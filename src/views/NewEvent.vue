@@ -29,14 +29,17 @@
 
 </template>
 
-<script>
+<script lang="ts">
+    import { defineComponent } from 'vue'
+
     import InputText from 'primevue/inputtext'
     import Dropdown from 'primevue/dropdown'
     import Calendar from 'primevue/calendar'
     import Checkbox from 'primevue/checkbox'
     import Button from 'primevue/button'
 
-    export default {
+    export default defineComponent({
+        name: 'NewEvent',
         components: {
             InputText,
             Dropdown,
@@ -57,6 +60,6 @@
                 isPublic: false
             }
         }
-    }
+    })
 
 </script>

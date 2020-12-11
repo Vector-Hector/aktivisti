@@ -7,20 +7,19 @@
 
 </template>
 
-<script>
-import Button from 'primevue/button'
 
-export default {
-    components: {
-        Button,
-    },
-    data() {
-        return {
+<script lang="ts">
+    import { defineComponent } from 'vue'
+    import Button from 'primevue/button'
+
+    export default defineComponent({
+        name: 'Events',
+        components: {
+            Button 
         }
-    }
-}
+    })
 </script>
 
-<style scoped>
 
+<style scoped>
 </style>
