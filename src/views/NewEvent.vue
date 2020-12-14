@@ -4,28 +4,28 @@
         <div class="p-field p-grid">
             <label for="eventName" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Names des Events</label>
             <div class="p-col-12 p-md-10">
-                <InputText id="eventName" type="text" v-model="eventName" />
+                <InputText id="eventName" type="text" v-model="event.name" />
             </div>
         </div>
         <div class="p-field p-grid">
             <label for="campaign" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Kampagnenauswahl</label>
             <div class="p-col-12 p-md-10">
-                <Dropdown v-model="selectedCampaign" :options="campaigns" optionLabel="name" placeholder="Wähle eine Kampagne aus" />
+                <Dropdown v-model="event.selectedCampaign" :options="campaigns" optionLabel="name" placeholder="Wähle eine Kampagne aus" />
             </div>
         </div>
         <div class="p-field p-grid">
             <label for="startTime" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Zeit</label>
             <div class="p-col-12 p-md-10">
-                <Calendar v-model="startTime" dateFormat="dd.mm.yy" />
+                <Calendar v-model="event.startTime" dateFormat="dd.mm.yy" />
             </div>
         </div>
     </div>
     <div class="p-field-checkbox">
-        <Checkbox id="isPublic" name="isPublic" value="public" v-model="isPublic" :binary="true" />
+        <Checkbox id="isPublic" name="isPublic" value="public" v-model="event.isPublic" :binary="true" />
         <label for="isPublic">Öffentlich</label>
     </div>
 
-    <Button label="Speichern" />
+    <Button v-on:click="saveEvent" label="Speichern" />
 
 </template>
 
@@ -49,15 +49,22 @@
         },
         data() {
             return {
-                selectedCampaign: null,
+                event: {
+                    name: '',
+                    selectedCampaign: '',
+                    startTime: null,
+                    isPublick: false
+                },
                 campaigns: [
                     {name: 'Mietendeckel', id: 0},
                     {name: 'Landtagswahl Baden-Würtemmberg', id: 1}
                 ],
-                
-                startTime: null,
-
-                isPublic: false
+            }
+        },
+        methods: {
+            saveEvent() {
+                console.log(this.event.name)
+                console.log('test')
             }
         }
     })

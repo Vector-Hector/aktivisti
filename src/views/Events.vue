@@ -19,26 +19,12 @@
     import Button from 'primevue/button'
 
     interface Event {
+        id: number
         name: string
         campaign: string
         startTime: string
         isPublic: boolean
     }
-
-    // dummy data
-    const events = [{
-        id: 0,
-        name: 'HautürWK Köpenick',
-        campaign: 'Landtagswahl',
-        startTime: '11.05.2021',
-        isPublic: true
-    }, {
-        id: 1,
-        name: 'HautürWK Kreuzberg',
-        campaign: 'Landtagswahl',
-        startTime: '11.07.2021',
-        isPublic: true
-    }]
 
     export default defineComponent({
         name: 'Events',
@@ -46,7 +32,29 @@
             Button 
         },
         data() {
-            return { events }
+            return {
+                events: {}
+            }
+        },
+        mounted() {
+           this.events = this.fetchEvents()
+        },
+        methods: {
+            fetchEvents(): Event[] {
+                return [{
+                    id: 0,
+                    name: 'HautürWK Köpenick',
+                    campaign: 'Landtagswahl',
+                    startTime: '11.05.2021',
+                    isPublic: true
+                }, {
+                    id: 1,
+                    name: 'HautürWK Kreuzberg',
+                    campaign: 'Landtagswahl',
+                    startTime: '11.07.2021',
+                    isPublic: true
+                }]
+            }
         }
     })
 </script>
