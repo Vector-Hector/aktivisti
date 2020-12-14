@@ -49,12 +49,7 @@
         },
         data() {
             return {
-                event: {
-                    name: '',
-                    selectedCampaign: '',
-                    startTime: null,
-                    isPublick: false
-                },
+                event: {} as Event[],
                 campaigns: [
                     {name: 'Mietendeckel', id: 0},
                     {name: 'Landtagswahl Baden-Würtemmberg', id: 1}
@@ -63,8 +58,8 @@
         },
         methods: {
             saveEvent() {
-                console.log(this.event.name)
-                console.log('test')
+                console.log(this.event)
+                this.$router.push("/events")
             }
         }
     })

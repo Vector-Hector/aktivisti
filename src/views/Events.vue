@@ -18,7 +18,7 @@
     import { defineComponent } from 'vue'
     import Button from 'primevue/button'
 
-    interface Event {
+    export interface Event {
         id: number
         name: string
         campaign: string
