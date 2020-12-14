@@ -1,9 +1,9 @@
 <template>
   <div id='root'>
       <img alt="Vue logo" src="./assets/logo_dielinke.png">
-    <div id='nav' style="padding-bottom: 100px;">
-      <router-link to='/'>Home</router-link>
-      <router-link to='/events'> Events</router-link>
+    <div id='nav'>
+      <router-link id="router-link" to='/'>Home</router-link>
+      <router-link id="router-link" to='/events'>Events</router-link>
     </div>
 
     <router-view />
@@ -25,4 +25,13 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
   }
+
+  #nav {
+    padding-bottom: 100px;
+  }
+
+  #router-link {
+    padding-right: 10px;
+  }
+
 </style>

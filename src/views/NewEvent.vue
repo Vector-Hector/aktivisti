@@ -19,10 +19,68 @@
                 <Calendar v-model="event.startTime" dateFormat="dd.mm.yy" />
             </div>
         </div>
+
+        <div class="p-field p-grid">
+            <label for="eventMeetingPoint" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Treffpunkt</label>
+            <div class="p-col-12 p-md-10">
+                <InputText id="eventMeetingPoint" type="text" v-model="event.meetingpoint" />
+            </div>
+        </div>
+
+        <div class="p-field p-grid">
+            <label for="eventParticipantsMax" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"># Personen</label>
+            <div class="p-col-12 p-md-10">
+                <InputNumber showButtons id="eventParticipantsMax" v-model="event.maxparticipants" mode="decimal" :min="0" />
+            </div>
+        </div>
+
+        <div class="p-field p-grid">
+            <label for="eventInfo" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Weitere Informationen</label>
+            <div class="p-col-12 p-md-10">
+                <InputText id="eventInfo" type="text" v-model="event.info" />
+            </div>
+        </div>
+
+        <div class="p-field p-grid">
+            <label for="eventMetrics" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Felder (geklopfte Türen etc.) auswählen</label>
+            <div class="p-col-12 p-md-10">
+                <MultiSelect v-model="selectedMetrics" :options="metrics" optionLabel="name" placeholder="Metriken auswählen" display="chip"/>
+            </div>
+        </div>
+
+        <div class="p-field p-grid">
+            <label for="eventGoals" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Zielvorgaben hinzufügen (TODO)</label>
+            <div class="p-col-12 p-md-10">
+                <InputNumber showButtons v-model="value" :min="0" />
+            </div>
+        </div>
+
+        <div class="p-field p-grid">
+            <label for="eventTasks" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Aufgabenbeschreibung</label>
+            <div class="p-col-12 p-md-10">
+                <InputText id="eventTasks" type="text" v-model="event.tasks" />
+            </div>
+        </div>
+
+
+        <div class="p-field p-grid">
+            <label for="eventInfoLink" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Link zu Info-Material</label>
+            <div class="p-col-12 p-md-10">
+                <InputText id="eventInfoLink" type="text" v-model="event.infolink" />
+            </div>
+        </div>
+
+        <div class="p-field p-grid">
+            <label for="eventContact" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Kontakt</label>
+            <div class="p-col-12 p-md-10">
+                <InputText id="eventContact" type="text" v-model="event.contact" />
+            </div>
+        </div>
+
     </div>
     <div class="p-field-checkbox">
-        <Checkbox id="isPublic" name="isPublic" value="public" v-model="event.isPublic" :binary="true" />
-        <label for="isPublic">Öffentlich</label>
+        <Checkbox id="isNotPublic" name="isNotPublic" value="public" v-model="event.isNotPublic" :binary="true" />
+        <label for="isNotPublic">Nicht-öffentlich</label>
     </div>
 
     <Button v-on:click="saveEvent" label="Speichern" />
@@ -37,6 +95,8 @@
     import Calendar from 'primevue/calendar'
     import Checkbox from 'primevue/checkbox'
     import Button from 'primevue/button'
+    import InputNumber from 'primevue/inputnumber'
+    import MultiSelect from 'primevue/multiselect'
 
     export default defineComponent({
         name: 'NewEvent',
@@ -45,7 +105,9 @@
             Dropdown,
             Calendar,
             Checkbox,
-            Button
+            Button,
+            InputNumber,
+            MultiSelect
         },
         data() {
             return {
@@ -54,6 +116,14 @@
                     {name: 'Mietendeckel', id: 0},
                     {name: 'Landtagswahl Baden-Würtemmberg', id: 1}
                 ],
+                selectedMetrics: null,
+                metrics: [
+                    {name: 'Geklopfte Türen', value: 'Geklopfte Türen'},
+                    {name: 'Geöffnete Türen', value: 'Geöffnete Türen'},
+                    {name: 'Gute Gespräche', value: 'Gute Gespräche'},
+                    {name: 'Zustimmung', value: 'Zustimmung'},
+                    {name: 'Unterschriften', value: 'Unterschriften'}
+                ]
             }
         },
         methods: {
