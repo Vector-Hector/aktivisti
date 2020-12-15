@@ -7,12 +7,14 @@
                 <InputText id="eventName" type="text" v-model="event.name" />
             </div>
         </div>
+
         <div class="p-field p-grid">
             <label for="campaign" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Kampagnenauswahl</label>
             <div class="p-col-12 p-md-10">
                 <Dropdown v-model="event.selectedCampaign" :options="campaigns" optionLabel="name" placeholder="Wähle eine Kampagne aus" />
             </div>
         </div>
+        
         <div class="p-field p-grid">
             <label for="startTime" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Zeit</label>
             <div class="p-col-12 p-md-10">
@@ -51,7 +53,7 @@
         <div class="p-field p-grid">
             <label for="eventGoals" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Zielvorgaben hinzufügen (TODO)</label>
             <div class="p-col-12 p-md-10">
-                <InputNumber showButtons v-model="value" :min="0" />
+                <InputNumber showButtons v-model="event.target" :min="0" />
             </div>
         </div>
 
@@ -71,7 +73,7 @@
         </div>
 
         <div class="p-field p-grid">
-            <label for="eventContact" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Kontakt</label>
+            <label for="eventContact" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Kontakt (Telefon, E-Mail)</label>
             <div class="p-col-12 p-md-10">
                 <InputText id="eventContact" type="text" v-model="event.contact" />
             </div>
