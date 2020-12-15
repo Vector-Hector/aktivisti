@@ -18,17 +18,14 @@ export function makeServer({ environment = "development" } = {}) {
 
     let server = createServer({
         environment,
-
         models: {
-            event: Model,
+            event: Model
         },
-
         seeds(server) {
             events.forEach(event => {
                 server.create("event", event)
-            });
+            })
         },
-
         routes() {
             this.namespace = "api"
 
@@ -36,6 +33,10 @@ export function makeServer({ environment = "development" } = {}) {
             this.post("/events", (schema, request) => {
                 const event = JSON.parse(request.requestBody)
                 return schema.db.events.insert(event)
+            })
+            this.delete("/events/:id", (schema, request) => {
+                const id = request.params.id
+                return schema.db.events.remove(id)
             })
         }
     })

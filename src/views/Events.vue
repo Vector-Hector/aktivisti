@@ -4,6 +4,7 @@
     <ul>
         <li v-for="event in events" :key="event.id">
             {{ event.name }}
+            <Button icon="pi pi-times" class="p-button-danger p-button-icon" v-on:click="deleteEvent(event.id)" />
         </li>
     </ul>
 
@@ -37,14 +38,28 @@
             }
         },
         created() {
-            // TODO write sth. like
-            // this.events = await fetch(`${process.env.VUE_APP_BASE_URL}/api/events`) ...
-            fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
-                .then((res) => res.json())
-                .then((json) => {
-                    this.events = json.events
+            this.getElements()
+        },
+        methods: {
+            deleteEvent: function(id: number) {
+                fetch(`${process.env.VUE_APP_BASE_URL}/api/events/${id}`, {
+                    method: 'DELETE',
                 })
-                .catch(/* handle errors*/)
+                .then(res => res.text())
+                .then(res => {
+                    // TODO check again, could be solved differently
+                    this.getElements()
+                    console.log(res)
+                })
+            },
+            getElements: function() {
+                fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
+                    .then((res) => res.json())
+                    .then((json) => {
+                        this.events = json.events
+                    })
+                    .catch(/* handle errors*/)
+            }
         }
     })
 </script>
