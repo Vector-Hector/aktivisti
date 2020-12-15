@@ -45,8 +45,7 @@
                     this.events = json.events
                 })
                 .catch(/* handle errors*/)
-        },
-        methods: { }
+        }
     })
 </script>
 

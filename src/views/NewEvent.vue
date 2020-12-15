@@ -130,10 +130,24 @@
         },
         methods: {
             saveEvent() {
-                console.log(this.event)
+                fetch(`${process.env.VUE_APP_BASE_URL}/api/events`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(this.event),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+
                 this.$router.push("/events")
             }
         }
-    })
+    });
 
 </script>
