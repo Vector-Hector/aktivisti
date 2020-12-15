@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "miragejs": "^0.1.41",
     "primeflex": "^2.0.0",
     "primeicons": "^4.1.0",
     "primevue": "^3.1.1",
@@ -30,6 +29,7 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.0.0-0",
+    "miragejs": "^0.1.41",
     "typescript": "~3.9.3"
   },
   "eslintConfig": {

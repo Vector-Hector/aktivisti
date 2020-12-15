@@ -36,26 +36,17 @@
                 events: {}
             }
         },
-        mounted() {
-           this.events = this.fetchEvents()
+        created() {
+            // TODO write sth. like
+            // this.events = await fetch(`${process.env.VUE_APP_BASE_URL}/api/events`) ...
+            fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
+                .then((res) => res.json())
+                .then((json) => {
+                    this.events = json.events
+                })
+                .catch(/* handle errors*/)
         },
-        methods: {
-            fetchEvents(): Event[] {
-                return [{
-                    id: 0,
-                    name: 'HautürWK Köpenick',
-                    campaign: 'Landtagswahl',
-                    startTime: '11.05.2021',
-                    isPublic: true
-                }, {
-                    id: 1,
-                    name: 'HautürWK Kreuzberg',
-                    campaign: 'Landtagswahl',
-                    startTime: '11.07.2021',
-                    isPublic: true
-                }]
-            }
-        }
+        methods: { }
     })
 </script>
 
