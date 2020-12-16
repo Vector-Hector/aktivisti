@@ -50,7 +50,7 @@
   }
 
   .dielinke-logo {
-    max-width: 100px;
+    max-width: 240px;
   }
 
 </style>

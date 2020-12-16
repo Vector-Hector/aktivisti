@@ -151,3 +151,9 @@
     });
 
 </script>
+
+<style scoped>
+    label {
+        text-align: left;
+    }
+</style>
