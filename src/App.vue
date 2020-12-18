@@ -2,8 +2,8 @@
   <div id='root'>
     <img class="dielinke-logo" alt="Vue logo" src="./assets/logo_dielinke.png">
     <div id='nav'>
-      <router-link id="router-link" to='/'>Home</router-link>
-      <router-link id="router-link" to='/events'>Events</router-link>
+      <router-link class="router-link" to='/'>Home</router-link>
+      <router-link class="router-link" to='/events'>Events</router-link>
     </div>
     <div class="container">
     <router-view />
@@ -37,7 +37,7 @@
     padding-bottom: 100px;
   }
 
-  #router-link {
+  .router-link {
     padding-right: 10px;
   }
 
