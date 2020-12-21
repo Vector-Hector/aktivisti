@@ -30,6 +30,8 @@
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.0.0-0",
     "miragejs": "^0.1.41",
+    "sass": "^1.30.0",
+    "sass-loader": "^10.1.0",
     "typescript": "~3.9.3"
   },
   "eslintConfig": {
