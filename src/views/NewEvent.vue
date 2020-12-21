@@ -113,7 +113,7 @@
         },
         data() {
             return {
-                event: {} as Event[],
+                event: {} as Event,
                 campaigns: [
                     {name: 'Mietendeckel', id: 0},
                     {name: 'Landtagswahl Baden-Würtemmberg', id: 1}
