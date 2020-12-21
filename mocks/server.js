@@ -4,13 +4,13 @@ export function makeServer({ environment = "development" } = {}) {
 
     const events = [{
         id: 0,
-        name: 'HautürWK Köpenick',
+        name: 'HaustürWK Köpenick',
         campaign: 'Landtagswahl',
         startTime: '11.05.2021',
         isPublic: true
     }, {
         id: 1,
-        name: 'HautürWK Kreuzberg',
+        name: 'HaustürWK Kreuzberg',
         campaign: 'Landtagswahl',
         startTime: '11.07.2021',
         isPublic: true
