@@ -152,7 +152,7 @@
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
     label {
         text-align: left;
     }

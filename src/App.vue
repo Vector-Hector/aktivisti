@@ -20,6 +20,8 @@
 </script>
 
 <style lang="scss" scoped>
+  @import 'src/scss/_globals.scss';
+
   .nav {
     padding-bottom: 100px;
   }

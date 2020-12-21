@@ -65,7 +65,7 @@
 </script>
 
 
-<style scoped>
+<style lang="scss" scoped>
     .new-event-button {
         text-decoration: none;
     }
