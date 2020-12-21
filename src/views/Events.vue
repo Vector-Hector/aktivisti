@@ -8,7 +8,7 @@
         </li>
     </ul>
 
-    <router-link to='/events/new' class="newEventButton">
+    <router-link to='/events/new' class="new-event-button">
         <Button label="Event hinzufügen" />
     </router-link>
 
@@ -66,7 +66,7 @@
 
 
 <style scoped>
-    .newEventButton {
+    .new-event-button {
         text-decoration: none;
     }
 </style>

@@ -2,7 +2,8 @@
 
 ## Code Style Guidelines
 
-* TBA
+* CSS/SCSS
+  * We use kebab-case for class declaration. 
 
 ## Submission Guidelines
 
