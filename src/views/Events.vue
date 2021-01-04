@@ -64,13 +64,7 @@
             },
             editEvent: function(id: number) {
                 // todo go to /events/edit/:id
-                // get data
-                 fetch(`${process.env.VUE_APP_BASE_URL}/api/events/${id}`)
-                    .then((res) => res.json())
-                    .then((json) => {
-                        this.event = json.event
-                    })
-                    .catch(/* handle errors*/)
+                this.$router.push(`/events/${id}`)
             }
         }
     })

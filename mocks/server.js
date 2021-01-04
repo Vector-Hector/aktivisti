@@ -30,6 +30,13 @@ export function makeServer({ environment = "development" } = {}) {
             this.namespace = "api"
 
             this.get("/events", (schema) => schema.events.all())
+
+            this.put("/events/:id", (schema, request) => {
+                const id = request.params.id
+                let event = schema.events.find(id)
+                event.update(JSON.parse(request.requestBody))
+            })
+
             this.get("/events/:id", (schema, request) => {
                 const id = request.params.id
                 return schema.events.find(id)
@@ -39,6 +46,7 @@ export function makeServer({ environment = "development" } = {}) {
                 const event = JSON.parse(request.requestBody)
                 return schema.db.events.insert(event)
             })
+
             this.delete("/events/:id", (schema, request) => {
                 const id = request.params.id
                 return schema.db.events.remove(id)

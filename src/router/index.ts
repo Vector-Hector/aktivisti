@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import Events from '../views/Events.vue'
 import NewEvent from '../views/NewEvent.vue'
+import EditEvent from '../views/EditEvent.vue'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -16,6 +17,10 @@ const router = createRouter({
         component: Events
       },
       {
+        path: '/events/:id',
+        component: EditEvent
+      },
+      {
         path: '/events/new',
         component: NewEvent
       },
@@ -23,3 +28,4 @@ const router = createRouter({
   })
 
 export default router
+
