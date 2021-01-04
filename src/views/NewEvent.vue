@@ -32,7 +32,7 @@
         <div class="p-field p-grid">
             <label for="eventParticipantsMax" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"># Personen</label>
             <div class="p-col-12 p-md-10">
-                <InputNumber showButtons id="eventParticipantsMax" v-model="event.maxparticipants" mode="decimal" :min="0" />
+                <InputNumber showButtons id="eventParticipantsMax" v-model="event.maxParticipants" mode="decimal" :min="0" />
             </div>
         </div>
 
@@ -46,14 +46,18 @@
         <div class="p-field p-grid">
             <label for="eventMetrics" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Felder (geklopfte Türen etc.) auswählen</label>
             <div class="p-col-12 p-md-10">
-                <MultiSelect v-model="selectedMetrics" :options="metrics" optionLabel="name" placeholder="Metriken auswählen" display="chip"/>
+                <MultiSelect v-model="event.selectedMetrics" :options="metrics" optionLabel="name" placeholder="Metriken auswählen" display="chip"/>
             </div>
         </div>
 
-        <div class="p-field p-grid">
-            <label for="eventGoals" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Zielvorgaben hinzufügen (TODO)</label>
-            <div class="p-col-12 p-md-10">
-                <InputNumber showButtons v-model="event.target" :min="0" />
+        <div v-if="event.selectedMetrics.length > 0">
+            <div v-for="metric in event.selectedMetrics" :key="metric.name">
+                <div class="p-field p-grid">
+                    <label for="eventGoals" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Zielvorgabe für {{metric.name}} hinzufügen</label>
+                    <div class="p-col-12 p-md-10">
+                        <InputNumber v-model="event.targets[metric.name]" showButtons :min="0" />
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -68,7 +72,7 @@
         <div class="p-field p-grid">
             <label for="eventInfoLink" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Link zu Info-Material</label>
             <div class="p-col-12 p-md-10">
-                <InputText id="eventInfoLink" type="text" v-model="event.infolink" />
+                <InputText id="eventInfoLink" type="text" v-model="event.infoLink" />
             </div>
         </div>
 
@@ -99,7 +103,7 @@
     import Button from 'primevue/button'
     import InputNumber from 'primevue/inputnumber'
     import MultiSelect from 'primevue/multiselect'
-
+    
     export default defineComponent({
         name: 'NewEvent',
         components: {
@@ -113,12 +117,14 @@
         },
         data() {
             return {
-                event: {} as Event,
+                event: {
+                    selectedMetrics: [],
+                    targets: {}
+                },
                 campaigns: [
                     {name: 'Mietendeckel', id: 0},
                     {name: 'Landtagswahl Baden-Würtemmberg', id: 1}
                 ],
-                selectedMetrics: null,
                 metrics: [
                     {name: 'Geklopfte Türen', value: 'Geklopfte Türen'},
                     {name: 'Geöffnete Türen', value: 'Geöffnete Türen'},
