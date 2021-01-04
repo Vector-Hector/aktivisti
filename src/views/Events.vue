@@ -5,7 +5,7 @@
         <li v-for="event in events" :key="event.id">
             {{ event.name }}
             <Button icon="pi pi-times" class="p-button-danger p-button-icon" v-on:click="deleteEvent(event.id)" />
-            <Button icon="pi pi-pencil" class="p-button-danger p-button-icon" v-on:click="editEvent(event.id)" />
+            <Button icon="pi pi-pencil" class="p-button-default p-button-icon" v-on:click="editEvent(event.id)" />
         </li>
     </ul>
 
@@ -74,5 +74,13 @@
 <style lang="scss" scoped>
     .new-event-button {
         text-decoration: none;
+    }
+
+    Button {
+        margin-left: 10px;
+    }
+
+    ul {
+        list-style: none;
     }
 </style>
