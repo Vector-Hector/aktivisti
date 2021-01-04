@@ -3,6 +3,7 @@
     <img class="dielinke-logo" alt="Vue logo" src="./assets/logo_dielinke.png">
     <div class="nav">
       <router-link class="router-link" to='/'>Home</router-link>
+      <router-link class="router-link" to='/campaigns'>Kampagnen</router-link>
       <router-link class="router-link" to='/events'>Events</router-link>
     </div>
     <div class="container">

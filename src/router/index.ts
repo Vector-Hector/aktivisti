@@ -4,6 +4,9 @@ import Home from '../views/Home.vue'
 import Events from '../views/Events.vue'
 import NewEvent from '../views/NewEvent.vue'
 import EditEvent from '../views/EditEvent.vue'
+import Campaigns from '../views/Campaigns.vue'
+import EditCampaign from '../views/EditCampaign.vue'
+import NewCampaign from '../views/NewCampaign.vue'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -23,6 +26,18 @@ const router = createRouter({
       {
         path: '/events/new',
         component: NewEvent
+      },
+      {
+        path: '/campaigns',
+        component: Campaigns
+      },
+      {
+        path: '/campaigns/:id',
+        component: EditCampaign
+      },
+      {
+        path: '/campaigns/new',
+        component: NewCampaign
       },
     ]
   })
