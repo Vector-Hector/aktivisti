@@ -5,6 +5,7 @@
         <li v-for="event in events" :key="event.id">
             {{ event.name }}
             <Button icon="pi pi-times" class="p-button-danger p-button-icon" v-on:click="deleteEvent(event.id)" />
+            <Button icon="pi pi-pencil" class="p-button-danger p-button-icon" v-on:click="editEvent(event.id)" />
         </li>
     </ul>
 
@@ -34,7 +35,8 @@
         },
         data() {
             return {
-                events: {}
+                events: {},
+                event: {}
             }
         },
         created() {
@@ -57,6 +59,16 @@
                     .then((res) => res.json())
                     .then((json) => {
                         this.events = json.events
+                    })
+                    .catch(/* handle errors*/)
+            },
+            editEvent: function(id: number) {
+                // todo go to /events/edit/:id
+                // get data
+                 fetch(`${process.env.VUE_APP_BASE_URL}/api/events/${id}`)
+                    .then((res) => res.json())
+                    .then((json) => {
+                        this.event = json.event
                     })
                     .catch(/* handle errors*/)
             }

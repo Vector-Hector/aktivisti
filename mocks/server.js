@@ -30,6 +30,11 @@ export function makeServer({ environment = "development" } = {}) {
             this.namespace = "api"
 
             this.get("/events", (schema) => schema.events.all())
+            this.get("/events/:id", (schema, request) => {
+                const id = request.params.id
+                return schema.events.find(id)
+            })
+
             this.post("/events", (schema, request) => {
                 const event = JSON.parse(request.requestBody)
                 return schema.db.events.insert(event)
