@@ -3,36 +3,36 @@
     <div class="p-fluid">
 
         <div class="p-field p-grid">
-            <label for="campaignName" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Names der Kampagne</label>
-            <div class="p-col-12 p-md-10">
+            <label for="campaignName" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Names der Kampagne</label>
+            <div class="p-col-12 p-md-9">
                 <InputText id="campaignName" type="text" v-model="campaign.name" />
             </div>
         </div>
         
         <div class="p-field p-grid">
-            <label for="startTime" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Start</label>
-            <div class="p-col-12 p-md-10">
+            <label for="startTime" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Start</label>
+            <div class="p-col-12 p-md-9">
                 <Calendar v-model="campaign.start" dateFormat="dd.mm.yy" />
             </div>
         </div>
 
         <div class="p-field p-grid">
-            <label for="startTime" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Ende</label>
-            <div class="p-col-12 p-md-10">
+            <label for="startTime" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Ende</label>
+            <div class="p-col-12 p-md-9">
                 <Calendar v-model="campaign.end" dateFormat="dd.mm.yy" />
             </div>
         </div>
 
         <div class="p-field p-grid">
-            <label for="campaign" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Typ</label>
-            <div class="p-col-12 p-md-10">
+            <label for="campaign" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Typ</label>
+            <div class="p-col-12 p-md-9">
                 <Dropdown v-model="campaign.type" :options="campaignTypes" optionLabel="name" placeholder="Wähle einen Kampagnen-Typ aus" />
             </div>
         </div>
 
         <div class="p-field p-grid">
-            <label for="campaign" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Kreis/Land/Bund (TODO)</label>
-            <div class="p-col-12 p-md-10">
+            <label for="campaign" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Kreis/Land/Bund (TODO)</label>
+            <div class="p-col-12 p-md-9">
                 <Dropdown v-model="campaign.organisation" :options="organisationType" optionLabel="name" placeholder="Wähle ein Gebiet aus" />
             </div>
         </div>

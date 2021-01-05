@@ -2,50 +2,50 @@
     <h1>Event editieren</h1>
     <div class="p-fluid">
         <div class="p-field p-grid">
-            <label for="eventName" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Name des Events</label>
-            <div class="p-col-12 p-md-10">
+            <label for="eventName" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Name des Events</label>
+            <div class="p-col-12 p-md-9">
                 <InputText id="eventName" type="text" v-model="event.name" />
             </div>
         </div>
 
         <div class="p-field p-grid">
-            <label for="campaign" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Kampagnenauswahl</label>
-            <div class="p-col-12 p-md-10">
+            <label for="campaign" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Kampagnenauswahl</label>
+            <div class="p-col-12 p-md-9">
                 <Dropdown v-model="event.selectedCampaign" :options="campaigns" optionLabel="name" placeholder="Wähle eine Kampagne aus" />
             </div>
         </div>
         
         <div class="p-field p-grid">
-            <label for="startTime" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Zeit</label>
-            <div class="p-col-12 p-md-10">
+            <label for="startTime" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Zeit</label>
+            <div class="p-col-12 p-md-9">
                 <Calendar v-model="event.startTime" dateFormat="dd.mm.yy" />
             </div>
         </div>
 
         <div class="p-field p-grid">
-            <label for="eventMeetingPoint" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Treffpunkt</label>
-            <div class="p-col-12 p-md-10">
+            <label for="eventMeetingPoint" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Treffpunkt</label>
+            <div class="p-col-12 p-md-9">
                 <InputText id="eventMeetingPoint" type="text" v-model="event.meetingpoint" />
             </div>
         </div>
 
         <div class="p-field p-grid">
-            <label for="eventParticipantsMax" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"># Personen</label>
-            <div class="p-col-12 p-md-10">
+            <label for="eventParticipantsMax" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"># Personen</label>
+            <div class="p-col-12 p-md-9">
                 <InputNumber showButtons id="eventParticipantsMax" v-model="event.maxParticipants" mode="decimal" :min="0" />
             </div>
         </div>
 
         <div class="p-field p-grid">
-            <label for="eventInfo" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Weitere Informationen</label>
-            <div class="p-col-12 p-md-10">
+            <label for="eventInfo" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Weitere Informationen</label>
+            <div class="p-col-12 p-md-9">
                 <InputText id="eventInfo" type="text" v-model="event.info" />
             </div>
         </div>
 
         <div class="p-field p-grid">
-            <label for="eventMetrics" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Felder (geklopfte Türen etc.) auswählen</label>
-            <div class="p-col-12 p-md-10">
+            <label for="eventMetrics" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Felder (geklopfte Türen etc.) auswählen</label>
+            <div class="p-col-12 p-md-9">
                 <MultiSelect v-model="event.selectedMetrics" :options="metrics" optionLabel="name" placeholder="Metriken auswählen" display="chip"/>
             </div>
         </div>
@@ -53,8 +53,8 @@
         <div v-if="event.selectedMetrics && event.selectedMetrics.length > 0">
             <div v-for="metric in event.selectedMetrics" :key="metric.name">
                 <div class="p-field p-grid">
-                    <label for="eventGoals" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Zielvorgabe für {{metric.name}} hinzufügen</label>
-                    <div class="p-col-12 p-md-10">
+                    <label for="eventGoals" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Zielvorgabe für {{metric.name}} hinzufügen</label>
+                    <div class="p-col-12 p-md-9">
                         <InputNumber v-model="event.targets[metric.name]" showButtons :min="0" />
                     </div>
                 </div>
@@ -62,23 +62,23 @@
         </div>
 
         <div class="p-field p-grid">
-            <label for="eventTasks" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Aufgabenbeschreibung</label>
-            <div class="p-col-12 p-md-10">
+            <label for="eventTasks" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Aufgabenbeschreibung</label>
+            <div class="p-col-12 p-md-9">
                 <InputText id="eventTasks" type="text" v-model="event.tasks" />
             </div>
         </div>
 
 
         <div class="p-field p-grid">
-            <label for="eventInfoLink" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Link zu Info-Material</label>
-            <div class="p-col-12 p-md-10">
+            <label for="eventInfoLink" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Link zu Info-Material</label>
+            <div class="p-col-12 p-md-9">
                 <InputText id="eventInfoLink" type="text" v-model="event.infoLink" />
             </div>
         </div>
 
         <div class="p-field p-grid">
-            <label for="eventContact" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Kontakt (Telefon, E-Mail)</label>
-            <div class="p-col-12 p-md-10">
+            <label for="eventContact" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Kontakt (Telefon, E-Mail)</label>
+            <div class="p-col-12 p-md-9">
                 <InputText id="eventContact" type="text" v-model="event.contact" />
             </div>
         </div>
