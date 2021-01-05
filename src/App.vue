@@ -2,7 +2,7 @@
   <div id='root'>
     <Menubar :model="items" >
       <template #start>
-        <img class="dielinke-logo" alt="Vue logo" src="./assets/logo_dielinke.png" v-on:click="$router.push('/')">
+        <img class="dielinke-logo" alt="Die LINKE Logo" src="./assets/logo_dielinke.png" v-on:click="$router.push('/')">
       </template>
     </Menubar>
 
