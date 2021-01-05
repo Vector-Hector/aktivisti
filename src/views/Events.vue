@@ -20,6 +20,7 @@
     import { defineComponent } from 'vue'
     import Button from 'primevue/button'
 
+    // TODO adjust type
     export interface Event {
         id: number
         name: string
@@ -35,8 +36,8 @@
         },
         data() {
             return {
-                events: {},
-                event: {}
+                events: [] as Event[],
+                event: {} as Event
             }
         },
         created() {
@@ -48,10 +49,9 @@
                     method: 'DELETE',
                 })
                 .then(res => res.text())
-                .then(res => {
+                .then(() => {
                     // TODO check again, could be solved differently
                     this.getElements()
-                    console.log(res)
                 })
             },
             getElements: function() {
@@ -63,7 +63,6 @@
                     .catch(/* handle errors*/)
             },
             editEvent: function(id: number) {
-                // todo go to /events/edit/:id
                 this.$router.push(`/events/${id}`)
             }
         }
