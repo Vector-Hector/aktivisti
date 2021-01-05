@@ -1,9 +1,9 @@
 <template>
-    <h1>Neues Kampagne hinzufügen</h1>
+    <h1>Neue Kampagne hinzufügen</h1>
 
     <div class="p-fluid">
         <div class="p-field p-grid">
-            <label for="campaignName" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Names der Kampagne</label>
+            <label for="campaignName" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Name der Kampagne</label>
             <div class="p-col-12 p-md-10">
                 <InputText id="campaignName" type="text" v-model="campaign.name" />
             </div>
