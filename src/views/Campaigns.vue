@@ -27,7 +27,7 @@
         },
         data() {
             return {
-                campaigns: {},
+                campaigns: [],
                 campaign: {}
             }
         },
