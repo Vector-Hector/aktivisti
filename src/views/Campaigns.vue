@@ -40,10 +40,9 @@
                     method: 'DELETE',
                 })
                 .then(res => res.text())
-                .then(res => {
+                .then(() => {
                     // TODO check again, could be solved differently
                     this.getCampaigns()
-                    console.log(res)
                 })
             },
             getCampaigns: function() {
