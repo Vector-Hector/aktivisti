@@ -63,6 +63,6 @@
 
   .p-menubar {
     background: white;
-    border: 1px solid red;
+    border: 1px solid $red;
   }
 </style>
