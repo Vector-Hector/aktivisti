@@ -99,4 +99,8 @@
     label {
         text-align: left;
     }
+    
+    Button {
+        margin: 10px;
+    }
 </style>

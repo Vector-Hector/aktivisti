@@ -2,7 +2,7 @@
     <h1>Neues Event hinzufügen</h1>
     <div class="p-fluid">
         <div class="p-field p-grid">
-            <label for="eventName" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Names des Events</label>
+            <label for="eventName" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Name des Events</label>
             <div class="p-col-12 p-md-10">
                 <InputText id="eventName" type="text" v-model="event.name" />
             </div>
@@ -170,5 +170,9 @@
 <style lang="scss" scoped>
     label {
         text-align: left;
+    }
+    
+    Button {
+        margin: 10px;
     }
 </style>
