@@ -120,12 +120,10 @@
             return {
                 event: {
                     selectedMetrics: [],
-                    targets: {}
+                    targets: {},
+                    selectedCampaign: {}
                 },
-                campaigns: [
-                    {name: 'Mietendeckel', id: 0},
-                    {name: 'Landtagswahl Baden-Würtemmberg', id: 1}
-                ],
+                campaigns: [],
                 metrics: [
                     {name: 'Geklopfte Türen', value: 'Geklopfte Türen'},
                     {name: 'Geöffnete Türen', value: 'Geöffnete Türen'},
@@ -136,10 +134,11 @@
             }
         },
         created() {
-            this.getElement()
+            this.getEvent()
+            this.getCampaigns()
         },
         methods: {
-            getElement() {
+            getEvent() {
                 const id = this.$route.params.id
                 fetch(`${process.env.VUE_APP_BASE_URL}/api/events/${id}`)
                     .then((res) => res.json())
@@ -166,7 +165,16 @@
                 })
 
                 this.$router.push('/events')
-            }
+            },
+            getCampaigns: function() {
+                fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
+                    .then((res) => res.json())
+                    .then((json) => {
+                        console.log(json)
+                        this.campaigns = json.campaigns
+                    })
+                    .catch(/* handle errors*/)
+            },
         }
     });
 

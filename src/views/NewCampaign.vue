@@ -39,6 +39,8 @@
     </div>
 
     <Button v-on:click="saveCampaign" label="Speichern" />
+    <Button v-on:click="$router.push('/campaigns')" label="Abbrechen" />
+
 </template>
 
 <script lang="ts">
@@ -63,7 +65,9 @@
                 },
                 campaignTypes: [
                     {name: 'Wahlkampf', id: 0},
-                    {name: 'Mietendeckel', id: 1}
+                    {name: 'Organizing', id: 1},
+                    {name: 'Petition', id: 2},
+                    {name: 'Datenerhebung', id: 3}
                 ],
             }
         },

@@ -90,6 +90,7 @@
     </div>
 
     <Button v-on:click="saveEvent" label="Speichern" />
+    <Button v-on:click="$router.push('/events')" label="Abbrechen" />
 
 </template>
 
@@ -121,10 +122,7 @@
                     selectedMetrics: [],
                     targets: {}
                 },
-                campaigns: [
-                    {name: 'Mietendeckel', id: 0},
-                    {name: 'Landtagswahl Baden-Würtemmberg', id: 1}
-                ],
+                campaigns: {},
                 metrics: [
                     {name: 'Geklopfte Türen', value: 'Geklopfte Türen'},
                     {name: 'Geöffnete Türen', value: 'Geöffnete Türen'},
@@ -133,6 +131,9 @@
                     {name: 'Unterschriften', value: 'Unterschriften'}
                 ]
             }
+        },
+        created () {
+            this.getCampaigns()
         },
         methods: {
             saveEvent() {
@@ -152,7 +153,15 @@
                 });
 
                 this.$router.push("/events")
-            }
+            },
+            getCampaigns: function() {
+                fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
+                    .then((res) => res.json())
+                    .then((json) => {
+                        this.campaigns = json.campaigns
+                    })
+                    .catch(/* handle errors*/)
+            },
         }
     });
 

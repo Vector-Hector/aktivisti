@@ -26,7 +26,7 @@
         <div class="p-field p-grid">
             <label for="campaign" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Typ</label>
             <div class="p-col-12 p-md-10">
-                <Dropdown v-model="campaign.type" :options="campaignTypes" optionLabel="name" placeholder="Wähle einen Kampagnen-Typ aus" />
+                <Dropdown v-model="selectedCampaign.name" :options="campaignTypes" optionLabel="name" placeholder="Wähle einen Kampagnen-Typ aus" />
             </div>
         </div>
 
@@ -65,8 +65,10 @@
                 },
                 campaignTypes: [
                     {name: 'Wahlkampf', id: 0},
-                    {name: 'Mietendeckel', id: 1}
-                ]
+                    {name: 'Organizing', id: 1},
+                    {name: 'Petition', id: 2},
+                    {name: 'Datenerhebung', id: 3}
+                ],
             }
         },
         created() {
