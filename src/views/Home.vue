@@ -69,5 +69,8 @@
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+    .leaflet-popup-content-wrapper {
+        border-radius: 0;
+    }
 </style>
