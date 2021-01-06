@@ -83,12 +83,12 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log('Success:', data)
+                    this.$router.push('/campaigns')
                 })
                 .catch((error) => {
                     console.error('Error:', error)
                 });
 
-                this.$router.push('/campaigns')
             }
         }
     });
