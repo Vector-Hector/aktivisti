@@ -12,7 +12,7 @@
         ></l-tile-layer>
 
         <span v-for="event in events" :key="event.id">
-            <l-marker :lat-lng="[52, 13]">
+            <l-marker v-if="event.location" :lat-lng="[event.location.lat, event.location.lng]">
                 <l-popup>
                     {{event.name}}
                 </l-popup>
@@ -70,7 +70,5 @@
 </script>
 
 <style lang="scss" scoped>
-    .leaflet-popup-content-wrapper {
-        border-radius: 0;
-    }
+
 </style>
