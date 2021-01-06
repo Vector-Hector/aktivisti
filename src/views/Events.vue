@@ -41,20 +41,20 @@
             }
         },
         created() {
-            this.getElements()
+            this.getEvents()
         },
         methods: {
-            deleteEvent: function(id: number) {
+            deleteEvent: function(id: number): void {
                 fetch(`${process.env.VUE_APP_BASE_URL}/api/events/${id}`, {
                     method: 'DELETE',
                 })
                 .then(res => res.text())
                 .then(() => {
                     // TODO check again, could be solved differently
-                    this.getElements()
+                    this.getEvents()
                 })
             },
-            getElements: function() {
+            getEvents: function(): void {
                 fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
                     .then((res) => res.json())
                     .then((json) => {
@@ -62,7 +62,7 @@
                     })
                     .catch(/* handle errors*/)
             },
-            editEvent: function(id: number) {
+            editEvent: function(id: number): void {
                 this.$router.push(`/events/${id}`)
             }
         }

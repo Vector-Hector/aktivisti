@@ -11,19 +11,13 @@
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         ></l-tile-layer>
 
-        <l-control-layers />
-
-        <l-marker :lat-lng="[53, 12]">
-            <l-tooltip>
-                Test Tooltip Text
-            </l-tooltip>
-        </l-marker>
-
-        <l-marker :lat-lng="[52, 13]">
-            <l-popup>
-                Test Popup Text
-            </l-popup>
-        </l-marker>
+        <span v-for="event in events" :key="event.id">
+            <l-marker :lat-lng="[52, 13]">
+                <l-popup>
+                    {{event.name}}
+                </l-popup>
+            </l-marker>
+        </span>
 
         </l-map>
     </div>
@@ -31,22 +25,22 @@
 
 <script lang="ts">
     import "leaflet/dist/leaflet.css"
+    import {defineComponent} from 'vue'
+
     import {
         LMap,
         LTileLayer,
         LMarker,
-        LControlLayers,
-        LTooltip,
         LPopup,
+    // @ts-ignore
     } from "@vue-leaflet/vue-leaflet"
 
-    export default {
+    export default defineComponent({
+        name: 'Home',
         components: {
             LMap,
             LTileLayer,
             LMarker,
-            LControlLayers,
-            LTooltip,
             LPopup,
         },
         data() {
@@ -55,13 +49,23 @@
                 iconWidth: 25,
                 iconHeight: 40,
                 center: [51.5, 10],
-            };
+                events: [] as Event[],
+            }
         },
-        computed: {
+        created() {
+            this.getEvents()
         },
         methods: {
+            getEvents: function(): void {
+                fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
+                    .then((res) => res.json())
+                    .then((json) => {
+                        this.events = json.events
+                    })
+                    .catch(/* handle errors*/)
+            },
         },
-    }
+    })
 
 </script>
 
