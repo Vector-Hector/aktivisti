@@ -1,10 +1,11 @@
 <template>
   <div id='root'>
-    <img class="dielinke-logo" alt="Vue logo" src="./assets/logo_dielinke.png">
-    <div class="nav">
-      <router-link class="router-link" to='/'>Home</router-link>
-      <router-link class="router-link" to='/events'>Events</router-link>
-    </div>
+    <Menubar :model="items" >
+      <template #start>
+        <img class="dielinke-logo" alt="Die LINKE Logo" src="./assets/logo_dielinke.png" v-on:click="$router.push('/')">
+      </template>
+    </Menubar>
+
     <div class="container">
     <router-view />
     </div>
@@ -13,9 +14,26 @@
 
 <script lang="ts">
   import { defineComponent } from 'vue'
+  import Menubar from 'primevue/menubar'
 
   export default defineComponent({
-    name: 'App'
+    name: 'App',
+    components: {
+      Menubar 
+    },
+    data() {
+      return {
+        items: [{
+          label: 'Kampagnen',
+          icon: 'pi pi-plus',
+          to: '/campaigns'
+        }, {
+          label:'Events',
+          icon:'pi pi-fw pi-calendar',
+          to: '/events'
+        }]
+      }
+    }
   })
 </script>
 
@@ -40,5 +58,11 @@
 
   .dielinke-logo {
     max-width: 240px;
+    cursor: pointer;
+  }
+
+  .p-menubar {
+    background: white;
+    border: 1px solid $red;
   }
 </style>

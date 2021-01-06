@@ -1,5 +1,5 @@
 <template>
-    <h1>Neues Event hinzufügen</h1>
+    <h1>Event editieren</h1>
     <div class="p-fluid">
         <div class="p-field p-grid">
             <label for="eventName" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Name des Events</label>
@@ -50,7 +50,7 @@
             </div>
         </div>
 
-        <div v-if="event.selectedMetrics.length > 0">
+        <div v-if="event.selectedMetrics && event.selectedMetrics.length > 0">
             <div v-for="metric in event.selectedMetrics" :key="metric.name">
                 <div class="p-field p-grid">
                     <label for="eventGoals" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Zielvorgabe für {{metric.name}} hinzufügen</label>
@@ -120,9 +120,10 @@
             return {
                 event: {
                     selectedMetrics: [],
-                    targets: {}
+                    targets: {},
+                    selectedCampaign: {}
                 },
-                campaigns: {},
+                campaigns: [],
                 metrics: [
                     {name: 'Geklopfte Türen', value: 'Geklopfte Türen'},
                     {name: 'Geöffnete Türen', value: 'Geöffnete Türen'},
@@ -132,32 +133,44 @@
                 ]
             }
         },
-        created () {
+        created() {
+            this.getEvent()
             this.getCampaigns()
         },
         methods: {
+            getEvent() {
+                const id = this.$route.params.id
+                fetch(`${process.env.VUE_APP_BASE_URL}/api/events/${id}`)
+                    .then((res) => res.json())
+                    .then((json) => {
+                        this.event = {...this.event, ...json.event}
+                    })
+                    .catch(/* handle errors*/)
+            },
             saveEvent() {
-                fetch(`${process.env.VUE_APP_BASE_URL}/api/events`, {
-                    method: 'POST',
+                const id = this.$route.params.id
+                fetch(`${process.env.VUE_APP_BASE_URL}/api/events/${id}`, {
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(this.event),
                 })
-                .then(response => response.json())
+                // .then(response => response.json())
                 .then(data => {
-                    console.log('Success:', data);
+                    console.log('Success:', data)
                 })
                 .catch((error) => {
-                    console.error('Error:', error);
-                });
+                    console.error('Error:', error)
+                })
 
-                this.$router.push("/events")
+                this.$router.push('/events')
             },
             getCampaigns: function() {
                 fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
                     .then((res) => res.json())
                     .then((json) => {
+                        console.log(json)
                         this.campaigns = json.campaigns
                     })
                     .catch(/* handle errors*/)
@@ -171,7 +184,7 @@
     label {
         text-align: left;
     }
-    
+
     Button {
         margin: 10px;
     }

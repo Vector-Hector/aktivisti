@@ -5,6 +5,7 @@
         <li v-for="event in events" :key="event.id">
             {{ event.name }}
             <Button icon="pi pi-times" class="p-button-danger p-button-icon" v-on:click="deleteEvent(event.id)" />
+            <Button icon="pi pi-pencil" class="p-button-default p-button-icon" v-on:click="editEvent(event.id)" />
         </li>
     </ul>
 
@@ -19,6 +20,7 @@
     import { defineComponent } from 'vue'
     import Button from 'primevue/button'
 
+    // TODO adjust type
     export interface Event {
         id: number
         name: string
@@ -34,7 +36,8 @@
         },
         data() {
             return {
-                events: {}
+                events: [] as Event[],
+                event: {} as Event
             }
         },
         created() {
@@ -46,10 +49,9 @@
                     method: 'DELETE',
                 })
                 .then(res => res.text())
-                .then(res => {
+                .then(() => {
                     // TODO check again, could be solved differently
                     this.getElements()
-                    console.log(res)
                 })
             },
             getElements: function() {
@@ -59,6 +61,9 @@
                         this.events = json.events
                     })
                     .catch(/* handle errors*/)
+            },
+            editEvent: function(id: number) {
+                this.$router.push(`/events/${id}`)
             }
         }
     })
@@ -68,5 +73,13 @@
 <style lang="scss" scoped>
     .new-event-button {
         text-decoration: none;
+    }
+
+    Button {
+        margin-left: 10px;
+    }
+
+    ul {
+        list-style: none;
     }
 </style>
