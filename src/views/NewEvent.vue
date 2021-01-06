@@ -146,13 +146,12 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Success:', data);
+                    console.log('Success:', data)
+                    this.$router.push("/events")
                 })
                 .catch((error) => {
                     console.error('Error:', error);
                 });
-
-                this.$router.push("/events")
             },
             getCampaigns: function() {
                 fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
