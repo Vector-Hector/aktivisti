@@ -1,7 +1,7 @@
 <template>
     <h1>Finde Veranstaltungen in deiner Nähe</h1>
 
-    <div style="height: 75vh; width: 50vw;">
+    <div class="map">
         <l-map
             v-model="zoom"
             :zoom="zoom"
@@ -73,5 +73,8 @@
 </script>
 
 <style lang="scss" scoped>
-
+    .map {
+        height: 75vh;
+        width: auto;
+    }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <h1>Wähle einen Treffpunkt aus</h1>
 
-  <div style="height: 75vh; width: 50vw">
+  <div class="map">
     <l-map
       v-model="zoom"
       :zoom="zoom"
@@ -11,13 +11,14 @@
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       ></l-tile-layer>
 
-      <l-marker :lat-lng="[52, 13]" draggable @dragend="getLatLng" >
+      <l-marker ref="marker" :lat-lng="[52, 13]" draggable>
       </l-marker>
 
     </l-map>
-    <button @click="changeIcon">Submit</button>
+    <button @click="submit">Submit</button>
   </div>
 </template>
+
 <script>
 import {
   LMap,
@@ -42,16 +43,21 @@ export default {
   computed: {
   },
   methods: {
-    changeIcon() {
-        console.log(this)
+    submit() {
+      let location = {
+        lat: this.$refs.marker.leafletObject._latlng.lat,
+        lng: this.$refs.marker.leafletObject._latlng.lng
+      }
+      console.log(location)
+      this.$router.push(`/events/new`)
     },
-    getLatLng() {
-        console.log(this)
-        console.log(event.latLngSync)
-        console.log(event.target.getLatLng())
-        // e.target.getLatLng().lng;
-
-    }
   },
 };
 </script>
+
+<style lang="scss" scoped>
+    .map {
+        height: 75vh;
+        width: auto;
+    }
+</style>

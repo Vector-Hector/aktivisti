@@ -32,7 +32,7 @@
     export default defineComponent({
         name: 'Events',
         components: {
-            Button 
+            Button,
         },
         data() {
             return {
