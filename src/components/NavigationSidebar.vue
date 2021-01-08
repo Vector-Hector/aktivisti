@@ -76,7 +76,7 @@
           </router-link>
         </div>
         <div class="menu-item">
-          <router-link class="menu-item-link" to="/map">
+          <router-link class="menu-item-link" to="/campaigns/new">
             <i class="pi pi-info-circle"/>
             <span class="menu-item-link-text">Kampagne erstellen</span>
           </router-link>
