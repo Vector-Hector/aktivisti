@@ -4,7 +4,7 @@ interface UiState {
   sidebarExpanded: boolean
 }
 
-class UiStateStore extends Store<UiState> {
+class UiStore extends Store<UiState> {
   protected data(): UiState {
     return {
       sidebarExpanded: false
@@ -24,4 +24,4 @@ class UiStateStore extends Store<UiState> {
   }
 }
 
-export const uiStateStore = new UiStateStore()
+export const uiStore = new UiStore()
