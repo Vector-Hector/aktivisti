@@ -34,22 +34,26 @@
     </div>
 
     <div class="p-field p-grid">
-      <label
-        for="eventMeetingPoint"
-        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0 event-meeting-point"
+      <label for="eventMeetingPoint" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
         >Treffpunkt
       </label>
       <div class="p-col-12 p-md-9">
         <Button
+          v-if="!event.location"
           class="modal-button"
           label="Ort auf Karte auswählen"
           icon="pi pi-external-link"
           @click="openModal"
         />
+        <Button
+          v-else
+          class="modal-button"
+          label="Ort auf Karte ändern"
+          icon="pi pi-external-link"
+          @click="openModal"
+        />
       </div>
     </div>
-
-    {{ location }}
 
     <Dialog
       header="Wähle einen Treffpunkt aus"
@@ -63,7 +67,12 @@
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           ></l-tile-layer>
 
-          <l-marker ref="marker" :lat-lng="[52, 13]" draggable> </l-marker>
+          <l-marker
+            ref="marker"
+            :lat-lng="[event.location.lat, event.location.lng]"
+            draggable
+          >
+          </l-marker>
         </l-map>
       </div>
 
@@ -218,6 +227,10 @@ export default defineComponent({
       event: {
         selectedMetrics: [],
         targets: {},
+        location: {
+          lat: 52,
+          lng: 13,
+        },
       },
       campaigns: {},
       metrics: [
@@ -232,7 +245,6 @@ export default defineComponent({
       iconWidth: 25,
       iconHeight: 40,
       center: [51.5, 10],
-      location: {},
     };
   },
   created() {
@@ -268,15 +280,13 @@ export default defineComponent({
       this.displayModal = true;
     },
     closeModal() {
-      this.location = undefined;
       this.displayModal = false;
     },
     confirmLocation() {
-      this.location = {
+      this.event.location = {
         lat: this.$refs.marker.leafletObject._latlng.lat,
         lng: this.$refs.marker.leafletObject._latlng.lng,
       };
-      this.$router.push(`/events/new`);
       this.displayModal = false;
     },
   },
@@ -292,9 +302,6 @@ Button {
   margin: 10px;
 }
 
-.event-meeting-point {
-  cursor: pointer;
-}
 .map {
   height: 45vh;
   width: auto;

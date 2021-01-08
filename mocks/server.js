@@ -9,8 +9,8 @@ export function makeServer({ environment = "development" } = {}) {
         startTime: '11.05.2021',
         isPublic: true,
         location: {
-            lat: 52.023,
-            lng: 13.123
+            lat: 51.023,
+            lng: 12.123
         }
     }, {
         id: 1,
@@ -19,7 +19,7 @@ export function makeServer({ environment = "development" } = {}) {
         startTime: '11.07.2021',
         isPublic: true,
         location: {
-            lat: 51.023,
+            lat: 52.023,
             lng: 13.823
         }
     }]
