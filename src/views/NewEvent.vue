@@ -23,10 +23,7 @@
         </div>
 
         <div class="p-field p-grid">
-            <label for="eventMeetingPoint" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Treffpunkt</label>
-            <div class="p-col-12 p-md-9">
-                <InputText id="eventMeetingPoint" type="text" v-model="event.meetingpoint" />
-            </div>
+            <label v-on:click="$router.push('/location-picker')" for="eventMeetingPoint" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Treffpunkt</label>
         </div>
 
         <div class="p-field p-grid">

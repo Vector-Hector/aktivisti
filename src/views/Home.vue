@@ -14,7 +14,9 @@
         <span v-for="event in events" :key="event.id">
             <l-marker v-if="event.location" :lat-lng="[event.location.lat, event.location.lng]">
                 <l-popup>
-                    {{event.name}}
+                    {{event.name}}<br>
+                    {{event.campaign}}<br>
+                    {{event.startTime}}<br>
                 </l-popup>
             </l-marker>
         </span>
@@ -60,6 +62,7 @@
                 fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
                     .then((res) => res.json())
                     .then((json) => {
+                        console.log(json.events)
                         this.events = json.events
                     })
                     .catch(/* handle errors*/)
