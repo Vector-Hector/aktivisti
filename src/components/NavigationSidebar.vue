@@ -1,24 +1,25 @@
 <template>
-  <div id="root">
-    <Topbar />
-    <NavigationSidebar />
-
-    <div class="container">
-    <router-view />
-    </div>
-  </div>
+  <Sidebar :visible="sidebarExpanded" @update:visible="toggleSidebar">
+    <Menu :model="items" />
+  </Sidebar>
 </template>
 
 <script lang="ts">
   import { defineComponent } from 'vue'
-  import Topbar from '@/components/Topbar.vue'
-  import NavigationSidebar from '@/components/NavigationSidebar.vue'
+  import { uiStateStore } from '@/store/UiStateStore'
+  import Sidebar from 'primevue/components/sidebar/Sidebar'
+  import Menu from 'primevue/components/menu/Menu'
 
   export default defineComponent({
-    name: 'App',
+    name: 'NavigationSidebar',
     components: {
-      NavigationSidebar,
-      Topbar
+      Sidebar,
+      Menu
+    },
+    computed: {
+      sidebarExpanded() {
+        return uiStateStore.getState().sidebarExpanded
+      }
     },
     data() {
       return {
@@ -31,6 +32,11 @@
           icon:'pi pi-fw pi-calendar',
           to: '/events'
         }]
+      }
+    },
+    methods: {
+      toggleSidebar(expanded: boolean) {
+        uiStateStore.toggleSidebar(expanded)
       }
     }
   })
