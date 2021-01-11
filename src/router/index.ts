@@ -40,10 +40,6 @@ const router = createRouter({
         path: '/campaigns/new',
         component: NewCampaign
       },
-      {
-        path: '/location-picker',
-        component: LocationPicker
-      },
     ]
   })
 
