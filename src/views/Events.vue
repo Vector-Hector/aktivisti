@@ -4,6 +4,11 @@
     <ul class="events">
         <li v-for="event in events" :key="event.id" class="event">
             {{ event.name }}
+
+            <span class="tag" v-if="event && event.selectedCampaign && event.selectedCampaign.name">
+                <Tag :value="event.selectedCampaign.name" severity="info"></Tag>
+            </span>
+
             <Button icon="pi pi-times" class="p-button-danger p-button-text p-button-padding-unset" v-on:click="deleteEvent(event.id)" />
             <Button icon="pi pi-pencil" class="p-button-default p-button-text p-button-padding-unset" v-on:click="editEvent(event.id)" />
         </li>
@@ -19,6 +24,7 @@
 <script lang="ts">
     import { defineComponent } from 'vue'
     import Button from 'primevue/button'
+    import Tag from 'primevue/tag'
 
     // TODO adjust type
     export interface Event {
@@ -32,7 +38,8 @@
     export default defineComponent({
         name: 'Events',
         components: {
-            Button 
+            Button,
+            Tag
         },
         data() {
             return {
@@ -68,8 +75,6 @@
         }
     })
 </script>
-
-
 <style lang="scss" scoped>
     .new-event-button {
         text-decoration: none;
@@ -93,6 +98,10 @@
     }
 
     .event {
-        padding-bottom: 10px;
+        padding-bottom: 20px;
+    }
+
+    .tag {
+        margin-left: 10px;
     }
 </style>
