@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { uiStateStore } from '@/store/UiStateStore'
+import { uiStore } from '@/store/UiStore'
 
 export default defineComponent({
   name: 'Topbar',
@@ -19,7 +19,7 @@ export default defineComponent({
   },
   methods: {
     openSidebar() {
-      uiStateStore.openSidebar()
+      uiStore.openSidebar()
     }
   }
 })

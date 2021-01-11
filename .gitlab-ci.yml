@@ -1,0 +1,47 @@
+variables:
+  POSTGRES_ENABLED: "false"
+  ROLLOUT_RESOURCE_TYPE: deployment
+
+
+include:
+  - template: Jobs/Build.gitlab-ci.yml
+  - template: Jobs/Deploy.gitlab-ci.yml
+
+
+stages:
+  - test
+  - bundle
+  - build
+  - review
+  - staging
+  - canary
+  - deploy
+  - incremental rollout 10%
+  - incremental rollout 25%
+  - incremental rollout 50%
+  - incremental rollout 100%
+  - production
+  - cleanup
+
+lint:
+  image: node:12-alpine
+  stage: test
+  script:
+    - npm ci
+    - npm run lint
+  cache:
+    paths:
+      - node_modules/
+
+bundle:
+  image: node:12-alpine
+  stage: bundle
+  script:
+    - npm ci
+    - npm run build
+  cache:
+    paths:
+      - node_modules/
+  artifacts:
+    paths:
+      - dist/
