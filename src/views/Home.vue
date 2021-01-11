@@ -62,7 +62,6 @@
                 fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
                     .then((res) => res.json())
                     .then((json) => {
-                        console.log(json.events)
                         this.events = json.events
                     })
                     .catch(/* handle errors*/)

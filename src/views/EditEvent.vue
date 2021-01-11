@@ -281,7 +281,6 @@ export default defineComponent({
       fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
         .then((res) => res.json())
         .then((json) => {
-          console.log(json);
           this.campaigns = json.campaigns;
         })
         .catch(/* handle errors*/);
