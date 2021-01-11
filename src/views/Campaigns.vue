@@ -1,7 +1,7 @@
 <template>
     <h1>Kampagnen</h1>
 
-    <ul>
+    <ul class="campaigns">
         <li v-for="campaign in campaigns" :key="campaign.id">
             {{ campaign.name }}
             <Button icon="pi pi-times" class="p-button-danger p-button-icon" v-on:click="deleteCampaign(campaign.id)" />
@@ -9,7 +9,7 @@
         </li>
     </ul>
 
-    <router-link to='/campaigns/new' class="new-event-button">
+    <router-link to='/campaigns/new' class="new-campaign-button">
         <Button label="Kampagne hinzufügen" />
     </router-link>
 
@@ -62,8 +62,9 @@
 
 
 <style lang="scss" scoped>
-    .new-event-button {
+    .new-campaign-button {
         text-decoration: none;
+        float: right;
     }
 
     Button {
@@ -72,5 +73,9 @@
 
     ul {
         list-style: none;
+    }
+
+    .campaigns {
+        text-align: left;
     }
 </style>

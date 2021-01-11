@@ -38,8 +38,10 @@
         </div>
     </div>
 
-    <Button v-on:click="saveCampaign" label="Speichern" />
-    <Button v-on:click="$router.push('/campaigns')" label="Abbrechen" />
+    <div class="control-buttons">
+        <Button v-on:click="$router.push('/campaigns')" class="p-button-text"  label="Abbrechen" />
+        <Button v-on:click="saveCampaign" label="Speichern" />
+    </div>
 
 </template>
 
@@ -102,5 +104,9 @@
     
     Button {
         margin: 10px;
+    }
+
+    .control-buttons {
+        float: right;
     }
 </style>

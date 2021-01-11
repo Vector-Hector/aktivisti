@@ -1,11 +1,11 @@
 <template>
     <h1>Events</h1>
 
-    <ul>
-        <li v-for="event in events" :key="event.id">
+    <ul class="events">
+        <li v-for="event in events" :key="event.id" class="event">
             {{ event.name }}
-            <Button icon="pi pi-times" class="p-button-danger p-button-icon" v-on:click="deleteEvent(event.id)" />
-            <Button icon="pi pi-pencil" class="p-button-default p-button-icon" v-on:click="editEvent(event.id)" />
+            <Button icon="pi pi-times" class="p-button-danger p-button-text p-button-padding-unset" v-on:click="deleteEvent(event.id)" />
+            <Button icon="pi pi-pencil" class="p-button-default p-button-text p-button-padding-unset" v-on:click="editEvent(event.id)" />
         </li>
     </ul>
 
@@ -73,6 +73,7 @@
 <style lang="scss" scoped>
     .new-event-button {
         text-decoration: none;
+        float: right;
     }
 
     Button {
@@ -81,5 +82,17 @@
 
     ul {
         list-style: none;
+    }
+
+    .events {
+        text-align: left;
+    }
+
+    .p-button-padding-unset {
+        padding: unset !important;
+    }
+
+    .event {
+        padding-bottom: 10px;
     }
 </style>
