@@ -1,6 +1,14 @@
 <template>
     <h1>Events</h1>
 
+    <AutoComplete v-if="campaigns.length && events.length" class="autocomplete" v-model="selectedCampaign" :suggestions="filteredCampaigns" @complete="searchCampaign($event)" :dropdown="true" field="name">
+        <template #item="slotProps">
+            <div class="">
+                <div>{{slotProps.item.name}}</div>
+            </div>
+        </template>
+    </AutoComplete>
+
     <ul class="events">
         <li v-for="event in events" :key="event.id" class="event">
             {{ event.name }}
@@ -25,6 +33,8 @@
     import { defineComponent } from 'vue'
     import Button from 'primevue/button'
     import Tag from 'primevue/tag'
+    import AutoComplete from 'primevue/autocomplete'
+
 
     // TODO adjust type
     export interface Event {
@@ -39,16 +49,21 @@
         name: 'Events',
         components: {
             Button,
-            Tag
+            Tag,
+            AutoComplete,
         },
         data() {
             return {
                 events: [] as Event[],
-                event: {} as Event
+                event: {} as Event,
+                selectedCampaign: [],
+                filteredCampaigns: [],
+                campaigns: [],
             }
         },
         created() {
             this.getElements()
+            this.getCampaigns()
         },
         methods: {
             deleteEvent: function(id: number) {
@@ -71,6 +86,26 @@
             },
             editEvent: function(id: number) {
                 this.$router.push(`/events/${id}`)
+            },
+            getCampaigns: function() {
+                fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
+                    .then((res) => res.json())
+                    .then((json) => {
+                        this.campaigns = json.campaigns
+                    })
+                    .catch(/* handle errors*/)
+            },
+            searchCampaign(event: any) {
+                setTimeout(() => {
+                    if (!event.query.trim().length) {
+                        this.filteredCampaigns = [...this.campaigns];
+                    }
+                    else {
+                        this.filteredCampaigns = this.campaigns.filter((campaign: any) => {
+                            return campaign.name.toLowerCase().startsWith(event.query.toLowerCase());
+                        });
+                    }
+                }, 250);
             }
         }
     })
@@ -79,6 +114,7 @@
     .new-event-button {
         text-decoration: none;
         float: right;
+        clear: both;
     }
 
     Button {
@@ -103,5 +139,10 @@
 
     .tag {
         margin-left: 10px;
+    }
+
+    .autocomplete {
+        float: right;
+        padding-bottom: 20px;
     }
 </style>
