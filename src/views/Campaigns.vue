@@ -2,10 +2,10 @@
     <h1>Kampagnen</h1>
 
     <ul class="campaigns">
-        <li v-for="campaign in campaigns" :key="campaign.id">
+        <li v-for="campaign in campaigns" :key="campaign.id" class="campaign">
             {{ campaign.name }}
-            <Button icon="pi pi-times" class="p-button-danger p-button-icon" v-on:click="deleteCampaign(campaign.id)" />
-            <Button icon="pi pi-pencil" class="p-button-default p-button-icon" v-on:click="editCampaign(campaign.id)" />
+            <Button icon="pi pi-times" class="p-button-danger p-button-text p-button-padding-unset" v-on:click="deleteCampaign(campaign.id)" />
+            <Button icon="pi pi-pencil" class="p-button-default p-button-text p-button-padding-unset" v-on:click="editCampaign(campaign.id)" />
         </li>
     </ul>
 
@@ -77,5 +77,13 @@
 
     .campaigns {
         text-align: left;
+    }
+
+    .p-button-padding-unset {
+        padding: unset !important;
+    }
+
+    .campaign {
+        padding-bottom: 10px;
     }
 </style>
