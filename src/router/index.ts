@@ -7,7 +7,6 @@ import EditEvent from '../views/EditEvent.vue'
 import Campaigns from '../views/Campaigns.vue'
 import EditCampaign from '../views/EditCampaign.vue'
 import NewCampaign from '../views/NewCampaign.vue'
-import LocationPicker from '../views/LocationPicker.vue'
 
 const router = createRouter({
     history: createWebHistory(),
