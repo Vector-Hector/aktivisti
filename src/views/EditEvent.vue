@@ -62,18 +62,17 @@
       :modal="true"
     >
       <div class="map">
-        <l-map v-model="zoom" :zoom="zoom" :center="center">
-          <l-tile-layer
+        <LMap v-model="zoom" :zoom="zoom" :center="center">
+          <LTileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          ></l-tile-layer>
+          ></LTileLayer>
 
-          <l-marker
-            ref="marker"
-            :lat-lng="[event.location.lat, event.location.lng]"
+          <LMarker
+            v-model:latLng="event.location"
             draggable
           >
-          </l-marker>
-        </l-map>
+          </LMarker>
+        </LMap>
       </div>
 
       <template #footer>
@@ -190,8 +189,7 @@
   <Button v-on:click="$router.push('/events')" label="Abbrechen" />
 </template>
 
-<!--script lang="ts"-->
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 
 import InputText from "primevue/inputtext";
@@ -245,8 +243,8 @@ export default defineComponent({
     };
   },
   created() {
-    this.getEvent();
-    this.getCampaigns();
+    this.getEvent()
+    this.getCampaigns()
   },
   methods: {
     getEvent() {
@@ -254,7 +252,7 @@ export default defineComponent({
       fetch(`${process.env.VUE_APP_BASE_URL}/api/events/${id}`)
         .then((res) => res.json())
         .then((json) => {
-          this.event = { ...this.event, ...json.event };
+          this.event = { ...this.event, ...json.event }
         })
         .catch(/* handle errors*/);
     },
@@ -267,21 +265,20 @@ export default defineComponent({
         },
         body: JSON.stringify(this.event),
       })
-        // .then(response => response.json())
-        .then((data) => {
-          console.log("Success:", data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+      .then((data) => {
+        console.log("Success:", data)
+        this.$router.push("/events")
+      })
+      .catch((error) => {
+        console.error("Error:", error)
+      });
 
-      this.$router.push("/events");
     },
     getCampaigns() {
       fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
         .then((res) => res.json())
         .then((json) => {
-          this.campaigns = json.campaigns;
+          this.campaigns = json.campaigns
         })
         .catch(/* handle errors*/);
     },
@@ -292,10 +289,6 @@ export default defineComponent({
       this.displayModal = false;
     },
     confirmLocation() {
-      this.event.location = {
-        lat: this.$refs.marker.leafletObject._latlng.lat,
-        lng: this.$refs.marker.leafletObject._latlng.lng,
-      };
       this.displayModal = false;
     },
   },

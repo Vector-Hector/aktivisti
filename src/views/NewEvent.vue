@@ -62,18 +62,17 @@
       :modal="true"
     >
       <div class="map">
-        <l-map v-model="zoom" :zoom="zoom" :center="center">
-          <l-tile-layer
+        <LMap v-model="zoom" :zoom="zoom" :center="center">
+          <LTileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          ></l-tile-layer>
+          ></LTileLayer>
 
-          <l-marker
-            ref="marker"
-            :lat-lng="[event.location.lat, event.location.lng]"
+          <LMarker
+            v-model:latLng="event.location"
             draggable
           >
-          </l-marker>
-        </l-map>
+          </LMarker>
+        </LMap>
       </div>
 
       <template #footer>
@@ -190,8 +189,7 @@
   <Button v-on:click="$router.push('/events')" label="Abbrechen" />
 </template>
 
-<!--script lang="ts"-->
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 
 import InputText from "primevue/inputtext";
@@ -283,10 +281,6 @@ export default defineComponent({
       this.displayModal = false;
     },
     confirmLocation() {
-      this.event.location = {
-        lat: this.$refs.marker.leafletObject._latlng.lat,
-        lng: this.$refs.marker.leafletObject._latlng.lng,
-      };
       this.displayModal = false;
     },
   },
