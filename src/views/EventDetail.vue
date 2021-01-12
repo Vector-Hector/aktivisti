@@ -1,5 +1,8 @@
 <template>
-  <div class="event" v-if="event !== null">
+  <div
+    v-if="event !== null"
+    class="event"
+  >
     <h2>{{ event.title }}</h2>
     <div class="p-grid">
       <span class="campaign p-col">{{ event.campaign.title }}</span>
@@ -15,14 +18,16 @@
       }}</span>
     </div>
     <div class="p-grid">
-    <span class="participants p-col">
-      <i class="pi pi-user"></i> {{ event.participants }}/{{ event.maxParticipants }}</span>
+      <span class="participants p-col">
+        <i class="pi pi-user"/> {{ event.participants }}/{{ event.maxParticipants }}</span>
     </div>
     <div class="p-grid">
-      <p class="description p-col">{{ event.description }}</p>
+      <p class="description p-col">
+        {{ event.description }}
+      </p>
     </div>
     <div class="p-grid  p-jc-end">
-        <Button>Ich bin dabei</Button>
+      <Button>Ich bin dabei</Button>
     </div>
   </div>
 </template>

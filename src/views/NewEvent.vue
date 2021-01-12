@@ -2,40 +2,52 @@
   <h1>Neues Event hinzufügen</h1>
   <div class="p-fluid">
     <div class="p-field p-grid">
-      <label for="eventName" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Name des Events</label
-      >
+      <label
+        for="eventName"
+        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+      >Name des Events</label>
       <div class="p-col-12 p-md-9">
-        <InputText id="eventName" type="text" v-model="event.name" />
+        <InputText
+          id="eventName"
+          v-model="event.name"
+          type="text"
+        />
       </div>
     </div>
 
     <div class="p-field p-grid">
-      <label for="campaign" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Kampagnenauswahl</label
-      >
+      <label
+        for="campaign"
+        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+      >Kampagnenauswahl</label>
       <div class="p-col-12 p-md-9">
         <Dropdown
-          v-model="event.selectedCampaign"
+          v-model="event.campaign"
           :options="campaigns"
-          optionLabel="name"
+          option-label="title"
           placeholder="Wähle eine Kampagne aus"
         />
       </div>
     </div>
 
     <div class="p-field p-grid">
-      <label for="startTime" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Zeit</label
-      >
+      <label
+        for="startTime"
+        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+      >Zeit</label>
       <div class="p-col-12 p-md-9">
-        <Calendar v-model="event.startTime" dateFormat="dd.mm.yy" />
+        <Calendar
+          v-model="event.startDate"
+          date-format="dd.mm.yy"
+        />
       </div>
     </div>
 
     <div class="p-field p-grid">
-      <label for="eventMeetingPoint" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Treffpunkt
+      <label
+        for="eventMeetingPoint"
+        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+      >Treffpunkt
       </label>
       <div class="p-col-12 p-md-9">
         <Button
@@ -56,22 +68,25 @@
     </div>
 
     <Dialog
-      header="Wähle einen Treffpunkt aus"
       v-model:visible="displayModal"
+      header="Wähle einen Treffpunkt aus"
       :style="{ width: '75vw' }"
       :modal="true"
     >
       <div class="map">
-        <LMap v-model="zoom" :zoom="zoom" :center="center">
+        <LMap
+          v-model="zoom"
+          :zoom="zoom"
+          :center="center"
+        >
           <LTileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          ></LTileLayer>
+          />
 
           <LMarker
             v-model:latLng="event.location"
             draggable
-          >
-          </LMarker>
+          />
         </LMap>
       </div>
 
@@ -79,27 +94,28 @@
         <Button
           label="Abbrechen"
           icon="pi pi-times"
-          @click="closeModal"
           class="p-button-text"
+          @click="closeModal"
         />
         <Button
           label="Übernehmen"
           icon="pi pi-check"
-          @click="confirmLocation"
           autofocus
+          @click="confirmLocation"
         />
       </template>
     </Dialog>
 
     <div class="p-field p-grid">
-      <label for="eventParticipantsMax" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        ># Personen</label
-      >
+      <label
+        for="eventParticipantsMax"
+        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+      ># Personen</label>
       <div class="p-col-12 p-md-9">
         <InputNumber
-          showButtons
           id="eventParticipantsMax"
           v-model="event.maxParticipants"
+          show-buttons
           mode="decimal"
           :min="0"
         />
@@ -107,23 +123,29 @@
     </div>
 
     <div class="p-field p-grid">
-      <label for="eventInfo" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Weitere Informationen</label
-      >
+      <label
+        for="eventInfo"
+        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+      >Weitere Informationen</label>
       <div class="p-col-12 p-md-9">
-        <InputText id="eventInfo" type="text" v-model="event.info" />
+        <InputText
+          id="eventInfo"
+          v-model="event.info"
+          type="text"
+        />
       </div>
     </div>
 
     <div class="p-field p-grid">
-      <label for="eventMetrics" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Felder (geklopfte Türen etc.) auswählen</label
-      >
+      <label
+        for="eventMetrics"
+        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+      >Felder (geklopfte Türen etc.) auswählen</label>
       <div class="p-col-12 p-md-9">
         <MultiSelect
           v-model="event.selectedMetrics"
           :options="metrics"
-          optionLabel="name"
+          option-label="name"
           placeholder="Metriken auswählen"
           display="chip"
         />
@@ -131,15 +153,19 @@
     </div>
 
     <div v-if="event.selectedMetrics.length > 0">
-      <div v-for="metric in event.selectedMetrics" :key="metric.name">
+      <div
+        v-for="metric in event.selectedMetrics"
+        :key="metric.name"
+      >
         <div class="p-field p-grid">
-          <label for="eventGoals" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-            >Zielvorgabe für {{ metric.name }} hinzufügen</label
-          >
+          <label
+            for="eventGoals"
+            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+          >Zielvorgabe für {{ metric.name }} hinzufügen</label>
           <div class="p-col-12 p-md-9">
             <InputNumber
               v-model="event.targets[metric.name]"
-              showButtons
+              show-buttons
               :min="0"
             />
           </div>
@@ -148,46 +174,68 @@
     </div>
 
     <div class="p-field p-grid">
-      <label for="eventTasks" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Aufgabenbeschreibung</label
-      >
+      <label
+        for="eventTasks"
+        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+      >Aufgabenbeschreibung</label>
       <div class="p-col-12 p-md-9">
-        <InputText id="eventTasks" type="text" v-model="event.tasks" />
+        <InputText
+          id="eventTasks"
+          v-model="event.tasks"
+          type="text"
+        />
       </div>
     </div>
 
     <div class="p-field p-grid">
-      <label for="eventInfoLink" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Link zu Info-Material</label
-      >
+      <label
+        for="eventInfoLink"
+        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+      >Link zu Info-Material</label>
       <div class="p-col-12 p-md-9">
-        <InputText id="eventInfoLink" type="text" v-model="event.infoLink" />
+        <InputText
+          id="eventInfoLink"
+          v-model="event.infoLink"
+          type="text"
+        />
       </div>
     </div>
 
     <div class="p-field p-grid">
-      <label for="eventContact" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Kontakt (Telefon, E-Mail)</label
-      >
+      <label
+        for="eventContact"
+        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+      >Kontakt (Telefon, E-Mail)</label>
       <div class="p-col-12 p-md-9">
-        <InputText id="eventContact" type="text" v-model="event.contact" />
+        <InputText
+          id="eventContact"
+          v-model="event.contact"
+          type="text"
+        />
       </div>
     </div>
   </div>
   <div class="p-field-checkbox">
     <Checkbox
       id="isNotPublic"
+      v-model="event.isNotPublic"
       name="isNotPublic"
       value="public"
-      v-model="event.isNotPublic"
       :binary="true"
     />
     <label for="isNotPublic">Nicht-öffentlich</label>
   </div>
 
   <div class="control-buttons">
-    <Button v-on:click="$router.push('/events')" class="p-button-text" label="Abbrechen" />
-    <Button v-on:click="saveEvent" label="Speichern" />
+    <Button
+      class="p-button-text"
+      label="Abbrechen"
+      @click="$router.push('/events')"
+    />
+    <Button
+      label="Speichern"
+      @click="saveEvent"
+    />
   </div>
 </template>
 
@@ -232,7 +280,7 @@ export default defineComponent({
           lng: 13,
         },
       },
-      campaigns: {},
+      campaigns: [],
       metrics: [
         { name: "Geklopfte Türen", value: "Geklopfte Türen" },
         { name: "Geöffnete Türen", value: "Geöffnete Türen" },
@@ -268,13 +316,9 @@ export default defineComponent({
           console.error("Error:", error);
         });
     },
-    getCampaigns() {
-      fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
-        .then((res) => res.json())
-        .then((json) => {
-          this.campaigns = json.campaigns;
-        })
-        .catch(/* handle errors*/);
+    async getCampaigns() {
+      const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
+      this.campaigns = await response.json()
     },
     openModal() {
       this.displayModal = true;

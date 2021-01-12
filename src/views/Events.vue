@@ -2,34 +2,61 @@
   <h1>Events</h1>
 
   <div class="autocomplete">
-    <AutoComplete v-if="campaigns.length" class="autocomplete-width" v-model="selectedCampaign"
-                  :suggestions="filteredCampaigns" @clear="getEvents" @item-select="filterEvents"
-                  @complete="searchCampaign($event)" :dropdown="true" field="name">
+    <AutoComplete
+      v-if="campaigns.length > 0"
+      v-model="selectedCampaign"
+      class="autocomplete-width"
+      :suggestions="filteredCampaigns"
+      :dropdown="true"
+      field="title"
+      @clear="getEvents"
+      @item-select="filterEvents"
+      @complete="searchCampaign($event)"
+    >
       <template #item="slotProps">
         <div>
-          <div>{{ slotProps.item.name }}</div>
+          <div>{{ slotProps.item.title }}</div>
         </div>
       </template>
     </AutoComplete>
   </div>
 
   <ul class="events">
-    <li v-for="event in events" :key="event.id" class="event">
-      {{ event.name }}
+    <li
+      v-for="event in events"
+      :key="event.id"
+      class="event"
+    >
+      {{ event.title }}
 
-      <span class="tag" v-if="event && event.selectedCampaign && event.selectedCampaign.name">
-                <Tag :value="event.selectedCampaign.name" severity="info"></Tag>
-            </span>
+      <span
+        v-if="event && event.campaign && event.campaign.title"
+        class="tag"
+      >
+        <Tag
+          :value="event.campaign.title"
+          severity="info"
+        />
+      </span>
 
-      <Button icon="pi pi-times" class="p-button-danger p-button-text p-button-padding-unset"
-              v-on:click="deleteEvent(event.id)"/>
-      <Button icon="pi pi-pencil" class="p-button-default p-button-text p-button-padding-unset"
-              v-on:click="editEvent(event.id)"/>
+      <Button
+        icon="pi pi-times"
+        class="p-button-danger p-button-text p-button-padding-unset"
+        @click="deleteEvent(event.id)"
+      />
+      <Button
+        icon="pi pi-pencil"
+        class="p-button-default p-button-text p-button-padding-unset"
+        @click="editEvent(event.id)"
+      />
     </li>
   </ul>
 
-  <router-link to='/events/new' class="new-event-button">
-    <Button label="Event hinzufügen"/>
+  <router-link
+    to="/events/new"
+    class="new-event-button"
+  >
+    <Button label="Event hinzufügen" />
   </router-link>
 </template>
 
@@ -40,20 +67,14 @@ import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 import AutoComplete from 'primevue/autocomplete'
 import { EventDto } from '@/model/EventDto'
+import { CampaignDto } from '@/model/CampaignDto'
 
-// TODO adjust type
-export interface Event {
-  id: number
-  name: string
-  campaign: string
-  startTime: string
-  isPublic: boolean
-  selectedCampaign: undefined | SelectedCampaign
-}
 
-export interface SelectedCampaign {
-  name: string
-  id: string
+interface EventsData {
+  events: EventDto[]
+  filteredCampaigns: CampaignDto[],
+  selectedCampaign: CampaignDto | null,
+  campaigns: CampaignDto[]
 }
 
 export default defineComponent({
@@ -63,10 +84,10 @@ export default defineComponent({
     Tag,
     AutoComplete
   },
-  data() {
+  data(): EventsData {
     return {
-      events: [] as EventDto[],
-      selectedCampaign: null as null | SelectedCampaign,
+      events: [],
+      selectedCampaign: null,
       filteredCampaigns: [],
       campaigns: []
     }
@@ -80,27 +101,22 @@ export default defineComponent({
       fetch(`${process.env.VUE_APP_BASE_URL}/api/events/${id}`, {
         method: 'DELETE'
       })
-          .then(res => res.text())
-          .then(() => {
-            // TODO check again, could be solved differently
-            this.getEvents()
-          })
+        .then(res => res.text())
+        .then(() => {
+          // TODO check again, could be solved differently
+          this.getEvents()
+        })
     },
     async getEvents() {
       const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
-      const events = await response.json()
-      this.events = events
+      this.events = await response.json()
     },
     editEvent(id: number): void {
       this.$router.push(`/events/${id}`)
     },
-    getCampaigns() {
-      fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
-          .then((res) => res.json())
-          .then((json) => {
-            this.campaigns = json.campaigns
-          })
-          .catch(/* handle errors*/)
+    async getCampaigns() {
+      const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
+      this.campaigns = await response.json()
     },
     searchCampaign(event: any) {
       setTimeout(() => {
@@ -113,24 +129,19 @@ export default defineComponent({
         }
       }, 250)
     },
-    filterEvents() {
-      // TODO
-      // fetch events once and store them locally
-      fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
-          .then((res) => res.json())
-          .then((json) => {
-            this.events = json.events
+    async filterEvents() {
+      // TODO filter by backend!
+      const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
+      const events = await response.json()
+      this.events = events
+      if (this.selectedCampaign && this.selectedCampaign.id) {
+        this.events = this.events.filter((event: EventDto) => {
+          if (event.campaign && event.campaign.id) {
+            return event.campaign.id == this.selectedCampaign?.id
+          }
+        })
+      }
 
-            if (this.selectedCampaign && this.selectedCampaign.name) {
-              this.events = this.events.filter((event: Event) => {
-                if (event.selectedCampaign && event.selectedCampaign.name && this.selectedCampaign) {
-                  return event.selectedCampaign.name == this.selectedCampaign.name
-                }
-              })
-            }
-
-          })
-          .catch(/* handle errors*/)
     }
   }
 })

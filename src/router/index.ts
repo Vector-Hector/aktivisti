@@ -10,42 +10,42 @@ import NewCampaign from '../views/NewCampaign.vue'
 import EventDetail from '@/views/EventDetail.vue'
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes: [
-      {
-        path: '/map',
-        component: Home
-      },
-      {
-        path: '/events',
-        component: Events
-      },
-      {
-        path: '/events/:id',
-        component: EventDetail
-      },
-      {
-        path: '/events/:id/edit',
-        component: EditEvent
-      },
-      {
-        path: '/events/new',
-        component: NewEvent
-      },
-      {
-        path: '/campaigns',
-        component: Campaigns
-      },
-      {
-        path: '/campaigns/:id',
-        component: EditCampaign
-      },
-      {
-        path: '/campaigns/new',
-        component: NewCampaign
-      },
-    ]
-  })
+  history: createWebHistory(),
+  routes: [
+    {
+      path: '/map',
+      component: Home
+    },
+    {
+      path: '/events',
+      component: Events
+    },
+    {
+      path: '/events/:id',
+      component: EventDetail
+    },
+    {
+      path: '/events/:id/edit',
+      component: EditEvent
+    },
+    {
+      path: '/events/new',
+      component: NewEvent
+    },
+    {
+      path: '/campaigns',
+      component: Campaigns
+    },
+    {
+      path: '/campaigns/:id',
+      component: EditCampaign
+    },
+    {
+      path: '/campaigns/new',
+      component: NewCampaign
+    },
+  ]
+})
 
 export default router
 

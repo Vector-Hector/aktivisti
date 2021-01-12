@@ -3,29 +3,34 @@
 
   <div class="map">
     <LMap
-        v-model="zoom"
-        :zoom="zoom"
-        :center="center"
+      v-model="zoom"
+      :zoom="zoom"
+      :center="center"
     >
       <LTileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      ></LTileLayer>
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
 
-      <span v-for="event in events" :key="event.id">
-        <LMarker v-if="event.location" :lat-lng="[event.location.lat, event.location.lng]">
-           <LPopup>
-             <span class="popup-title">{{ event.title }}</span>
-             <span class="popup-campaign">{{ event.campaign.title }}</span>
-             <span class="popup-date">{{ new Date(event.startDate).toLocaleString() }}</span>
-             <router-link :to="`/events/${event.id}`">
-               <Button class="p-button button-red">
-               Mitmachen/Infos
-             </Button>
-               </router-link>
-            </LPopup>
-          </LMarker>
-        </span>
-
+      <span
+        v-for="event in events"
+        :key="event.id"
+      >
+        <LMarker
+          v-if="event.location"
+          :lat-lng="[event.location.lat, event.location.lng]"
+        >
+          <LPopup>
+            <span class="popup-title">{{ event.title }}</span>
+            <span class="popup-campaign">{{ event.campaign.title }}</span>
+            <span class="popup-date">{{ new Date(event.startDate).toLocaleString() }}</span>
+            <router-link :to="`/events/${event.id}`">
+              <Button class="p-button button-red">
+                Mitmachen/Infos
+              </Button>
+            </router-link>
+          </LPopup>
+        </LMarker>
+      </span>
     </LMap>
   </div>
 </template>
