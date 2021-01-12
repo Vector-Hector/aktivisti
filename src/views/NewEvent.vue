@@ -290,11 +290,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.control-buttons {
-  display: flex;
-  justify-content: flex-end;
-}
-
 label {
   text-align: left;
 }

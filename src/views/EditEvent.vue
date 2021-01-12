@@ -312,11 +312,6 @@ Button {
   width: auto;
 }
 
-.control-buttons {
-  display: flex;
-  justify-content: flex-end;
-}
-
 .modal-button {
   width: unset !important;
   display: flex;

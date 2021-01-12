@@ -118,9 +118,4 @@
     Button {
         margin: 10px;
     }
-
-    .control-buttons {
-        display: flex;
-        justify-content: flex-end;
-    }
 </style>
