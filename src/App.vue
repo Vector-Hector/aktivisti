@@ -4,36 +4,36 @@
     <NavigationSidebar />
 
     <div class="container">
-    <router-view />
+      <router-view />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-  import { defineComponent } from 'vue'
-  import Topbar from '@/components/Topbar.vue'
-  import NavigationSidebar from '@/components/NavigationSidebar.vue'
+import { defineComponent } from 'vue'
+import Topbar from '@/components/Topbar.vue'
+import NavigationSidebar from '@/components/NavigationSidebar.vue'
 
-  export default defineComponent({
-    name: 'App',
-    components: {
-      NavigationSidebar,
-      Topbar
-    },
-    data() {
-      return {
-        items: [{
-          label: 'Kampagnen',
-          icon: 'pi pi-plus',
-          to: '/campaigns'
-        }, {
-          label:'Events',
-          icon:'pi pi-fw pi-calendar',
-          to: '/events'
-        }]
-      }
+export default defineComponent({
+  name: 'App',
+  components: {
+    NavigationSidebar,
+    Topbar
+  },
+  data() {
+    return {
+      items: [{
+        label: 'Kampagnen',
+        icon: 'pi pi-plus',
+        to: '/campaigns'
+      }, {
+        label:'Events',
+        icon:'pi pi-fw pi-calendar',
+        to: '/events'
+      }]
     }
-  })
+  }
+})
 </script>
 
 <style lang="scss" scoped>

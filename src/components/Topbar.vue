@@ -1,9 +1,17 @@
 <template>
   <div class="topbar">
-    <a @click="openSidebar" class="hamburger">
-      <i class="pi pi-bars"></i>
+    <a
+      class="hamburger"
+      @click="openSidebar"
+    >
+      <i class="pi pi-bars" />
     </a>
-    <img class="dielinke-logo" alt="Die LINKE Logo" src="../assets/logo_dielinke.png" v-on:click="$router.push('/')">
+    <img
+      class="dielinke-logo"
+      alt="Die LINKE Logo"
+      src="../assets/logo_dielinke.png"
+      @click="$router.push('/')"
+    >
   </div>
 </template>
 

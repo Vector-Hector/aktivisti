@@ -1,10 +1,18 @@
 <template>
-  <Sidebar class="navigation-sidebar" :visible="sidebarExpanded" @update:visible="toggleSidebar" :showCloseIcon="false">
+  <Sidebar
+    class="navigation-sidebar"
+    :visible="sidebarExpanded"
+    :show-close-icon="false"
+    @update:visible="toggleSidebar"
+  >
     <div class="menu">
-      <div class="menu-group highlighted" v-if="authState.loggedIn">
+      <div
+        v-if="authState.loggedIn"
+        class="menu-group highlighted"
+      >
         <div class="user-widget">
           <div class="user-widget-avatar">
-            <i class="pi pi-user avatar-placeholder"/>
+            <i class="pi pi-user avatar-placeholder" />
           </div>
           <div class="user-widget-details">
             <span class="email">{{ authState.email }}</span>
@@ -12,87 +20,132 @@
           </div>
         </div>
         <div class="menu-item">
-          <router-link class="menu-item-link" to="/profile">
-            <i class="pi pi-user-edit"/>
+          <router-link
+            class="menu-item-link"
+            to="/profile"
+          >
+            <i class="pi pi-user-edit" />
             <span class="menu-item-link-text">Mein Profil</span>
           </router-link>
         </div>
       </div>
-      <div class="menu-group highlighted" v-if="!authState.loggedIn">
-        <Button icon="pi pi-times" @click="toggleSidebar(false)"
-                class="p-button-text p-button-rounded close-sidebar-button"/>
+      <div
+        v-if="!authState.loggedIn"
+        class="menu-group highlighted"
+      >
+        <Button
+          icon="pi pi-times"
+          class="p-button-text p-button-rounded close-sidebar-button"
+          @click="toggleSidebar(false)"
+        />
         <div class="menu-item">
-          <a class="menu-item-link" @click="login()">
-            <i class="pi pi-sign-in"/>
+          <a
+            class="menu-item-link"
+            @click="login()"
+          >
+            <i class="pi pi-sign-in" />
             <span class="menu-item-link-text">Einloggen</span>
           </a>
         </div>
-        <hr class="menu-divider"/>
+        <hr class="menu-divider">
         <div class="menu-item">
-          <router-link class="menu-item-link" to="/register">
-            <i class="pi pi-id-card"/>
+          <router-link
+            class="menu-item-link"
+            to="/register"
+          >
+            <i class="pi pi-id-card" />
             <span class="menu-item-link-text">Registrieren</span>
           </router-link>
         </div>
       </div>
       <div class="menu-group">
         <div class="menu-item">
-          <router-link class="menu-item-link" to="/events">
-            <i class="pi pi-calendar"/>
+          <router-link
+            class="menu-item-link"
+            to="/events"
+          >
+            <i class="pi pi-calendar" />
             <span class="menu-item-link-text">Alle Termine</span>
           </router-link>
         </div>
         <div class="menu-item">
-          <router-link class="menu-item-link" to="/map">
-            <i class="pi pi-map-marker"/>
+          <router-link
+            class="menu-item-link"
+            to="/map"
+          >
+            <i class="pi pi-map-marker" />
             <span class="menu-item-link-text">Termine auf Karte</span>
           </router-link>
         </div>
         <div class="menu-item">
-          <router-link class="menu-item-link" to="/contact">
-            <i class="pi pi-users"/>
+          <router-link
+            class="menu-item-link"
+            to="/contact"
+          >
+            <i class="pi pi-users" />
             <span class="menu-item-link-text">Kontakt zur LINKEN</span>
           </router-link>
         </div>
         <div class="menu-item">
-          <router-link class="menu-item-link" to="/material">
-            <i class="pi pi-file"/>
+          <router-link
+            class="menu-item-link"
+            to="/material"
+          >
+            <i class="pi pi-file" />
             <span class="menu-item-link-text">Wahlkampfmaterial</span>
           </router-link>
         </div>
         <div class="menu-item">
-          <router-link class="menu-item-link" to="/campaign-select">
-            <i class="pi pi-external-link"/>
+          <router-link
+            class="menu-item-link"
+            to="/campaign-select"
+          >
+            <i class="pi pi-external-link" />
             <span class="menu-item-link-text">Anderen Ort auswählen</span>
           </router-link>
         </div>
       </div>
-      <div class="menu-group" v-if="authState.loggedIn">
-        <hr class="menu-divider"/>
+      <div
+        v-if="authState.loggedIn"
+        class="menu-group"
+      >
+        <hr class="menu-divider">
         <div class="menu-item">
-          <router-link class="menu-item-link" to="/events">
-            <i class="pi pi-check-circle"/>
+          <router-link
+            class="menu-item-link"
+            to="/events"
+          >
+            <i class="pi pi-check-circle" />
             <span class="menu-item-link-text">Meine Termine</span>
           </router-link>
         </div>
         <div class="menu-item">
-          <router-link class="menu-item-link" to="/campaigns/new">
-            <i class="pi pi-info-circle"/>
+          <router-link
+            class="menu-item-link"
+            to="/campaigns/new"
+          >
+            <i class="pi pi-info-circle" />
             <span class="menu-item-link-text">Kampagne erstellen</span>
           </router-link>
         </div>
         <div class="menu-item">
-          <router-link class="menu-item-link" to="/contact">
-            <i class="pi pi-calendar-plus"/>
+          <router-link
+            class="menu-item-link"
+            to="/contact"
+          >
+            <i class="pi pi-calendar-plus" />
             <span class="menu-item-link-text">Event erstellen</span>
           </router-link>
         </div>
       </div>
       <div class="menu-group menu-bottom">
-        <hr class="menu-divider"/>
+        <hr class="menu-divider">
         <div class="menu-item">
-          <router-link class="menu-item-link" to="/settings">
-            <i class="pi pi-cog"/>
+          <router-link
+            class="menu-item-link"
+            to="/settings"
+          >
+            <i class="pi pi-cog" />
             <span class="menu-item-link-text">Einstellungen</span>
           </router-link>
         </div>
@@ -116,6 +169,9 @@ export default defineComponent({
     Sidebar,
     Button
   },
+  data() {
+    return {}
+  },
   computed: {
     authState() {
       return userStore.getState()
@@ -124,8 +180,12 @@ export default defineComponent({
       return uiStore.getState().sidebarExpanded
     }
   },
-  data() {
-    return {}
+  watch: {
+    $route: {
+      handler() {
+        this.toggleSidebar(false)
+      }
+    }
   },
   methods: {
     toggleSidebar(expanded: boolean) {
@@ -133,13 +193,6 @@ export default defineComponent({
     },
     login() {
       userStore.mockLogin()
-    }
-  },
-  watch: {
-    $route: {
-      handler() {
-        this.toggleSidebar(false)
-      }
     }
   }
 })
@@ -225,7 +278,7 @@ export default defineComponent({
 }
 
 .navigation-sidebar {
-  ::v-deep .p-sidebar-content {
+  :deep(.p-sidebar-content) {
     height: 100%;
   }
 }

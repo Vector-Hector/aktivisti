@@ -14,10 +14,10 @@ import './scss/_globals.scss'
 
 import { makeServer } from "../mocks/server"
 if (process.env.NODE_ENV === "development") {
-    makeServer()
+  makeServer()
 }
 
 createApp(App)
-    .use(router)
-    .use(PrimeVue)
-    .mount('#app')
+  .use(router)
+  .use(PrimeVue)
+  .mount('#app')

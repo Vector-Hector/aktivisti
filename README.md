@@ -52,5 +52,5 @@ Find contribution guidelines [here](./CONTRIBUTE.md)
 
 While running the application in development or especially during automated e2e-tests we like to introduce a mocked API environment,
 to be independent of a backend to be running. For that matter [mirageJS](https://miragejs.com/) is utilized.
-It hooks into `fetch` calls effectively simulating a backend response according the configuration that lives in [server.js](./src/server.js)
+It hooks into `fetch` calls effectively simulating a backend response according the configuration that lives in [server.ts](./src/server.js)
 
