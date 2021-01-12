@@ -68,7 +68,7 @@
             }
         },
         created() {
-            this.getElements()
+            this.getEvents()
             this.getCampaigns()
         },
         methods: {
@@ -79,10 +79,10 @@
                 .then(res => res.text())
                 .then(() => {
                     // TODO check again, could be solved differently
-                    this.getElements()
+                    this.getEvents()
                 })
             },
-            getElements() {
+            getEvents() {
                 fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
                     .then((res) => res.json())
                     .then((json) => {
@@ -90,7 +90,7 @@
                     })
                     .catch(/* handle errors*/)
             },
-            editEvent(id: number) {
+            editEvent(id: number): void {
                 this.$router.push(`/events/${id}`)
             },
             getCampaigns() {

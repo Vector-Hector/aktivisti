@@ -2,8 +2,35 @@ import { createServer, Model } from "miragejs"
 
 export function makeServer({ environment = "development" } = {}) {
 
+    const events = [{
+        id: 0,
+        name: 'HaustürWK Köpenick',
+        campaign: 'Landtagswahl',
+        startTime: '11.05.2021',
+        isPublic: true,
+        location: {
+            lat: 52.4426,
+            lng: 13.5823
+        }
+    }, {
+        id: 1,
+        name: 'HaustürWK Kreuzberg',
+        campaign: 'Landtagswahl',
+        startTime: '11.07.2021',
+        isPublic: true,
+        location: {
+            lat: 52.4983,
+            lng: 13.4066
+        }
+    }]
+
     let server = createServer({
         environment,
+        seeds(server) {
+            events.forEach(event => {
+                server.create("event", event)
+            })
+        },
         models: {
             event: Model,
             campaign: Model

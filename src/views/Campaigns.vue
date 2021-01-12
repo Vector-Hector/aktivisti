@@ -35,7 +35,7 @@
             this.getCampaigns()
         },
         methods: {
-            deleteCampaign: function(id: number) {
+            deleteCampaign(id: number) {
                 fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns/${id}`, {
                     method: 'DELETE',
                 })
@@ -45,7 +45,7 @@
                     this.getCampaigns()
                 })
             },
-            getCampaigns: function() {
+            getCampaigns() {
                 fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
                     .then((res) => res.json())
                     .then((json) => {
@@ -53,7 +53,7 @@
                     })
                     .catch(/* handle errors*/)
             },
-            editCampaign: function(id: number) {
+            editCampaign(id: number) {
                 this.$router.push(`/campaigns/${id}`)
             }
         }
