@@ -185,8 +185,10 @@
     <label for="isNotPublic">Nicht-öffentlich</label>
   </div>
 
-  <Button v-on:click="saveEvent" label="Speichern" />
-  <Button v-on:click="$router.push('/events')" label="Abbrechen" />
+  <div class="control-buttons">
+    <Button v-on:click="$router.push('/events')" class="p-button-text" label="Abbrechen" />
+    <Button v-on:click="saveEvent" label="Speichern" />
+  </div>
 </template>
 
 <script lang="ts">
@@ -303,7 +305,7 @@ Button {
 
 .modal-button {
   width: unset !important;
-  float: left;
   margin: unset;
+  display: flex;
 }
 </style>

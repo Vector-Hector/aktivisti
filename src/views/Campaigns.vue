@@ -1,15 +1,15 @@
 <template>
     <h1>Kampagnen</h1>
 
-    <ul>
-        <li v-for="campaign in campaigns" :key="campaign.id">
+    <ul class="campaigns">
+        <li v-for="campaign in campaigns" :key="campaign.id" class="campaign">
             {{ campaign.name }}
-            <Button icon="pi pi-times" class="p-button-danger p-button-icon" v-on:click="deleteCampaign(campaign.id)" />
-            <Button icon="pi pi-pencil" class="p-button-default p-button-icon" v-on:click="editCampaign(campaign.id)" />
+            <Button icon="pi pi-times" class="p-button-danger p-button-text p-button-padding-unset" v-on:click="deleteCampaign(campaign.id)" />
+            <Button icon="pi pi-pencil" class="p-button-default p-button-text p-button-padding-unset" v-on:click="editCampaign(campaign.id)" />
         </li>
     </ul>
 
-    <router-link to='/campaigns/new' class="new-event-button">
+    <router-link to='/campaigns/new' class="new-campaign-button">
         <Button label="Kampagne hinzufügen" />
     </router-link>
 
@@ -62,8 +62,10 @@
 
 
 <style lang="scss" scoped>
-    .new-event-button {
+    .new-campaign-button {
         text-decoration: none;
+        display: flex;
+        justify-content: flex-end;
     }
 
     Button {
@@ -72,5 +74,17 @@
 
     ul {
         list-style: none;
+    }
+
+    .campaigns {
+        text-align: left;
+    }
+
+    .p-button-padding-unset {
+        padding: unset !important;
+    }
+
+    .campaign {
+        padding-bottom: 10px;
     }
 </style>
