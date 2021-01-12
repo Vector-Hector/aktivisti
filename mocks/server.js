@@ -5,7 +5,6 @@ export function makeServer({ environment = "development" } = {}) {
     const events = [{
         id: 0,
         name: 'HaustürWK Köpenick',
-        campaign: 'Landtagswahl',
         startTime: '11.05.2021',
         isPublic: true,
         location: {
@@ -15,7 +14,6 @@ export function makeServer({ environment = "development" } = {}) {
     }, {
         id: 1,
         name: 'HaustürWK Kreuzberg',
-        campaign: 'Landtagswahl',
         startTime: '11.07.2021',
         isPublic: true,
         location: {
