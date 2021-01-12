@@ -225,7 +225,7 @@ export default defineComponent({
 }
 
 .navigation-sidebar {
-  ::v-deep .p-sidebar-content {
+  :deep(.p-sidebar-content) {
     height: 100%;
   }
 }

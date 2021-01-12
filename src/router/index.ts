@@ -7,6 +7,7 @@ import EditEvent from '../views/EditEvent.vue'
 import Campaigns from '../views/Campaigns.vue'
 import EditCampaign from '../views/EditCampaign.vue'
 import NewCampaign from '../views/NewCampaign.vue'
+import EventDetail from '@/views/EventDetail.vue'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -21,6 +22,10 @@ const router = createRouter({
       },
       {
         path: '/events/:id',
+        component: EventDetail
+      },
+      {
+        path: '/events/:id/edit',
         component: EditEvent
       },
       {

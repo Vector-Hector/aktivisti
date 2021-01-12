@@ -1,181 +1,181 @@
 <template>
-    <h1>Events</h1>
+  <h1>Events</h1>
 
-    <div class="autocomplete">
-        <AutoComplete v-if="campaigns.length" class="autocomplete-width" v-model="selectedCampaign" :suggestions="filteredCampaigns" @clear="getEvents" @item-select="filterEvents" @complete="searchCampaign($event)" :dropdown="true" field="name">
-            <template #item="slotProps">
-                <div>
-                    <div>{{slotProps.item.name}}</div>
-                </div>
-            </template>
-        </AutoComplete>
-    </div>
+  <div class="autocomplete">
+    <AutoComplete v-if="campaigns.length" class="autocomplete-width" v-model="selectedCampaign"
+                  :suggestions="filteredCampaigns" @clear="getEvents" @item-select="filterEvents"
+                  @complete="searchCampaign($event)" :dropdown="true" field="name">
+      <template #item="slotProps">
+        <div>
+          <div>{{ slotProps.item.name }}</div>
+        </div>
+      </template>
+    </AutoComplete>
+  </div>
 
-    <ul class="events">
-        <li v-for="event in events" :key="event.id" class="event">
-            {{ event.name }}
+  <ul class="events">
+    <li v-for="event in events" :key="event.id" class="event">
+      {{ event.name }}
 
-            <span class="tag" v-if="event && event.selectedCampaign && event.selectedCampaign.name">
+      <span class="tag" v-if="event && event.selectedCampaign && event.selectedCampaign.name">
                 <Tag :value="event.selectedCampaign.name" severity="info"></Tag>
             </span>
 
-            <Button icon="pi pi-times" class="p-button-danger p-button-text p-button-padding-unset" v-on:click="deleteEvent(event.id)" />
-            <Button icon="pi pi-pencil" class="p-button-default p-button-text p-button-padding-unset" v-on:click="editEvent(event.id)" />
-        </li>
-    </ul>
+      <Button icon="pi pi-times" class="p-button-danger p-button-text p-button-padding-unset"
+              v-on:click="deleteEvent(event.id)"/>
+      <Button icon="pi pi-pencil" class="p-button-default p-button-text p-button-padding-unset"
+              v-on:click="editEvent(event.id)"/>
+    </li>
+  </ul>
 
-    <router-link to='/events/new' class="new-event-button">
-        <Button label="Event hinzufügen" />
-    </router-link>
+  <router-link to='/events/new' class="new-event-button">
+    <Button label="Event hinzufügen"/>
+  </router-link>
 </template>
 
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import Button from 'primevue/button'
-    import Tag from 'primevue/tag'
-    import AutoComplete from 'primevue/autocomplete'
+import { defineComponent } from 'vue'
+import Button from 'primevue/button'
+import Tag from 'primevue/tag'
+import AutoComplete from 'primevue/autocomplete'
+import { EventDto } from '@/model/EventDto'
 
-    // TODO adjust type
-    export interface Event {
-        id: number
-        name: string
-        campaign: string
-        startTime: string
-        isPublic: boolean
-        selectedCampaign: undefined|SelectedCampaign
+// TODO adjust type
+export interface Event {
+  id: number
+  name: string
+  campaign: string
+  startTime: string
+  isPublic: boolean
+  selectedCampaign: undefined | SelectedCampaign
+}
+
+export interface SelectedCampaign {
+  name: string
+  id: string
+}
+
+export default defineComponent({
+  name: 'Events',
+  components: {
+    Button,
+    Tag,
+    AutoComplete
+  },
+  data() {
+    return {
+      events: [] as EventDto[],
+      selectedCampaign: null as null | SelectedCampaign,
+      filteredCampaigns: [],
+      campaigns: []
     }
-
-    export interface SelectedCampaign {
-        name: string
-        id: string
-    }
-
-    export default defineComponent({
-        name: 'Events',
-        components: {
-            Button,
-            Tag,
-            AutoComplete,
-        },
-        data() {
-            return {
-                events: [] as Event[],
-                event: {} as Event,
-                selectedCampaign: null as null|SelectedCampaign,
-                filteredCampaigns: [],
-                campaigns: [],
-            }
-        },
-        created() {
+  },
+  created() {
+    this.getEvents()
+    this.getCampaigns()
+  },
+  methods: {
+    deleteEvent(id: number) {
+      fetch(`${process.env.VUE_APP_BASE_URL}/api/events/${id}`, {
+        method: 'DELETE'
+      })
+          .then(res => res.text())
+          .then(() => {
+            // TODO check again, could be solved differently
             this.getEvents()
-            this.getCampaigns()
-        },
-        methods: {
-            deleteEvent(id: number) {
-                fetch(`${process.env.VUE_APP_BASE_URL}/api/events/${id}`, {
-                    method: 'DELETE',
-                })
-                .then(res => res.text())
-                .then(() => {
-                    // TODO check again, could be solved differently
-                    this.getEvents()
-                })
-            },
-            getEvents() {
-                fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
-                    .then((res) => res.json())
-                    .then((json) => {
-                        this.events = json.events
-                    })
-                    .catch(/* handle errors*/)
-            },
-            editEvent(id: number): void {
-                this.$router.push(`/events/${id}`)
-            },
-            getCampaigns() {
-                fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
-                    .then((res) => res.json())
-                    .then((json) => {
-                        this.campaigns = json.campaigns
-                    })
-                    .catch(/* handle errors*/)
-            },
-            searchCampaign(event: any) {
-                setTimeout(() => {
-                    if (!event.query.trim().length) {
-                        this.filteredCampaigns = [...this.campaigns];
-                    }
-                    else {
-                        this.filteredCampaigns = this.campaigns.filter((campaign: any) => {
-                            return campaign.name.toLowerCase().startsWith(event.query.toLowerCase());
-                        })
-                    }
-                }, 250);
-            },
-            filterEvents() {
-                // TODO
-                // fetch events once and store them locally
-                fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
-                    .then((res) => res.json())
-                    .then((json) => {
-                        this.events = json.events
-
-                        if (this.selectedCampaign && this.selectedCampaign.name) {
-                            this.events = this.events.filter((event: Event) => {
-                                if (event.selectedCampaign && event.selectedCampaign.name && this.selectedCampaign) {
-                                    return event.selectedCampaign.name == this.selectedCampaign.name
-                                }
-                            })
-                        }
-
-                    })
-                    .catch(/* handle errors*/)
-            }
+          })
+    },
+    async getEvents() {
+      const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
+      const events = await response.json()
+      this.events = events
+    },
+    editEvent(id: number): void {
+      this.$router.push(`/events/${id}`)
+    },
+    getCampaigns() {
+      fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
+          .then((res) => res.json())
+          .then((json) => {
+            this.campaigns = json.campaigns
+          })
+          .catch(/* handle errors*/)
+    },
+    searchCampaign(event: any) {
+      setTimeout(() => {
+        if (!event.query.trim().length) {
+          this.filteredCampaigns = [...this.campaigns]
+        } else {
+          this.filteredCampaigns = this.campaigns.filter((campaign: any) => {
+            return campaign.name.toLowerCase().startsWith(event.query.toLowerCase())
+          })
         }
-    })
+      }, 250)
+    },
+    filterEvents() {
+      // TODO
+      // fetch events once and store them locally
+      fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
+          .then((res) => res.json())
+          .then((json) => {
+            this.events = json.events
+
+            if (this.selectedCampaign && this.selectedCampaign.name) {
+              this.events = this.events.filter((event: Event) => {
+                if (event.selectedCampaign && event.selectedCampaign.name && this.selectedCampaign) {
+                  return event.selectedCampaign.name == this.selectedCampaign.name
+                }
+              })
+            }
+
+          })
+          .catch(/* handle errors*/)
+    }
+  }
+})
 </script>
 
 <style lang="scss" scoped>
-    .new-event-button {
-        text-decoration: none;
-        display: flex;
-        justify-content: flex-end;
-    }
+.new-event-button {
+  text-decoration: none;
+  display: flex;
+  justify-content: flex-end;
+}
 
-    Button {
-        margin-left: 10px;
-    }
+Button {
+  margin-left: 10px;
+}
 
-    ul {
-        list-style: none;
-    }
+ul {
+  list-style: none;
+}
 
-    .events {
-        text-align: left;
-    }
+.events {
+  text-align: left;
+}
 
-    .p-button-padding-unset {
-        padding: unset !important;
-    }
+.p-button-padding-unset {
+  padding: unset !important;
+}
 
-    .event {
-        padding-bottom: 20px;
-    }
+.event {
+  padding-bottom: 20px;
+}
 
-    .tag {
-        margin-left: 10px;
-    }
+.tag {
+  margin-left: 10px;
+}
 
-    .autocomplete {
-        padding-bottom: 20px;
-        display: flex;
-        justify-content: flex-end;
-    }
-    
-    .autocomplete-width {
-        flex-grow: 0;
-        flex-shrink: 0;
-        flex-basis: 50%;
-    }
+.autocomplete {
+  padding-bottom: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.autocomplete-width {
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 50%;
+}
 </style>

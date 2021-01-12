@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
+@import "font/roboto";
 
 $font-stack: 'Roboto', Arial, Helvetica, Geneva, sans-serif;
 
@@ -30,7 +30,6 @@ html, body {
   font-family: $font-stack;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
 }
 
 .control-buttons {
