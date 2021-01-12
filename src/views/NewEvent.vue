@@ -268,7 +268,7 @@ export default defineComponent({
           console.error("Error:", error);
         });
     },
-    getCampaigns: function () {
+    getCampaigns() {
       fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
         .then((res) => res.json())
         .then((json) => {

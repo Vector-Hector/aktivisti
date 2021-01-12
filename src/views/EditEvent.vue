@@ -277,7 +277,7 @@ export default defineComponent({
 
       this.$router.push("/events");
     },
-    getCampaigns: function () {
+    getCampaigns() {
       fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
         .then((res) => res.json())
         .then((json) => {

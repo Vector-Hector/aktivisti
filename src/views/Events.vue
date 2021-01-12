@@ -44,7 +44,7 @@
             this.getEvents()
         },
         methods: {
-            deleteEvent: function(id: number): void {
+            deleteEvent(id: number): void {
                 fetch(`${process.env.VUE_APP_BASE_URL}/api/events/${id}`, {
                     method: 'DELETE',
                 })
@@ -54,7 +54,7 @@
                     this.getEvents()
                 })
             },
-            getEvents: function(): void {
+            getEvents(): void {
                 fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
                     .then((res) => res.json())
                     .then((json) => {
@@ -62,7 +62,7 @@
                     })
                     .catch(/* handle errors*/)
             },
-            editEvent: function(id: number): void {
+            editEvent(id: number): void {
                 this.$router.push(`/events/${id}`)
             }
         }

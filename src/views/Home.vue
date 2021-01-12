@@ -58,7 +58,7 @@
             this.getEvents()
         },
         methods: {
-            getEvents: function(): void {
+            getEvents(): void {
                 fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
                     .then((res) => res.json())
                     .then((json) => {
