@@ -1,4 +1,6 @@
 import { Location } from '@/model/Location'
+import { MetricDto } from '@/model/MetricDto'
+import { CampaignDto } from '@/model/CampaignDto'
 
 export interface EventDto {
   id: string,

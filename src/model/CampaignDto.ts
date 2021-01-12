@@ -1,4 +1,4 @@
-interface CampaignDto {
+export interface CampaignDto {
   id: string,
   title: string
 }
