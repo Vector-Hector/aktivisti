@@ -64,7 +64,8 @@
 <style lang="scss" scoped>
     .new-campaign-button {
         text-decoration: none;
-        float: right;
+        display: flex;
+        justify-content: flex-end;
     }
 
     Button {
