@@ -1,15 +1,13 @@
 <template>
     <h1>Events</h1>
 
-    <AutoComplete v-if="campaigns.length && events.length" class="autocomplete" v-model="selectedCampaign" :suggestions="filteredCampaigns" @item-select="filterEvents" @complete="searchCampaign($event)" :dropdown="true" field="name">
+    <AutoComplete v-if="campaigns.length && events.length" class="autocomplete" v-model="selectedCampaign" :suggestions="filteredCampaigns" @clear="getElements" @item-select="filterEvents" @complete="searchCampaign($event)" :dropdown="true" field="name">
         <template #item="slotProps">
             <div class="">
                 <div>{{slotProps.item.name}}</div>
             </div>
         </template>
     </AutoComplete>
-
-    {{selectedCampaign && selectedCampaign.name}}
 
     <ul class="events">
         <li v-for="event in events" :key="event.id" class="event">
@@ -45,6 +43,12 @@
         campaign: string
         startTime: string
         isPublic: boolean
+        selectedCampaign: undefined|SelectedCampaign
+    }
+
+    export interface SelectedCampaign {
+        name: string
+        id: string
     }
 
     export default defineComponent({
@@ -58,7 +62,7 @@
             return {
                 events: [] as Event[],
                 event: {} as Event,
-                selectedCampaign: null as null|Element,
+                selectedCampaign: null as null|SelectedCampaign,
                 filteredCampaigns: [],
                 campaigns: [],
             }
@@ -68,7 +72,7 @@
             this.getCampaigns()
         },
         methods: {
-            deleteEvent: function(id: number) {
+            deleteEvent(id: number) {
                 fetch(`${process.env.VUE_APP_BASE_URL}/api/events/${id}`, {
                     method: 'DELETE',
                 })
@@ -78,7 +82,7 @@
                     this.getElements()
                 })
             },
-            getElements: function() {
+            getElements() {
                 fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
                     .then((res) => res.json())
                     .then((json) => {
@@ -86,10 +90,10 @@
                     })
                     .catch(/* handle errors*/)
             },
-            editEvent: function(id: number) {
+            editEvent(id: number) {
                 this.$router.push(`/events/${id}`)
             },
-            getCampaigns: function() {
+            getCampaigns() {
                 fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
                     .then((res) => res.json())
                     .then((json) => {
@@ -105,12 +109,28 @@
                     else {
                         this.filteredCampaigns = this.campaigns.filter((campaign: any) => {
                             return campaign.name.toLowerCase().startsWith(event.query.toLowerCase());
-                        });
+                        })
                     }
                 }, 250);
             },
-            filterEvents: function() {
-                console.log(this.selectedCampaign.name)
+            filterEvents() {
+                // TODO
+                // fetch events once and store them locally
+                fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
+                    .then((res) => res.json())
+                    .then((json) => {
+                        this.events = json.events
+
+                        if (this.selectedCampaign && this.selectedCampaign.name) {
+                            this.events = this.events.filter((event: Event) => {
+                                if (event.selectedCampaign && event.selectedCampaign.name && this.selectedCampaign) {
+                                    return event.selectedCampaign.name == this.selectedCampaign.name
+                                }
+                            })
+                        }
+
+                    })
+                    .catch(/* handle errors*/)
             }
         }
     })
