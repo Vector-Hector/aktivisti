@@ -291,7 +291,8 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .control-buttons {
-  float: right;
+  display: flex;
+  justify-content: flex-end;
 }
 
 label {
@@ -309,7 +310,7 @@ Button {
 
 .modal-button {
   width: unset !important;
-  float: left;
   margin: unset;
+  display: flex;
 }
 </style>

@@ -1,13 +1,15 @@
 <template>
     <h1>Events</h1>
 
-    <AutoComplete v-if="campaigns.length && events.length" class="autocomplete" v-model="selectedCampaign" :suggestions="filteredCampaigns" @clear="getElements" @item-select="filterEvents" @complete="searchCampaign($event)" :dropdown="true" field="name">
-        <template #item="slotProps">
-            <div class="">
-                <div>{{slotProps.item.name}}</div>
-            </div>
-        </template>
-    </AutoComplete>
+    <div class="autocomplete">
+        <AutoComplete v-if="campaigns.length" class="autocomplete-width" v-model="selectedCampaign" :suggestions="filteredCampaigns" @clear="getEvents" @item-select="filterEvents" @complete="searchCampaign($event)" :dropdown="true" field="name">
+            <template #item="slotProps">
+                <div>
+                    <div>{{slotProps.item.name}}</div>
+                </div>
+            </template>
+        </AutoComplete>
+    </div>
 
     <ul class="events">
         <li v-for="event in events" :key="event.id" class="event">
@@ -25,7 +27,6 @@
     <router-link to='/events/new' class="new-event-button">
         <Button label="Event hinzufügen" />
     </router-link>
-
 </template>
 
 
@@ -34,7 +35,6 @@
     import Button from 'primevue/button'
     import Tag from 'primevue/tag'
     import AutoComplete from 'primevue/autocomplete'
-
 
     // TODO adjust type
     export interface Event {
@@ -139,8 +139,8 @@
 <style lang="scss" scoped>
     .new-event-button {
         text-decoration: none;
-        float: right;
-        clear: both;
+        display: flex;
+        justify-content: flex-end;
     }
 
     Button {
@@ -149,7 +149,6 @@
 
     ul {
         list-style: none;
-        clear: both;
     }
 
     .events {
@@ -169,7 +168,14 @@
     }
 
     .autocomplete {
-        float: right;
         padding-bottom: 20px;
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .autocomplete-width {
+        flex-grow: 0;
+        flex-shrink: 0;
+        flex-basis: 50%;
     }
 </style>

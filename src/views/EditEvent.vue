@@ -313,12 +313,13 @@ Button {
 }
 
 .control-buttons {
-  float: right;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .modal-button {
   width: unset !important;
-  float: left;
+  display: flex;
   margin: unset;
 }
 </style>

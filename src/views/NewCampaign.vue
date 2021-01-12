@@ -106,6 +106,7 @@
     }
 
     .control-buttons {
-        float: right;
+        display: flex;
+        justify-content: flex-end;
     }
 </style>
