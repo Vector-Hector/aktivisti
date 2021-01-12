@@ -1,13 +1,15 @@
 <template>
     <h1>Events</h1>
 
-    <AutoComplete v-if="campaigns.length && events.length" class="autocomplete" v-model="selectedCampaign" :suggestions="filteredCampaigns" @complete="searchCampaign($event)" :dropdown="true" field="name">
+    <AutoComplete v-if="campaigns.length && events.length" class="autocomplete" v-model="selectedCampaign" :suggestions="filteredCampaigns" @item-select="filterEvents" @complete="searchCampaign($event)" :dropdown="true" field="name">
         <template #item="slotProps">
             <div class="">
                 <div>{{slotProps.item.name}}</div>
             </div>
         </template>
     </AutoComplete>
+
+    {{selectedCampaign && selectedCampaign.name}}
 
     <ul class="events">
         <li v-for="event in events" :key="event.id" class="event">
@@ -56,7 +58,7 @@
             return {
                 events: [] as Event[],
                 event: {} as Event,
-                selectedCampaign: [],
+                selectedCampaign: null as null|Element,
                 filteredCampaigns: [],
                 campaigns: [],
             }
@@ -106,10 +108,14 @@
                         });
                     }
                 }, 250);
+            },
+            filterEvents: function() {
+                console.log(this.selectedCampaign.name)
             }
         }
     })
 </script>
+
 <style lang="scss" scoped>
     .new-event-button {
         text-decoration: none;
@@ -123,6 +129,7 @@
 
     ul {
         list-style: none;
+        clear: both;
     }
 
     .events {
