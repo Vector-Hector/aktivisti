@@ -31,7 +31,7 @@
         </div>
 
         <div class="p-field p-grid">
-            <label for="campaign" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Kreis/Land/Bund (TODO)</label>
+            <label for="campaign" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Bundes-, landes-, oder kreisweite Kampagne</label>
             <div class="p-col-12 p-md-9">
                 <Dropdown v-model="campaign.organisation" :options="organisationType" optionLabel="name" placeholder="Wähle ein Gebiet aus" />
             </div>
@@ -69,6 +69,11 @@
                     {name: 'Petition', id: 2},
                     {name: 'Datenerhebung', id: 3}
                 ],
+                organisationType: [
+                    {name: 'Bund', code: 'Bund'},
+                    {name: 'Land', code: 'Land'},
+                    {name: 'Kreis', code: 'Kreis'},
+                ]
             }
         },
         created() {
@@ -93,15 +98,14 @@
                     },
                     body: JSON.stringify(this.campaign),
                 })
-                // .then(response => response.json())
                 .then(data => {
                     console.log('Success:', data)
+                    this.$router.push('/campaigns')
                 })
                 .catch((error) => {
                     console.error('Error:', error)
                 })
 
-                this.$router.push('/campaigns')
             }
         }
     });
