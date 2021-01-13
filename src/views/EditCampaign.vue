@@ -9,7 +9,7 @@
       <div class="p-col-12 p-md-9">
         <InputText
           id="campaignName"
-          v-model="campaign.name"
+          v-model="campaign.title"
           type="text"
         />
       </div>
@@ -22,7 +22,7 @@
       >Start</label>
       <div class="p-col-12 p-md-9">
         <Calendar
-          v-model="campaign.start"
+          v-model="campaign.startTime"
           date-format="dd.mm.yy"
         />
       </div>
@@ -35,7 +35,7 @@
       >Ende</label>
       <div class="p-col-12 p-md-9">
         <Calendar
-          v-model="campaign.end"
+          v-model="campaign.endDate"
           date-format="dd.mm.yy"
         />
       </div>
@@ -50,7 +50,7 @@
         <Dropdown
           v-model="campaign.type"
           :options="campaignTypes"
-          option-label="name"
+          option-label="title"
           placeholder="Wähle einen Kampagnen-Typ aus"
         />
       </div>
@@ -63,9 +63,9 @@
       >Bundes-, landes-, oder kreisweite Kampagne</label>
       <div class="p-col-12 p-md-9">
         <Dropdown
-          v-model="campaign.organisation"
-          :options="organisationType"
-          option-label="name"
+          v-model="campaign.organization"
+          :options="organizationTypes"
+          option-label="title"
           placeholder="Wähle ein Gebiet aus"
         />
       </div>
@@ -92,6 +92,7 @@ import InputText from "primevue/inputtext";
 import Dropdown from "primevue/dropdown";
 import Calendar from "primevue/calendar";
 import Button from "primevue/button";
+import { CampaignDto } from "@/model/CampaignDto";
 
 export default defineComponent({
   name: "NewCampaign",
@@ -103,17 +104,17 @@ export default defineComponent({
   },
   data() {
     return {
-      campaign: {},
+      campaign: {} as CampaignDto,
       campaignTypes: [
-        { name: "Wahlkampf", id: 0 },
-        { name: "Organizing", id: 1 },
-        { name: "Petition", id: 2 },
-        { name: "Datenerhebung", id: 3 },
+        { title: "Wahlkampf", id: 0 },
+        { title: "Organizing", id: 1 },
+        { title: "Petition", id: 2 },
+        { title: "Datenerhebung", id: 3 },
       ],
-      organisationType: [
-        { name: "Bund", code: "Bund" },
-        { name: "Land", code: "Land" },
-        { name: "Kreis", code: "Kreis" },
+      organizationTypes: [
+        { title: "Bund", code: "Bund" },
+        { title: "Land", code: "Land" },
+        { title: "Kreis", code: "Kreis" },
       ],
     };
   },
@@ -126,7 +127,7 @@ export default defineComponent({
       fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns/${id}`)
         .then((res) => res.json())
         .then((json) => {
-          this.campaign = { ...this.campaign, ...json.campaign };
+          this.campaign = { ...this.campaign, ...json };
         })
         .catch(/* handle errors*/);
     },
