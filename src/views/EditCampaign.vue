@@ -63,9 +63,9 @@
       >Bundes-, landes-, oder kreisweite Kampagne</label>
       <div class="p-col-12 p-md-9">
         <Dropdown
-          v-model="campaign.organization"
+          v-model="campaign.type"
           :options="organizationTypes"
-          option-label="title"
+          option-label="name"
           placeholder="Wähle ein Gebiet aus"
         />
       </div>
@@ -112,9 +112,9 @@ export default defineComponent({
         { title: "Datenerhebung", id: 3 },
       ],
       organizationTypes: [
-        { title: "Bund", code: "Bund" },
-        { title: "Land", code: "Land" },
-        { title: "Kreis", code: "Kreis" },
+        { name: "Bund", id: "1" },
+        { name: "Land", id: "2" },
+        { name: "Kreis", id: "3" },
       ],
     };
   },
