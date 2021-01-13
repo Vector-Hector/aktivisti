@@ -7,7 +7,6 @@
       :key="campaign.id"
       class="campaign"
     >
-
       <Button
         icon="pi pi-times"
         class="p-button-danger p-button-text p-button-padding-unset"
