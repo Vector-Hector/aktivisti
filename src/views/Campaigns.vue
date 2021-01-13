@@ -7,6 +7,7 @@
       :key="campaign.id"
       class="campaign"
     >
+      {{ campaign.title }}
       <Button
         icon="pi pi-times"
         class="p-button-danger p-button-text p-button-padding-unset"
