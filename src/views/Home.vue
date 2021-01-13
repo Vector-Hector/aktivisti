@@ -1,153 +1,177 @@
 <template>
-    <h1>Finde Veranstaltungen in deiner Nähe</h1>
+  <h1>Finde Veranstaltungen in deiner Nähe</h1>
 
-    <AutoComplete v-if="campaigns.length" class="autocomplete" v-model="selectedCampaign" :suggestions="filteredCampaigns" @clear="getEvents" @item-select="filterEvents" @complete="searchCampaign($event)" :dropdown="true" field="name">
-        <template #item="slotProps">
-            <div class="">
-                <div>{{slotProps.item.name}}</div>
-            </div>
-        </template>
+  <div class="autocomplete">
+    <AutoComplete
+      v-if="campaigns"
+      v-model="campaign"
+      class="autocomplete-width"
+      :suggestions="filteredCampaigns"
+      :dropdown="true"
+      field="title"
+      @clear="getEvents"
+      @item-select="filterEvents"
+      @complete="searchCampaign($event)"
+    >
+      <template #item="slotProps">
+        <div class="">
+          <div>{{ slotProps.item.title }}</div>
+        </div>
+      </template>
     </AutoComplete>
+  </div>
 
-    <div class="map">
-        <LMap
-            v-model="zoom"
-            :zoom="zoom"
-            :center="center"
+  <div class="map">
+    <LMap
+      v-model="zoom"
+      :zoom="zoom"
+      :center="center"
+    >
+      <LTileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+
+      <span
+        v-for="event in events"
+        :key="event.id"
+      >
+        <LMarker
+          v-if="event.location"
+          :lat-lng="[event.location.lat, event.location.lng]"
         >
-            <LTileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            ></LTileLayer>
-
-            <span v-for="event in events" :key="event.id">
-                <LMarker v-if="event.location" :lat-lng="[event.location.lat, event.location.lng]">
-                    <LPopup>
-                        {{event.name}}<br>
-                        {{event.selectedCampaign.name}}<br>
-                        {{event.startTime}}<br>
-                    </LPopup>
-                </LMarker>
-            </span>
-
-        </LMap>
-    </div>
+          <LPopup>
+            <span class="popup-title">{{ event.title }}</span>
+            <span class="popup-campaign">{{ event.campaign.title }}</span>
+            <span class="popup-date">{{ new Date(event.startDate).toLocaleString() }}</span>
+            <router-link :to="`/events/${event.id}`">
+              <Button class="p-button button-red">
+                Mitmachen/Infos
+              </Button>
+            </router-link>
+          </LPopup>
+        </LMarker>
+      </span>
+    </LMap>
+  </div>
 </template>
 
 <script lang="ts">
-    import 'leaflet/dist/leaflet.css'
-    import {defineComponent} from 'vue'
-    import AutoComplete from 'primevue/autocomplete'
+import 'leaflet/dist/leaflet.css'
+import { defineComponent } from 'vue'
+import AutoComplete from "primevue/autocomplete";
+import {
+  LMap,
+  LTileLayer,
+  LMarker,
+  LPopup
+  // @ts-ignore
+} from '@vue-leaflet/vue-leaflet'
+import { CampaignDto } from '@/model/CampaignDto';
+import { EventDto } from '@/model/EventDto';
 
-    import {
-        LMap,
-        LTileLayer,
-        LMarker,
-        LPopup,
-    // @ts-ignore
-    } from '@vue-leaflet/vue-leaflet'
+export interface SelectedCampaign {
+  title: string;
+  id: string;
+}
 
-    // TODO check if defined twice
-    export interface SelectedCampaign {
-        name: string
-        id: string
+export default defineComponent({
+  name: 'Home',
+  components: {
+    LMap,
+    LTileLayer,
+    LMarker,
+    LPopup,
+    AutoComplete
+  },
+  data() {
+    return {
+      zoom: 6,
+      iconWidth: 25,
+      iconHeight: 40,
+      center: [51.5, 10],
+      events: [] as EventDto[],
+      filteredCampaigns: {} as CampaignDto[],
+      campaigns: [] as CampaignDto[],
+      campaign: {title: ''} as CampaignDto
     }
-    // TODO check if defined twice
-    export interface Event {
-        id: number
-        name: string
-        campaign: string
-        startTime: string
-        isPublic: boolean
-        selectedCampaign: undefined|SelectedCampaign
-    }
+  },
+  created() {
+    this.getEvents()
+    this.getCampaigns()
+  },
+  methods: {
+    async getEvents() {
+      const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
+      this.events = await response.json()
+    },
+    getCampaigns() {
+      fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
+        .then((res) => res.json())
+        .then((json) => {
+          this.campaigns = json;
+        })
+        .catch(/* handle errors*/);
+    },
+    searchCampaign(input: any) {
+      setTimeout(() => {
+        if (!input.query.trim().length) {
+          this.filteredCampaigns = [...this.campaigns];
+        } else {
+          this.filteredCampaigns = this.campaigns.filter((campaign) => {
+            return campaign.title
+              .toLowerCase()
+              .startsWith(input.query.toLowerCase());
+          });
+        }
+      }, 250);
+    },
+    filterEvents() {
+      // TODO
+      // fetch events once and store them locally
+      fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
+        .then((res) => res.json())
+        .then((json) => {
+          this.events = json;
 
-    export default defineComponent({
-        name: 'Home',
-        components: {
-            AutoComplete,
-            LMap,
-            LTileLayer,
-            LMarker,
-            LPopup,
-        },
-        data() {
-            return {
-                zoom: 6,
-                iconWidth: 25,
-                iconHeight: 40,
-                center: [51.5, 10],
-                events: [] as Event[],
-                selectedCampaign: null as null|SelectedCampaign,
-                filteredCampaigns: [],
-                campaigns: [],
+          this.events = this.events.filter((event) => {
+            if (
+              event.campaign &&
+              event.campaign.title &&
+              this.campaign && 
+              this.campaign.title
+            ) {
+              return (
+                event.campaign.title == this.campaign.title
+              );
             }
-        },
-        created() {
-            this.getEvents()
-            this.getCampaigns()
-        },
-        methods: {
-            getEvents(): void {
-                fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
-                    .then((res) => res.json())
-                    .then((json) => {
-                        this.events = json.events
-                    })
-                    .catch(/* handle errors*/)
-            },
-            getCampaigns() {
-                fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
-                    .then((res) => res.json())
-                    .then((json) => {
-                        this.campaigns = json.campaigns
-                    })
-                    .catch(/* handle errors*/)
-            },
-            searchCampaign(event: any) {
-                setTimeout(() => {
-                    if (!event.query.trim().length) {
-                        this.filteredCampaigns = [...this.campaigns];
-                    }
-                    else {
-                        this.filteredCampaigns = this.campaigns.filter((campaign: any) => {
-                            return campaign.name.toLowerCase().startsWith(event.query.toLowerCase());
-                        })
-                    }
-                }, 250);
-            },
-            filterEvents() {
-                // TODO
-                // fetch events once and store them locally
-                fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
-                    .then((res) => res.json())
-                    .then((json) => {
-                        this.events = json.events
-
-                        if (this.selectedCampaign && this.selectedCampaign.name) {
-                            this.events = this.events.filter((event: Event) => {
-                                if (event.selectedCampaign && event.selectedCampaign.name && this.selectedCampaign) {
-                                    return event.selectedCampaign.name == this.selectedCampaign.name
-                                }
-                            })
-                        }
-
-                    })
-                    .catch(/* handle errors*/)
-            }
-        },
-    })
+          });
+        })
+        .catch(/* handle errors*/);
+    },
+  }
+})
 
 </script>
 
 <style lang="scss" scoped>
-    .map {
-        height: 75vh;
-        width: auto;
-    }
+.popup-title {
+  font-weight: bold;
+  display: block;
+  font-size: 1.1rem;
+}
 
-    .autocomplete {
-        float: right;
-        padding-bottom: 20px;
-    }
+.popup-campaign {
+  display: block;
+  font-size: 1rem;
 
+}
+.popup-date {
+  display: block;
+  font-size: 1rem;
+}
+
+.map {
+  height: 75vh;
+  width: auto;
+}
 </style>

@@ -12,15 +12,15 @@ class UiStore extends Store<UiState> {
   }
 
   public toggleSidebar(expanded = true) {
-      this.state.sidebarExpanded = expanded
+    this.state.sidebarExpanded = expanded
   }
 
   public openSidebar() {
-      this.toggleSidebar(true)
+    this.toggleSidebar(true)
   }
 
   public closeSidebar() {
-      this.toggleSidebar(false)
+    this.toggleSidebar(false)
   }
 }
 

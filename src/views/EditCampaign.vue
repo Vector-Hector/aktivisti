@@ -2,61 +2,87 @@
   <h1>Kampagne editieren</h1>
   <div class="p-fluid">
     <div class="p-field p-grid">
-      <label for="campaignName" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Names der Kampagne</label
-      >
+      <label
+        for="campaignName"
+        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+      >Names der Kampagne</label>
       <div class="p-col-12 p-md-9">
-        <InputText id="campaignName" type="text" v-model="campaign.name" />
+        <InputText
+          id="campaignName"
+          v-model="campaign.name"
+          type="text"
+        />
       </div>
     </div>
 
     <div class="p-field p-grid">
-      <label for="startTime" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Start</label
-      >
+      <label
+        for="startTime"
+        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+      >Start</label>
       <div class="p-col-12 p-md-9">
-        <Calendar v-model="campaign.start" dateFormat="dd.mm.yy" />
+        <Calendar
+          v-model="campaign.start"
+          date-format="dd.mm.yy"
+        />
       </div>
     </div>
 
     <div class="p-field p-grid">
-      <label for="startTime" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Ende</label
-      >
+      <label
+        for="startTime"
+        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+      >Ende</label>
       <div class="p-col-12 p-md-9">
-        <Calendar v-model="campaign.end" dateFormat="dd.mm.yy" />
+        <Calendar
+          v-model="campaign.end"
+          date-format="dd.mm.yy"
+        />
       </div>
     </div>
 
     <div class="p-field p-grid">
-      <label for="campaign" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">Typ</label>
+      <label
+        for="campaign"
+        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+      >Typ</label>
       <div class="p-col-12 p-md-9">
         <Dropdown
           v-model="campaign.type"
           :options="campaignTypes"
-          optionLabel="name"
+          option-label="name"
           placeholder="Wähle einen Kampagnen-Typ aus"
         />
       </div>
     </div>
 
     <div class="p-field p-grid">
-      <label for="campaign" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Bundes-, landes-, oder kreisweite Kampagne</label
-      >
+      <label
+        for="campaign"
+        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+      >Bundes-, landes-, oder kreisweite Kampagne</label>
       <div class="p-col-12 p-md-9">
         <Dropdown
           v-model="campaign.organisation"
           :options="organisationType"
-          optionLabel="name"
+          option-label="name"
           placeholder="Wähle ein Gebiet aus"
         />
       </div>
     </div>
   </div>
 
-  <Button v-on:click="saveCampaign" label="Speichern" />
-  <Button v-on:click="$router.push('/campaigns')" label="Abbrechen" />
+  <div class="control-buttons">
+    <Button
+      class="p-button-text"
+      label="Abbrechen"
+      @click="$router.push('/campaigns')"
+    />
+    <Button
+      label="Speichern"
+      @click="saveCampaign"
+    />
+  </div>
 </template>
 
 <script lang="ts">
