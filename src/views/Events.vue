@@ -124,7 +124,7 @@ export default defineComponent({
           this.filteredCampaigns = [...this.campaigns]
         } else {
           this.filteredCampaigns = this.campaigns.filter((campaign: any) => {
-            return campaign.name.toLowerCase().startsWith(event.query.toLowerCase())
+            return campaign.title.toLowerCase().startsWith(event.query.toLowerCase())
           })
         }
       }, 250)
