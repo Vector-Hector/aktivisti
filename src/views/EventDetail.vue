@@ -19,7 +19,7 @@
     </div>
     <div class="p-grid">
       <span class="participants p-col">
-        <i class="pi pi-user"/> {{ event.participants }}/{{ event.maxParticipants }}</span>
+        <i class="pi pi-user" /> {{ event.participants }}/{{ event.maxParticipants }}</span>
     </div>
     <div class="p-grid">
       <p class="description p-col">
@@ -34,14 +34,17 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { EventDto } from '@/model/EventDto'
-import { D2DMetricsDto } from '@/model/D2DMetricsDto'
+import { EventDto } from '@/api/model/EventDto'
+import { D2DMetricsDto } from '@/api/model/D2DMetricsDto'
 import Button from 'primevue/components/button/Button'
+import { ApiClient } from '@/api'
 
 interface EventDetailData {
   event: EventDto | null,
   metrics: D2DMetricsDto[] | null
 }
+
+const apiClient = new ApiClient()
 
 export default defineComponent({
   name: 'EventDetail',
@@ -65,9 +68,8 @@ export default defineComponent({
   },
   methods: {
     async getEvent() {
-      const id = this.$route.params.id
-      const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/events/${id}`)
-      this.event = await response.json()
+      const id = parseInt(this.$route.params.id as string)
+      this.event = (await apiClient.events.get(id)).data
     }
   }
 })
