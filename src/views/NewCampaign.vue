@@ -23,7 +23,7 @@
       >Start</label>
       <div class="p-col-12 p-md-9">
         <Calendar
-          v-model="campaign.startDate"
+          v-model="campaign.startTime"
           date-format="dd.mm.yy"
         />
       </div>
@@ -31,7 +31,7 @@
 
     <div class="p-field p-grid">
       <label
-        for="startTime"
+        for="endDate"
         class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
       >Ende</label>
       <div class="p-col-12 p-md-9">
