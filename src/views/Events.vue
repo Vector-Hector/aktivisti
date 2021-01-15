@@ -4,7 +4,7 @@
   <div class="autocomplete">
     <AutoComplete
       v-if="campaigns.length > 0"
-      v-model="selectedCampaign"
+      v-model="campaign"
       class="autocomplete-width"
       :suggestions="filteredCampaigns"
       :dropdown="true"
@@ -60,7 +60,6 @@
   </router-link>
 </template>
 
-
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Button from 'primevue/button'
@@ -69,14 +68,6 @@ import AutoComplete from 'primevue/autocomplete'
 import { EventDto } from '@/api/model/EventDto.ts'
 import { CampaignDto } from '@/api/model/CampaignDto.ts'
 
-
-interface EventsData {
-  events: EventDto[]
-  filteredCampaigns: CampaignDto[],
-  selectedCampaign: CampaignDto | null,
-  campaigns: CampaignDto[]
-}
-
 export default defineComponent({
   name: 'Events',
   components: {
@@ -84,12 +75,13 @@ export default defineComponent({
     Tag,
     AutoComplete
   },
-  data(): EventsData {
+  data() {
     return {
-      events: [],
-      selectedCampaign: null,
-      filteredCampaigns: [],
-      campaigns: []
+      events: [] as EventDto[],
+      filteredCampaigns: [] as CampaignDto[],
+      campaigns: [] as CampaignDto[],
+      campaign: null as CampaignDto | null,
+      selectedCampaign: null as CampaignDto | null
     }
   },
   created() {
@@ -134,14 +126,13 @@ export default defineComponent({
       const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
       const events = await response.json()
       this.events = events
-      if (this.selectedCampaign && this.selectedCampaign.id) {
-        this.events = this.events.filter((event: EventDto) => {
-          if (event.campaign && event.campaign.id) {
-            return event.campaign.id == this.selectedCampaign?.id
+      if (this.campaign?.id) {
+        this.events = this.events.filter((event) => {
+          if (event.campaign?.id) {
+            return event.campaign.id == this.campaign?.id
           }
         })
       }
-
     }
   }
 })
@@ -178,15 +169,4 @@ ul {
   margin-left: 10px;
 }
 
-.autocomplete {
-  padding-bottom: 20px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.autocomplete-width {
-  flex-grow: 0;
-  flex-shrink: 0;
-  flex-basis: 50%;
-}
 </style>

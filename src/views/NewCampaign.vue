@@ -18,7 +18,7 @@
 
     <div class="p-field p-grid">
       <label
-        for="startTime"
+        for="startDate"
         class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
       >Start</label>
       <div class="p-col-12 p-md-9">
@@ -31,7 +31,7 @@
 
     <div class="p-field p-grid">
       <label
-        for="startTime"
+        for="endDate"
         class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
       >Ende</label>
       <div class="p-col-12 p-md-9">
@@ -61,11 +61,11 @@
       <label
         for="campaign"
         class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-      >Kreis/Land/Bund (TODO)</label>
+      >Bundes-, landes-, oder kreisweite Kampagne (TODO)</label>
       <div class="p-col-12 p-md-9">
         <Dropdown
           v-model="campaign.organization"
-          :options="organisationType"
+          :options="organizationType"
           option-label="name"
           placeholder="Wähle ein Gebiet aus"
         />
@@ -98,7 +98,7 @@ import { CampaignTypeDto } from '@/api/model/CampaignTypeDto'
 
 interface NewCampaignData {
   campaign: Partial<CampaignDto>,
-  campaignTypes: CampaignTypeDto[]
+  campaignTypes: CampaignTypeDto[],
 }
 
 export default defineComponent({
@@ -117,7 +117,7 @@ export default defineComponent({
         {name: 'Organizing', id: 2},
         {name: 'Petition', id: 3},
         {name: 'Datenerhebung', id: 4}
-      ]
+      ],
     }
   },
   methods: {
@@ -140,7 +140,6 @@ export default defineComponent({
     }
   }
 })
-
 </script>
 
 <style lang="scss" scoped>

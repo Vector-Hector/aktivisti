@@ -3,3 +3,15 @@
 .button-red {
   background: $red;
 }
+
+.autocomplete {
+  padding-bottom: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.autocomplete-width {
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 50%;
+}
