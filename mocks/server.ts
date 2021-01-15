@@ -1,141 +1,106 @@
-import { belongsTo, createServer, Model, Response } from 'miragejs'
-import { EventDto } from '@/model/EventDto'
-import { CampaignDto } from '@/model/CampaignDto'
+import { createServer, Response, RestSerializer } from 'miragejs'
+import { sampleCampaigns } from './fixtures/campaigns'
+import { sampleEvents } from './fixtures/events'
+import { sampleUsers } from './fixtures/user'
+import { EventModel } from './events'
+import { CampaignModel } from './campaigns'
+import { UserModel } from './user'
+import Schema from 'miragejs/orm/schema'
+import { Registry } from 'miragejs/-types'
+
+type AppRegistry = Registry<{
+  user: typeof UserModel;
+  event: typeof EventModel,
+  campaign: typeof CampaignModel
+}, {}>
+type AppSchema = Schema<AppRegistry>
 
 export function makeServer({environment = 'development'} = {}) {
-  const campaigns: CampaignDto[] = [{
-    id: '1',
-    title: 'Bundestagswahl 2021',
-    type: {
-      name: 'Bund',
-      id: '1'
-    },
-    organization: null
-  }, {
-    id: '2',
-    title: 'Landtagswahl BaWü 2021',
-    type: {
-      name: 'Land',
-      id: '2'
-    },
-    organization: null
-  }]
 
-  const events: EventDto[] = [{
-    id: '1',
-    title: 'HaustürWK Köpenick',
-    campaign: campaigns[0],
-    startDate: new Date('2021-05-11T12:00'),
-    endDate: new Date('2021-05-11T13:00'),
-    public: true,
-    location: {
-      lat: 52.4426,
-      lng: 13.5823
-    },
-    metrics: [],
-    description: 'Haustürwahlkampf in Köpenick',
-    participants: 6,
-    maxParticipants: 10
-  }, {
-    id: '2',
-    title: 'HaustürWK Kreuzberg',
-    campaign: campaigns[0],
-    startDate: new Date('2021-05-12T16:00'),
-    endDate: new Date('2021-05-12T17:00'),
-    public: true,
-    location: {
-      lat: 52.4983,
-      lng: 13.4066
-    },
-    metrics: [],
-    description: 'Haustürwahlkampf in Kreuzberg',
-    participants: 6,
-    maxParticipants: 10
-  }, {
-    id: '3',
-    title: 'HaustürWK Steinenbronn',
-    campaign: campaigns[1],
-    startDate: new Date('2021-05-12T16:00'),
-    endDate: new Date('2021-05-12T17:00'),
-    public: true,
-    location: {
-      lat: 48.6622027,
-      lng: 9.1140697
-    },
-    metrics: [],
-    description: 'Haustürwahlkampf in Steinenbronn',
-    participants: 6,
-    maxParticipants: 10
-  }]
 
   return createServer({
     environment,
-    seeds(server) {
-      server.db.loadData({
-        event: events,
-        campaign: campaigns
-      })
+    serializers: {
+      event: RestSerializer.extend({root: false, embed: true, include: ['campaign']}),
+      campaign: RestSerializer.extend({root: false, embed: true}),
+      user: RestSerializer.extend({root: false, embed: true})
+    },
+    fixtures: {
+      users: sampleUsers,
+      events: sampleEvents,
+      campaigns: sampleCampaigns
     },
     models: {
-      event: Model.extend({
-        campaign: belongsTo()
-      }),
-      campaign: Model
+      user: UserModel,
+      campaign: CampaignModel,
+      event: EventModel
+    },
+    seeds(server) {
+      // only load the countries and cities fixtures
+      server.loadFixtures('users')
+      server.loadFixtures('campaigns')
+      server.loadFixtures('events')
     },
     routes() {
       this.namespace = 'api'
 
       // events
       this.get('/events', (schema) => {
-        return schema.db.event
+        return schema.all('event')
       })
 
       this.get('/events/:id', (schema, request) => {
         const id = request.params.id
-        return schema.db.event.find(id)
+        return schema.find('event', id)!!
       })
 
       this.put('/events/:id', (schema, request) => {
         const id = request.params.id
-        const event = schema.db.event.find(id)
+        const event = schema.find('event', id)!!
         event.update(JSON.parse(request.requestBody))
         return event
       })
 
       this.post('/events', (schema, request) => {
         const event = JSON.parse(request.requestBody)
-        return schema.db.event.insert(event)
+        return schema.create('event', event)
       })
 
       this.delete('/events/:id', (schema, request) => {
         const id = request.params.id
-        schema.db.event.remove(id)
+        schema.db.events.remove(id)
         return new Response(204)
       })
 
       // campaigns
-      this.get('/campaigns', (schema) => schema.db.campaign)
+      this.get('/campaigns', (schema) => schema.all('campaign'))
 
       this.get('/campaigns/:id', (schema, request) => {
         const id = request.params.id
-        return schema.db.campaign.find(id)
+        return schema.find('campaign', id)!!
       })
 
       this.put('/campaigns/:id', (schema, request) => {
         const id = request.params.id
-        const campaign = schema.db.campaign.find(id)
-        return campaign.update(JSON.parse(request.requestBody))
+        const campaign = schema.find("campaign", id)!!
+        campaign.update(JSON.parse(request.requestBody))
+        return schema.find('campaign', id)!!
       })
 
       this.post('/campaigns', (schema, request) => {
         const campaign = JSON.parse(request.requestBody)
-        return schema.db.campaign.insert(campaign)
+        return schema.create('campaign', campaign)
       })
 
       this.delete('/campaigns/:id', (schema, request) => {
         const id = request.params.id
-        schema.db.campaign.remove(id)
+        schema.db.campaigns.remove(id)
         return new Response(204)
+      })
+
+      this.post('/login', (schema: AppSchema, request) => {
+        const body = JSON.parse(request.requestBody)
+        return schema.findBy('user', {email: body.email})!!
       })
     }
   })

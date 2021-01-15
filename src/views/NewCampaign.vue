@@ -93,7 +93,8 @@ import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
 import Calendar from 'primevue/calendar'
 import Button from 'primevue/button'
-import { CampaignDto, CampaignTypeDto } from '@/model/CampaignDto'
+import { CampaignDto } from '@/api/model/CampaignDto.ts'
+import { CampaignTypeDto } from '@/api/model/CampaignTypeDto'
 
 interface NewCampaignData {
   campaign: Partial<CampaignDto>,
@@ -112,10 +113,10 @@ export default defineComponent({
     return {
       campaign: {},
       campaignTypes: [
-        {name: 'Wahlkampf', id: '1'},
-        {name: 'Organizing', id: '2'},
-        {name: 'Petition', id: '3'},
-        {name: 'Datenerhebung', id: '4'}
+        {name: 'Wahlkampf', id: 1},
+        {name: 'Organizing', id: 2},
+        {name: 'Petition', id: 3},
+        {name: 'Datenerhebung', id: 4}
       ]
     }
   },

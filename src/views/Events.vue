@@ -66,8 +66,8 @@ import { defineComponent } from 'vue'
 import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 import AutoComplete from 'primevue/autocomplete'
-import { EventDto } from '@/model/EventDto'
-import { CampaignDto } from '@/model/CampaignDto'
+import { EventDto } from '@/api/model/EventDto.ts'
+import { CampaignDto } from '@/api/model/CampaignDto.ts'
 
 
 interface EventsData {
