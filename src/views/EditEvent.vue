@@ -293,8 +293,8 @@ export default defineComponent({
     };
   },
   created() {
-    this.getEvent()
-    this.getCampaigns()
+    this.getEvent();
+    this.getCampaigns();
   },
   methods: {
     getEvent() {
@@ -302,7 +302,7 @@ export default defineComponent({
       fetch(`${process.env.VUE_APP_BASE_URL}/api/events/${id}`)
         .then((res) => res.json())
         .then((json) => {
-          this.event = { ...this.event, ...json.event }
+          this.event = { ...this.event, ...json.event };
         })
         .catch(/* handle errors*/);
     },
@@ -328,7 +328,7 @@ export default defineComponent({
       fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
         .then((res) => res.json())
         .then((json) => {
-          this.campaigns = json.campaigns
+          this.campaigns = json.campaigns;
         })
         .catch(/* handle errors*/);
     },

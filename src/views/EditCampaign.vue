@@ -9,20 +9,20 @@
       <div class="p-col-12 p-md-9">
         <InputText
           id="campaignName"
-          v-model="campaign.name"
+          v-model="campaign.title"
           type="text"
         />
       </div>
     </div>
-        
+
     <div class="p-field p-grid">
       <label
-        for="startTime"
+        for="startDate"
         class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
       >Start</label>
       <div class="p-col-12 p-md-9">
         <Calendar
-          v-model="campaign.start"
+          v-model="campaign.startDate"
           date-format="dd.mm.yy"
         />
       </div>
@@ -35,7 +35,7 @@
       >Ende</label>
       <div class="p-col-12 p-md-9">
         <Calendar
-          v-model="campaign.end"
+          v-model="campaign.endDate"
           date-format="dd.mm.yy"
         />
       </div>
@@ -50,7 +50,7 @@
         <Dropdown
           v-model="campaign.type"
           :options="campaignTypes"
-          option-label="name"
+          option-label="title"
           placeholder="Wähle einen Kampagnen-Typ aus"
         />
       </div>
@@ -60,11 +60,11 @@
       <label
         for="campaign"
         class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-      >Kreis/Land/Bund (TODO)</label>
+      >Bundes-, landes-, oder kreisweite Kampagne</label>
       <div class="p-col-12 p-md-9">
         <Dropdown
-          v-model="campaign.organisation"
-          :options="organisationType"
+          v-model="campaign.type"
+          :options="organizationTypes"
           option-label="name"
           placeholder="Wähle ein Gebiet aus"
         />
@@ -86,15 +86,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent } from "vue";
 
-import InputText from 'primevue/inputtext'
-import Dropdown from 'primevue/dropdown'
-import Calendar from 'primevue/calendar'
-import Button from 'primevue/button'
+import InputText from "primevue/inputtext";
+import Dropdown from "primevue/dropdown";
+import Calendar from "primevue/calendar";
+import Button from "primevue/button";
+import { CampaignDto } from "@/model/CampaignDto";
 
 export default defineComponent({
-  name: 'NewCampaign',
+  name: "NewCampaign",
   components: {
     InputText,
     Dropdown,
@@ -103,59 +104,60 @@ export default defineComponent({
   },
   data() {
     return {
-      campaign: {
-      },
+      campaign: {} as CampaignDto,
       campaignTypes: [
-        {name: 'Wahlkampf', id: 0},
-        {name: 'Organizing', id: 1},
-        {name: 'Petition', id: 2},
-        {name: 'Datenerhebung', id: 3}
+        { title: "Wahlkampf", id: 0 },
+        { title: "Organizing", id: 1 },
+        { title: "Petition", id: 2 },
+        { title: "Datenerhebung", id: 3 },
       ],
-    }
+      organizationTypes: [
+        { name: "Bund", id: "1" },
+        { name: "Land", id: "2" },
+        { name: "Kreis", id: "3" },
+      ],
+    };
   },
   created() {
-    this.getCampaign()
+    this.getCampaign();
   },
   methods: {
     getCampaign() {
-      const id = this.$route.params.id
+      const id = this.$route.params.id;
       fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns/${id}`)
         .then((res) => res.json())
         .then((json) => {
-          this.campaign = {...this.campaign, ...json.campaign}
+          this.campaign = { ...this.campaign, ...json };
         })
-        .catch(/* handle errors*/)
+        .catch(/* handle errors*/);
     },
     saveCampaign() {
-      const id = this.$route.params.id
+      const id = this.$route.params.id;
       fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns/${id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(this.campaign),
       })
-      // .then(response => response.json())
-        .then(data => {
-          console.log('Success:', data)
+        .then((data) => {
+          console.log("Success:", data);
+          this.$router.push("/campaigns");
         })
         .catch((error) => {
-          console.error('Error:', error)
-        })
-
-      this.$router.push('/campaigns')
-    }
-  }
+          console.error("Error:", error);
+        });
+    },
+  },
 });
-
 </script>
 
 <style lang="scss" scoped>
-    label {
-        text-align: left;
-    }
+label {
+  text-align: left;
+}
 
-    Button {
-        margin: 10px;
-    }
+Button {
+  margin: 10px;
+}
 </style>

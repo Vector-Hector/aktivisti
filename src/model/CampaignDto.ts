@@ -10,3 +10,7 @@ export interface CampaignDto {
   organization: null
 }
 
+export interface OrganizationTypeDto {
+  code: string,
+  name: string
+}
