@@ -134,12 +134,7 @@ export default defineComponent({
           this.events = json;
 
           this.events = this.events.filter((event) => {
-            if (
-              event.campaign &&
-              event.campaign.title &&
-              this.campaign && 
-              this.campaign.title
-            ) {
+            if (event.campaign?.title && this.campaign?.title) {
               return (
                 event.campaign.title == this.campaign.title
               );
