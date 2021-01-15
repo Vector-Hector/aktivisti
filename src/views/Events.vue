@@ -27,7 +27,11 @@
       :key="event.id"
       class="event"
     >
-      <a class="event-link" href="" @click="editEvent(event.id)">
+      <a
+        class="event-link"
+        href=""
+        @click="editEvent(event.id)"
+      >
         {{ event.title }}
       </a>
       <span
