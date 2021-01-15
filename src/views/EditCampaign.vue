@@ -17,12 +17,12 @@
 
     <div class="p-field p-grid">
       <label
-        for="startTime"
+        for="startDate"
         class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
       >Start</label>
       <div class="p-col-12 p-md-9">
         <Calendar
-          v-model="campaign.startTime"
+          v-model="campaign.startDate"
           date-format="dd.mm.yy"
         />
       </div>
