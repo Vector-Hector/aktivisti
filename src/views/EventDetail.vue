@@ -19,7 +19,7 @@
     </div>
     <div class="p-grid">
       <span class="participants p-col">
-        <i class="pi pi-user"/> {{ event.participants }}/{{ event.maxParticipants }}</span>
+        <i class="pi pi-user" /> {{ event.participants }}/{{ event.maxParticipants }}</span>
     </div>
     <div class="p-grid">
       <p class="description p-col">

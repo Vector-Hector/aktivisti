@@ -20,3 +20,75 @@ html, body {
   display: flex;
   justify-content: flex-end;
 }
+
+
+
+
+.p-tag {
+  background-color: white !important;
+  color: $red !important;
+  border: 1px solid $red;
+  border-radius: 0;
+}
+
+.event-link {
+  text-decoration: none;
+  color: black;
+
+  &:hover {
+    color: $red;
+  }
+}
+
+ul {
+  padding-inline-start: 0;
+}
+
+.p-button {
+  background-color: $red !important;
+  border-radius: 0 !important;
+  border: 1px solid $red !important;
+}
+
+.p-button.p-button-text {
+  color: white !important;
+}
+
+.p-inputtext:enabled:focus {
+// .p-dropdown:not(.p-disabled).p-focus,
+// .p-dropdown:not(.p-disabled):hover,
+// .p-multiselect:not(.p-disabled):focus {
+  outline: 0 none !important;
+  outline-offset: 0 !important;
+  box-shadow: 0 0 0 0.2rem #faa6a6 !important;
+  border-color: #b13651 !important;
+}
+
+// .p-multiselect:not(.p-disabled):hover,
+// .p-dropdown:not(.p-disabled):hover {
+//   border-color: #b13651 !important;
+// }
+
+.p-inputtext:enabled:hover {
+  border-color: #f32121 !important;
+}
+
+.p-autocomplete-dd .p-autocomplete-input,
+.p-input {
+  border-radius: 0 !important;
+}
+
+.p-button:focus {
+  outline: 0 none;
+  outline-offset: 0;
+  box-shadow: 0 0 0 0.2rem #faa6a6;
+}
+
+// .p-checkbox .p-checkbox-box.p-highlight {
+//   border-color: $red !important;
+//   background: $red !important;
+// }
+
+// .p-checkbox:not(.p-checkbox-disabled) .p-checkbox-box:hover {
+//   border-color: #b13651;
+// }
