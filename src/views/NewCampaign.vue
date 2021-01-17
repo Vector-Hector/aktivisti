@@ -1,88 +1,90 @@
 <template>
-  <h1>Neue Kampagne hinzufügen</h1>
+  <div class="container">
+    <h2>Neue Kampagne hinzufügen</h2>
 
-  <div class="p-fluid">
-    <div class="p-field p-grid">
-      <label
-        for="campaignName"
-        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-      >Name der Kampagne</label>
-      <div class="p-col-12 p-md-9">
-        <InputText
-          id="campaignName"
-          v-model="campaign.title"
-          type="text"
-        />
+    <div class="p-fluid">
+      <div class="p-field p-grid">
+        <label
+          for="campaignName"
+          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+        >Name der Kampagne</label>
+        <div class="p-col-12 p-md-9">
+          <InputText
+            id="campaignName"
+            v-model="campaign.title"
+            type="text"
+          />
+        </div>
+      </div>
+
+      <div class="p-field p-grid">
+        <label
+          for="startDate"
+          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+        >Start</label>
+        <div class="p-col-12 p-md-9">
+          <Calendar
+            v-model="campaign.startDate"
+            date-format="dd.mm.yy"
+          />
+        </div>
+      </div>
+
+      <div class="p-field p-grid">
+        <label
+          for="endDate"
+          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+        >Ende</label>
+        <div class="p-col-12 p-md-9">
+          <Calendar
+            v-model="campaign.endDate"
+            date-format="dd.mm.yy"
+          />
+        </div>
+      </div>
+
+      <div class="p-field p-grid">
+        <label
+          for="campaign"
+          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+        >Typ</label>
+        <div class="p-col-12 p-md-9">
+          <Dropdown
+            v-model="campaign.type"
+            :options="campaignTypes"
+            option-label="name"
+            placeholder="Wähle einen Kampagnen-Typ aus"
+          />
+        </div>
+      </div>
+
+      <div class="p-field p-grid">
+        <label
+          for="campaign"
+          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+        >Bundes-, landes-, oder kreisweite Kampagne (TODO)</label>
+        <div class="p-col-12 p-md-9">
+          <Dropdown
+            v-model="campaign.organization"
+            :options="organizationType"
+            option-label="name"
+            placeholder="Wähle ein Gebiet aus"
+          />
+        </div>
       </div>
     </div>
 
-    <div class="p-field p-grid">
-      <label
-        for="startDate"
-        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-      >Start</label>
-      <div class="p-col-12 p-md-9">
-        <Calendar
-          v-model="campaign.startDate"
-          date-format="dd.mm.yy"
-        />
-      </div>
+    <div class="control-buttons">
+      <Button
+        class="p-button-text"
+        label="Abbrechen"
+        @click="$router.push('/campaigns')"
+      />
+      <Button
+        label="Speichern"
+        @click="saveCampaign"
+      />
     </div>
-
-    <div class="p-field p-grid">
-      <label
-        for="endDate"
-        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-      >Ende</label>
-      <div class="p-col-12 p-md-9">
-        <Calendar
-          v-model="campaign.endDate"
-          date-format="dd.mm.yy"
-        />
-      </div>
-    </div>
-
-    <div class="p-field p-grid">
-      <label
-        for="campaign"
-        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-      >Typ</label>
-      <div class="p-col-12 p-md-9">
-        <Dropdown
-          v-model="campaign.type"
-          :options="campaignTypes"
-          option-label="name"
-          placeholder="Wähle einen Kampagnen-Typ aus"
-        />
-      </div>
-    </div>
-
-    <div class="p-field p-grid">
-      <label
-        for="campaign"
-        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-      >Bundes-, landes-, oder kreisweite Kampagne (TODO)</label>
-      <div class="p-col-12 p-md-9">
-        <Dropdown
-          v-model="campaign.organization"
-          :options="organizationType"
-          option-label="name"
-          placeholder="Wähle ein Gebiet aus"
-        />
-      </div>
-    </div>
-  </div>
-
-  <div class="control-buttons">
-    <Button
-      class="p-button-text"
-      label="Abbrechen"
-      @click="$router.push('/campaigns')"
-    />
-    <Button
-      label="Speichern"
-      @click="saveCampaign"
-    />
   </div>
 </template>
 
@@ -117,7 +119,7 @@ export default defineComponent({
         {name: 'Organizing', id: 2},
         {name: 'Petition', id: 3},
         {name: 'Datenerhebung', id: 4}
-      ],
+      ]
     }
   },
   methods: {

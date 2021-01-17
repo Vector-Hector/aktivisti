@@ -16,8 +16,6 @@ type AppRegistry = Registry<{
 type AppSchema = Schema<AppRegistry>
 
 export function makeServer({environment = 'development'} = {}) {
-
-
   return createServer({
     environment,
     serializers: {
@@ -42,6 +40,7 @@ export function makeServer({environment = 'development'} = {}) {
       server.loadFixtures('events')
     },
     routes() {
+      this.pretender.handledRequest
       this.namespace = 'api'
 
       // events
@@ -63,6 +62,7 @@ export function makeServer({environment = 'development'} = {}) {
 
       this.post('/events', (schema, request) => {
         const event = JSON.parse(request.requestBody)
+        event.campaign = schema.find('campaign', event.campaign)
         return schema.create('event', event)
       })
 
@@ -82,7 +82,7 @@ export function makeServer({environment = 'development'} = {}) {
 
       this.put('/campaigns/:id', (schema, request) => {
         const id = request.params.id
-        const campaign = schema.find("campaign", id)!!
+        const campaign = schema.find('campaign', id)!!
         campaign.update(JSON.parse(request.requestBody))
         return schema.find('campaign', id)!!
       })
@@ -102,6 +102,31 @@ export function makeServer({environment = 'development'} = {}) {
         const body = JSON.parse(request.requestBody)
         return schema.findBy('user', {email: body.email})!!
       })
+      this.passthrough('https://api.mapbox.com/**')
+      this.passthrough('https://events.mapbox.com/**')
+
+
+      /**
+       * Next block is a dirty fix for mapbox request passthrough as per https://gitmemory.com/issue/miragejs/miragejs/683/715621643
+       */
+      // eslint-disable-next-line no-prototype-builtins
+      if (!window.Request.prototype.hasOwnProperty('signal')) {
+        // @ts-ignore
+        window.Request.prototype.signal = undefined
+      }
+
+      const oldPassthroughRequests = this.pretender.passthroughRequest.bind(
+        this.pretender
+      )
+      this.pretender.passthroughRequest = (verb, path, request) => {
+        // Needed because responseType is not set correctly in Mirages passthrough
+        // for more details see: https://github.com/miragejs/miragejs/issues/1915
+        if (verb === 'GET' && path.match(/\.png|\.pbf/)) {
+          request.responseType = 'arraybuffer'
+        }
+        return oldPassthroughRequests(verb, path, request)
+      }
+
     }
   })
 }
