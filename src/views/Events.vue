@@ -27,8 +27,13 @@
       :key="event.id"
       class="event"
     >
-      {{ event.title }}
-
+      <a
+        class="event-link"
+        href=""
+        @click="editEvent(event.id)"
+      >
+        {{ event.title }}
+      </a>
       <span
         v-if="event && event.campaign && event.campaign.title"
         class="tag"
@@ -39,7 +44,7 @@
         />
       </span>
 
-      <Button
+      <!-- <Button
         icon="pi pi-times"
         class="p-button-danger p-button-text p-button-padding-unset"
         @click="deleteEvent(event.id)"
@@ -48,7 +53,7 @@
         icon="pi pi-pencil"
         class="p-button-default p-button-text p-button-padding-unset"
         @click="editEvent(event.id)"
-      />
+      /> -->
     </li>
   </ul>
 
@@ -139,6 +144,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import 'src/scss/_globals.scss';
+
 .new-event-button {
   text-decoration: none;
   display: flex;
@@ -167,6 +174,22 @@ ul {
 
 .tag {
   margin-left: 10px;
+}
+
+.autocomplete {
+  padding-bottom: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.autocomplete-width {
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 50%;
+}
+
+ul {
+  padding-inline-start: 0;
 }
 
 </style>
