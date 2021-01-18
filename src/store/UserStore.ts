@@ -1,10 +1,12 @@
 import { Store } from '@/store/Store'
+import { LocationDto } from '@/api/model/LocationDto'
 
 interface UserState {
   loggedIn: boolean
   username: string | null
   token: string | null
   email: string | null
+  location: LocationDto | null
 }
 
 class UserStore extends Store<UserState> {
@@ -13,8 +15,13 @@ class UserStore extends Store<UserState> {
       loggedIn: false,
       username: null,
       token: null,
-      email: null
+      email: null,
+      location: null
     }
+  }
+
+  public locate(location: LocationDto) {
+    this.state.location = location
   }
 
   /**
