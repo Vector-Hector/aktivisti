@@ -26,9 +26,17 @@
         {{ event.description }}
       </p>
     </div>
-    <div class="p-grid  p-jc-end">
+    <div class="p-grid p-jc-end">
       <Button>Ich bin dabei</Button>
     </div>
+    <router-link
+      :to="`/events/${event.id}/live`"
+      class="start-event-button"
+    >
+      <div class="p-grid p-jc-end">
+        <Button>Starten</Button>
+      </div>
+    </router-link>
   </div>
 </template>
 
@@ -92,5 +100,9 @@ Button {
 .campaign {
   font-weight: bold;
   display: block;
+}
+
+.start-event-button {
+  text-decoration: none;
 }
 </style>

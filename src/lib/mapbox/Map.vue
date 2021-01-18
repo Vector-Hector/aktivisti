@@ -19,6 +19,10 @@ export default defineComponent({
     center: {
       type: Object as PropType<LocationDto>,
       required: true
+    },
+    zoom: {
+      type: Number,
+      required: false
     }
   },
   setup(props) {
@@ -27,11 +31,12 @@ export default defineComponent({
     const initialized = ref(false)
     provide(MapInject, map)
     onMounted(() => {
+      console.log(props)
       map.value = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [props.center.lng, props.center.lat],
-        zoom: 5
+        zoom: props.zoom || 5
       })
       map.value.on('load', () => {
         initialized.value = true
