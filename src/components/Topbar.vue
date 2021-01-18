@@ -1,6 +1,7 @@
 <template>
   <div class="topbar">
     <a
+      v-if="showSidebar"
       class="hamburger"
       @click="openSidebar"
     >
@@ -16,12 +17,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { uiStore } from '@/store/UiStore'
 
 export default defineComponent({
   name: 'Topbar',
-  components: {},
+  props: {
+    showSidebar: {
+      type: Boolean as PropType<Boolean>,
+      default: true
+    }
+  },
   data() {
     return {}
   },

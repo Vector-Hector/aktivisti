@@ -1,14 +1,20 @@
 import { Store } from '@/store/Store'
 
 interface UiState {
-  sidebarExpanded: boolean
+  sidebarExpanded: boolean,
+  showNavigation: boolean
 }
 
 class UiStore extends Store<UiState> {
   protected data(): UiState {
     return {
-      sidebarExpanded: false
+      sidebarExpanded: false,
+      showNavigation: true
     }
+  }
+
+  public toggleNavigation(enabled = true) {
+    this.state.showNavigation = enabled
   }
 
   public toggleSidebar(expanded = true) {

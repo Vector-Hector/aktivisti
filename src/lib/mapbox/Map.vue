@@ -19,9 +19,14 @@ export default defineComponent({
     center: {
       type: Object as PropType<LocationDto>,
       required: true
+    },
+    zoom: {
+      type: Number as PropType<number>,
+      default: 5
     }
   },
-  setup(props) {
+  emits: ['update:zoom'],
+  setup(props, { emit }) {
     mapboxgl.accessToken = process.env.VUE_APP_MAPBOX_TOKEN
     const map = ref<mapboxgl.Map | null>(null)
     const initialized = ref(false)
@@ -31,10 +36,13 @@ export default defineComponent({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [props.center.lng, props.center.lat],
-        zoom: 5
+        zoom: props.zoom
       })
       map.value.on('load', () => {
         initialized.value = true
+      })
+      map.value.on('zoom', () => {
+        emit('update:zoom', map.value?.getZoom())
       })
     })
     return {
