@@ -2,8 +2,7 @@
 @import "color";
 @import "button";
 @import "primevue-overwrite";
-@import "leaflet-overwrite";
-
+@import "layout";
 
 $font-stack: 'Roboto', Arial, Helvetica, Geneva, sans-serif;
 
@@ -11,12 +10,19 @@ html, body {
   font-family: $font-stack;
   margin: 0;
   padding: 0;
+  width: 100%;
+  height: 100%;
 }
 
 #app {
   font-family: $font-stack;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+#app, #root {
+  height: 100%;
+  width: 100%;
 }
 
 .control-buttons {

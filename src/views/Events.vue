@@ -1,68 +1,69 @@
 <template>
-  <h1>Events</h1>
+  <div class="container">
+    <h2>Events</h2>
 
-  <div class="autocomplete">
-    <AutoComplete
-      v-if="campaigns.length > 0"
-      v-model="campaign"
-      class="autocomplete-width"
-      :suggestions="filteredCampaigns"
-      :dropdown="true"
-      field="title"
-      @clear="getEvents"
-      @item-select="filterEvents"
-      @complete="searchCampaign($event)"
-    >
-      <template #item="slotProps">
-        <div>
-          <div>{{ slotProps.item.title }}</div>
-        </div>
-      </template>
-    </AutoComplete>
-  </div>
+    <div class="autocomplete">
+      <AutoComplete
+        v-if="campaigns.length > 0"
+        v-model="campaign"
+        :suggestions="filteredCampaigns"
+        :dropdown="true"
+        field="title"
+        @clear="getEvents"
+        @item-select="filterEvents"
+        @complete="searchCampaign($event)"
+      >
+        <template #item="slotProps">
+          <div>
+            <div>{{ slotProps.item.title }}</div>
+          </div>
+        </template>
+      </AutoComplete>
+    </div>
 
-  <ul class="events">
-    <li
-      v-for="event in events"
-      :key="event.id"
-      class="event"
-    >
-      <a
-        class="event-link"
-        href=""
-        @click="editEvent(event.id)"
+    <ul class="events">
+      <li
+        v-for="event in events"
+        :key="event.id"
+        class="event"
       >
-        {{ event.title }}
-      </a>
-      <span
-        v-if="event && event.campaign && event.campaign.title"
-        class="tag"
-      >
-        <Tag
-          :value="event.campaign.title"
-          severity="info"
+        <a
+          class="event-link"
+          href=""
+          @click="editEvent(event.id)"
+        >
+          {{ event.title }}
+        </a>
+        <span
+          v-if="event && event.campaign && event.campaign.title"
+          class="tag"
+        >
+          <Tag
+            :value="event.campaign.title"
+            severity="info"
+          />
+        </span>
+
+        <!-- <Button
+          icon="pi pi-times"
+          class="p-button-danger p-button-text p-button-padding-unset"
+          @click="deleteEvent(event.id)"
         />
-      </span>
+        <Button
+          icon="pi pi-pencil"
+          class="p-button-default p-button-text p-button-padding-unset"
+          @click="editEvent(event.id)"
+        /> -->
+      </li>
+    </ul>
 
-      <!-- <Button
-        icon="pi pi-times"
-        class="p-button-danger p-button-text p-button-padding-unset"
-        @click="deleteEvent(event.id)"
-      />
-      <Button
-        icon="pi pi-pencil"
-        class="p-button-default p-button-text p-button-padding-unset"
-        @click="editEvent(event.id)"
-      /> -->
-    </li>
-  </ul>
-
-  <router-link
-    to="/events/new"
-    class="new-event-button"
-  >
-    <Button label="Event hinzufügen" />
-  </router-link>
+    <router-link
+      to="/events/new"
+      class="new-event-button"
+    >
+      <Button label="Event hinzufügen" />
+    </router-link>
+  </div>
 </template>
 
 <script lang="ts">
@@ -180,12 +181,6 @@ ul {
   padding-bottom: 20px;
   display: flex;
   justify-content: flex-end;
-}
-
-.autocomplete-width {
-  flex-grow: 0;
-  flex-shrink: 0;
-  flex-basis: 50%;
 }
 
 ul {

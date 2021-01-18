@@ -3,9 +3,7 @@
     <Topbar />
     <NavigationSidebar />
 
-    <div class="container">
-      <router-view />
-    </div>
+    <router-view />
   </div>
 </template>
 
@@ -27,8 +25,8 @@ export default defineComponent({
         icon: 'pi pi-plus',
         to: '/campaigns'
       }, {
-        label:'Events',
-        icon:'pi pi-fw pi-calendar',
+        label: 'Events',
+        icon: 'pi pi-fw pi-calendar',
         to: '/events'
       }]
     }
@@ -37,31 +35,30 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  @import 'src/scss/_globals.scss';
+@import 'src/scss/_globals.scss';
 
-  .nav {
-    padding-bottom: 100px;
-  }
+#root {
+  display: flex;
+  flex-direction: column;
+}
 
-  .router-link {
-    padding-right: 10px;
-  }
+.nav {
+  padding-bottom: 100px;
+}
 
-  .container {
-    margin-right: auto;
-    margin-left:  auto;
-    max-width: 960px;
-    padding-right: 10px;
-    padding-left:  10px;
-  }
+.router-link {
+  padding-right: 10px;
+}
 
-  .dielinke-logo {
-    max-width: 240px;
-    cursor: pointer;
-  }
 
-  .p-menubar {
-    background: white;
-    border: 1px solid $red;
-  }
+
+.dielinke-logo {
+  max-width: 240px;
+  cursor: pointer;
+}
+
+.p-menubar {
+  background: white;
+  border: 1px solid $red;
+}
 </style>
