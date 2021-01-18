@@ -29,7 +29,7 @@
         >Besuchte Adressen:</label>
         <div class="p-col-12 p-md-9">
           <MultiSelect
-            v-model="eventData"
+            v-model="eventData.visitedAddresses"
             :options="visitedAddresses"
             option-label="name"
             placeholder="Besuchte Adressen"
@@ -99,12 +99,13 @@
           show-buttons
           mode="decimal"
           :min="0"
+          @input="handleInput"
         />
       </div>
     </div>
 
     <ProgressBar
-      :value="50"
+      :value="progress"
       :show-value="false"
     />
  
@@ -137,11 +138,19 @@ import ProgressBar from "primevue/progressbar"
 import MultiSelect from 'primevue/multiselect'
 
 
+interface EventData {
+  knockedDoors: number
+  openedDoors: number
+  goodChats: number
+  consent: number
+}
+
 interface EventDetailData {
   event: EventDto | null,
   metrics: D2DMetricsDto[] | null,
-  eventData: [],
-  visitedAddresses: object[]
+  eventData: EventData,
+  visitedAddresses: object[],
+  progress: number,
 }
 
 const apiClient = new ApiClient()
@@ -166,14 +175,20 @@ export default defineComponent({
         {name: 'Zustimmung', value: 'Zustimmung'},
         {name: 'Unterschriften', value: 'Unterschriften'}
       ],
-      eventData: [],
+      eventData: {
+        knockedDoors: 0,
+        openedDoors: 0,
+        goodChats: 0,
+        consent: 0
+      },
       visitedAddresses: [
         {name: 'Hauptstr.', value: 'Hauptstr.'},
         {name: 'Bahnhofstr.', value: 'Bahnhofstr.'},
         {name: 'Mittelstr.', value: 'Mittelstr.'},
         {name: 'Seestr.', value: 'Seestr.'},
         {name: 'Berliner Str.', value: 'Berliner Str.'}
-      ]
+      ],
+      progress: 0
     }
   },
   created() {
@@ -183,6 +198,10 @@ export default defineComponent({
     async getEvent() {
       const id = parseInt(this.$route.params.id as string)
       this.event = (await apiClient.events.get(id)).data
+    },
+    handleInput() {
+      // TODO get taget data
+      this.progress = this.eventData.consent * 100 / 20
     }
   }
 })
@@ -217,7 +236,7 @@ Button {
 }
 
 .event-button {
-  text-decoration:none;
+  text-decoration: none;
 }
 
 </style>
