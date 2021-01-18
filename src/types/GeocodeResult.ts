@@ -1,6 +1,3 @@
-import { LocationDto } from '@/api/model/LocationDto'
-import { MapboxGeoJSONFeature } from 'mapbox-gl'
-
 export interface GeoJSONFeature {
   id?: string
   coordinates: number[]
