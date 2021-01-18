@@ -1,3 +1,4 @@
+
 # wk-frontend
 
 This project is the frontend application for the "Wahlkampf"-App. It's a responsive Progressive Web App.
@@ -22,6 +23,16 @@ Documentation resources for the used tools:
 ```
 npm install
 ```
+
+### Development credentials
+
+For getting the map to work you need to add a mapbox access token to your development environment that is eligible for your local development domain (probably http://localhost:8080)
+
+Create a file .env.development.local and add the token like this:
+```
+VUE_APP_MAPBOX_TOKEN=[token]
+```
+
 
 ### Serving the application during development (with hot-load)
 

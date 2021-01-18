@@ -3,7 +3,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import Events from '../views/Events.vue'
 import NewEvent from '../views/NewEvent.vue'
-import EditEvent from '../views/EditEvent.vue'
 import Campaigns from '../views/Campaigns.vue'
 import EditCampaign from '../views/EditCampaign.vue'
 import EventDetail from '@/views/EventDetail.vue'
@@ -22,10 +21,6 @@ const router = createRouter({
     {
       path: '/events/:id',
       component: EventDetail
-    },
-    {
-      path: '/events/:id/edit',
-      component: EditEvent
     },
     {
       path: '/events/new',
