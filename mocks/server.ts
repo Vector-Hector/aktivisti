@@ -1,4 +1,4 @@
-import { createServer, Response, RestSerializer } from 'miragejs'
+import { createServer, Response, RestSerializer, Serializer } from 'miragejs'
 import { sampleCampaigns } from './fixtures/campaigns'
 import { sampleEvents } from './fixtures/events'
 import { sampleUsers } from './fixtures/user'
@@ -15,13 +15,39 @@ type AppRegistry = Registry<{
 }, {}>
 type AppSchema = Schema<AppRegistry>
 
+function transformId(obj: any) {
+  if (typeof obj === 'object' && obj !== null) {
+    for (const prop in obj) {
+      if (prop === 'id') {
+        obj.id = parseInt(obj.id)
+      }
+      transformId(obj[prop])
+    }
+  }
+}
+
+//@ts-ignore
+const ApplicationSerializer = RestSerializer.extend({
+  root: false,
+  embed: true,
+  serialize(...args): any {
+    //@ts-ignore
+    const serialized = Serializer.prototype.serialize.apply(this, args)
+    transformId(serialized)
+    return serialized
+  }
+})
+
 export function makeServer({environment = 'development'} = {}) {
   return createServer({
     environment,
     serializers: {
-      event: RestSerializer.extend({root: false, embed: true, include: ['campaign']}),
-      campaign: RestSerializer.extend({root: false, embed: true}),
-      user: RestSerializer.extend({root: false, embed: true})
+      //@ts-ignore
+      event: ApplicationSerializer.extend({include: ['campaign', 'participants']}),
+      //@ts-ignore
+      campaign: ApplicationSerializer.extend({}),
+      //@ts-ignore
+      user: ApplicationSerializer.extend({})
     },
     fixtures: {
       users: sampleUsers,
@@ -70,6 +96,28 @@ export function makeServer({environment = 'development'} = {}) {
         const id = request.params.id
         schema.db.events.remove(id)
         return new Response(204)
+      })
+
+      this.post('/events/:id/join', (schema, request) => {
+        const id = request.params.id
+        const event = schema.find('event', id)!!
+        event.update({
+          participantIds: [...(event as any).participantIds, sampleUsers[0].id]
+        })
+
+        return new Response(200, {'Content-Type': 'application/json'}, event)
+      })
+
+      this.post('/events/:id/leave', (schema, request) => {
+        const id = request.params.id
+        const event = schema.find('event', id)!!
+        event.update({
+          participantIds: [
+            ...(event as any).participantIds
+              .filter((searchId: string) => parseInt(searchId) !== sampleUsers[0].id)
+          ]
+        })
+        return new Response(200, {'Content-Type': 'application/json'}, event)
       })
 
       // campaigns
