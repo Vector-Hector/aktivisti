@@ -21,19 +21,21 @@
       />
     </Map>
 
-    <div class="p-field p-grid">
-      <label
-        for="visitedAddresses"
-        class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-      >Besuchte Adressen:</label>
-      <div class="p-col-12 p-md-9">
-        <MultiSelect
-          v-model="eventData"
-          :options="visitedAddresses"
-          option-label="name"
-          placeholder="Besuchte Adressen"
-          display="chip"
-        />
+    <div class="p-fluid">
+      <div class="p-field p-grid">
+        <label
+          for="visitedAddresses"
+          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+        >Besuchte Adressen:</label>
+        <div class="p-col-12 p-md-9">
+          <MultiSelect
+            v-model="eventData"
+            :options="visitedAddresses"
+            option-label="name"
+            placeholder="Besuchte Adressen"
+            display="chip"
+          />
+        </div>
       </div>
     </div>
 
@@ -111,7 +113,9 @@
         to="/events"
         class="event-button"
       >
-        <Button>Beenden</Button>
+        <Button>
+          Beenden
+        </Button>
       </router-link>
       <Button>Kontakt registrieren</Button>
     </div>
