@@ -6,6 +6,7 @@
     <Geocoder
       class="geocoder"
       :access-token="mapboxToken"
+      :countries="['de']"
       @result="locate"
     />
     <router-link
