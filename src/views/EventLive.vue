@@ -164,11 +164,11 @@ export default defineComponent({
       ],
       eventData: [],
       visitedAddresses: [
-        {name: 'Test', value: 'Test'},
-        {name: 'Geöffnete Türen', value: 'Geöffnete Türen'},
-        {name: 'Gute Gespräche', value: 'Gute Gespräche'},
-        {name: 'Zustimmung', value: 'Zustimmung'},
-        {name: 'Unterschriften', value: 'Unterschriften'}
+        {name: 'Hauptstr.', value: 'Hauptstr.'},
+        {name: 'Bahnhofstr.', value: 'Bahnhofstr.'},
+        {name: 'Mittelstr.', value: 'Mittelstr.'},
+        {name: 'Seestr.', value: 'Seestr.'},
+        {name: 'Berliner Str.', value: 'Berliner Str.'}
       ]
     }
   },
@@ -179,8 +179,6 @@ export default defineComponent({
     async getEvent() {
       const id = parseInt(this.$route.params.id as string)
       this.event = (await apiClient.events.get(id)).data
-      console.log(this.event)
-
     }
   }
 })
