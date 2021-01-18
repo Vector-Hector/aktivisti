@@ -1,6 +1,8 @@
 <template>
   <div id="root">
-    <Topbar />
+    <Topbar
+      :show-sidebar="showNavigation"
+    />
     <NavigationSidebar />
 
     <router-view />
@@ -11,6 +13,7 @@
 import { defineComponent } from 'vue'
 import Topbar from '@/components/Topbar.vue'
 import NavigationSidebar from '@/components/NavigationSidebar.vue'
+import { uiStore } from '@/store/UiStore'
 
 export default defineComponent({
   name: 'App',
@@ -29,6 +32,11 @@ export default defineComponent({
         icon: 'pi pi-fw pi-calendar',
         to: '/events'
       }]
+    }
+  },
+  computed: {
+    showNavigation() {
+      return uiStore.getState().showNavigation
     }
   }
 })

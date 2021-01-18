@@ -6,10 +6,16 @@ import NewEvent from '../views/NewEvent.vue'
 import Campaigns from '../views/Campaigns.vue'
 import EditCampaign from '../views/EditCampaign.vue'
 import EventDetail from '@/views/EventDetail.vue'
+import Locate from '@/views/Locate.vue'
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
+    {
+      path: '/',
+      component: Locate,
+      name: 'splash'
+    },
     {
       path: '/map',
       component: Home

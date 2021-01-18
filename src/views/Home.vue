@@ -24,6 +24,7 @@
   </div>
   <Map
     :center="center"
+    :zoom="zoom"
     map-style="mapbox://styles/mapbox/streets-v11"
   >
     <Marker
@@ -58,6 +59,7 @@ import AutoComplete from 'primevue/autocomplete'
 import { EventDto } from '@/api/model/EventDto'
 import { CampaignDto } from '@/api/model/CampaignDto'
 import Popup from '@/lib/mapbox/Popup.vue'
+import { userStore } from '@/store/UserStore'
 
 export default defineComponent({
   name: 'Home',
@@ -67,12 +69,18 @@ export default defineComponent({
     Marker,
     AutoComplete
   },
+  beforeRouteEnter(to, from, next) {
+    if (userStore.getState().location == null) {
+      next({ name: 'splash' })
+    }
+    next()
+  },
   data() {
     return {
-      zoom: 6,
+      zoom: 14,
       iconWidth: 25,
       iconHeight: 40,
-      center: {lat: 51.5, lng: 10},
+      center: { ...userStore.getState().location },
       events: [] as EventDto[],
       filteredCampaigns: [] as CampaignDto[],
       campaigns: [] as CampaignDto[],
