@@ -17,6 +17,10 @@ export default defineComponent({
     accessToken: {
       type: String as PropType<string>,
       required: true
+    },
+    countries: {
+      type: Array as PropType<string[]> | null,
+      default: null
     }
   },
   emits: {
@@ -26,7 +30,8 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const geocodeControl = new MapboxGeocoder({
-      accessToken: props.accessToken
+      accessToken: props.accessToken,
+      countries: props.countries.join(',')
     })
     const geocodeWrapper = ref<HTMLElement | null>(null)
     geocodeControl.on('result', ({ result }: { result: GeocodeResult }) => {
