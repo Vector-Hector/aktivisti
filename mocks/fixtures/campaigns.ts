@@ -5,21 +5,21 @@ export const sampleCampaigns: Partial<CampaignDto>[] = [{
   title: 'Bundestagswahl 2021',
   type: {
     name: 'Wahlkampf',
-    id: 0
+    id: 1
   },
   organization: {
     name: 'Bund',
-    id: 0
+    id: 1
   },
 }, {
   id: 2,
   title: 'Landtagswahl BaWü 2021',
   type: {
     name: 'Organizing',
-    id: 1
+    id: 2
   },
   organization: {
     name: 'Land',
-    id: 1
+    id: 2
   },
 }]

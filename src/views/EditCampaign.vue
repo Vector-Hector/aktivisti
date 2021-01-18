@@ -113,15 +113,15 @@ export default defineComponent({
     return {
       campaign: {} as CampaignDto,
       campaignTypes: [
-        { name: "Wahlkampf", id: 0 },
-        { name: "Organizing", id: 1 },
-        { name: "Petition", id: 2 },
-        { name: "Datenerhebung", id: 3 },
+        { name: "Wahlkampf", id: 1 },
+        { name: "Organizing", id: 2 },
+        { name: "Petition", id: 3 },
+        { name: "Datenerhebung", id: 4 },
       ] as CampaignTypeDto[],
       organizationTypes: [
-        { name: "Bund", id: 0 },
-        { name: "Land", id: 1 },
-        { name: "Kreis", id: 2 },
+        { name: "Bund", id: 1 },
+        { name: "Land", id: 2 },
+        { name: "Kreis", id: 3 },
       ] as CampaignOrganizationDto[],
     };
   },

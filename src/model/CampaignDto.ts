@@ -7,10 +7,15 @@ export interface CampaignDto {
   id: string,
   title: string,
   type: CampaignTypeDto,
-  organization: null
+  organization: CampaignOrganizationDto
 }
 
 export interface OrganizationTypeDto {
   code: string,
+  name: string
+}
+
+export interface CampaignOrganizationDto {
+  id: number,
   name: string
 }
