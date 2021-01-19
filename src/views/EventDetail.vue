@@ -26,17 +26,18 @@
         {{ event.description }}
       </p>
     </div>
+
     <div class="p-grid p-jc-end">
+      <router-link
+        :to="`/events/${event.id}/live`"
+        class="start-event-button"
+      >
+        <Button class="gray-button">
+          Starten
+        </Button>
+      </router-link>
       <Button>Ich bin dabei</Button>
     </div>
-    <router-link
-      :to="`/events/${event.id}/live`"
-      class="start-event-button"
-    >
-      <div class="p-grid p-jc-end">
-        <Button>Starten</Button>
-      </div>
-    </router-link>
   </div>
 </template>
 
@@ -105,4 +106,5 @@ Button {
 .start-event-button {
   text-decoration: none;
 }
+
 </style>

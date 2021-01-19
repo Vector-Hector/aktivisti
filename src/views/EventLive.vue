@@ -114,7 +114,7 @@
         to="/events"
         class="event-button"
       >
-        <Button>
+        <Button class="gray-button">
           Beenden
         </Button>
       </router-link>
