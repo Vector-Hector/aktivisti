@@ -41,7 +41,7 @@
             {{ new Date(event.startDate).toLocaleString() }}
           </span>
           <router-link
-            class="join-link"
+            class="join-link no-button-decoration"
             :to="`/events/${event.id}`"
           >
             <Button class="p-button button-red join-button"> Mitmachen/Infos</Button>
@@ -132,8 +132,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-
-
 .popup-title {
   font-weight: bold;
   display: block;
