@@ -1,32 +1,34 @@
 <template>
-  <h1>Kampagnen</h1>
+  <div class="container">
+    <h1>Kampagnen</h1>
 
-  <ul class="campaigns">
-    <li
-      v-for="campaign in campaigns"
-      :key="campaign.id"
-      class="campaign"
+    <ul class="campaigns">
+      <li
+        v-for="campaign in campaigns"
+        :key="campaign.id"
+        class="campaign"
+      >
+        {{ campaign.title }}
+        <Button
+          icon="pi pi-times"
+          class="p-button-danger p-button-text p-button-padding-unset"
+          @click="deleteCampaign(campaign.id)"
+        />
+        <Button
+          icon="pi pi-pencil"
+          class="p-button-default p-button-text p-button-padding-unset"
+          @click="editCampaign(campaign.id)"
+        />
+      </li>
+    </ul>
+
+    <router-link
+      to="/campaigns/new"
+      class="new-campaign-button"
     >
-      {{ campaign.title }}
-      <Button
-        icon="pi pi-times"
-        class="p-button-danger p-button-text p-button-padding-unset"
-        @click="deleteCampaign(campaign.id)"
-      />
-      <Button
-        icon="pi pi-pencil"
-        class="p-button-default p-button-text p-button-padding-unset"
-        @click="editCampaign(campaign.id)"
-      />
-    </li>
-  </ul>
-
-  <router-link
-    to="/campaigns/new"
-    class="new-campaign-button"
-  >
-    <Button label="Kampagne hinzufügen" />
-  </router-link>
+      <Button label="Kampagne hinzufügen" />
+    </router-link>
+  </div>
 </template>
 
 

@@ -51,7 +51,7 @@
       <router-link
         v-if="isMember"
         :to="`/events/${event.id}/live`"
-        class="start-event-button"
+        class="no-button-decoration"
       >
         <Button>
           Starten
@@ -141,9 +141,4 @@ Button {
   font-weight: bold;
   display: block;
 }
-
-.start-event-button {
-  text-decoration: none;
-}
-
 </style>
