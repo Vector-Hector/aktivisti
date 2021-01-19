@@ -112,7 +112,7 @@
     <div class="p-grid p-jc-end button-group">
       <router-link
         to="/events"
-        class="event-button"
+        class="event-button no-button-decoration"
       >
         <Button class="gray-button">
           Beenden
@@ -120,6 +120,7 @@
       </router-link>
       <router-link
         :to="{ name: 'create-lead', query: {event: event.id}}"
+        class="no-button-decoration"
       >
         <Button>Kontakt registrieren</Button>
       </router-link>
@@ -238,9 +239,4 @@ Button {
 .button-group {
   margin-top: 1.5em;
 }
-
-.event-button {
-  text-decoration: none;
-}
-
 </style>
