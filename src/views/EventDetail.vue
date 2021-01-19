@@ -27,16 +27,33 @@
       </p>
     </div>
     <div class="p-grid  p-jc-end">
-
-      <Button v-if="currentUserId === null" disabled="disabled">Anmelden um mitzumachen</Button>
-      <Button v-else-if="isMember" :disabled="joinLoading" @click="leave">Doch nicht dabei</Button>
-      <Button v-else-if="!isMember" :disabled="joinLoading" @click="join">Ich bin dabei</Button>
+      <Button
+        v-if="currentUserId === null"
+        disabled="disabled"
+      >
+        Anmelden um mitzumachen
+      </Button>
+      <Button
+        v-else-if="isMember"
+        :disabled="joinLoading"
+        class="gray-button"
+        @click="leave"
+      >
+        Doch nicht dabei
+      </Button>
+      <Button
+        v-else-if="!isMember"
+        :disabled="joinLoading"
+        @click="join"
+      >
+        Ich bin dabei
+      </Button>
       <router-link
         v-if="isMember"
         :to="`/events/${event.id}/live`"
         class="start-event-button"
       >
-        <Button class="gray-button">
+        <Button>
           Starten
         </Button>
       </router-link>
