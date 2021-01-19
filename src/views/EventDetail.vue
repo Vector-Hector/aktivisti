@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="event !== null"
-    class="event"
+    class="event container"
   >
     <h2>{{ event.title }}</h2>
     <div class="p-grid">

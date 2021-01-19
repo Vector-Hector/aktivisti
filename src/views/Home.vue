@@ -9,6 +9,7 @@
         class="autocomplete-width"
         :suggestions="filteredCampaigns"
         :dropdown="true"
+        placeholder="Alle Kampagnen"
         field="title"
         @clear="getEvents"
         @item-select="filterEvents"

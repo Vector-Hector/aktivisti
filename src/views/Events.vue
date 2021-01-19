@@ -8,6 +8,7 @@
         v-model="campaign"
         :suggestions="filteredCampaigns"
         :dropdown="true"
+        placeholder="Alle Kampagnen"
         field="title"
         @clear="getEvents"
         @item-select="filterEvents"
@@ -27,13 +28,13 @@
         :key="event.id"
         class="event"
       >
-        <a
+        <router-link
           class="event-link"
           href=""
-          @click="editEvent(event.id)"
+          :to="`/events/${event.id}`"
         >
           {{ event.title }}
-        </a>
+        </router-link>
         <span
           v-if="event && event.campaign && event.campaign.title"
           class="tag"
@@ -108,9 +109,6 @@ export default defineComponent({
     async getEvents() {
       const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
       this.events = await response.json()
-    },
-    editEvent(id: number): void {
-      this.$router.push(`/events/${id}`)
     },
     async getCampaigns() {
       const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
