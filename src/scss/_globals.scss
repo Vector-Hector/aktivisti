@@ -29,3 +29,8 @@ html, body {
   display: flex;
   justify-content: flex-end;
 }
+
+.gray-button {
+  background-color: $gray-600 !important;
+  border: 1px solid $gray-600 !important;
+}

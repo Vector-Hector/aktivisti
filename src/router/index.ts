@@ -6,6 +6,7 @@ import NewEvent from '../views/NewEvent.vue'
 import Campaigns from '../views/Campaigns.vue'
 import EditCampaign from '../views/EditCampaign.vue'
 import EventDetail from '@/views/EventDetail.vue'
+import EventLive from '@/views/EventLive.vue'
 import Locate from '@/views/Locate.vue'
 
 const router = createRouter({
@@ -27,6 +28,10 @@ const router = createRouter({
     {
       path: '/events/:id',
       component: EventDetail
+    },
+    {
+      path: '/events/:id/live',
+      component: EventLive
     },
     {
       path: '/events/new',
