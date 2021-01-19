@@ -32,7 +32,6 @@ export default defineComponent({
     const initialized = ref(false)
     provide(MapInject, map)
     onMounted(() => {
-      console.log(props)
       map.value = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
