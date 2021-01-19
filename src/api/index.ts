@@ -12,7 +12,8 @@ class JSONResponse<T> {
  * Second Generic C is the interface for creating or updating entities
  */
 class ApiRoute<E, C> {
-  constructor(private baseUrl: string, private path: string) {}
+  constructor(protected baseUrl: string, protected path: string) {
+  }
 
   async list(): Promise<JSONResponse<E[]>> {
     const response = await fetch(`${this.baseUrl}/${this.path}`)
@@ -51,14 +52,38 @@ class ApiRoute<E, C> {
   }
 
   async delete(id: number): Promise<void> {
-    await fetch(`${this.baseUrl}/${this.path}/${id}`, { method: 'DELETE' })
+    await fetch(`${this.baseUrl}/${this.path}/${id}`, {method: 'DELETE'})
+  }
+}
+
+class EventRoute extends ApiRoute<EventDto, CreateEventDto> {
+  async join(id: number) {
+    const response = await fetch(`${this.baseUrl}/${this.path}/${id}/join`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    const data = await response.json()
+    return new JSONResponse<EventDto>(response, data)
+  }
+
+  async leave(id: number) {
+    const response = await fetch(`${this.baseUrl}/${this.path}/${id}/leave`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    const data = await response.json()
+    return new JSONResponse<EventDto>(response, data)
   }
 }
 
 
 export class ApiClient {
   baseURL = `${process.env.VUE_APP_BASE_URL}/api`
-  events = new ApiRoute<EventDto, CreateEventDto>(this.baseURL, "events")
-  campaign = new ApiRoute<EventDto, CreateEventDto>(this.baseURL, "campaigns")
-  user = new ApiRoute<UserDto, UserDto>(this.baseURL, "users")
+  events = new EventRoute(this.baseURL, 'events')
+  campaign = new ApiRoute<EventDto, CreateEventDto>(this.baseURL, 'campaigns')
+  user = new ApiRoute<UserDto, UserDto>(this.baseURL, 'users')
 }

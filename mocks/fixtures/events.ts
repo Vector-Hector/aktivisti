@@ -19,7 +19,7 @@ export const sampleEvents: Partial<EventDtoFixture>[] = [{
   },
   metrics: [],
   description: 'Haustürwahlkampf in Berlin-Mitte Gruppe 1, Treffpunkt Volksbühne',
-  participantIds: [1],
+  participantIds: [],
   maxParticipants: 10
 }, {
   id: 2,
@@ -34,7 +34,7 @@ export const sampleEvents: Partial<EventDtoFixture>[] = [{
   },
   metrics: [],
   description: 'Haustürwahlkampf in Berlin-Mitte Gruppe 2, Treffpunkt Hackerscher Markt',
-  participantIds: [1],
+  participantIds: [],
   maxParticipants: 10
 }, {
   id: 3,
@@ -49,7 +49,7 @@ export const sampleEvents: Partial<EventDtoFixture>[] = [{
   },
   metrics: [],
   description: 'Haustürwahlkampf in Berlin-Mitte Gruppe 3, Treffpunkt Fernsehturm',
-  participantIds: [1],
+  participantIds: [],
   maxParticipants: 10
 }, {
   id: 4,
@@ -64,7 +64,7 @@ export const sampleEvents: Partial<EventDtoFixture>[] = [{
   },
   metrics: [],
   description: 'Haustürwahlkampf in Schöneiche, Treffpunkt vor dem Rathaus',
-  participantIds: [1],
+  participantIds: [],
   maxParticipants: 10
 }, {
   id: 5,
@@ -79,6 +79,6 @@ export const sampleEvents: Partial<EventDtoFixture>[] = [{
   },
   metrics: [],
   description: 'Haustürwahlkampf in Stuttgart, Treffpunkt U-Charlottenplatz',
-  participantIds: [1],
+  participantIds: [2],
   maxParticipants: 10
 }]

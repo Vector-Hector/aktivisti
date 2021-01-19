@@ -19,24 +19,44 @@
     </div>
     <div class="p-grid">
       <span class="participants p-col">
-        <i class="pi pi-user" /> {{ event.participants }}/{{ event.maxParticipants }}</span>
+        <i class="pi pi-user" /> {{ event.participants.length }}/{{ event.maxParticipants }}</span>
     </div>
     <div class="p-grid">
       <p class="description p-col">
         {{ event.description }}
       </p>
     </div>
-
-    <div class="p-grid p-jc-end">
+    <div class="p-grid  p-jc-end">
+      <Button
+        v-if="currentUserId === null"
+        disabled="disabled"
+      >
+        Anmelden um mitzumachen
+      </Button>
+      <Button
+        v-else-if="isMember"
+        :disabled="joinLoading"
+        class="gray-button"
+        @click="leave"
+      >
+        Doch nicht dabei
+      </Button>
+      <Button
+        v-else-if="!isMember"
+        :disabled="joinLoading"
+        @click="join"
+      >
+        Ich bin dabei
+      </Button>
       <router-link
+        v-if="isMember"
         :to="`/events/${event.id}/live`"
         class="start-event-button"
       >
-        <Button class="gray-button">
+        <Button>
           Starten
         </Button>
       </router-link>
-      <Button>Ich bin dabei</Button>
     </div>
   </div>
 </template>
@@ -44,14 +64,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { EventDto } from '@/api/model/EventDto'
-import { D2DMetricsDto } from '@/api/model/D2DMetricsDto'
 import Button from 'primevue/components/button/Button'
 import { ApiClient } from '@/api'
-
-interface EventDetailData {
-  event: EventDto | null,
-  metrics: D2DMetricsDto[] | null
-}
+import { userStore } from '@/store/UserStore'
 
 const apiClient = new ApiClient()
 
@@ -60,9 +75,10 @@ export default defineComponent({
   components: {
     Button
   },
-  data(): EventDetailData {
+  data() {
     return {
-      event: null,
+      event: null as EventDto | null,
+      joinLoading: false,
       metrics: [
         {name: 'Geklopfte Türen', value: 'Geklopfte Türen'},
         {name: 'Geöffnete Türen', value: 'Geöffnete Türen'},
@@ -72,13 +88,36 @@ export default defineComponent({
       ]
     }
   },
+  computed: {
+    currentUserId(): number | null {
+      return userStore.getState().id
+    },
+    isMember(): boolean {
+      return this.event?.participants.find(({id}) => id === this.currentUserId) !== undefined
+    },
+    id(): number {
+      return parseInt(this.$route.params.id as string)
+    }
+  },
   created() {
     this.getEvent()
   },
   methods: {
     async getEvent() {
-      const id = parseInt(this.$route.params.id as string)
-      this.event = (await apiClient.events.get(id)).data
+
+      this.event = (await apiClient.events.get(this.id)).data
+    },
+
+    async join() {
+      this.joinLoading = true
+      this.event = (await apiClient.events.join(this.id)).data
+      this.joinLoading = false
+    },
+
+    async leave() {
+      this.joinLoading = true
+      this.event = (await apiClient.events.leave(this.id)).data
+      this.joinLoading = false
     }
   }
 })

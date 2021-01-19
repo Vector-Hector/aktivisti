@@ -1,6 +1,7 @@
-import { Location } from '@/api/model/Location'
+import { LocationDto } from '@/api/model/LocationDto'
 import { MetricDto } from '@/api/model/MetricDto'
 import { CampaignDto } from '@/api/model/CampaignDto'
+import { UserDto } from '@/api/model/UserDto'
 
 
 export interface EventDto {
@@ -10,9 +11,9 @@ export interface EventDto {
   campaign: CampaignDto,
   startDate: string,
   endDate: string,
-  location: Location,
+  location: LocationDto,
   description: string,
-  participants: number[],
+  participants: UserDto[],
   maxParticipants: number,
   public: boolean
 }
@@ -25,7 +26,7 @@ export interface CreateEventDto {
   campaign: number,
   startDate: string,
   endDate: string,
-  location: Location,
+  location: LocationDto,
   description: string,
   participants: number[],
   maxParticipants: number,
