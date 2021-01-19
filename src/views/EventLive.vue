@@ -108,7 +108,7 @@
       :value="progress"
       :show-value="false"
     />
- 
+
     <div class="p-grid p-jc-end button-group">
       <router-link
         to="/events"
@@ -118,7 +118,11 @@
           Beenden
         </Button>
       </router-link>
-      <Button>Kontakt registrieren</Button>
+      <router-link
+        :to="{ name: 'create-lead', query: {event: event.id}}"
+      >
+        <Button>Kontakt registrieren</Button>
+      </router-link>
     </div>
   </div>
 </template>
@@ -133,8 +137,8 @@ import { ApiClient } from '@/api'
 import Map from '@/lib/mapbox/Map.vue'
 import Marker from '@/lib/mapbox/Marker.vue'
 
-import InputNumber from "primevue/inputnumber"
-import ProgressBar from "primevue/progressbar"
+import InputNumber from 'primevue/inputnumber'
+import ProgressBar from 'primevue/progressbar'
 import MultiSelect from 'primevue/multiselect'
 
 

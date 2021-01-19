@@ -8,6 +8,7 @@ import EditCampaign from '../views/EditCampaign.vue'
 import EventDetail from '@/views/EventDetail.vue'
 import EventLive from '@/views/EventLive.vue'
 import Locate from '@/views/Locate.vue'
+import CreateLead from '@/views/CreateLead.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -16,6 +17,14 @@ const router = createRouter({
       path: '/',
       component: Locate,
       name: 'splash'
+    },
+    {
+      path: '/create-lead',
+      name: 'create-lead',
+      component: CreateLead,
+      props: (route) => ({
+        eventId: parseInt(route.query.event as string)
+      })
     },
     {
       path: '/map',
@@ -31,6 +40,7 @@ const router = createRouter({
     },
     {
       path: '/events/:id/live',
+      name: 'live-event',
       component: EventLive
     },
     {
@@ -48,7 +58,7 @@ const router = createRouter({
     {
       path: '/campaigns/new',
       component: EditCampaign
-    },
+    }
   ]
 })
 
