@@ -171,7 +171,7 @@ export default defineComponent({
       this.confirmOpen = true
     },
     confirm() {
-      this.$router.go(-1)
+      this.$router.replace({name: 'live-event', params: {id: this.eventId }})
     }
   }
 })

@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, RouteLocationNormalized } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
 import Home from '../views/Home.vue'
 import Events from '../views/Events.vue'
@@ -22,9 +22,9 @@ const router = createRouter({
       path: '/create-lead',
       name: 'create-lead',
       component: CreateLead,
-      props: {
-        eventId: (route: RouteLocationNormalized) => parseInt(route.query.event as string)
-      }
+      props: (route) => ({
+        eventId: parseInt(route.query.event as string)
+      })
     },
     {
       path: '/map',
@@ -40,6 +40,7 @@ const router = createRouter({
     },
     {
       path: '/events/:id/live',
+      name: 'live-event',
       component: EventLive
     },
     {
