@@ -114,10 +114,13 @@
         to="/events"
         class="event-button no-button-decoration"
       >
-        <ion-button>Default</ion-button>
+        <IonButton>Default</IonButton>
         <ion-button color="primary">
           Primary
         </ion-button>
+
+        <ion-button color="secondary">Secondary</ion-button>
+
 
         <Button class="gray-button">
           Beenden
