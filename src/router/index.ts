@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from '@ionic/vue-router'
 
 import Home from '../views/Home.vue'
 import Events from '../views/Events.vue'
@@ -9,6 +9,7 @@ import EventDetail from '@/views/EventDetail.vue'
 import EventLive from '@/views/EventLive.vue'
 import Locate from '@/views/Locate.vue'
 import CreateLead from '@/views/CreateLead.vue'
+
 
 const router = createRouter({
   history: createWebHistory(),

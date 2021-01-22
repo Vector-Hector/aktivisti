@@ -114,6 +114,11 @@
         to="/events"
         class="event-button no-button-decoration"
       >
+        <ion-button>Default</ion-button>
+        <ion-button color="primary">
+          Primary
+        </ion-button>
+
         <Button class="gray-button">
           Beenden
         </Button>
@@ -142,6 +147,8 @@ import InputNumber from 'primevue/inputnumber'
 import ProgressBar from 'primevue/progressbar'
 import MultiSelect from 'primevue/multiselect'
 
+import { IonButton } from '@ionic/vue';
+
 
 interface EventData {
   knockedDoors: number
@@ -168,7 +175,8 @@ export default defineComponent({
     Marker,
     InputNumber,
     ProgressBar,
-    MultiSelect
+    MultiSelect,
+    IonButton
   },
   data(): EventDetailData {
     return {

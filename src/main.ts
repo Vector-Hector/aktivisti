@@ -10,6 +10,8 @@ import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
 
+import { IonicVue } from '@ionic/vue';
+
 import './scss/_globals.scss'
 
 import 'mapbox-gl/dist/mapbox-gl.css'
@@ -20,6 +22,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 createApp(App)
+  .use(IonicVue)
   .use(router)
   .use(PrimeVue)
   .mount('#app')
