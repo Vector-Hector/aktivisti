@@ -13,11 +13,9 @@
           class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
         >Name der Kampagne</label>
         <div class="p-col-12 p-md-9">
-          <InputText
-            id="campaignName"
-            v-model="campaign.title"
-            type="text"
-          />
+          <IonItem>
+            <IonInput v-model="campaign.title" />
+          </IonItem>
         </div>
       </div>
 
@@ -27,9 +25,9 @@
           class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
         >Start</label>
         <div class="p-col-12 p-md-9">
-          <Calendar
+          <IonDatetime
             v-model="campaign.startDate"
-            date-format="dd.mm.yy"
+            display-format="DD.MM.YY"
           />
         </div>
       </div>
@@ -40,9 +38,9 @@
           class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
         >Ende</label>
         <div class="p-col-12 p-md-9">
-          <Calendar
+          <IonDatetime
             v-model="campaign.endDate"
-            date-format="dd.mm.yy"
+            display-format="DD.MM.YY"
           />
         </div>
       </div>
@@ -53,12 +51,18 @@
           class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
         >Typ</label>
         <div class="p-col-12 p-md-9">
-          <Dropdown
+          <IonSelect
             v-model="campaign.type"
-            :options="campaignTypes"
-            option-label="name"
             placeholder="Wähle einen Kampagnen-Typ aus"
-          />
+          >
+            <IonSelectOption
+              v-for="campaignType in campaignTypes"
+              :key="campaignType.id"
+              value="f"
+            >
+              {{ campaignType.name }}
+            </IonSelectOption>
+          </IonSelect>
         </div>
       </div>
 
@@ -68,12 +72,18 @@
           class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
         >Bundes-, landes-, oder kreisweite Kampagne</label>
         <div class="p-col-12 p-md-9">
-          <Dropdown
+          <IonSelect
             v-model="campaign.organization"
-            :options="organizationTypes"
-            option-label="name"
             placeholder="Wähle ein Gebiet aus"
-          />
+          >
+            <IonSelectOption
+              v-for="organizationType in organizationTypes"
+              :key="organizationType.id"
+              value="f"
+            >
+              {{ organizationType.name }}
+            </IonSelectOption>
+          </IonSelect>
         </div>
       </div>
     </div>
@@ -98,21 +108,20 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-import InputText from 'primevue/inputtext'
-import Dropdown from 'primevue/dropdown'
-import Calendar from 'primevue/calendar'
 import { CampaignDto } from '@/model/CampaignDto'
 import { CampaignTypeDto } from '@/api/model/CampaignTypeDto'
 import { CampaignOrganizationDto } from '@/api/model/CampaignOrganizationDto'
-import { IonButton } from '@ionic/vue'
+import { IonButton, IonInput, IonItem, IonDatetime, IonSelect, IonSelectOption } from '@ionic/vue'
 
 export default defineComponent({
   name: 'NewCampaign',
   components: {
-    InputText,
-    Dropdown,
-    Calendar,
-    IonButton
+    IonButton,
+    IonInput,
+    IonItem,
+    IonDatetime,
+    IonSelect,
+    IonSelectOption
   },
   data() {
     return {
