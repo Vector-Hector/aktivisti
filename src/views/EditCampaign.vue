@@ -28,6 +28,7 @@
           <IonDatetime
             v-model="campaign.startDate"
             display-format="DD.MM.YY"
+            placeholder="Wähle ein Startdatum aus"
           />
         </div>
       </div>
@@ -41,6 +42,7 @@
           <IonDatetime
             v-model="campaign.endDate"
             display-format="DD.MM.YY"
+            placeholder="Wähle ein Enddatum aus"
           />
         </div>
       </div>
