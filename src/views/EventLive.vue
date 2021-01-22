@@ -114,23 +114,17 @@
         to="/events"
         class="event-button no-button-decoration"
       >
-        <IonButton>Default</IonButton>
-        <ion-button color="primary">
-          Primary
-        </ion-button>
-
-        <ion-button color="secondary">Secondary</ion-button>
-
-
-        <Button class="gray-button">
+        <IonButton color="medium">
           Beenden
-        </Button>
+        </IonButton>
       </router-link>
       <router-link
         :to="{ name: 'create-lead', query: {event: event.id}}"
         class="no-button-decoration"
       >
-        <Button>Kontakt registrieren</Button>
+        <IonButton color="danger">
+          Kontakt registrieren
+        </IonButton>
       </router-link>
     </div>
   </div>
@@ -140,7 +134,6 @@
 import { defineComponent } from 'vue'
 import { EventDto } from '@/api/model/EventDto'
 import { D2DMetricsDto } from '@/api/model/D2DMetricsDto'
-import Button from 'primevue/components/button/Button'
 import { ApiClient } from '@/api'
 
 import Map from '@/lib/mapbox/Map.vue'
@@ -173,7 +166,6 @@ const apiClient = new ApiClient()
 export default defineComponent({
   name: 'EventLive',
   components: {
-    Button,
     Map,
     Marker,
     InputNumber,
@@ -229,12 +221,6 @@ export default defineComponent({
 
 label {
   text-align: left;
-}
-
-Button {
-  margin: 10px;
-  background: $red;
-  border: 1px solid $red;
 }
 
 .campaign {
