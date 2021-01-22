@@ -56,9 +56,6 @@ export default defineComponent({
 
 a.hamburger {
   color: black;
-}
-
-.hamburger {
   position: absolute;
   padding: 0 16px;
 
