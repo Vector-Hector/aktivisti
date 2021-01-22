@@ -79,15 +79,18 @@
     </div>
 
     <div class="control-buttons">
-      <Button
-        class="p-button-text"
-        label="Abbrechen"
+      <IonButton
+        color="medium"
         @click="$router.push('/campaigns')"
-      />
-      <Button
-        label="Speichern"
+      >
+        Abbrechen
+      </IonButton>
+      <IonButton
+        color="primary"
         @click="saveCampaign"
-      />
+      >
+        Kampagne hinzufügen
+      </IonButton>
     </div>
   </div>
 </template>
@@ -98,10 +101,10 @@ import { defineComponent } from 'vue'
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
 import Calendar from 'primevue/calendar'
-import Button from 'primevue/button'
 import { CampaignDto } from '@/model/CampaignDto'
 import { CampaignTypeDto } from '@/api/model/CampaignTypeDto'
 import { CampaignOrganizationDto } from '@/api/model/CampaignOrganizationDto'
+import { IonButton } from '@ionic/vue'
 
 export default defineComponent({
   name: 'NewCampaign',
@@ -109,7 +112,7 @@ export default defineComponent({
     InputText,
     Dropdown,
     Calendar,
-    Button
+    IonButton
   },
   data() {
     return {
