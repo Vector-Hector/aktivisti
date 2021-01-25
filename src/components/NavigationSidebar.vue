@@ -259,6 +259,9 @@ export default defineComponent({
   }
 }
 
+hr {
+  border-width: thin;
+}
 
 .close-sidebar-button {
   position: absolute;

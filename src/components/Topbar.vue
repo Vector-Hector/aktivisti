@@ -54,7 +54,8 @@ export default defineComponent({
   margin: auto;
 }
 
-.hamburger {
+a.hamburger {
+  color: black;
   position: absolute;
   padding: 0 16px;
 

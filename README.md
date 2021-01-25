@@ -5,7 +5,7 @@ This project is the frontend application for the "Wahlkampf"-App. It's a respons
 
 ## General
 
-This project uses Vue3 with Typescript and VueCLI for bootstrapping, building and serving during development.
+This project uses Vue3 with Typescript and VueCLI for bootstrapping, building and serving during development. As UI component library we started with [PrimeVue](https://www.primefaces.org/primevue/showcase/#/) (⚠️ depracted now), but we are switching successively to [Ionic](https://ionicframework.com/docs/components).
 
 Documentation resources for the used tools:
 
