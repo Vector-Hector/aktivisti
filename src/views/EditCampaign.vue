@@ -101,7 +101,7 @@
         color="primary"
         @click="saveCampaign"
       >
-        Kampagne hinzufügen
+        Speichern
       </IonButton>
     </div>
   </div>
