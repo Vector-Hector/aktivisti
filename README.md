@@ -13,7 +13,7 @@ Documentation resources for the used tools:
 * Vue (3): https://v3.vuejs.org/api/
 * Typescript: https://www.typescriptlang.org/
 
-⚠️ Lots of resources out there still refer to Vue2 while we use Vue3.
+⚠️ Lots of resources out there still refer to Vue2 while we use Vue3
 
 
 ## Development

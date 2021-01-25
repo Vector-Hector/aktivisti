@@ -10,7 +10,6 @@ import EventLive from '@/views/EventLive.vue'
 import Locate from '@/views/Locate.vue'
 import CreateLead from '@/views/CreateLead.vue'
 
-
 const router = createRouter({
   history: createWebHistory(),
   routes: [
