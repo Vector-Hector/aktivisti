@@ -34,7 +34,7 @@
 
       <div class="p-field p-grid">
         <label
-          for="startTime"
+          for="startDate"
           class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
         >Beginn</label>
         <div class="p-col-12 p-md-9">
@@ -48,7 +48,7 @@
 
       <div class="p-field p-grid">
         <label
-          for="startTime"
+          for="endDate"
           class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
         >Ende</label>
         <div class="p-col-12 p-md-9">
