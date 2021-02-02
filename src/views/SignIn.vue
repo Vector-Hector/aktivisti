@@ -12,7 +12,7 @@
       <IonLabel position="floating">
         Passwort
       </IonLabel>
-      <IonInput />
+      <IonInput type="password" />
     </IonItem>
 
     <IonItem lines="none">
@@ -80,7 +80,7 @@ export default defineComponent({
 }
 
 .control-buttons {
-  margin-top: 1.5em;
+  margin-top: 1em;
   flex-direction: column;
   align-items: flex-end;
 }
