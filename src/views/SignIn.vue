@@ -16,11 +16,22 @@
     </IonItem>
 
     <IonItem lines="none">
-      <IonCheckbox class="checkbox-margin-right" />
-      <IonLabel>Angemeldet bleiben</IonLabel>
+      <IonLabel>
+        <router-link
+          class=""
+          href=""
+          :to="`/`"
+        >
+          Passwort vergessen?
+        </router-link>
+      </IonLabel>
     </IonItem>
 
     <div class="control-buttons">
+      <IonItem lines="none">
+        <IonCheckbox class="checkbox-margin-right" />
+        <IonLabel>Angemeldet bleiben</IonLabel>
+      </IonItem>
       <IonButton color="primary">
         Anmelden
       </IonButton>
@@ -28,7 +39,16 @@
 
     <IonItemDivider />
 
-    <div>Noch kein Konto? Hier registrieren</div>
+    <div class="sign-up-link">
+      Noch kein Konto?
+      <router-link
+        class=""
+        href=""
+        :to="`/`"
+      >
+        Hier registrieren
+      </router-link>
+    </div>
   </div>
 </template>
 
@@ -56,10 +76,17 @@ export default defineComponent({
 <style lang="scss" scoped>
 @import "src/scss/_globals.scss";
 .checkbox-margin-right {
-  margin-right: 15px;
+  margin-right: 10px;
 }
 
 .control-buttons {
   margin-top: 1.5em;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.sign-up-link {
+  margin-top: 2em;
+  text-align: center;
 }
 </style>
