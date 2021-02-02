@@ -11,6 +11,7 @@ import Locate from '@/views/Locate.vue'
 import CreateLead from '@/views/CreateLead.vue'
 import SignIn from '@/views/SignIn.vue'
 import SignUp from '@/views/SignUp.vue'
+import Password from '@/views/Password.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -68,6 +69,10 @@ const router = createRouter({
     {
       path: '/register',
       component: SignUp
+    },
+    {
+      path: '/password',
+      component: Password
     }
   ]
 })

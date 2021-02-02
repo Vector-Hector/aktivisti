@@ -18,7 +18,7 @@
     <IonItem lines="none">
       <IonLabel>
         <router-link
-          :to="`/login`"
+          :to="`/password`"
         >
           Passwort vergessen?
         </router-link>

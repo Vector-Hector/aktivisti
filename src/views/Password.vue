@@ -1,6 +1,10 @@
 <template>
   <div class="container">
-    <h2>Anmelden</h2>
+    <h2>Passwort vergessen?</h2>
+    <div>
+      Gib deine E-Mail-Adresse ein und wir senden dir einen Link, um wieder zu deinem Konto zu gelangen.
+    </div>
+
     <IonItem>
       <IonLabel position="floating">
         E-Mail-Adresse
@@ -8,41 +12,22 @@
       <IonInput type="email" />
     </IonItem>
 
-    <IonItem>
-      <IonLabel position="floating">
-        Vorname
-      </IonLabel>
-      <IonInput />
-    </IonItem>
-
-    <IonItem>
-      <IonLabel position="floating">
-        Nachname
-      </IonLabel>
-      <IonInput />
-    </IonItem>
-
-    <IonItem>
-      <IonLabel position="floating">
-        Benutzername
-      </IonLabel>
-      <IonInput />
-    </IonItem>
-
-    <IonItem>
-      <IonLabel position="floating">
-        Passwort
-      </IonLabel>
-      <IonInput type="password" />
-    </IonItem>
-
     <div class="control-buttons">
       <IonButton color="primary">
-        Registrieren
+        Sende Login Link
       </IonButton>
     </div>
 
     <IonItemDivider />
+
+    <div class="sign-up-link">
+      Noch kein Konto?
+      <router-link
+        :to="`/register`"
+      >
+        Hier registrieren
+      </router-link>
+    </div>
 
     <div class="sign-up-link">
       Du bist bereits angemeldet?
@@ -64,7 +49,7 @@ import {
 } from "@ionic/vue";
 
 export default defineComponent({
-  name: "SignUp",
+  name: "Password",
   components: {
     IonInput,
     IonLabel,
