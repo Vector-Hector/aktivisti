@@ -18,9 +18,7 @@
     <IonItem lines="none">
       <IonLabel>
         <router-link
-          class=""
-          href=""
-          :to="`/`"
+          :to="`/login`"
         >
           Passwort vergessen?
         </router-link>
@@ -32,19 +30,20 @@
         <IonCheckbox class="checkbox-margin-right" />
         <IonLabel>Angemeldet bleiben</IonLabel>
       </IonItem>
-      <IonButton color="primary">
+      <IonButton
+        color="primary"
+        @click="login()"
+      >
         Anmelden
       </IonButton>
     </div>
 
     <IonItemDivider />
 
-    <div class="sign-up-link">
+    <div class="sign-in-link">
       Noch kein Konto?
       <router-link
-        class=""
-        href=""
-        :to="`/`"
+        :to="`/register`"
       >
         Hier registrieren
       </router-link>
@@ -55,6 +54,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { IonInput, IonLabel, IonItem, IonButton, IonCheckbox, IonItemDivider } from "@ionic/vue";
+import { userStore } from '@/store/UserStore'
+import { uiStore } from '@/store/UiStore'
 
 export default defineComponent({
   name: "SignIn",
@@ -69,7 +70,12 @@ export default defineComponent({
   data() {
     return {};
   },
-  methods: {},
+  methods: {
+    login() {
+      userStore.mockLogin()
+      uiStore.toggleSidebar(true)
+    }
+  },
 });
 </script>
 
@@ -85,7 +91,7 @@ export default defineComponent({
   align-items: flex-end;
 }
 
-.sign-up-link {
+.sign-in-link {
   margin-top: 2em;
   text-align: center;
 }

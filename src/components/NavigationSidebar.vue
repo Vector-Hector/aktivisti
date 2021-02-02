@@ -191,9 +191,6 @@ export default defineComponent({
     toggleSidebar(expanded: boolean) {
       uiStore.toggleSidebar(expanded)
     },
-    login() {
-      userStore.mockLogin()
-    }
   }
 })
 </script>
