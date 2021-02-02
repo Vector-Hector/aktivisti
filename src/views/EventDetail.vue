@@ -9,12 +9,12 @@
     </div>
     <div class="p-grid">
       <span class="p-col-2">Start:</span><span class="start-date p-col-10">{{
-        new Date(event.startDate).toLocaleString()
+        new Date(event.startDate).toLocaleString([], dateOptions)
       }}</span>
     </div>
     <div class="p-grid">
       <span class="p-col-2">Ende:</span><span class="start-date p-col-10">{{
-        new Date(event.endDate).toLocaleString()
+        new Date(event.endDate).toLocaleString([], dateOptions)
       }}</span>
     </div>
     <div class="p-grid">
@@ -85,7 +85,14 @@ export default defineComponent({
         {name: 'Gute Gespräche', value: 'Gute Gespräche'},
         {name: 'Zustimmung', value: 'Zustimmung'},
         {name: 'Unterschriften', value: 'Unterschriften'}
-      ]
+      ],
+      dateOptions: {
+        year: 'numeric',
+        month: '2-digit',
+        day: 'numeric',
+        hour: '2-digit',
+        minute:'2-digit'
+      }
     }
   },
   computed: {
