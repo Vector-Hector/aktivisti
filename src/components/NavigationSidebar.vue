@@ -41,7 +41,7 @@
         <div class="menu-item">
           <a
             class="menu-item-link"
-            @click="login()"
+            @click="$router.push('/login')"
           >
             <i class="pi pi-sign-in" />
             <span class="menu-item-link-text">Einloggen</span>
