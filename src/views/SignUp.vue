@@ -36,6 +36,15 @@
       <IonInput type="password" />
     </IonItem>
 
+    <div class="privacy-margin">
+      Mit deiner Registrierung nimmst du die
+      <a
+        href="https://www.die-linke.de/seitenfuss/datenschutz/"
+        target="_blank"
+      >Datenschutzbestimmungen</a>
+      zur Kenntnis.
+    </div>
+
     <div class="control-buttons">
       <IonButton color="primary">
         Registrieren
@@ -90,5 +99,9 @@ export default defineComponent({
 .sign-up-link {
   margin-top: 1.5em;
   text-align: center;
+}
+
+.privacy-margin {
+  margin-top: 2em;
 }
 </style>
