@@ -14,7 +14,7 @@
     </div>
     <div class="p-grid">
       <span class="p-col-2">Ende:</span><span class="start-date p-col-10">{{
-        new Date(event.endDate).toLocaleString([], dateOptions)
+        event.endDate ? new Date(event.endDate).toLocaleString([], dateOptions): ''
       }}</span>
     </div>
     <div class="p-grid">
