@@ -33,9 +33,11 @@ import './scss/_globals.scss'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
 import { makeServer } from "../mocks/server"
+
 if (process.env.NODE_ENV === "development") {
   makeServer()
 }
+
 
 createApp(App)
   .use(IonicVue)

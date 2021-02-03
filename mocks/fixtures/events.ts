@@ -1,15 +1,10 @@
 import { EventDto } from '@/api/model/EventDto'
 
 
-interface EventDtoFixture extends EventDto {
-  campaignId: number,
-  participantIds: number[]
-}
-
-export const sampleEvents: Partial<EventDtoFixture>[] = [{
+export const sampleEvents: EventDto[] = [{
   id: 1,
   title: 'Haustürwahlkampf Mitte Gruppe 1',
-  campaignId: 1,
+  campaign: 1,
   startDate: '2021-05-11T12:00',
   endDate: '2021-05-11T13:00',
   public: true,
@@ -19,12 +14,12 @@ export const sampleEvents: Partial<EventDtoFixture>[] = [{
   },
   metrics: [],
   description: 'Haustürwahlkampf in Berlin-Mitte Gruppe 1, Treffpunkt Volksbühne',
-  participantIds: [],
+  participants: [],
   maxParticipants: 10
 }, {
   id: 2,
   title: 'Haustürwahlkampf Mitte Gruppe 2',
-  campaignId: 1,
+  campaign: 1,
   startDate: '2021-05-12T16:00',
   endDate: '2021-05-12T17:00',
   public: true,
@@ -34,12 +29,12 @@ export const sampleEvents: Partial<EventDtoFixture>[] = [{
   },
   metrics: [],
   description: 'Haustürwahlkampf in Berlin-Mitte Gruppe 2, Treffpunkt Hackerscher Markt',
-  participantIds: [],
+  participants: [],
   maxParticipants: 10
 }, {
   id: 3,
   title: 'Haustürwahlkampf Mitte Gruppe 3',
-  campaignId: 1,
+  campaign: 1,
   startDate: '2021-05-12T16:00',
   endDate: '2021-05-12T17:00',
   public: true,
@@ -49,12 +44,12 @@ export const sampleEvents: Partial<EventDtoFixture>[] = [{
   },
   metrics: [],
   description: 'Haustürwahlkampf in Berlin-Mitte Gruppe 3, Treffpunkt Fernsehturm',
-  participantIds: [],
+  participants: [],
   maxParticipants: 10
 }, {
   id: 4,
   title: 'Haustürwahlkampf Schöneiche',
-  campaignId: 1,
+  campaign: 1,
   startDate: '2021-05-12T16:00',
   endDate: '2021-05-12T17:00',
   public: true,
@@ -64,12 +59,12 @@ export const sampleEvents: Partial<EventDtoFixture>[] = [{
   },
   metrics: [],
   description: 'Haustürwahlkampf in Schöneiche, Treffpunkt vor dem Rathaus',
-  participantIds: [],
+  participants: [],
   maxParticipants: 10
 }, {
   id: 5,
   title: 'Haustürwahlkampf Stuttgart',
-  campaignId: 2,
+  campaign: 2,
   startDate: '2021-05-12T16:00',
   endDate: '2021-05-12T17:00',
   public: true,
@@ -79,6 +74,6 @@ export const sampleEvents: Partial<EventDtoFixture>[] = [{
   },
   metrics: [],
   description: 'Haustürwahlkampf in Stuttgart, Treffpunkt U-Charlottenplatz',
-  participantIds: [2],
+  participants: [2],
   maxParticipants: 10
 }]
