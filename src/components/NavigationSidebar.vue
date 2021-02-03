@@ -39,13 +39,13 @@
           @click="toggleSidebar(false)"
         />
         <div class="menu-item">
-          <a
+          <router-link
             class="menu-item-link"
-            @click="$router.push('/login')"
+            to="/login"
           >
             <i class="pi pi-sign-in" />
             <span class="menu-item-link-text">Einloggen</span>
-          </a>
+          </router-link>
         </div>
         <hr class="menu-divider">
         <div class="menu-item">
