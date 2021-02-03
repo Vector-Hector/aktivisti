@@ -9,6 +9,9 @@ import EventDetail from '@/views/EventDetail.vue'
 import EventLive from '@/views/EventLive.vue'
 import Locate from '@/views/Locate.vue'
 import CreateLead from '@/views/CreateLead.vue'
+import Login from '@/views/Login.vue'
+import Register from '@/views/Register.vue'
+import Password from '@/views/Password.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -58,6 +61,18 @@ const router = createRouter({
     {
       path: '/campaigns/new',
       component: EditCampaign
+    },
+    {
+      path: '/login',
+      component: Login
+    },
+    {
+      path: '/register',
+      component: Register
+    },
+    {
+      path: '/password',
+      component: Password
     }
   ]
 })

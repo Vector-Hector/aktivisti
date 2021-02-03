@@ -34,13 +34,28 @@
 
       <div class="p-field p-grid">
         <label
-          for="startTime"
+          for="startDate"
           class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Zeit</label>
+        >Beginn</label>
         <div class="p-col-12 p-md-9">
           <Calendar
             v-model="event.startDate"
             date-format="dd.mm.yy"
+            :show-time="true"
+          />
+        </div>
+      </div>
+
+      <div class="p-field p-grid">
+        <label
+          for="endDate"
+          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+        >Ende</label>
+        <div class="p-col-12 p-md-9">
+          <Calendar
+            v-model="event.endDate"
+            date-format="dd.mm.yy"
+            :show-time="true"
           />
         </div>
       </div>
