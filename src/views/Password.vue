@@ -23,7 +23,7 @@
     <div class="sign-up-link">
       Noch kein Konto?
       <router-link
-        :to="`/register`"
+        to="`/register`"
       >
         Hier registrieren
       </router-link>
@@ -31,7 +31,7 @@
 
     <div class="sign-up-link">
       Du bist bereits angemeldet?
-      <router-link :to="`/login`">
+      <router-link to="`/login`">
         Zum Login
       </router-link>
     </div>

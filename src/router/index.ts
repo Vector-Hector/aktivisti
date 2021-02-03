@@ -9,8 +9,8 @@ import EventDetail from '@/views/EventDetail.vue'
 import EventLive from '@/views/EventLive.vue'
 import Locate from '@/views/Locate.vue'
 import CreateLead from '@/views/CreateLead.vue'
-import SignIn from '@/views/SignIn.vue'
-import SignUp from '@/views/SignUp.vue'
+import Login from '@/views/Login.vue'
+import Register from '@/views/Register.vue'
 import Password from '@/views/Password.vue'
 
 const router = createRouter({
@@ -64,11 +64,11 @@ const router = createRouter({
     },
     {
       path: '/login',
-      component: SignIn
+      component: Login
     },
     {
       path: '/register',
-      component: SignUp
+      component: Register
     },
     {
       path: '/password',
