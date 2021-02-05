@@ -1,11 +1,9 @@
+@import "variables";
 @import "font/roboto";
-@import "color";
 @import "button";
 @import "primevue-overwrite";
 @import "layout";
 @import "ionic";
-
-$font-stack: 'Roboto', Arial, Helvetica, Geneva, sans-serif;
 
 html, body {
   font-family: $font-stack;

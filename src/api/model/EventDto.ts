@@ -1,14 +1,16 @@
-import { LocationDto } from '@/api/model/LocationDto'
+import { EventTypes } from '@/api/model/EventTypes'
+import { MapboxPlaceDto } from '@/api/model/MapboxPlaceDto'
 
 
 export interface EventDto {
   id: number,
+  type: EventTypes
   title: string,
   metrics: number[],
   campaign: number,
   startDate: string,
   endDate: string,
-  location: LocationDto,
+  location: MapboxPlaceDto,
   description: string,
   participants: number[],
   maxParticipants: number,

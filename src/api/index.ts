@@ -1,5 +1,6 @@
 import { EventDto } from '@/api/model/EventDto'
 import { UserDto } from '@/api/model/UserDto'
+import { OSMPlaceDto } from '@/api/model/OSMPlaceDto'
 import { CampaignDto } from '@/api/model/CampaignDto'
 import { APIEnvelope } from '@/api/model/APIEnvelope'
 import { OrganizationTypeDto } from '@/api/model/OrganizationTypeDto'
@@ -94,6 +95,7 @@ export class ApiClient {
   events = new EventRoute(this.baseURL, 'events')
   campaign = new ApiRoute<CampaignDto>(this.baseURL, 'campaigns')
   user = new ApiRoute<UserDto>(this.baseURL, 'users')
+  places = new ApiRoute<OSMPlaceDto>(this.baseURL, 'geocoding/places')
   campaignTypes = new ApiRoute<CampaignTypeDto>(this.baseURL, 'campaign-types')
   organizationTypes = new ApiRoute<OrganizationTypeDto>(this.baseURL, 'organization-types')
 }

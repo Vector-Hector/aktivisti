@@ -1,15 +1,17 @@
 <template>
   <div
     id="map"
+    ref="mapContainer"
     class="map"
   >
     <slot v-if="initialized" />
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, provide, InjectionKey, PropType, ref, Ref, onMounted } from 'vue'
+import { defineComponent, provide, InjectionKey, PropType, ref, Ref, onMounted, nextTick } from 'vue'
 import mapboxgl from 'mapbox-gl'
 import { LocationDto } from '@/api/model/LocationDto'
+
 
 export const MapInject: InjectionKey<Ref<mapboxgl.Map>> = Symbol()
 
@@ -29,6 +31,7 @@ export default defineComponent({
   setup(props, { emit }) {
     mapboxgl.accessToken = process.env.VUE_APP_MAPBOX_TOKEN
     const map = ref<mapboxgl.Map | null>(null)
+    const mapContainer = ref<HTMLElement | null>(null)
     const initialized = ref(false)
     provide(MapInject, map)
     onMounted(() => {
@@ -39,6 +42,7 @@ export default defineComponent({
         zoom: props.zoom
       })
       map.value.on('load', () => {
+        map.value?.resize()
         initialized.value = true
       })
       map.value.on('zoom', () => {
@@ -46,7 +50,8 @@ export default defineComponent({
       })
     })
     return {
-      initialized
+      initialized,
+      mapContainer
     }
   }
 })

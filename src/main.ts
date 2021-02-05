@@ -31,6 +31,7 @@ import '@ionic/vue/css/display.css';
 import './scss/_globals.scss'
 
 import 'mapbox-gl/dist/mapbox-gl.css'
+import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
 
 import { makeServer } from "../mocks/server"
 

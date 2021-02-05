@@ -1,17 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import Home from '../views/Home.vue'
-import Events from '../views/Events.vue'
-import NewEvent from '../views/NewEvent.vue'
-import Campaigns from '../views/Campaigns.vue'
-import EditCampaign from '../views/EditCampaign.vue'
+import Home from '@/views/Home.vue'
+import Events from '@/views/Events.vue'
+import EditEvent from '@/views/EditEvent.vue'
+import Campaigns from '@/views/Campaigns.vue'
+import EditCampaign from '@/views/EditCampaign.vue'
 import EventDetail from '@/views/EventDetail.vue'
 import EventLive from '@/views/EventLive.vue'
 import Locate from '@/views/Locate.vue'
+import RouteEditor from '@/views/RouteEditor.vue'
 import CreateLead from '@/views/CreateLead.vue'
 import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
 import Password from '@/views/Password.vue'
+import EditEventDetails from '@/views/edit-event/EditEventDetails.vue'
+import EditEventSummary from '@/views/edit-event/EditEventSummary.vue'
+import EditEventMapRoutes from '@/views/edit-event/map/EditEventMapRoutes.vue'
+import EditEventMap from '@/views/edit-event/EditEventMap.vue'
+import EditEventMapLocation from '@/views/edit-event/map/EditEventMapLocation.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -49,8 +55,37 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/events/new',
-      component: NewEvent
+      path: '/events/edit',
+      component: EditEvent,
+      redirect: {name: 'edit-event-details'},
+      children: [
+        {
+          path: 'details',
+          component: EditEventDetails,
+          name: 'edit-event-details'
+        },
+        {
+          path: 'map',
+          component: EditEventMap,
+          children: [
+            {
+              path: 'location',
+              component: EditEventMapLocation,
+              name: 'edit-event-location'
+            },
+            {
+              path: 'route-planner',
+              component: EditEventMapRoutes,
+              name: 'edit-event-routes'
+            }
+          ]
+        },
+        {
+          path: 'summary',
+          component: EditEventSummary,
+          name: 'edit-event-summary'
+        }
+      ]
     },
     {
       path: '/campaigns',

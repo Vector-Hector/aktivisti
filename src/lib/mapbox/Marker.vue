@@ -10,7 +10,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, inject, provide, InjectionKey, onMounted, PropType, Ref, ref } from 'vue'
+import { defineComponent, inject, provide, InjectionKey, onMounted, PropType, Ref, ref, watch, onUnmounted } from 'vue'
 import { Marker } from 'mapbox-gl'
 import { LocationDto } from '@/api/model/LocationDto'
 import { MapInject } from './Map.vue'
@@ -36,6 +36,11 @@ export default defineComponent({
     const markerElement = ref<HTMLElement | null>(null)
     const marker = ref<Marker | null>(null)
     provide(MarkerInject, marker)
+
+    watch(() => props.location, (location) => {
+      marker.value?.setLngLat([location.lng, location.lat])
+    })
+
     onMounted(() => {
       marker.value = new Marker({
         element: markerElement.value!,
@@ -51,6 +56,10 @@ export default defineComponent({
       })
     })
 
+    onUnmounted(() => {
+      marker?.value?.remove()
+    })
+
     return {
       marker,
       markerElement,
@@ -61,7 +70,7 @@ export default defineComponent({
 
 </script>
 <style lang="scss" scoped>
-@import "~@/scss/_color.scss";
+@import "~@/scss/_variables.scss";
 
 .marker-icon {
   background-image: url("~@/assets/marker.png");

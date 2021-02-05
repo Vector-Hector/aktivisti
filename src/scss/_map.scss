@@ -1,0 +1,10 @@
+@import "variables";
+
+.map-overlay {
+  position: absolute;
+  background: $white;
+  border-radius: 4px;
+  z-index: 2;
+  margin: 1rem;
+  box-shadow: $map-overlay-shadow;
+}
