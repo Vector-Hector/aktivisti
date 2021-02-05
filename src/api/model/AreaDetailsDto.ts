@@ -1,14 +1,14 @@
-import { GeoJSON } from 'geojson'
+import { Geometry } from 'geojson'
 
 export interface AddressDetails {
   house_number: string
-  geometry: GeoJSON
+  geometry: Geometry
 }
 
 export interface StreetDetails {
   name: string
   addresses: AddressDetails[]
-  geometry: GeoJSON | null
+  geometry: Geometry
 }
 
 export interface AreaDetailsDto {
