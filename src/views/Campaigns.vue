@@ -9,15 +9,10 @@
         class="campaign"
       >
         {{ campaign.title }}
-        <span
-          v-if="campaign?.organization?.name || campaign?.organization"
-          class="tag"
-        >
-          <Tag
-            :value="campaign.organization.name ? campaign.organization.name : campaign.organization"
-            severity="info"
-          />
-        </span>
+        <Tag
+          :value="organizationTypes[campaign.organization - 1]?.name"
+          severity="info"
+        />
 
         <Button
           icon="pi pi-times"
@@ -48,6 +43,7 @@ import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 import { ApiClient } from '@/api'
 import { CampaignDto } from '@/api/model/CampaignDto'
+import { OrganizationTypeDto } from '@/api/model/OrganizationTypeDto'
 
 const apiClient = new ApiClient()
 
@@ -59,11 +55,13 @@ export default defineComponent({
   },
   data() {
     return {
-      campaigns: [] as CampaignDto[]
+      campaigns: [] as CampaignDto[],
+      organizationTypes: [] as OrganizationTypeDto[]
     }
   },
   created() {
     this.getCampaigns()
+    this.getOrganizationTypes()
   },
   methods: {
     deleteCampaign(id: string) {
@@ -72,6 +70,10 @@ export default defineComponent({
           // TODO check again, could be solved differently
           this.getCampaigns()
         })
+    },
+    async getOrganizationTypes() {
+      const response = await apiClient.organizationTypes.list()
+      this.organizationTypes = response.payload.data
     },
     async getCampaigns() {
       const response = await apiClient.campaign.list()
