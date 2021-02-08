@@ -32,7 +32,24 @@ ul {
 }
 
 .p-button.p-button-text {
-  color: white !important;
+  background-color: transparent !important;
+  color: $button-red;
+  border-color: transparent !important;
+}
+
+.p-button.p-button-link:enabled:hover {
+  background: transparent;
+  color: $button-shadow;
+  border-color: transparent;
+}
+
+.p-button.p-button-text:enabled:hover {
+  color: $button-red;
+  border-color: transparent;
+}
+
+.p-button.p-button-link:enabled:focus {
+  box-shadow: 0 0 0 0.2rem $button-shadow !important;
 }
 
 .p-inputtext:enabled:focus,

@@ -52,15 +52,37 @@
           for="campaign"
           class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
         >Typ</label>
-        <div class="p-col-12 p-md-9">
+        <div
+          v-if="campaign.type"
+          class="p-col-12 p-md-9"
+        >
           <IonSelect
-            v-model="campaign.type"
+            v-model="campaign.type.name"
             placeholder="Wähle einen Kampagnen-Typ aus"
+            vg-if="campaign.type"
           >
             <IonSelectOption
               v-for="campaignType in campaignTypes"
               :key="campaignType.id"
-              value="f"
+              :value="campaignType.name"
+            >
+              {{ campaignType.name }}
+            </IonSelectOption>
+          </IonSelect>
+        </div>
+        <div
+          v-else
+          class="p-col-12 p-md-9"
+        >
+          <IonSelect
+            v-model="campaign.type"
+            placeholder="Wähle einen Kampagnen-Typ aus"
+            vg-if="campaign.type"
+          >
+            <IonSelectOption
+              v-for="campaignType in campaignTypes"
+              :key="campaignType.id"
+              :value="{'name': campaignType.name, 'id': campaignType.id}"
             >
               {{ campaignType.name }}
             </IonSelectOption>
@@ -73,15 +95,37 @@
           for="campaign"
           class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
         >Bundes-, landes-, oder kreisweite Kampagne</label>
-        <div class="p-col-12 p-md-9">
+        <div
+          v-if="campaign.organization"
+          class="p-col-12 p-md-9"
+        >
           <IonSelect
-            v-model="campaign.organization"
+            v-model="campaign.organization.name"
+            vg-if="campaign.organization"
             placeholder="Wähle ein Gebiet aus"
           >
             <IonSelectOption
               v-for="organizationType in organizationTypes"
               :key="organizationType.id"
-              value="f"
+              :value="organizationType.name"
+            >
+              {{ organizationType.name }}
+            </IonSelectOption>
+          </IonSelect>
+        </div>
+        <div
+          v-else
+          class="p-col-12 p-md-9"
+        >
+          <IonSelect
+            v-model="campaign.organization"
+            vg-if="campaign.organization"
+            placeholder="Wähle ein Gebiet aus"
+          >
+            <IonSelectOption
+              v-for="organizationType in organizationTypes"
+              :key="organizationType.id"
+              :value="{'name': organizationType.name, 'id': organizationType.id}"
             >
               {{ organizationType.name }}
             </IonSelectOption>

@@ -9,14 +9,24 @@
         class="campaign"
       >
         {{ campaign.title }}
+        <span
+          v-if="campaign?.organization?.name || campaign?.organization"
+          class="tag"
+        >
+          <Tag
+            :value="campaign.organization.name ? campaign.organization.name : campaign.organization"
+            severity="info"
+          />
+        </span>
+
         <Button
           icon="pi pi-times"
-          class="p-button-danger p-button-text p-button-padding-unset"
+          class="p-button-text p-button-link"
           @click="deleteCampaign(campaign.id)"
         />
         <Button
           icon="pi pi-pencil"
-          class="p-button-default p-button-text p-button-padding-unset"
+          class="p-button-text p-button-link"
           @click="editCampaign(campaign.id)"
         />
       </li>
@@ -35,11 +45,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Button from 'primevue/button'
+import Tag from 'primevue/tag'
 
 export default defineComponent({
   name: 'Campaigns',
   components: {
-    Button
+    Button,
+    Tag,
   },
   data() {
     return {
