@@ -34,7 +34,7 @@ export default defineComponent({
     onMounted(() => {
       map.value = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11',
+        style: 'mapbox://styles/ctrlaltcoop/ckk88gdh90jle17nn8y76dp36',
         center: [props.center.lng, props.center.lat],
         zoom: props.zoom
       })

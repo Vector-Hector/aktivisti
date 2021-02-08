@@ -46,6 +46,10 @@
 import { defineComponent } from 'vue'
 import Button from 'primevue/button'
 import Tag from 'primevue/tag'
+import { ApiClient } from '@/api'
+import { CampaignDto } from '@/api/model/CampaignDto'
+
+const apiClient = new ApiClient()
 
 export default defineComponent({
   name: 'Campaigns',
@@ -55,7 +59,7 @@ export default defineComponent({
   },
   data() {
     return {
-      campaigns: []
+      campaigns: [] as CampaignDto[]
     }
   },
   created() {
@@ -63,18 +67,15 @@ export default defineComponent({
   },
   methods: {
     deleteCampaign(id: string) {
-      fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns/${id}`, {
-        method: 'DELETE',
-      })
-        .then(res => res.text())
+      apiClient.campaign.delete(id)
         .then(() => {
           // TODO check again, could be solved differently
           this.getCampaigns()
         })
     },
     async getCampaigns() {
-      const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
-      this.campaigns = await response.json()
+      const response = await apiClient.campaign.list()
+      this.campaigns = response.payload.data
     },
     editCampaign(id: string) {
       this.$router.push(`/campaigns/${id}`)

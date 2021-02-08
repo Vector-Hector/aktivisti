@@ -61,6 +61,9 @@ import { EventDto } from '@/api/model/EventDto'
 import { CampaignDto } from '@/api/model/CampaignDto'
 import Popup from '@/lib/mapbox/Popup.vue'
 import { userStore } from '@/store/UserStore'
+import { ApiClient } from '@/api'
+
+const apiClient = new ApiClient()
 
 export default defineComponent({
   name: 'Home',
@@ -95,12 +98,12 @@ export default defineComponent({
   },
   methods: {
     async getEvents() {
-      const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
-      this.events = await response.json()
+      const response = await apiClient.events.list()
+      this.events = response.payload.data
     },
     async getCampaigns() {
-      const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
-      this.campaigns = await response.json()
+      const response = await apiClient.campaign.list()
+      this.campaigns = response.payload.data
     },
     searchCampaign(event: any) {
       setTimeout(() => {
@@ -114,17 +117,10 @@ export default defineComponent({
       }, 250)
     },
     async filterEvents() {
-      // TODO filter by backend!
-      const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/events`)
-      const events = await response.json()
-      this.events = events
-      if (this.campaign?.id) {
-        this.events = this.events.filter((event) => {
-          if (event.campaign && event.campaign.id) {
-            return event.campaign.id == this.campaign?.id
-          }
-        })
-      }
+      const response = await apiClient.events.list({
+        campaign: this.campaign?.id ?? undefined
+      })
+      this.events = response.payload.data
     }
   }
 })

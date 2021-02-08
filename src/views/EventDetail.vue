@@ -9,12 +9,12 @@
     </div>
     <div class="p-grid">
       <span class="p-col-2">Start:</span><span class="start-date p-col-10">{{
-        new Date(event.startDate).toLocaleString()
+        new Date(event.startDate).toLocaleString([], dateOptions)
       }}</span>
     </div>
     <div class="p-grid">
       <span class="p-col-2">Ende:</span><span class="start-date p-col-10">{{
-        new Date(event.endDate).toLocaleString()
+        event.endDate ? new Date(event.endDate).toLocaleString([], dateOptions): ''
       }}</span>
     </div>
     <div class="p-grid">
@@ -62,7 +62,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { EventDto } from '@/api/model/EventDto'
 import Button from 'primevue/components/button/Button'
 import { ApiClient } from '@/api'
@@ -75,6 +75,12 @@ export default defineComponent({
   components: {
     Button
   },
+  props: {
+    id: {
+      type: String as PropType<string>,
+      required: true
+    }
+  },
   data() {
     return {
       event: null as EventDto | null,
@@ -85,7 +91,14 @@ export default defineComponent({
         {name: 'Gute Gespräche', value: 'Gute Gespräche'},
         {name: 'Zustimmung', value: 'Zustimmung'},
         {name: 'Unterschriften', value: 'Unterschriften'}
-      ]
+      ],
+      dateOptions: {
+        year: 'numeric',
+        month: '2-digit',
+        day: 'numeric',
+        hour: '2-digit',
+        minute:'2-digit'
+      }
     }
   },
   computed: {
@@ -93,10 +106,7 @@ export default defineComponent({
       return userStore.getState().id
     },
     isMember(): boolean {
-      return this.event?.participants.find(({id}) => id === this.currentUserId) !== undefined
-    },
-    id(): number {
-      return parseInt(this.$route.params.id as string)
+      return this.event?.participants.find((id) => id === this.currentUserId) !== undefined
     }
   },
   created() {
@@ -104,19 +114,18 @@ export default defineComponent({
   },
   methods: {
     async getEvent() {
-
-      this.event = (await apiClient.events.get(this.id)).data
+      this.event = (await apiClient.events.get(this.id)).payload.data
     },
 
     async join() {
       this.joinLoading = true
-      this.event = (await apiClient.events.join(this.id)).data
+      this.event = (await apiClient.events.join(this.id)).payload.data
       this.joinLoading = false
     },
 
     async leave() {
       this.joinLoading = true
-      this.event = (await apiClient.events.leave(this.id)).data
+      this.event = (await apiClient.events.leave(this.id)).payload.data
       this.joinLoading = false
     }
   }

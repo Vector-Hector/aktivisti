@@ -82,7 +82,7 @@
             <IonSelectOption
               v-for="campaignType in campaignTypes"
               :key="campaignType.id"
-              :value="{'name': campaignType.name, 'id': campaignType.id}"
+              :value="campaignType.id"
             >
               {{ campaignType.name }}
             </IonSelectOption>
@@ -125,7 +125,7 @@
             <IonSelectOption
               v-for="organizationType in organizationTypes"
               :key="organizationType.id"
-              :value="{'name': organizationType.name, 'id': organizationType.id}"
+              :value="organizationType.id"
             >
               {{ organizationType.name }}
             </IonSelectOption>
@@ -152,15 +152,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 
-import { CampaignDto } from '@/model/CampaignDto'
 import { CampaignTypeDto } from '@/api/model/CampaignTypeDto'
-import { CampaignOrganizationDto } from '@/api/model/CampaignOrganizationDto'
+import { OrganizationTypeDto } from '@/api/model/OrganizationTypeDto'
 import { IonButton, IonInput, IonItem, IonDatetime, IonSelect, IonSelectOption } from '@ionic/vue'
+import { CampaignDto } from '@/api/model/CampaignDto'
+import { ApiClient } from '@/api'
+
+const apiClient = new ApiClient()
 
 export default defineComponent({
-  name: 'NewCampaign',
+  name: 'EditCampaign',
   components: {
     IonButton,
     IonInput,
@@ -169,68 +172,49 @@ export default defineComponent({
     IonSelect,
     IonSelectOption
   },
+  props: {
+    id: {
+      type: String as PropType<string | null>,
+      required: false,
+      default: null
+    }
+  },
   data() {
     return {
       campaign: {} as CampaignDto,
-      campaignTypes: [
-        {name: 'Wahlkampf', id: 1},
-        {name: 'Organizing', id: 2},
-        {name: 'Petition', id: 3},
-        {name: 'Datenerhebung', id: 4}
-      ] as CampaignTypeDto[],
-      organizationTypes: [
-        {name: 'Bund', id: 1},
-        {name: 'Land', id: 2},
-        {name: 'Kreis', id: 3}
-      ] as CampaignOrganizationDto[]
+      campaignTypes: [] as CampaignTypeDto[],
+      organizationTypes: [] as OrganizationTypeDto[]
     }
   },
   created() {
     this.getCampaign()
+    this.getOrganizationTypes()
+    this.getCampaignTypes()
   },
   methods: {
-    getCampaign() {
-      const id = this.$route.params.id
-      fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns/${id}`)
-        .then((res) => res.json())
-        .then((json) => {
-          this.campaign = {...this.campaign, ...json}
-        })
-        .catch(/* handle errors*/)
+    async getOrganizationTypes() {
+      const response = await apiClient.organizationTypes.list()
+      this.organizationTypes = response.payload.data
     },
-    saveCampaign() {
-      const id = this.$route.params.id
-      if (id) {
-        fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns/${id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(this.campaign)
-        })
-          .then((data) => {
-            console.log('Success:', data)
-            this.$router.push('/campaigns')
-          })
-          .catch((error) => {
-            console.error('Error:', error)
-          })
+    async getCampaignTypes() {
+      const response = await apiClient.campaignTypes.list()
+      this.campaignTypes = response.payload.data
+    },
+    async getCampaign() {
+      if (this.id) {
+        const response = await apiClient.campaign.get(this.id)
+        this.campaign = response.payload.data
+      }
+    },
+    async saveCampaign() {
+      if (this.id !== null) {
+        const response = await apiClient.campaign.update(this.id, this.campaign)
+        this.campaign = response.payload.data
+        this.$router.push('/campaigns')
       } else {
-        fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(this.campaign)
-        })
-          .then(response => response.json())
-          .then(data => {
-            console.log('Success:', data)
-            this.$router.push('/campaigns')
-          })
-          .catch((error) => {
-            console.error('Error:', error)
-          })
+        const response = await apiClient.campaign.create(this.campaign)
+        this.campaign = response.payload.data
+        this.$router.push('/campaigns')
       }
     }
   }

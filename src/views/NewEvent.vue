@@ -34,13 +34,28 @@
 
       <div class="p-field p-grid">
         <label
-          for="startTime"
+          for="startDate"
           class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Zeit</label>
+        >Beginn</label>
         <div class="p-col-12 p-md-9">
           <Calendar
             v-model="event.startDate"
             date-format="dd.mm.yy"
+            :show-time="true"
+          />
+        </div>
+      </div>
+
+      <div class="p-field p-grid">
+        <label
+          for="endDate"
+          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+        >Ende</label>
+        <div class="p-col-12 p-md-9">
+          <Calendar
+            v-model="event.endDate"
+            date-format="dd.mm.yy"
+            :show-time="true"
           />
         </div>
       </div>
@@ -250,6 +265,7 @@ import Dialog from 'primevue/dialog'
 import Map from '@/lib/mapbox/Map.vue'
 import Marker from '@/lib/mapbox/Marker.vue'
 import { ApiClient } from '@/api'
+import { CampaignDto } from '@/api/model/CampaignDto'
 
 const apiClient = new ApiClient()
 
@@ -277,7 +293,7 @@ export default defineComponent({
           lng: 13
         }
       },
-      campaigns: [],
+      campaigns: [] as CampaignDto[],
       metrics: [
         {name: 'Geklopfte Türen', value: 'Geklopfte Türen'},
         {name: 'Geöffnete Türen', value: 'Geöffnete Türen'},
@@ -301,8 +317,8 @@ export default defineComponent({
       this.$router.push('/events')
     },
     async getCampaigns() {
-      const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/campaigns`)
-      this.campaigns = await response.json()
+      const response = await apiClient.campaign.list()
+      this.campaigns = response.payload.data
     },
     openModal() {
       this.displayModal = true
