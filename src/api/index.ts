@@ -1,33 +1,40 @@
-import { CreateEventDto, EventDto } from '@/api/model/EventDto'
+import { EventDto } from '@/api/model/EventDto'
 import { UserDto } from '@/api/model/UserDto'
+import { CampaignDto } from '@/api/model/CampaignDto'
+import { APIEnvelope } from '@/api/model/APIEnvelope'
+import { OrganizationTypeDto } from '@/api/model/OrganizationTypeDto'
+import { CampaignTypeDto } from '@/api/model/CampaignTypeDto'
 
 class JSONResponse<T> {
-  constructor(public response: Response, public data: T) {
+  constructor(public response: Response, public payload: T) {
   }
 }
 
 /**
  * Generic CRUD operation definitions for a route
- * First Generic E is the interface as returned by server
- * Second Generic C is the interface for creating or updating entities
+ * @template T Is the entities datatype this route is operating on
+ * @template E Is the response format for a single entity, defaults to an enveloped T
+ * @template L Is the response format for a list of entities, defaults to an enveloped T[]
  */
-class ApiRoute<E, C> {
+class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
   constructor(protected baseUrl: string, protected path: string) {
   }
 
-  async list(): Promise<JSONResponse<E[]>> {
-    const response = await fetch(`${this.baseUrl}/${this.path}`)
+  async list(query: { [key: string]: any } = {}): Promise<JSONResponse<L>> {
+    const url = new URL(`${this.baseUrl}/${this.path}`)
+    Object.keys(query).forEach(key => url.searchParams.append(key, query[key]))
+    const response = await fetch(url.toString())
     const data = await response.json()
-    return new JSONResponse<E[]>(response, data)
+    return new JSONResponse<L>(response, data)
   }
 
-  async get(id: number): Promise<JSONResponse<E>> {
+  async get(id: string): Promise<JSONResponse<E>> {
     const response = await fetch(`${this.baseUrl}/${this.path}/${id}`)
     const data = await response.json()
     return new JSONResponse<E>(response, data)
   }
 
-  async create(body: Partial<C>): Promise<JSONResponse<E>> {
+  async create(body: Partial<T>): Promise<JSONResponse<E>> {
     const response = await fetch(`${this.baseUrl}/${this.path}`, {
       method: 'POST',
       body: JSON.stringify(body),
@@ -39,7 +46,7 @@ class ApiRoute<E, C> {
     return new JSONResponse<E>(response, data)
   }
 
-  async update(id: number, body: C): Promise<JSONResponse<E>> {
+  async update(id: string, body: T): Promise<JSONResponse<E>> {
     const response = await fetch(`${this.baseUrl}/${this.path}/${id}`, {
       method: 'PUT',
       body: JSON.stringify(body),
@@ -51,13 +58,13 @@ class ApiRoute<E, C> {
     return new JSONResponse<E>(response, data)
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     await fetch(`${this.baseUrl}/${this.path}/${id}`, {method: 'DELETE'})
   }
 }
 
-class EventRoute extends ApiRoute<EventDto, CreateEventDto> {
-  async join(id: number) {
+class EventRoute extends ApiRoute<EventDto> {
+  async join(id: string) {
     const response = await fetch(`${this.baseUrl}/${this.path}/${id}/join`, {
       method: 'POST',
       headers: {
@@ -65,10 +72,10 @@ class EventRoute extends ApiRoute<EventDto, CreateEventDto> {
       }
     })
     const data = await response.json()
-    return new JSONResponse<EventDto>(response, data)
+    return new JSONResponse<APIEnvelope<EventDto>>(response, data)
   }
 
-  async leave(id: number) {
+  async leave(id: string) {
     const response = await fetch(`${this.baseUrl}/${this.path}/${id}/leave`, {
       method: 'POST',
       headers: {
@@ -76,14 +83,17 @@ class EventRoute extends ApiRoute<EventDto, CreateEventDto> {
       }
     })
     const data = await response.json()
-    return new JSONResponse<EventDto>(response, data)
+    return new JSONResponse<APIEnvelope<EventDto>>(response, data)
   }
 }
 
 
 export class ApiClient {
-  baseURL = `${process.env.VUE_APP_BASE_URL}/api`
+  baseURL = `${process.env.VUE_APP_BASE_URL}`
+
   events = new EventRoute(this.baseURL, 'events')
-  campaign = new ApiRoute<EventDto, CreateEventDto>(this.baseURL, 'campaigns')
-  user = new ApiRoute<UserDto, UserDto>(this.baseURL, 'users')
+  campaign = new ApiRoute<CampaignDto>(this.baseURL, 'campaigns')
+  user = new ApiRoute<UserDto>(this.baseURL, 'users')
+  campaignTypes = new ApiRoute<CampaignTypeDto>(this.baseURL, 'campaign-types')
+  organizationTypes = new ApiRoute<OrganizationTypeDto>(this.baseURL, 'organization-types')
 }

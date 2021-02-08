@@ -131,7 +131,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { EventDto } from '@/api/model/EventDto'
 import { D2DMetricsDto } from '@/api/model/D2DMetricsDto'
 import { ApiClient } from '@/api'
@@ -173,6 +173,12 @@ export default defineComponent({
     MultiSelect,
     IonButton
   },
+  props: {
+    id: {
+      type: String as PropType<string>,
+      required: true
+    }
+  },
   data(): EventDetailData {
     return {
       event: null,
@@ -204,8 +210,7 @@ export default defineComponent({
   },
   methods: {
     async getEvent() {
-      const id = parseInt(this.$route.params.id as string)
-      this.event = (await apiClient.events.get(id)).data
+      this.event = (await apiClient.events.get(this.id)).payload.data
     },
     handleInput() {
       // TODO get taget data

@@ -62,7 +62,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { EventDto } from '@/api/model/EventDto'
 import Button from 'primevue/components/button/Button'
 import { ApiClient } from '@/api'
@@ -74,6 +74,12 @@ export default defineComponent({
   name: 'EventDetail',
   components: {
     Button
+  },
+  props: {
+    id: {
+      type: String as PropType<string>,
+      required: true
+    }
   },
   data() {
     return {
@@ -100,10 +106,7 @@ export default defineComponent({
       return userStore.getState().id
     },
     isMember(): boolean {
-      return this.event?.participants.find(({id}) => id === this.currentUserId) !== undefined
-    },
-    id(): number {
-      return parseInt(this.$route.params.id as string)
+      return this.event?.participants.find((id) => id === this.currentUserId) !== undefined
     }
   },
   created() {
@@ -111,19 +114,18 @@ export default defineComponent({
   },
   methods: {
     async getEvent() {
-
-      this.event = (await apiClient.events.get(this.id)).data
+      this.event = (await apiClient.events.get(this.id)).payload.data
     },
 
     async join() {
       this.joinLoading = true
-      this.event = (await apiClient.events.join(this.id)).data
+      this.event = (await apiClient.events.join(this.id)).payload.data
       this.joinLoading = false
     },
 
     async leave() {
       this.joinLoading = true
-      this.event = (await apiClient.events.leave(this.id)).data
+      this.event = (await apiClient.events.leave(this.id)).payload.data
       this.joinLoading = false
     }
   }

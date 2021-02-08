@@ -39,12 +39,14 @@ const router = createRouter({
     },
     {
       path: '/events/:id',
-      component: EventDetail
+      component: EventDetail,
+      props: true
     },
     {
       path: '/events/:id/live',
       name: 'live-event',
-      component: EventLive
+      component: EventLive,
+      props: true
     },
     {
       path: '/events/new',
@@ -56,7 +58,8 @@ const router = createRouter({
     },
     {
       path: '/campaigns/:id',
-      component: EditCampaign
+      component: EditCampaign,
+      props: true
     },
     {
       path: '/campaigns/new',
