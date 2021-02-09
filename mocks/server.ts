@@ -100,7 +100,16 @@ export function makeServer({environment = 'development'} = {}) {
 
       this.get('/campaigns/:id', (schema, request) => {
         const idParam = parseInt(request.params.id)
-        return {data: sampleCampaigns.find(({id}) => id === idParam)} || new Response(404)
+        const campaign = sampleCampaigns.find(({id}) => id === idParam)
+        const organization = sampleOrganizationTypes.find(({id}) => id === campaign?.id)
+        return {
+          data: campaign,
+          embedded: {
+            organzation: {
+              ...organization
+            }
+          }
+        } || new Response(404)
       })
 
       this.put('/campaigns/:id', (schema, request) => {
