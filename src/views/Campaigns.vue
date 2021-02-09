@@ -10,7 +10,7 @@
       >
         {{ campaign.title }}
         <Tag
-          :value="organizationTypes[campaign.organization - 1]?.name"
+          :value="campaign.organization"
           severity="info"
         />
 
