@@ -10,7 +10,7 @@
       >
         {{ campaign.title }}
         <Tag
-          :value="campaign.organization"
+          :value="organizationTypes.find(x => x.id === campaign.organization)?.name"
           severity="info"
         />
 

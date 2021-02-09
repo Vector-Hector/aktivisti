@@ -88,7 +88,14 @@ export function makeServer({environment = 'development'} = {}) {
 
       // campaigns
       this.get('/campaigns', () => {
-        return {data: sampleCampaigns}
+        return {
+          data: sampleCampaigns,
+          embedded: {
+            organization: {
+              ...sampleOrganizationTypes
+            }
+          }
+        }
       })
 
       this.get('/campaigns/:id', (schema, request) => {
