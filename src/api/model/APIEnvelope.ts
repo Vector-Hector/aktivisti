@@ -1,4 +1,4 @@
-export interface APIEnvelope<T, E = undefined> {
+export interface APIEnvelope<T, E = any> {
   data: T
   embedded: E
 }

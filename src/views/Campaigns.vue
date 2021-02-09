@@ -61,7 +61,6 @@ export default defineComponent({
   },
   created() {
     this.getCampaigns()
-    this.getOrganizationTypes()
   },
   methods: {
     deleteCampaign(id: string) {
@@ -71,12 +70,9 @@ export default defineComponent({
           this.getCampaigns()
         })
     },
-    async getOrganizationTypes() {
-      const response = await apiClient.organizationTypes.list()
-      this.organizationTypes = response.payload.data
-    },
     async getCampaigns() {
       const response = await apiClient.campaign.list()
+      this.organizationTypes = response.payload.embedded.organization
       this.campaigns = response.payload.data
     },
     editCampaign(id: string) {
@@ -85,7 +81,6 @@ export default defineComponent({
   }
 })
 </script>
-
 
 <style lang="scss" scoped>
     .new-campaign-button {
