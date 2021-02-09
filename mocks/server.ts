@@ -91,9 +91,9 @@ export function makeServer({environment = 'development'} = {}) {
         return {
           data: sampleCampaigns,
           embedded: {
-            organization: {
+            organization: [
               ...sampleOrganizationTypes
-            }
+            ]
           }
         }
       })
