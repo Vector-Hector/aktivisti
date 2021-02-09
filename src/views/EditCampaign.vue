@@ -54,13 +54,13 @@
         >Typ</label>
         <div class="p-col-12 p-md-9">
           <IonSelect
-            v-model="campaignTypes[campaign.type - 1]"
+            v-model="campaign.type"
             placeholder="Wähle einen Kampagnen-Typ aus"
           >
             <IonSelectOption
               v-for="campaignType in campaignTypes"
               :key="campaignType.id"
-              :value="campaignType"
+              :value="campaignType.id"
             >
               {{ campaignType.name }}
             </IonSelectOption>
@@ -75,13 +75,13 @@
         >Bundes-, landes-, oder kreisweite Kampagne</label>
         <div class="p-col-12 p-md-9">
           <IonSelect
-            v-model="organizationTypes[campaign.organization - 1]"
+            v-model="campaign.organization"
             placeholder="Wähle ein Gebiet aus"
           >
             <IonSelectOption
               v-for="organizationType in organizationTypes"
               :key="organizationType.id"
-              :value="organizationType"
+              :value="organizationType.id"
             >
               {{ organizationType.name }}
             </IonSelectOption>
