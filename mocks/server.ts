@@ -129,9 +129,23 @@ export function makeServer({environment = 'development'} = {}) {
         }
       })
 
+      this.get('/campaign-types/:id', (schema, request) => {
+        const idParam = parseInt(request.params.id)
+        return {
+          data: sampleCampaignTypes.find(({id}) => id === idParam)
+        }
+      })
+
       this.get('/organization-types', () => {
         return {
           data: sampleOrganizationTypes
+        }
+      })
+
+      this.get('/organization-types/:id', (schema, request) => {
+        const idParam = parseInt(request.params.id)
+        return {
+          data: sampleOrganizationTypes.find(({id}) => id === idParam)
         }
       })
 
