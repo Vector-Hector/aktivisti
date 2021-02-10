@@ -88,12 +88,32 @@ export function makeServer({environment = 'development'} = {}) {
 
       // campaigns
       this.get('/campaigns', () => {
-        return {data: sampleCampaigns}
+        return {
+          data: sampleCampaigns,
+          embedded: {
+            organization: [
+              ...sampleOrganizationTypes
+            ]
+          }
+        }
       })
 
       this.get('/campaigns/:id', (schema, request) => {
         const idParam = parseInt(request.params.id)
-        return {data: sampleCampaigns.find(({id}) => id === idParam)} || new Response(404)
+        const campaign = sampleCampaigns.find(({id}) => id === idParam)
+        const organization = sampleOrganizationTypes.find(({id}) => id === campaign?.id)
+        if (!campaign) {
+          return new Response(404)
+        } else {
+          return {
+            data: campaign,
+            embedded: {
+              organzation: {
+                ...organization
+              }
+            }
+          }
+        }
       })
 
       this.put('/campaigns/:id', (schema, request) => {
@@ -129,9 +149,23 @@ export function makeServer({environment = 'development'} = {}) {
         }
       })
 
+      this.get('/campaign-types/:id', (schema, request) => {
+        const idParam = parseInt(request.params.id)
+        return {
+          data: sampleCampaignTypes.find(({id}) => id === idParam)
+        }
+      })
+
       this.get('/organization-types', () => {
         return {
           data: sampleOrganizationTypes
+        }
+      })
+
+      this.get('/organization-types/:id', (schema, request) => {
+        const idParam = parseInt(request.params.id)
+        return {
+          data: sampleOrganizationTypes.find(({id}) => id === idParam)
         }
       })
 

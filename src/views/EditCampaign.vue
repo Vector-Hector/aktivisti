@@ -142,10 +142,12 @@ export default defineComponent({
       organizationTypes: [] as OrganizationTypeDto[]
     }
   },
-  created() {
+  async created() {
+    Promise.all([
+      await this.getOrganizationTypes(),
+      await this.getCampaignTypes()
+    ])
     this.getCampaign()
-    this.getOrganizationTypes()
-    this.getCampaignTypes()
   },
   methods: {
     async getOrganizationTypes() {

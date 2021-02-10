@@ -9,14 +9,19 @@
         class="campaign"
       >
         {{ campaign.title }}
+        <Tag
+          :value="organizationTypes.find(x => x.id === campaign.organization)?.name"
+          severity="info"
+        />
+
         <Button
           icon="pi pi-times"
-          class="p-button-danger p-button-text p-button-padding-unset"
+          class="p-button-text p-button-link"
           @click="deleteCampaign(campaign.id)"
         />
         <Button
           icon="pi pi-pencil"
-          class="p-button-default p-button-text p-button-padding-unset"
+          class="p-button-text p-button-link"
           @click="editCampaign(campaign.id)"
         />
       </li>
@@ -35,19 +40,23 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Button from 'primevue/button'
+import Tag from 'primevue/tag'
 import { ApiClient } from '@/api'
 import { CampaignDto } from '@/api/model/CampaignDto'
+import { OrganizationTypeDto } from '@/api/model/OrganizationTypeDto'
 
 const apiClient = new ApiClient()
 
 export default defineComponent({
   name: 'Campaigns',
   components: {
-    Button
+    Button,
+    Tag,
   },
   data() {
     return {
-      campaigns: [] as CampaignDto[]
+      campaigns: [] as CampaignDto[],
+      organizationTypes: [] as OrganizationTypeDto[]
     }
   },
   created() {
@@ -63,6 +72,7 @@ export default defineComponent({
     },
     async getCampaigns() {
       const response = await apiClient.campaign.list()
+      this.organizationTypes = response.payload.embedded.organization
       this.campaigns = response.payload.data
     },
     editCampaign(id: string) {
@@ -71,7 +81,6 @@ export default defineComponent({
   }
 })
 </script>
-
 
 <style lang="scss" scoped>
     .new-campaign-button {
