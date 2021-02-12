@@ -5,7 +5,7 @@
   >
     <h2>{{ event.title }}</h2>
     <div class="p-grid">
-      <span class="campaign p-col">{{ event.campaign.title }}</span>
+      <span class="campaign p-col">{{ event.campaign }}</span>
     </div>
     <div class="p-grid">
       <span class="p-col-2">Start:</span><span class="start-date p-col-10">{{

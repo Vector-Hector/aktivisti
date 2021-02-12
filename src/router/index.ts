@@ -8,7 +8,6 @@ import EditCampaign from '@/views/EditCampaign.vue'
 import EventDetail from '@/views/EventDetail.vue'
 import EventLive from '@/views/EventLive.vue'
 import Locate from '@/views/Locate.vue'
-import RouteEditor from '@/views/RouteEditor.vue'
 import CreateLead from '@/views/CreateLead.vue'
 import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
@@ -55,9 +54,22 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/events/edit',
+      path: '/events/edit/new',
+      component: EditEvent,
+      redirect: {name: 'edit-event-details-new'},
+      children: [
+        {
+          path: 'details',
+          component: EditEventDetails,
+          name: 'edit-event-details-new'
+        }
+      ]
+    },
+    {
+      path: '/events/edit/:id',
       component: EditEvent,
       redirect: {name: 'edit-event-details'},
+      props: true,
       children: [
         {
           path: 'details',

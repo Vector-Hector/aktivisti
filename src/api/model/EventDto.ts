@@ -11,6 +11,7 @@ export interface EventDto {
   startDate: string,
   endDate: string,
   location: MapboxPlaceDto,
+  published: boolean,
   description: string,
   participants: number[],
   maxParticipants: number,

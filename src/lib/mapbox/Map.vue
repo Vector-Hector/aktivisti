@@ -8,7 +8,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, provide, InjectionKey, PropType, ref, Ref, onMounted, nextTick } from 'vue'
+import { defineComponent, provide, InjectionKey, PropType, ref, Ref, onMounted, nextTick, watch } from 'vue'
 import mapboxgl from 'mapbox-gl'
 import { LocationDto } from '@/api/model/LocationDto'
 
@@ -34,6 +34,15 @@ export default defineComponent({
     const mapContainer = ref<HTMLElement | null>(null)
     const initialized = ref(false)
     provide(MapInject, map)
+
+    watch(() => props.center, (newCenter) => {
+      map.value?.setCenter([newCenter.lng, newCenter.lat])
+    })
+
+    watch(() => props.zoom, (newZoom) => {
+      map.value?.setZoom(newZoom)
+    })
+
     onMounted(() => {
       map.value = new mapboxgl.Map({
         container: 'map',

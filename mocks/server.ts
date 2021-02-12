@@ -1,11 +1,16 @@
 import { createServer, Response } from 'miragejs'
 import { sampleCampaigns } from './fixtures/campaigns'
-import { sampleEvents } from './fixtures/events'
+import { sampleCreatedEvent, sampleEvents } from './fixtures/events'
 import { sampleUsers } from './fixtures/user'
-import { samplePlaces } from './fixtures/addresses'
 import { sampleOrganizationTypes } from './fixtures/organizationTypes'
 import { sampleCampaignTypes } from './fixtures/campaignTypes'
+import { sampleEventAreas } from './fixtures/eventAreas'
+import { sampleAreaDetails } from './fixtures/areaDetails'
 
+
+const defaultHeaders = {
+  'Content-Type': 'application/json'
+}
 
 export function makeServer({environment = 'development'} = {}) {
   return createServer({
@@ -27,8 +32,13 @@ export function makeServer({environment = 'development'} = {}) {
 
       this.get('/events/:id', (schema, request) => {
         const idParam = parseInt(request.params.id)
-        return {
-          data: sampleEvents.find(({id}) => id === idParam)
+        const event = sampleEvents.find(({id}) => id === idParam)
+        if (!event) {
+          return new Response(404)
+        } else {
+          return {
+            data: sampleEvents.find(({id}) => id === idParam)
+          }
         }
       })
 
@@ -47,7 +57,10 @@ export function makeServer({environment = 'development'} = {}) {
         const event = JSON.parse(request.requestBody)
 
         return {
-          data: event
+          data: {
+            ...sampleCreatedEvent,
+            ...event
+          }
         }
       })
 
@@ -175,10 +188,44 @@ export function makeServer({environment = 'development'} = {}) {
         return {data: sampleUsers.find(({username}) => username === body.email)} || new Response(400)
       })
 
-      this.get('/geocoding/places', () => {
+      // event areas
+      this.post('/event-areas', (schema, request) => {
+        const body = JSON.parse(request.requestBody)
         return {
-          data: samplePlaces
+          data: {
+            ...body,
+            area_details: sampleAreaDetails,
+            id: 15
+          }
         }
+      })
+
+
+      // event areas
+      this.put('/event-areas/:id', (schema, request) => {
+        const body = JSON.parse(request.requestBody)
+        return {
+          data: {
+            ...body
+          }
+        }
+      })
+
+      this.get('/event-areas', (schema, request) => {
+        const filterEvent = parseInt(request.queryParams.event)
+        if (filterEvent > 0) {
+          return {
+            data: sampleEventAreas.filter(({event}) => event === filterEvent)
+          }
+        } else {
+          return new Response(400, defaultHeaders, {
+            message: 'Listing event areas requires event query parameter'
+          })
+        }
+      })
+
+      this.delete('/event-areas/:id', () => {
+        return new Response(204)
       })
 
       this.passthrough('https://api.mapbox.com/**')

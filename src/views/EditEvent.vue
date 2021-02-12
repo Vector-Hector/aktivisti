@@ -14,23 +14,43 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 
 import { EventTypes } from '@/api/model/EventTypes'
 import { EventDto } from '@/api/model/EventDto'
 import Steps from 'primevue/components/steps/Steps'
+import { RouteParams } from 'vue-router'
+import { ApiClient } from '@/api'
 
+const apiClient = new ApiClient()
 
 export default defineComponent({
   name: 'EditEvent',
   components: {
     Steps
   },
+  beforeRouteEnter: async (to, from, next) => {
+    if (to.params.id) {
+      const response = await apiClient.events.get(to.params.id as string)
+      next((vm: any) => {
+        vm.event = response.payload.data
+      })
+    } else {
+      next()
+    }
+  },
+  props: {
+    id: {
+      type: String as PropType<string | null>,
+      required: false,
+      default: null
+    }
+  },
   data() {
     return {
       event: {
         type: EventTypes.DOOR_TO_DOOR,
-        selectedMetrics: [],
+        metrics: [],
         targets: {}
       } as Partial<EventDto>
     }
@@ -40,31 +60,53 @@ export default defineComponent({
       return [{
         label: 'Allgemein',
         to: this.$router.resolve({
-          name: 'edit-event-details'
+          name: this.id !== null ? 'edit-event-details' : 'edit-event-details-new',
+          params: {
+            id: this.id?.toString() ?? ''
+          }
         }).path
       }, {
         label: 'Ort',
-        to: this.$router.resolve({
+        to: this.resolveIfEventId({
           name: 'edit-event-location'
-        }).path
+        }),
+        disabled: !this.event.id
       }, {
         label: 'Abschnitte',
-        to: this.$router.resolve({
+        to: this.resolveIfEventId({
           name: 'edit-event-routes'
-        }).path,
-        disabled: !this.event.location
+        }),
+        disabled: !this.event.location || !this.event.id
       }, {
         label: 'Zusammenfassung',
-        to: this.$router.resolve({
+        to: this.resolveIfEventId({
           name: 'edit-event-summary'
-        }).path,
-        disabled: !this.event.location
+        }),
+        disabled: !this.event.location || !this.event.id
       }]
     }
   },
-  created() {
-  },
-  methods: {}
+  methods: {
+    async getEvent() {
+      this.event = (await apiClient.events.get(this.id!)).payload.data
+    },
+    setEvent(event: EventDto) {
+      this.event = event
+    },
+    resolveIfEventId(location: { name: string, params?: RouteParams }): string | undefined {
+      if (this.id) {
+        return this.$router.resolve({
+          ...location,
+          params: {
+            ...location.params,
+            id: this.id ?? undefined
+          }
+        })?.path
+      } else {
+        return undefined
+      }
+    }
+  }
 })
 </script>
 

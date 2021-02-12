@@ -7,6 +7,14 @@
     :reverse-geocode="true"
     @result="updateMarker"
   />
+  <MapOverlay
+    position="top-left"
+  >
+    <h1 class="headline">
+      Ort auswählen
+    </h1>
+    <p>Wähle ein Ort über das Suchfeld auf der rechten Seite aus aus</p>
+  </MapOverlay>
   <Marker
     v-if="event.location?.center"
     :draggable="true"
@@ -17,15 +25,33 @@
     class="navigation-overlay"
     position="bottom-right"
   >
-    <Button class="gray-button">
-      Zurück
-    </Button>
-    <router-link :to="{name: 'edit-event-routes'}">
+    <router-link
+      v-slot="{ href, navigate }"
+      custom
+      :to="{name: 'edit-event-details'}"
+    >
+      <Button
+        class="gray-button"
+        @click="navigate"
+      >
+        <a :href="href">
+          Zurück
+        </a>
+      </Button>
+    </router-link>
+    <router-link
+      v-slot="{ href, navigate }"
+      custom
+      :to="{name: 'edit-event-routes'}"
+    >
       <Button
         :disabled="!event.location"
         class="submit-button"
+        @click="navigate"
       >
-        Routen zeichnen
+        <a :href="href">
+          Routen zeichnen
+        </a>
       </Button>
     </router-link>
   </MapOverlay>
@@ -70,15 +96,22 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import "~@/scss/_map.scss";
+@import "~@/scss/_variables.scss";
 
-.navigation-overlay {
-  @extend .map-overlay;
-  margin: 2rem 1.5rem;
-  padding: 1rem;
+
+Button {
+  a {
+    color: $white;
+    text-decoration: none;
+  }
 }
 
 .submit-button {
   margin-left: 1rem;
+}
+
+.headline {
+  margin: 0;
 }
 
 </style>

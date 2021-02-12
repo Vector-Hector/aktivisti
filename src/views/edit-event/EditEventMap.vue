@@ -1,5 +1,8 @@
 <template>
-  <Map :center="{ lng: 53, lat: 11 }">
+  <Map
+    :center="location"
+    :zoom="zoom"
+  >
     <router-view
       v-model:event="localEvent"
     />
@@ -10,6 +13,7 @@
 import { defineComponent } from 'vue'
 import Map from '@/lib/mapbox/Map.vue'
 import EditEventMixin from '@/views/edit-event/EditEventMixin'
+import { LocationDto } from '@/api/model/LocationDto'
 
 
 export default defineComponent({
@@ -17,7 +21,22 @@ export default defineComponent({
   components: {
     Map
   },
-  mixins: [EditEventMixin]
+  mixins: [EditEventMixin],
+  computed: {
+    zoom() {
+      if (this.event.location?.center) {
+        return 14
+      } else {
+        return 11
+      }
+    },
+    location(): LocationDto {
+      return this.event.location?.center ?? {
+        lat: 51.1642292,
+        lng: 10.4541194
+      }
+    }
+  }
 })
 </script>
 

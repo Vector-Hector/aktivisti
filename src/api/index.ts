@@ -5,6 +5,9 @@ import { CampaignDto } from '@/api/model/CampaignDto'
 import { APIEnvelope } from '@/api/model/APIEnvelope'
 import { OrganizationTypeDto } from '@/api/model/OrganizationTypeDto'
 import { CampaignTypeDto } from '@/api/model/CampaignTypeDto'
+import { AreaDetailsDto } from '@/api/model/AreaDetailsDto'
+import { Geometry } from 'geojson'
+import { EventAreaDto } from '@/api/model/EventAreaDto'
 
 class JSONResponse<T> {
   constructor(public response: Response, public payload: T) {
@@ -88,7 +91,6 @@ class EventRoute extends ApiRoute<EventDto> {
   }
 }
 
-
 export class ApiClient {
   baseURL = `${process.env.VUE_APP_BASE_URL}`
 
@@ -96,6 +98,7 @@ export class ApiClient {
   campaign = new ApiRoute<CampaignDto>(this.baseURL, 'campaigns')
   user = new ApiRoute<UserDto>(this.baseURL, 'users')
   places = new ApiRoute<OSMPlaceDto>(this.baseURL, 'geocoding/places')
+  eventAreas = new ApiRoute<EventAreaDto>(this.baseURL, 'event-areas')
   campaignTypes = new ApiRoute<CampaignTypeDto>(this.baseURL, 'campaign-types')
   organizationTypes = new ApiRoute<OrganizationTypeDto>(this.baseURL, 'organization-types')
 }

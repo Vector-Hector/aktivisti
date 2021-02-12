@@ -56,7 +56,7 @@
         >Beginn</label>
         <div class="p-col-12 p-md-9">
           <Calendar
-            v-model="localEvent.startDate"
+            v-model="startDate"
             date-format="dd.mm.yy"
             :show-time="true"
           />
@@ -70,7 +70,7 @@
         >Ende</label>
         <div class="p-col-12 p-md-9">
           <Calendar
-            v-model="localEvent.endDate"
+            v-model="endDate"
             date-format="dd.mm.yy"
             :show-time="true"
           />
@@ -114,7 +114,7 @@
         >Felder (geklopfte Türen etc.) auswählen</label>
         <div class="p-col-12 p-md-9">
           <MultiSelect
-            v-model="localEvent.selectedMetrics"
+            v-model="localEvent.metrics"
             :options="metrics"
             option-label="name"
             placeholder="Metriken auswählen"
@@ -123,9 +123,9 @@
         </div>
       </div>
 
-      <div v-if="localEvent.selectedMetrics.length > 0">
+      <div v-if="localEvent.metrics.length > 0">
         <div
-          v-for="metric in localEvent.selectedMetrics"
+          v-for="metric in localEvent.metrics"
           :key="metric.name"
         >
           <div class="p-field p-grid">
@@ -204,11 +204,10 @@
           label="Abbrechen"
         />
       </router-link>
-      <router-link :to="{name: 'edit-event-location'}">
-        <Button
-          label="Ort auswählen"
-        />
-      </router-link>
+      <Button
+        label="Ort auswählen"
+        @click="saveAndProceed"
+      />
     </div>
   </div>
 </template>
@@ -228,6 +227,7 @@ import { ApiClient } from '@/api'
 import { CampaignDto } from '@/api/model/CampaignDto'
 import { eventTypeOptions } from '@/api/model/EventTypes'
 import EditEventMixin from '@/views/edit-event/EditEventMixin'
+import { EventDto } from '@/api/model/EventDto'
 
 const apiClient = new ApiClient()
 
@@ -262,6 +262,30 @@ export default defineComponent({
   computed: {
     eventTypes() {
       return eventTypeOptions
+    },
+    endDate: {
+      get(): Date | undefined {
+        if (this.localEvent.endDate) {
+          return new Date(this.localEvent.endDate)
+        } else {
+          return undefined
+        }
+      },
+      set(value: Date) {
+        this.localEvent.endDate = value.toISOString()
+      }
+    },
+    startDate: {
+      get(): Date | undefined {
+        if (this.localEvent.startDate) {
+          return new Date(this.localEvent.startDate)
+        } else {
+          return undefined
+        }
+      },
+      set(value: Date) {
+        this.localEvent.startDate = value.toISOString()
+      }
     }
   },
   created() {
@@ -271,6 +295,20 @@ export default defineComponent({
     async getCampaigns() {
       const response = await apiClient.campaign.list()
       this.campaigns = response.payload.data
+    },
+    async saveAndProceed() {
+      let newEvent
+      if (!this.event.id) {
+        newEvent = this.localEvent = (await apiClient.events.create(this.event)).payload.data
+      } else {
+        newEvent = this.localEvent = (await apiClient.events.update(this.event!.id!.toString(), this.event as EventDto)).payload.data
+      }
+      this.$router.push({
+        name: 'edit-event-location',
+        params: {
+          id: newEvent.id.toString()
+        }
+      })
     }
   }
 })

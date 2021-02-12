@@ -19,7 +19,8 @@ export const sampleEvents: EventDto[] = [{
   metrics: [],
   description: 'Haustürwahlkampf in Berlin-Mitte Gruppe 1, Treffpunkt Volksbühne',
   participants: [],
-  maxParticipants: 10
+  maxParticipants: 10,
+  published: true
 }, {
   id: 2,
   type: EventTypes.DOOR_TO_DOOR,
@@ -37,7 +38,8 @@ export const sampleEvents: EventDto[] = [{
   metrics: [],
   description: 'Haustürwahlkampf in Berlin-Mitte Gruppe 2, Treffpunkt Hackerscher Markt',
   participants: [],
-  maxParticipants: 10
+  maxParticipants: 10,
+  published: true
 }, {
   id: 3,
   type: EventTypes.DOOR_TO_DOOR,
@@ -55,7 +57,8 @@ export const sampleEvents: EventDto[] = [{
   metrics: [],
   description: 'Haustürwahlkampf in Berlin-Mitte Gruppe 3, Treffpunkt Fernsehturm',
   participants: [],
-  maxParticipants: 10
+  maxParticipants: 10,
+  published: true
 }, {
   id: 4,
   type: EventTypes.DOOR_TO_DOOR,
@@ -79,7 +82,8 @@ export const sampleEvents: EventDto[] = [{
   metrics: [],
   description: 'Haustürwahlkampf in Schöneiche, Treffpunkt vor dem Rathaus',
   participants: [],
-  maxParticipants: 10
+  maxParticipants: 10,
+  published: true
 }, {
   id: 5,
   type: EventTypes.DOOR_TO_DOOR,
@@ -103,5 +107,22 @@ export const sampleEvents: EventDto[] = [{
   metrics: [],
   description: 'Haustürwahlkampf in Stuttgart, Treffpunkt U-Charlottenplatz',
   participants: [2],
-  maxParticipants: 10
+  maxParticipants: 10,
+  published: true
 }]
+
+export const sampleCreatedEvent = {
+  id: 6,
+  type: EventTypes.DOOR_TO_DOOR,
+  title: 'Neues Event',
+  campaign: 2,
+  startDate: '2021-05-12T16:00',
+  endDate: '2021-05-12T17:00',
+  public: true,
+  location: null,
+  metrics: [],
+  description: '',
+  participants: [],
+  maxParticipants: 0,
+  published: false
+}
