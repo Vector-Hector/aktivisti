@@ -3,9 +3,6 @@ import router from './router'
 
 import App from './App.vue'
 
-import PrimeVue from 'primevue/config'
-
-import 'primevue/resources/themes/saga-blue/theme.css'
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
@@ -28,6 +25,7 @@ import '@ionic/vue/css/text-transformation.css';
 import '@ionic/vue/css/flex-utils.css';
 import '@ionic/vue/css/display.css';
 
+import './scss/theme.scss' // primevue theme
 import './scss/_globals.scss'
 
 import 'mapbox-gl/dist/mapbox-gl.css'
@@ -38,9 +36,7 @@ if (process.env.NODE_ENV === "development") {
   makeServer()
 }
 
-
 createApp(App)
   .use(IonicVue)
   .use(router)
-  .use(PrimeVue)
   .mount('#app')
