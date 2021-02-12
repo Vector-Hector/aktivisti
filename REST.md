@@ -166,7 +166,7 @@ Sometimes you need to request related resources. If they are a lot and especiall
 ```
 
 You should instead add a `embed` query parameter making the related resource available in the `embedded` property of the response.
-The P
+
 ```
 ✅ GET /v1/photos/42?embed=author
 {
