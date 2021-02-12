@@ -34,7 +34,7 @@
       <Column
         header="Name"
         field="name"
-        bodyClass="name-cell"
+        body-class="name-cell"
       >
         <template
           #editor="slotProps"
@@ -49,8 +49,8 @@
       <Column
         field="addressCount"
         header="Adressen"
-        headerClass="address-cell"
-        bodyClass="address-cell"
+        header-class="address-cell"
+        body-class="address-cell"
       >
         <template #body="slotProps">
           <ProgressSpinner
@@ -152,7 +152,6 @@ import ProgressSpinner from 'primevue/components/progressspinner/ProgressSpinner
 import { routePlannerStyles } from '@/views/edit-event/map/route-planner.styles'
 import InputText from 'primevue/components/inputtext/InputText'
 import { EventAreaDto } from '@/api/model/EventAreaDto'
-import { isEqual } from 'lodash-es'
 
 const apiClient = new ApiClient()
 

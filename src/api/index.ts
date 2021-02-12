@@ -5,8 +5,6 @@ import { CampaignDto } from '@/api/model/CampaignDto'
 import { APIEnvelope } from '@/api/model/APIEnvelope'
 import { OrganizationTypeDto } from '@/api/model/OrganizationTypeDto'
 import { CampaignTypeDto } from '@/api/model/CampaignTypeDto'
-import { AreaDetailsDto } from '@/api/model/AreaDetailsDto'
-import { Geometry } from 'geojson'
 import { EventAreaDto } from '@/api/model/EventAreaDto'
 
 class JSONResponse<T> {

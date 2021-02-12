@@ -8,7 +8,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, provide, InjectionKey, PropType, ref, Ref, onMounted, nextTick, watch } from 'vue'
+import { defineComponent, provide, InjectionKey, PropType, ref, Ref, onMounted, watch } from 'vue'
 import mapboxgl from 'mapbox-gl'
 import { LocationDto } from '@/api/model/LocationDto'
 
