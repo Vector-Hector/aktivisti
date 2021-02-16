@@ -1,7 +1,5 @@
 import { CampaignDto } from '@/api/model/CampaignDto.ts'
 
-
-
 export const sampleCampaigns: CampaignDto[] = [{
   id: 1,
   title: 'Bundestagswahl 2021',

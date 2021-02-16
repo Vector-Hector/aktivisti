@@ -46,7 +46,10 @@
     </div>
 
     <div class="control-buttons">
-      <IonButton color="primary">
+      <IonButton
+        color="primary"
+        @click="register()"
+      >
         Registrieren
       </IonButton>
     </div>
@@ -63,7 +66,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent } from "vue"
+import { ApiClient } from '@/api'
+const apiClient = new ApiClient()
+
 import {
   IonInput,
   IonLabel,
@@ -84,7 +90,12 @@ export default defineComponent({
   data() {
     return {};
   },
-  methods: {},
+  methods: {
+    async register() {
+      const response = await apiClient.token.list()
+      localStorage.setItem('token', JSON.stringify(response.payload.data))
+    }
+  }
 });
 </script>
 

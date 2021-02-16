@@ -1,6 +1,5 @@
 import { EventDto } from '@/api/model/EventDto'
 
-
 export const sampleEvents: EventDto[] = [{
   id: 1,
   title: 'Haustürwahlkampf Mitte Gruppe 1',

@@ -4,6 +4,7 @@ import { sampleEvents } from './fixtures/events'
 import { sampleUsers } from './fixtures/user'
 import { sampleOrganizationTypes } from './fixtures/organizationTypes'
 import { sampleCampaignTypes } from './fixtures/campaignTypes'
+import { sampleToken } from './fixtures/token'
 
 
 export function makeServer({environment = 'development'} = {}) {
@@ -172,6 +173,12 @@ export function makeServer({environment = 'development'} = {}) {
       this.post('/login', (schema, request) => {
         const body = JSON.parse(request.requestBody)
         return {data: sampleUsers.find(({username}) => username === body.email)} || new Response(400)
+      })
+
+      this.get('/auth', () => {
+        return {
+          data: sampleToken
+        }
       })
 
       this.passthrough('https://api.mapbox.com/**')
