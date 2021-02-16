@@ -93,7 +93,7 @@ export default defineComponent({
   methods: {
     async register() {
       const response = await apiClient.token.list()
-      localStorage.setItem('token', JSON.stringify(response.payload.data))
+      localStorage.setItem('user', JSON.stringify(response.payload.data))
     }
   }
 });

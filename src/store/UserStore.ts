@@ -16,7 +16,7 @@ class UserStore extends Store<UserState> {
       loggedIn: false,
       id: null,
       username: null,
-      token: null,
+      token: localStorage.getItem('user') ?? null,
       email: null,
       location: null
     }
