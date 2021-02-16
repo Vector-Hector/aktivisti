@@ -1,0 +1,34 @@
+// Theme Specific Variables
+$primaryColor: #DF0303;
+$primaryDarkColor: darken($primaryColor, 5%);
+$primaryDarkerColor: darken($primaryColor, 10%);
+$primaryTextColor: #ffffff;
+$focusOutlineColor: #fdb8b8;
+$borderRadius: 0px;
+$fontFamily:"Roboto","Helvetica Neue",sans-serif;
+
+// Mandatory Designer Variables
+@import './variables/general';
+@import './variables/form';
+@import './variables/button';
+@import './variables/panel';
+@import './variables/_data';
+@import './variables/_overlay';
+@import './variables/_message';
+@import './variables/_menu';
+@import './variables/_media';
+@import './variables/_misc';
+
+:root {
+  --surface-a:#ffffff;
+  --surface-b:#f8f9fa;
+  --surface-c:#e9ecef;
+  --surface-d:#dee2e6;
+  --surface-e:#ffffff;
+  --surface-f:#ffffff;
+  --text-color:#495057;
+  --text-color-secondary:#6c757d;
+  --primary-color:$primaryColor;
+  --primary-color-text:#ffffff;
+  --font-family:$fontFamily;
+}
