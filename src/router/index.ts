@@ -50,7 +50,10 @@ const router = createRouter({
     },
     {
       path: '/events/new',
-      component: NewEvent
+      component: NewEvent,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/campaigns',
@@ -78,6 +81,22 @@ const router = createRouter({
       component: Password
     }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (localStorage.getItem('token') == null) {
+      next({
+        // TODO use /login
+        path: '/register',
+        params: { nextUrl: to.fullPath }
+      })
+    } else {
+      next()
+    } 
+  } else {
+    next()
+  }
 })
 
 export default router
