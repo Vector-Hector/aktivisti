@@ -69,6 +69,8 @@
 import { defineComponent } from "vue"
 import { ApiClient } from '@/api'
 const apiClient = new ApiClient()
+import { userStore } from '@/store/UserStore'
+import { uiStore } from '@/store/UiStore'
 
 import {
   IonInput,
@@ -92,8 +94,28 @@ export default defineComponent({
   },
   methods: {
     async register() {
+      // TODO send user data to the BE and receive token, userId etc.
       const response = await apiClient.token.list()
-      localStorage.setItem('user', JSON.stringify(response.payload.data))
+      
+      // const token = response.payload.data.token
+      // Property 'token' does not exist on type 'TokenDto[]
+      // TODO only store token
+      localStorage.setItem('token', JSON.stringify(response.payload.data))
+      localStorage.setItem('refreshToken', JSON.stringify(response.payload.data))
+      localStorage.setItem('isNew', JSON.stringify(true))
+
+      // TODO use user input and data from BE
+      const userData = {
+        id: "602ce1a5158b7e35c8eb50c0",
+        name: "Test",
+        email: "test@test.de",
+      }
+      localStorage.setItem('user', JSON.stringify(userData))
+      
+      await this.$router.push('/events')
+
+      userStore.mockLogin()
+      uiStore.toggleSidebar(true)
     }
   }
 });
