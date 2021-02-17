@@ -40,13 +40,19 @@ const router = createRouter({
     {
       path: '/events/:id',
       component: EventDetail,
-      props: true
+      props: true,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/events/:id/live',
       name: 'live-event',
       component: EventLive,
-      props: true
+      props: true,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/events/new',
@@ -62,11 +68,17 @@ const router = createRouter({
     {
       path: '/campaigns/:id',
       component: EditCampaign,
-      props: true
+      props: true,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/campaigns/new',
-      component: EditCampaign
+      component: EditCampaign,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/login',
