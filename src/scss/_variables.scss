@@ -3,7 +3,6 @@ $white: #fff;
 $red: #DF0303;
 $blue: #00C3E8;
 
-
 $gray-100: #f8f9fa;
 $gray-200: #e9ecef;
 $gray-300: #dee2e6;
@@ -21,3 +20,39 @@ $primary: $red;
 
 $font-stack: 'Roboto', Arial, Helvetica, Geneva, sans-serif;
 $map-overlay-shadow: 0 0 10px 2px rgba(0,0,0,.1);
+
+
+// Theme Specific Variables
+$primaryColor: $red;
+$primaryDarkColor: darken($primaryColor, 5%);
+$primaryDarkerColor: darken($primaryColor, 10%);
+$primaryTextColor: $white;
+$focusOutlineColor: #fdb8b8;
+$borderRadius: 0px;
+$fontFamily:"Roboto","Helvetica Neue",sans-serif;
+
+// Mandatory Designer Variables
+@import 'primevueVariables/general';
+@import 'primevueVariables/form';
+@import 'primevueVariables/button';
+@import 'primevueVariables/panel';
+@import 'primevueVariables/_data';
+@import 'primevueVariables/_overlay';
+@import 'primevueVariables/_message';
+@import 'primevueVariables/_menu';
+@import 'primevueVariables/_media';
+@import 'primevueVariables/_misc';
+
+:root {
+  --surface-a:#ffffff;
+  --surface-b:#f8f9fa;
+  --surface-c:#e9ecef;
+  --surface-d:#dee2e6;
+  --surface-e:#ffffff;
+  --surface-f:#ffffff;
+  --text-color:#495057;
+  --text-color-secondary:#6c757d;
+  --primary-color:$primaryColor;
+  --primary-color-text:#ffffff;
+  --font-family:$fontFamily;
+}
