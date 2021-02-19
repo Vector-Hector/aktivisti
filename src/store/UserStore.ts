@@ -16,7 +16,7 @@ class UserStore extends Store<UserState> {
       loggedIn: false,
       id: null,
       username: null,
-      token: localStorage.getItem('user') ?? null,
+      token: localStorage.getItem('token') ?? null,
       email: null,
       location: null
     }
@@ -24,6 +24,10 @@ class UserStore extends Store<UserState> {
 
   public locate(location: LocationDto) {
     this.state.location = location
+  }
+
+  public getToken() {
+    return this.state.token
   }
 
   /**
