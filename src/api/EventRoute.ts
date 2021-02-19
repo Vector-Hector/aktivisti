@@ -2,6 +2,7 @@ import { EventDto } from '@/api/model/EventDto'
 import { APIEnvelope } from '@/api/model/APIEnvelope'
 import { ApiRoute } from '@/api/ApiRoute'
 import { JSONResponse } from '@/api/JSONResponse'
+import { userStore } from '@/store/UserStore'
 
 /**
  * A class extending {@link ApiRoute} to implement some extra non-standard operations (join / leave)
@@ -15,7 +16,8 @@ export class EventRoute extends ApiRoute<EventDto> {
     const response = await fetch(`${this.baseUrl}/${this.path}/${id}/join`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Authorization': `Bearer ${userStore.getToken()}`,
+        'Content-Type': 'application/json',
       }
     })
     const data = await response.json()
@@ -30,6 +32,7 @@ export class EventRoute extends ApiRoute<EventDto> {
     const response = await fetch(`${this.baseUrl}/${this.path}/${id}/leave`, {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${userStore.getToken()}`,
         'Content-Type': 'application/json'
       }
     })
