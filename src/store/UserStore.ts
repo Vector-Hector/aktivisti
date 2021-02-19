@@ -1,5 +1,6 @@
 import { Store } from '@/store/Store'
 import { LocationDto } from '@/api/model/LocationDto'
+import { tokenService } from '@/store/TokenService'
 
 interface UserState {
   loggedIn: boolean
@@ -16,7 +17,7 @@ class UserStore extends Store<UserState> {
       loggedIn: false,
       id: null,
       username: null,
-      token: localStorage.getItem('token') ?? null,
+      token: tokenService.getToken('access_token'),
       email: null,
       location: null
     }
@@ -26,9 +27,18 @@ class UserStore extends Store<UserState> {
     this.state.location = location
   }
 
-  public getToken() {
+  public getToken(): string | null {
     return this.state.token
   }
+
+  public setToken(token: string) {
+    this.state.token = token
+  }
+
+  // public setUser(userData: Partial<UserState>) {
+  // TODO check again
+  //   Object.assign(this.state, ...userData)
+  // }
 
   /**
    * TODO: Remove from production codebase

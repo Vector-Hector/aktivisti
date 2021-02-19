@@ -56,6 +56,7 @@ import { defineComponent } from "vue";
 import { IonInput, IonLabel, IonItem, IonButton, IonCheckbox, IonItemDivider } from "@ionic/vue";
 import { userStore } from '@/store/UserStore'
 import { uiStore } from '@/store/UiStore'
+import { tokenService } from '@/store/TokenService'
 
 export default defineComponent({
   name: "Login",
@@ -74,6 +75,30 @@ export default defineComponent({
     login() {
       userStore.mockLogin()
       uiStore.toggleSidebar(true)
+      // TODO adjust
+      // const response = await apiClient.token.list()
+      // const token = response.payload.data.token
+      // Property 'token' does not exist on type 'TokenDto[]
+
+      const auth = {
+        "access_token": "2YotnFZFEjr1zCsicMWpAA",
+        "expires_in": 3600,
+        "refresh_token": "tGzv3JOkF0XG5Qx2TlKWIA",
+      }
+
+      tokenService.setToken('access_token', JSON.stringify(auth.access_token))
+      tokenService.setToken('refresh_token', JSON.stringify(auth.refresh_token))
+      tokenService.setExpiry(new Date().getTime() + auth.expires_in)
+
+      // TODO use user input and data from BE
+      const userData = {
+        id: "602ce1a5158b7e35c8eb50c0",
+        username: "Test",
+        email: "test@test.de",
+      }
+      // userStore.setUser(userData)
+      localStorage.setItem('user', JSON.stringify(userData))
+
     }
   },
 });

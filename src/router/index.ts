@@ -82,7 +82,7 @@ const router = createRouter({
     },
     {
       path: '/login',
-      component: Login
+      component: Login,
     },
     {
       path: '/register',
@@ -97,10 +97,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (localStorage.getItem('token') == null) {
+    if (localStorage.getItem('access_token') === null) {
       next({
-        // TODO use /login
-        path: '/register',
+        path: '/login',
         params: { nextUrl: to.fullPath }
       })
     } else {
@@ -112,4 +111,3 @@ router.beforeEach((to, from, next) => {
 })
 
 export default router
-
