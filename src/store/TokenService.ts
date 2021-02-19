@@ -1,3 +1,4 @@
+import router from '@/router'
 import { userStore } from '@/store/UserStore'
 
 const tokenService = {
@@ -13,6 +14,7 @@ const tokenService = {
   removeToken(tokenType: string) {
     userStore.setToken('')
     localStorage.removeItem(tokenType)
+    router.push('/login')
   },
 
   getExpiry() {
@@ -25,14 +27,13 @@ const tokenService = {
 
   isTokenExpired() {
     const expirationDate = this.getExpiry()
-    if (!expirationDate) return false
+    if (!expirationDate) return true
     return parseInt(expirationDate) < new Date().getTime()
   },
 
   removeExpiry() {
     localStorage.removeItem('expiry')
-  },
-
+  }
 }
 
 export { tokenService }
