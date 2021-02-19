@@ -1,4 +1,3 @@
-import router from '@/router'
 import { userStore } from '@/store/UserStore'
 
 const tokenService = {
@@ -14,7 +13,6 @@ const tokenService = {
   removeToken(tokenType: string) {
     userStore.setToken('')
     localStorage.removeItem(tokenType)
-    router.push('/login')
   },
 
   getExpiry() {
