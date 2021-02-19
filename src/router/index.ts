@@ -12,6 +12,7 @@ import CreateLead from '@/views/CreateLead.vue'
 import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
 import Password from '@/views/Password.vue'
+import { tokenService } from '@/store/TokenService'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -96,8 +97,10 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  const loggedIn = !!tokenService.getToken('access_token')
+
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (localStorage.getItem('access_token') === null) {
+    if (!loggedIn) {
       next({
         path: '/login',
         params: { nextUrl: to.fullPath }
@@ -109,5 +112,6 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+
 
 export default router
