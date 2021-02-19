@@ -33,7 +33,7 @@ export default defineComponent({
 
 </script>
 <style lang="scss" scoped>
-@import "~@/scss/_color.scss";
+@import "~@/scss/_variables.scss";
 
 .popup {
   padding: 6px 3px 0 3px;

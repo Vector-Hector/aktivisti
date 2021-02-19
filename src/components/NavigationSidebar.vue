@@ -131,7 +131,7 @@
         <div class="menu-item">
           <router-link
             class="menu-item-link"
-            to="/events/new"
+            to="/events/edit/new"
           >
             <i class="pi pi-calendar-plus" />
             <span class="menu-item-link-text">Event erstellen</span>

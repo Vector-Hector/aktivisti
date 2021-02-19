@@ -1,8 +1,4 @@
-export interface GeoJSONFeature {
-  id?: string
-  coordinates: number[]
-  type: 'Point' | 'LineString' | 'Polygon'
-}
+import { Geometry } from 'geojson'
 
 export interface GeocodeResultContext {
   id: string
@@ -21,7 +17,7 @@ export interface GeocodeResult {
   boundingBox: number[]
   center: number[]
   context: GeocodeResultContext[]
-  geometry: GeoJSONFeature
+  geometry: Geometry
   language: string
   place_name: string
   place_type: string[]

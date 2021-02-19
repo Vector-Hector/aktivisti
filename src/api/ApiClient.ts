@@ -4,6 +4,7 @@ import { CampaignTypeDto } from '@/api/model/CampaignTypeDto'
 import { OrganizationTypeDto } from '@/api/model/OrganizationTypeDto'
 import { EventRoute } from '@/api/EventRoute'
 import { ApiRoute } from '@/api/ApiRoute'
+import { EventAreaDto } from '@/api/model/EventAreaDto'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -12,6 +13,7 @@ import { ApiRoute } from '@/api/ApiRoute'
 export class ApiClient {
   baseURL = `${process.env.VUE_APP_BASE_URL}`
 
+  eventAreas = new ApiRoute<EventAreaDto>(this.baseURL, 'event-areas')
   events = new EventRoute(this.baseURL, 'events')
   campaign = new ApiRoute<CampaignDto>(this.baseURL, 'campaigns')
   user = new ApiRoute<UserDto>(this.baseURL, 'users')

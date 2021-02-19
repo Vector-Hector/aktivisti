@@ -8,7 +8,7 @@ export interface AddressDetails {
 export interface StreetDetails {
   name: string
   addresses: AddressDetails[]
-  geometry: Geometry
+  geometry: Geometry | null
 }
 
 export interface AreaDetailsDto {
