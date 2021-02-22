@@ -12,23 +12,27 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
   constructor(protected baseUrl: string, protected path: string) {
   }
 
+  // TODO (not sure, why this is throwing an error)
+  // #getHeader(): Headers {
+  getHeader(): Headers {
+    const httpHeaders = {
+      'Authorization': `Bearer ${userStore.getToken()}`,
+      'Content-Type': 'application/json'
+    }
+    return new Headers(httpHeaders)
+  }
+
   async list(query: { [key: string]: any } = {}): Promise<JSONResponse<L>> {
     const url = new URL(`${this.baseUrl}/${this.path}`)
     Object.keys(query).forEach(key => url.searchParams.append(key, query[key]))
-    const response = await fetch(url.toString(), {
-      headers: {
-        'Authorization': `Bearer ${userStore.getToken()}`
-      }
-    })
+    const response = await fetch(url.toString(), { headers: this.getHeader() })
     const data = await response.json()
     return new JSONResponse<L>(response, data)
   }
 
   async get(id: string): Promise<JSONResponse<E>> {
     const response = await fetch(`${this.baseUrl}/${this.path}/${id}`, {
-      headers: {
-        'Authorization': `Bearer ${userStore.getToken()}`
-      }
+      headers: this.getHeader()
     })
     const data = await response.json()
     return new JSONResponse<E>(response, data)
@@ -38,10 +42,7 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
     const response = await fetch(`${this.baseUrl}/${this.path}`, {
       method: 'POST',
       body: JSON.stringify(body),
-      headers: {
-        'Authorization': `Bearer ${userStore.getToken()}`,
-        'Content-Type': 'application/json'
-      }
+      headers: this.getHeader()
     })
     const data = await response.json()
     return new JSONResponse<E>(response, data)
@@ -51,10 +52,7 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
     const response = await fetch(`${this.baseUrl}/${this.path}/${id}`, {
       method: 'PUT',
       body: JSON.stringify(body),
-      headers: {
-        'Authorization': `Bearer ${userStore.getToken()}`,
-        'Content-Type': 'application/json'
-      }
+      headers: this.getHeader()
     })
     const data = await response.json()
     return new JSONResponse<E>(response, data)
@@ -63,9 +61,7 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
   async delete(id: string): Promise<void> {
     await fetch(`${this.baseUrl}/${this.path}/${id}`, {
       method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${userStore.getToken()}`
-      }
+      headers: this.getHeader()
     })
   }
 }
