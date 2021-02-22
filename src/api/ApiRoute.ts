@@ -12,9 +12,7 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
   constructor(protected baseUrl: string, protected path: string) {
   }
 
-  // TODO (not sure, why this is throwing an error)
-  // #getHeader(): Headers {
-  getHeader(): Headers {
+  private getHeader(): Headers {
     const httpHeaders = {
       'Authorization': `Bearer ${userStore.getToken()}`,
       'Content-Type': 'application/json'
