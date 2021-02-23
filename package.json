@@ -10,6 +10,7 @@
   "dependencies": {
     "@ionic/vue": "^5.5.2",
     "@mapbox/mapbox-gl-geocoder": "^4.7.0",
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "mapbox-gl": "^2.0.1",
     "primeflex": "^2.0.0",
