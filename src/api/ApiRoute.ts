@@ -1,7 +1,6 @@
 import { APIEnvelope } from '@/api/model/APIEnvelope'
 import { JSONResponse } from '@/api/JSONResponse'
 import { userStore } from '@/store/UserStore'
-import axios from 'axios'
 
 /**
  * Generic CRUD operation definitions for a route
@@ -10,7 +9,8 @@ import axios from 'axios'
  * @template L Is the response format for a list of entities, defaults to an enveloped T[]
  */
 export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
-  constructor(protected baseUrl: string, protected path: string) {
+  // TODO add type for axiosInstance
+  constructor(protected baseUrl: string, protected path: string, protected axiosInstance) {
   }
 
   private getHeader(): Headers {
@@ -24,13 +24,13 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
   async list(query: { [key: string]: any } = {}): Promise<JSONResponse<L>> {
     const url = new URL(`${this.baseUrl}/${this.path}`)
     Object.keys(query).forEach(key => url.searchParams.append(key, query[key]))
-    const response = await axios(url.toString(), { headers: this.getHeader() })
+    const response = await this.axiosInstance(url.toString(), { headers: this.getHeader() })
     const data = await response.data
     return new JSONResponse<L>(response, data)
   }
 
   async get(id: string): Promise<JSONResponse<E>> {
-    const response = await axios(`${this.baseUrl}/${this.path}/${id}`, {
+    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}/${id}`, {
       headers: this.getHeader()
     })
     const data = await response.data
@@ -38,7 +38,7 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
   }
 
   async create(body: Partial<T>): Promise<JSONResponse<E>> {
-    const response = await axios(`${this.baseUrl}/${this.path}`, {
+    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}`, {
       method: 'POST',
       data: JSON.stringify(body),
       headers: this.getHeader()
@@ -48,7 +48,7 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
   }
 
   async update(id: string, body: T): Promise<JSONResponse<E>> {
-    const response = await axios(`${this.baseUrl}/${this.path}/${id}`, {
+    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}/${id}`, {
       method: 'PUT',
       data: JSON.stringify(body),
       headers: this.getHeader()
@@ -58,7 +58,7 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
   }
 
   async delete(id: string): Promise<void> {
-    await axios(`${this.baseUrl}/${this.path}/${id}`, {
+    await this.axiosInstance(`${this.baseUrl}/${this.path}/${id}`, {
       method: 'DELETE',
       headers: this.getHeader()
     })

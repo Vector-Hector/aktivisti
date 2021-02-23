@@ -33,13 +33,45 @@ import './scss/_globals.scss'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
 import { makeServer } from "../mocks/server"
+import { ApiClient } from './api'
 
 if (process.env.NODE_ENV === "development") {
   makeServer()
 }
 
-createApp(App)
+const app = createApp(App)
   .use(IonicVue)
   .use(router)
   .use(PrimeVue)
-  .mount('#app')
+
+const apiClient = new ApiClient()
+
+app.config.globalProperties.$apiClient = apiClient
+
+apiClient.axiosInstance.interceptors.response.use(
+  response => {
+    if (response.status === 200 || response.status === 201) {
+      console.log('TEST')
+      return Promise.resolve(response)
+    } else {
+      return Promise.reject(response)
+    }
+  },
+  error => {
+    if (error.response.status) {
+      switch (error.response.status) {
+      case 401:
+        break;
+      case 403:
+        router.replace({
+          path: '/login',
+        });
+        break;
+      default:
+        return Promise.reject(error.response)
+      }
+    }
+  }
+)
+
+app.mount('#app')
