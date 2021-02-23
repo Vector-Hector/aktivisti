@@ -1,6 +1,5 @@
 import { APIEnvelope } from '@/api/model/APIEnvelope'
 import { JSONResponse } from '@/api/JSONResponse'
-import { userStore } from '@/store/UserStore'
 
 /**
  * Generic CRUD operation definitions for a route

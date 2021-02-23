@@ -48,12 +48,20 @@ const apiClient = new ApiClient()
 
 app.config.globalProperties.$apiClient = apiClient
 
+apiClient.axiosInstance.interceptors.request.use(config => {
+  // Do something before request is sent
+  return config
+}, function (error) {
+  // Do something with request error
+  return Promise.reject(error)
+})
+
 apiClient.axiosInstance.interceptors.response.use(
   response => {
-    // TODO doesn't get executed
+    // TODO
     console.log('TEST')
     if (response.status === 200 || response.status === 201) {
-      return Promise.resolve(response)
+      return response
     } else {
       return Promise.reject(response)
     }
