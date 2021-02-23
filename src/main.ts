@@ -51,7 +51,6 @@ app.config.globalProperties.$apiClient = apiClient
 apiClient.axiosInstance.interceptors.response.use(
   response => {
     if (response.status === 200 || response.status === 201) {
-      console.log('TEST')
       return Promise.resolve(response)
     } else {
       return Promise.reject(response)
@@ -61,8 +60,6 @@ apiClient.axiosInstance.interceptors.response.use(
     if (error.response.status) {
       switch (error.response.status) {
       case 401:
-        break;
-      case 403:
         router.replace({
           path: '/login',
         });
