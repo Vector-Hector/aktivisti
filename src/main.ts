@@ -50,6 +50,8 @@ app.config.globalProperties.$apiClient = apiClient
 
 apiClient.axiosInstance.interceptors.response.use(
   response => {
+    // TODO doesn't get executed
+    console.log('TEST')
     if (response.status === 200 || response.status === 201) {
       return Promise.resolve(response)
     } else {
@@ -63,7 +65,7 @@ apiClient.axiosInstance.interceptors.response.use(
         router.replace({
           path: '/login',
         });
-        break;
+        break
       default:
         return Promise.reject(error.response)
       }

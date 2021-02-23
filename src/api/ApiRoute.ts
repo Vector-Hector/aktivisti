@@ -10,29 +10,19 @@ import { userStore } from '@/store/UserStore'
  */
 export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
   // TODO add type for axiosInstance
-  constructor(protected baseUrl: string, protected path: string, protected axiosInstance) {
-  }
-
-  private getHeader(): Headers {
-    const httpHeaders = {
-      'Authorization': `Bearer ${userStore.getToken()}`,
-      'Content-Type': 'application/json'
-    }
-    return new Headers(httpHeaders)
+  constructor(protected baseUrl: string, protected path: string, protected axiosInstance: any) {
   }
 
   async list(query: { [key: string]: any } = {}): Promise<JSONResponse<L>> {
     const url = new URL(`${this.baseUrl}/${this.path}`)
     Object.keys(query).forEach(key => url.searchParams.append(key, query[key]))
-    const response = await this.axiosInstance(url.toString(), { headers: this.getHeader() })
+    const response = await this.axiosInstance(url.toString())
     const data = await response.data
     return new JSONResponse<L>(response, data)
   }
 
   async get(id: string): Promise<JSONResponse<E>> {
-    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}/${id}`, {
-      headers: this.getHeader()
-    })
+    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}/${id}`)
     const data = await response.data
     return new JSONResponse<E>(response, data)
   }
@@ -40,8 +30,7 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
   async create(body: Partial<T>): Promise<JSONResponse<E>> {
     const response = await this.axiosInstance(`${this.baseUrl}/${this.path}`, {
       method: 'POST',
-      data: JSON.stringify(body),
-      headers: this.getHeader()
+      data: JSON.stringify(body)
     })
     const data = await response.data
     return new JSONResponse<E>(response, data)
@@ -50,8 +39,7 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
   async update(id: string, body: T): Promise<JSONResponse<E>> {
     const response = await this.axiosInstance(`${this.baseUrl}/${this.path}/${id}`, {
       method: 'PUT',
-      data: JSON.stringify(body),
-      headers: this.getHeader()
+      data: JSON.stringify(body)
     })
     const data = await response.data
     return new JSONResponse<E>(response, data)
@@ -59,8 +47,7 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
 
   async delete(id: string): Promise<void> {
     await this.axiosInstance(`${this.baseUrl}/${this.path}/${id}`, {
-      method: 'DELETE',
-      headers: this.getHeader()
+      method: 'DELETE'
     })
   }
 }

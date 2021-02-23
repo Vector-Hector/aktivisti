@@ -6,6 +6,7 @@ import { TokenDto } from '@/api/model/TokenDto'
 import { EventRoute } from '@/api/EventRoute'
 import { ApiRoute } from '@/api/ApiRoute'
 import axios from 'axios'
+import { userStore } from '@/store/UserStore'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -13,11 +14,12 @@ import axios from 'axios'
  */
 export class ApiClient {
   baseURL = `${process.env.VUE_APP_BASE_URL}`
+
   axiosInstance = axios.create({
     baseURL: this.baseURL,
     headers: {
-      'Accept': 'application/json',
-      'Content- Type': 'application/json'
+      'Authorization': `Bearer ${userStore.getToken()}`,
+      'Content-Type': 'application/json'
     }
   })
 
