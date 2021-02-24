@@ -1,16 +1,18 @@
 import { userStore } from '@/store/UserStore'
 
+type TokenType = 'access_token' | 'refresh_token'
+
 const tokenService = {
-  getToken(tokenType: string) {
+  getToken(tokenType: TokenType) {
     return localStorage.getItem(tokenType)
   },
 
-  setToken(tokenType: string, token: string) {
+  setToken(tokenType: TokenType, token: string) {
     userStore.setToken(token)
     localStorage.setItem(tokenType, token)
   },
 
-  removeToken(tokenType: string) {
+  removeToken(tokenType: TokenType) {
     userStore.setToken('')
     localStorage.removeItem(tokenType)
   },

@@ -36,6 +36,8 @@ import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
 import { makeServer } from "../mocks/server"
 import { ApiClient } from './api'
 
+import { AxiosResponse, AxiosRequestConfig } from 'axios'
+
 if (process.env.NODE_ENV === "development") {
   makeServer()
 }
@@ -45,41 +47,38 @@ const app = createApp(App)
   .use(router)
   .use(PrimeVue)
 
-const apiClient = new ApiClient()
+const apiClient = app.config.globalProperties.$apiClient = new ApiClient().axiosInstance.interceptors
 
-app.config.globalProperties.$apiClient = apiClient
-
-apiClient.axiosInstance.interceptors.request.use(config => {
+apiClient.request.use((config: AxiosRequestConfig) => {
   // Do something before request is sent
   return config
-}, function (error) {
+}, function (error: any) {
   // Do something with request error
   return Promise.reject(error)
 })
 
-apiClient.axiosInstance.interceptors.response.use(
-  response => {
-    // TODO
-    console.log('TEST')
-    if (response.status === 200 || response.status === 201) {
-      return response
-    } else {
-      return Promise.reject(response)
-    }
-  },
-  error => {
-    if (error.response.status) {
-      switch (error.response.status) {
-      case 401:
-        router.replace({
-          path: '/login',
-        });
-        break
-      default:
-        return Promise.reject(error.response)
-      }
+apiClient.response.use((response: AxiosResponse) => {
+  // TODO
+  console.log('TEST')
+  if (response.status === 200 || response.status === 201) {
+    return response
+  } else {
+    return Promise.reject(response)
+  }
+},
+(error: any) => {
+  if (error.response.status) {
+    switch (error.response.status) {
+    case 401:
+      router.replace({
+        path: '/login',
+      });
+      break
+    default:
+      return Promise.reject(error.response)
     }
   }
+}
 )
 
 app.mount('#app')
