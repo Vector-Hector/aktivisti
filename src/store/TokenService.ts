@@ -33,6 +33,10 @@ const tokenService = {
 
   removeExpiry() {
     localStorage.removeItem('expiry')
+  },
+
+  removeAllData() {
+    localStorage.clear()
   }
 }
 

@@ -37,6 +37,7 @@ import { makeServer } from "../mocks/server"
 import { ApiClient } from './api'
 
 import { AxiosResponse, AxiosRequestConfig } from 'axios'
+import { authService } from './api/authService'
 
 if (process.env.NODE_ENV === "development") {
   makeServer()
@@ -70,9 +71,7 @@ apiClient.response.use((response: AxiosResponse) => {
   if (error.response.status) {
     switch (error.response.status) {
     case 401:
-      router.replace({
-        path: '/login',
-      });
+      authService.logout()
       break
     default:
       return Promise.reject(error.response)
