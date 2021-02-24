@@ -57,6 +57,9 @@ import { IonInput, IonLabel, IonItem, IonButton, IonCheckbox, IonItemDivider } f
 import { userStore } from '@/store/UserStore'
 import { uiStore } from '@/store/UiStore'
 import { tokenService } from '@/store/TokenService'
+import { ApiClient } from "@/api";
+
+const apiClient = new ApiClient()
 
 export default defineComponent({
   name: "Login",
@@ -72,20 +75,11 @@ export default defineComponent({
     return {};
   },
   methods: {
-    login() {
+    async login() {
       userStore.mockLogin()
       uiStore.toggleSidebar(true)
-      // TODO adjust
-      // const response = await apiClient.token.list()
-      // const token = response.payload.data.token
-      // Property 'token' does not exist on type 'TokenDto[]
 
-      const auth = {
-        "access_token": "2YotnFZFEjr1zCsicMWpAA",
-        "expires_in": 3600,
-        "refresh_token": "tGzv3JOkF0XG5Qx2TlKWIA",
-      }
-
+      const auth = (await apiClient.token.list()).payload.data[0]
       tokenService.setToken('access_token', JSON.stringify(auth.access_token))
       tokenService.setToken('refresh_token', JSON.stringify(auth.refresh_token))
       tokenService.setExpiry(new Date().getTime() + auth.expires_in)
