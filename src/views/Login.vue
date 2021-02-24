@@ -80,8 +80,8 @@ export default defineComponent({
       uiStore.toggleSidebar(true)
 
       const auth = (await apiClient.token.list()).payload.data[0]
-      tokenService.setToken('access_token', JSON.stringify(auth.access_token))
-      tokenService.setToken('refresh_token', JSON.stringify(auth.refresh_token))
+      tokenService.setToken('access_token', auth.access_token)
+      tokenService.setToken('refresh_token', auth.refresh_token)
       tokenService.setExpiry(new Date().getTime() + auth.expires_in)
 
       // TODO use user input and data from BE
