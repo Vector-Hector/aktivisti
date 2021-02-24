@@ -1,6 +1,6 @@
 import { AreaDetailsDto } from '@/api/model/AreaDetailsDto'
 
-export const samplePlaces: AreaDetailsDto = {
+export const sampleAreaDetails: AreaDetailsDto = {
   streets: [{
     name: 'Hauptstraße',
     addresses: [{

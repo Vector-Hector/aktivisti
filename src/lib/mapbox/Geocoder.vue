@@ -1,15 +1,18 @@
 <template>
   <div
+    v-if="standalone"
     ref="geocodeWrapper"
     class="geocode-wrapper"
   />
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, PropType, ref } from 'vue'
+import { defineComponent, inject, onMounted, onUnmounted, PropType, ref } from 'vue'
 //@ts-ignore
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder'
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css'
 import { GeocodeResult } from '@/types/GeocodeResult'
+import { MapInject } from '@/lib/mapbox/Map.vue'
+import mapboxgl, { MarkerOptions } from 'mapbox-gl'
 
 export default defineComponent({
   name: 'Geocoder',
@@ -21,6 +24,16 @@ export default defineComponent({
     countries: {
       type: Array as PropType<string[]> | null,
       default: null
+    },
+    markerOptions: {
+      type: Object as PropType<MarkerOptions | boolean>,
+      required: false,
+      default: undefined
+    },
+    reverseGeocode: {
+      type: Boolean as PropType<boolean>,
+      required: false,
+      default: false
     }
   },
   emits: {
@@ -28,28 +41,46 @@ export default defineComponent({
       return payload
     }
   },
-  setup(props, { emit }) {
+  setup(props, {emit}) {
+    const map = inject(MapInject)
+    const standalone = ref(true)
+
     const geocodeControl = new MapboxGeocoder({
+      mapboxgl: mapboxgl,
       accessToken: props.accessToken,
-      countries: props.countries.join(',')
+      countries: props.countries?.join(',') ?? undefined,
+      marker: props.markerOptions,
+      reverseGeocode: props.reverseGeocode
     })
     const geocodeWrapper = ref<HTMLElement | null>(null)
-    geocodeControl.on('result', ({ result }: { result: GeocodeResult }) => {
+    geocodeControl.on('result', ({result}: { result: GeocodeResult }) => {
       emit('result', result)
     })
+
     onMounted(() => {
-      geocodeControl.addTo(geocodeWrapper.value)
+      if (map?.value) {
+        map.value.addControl(geocodeControl)
+        standalone.value = false
+      } else {
+        geocodeControl.addTo(geocodeWrapper.value)
+      }
+    })
+
+    onUnmounted(() => {
+      map?.value?.removeControl(geocodeControl)
     })
 
     return {
-      geocodeWrapper
+      geocodeWrapper,
+      standalone,
+      query: (input: string) => geocodeControl.query(input)
     }
   }
 })
 
 </script>
 <style lang="scss" scoped>
-@import "~@/scss/_color.scss";
+@import "~@/scss/_variables.scss";
 
 .popup {
   padding: 6px 3px 0 3px;

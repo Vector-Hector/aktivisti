@@ -1,23 +1,47 @@
+$black: #000;
+$white: #fff;
+$red: #DF0303;
+$blue: #00C3E8;
+
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$gray-800: #343a40;
+$gray-900: #212529;
+
+$text-primary: $black;
+$text-inverted: invert($black);
+$primary: $red;
+
+
+$font-stack: 'Roboto', Arial, Helvetica, Geneva, sans-serif;
+$map-overlay-shadow: 0 0 10px 2px rgba(0,0,0,.1);
+
+
 // Theme Specific Variables
-$primaryColor: #DF0303;
+$primaryColor: $red;
 $primaryDarkColor: darken($primaryColor, 5%);
 $primaryDarkerColor: darken($primaryColor, 10%);
-$primaryTextColor: #ffffff;
+$primaryTextColor: $white;
 $focusOutlineColor: #fdb8b8;
 $borderRadius: 0px;
 $fontFamily:"Roboto","Helvetica Neue",sans-serif;
 
 // Mandatory Designer Variables
-@import './variables/general';
-@import './variables/form';
-@import './variables/button';
-@import './variables/panel';
-@import './variables/_data';
-@import './variables/_overlay';
-@import './variables/_message';
-@import './variables/_menu';
-@import './variables/_media';
-@import './variables/_misc';
+@import 'primevueVariables/general';
+@import 'primevueVariables/form';
+@import 'primevueVariables/button';
+@import 'primevueVariables/panel';
+@import 'primevueVariables/_data';
+@import 'primevueVariables/_overlay';
+@import 'primevueVariables/_message';
+@import 'primevueVariables/_menu';
+@import 'primevueVariables/_media';
+@import 'primevueVariables/_misc';
 
 :root {
   --surface-a:#ffffff;

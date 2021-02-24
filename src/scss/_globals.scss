@@ -1,9 +1,7 @@
-@import "color";
+@import "variables";
 @import "button";
 @import "layout";
 @import "ionic";
-
-$font-stack: 'Roboto', Arial, Helvetica, Geneva, sans-serif;
 
 html, body {
   font-family: $font-stack;
