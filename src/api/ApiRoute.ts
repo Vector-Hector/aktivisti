@@ -1,5 +1,6 @@
 import { APIEnvelope } from '@/api/model/APIEnvelope'
 import { JSONResponse } from '@/api/JSONResponse'
+import { AxiosInstance } from 'axios'
 
 /**
  * Generic CRUD operation definitions for a route
@@ -8,8 +9,7 @@ import { JSONResponse } from '@/api/JSONResponse'
  * @template L Is the response format for a list of entities, defaults to an enveloped T[]
  */
 export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
-  // TODO add type for axiosInstance
-  constructor(protected baseUrl: string, protected path: string, protected axiosInstance: any) {
+  constructor(protected baseUrl: string, protected path: string, protected axiosInstance: AxiosInstance) {
   }
 
   async list(query: { [key: string]: any } = {}): Promise<JSONResponse<L>> {
