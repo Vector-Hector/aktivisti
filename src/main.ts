@@ -48,9 +48,11 @@ const app = createApp(App)
   .use(router)
   .use(PrimeVue)
 
-const apiClient = app.config.globalProperties.$apiClient = new ApiClient().axiosInstance.interceptors
+const apiClient = new ApiClient()
 
-apiClient.request.use((config: AxiosRequestConfig) => {
+app.config.globalProperties.$apiClient  = apiClient
+
+apiClient.axiosInstance.interceptors.request.use((config: AxiosRequestConfig) => {
   // Do something before request is sent
   return config
 }, function (error: any) {
@@ -58,7 +60,7 @@ apiClient.request.use((config: AxiosRequestConfig) => {
   return Promise.reject(error)
 })
 
-apiClient.response.use((response: AxiosResponse) => {
+apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
   // TODO
   console.log('TEST')
   if (response.status === 200 || response.status === 201) {

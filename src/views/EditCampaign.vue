@@ -114,9 +114,6 @@ import { CampaignTypeDto } from '@/api/model/CampaignTypeDto'
 import { OrganizationTypeDto } from '@/api/model/OrganizationTypeDto'
 import { IonButton, IonInput, IonItem, IonDatetime, IonSelect, IonSelectOption } from '@ionic/vue'
 import { CampaignDto } from '@/api/model/CampaignDto'
-import { ApiClient } from '@/api'
-
-const apiClient = new ApiClient()
 
 export default defineComponent({
   name: 'EditCampaign',
@@ -151,26 +148,26 @@ export default defineComponent({
   },
   methods: {
     async getOrganizationTypes() {
-      const response = await apiClient.organizationTypes.list()
+      const response = await this.$apiClient.organizationTypes.list()
       this.organizationTypes = response.payload.data
     },
     async getCampaignTypes() {
-      const response = await apiClient.campaignTypes.list()
+      const response = await this.$apiClient.campaignTypes.list()
       this.campaignTypes = response.payload.data
     },
     async getCampaign() {
       if (this.id) {
-        const response = await apiClient.campaign.get(this.id)
+        const response = await this.$apiClient.campaign.get(this.id)
         this.campaign = response.payload.data
       }
     },
     async saveCampaign() {
       if (this.id !== null) {
-        const response = await apiClient.campaign.update(this.id, this.campaign)
+        const response = await this.$apiClient.campaign.update(this.id, this.campaign)
         this.campaign = response.payload.data
         this.$router.push('/campaigns')
       } else {
-        const response = await apiClient.campaign.create(this.campaign)
+        const response = await this.$apiClient.campaign.create(this.campaign)
         this.campaign = response.payload.data
         this.$router.push('/campaigns')
       }

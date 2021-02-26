@@ -134,7 +134,6 @@
 import { defineComponent, PropType } from 'vue'
 import { EventDto } from '@/api/model/EventDto'
 import { D2DMetricsDto } from '@/api/model/D2DMetricsDto'
-import { ApiClient } from '@/api'
 
 import Map from '@/lib/mapbox/Map.vue'
 import Marker from '@/lib/mapbox/Marker.vue'
@@ -160,8 +159,6 @@ interface EventDetailData {
   visitedAddresses: object[],
   progress: number,
 }
-
-const apiClient = new ApiClient()
 
 export default defineComponent({
   name: 'EventLive',
@@ -210,7 +207,7 @@ export default defineComponent({
   },
   methods: {
     async getEvent() {
-      this.event = (await apiClient.events.get(this.id)).payload.data
+      this.event = (await this.$apiClient.events.get(this.id)).payload.data
     },
     handleInput() {
       // TODO get taget data

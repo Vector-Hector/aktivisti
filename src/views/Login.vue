@@ -57,9 +57,6 @@ import { IonInput, IonLabel, IonItem, IonButton, IonCheckbox, IonItemDivider } f
 import { userStore } from '@/store/UserStore'
 import { uiStore } from '@/store/UiStore'
 import { tokenService } from '@/store/TokenService'
-import { ApiClient } from "@/api";
-
-const apiClient = new ApiClient()
 
 export default defineComponent({
   name: "Login",
@@ -79,7 +76,7 @@ export default defineComponent({
       userStore.mockLogin()
       uiStore.toggleSidebar(true)
 
-      const auth = (await apiClient.token.list()).payload.data[0]
+      const auth = (await this.$apiClient.token.list()).payload.data[0]
       tokenService.setToken('access_token', auth.access_token)
       tokenService.setToken('refresh_token', auth.refresh_token)
       tokenService.setExpiry(new Date().getTime() + auth.expires_in)

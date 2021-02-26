@@ -31,6 +31,7 @@ export default defineComponent({
   },
   beforeRouteEnter: async (to, from, next) => {
     if (to.params.id) {
+      // TODO this.$apiClient doesn't work here
       const response = await apiClient.events.get(to.params.id as string)
       next((vm: any) => {
         vm.event = response.payload.data
@@ -88,7 +89,7 @@ export default defineComponent({
   },
   methods: {
     async getEvent() {
-      this.event = (await apiClient.events.get(this.id!)).payload.data
+      this.event = (await this.$apiClient.events.get(this.id!)).payload.data
     },
     setEvent(event: EventDto) {
       this.event = event

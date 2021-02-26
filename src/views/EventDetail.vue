@@ -65,10 +65,7 @@
 import { defineComponent, PropType } from 'vue'
 import { EventDto } from '@/api/model/EventDto'
 import Button from 'primevue/components/button/Button'
-import { ApiClient } from '@/api'
 import { userStore } from '@/store/UserStore'
-
-const apiClient = new ApiClient()
 
 export default defineComponent({
   name: 'EventDetail',
@@ -114,18 +111,18 @@ export default defineComponent({
   },
   methods: {
     async getEvent() {
-      this.event = (await apiClient.events.get(this.id)).payload.data
+      this.event = (await this.$apiClient.events.get(this.id)).payload.data
     },
 
     async join() {
       this.joinLoading = true
-      this.event = (await apiClient.events.join(this.id)).payload.data
+      this.event = (await this.$apiClient.events.join(this.id)).payload.data
       this.joinLoading = false
     },
 
     async leave() {
       this.joinLoading = true
-      this.event = (await apiClient.events.leave(this.id)).payload.data
+      this.event = (await this.$apiClient.events.leave(this.id)).payload.data
       this.joinLoading = false
     }
   }
