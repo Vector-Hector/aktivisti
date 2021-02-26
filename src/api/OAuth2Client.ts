@@ -4,7 +4,7 @@ import { TokenDto } from './model/TokenDto'
 import qs from 'qs'
 
 interface OAuthTokenRequestParams {
-    grant_type: 'password'
+    // grant_type: 'password'
     username: string
     password: string
     scope?: string
@@ -12,7 +12,7 @@ interface OAuthTokenRequestParams {
 }
 
 export class OAuth2Client {
-  baseURL = process.env.VUE_APP_AUTH_URL
+  baseURL = `${process.env.VUE_APP_BASE_URL}/oauth/token`
 
   axiosInstance = axios.create({
     baseURL: this.baseURL,
@@ -22,7 +22,7 @@ export class OAuth2Client {
   })
 
   async token(params: OAuthTokenRequestParams): Promise<JSONResponse<TokenDto>> {
-    const response = await this.axiosInstance(`${this.baseURL}/token/`, {
+    const response = await this.axiosInstance(`${this.baseURL}`, {
       method: 'POST',
       data: qs.stringify(params)
     })

@@ -34,7 +34,6 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
 
 import { makeServer } from "../mocks/server"
-import { makeAuthServer } from '../mocks/authServer'
 import { ApiClient } from './api'
 
 import { AxiosResponse, AxiosRequestConfig } from 'axios'
@@ -43,7 +42,6 @@ import { OAuth2Client } from './api/OAuth2Client'
 
 if (process.env.NODE_ENV === "development") {
   makeServer()
-  makeAuthServer()
 }
 
 const app = createApp(App)
