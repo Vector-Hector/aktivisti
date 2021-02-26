@@ -143,15 +143,11 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const loggedIn = !!tokenService.getToken('access_token')
 
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!loggedIn) {
-      next({
-        path: '/login',
-        params: { nextUrl: to.fullPath }
-      })
-    } else {
-      next()
-    } 
+  if (!loggedIn && to.matched.some(record => record.meta.requiresAuth)) {
+    next({
+      path: '/login',
+      params: { nextUrl: to.fullPath }
+    })
   } else {
     next()
   }
