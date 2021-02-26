@@ -16,13 +16,13 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
     const url = new URL(`${this.baseUrl}/${this.path}`)
     Object.keys(query).forEach(key => url.searchParams.append(key, query[key]))
     const response = await this.axiosInstance(url.toString())
-    const data = await response.data
+    const data = response.data
     return new JSONResponse<L>(response, data)
   }
 
   async get(id: string): Promise<JSONResponse<E>> {
     const response = await this.axiosInstance(`${this.baseUrl}/${this.path}/${id}`)
-    const data = await response.data
+    const data = response.data
     return new JSONResponse<E>(response, data)
   }
 
@@ -31,7 +31,7 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
       method: 'POST',
       data: JSON.stringify(body)
     })
-    const data = await response.data
+    const data = response.data
     return new JSONResponse<E>(response, data)
   }
 
@@ -40,7 +40,7 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
       method: 'PUT',
       data: JSON.stringify(body)
     })
-    const data = await response.data
+    const data = response.data
     return new JSONResponse<E>(response, data)
   }
 
