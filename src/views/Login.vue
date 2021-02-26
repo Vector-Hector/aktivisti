@@ -78,7 +78,7 @@ export default defineComponent({
 
       // TODO
       const userParams = {
-        // grand_type: 'password',
+        grant_type: 'password',
         username: 'test',
         password: 'test',
         client_id: 'test'
