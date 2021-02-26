@@ -9,4 +9,3 @@ export const sampleUsers: Partial<UserDto>[] = [{
   username: 'rosaluxemburg',
   email: 'r.luxemburg@die-linke.de'
 }]
-
