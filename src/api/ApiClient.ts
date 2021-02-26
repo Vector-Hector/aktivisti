@@ -2,7 +2,6 @@ import { CampaignDto } from '@/api/model/CampaignDto'
 import { UserDto } from '@/api/model/UserDto'
 import { CampaignTypeDto } from '@/api/model/CampaignTypeDto'
 import { OrganizationTypeDto } from '@/api/model/OrganizationTypeDto'
-import { TokenDto } from '@/api/model/TokenDto'
 import { EventRoute } from '@/api/EventRoute'
 import { ApiRoute } from '@/api/ApiRoute'
 import axios from 'axios'
@@ -30,7 +29,4 @@ export class ApiClient {
   user = new ApiRoute<UserDto>(this.baseURL, 'users', this.axiosInstance)
   campaignTypes = new ApiRoute<CampaignTypeDto>(this.baseURL, 'campaign-types', this.axiosInstance)
   organizationTypes = new ApiRoute<OrganizationTypeDto>(this.baseURL, 'organization-types', this.axiosInstance)
-
-  token = new ApiRoute<TokenDto>(this.baseURL, 'auth', this.axiosInstance)
-
 }

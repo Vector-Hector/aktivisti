@@ -61,8 +61,6 @@ apiClient.axiosInstance.interceptors.request.use((config: AxiosRequestConfig) =>
 })
 
 apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
-  // TODO
-  console.log('TEST')
   if (response.status === 200 || response.status === 201) {
     return response
   } else {
@@ -79,7 +77,6 @@ apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
       return Promise.reject(error.response)
     }
   }
-}
-)
+})
 
 app.mount('#app')
