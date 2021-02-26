@@ -76,7 +76,16 @@ export default defineComponent({
       userStore.mockLogin()
       uiStore.toggleSidebar(true)
 
-      const auth = (await this.$apiClient.token.list()).payload.data[0]
+      // TODO
+      const userParams = {
+        // grand_type: 'password',
+        username: 'test',
+        password: 'test',
+        client_id: 'test'
+      }
+
+      const auth = (await this.$oauth2Client.token(userParams)).response.data[0]
+
       tokenService.setToken('access_token', auth.access_token)
       tokenService.setToken('refresh_token', auth.refresh_token)
       tokenService.setExpiry(new Date().getTime() + auth.expires_in)

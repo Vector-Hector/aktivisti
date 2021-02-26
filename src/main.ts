@@ -34,13 +34,16 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
 
 import { makeServer } from "../mocks/server"
+import { makeAuthServer } from '../mocks/authServer'
 import { ApiClient } from './api'
 
 import { AxiosResponse, AxiosRequestConfig } from 'axios'
 import { authService } from './api/authService'
+import { OAuth2Client } from './api/OAuth2Client'
 
 if (process.env.NODE_ENV === "development") {
   makeServer()
+  makeAuthServer()
 }
 
 const app = createApp(App)
@@ -49,8 +52,10 @@ const app = createApp(App)
   .use(PrimeVue)
 
 const apiClient = new ApiClient()
+const oauth2Client = new OAuth2Client()
 
 app.config.globalProperties.$apiClient  = apiClient
+app.config.globalProperties.$oauth2Client  = oauth2Client
 
 apiClient.axiosInstance.interceptors.request.use((config: AxiosRequestConfig) => {
   // Do something before request is sent
@@ -78,5 +83,31 @@ apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
     }
   }
 })
+
+oauth2Client.axiosInstance.interceptors.request.use((config: AxiosRequestConfig) => {
+  // Do something before request is sent
+  return config
+}, function (error: any) {
+  // Do something with request error
+  return Promise.reject(error)
+})
+
+oauth2Client.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
+  if (response.status === 200 || response.status === 201) {
+    return response
+  } else {
+    return Promise.reject(response)
+  }
+},
+(error: any) => {
+  if (error.response.status) {
+    switch (error.response.status) {
+    case 401:
+      authService.logout()
+      break
+    default:
+      return Promise.reject(error.response)
+    }
+  }})
 
 app.mount('#app')

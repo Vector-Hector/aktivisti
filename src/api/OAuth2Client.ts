@@ -4,7 +4,7 @@ import { TokenDto } from './model/TokenDto'
 import qs from 'qs'
 
 interface OAuthTokenRequestParams {
-    grant_type: 'password'
+    // grant_type: 'password'
     username: string
     password: string
     scope?: string
