@@ -1,3 +1,4 @@
+import convertToFormData from '@/utils/convertToFormData'
 import axios from 'axios'
 import { JSONResponse } from './JSONResponse'
 import { TokenDto } from './model/TokenDto'
@@ -13,12 +14,6 @@ interface OAuthTokenRequestParams {
 export class OAuth2Client {
   baseURL = `${process.env.VUE_APP_BASE_URL}/oauth2/token`
 
-  getFormData(object: any) {
-    const formData = new FormData()
-    Object.keys(object).forEach(key => formData.append(key, object[key]))
-    return formData
-  }
-
   axiosInstance = axios.create({
     baseURL: this.baseURL,
     headers: {
@@ -29,7 +24,7 @@ export class OAuth2Client {
   async token(params: OAuthTokenRequestParams): Promise<JSONResponse<TokenDto>> {
     const response = await this.axiosInstance(`${this.baseURL}`, {
       method: 'POST',
-      data: this.getFormData(params)
+      data: convertToFormData(params)
     })
     const data = response.data
     return new JSONResponse<TokenDto>(response, data)
