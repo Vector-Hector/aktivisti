@@ -55,13 +55,6 @@ const oauth2Client = new OAuth2Client()
 app.config.globalProperties.$apiClient  = apiClient
 app.config.globalProperties.$oauth2Client  = oauth2Client
 
-apiClient.axiosInstance.interceptors.request.use((config: AxiosRequestConfig) => {
-  // Do something before request is sent
-  return config
-}, function (error: any) {
-  // Do something with request error
-  return Promise.reject(error)
-})
 
 apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
   if (response.status === 200 || response.status === 201) {
@@ -71,23 +64,10 @@ apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
   }
 },
 (error: any) => {
-  if (error.response.status) {
-    switch (error.response.status) {
-    case 401:
-      authService.logout()
-      break
-    default:
-      return Promise.reject(error.response)
-    }
+  if (error.response.status === 401) {
+    authService.logout()
   }
-})
-
-oauth2Client.axiosInstance.interceptors.request.use((config: AxiosRequestConfig) => {
-  // Do something before request is sent
-  return config
-}, function (error: any) {
-  // Do something with request error
-  return Promise.reject(error)
+  return Promise.reject(error.response)
 })
 
 oauth2Client.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
@@ -98,14 +78,10 @@ oauth2Client.axiosInstance.interceptors.response.use((response: AxiosResponse) =
   }
 },
 (error: any) => {
-  if (error.response.status) {
-    switch (error.response.status) {
-    case 401:
-      authService.logout()
-      break
-    default:
-      return Promise.reject(error.response)
-    }
-  }})
+  if (error.response.status === 401) {
+    authService.logout()
+  }
+  return Promise.reject(error.response)
+})
 
 app.mount('#app')
