@@ -189,7 +189,7 @@ export function makeServer({environment = 'development'} = {}) {
         return {data: sampleUsers.find(({username}) => username === body.email)} || new Response(400)
       })
       
-      this.post('/oauth/token', () => {
+      this.post('/oauth2/token', () => {
         return {
           ...sampleToken
         }
