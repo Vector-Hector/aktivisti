@@ -56,7 +56,7 @@ import { defineComponent } from "vue";
 import { IonInput, IonLabel, IonItem, IonButton, IonCheckbox, IonItemDivider } from "@ionic/vue";
 import { userStore } from '@/store/UserStore'
 import { uiStore } from '@/store/UiStore'
-import { tokenService } from '@/store/TokenService'
+import { authService } from "@/api/authService";
 
 export default defineComponent({
   name: "Login",
@@ -86,9 +86,7 @@ export default defineComponent({
 
       const auth = (await this.$oauth2Client.token(userParams)).response.data[0]
 
-      tokenService.setToken('access_token', auth.access_token)
-      tokenService.setToken('refresh_token', auth.refresh_token)
-      tokenService.setExpiry(new Date().getTime() + auth.expires_in)
+      authService.login(auth)
 
       // TODO use user input and data from BE
       const userData = {

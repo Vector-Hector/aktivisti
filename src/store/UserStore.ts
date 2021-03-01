@@ -1,6 +1,5 @@
 import { Store } from '@/store/Store'
 import { LocationDto } from '@/api/model/LocationDto'
-import { tokenService } from '@/store/TokenService'
 
 interface UserState {
   loggedIn: boolean

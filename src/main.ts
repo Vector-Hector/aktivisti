@@ -36,7 +36,7 @@ import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
 import { makeServer } from "../mocks/server"
 import { ApiClient } from './api'
 
-import { AxiosResponse, AxiosRequestConfig } from 'axios'
+import { AxiosResponse } from 'axios'
 import { authService } from './api/authService'
 import { OAuth2Client } from './api/OAuth2Client'
 
