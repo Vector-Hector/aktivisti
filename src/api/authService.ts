@@ -18,6 +18,10 @@ const authService = {
 
     userStore.setToken(token.access_token)
     // TODO 
+  },
+
+  isLoggedIn() {
+    return !!tokenService.getToken('access_token')
   }
 
 }

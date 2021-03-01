@@ -18,6 +18,7 @@ import EditEventSummary from '@/views/edit-event/EditEventSummary.vue'
 import EditEventMapRoutes from '@/views/edit-event/map/EditEventMapRoutes.vue'
 import EditEventMap from '@/views/edit-event/EditEventMap.vue'
 import EditEventMapLocation from '@/views/edit-event/map/EditEventMapLocation.vue'
+import { authService } from '@/api/authService'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -141,9 +142,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const loggedIn = !!tokenService.getToken('access_token')
-
-  if (!loggedIn && to.matched.some(record => record.meta.requiresAuth)) {
+  if (!authService.isLoggedIn() && to.matched.some(record => record.meta.requiresAuth)) {
     next({
       path: '/login',
       params: { nextUrl: to.fullPath }
