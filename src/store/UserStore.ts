@@ -38,10 +38,9 @@ class UserStore extends Store<UserState> {
     Object.assign(this.state, {})
   }
 
-  // public setUser(userData: Partial<UserState>) {
-  // TODO check again
-  //   Object.assign(this.state, ...userData)
-  // }
+  public setUser(userData: Partial<UserState>) {
+    Object.assign(this.state, {userData})
+  }
 
   /**
    * TODO: Remove from production codebase
