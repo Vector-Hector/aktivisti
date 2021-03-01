@@ -17,7 +17,7 @@ class UserStore extends Store<UserState> {
       loggedIn: false,
       id: null,
       username: null,
-      token: tokenService.getToken('access_token'),
+      token: null,
       email: null,
       location: null
     }

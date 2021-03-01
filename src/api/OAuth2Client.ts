@@ -12,7 +12,7 @@ interface OAuthTokenRequestParams {
 }
 
 export class OAuth2Client {
-  baseURL = `${process.env.VUE_APP_BASE_URL}/oauth/token`
+  baseURL = `${process.env.VUE_APP_BASE_URL}/oauth2/token`
 
   axiosInstance = axios.create({
     baseURL: this.baseURL,
