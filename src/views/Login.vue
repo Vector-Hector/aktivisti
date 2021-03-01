@@ -88,15 +88,7 @@ export default defineComponent({
 
       authService.login(auth)
 
-      // TODO use user input and data from BE
-      const userData = {
-        id: "602ce1a5158b7e35c8eb50c0",
-        username: "Test",
-        email: "test@test.de",
-      }
-      // userStore.setUser(userData)
-      localStorage.setItem('user', JSON.stringify(userData))
-
+      // TODO use user input and return data
     }
   },
 });
