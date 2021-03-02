@@ -34,13 +34,35 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
 
 import { makeServer } from "../mocks/server"
+import { ApiClient } from './api'
+
+import { AxiosResponse } from 'axios'
+import { authService } from './api/authService'
+import { OAuth2Client } from './api/OAuth2Client'
 
 if (process.env.NODE_ENV === "development") {
   makeServer()
 }
 
-createApp(App)
+const app = createApp(App)
   .use(IonicVue)
   .use(router)
   .use(PrimeVue)
-  .mount('#app')
+
+const apiClient = new ApiClient()
+const oauth2Client = new OAuth2Client()
+
+app.config.globalProperties.$apiClient  = apiClient
+app.config.globalProperties.$oauth2Client  = oauth2Client
+
+
+apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
+  return response
+}, (error: any) => {
+  if (error.response.status === 401) {
+    authService.logout()
+  }
+  return Promise.reject(error.response)
+})
+
+app.mount('#app')

@@ -17,6 +17,7 @@ import EditEventSummary from '@/views/edit-event/EditEventSummary.vue'
 import EditEventMapRoutes from '@/views/edit-event/map/EditEventMapRoutes.vue'
 import EditEventMap from '@/views/edit-event/EditEventMap.vue'
 import EditEventMapLocation from '@/views/edit-event/map/EditEventMapLocation.vue'
+import { authService } from '@/api/authService'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -45,13 +46,19 @@ const router = createRouter({
     {
       path: '/events/:id',
       component: EventDetail,
-      props: true
+      props: true,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/events/:id/live',
       name: 'live-event',
       component: EventLive,
-      props: true
+      props: true,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/events/edit/new',
@@ -106,15 +113,21 @@ const router = createRouter({
     {
       path: '/campaigns/:id',
       component: EditCampaign,
-      props: true
+      props: true,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/campaigns/new',
-      component: EditCampaign
+      component: EditCampaign,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/login',
-      component: Login
+      component: Login,
     },
     {
       path: '/register',
@@ -127,5 +140,16 @@ const router = createRouter({
   ]
 })
 
-export default router
+router.beforeEach((to, from, next) => {
+  if (!authService.isLoggedIn() && to.matched.some(record => record.meta.requiresAuth)) {
+    next({
+      path: '/login',
+      params: { nextUrl: to.fullPath }
+    })
+  } else {
+    next()
+  }
+})
 
+
+export default router

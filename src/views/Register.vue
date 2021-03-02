@@ -46,7 +46,10 @@
     </div>
 
     <div class="control-buttons">
-      <IonButton color="primary">
+      <IonButton
+        color="primary"
+        @click="register()"
+      >
         Registrieren
       </IonButton>
     </div>
@@ -63,7 +66,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent } from "vue"
+
 import {
   IonInput,
   IonLabel,
@@ -84,7 +88,11 @@ export default defineComponent({
   data() {
     return {};
   },
-  methods: {},
+  methods: {
+    async register() {
+      // TODO send user data to the BE and receive token, userId etc.
+    }
+  }
 });
 </script>
 

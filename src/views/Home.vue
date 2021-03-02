@@ -61,9 +61,6 @@ import { EventDto } from '@/api/model/EventDto'
 import { CampaignDto } from '@/api/model/CampaignDto'
 import Popup from '@/lib/mapbox/Popup.vue'
 import { userStore } from '@/store/UserStore'
-import { ApiClient } from '@/api'
-
-const apiClient = new ApiClient()
 
 export default defineComponent({
   name: 'Home',
@@ -98,11 +95,11 @@ export default defineComponent({
   },
   methods: {
     async getEvents() {
-      const response = await apiClient.events.list()
+      const response = await this.$apiClient.events.list()
       this.events = response.payload.data
     },
     async getCampaigns() {
-      const response = await apiClient.campaign.list()
+      const response = await this.$apiClient.campaign.list()
       this.campaigns = response.payload.data
     },
     searchCampaign(event: any) {
@@ -117,7 +114,7 @@ export default defineComponent({
       }, 250)
     },
     async filterEvents() {
-      const response = await apiClient.events.list({
+      const response = await this.$apiClient.events.list({
         campaign: this.campaign?.id ?? undefined
       })
       this.events = response.payload.data

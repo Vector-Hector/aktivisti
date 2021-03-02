@@ -56,6 +56,7 @@ import { defineComponent } from "vue";
 import { IonInput, IonLabel, IonItem, IonButton, IonCheckbox, IonItemDivider } from "@ionic/vue";
 import { userStore } from '@/store/UserStore'
 import { uiStore } from '@/store/UiStore'
+import { authService } from "@/api/authService";
 
 export default defineComponent({
   name: "Login",
@@ -71,9 +72,23 @@ export default defineComponent({
     return {};
   },
   methods: {
-    login() {
+    async login() {
       userStore.mockLogin()
       uiStore.toggleSidebar(true)
+
+      // TODO
+      const userParams = {
+        // grant_type: 'password',
+        username: 'test',
+        password: 'test',
+        client_id: 'test'
+      }
+
+      const auth = (await this.$oauth2Client.token(userParams)).response.data[0]
+
+      authService.login(auth)
+
+      // TODO use user input and return data
     }
   },
 });

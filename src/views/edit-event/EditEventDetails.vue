@@ -223,13 +223,10 @@ import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
 import MultiSelect from 'primevue/multiselect'
 
-import { ApiClient } from '@/api'
 import { CampaignDto } from '@/api/model/CampaignDto'
 import { eventTypeOptions } from '@/api/model/EventTypes'
 import EditEventMixin from '@/views/edit-event/EditEventMixin'
 import { EventDto } from '@/api/model/EventDto'
-
-const apiClient = new ApiClient()
 
 export default defineComponent({
   name: 'EditEventDetails',
@@ -293,15 +290,15 @@ export default defineComponent({
   },
   methods: {
     async getCampaigns() {
-      const response = await apiClient.campaign.list()
+      const response = await this.$apiClient.campaign.list()
       this.campaigns = response.payload.data
     },
     async saveAndProceed() {
       let newEvent
       if (!this.event.id) {
-        newEvent = this.localEvent = (await apiClient.events.create(this.event)).payload.data
+        newEvent = this.localEvent = (await this.$apiClient.events.create(this.event)).payload.data
       } else {
-        newEvent = this.localEvent = (await apiClient.events.update(this.event!.id!.toString(), this.event as EventDto)).payload.data
+        newEvent = this.localEvent = (await this.$apiClient.events.update(this.event!.id!.toString(), this.event as EventDto)).payload.data
       }
       this.$router.push({
         name: 'edit-event-location',

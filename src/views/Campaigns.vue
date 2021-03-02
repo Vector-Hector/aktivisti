@@ -41,11 +41,8 @@
 import { defineComponent } from 'vue'
 import Button from 'primevue/button'
 import Tag from 'primevue/tag'
-import { ApiClient } from '@/api'
 import { CampaignDto } from '@/api/model/CampaignDto'
 import { OrganizationTypeDto } from '@/api/model/OrganizationTypeDto'
-
-const apiClient = new ApiClient()
 
 export default defineComponent({
   name: 'Campaigns',
@@ -64,14 +61,14 @@ export default defineComponent({
   },
   methods: {
     deleteCampaign(id: string) {
-      apiClient.campaign.delete(id)
+      this.$apiClient.campaign.delete(id)
         .then(() => {
           // TODO check again, could be solved differently
           this.getCampaigns()
         })
     },
     async getCampaigns() {
-      const response = await apiClient.campaign.list()
+      const response = await this.$apiClient.campaign.list()
       this.organizationTypes = response.payload.embedded.organization
       this.campaigns = response.payload.data
     },

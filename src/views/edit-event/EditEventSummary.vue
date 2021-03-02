@@ -53,12 +53,9 @@
 import { defineComponent, PropType } from 'vue'
 import { EventDto } from '@/api/model/EventDto'
 import { EventAreaDto } from '@/api/model/EventAreaDto'
-import { ApiClient } from '@/api'
 import EditEventMixin from '@/views/edit-event/EditEventMixin'
 import DataTable from 'primevue/components/datatable/DataTable'
 import Column from 'primevue/components/column/Column'
-
-const apiClient = new ApiClient()
 
 export default defineComponent({
   name: 'EditEventSummary',
@@ -89,7 +86,7 @@ export default defineComponent({
     event: {
       async handler() {
         if (this.event.id) {
-          const response = await apiClient.eventAreas.list({
+          const response = await this.$apiClient.eventAreas.list({
             event: this.event.id
           })
           this.eventAreas = response.payload.data

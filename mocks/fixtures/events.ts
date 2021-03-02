@@ -1,7 +1,6 @@
 import { EventDto } from '@/api/model/EventDto'
 import { EventTypes } from '@/api/model/EventTypes'
 
-
 export const sampleEvents: EventDto[] = [{
   id: 1,
   type: EventTypes.DOOR_TO_DOOR,

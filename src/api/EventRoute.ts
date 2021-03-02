@@ -12,13 +12,10 @@ export class EventRoute extends ApiRoute<EventDto> {
    * @param id the event id
    */
   async join(id: string) {
-    const response = await fetch(`${this.baseUrl}/${this.path}/${id}/join`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}/${id}/join`, {
+      method: 'POST'
     })
-    const data = await response.json()
+    const data = await response.data
     return new JSONResponse<APIEnvelope<EventDto>>(response, data)
   }
 
@@ -27,13 +24,10 @@ export class EventRoute extends ApiRoute<EventDto> {
    * @param id the event id
    */
   async leave(id: string) {
-    const response = await fetch(`${this.baseUrl}/${this.path}/${id}/leave`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}/${id}/leave`, {
+      method: 'POST'
     })
-    const data = await response.json()
+    const data = await response.data
     return new JSONResponse<APIEnvelope<EventDto>>(response, data)
   }
 }

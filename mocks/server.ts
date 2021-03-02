@@ -6,6 +6,7 @@ import { sampleOrganizationTypes } from './fixtures/organizationTypes'
 import { sampleCampaignTypes } from './fixtures/campaignTypes'
 import { sampleEventAreas } from './fixtures/eventAreas'
 import { sampleAreaDetails } from './fixtures/areaDetails'
+import { sampleToken } from './fixtures/token'
 
 
 const defaultHeaders = {
@@ -187,6 +188,12 @@ export function makeServer({environment = 'development'} = {}) {
         const body = JSON.parse(request.requestBody)
         return {data: sampleUsers.find(({username}) => username === body.email)} || new Response(400)
       })
+      
+      this.post('/oauth2/token', () => {
+        return {
+          ...sampleToken
+        }
+      })
 
       // event areas
       this.post('/event-areas', (schema, request) => {
@@ -199,7 +206,6 @@ export function makeServer({environment = 'development'} = {}) {
           }
         }
       })
-
 
       // event areas
       this.put('/event-areas/:id', (schema, request) => {
