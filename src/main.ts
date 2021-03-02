@@ -38,6 +38,11 @@ import { authService } from './api/authService'
 import { OAuth2Client } from './api/OAuth2Client'
 import { ApiClient } from '@/api'
 import { userStore } from '@/store/UserStore'
+import { makeServer } from '../mocks/server'
+
+if (process.env.VUE_APP_ENABLE_MOCKS === "true") {
+  makeServer()
+}
 
 
 const app = createApp(App)
