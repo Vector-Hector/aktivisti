@@ -55,4 +55,4 @@ class TokenStore extends Store<TokenStoreState> {
   }
 }
 
-export const tokenService = new TokenStore()
+export const tokenStore = new TokenStore()

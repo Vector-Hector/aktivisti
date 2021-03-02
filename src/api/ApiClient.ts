@@ -5,8 +5,8 @@ import { OrganizationTypeDto } from '@/api/model/OrganizationTypeDto'
 import { EventRoute } from '@/api/EventRoute'
 import { ApiRoute } from '@/api/ApiRoute'
 import axios from 'axios'
-import { userStore } from '@/store/UserStore'
 import { EventAreaDto } from '@/api/model/EventAreaDto'
+import { tokenStore } from '@/store/TokenStore'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -18,7 +18,7 @@ export class ApiClient {
   axiosInstance = axios.create({
     baseURL: this.baseURL,
     headers: {
-      'Authorization': `Bearer ${userStore.getToken()}`,
+      'Authorization': `Bearer ${tokenStore.getTokenDto()?.access_token}`,
       'Content-Type': 'application/json'
     }
   })
