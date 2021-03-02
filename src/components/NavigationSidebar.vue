@@ -7,7 +7,7 @@
   >
     <div class="menu">
       <div
-        v-if="authState.loggedIn"
+        v-if="isLoggedIn"
         class="menu-group highlighted"
       >
         <div class="user-widget">
@@ -15,8 +15,8 @@
             <i class="pi pi-user avatar-placeholder" />
           </div>
           <div class="user-widget-details">
-            <span class="email">{{ authState.email }}</span>
-            <span class="username">@{{ authState.username }}</span>
+            <span class="email">{{ userProfile.email }}</span>
+            <span class="username">@{{ userProfile.username }}</span>
           </div>
         </div>
         <div class="menu-item">
@@ -30,7 +30,7 @@
         </div>
       </div>
       <div
-        v-if="!authState.loggedIn"
+        v-if="!isLoggedIn"
         class="menu-group highlighted"
       >
         <Button
@@ -106,7 +106,7 @@
         </div>
       </div>
       <div
-        v-if="authState.loggedIn"
+        v-if="isLoggedIn"
         class="menu-group"
       >
         <hr class="menu-divider">
@@ -161,6 +161,7 @@ import { userStore } from '@/store/UserStore'
 
 import Sidebar from 'primevue/components/sidebar/Sidebar'
 import Button from 'primevue/components/button/Button'
+import { authService } from '@/api/authService'
 
 
 export default defineComponent({
@@ -173,8 +174,11 @@ export default defineComponent({
     return {}
   },
   computed: {
-    authState() {
-      return userStore.getState()
+    isLoggedIn() {
+      return authService.isLoggedIn()
+    },
+    userProfile() {
+      return userStore.getState().user
     },
     sidebarExpanded() {
       return uiStore.getState().sidebarExpanded

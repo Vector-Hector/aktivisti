@@ -1,30 +1,40 @@
 <template>
   <div
-    v-if="event !== null"
+    v-if="event !== null && loading === false"
     class="event container"
   >
-    <h2>{{ event.title }}</h2>
+    <h2>{{ event.name }}</h2>
     <div class="p-grid">
       <span class="campaign p-col">{{ event.campaign }}</span>
     </div>
     <div class="p-grid">
       <span class="p-col-2">Start:</span><span class="start-date p-col-10">{{
-        new Date(event.startDate).toLocaleString([], dateOptions)
+        new Date(event.start_date).toLocaleString([], dateOptions)
       }}</span>
     </div>
     <div class="p-grid">
       <span class="p-col-2">Ende:</span><span class="start-date p-col-10">{{
-        event.endDate ? new Date(event.endDate).toLocaleString([], dateOptions): ''
+        event.endDate ? new Date(event.end_date).toLocaleString([], dateOptions) : ''
       }}</span>
     </div>
     <div class="p-grid">
       <span class="participants p-col">
-        <i class="pi pi-user" /> {{ event.participants.length }}/{{ event.maxParticipants }}</span>
+        <i class="pi pi-user" /> {{ event.participants.length }}/{{ event.max_participants }}</span>
     </div>
     <div class="p-grid">
       <p class="description p-col">
         {{ event.description }}
       </p>
+    </div>
+    <div
+      class="areas p-grid"
+    >
+      <div
+        v-for="area in eventAreas"
+        :key="area.id"
+      >
+        {{ area.name }}
+      </div>
     </div>
     <div class="p-grid  p-jc-end">
       <Button
@@ -66,6 +76,7 @@ import { defineComponent, PropType } from 'vue'
 import { EventDto } from '@/api/model/EventDto'
 import Button from 'primevue/components/button/Button'
 import { userStore } from '@/store/UserStore'
+import { EventAreaDto } from '@/api/model/EventAreaDto'
 
 export default defineComponent({
   name: 'EventDetail',
@@ -81,6 +92,8 @@ export default defineComponent({
   data() {
     return {
       event: null as EventDto | null,
+      eventAreas: [] as EventAreaDto[],
+      loading: true,
       joinLoading: false,
       metrics: [
         {name: 'Geklopfte Türen', value: 'Geklopfte Türen'},
@@ -94,24 +107,33 @@ export default defineComponent({
         month: '2-digit',
         day: 'numeric',
         hour: '2-digit',
-        minute:'2-digit'
+        minute: '2-digit'
       }
     }
   },
   computed: {
     currentUserId(): number | null {
-      return userStore.getState().id
+      return userStore.getState().user?.id ?? null
     },
     isMember(): boolean {
       return this.event?.participants.find((id) => id === this.currentUserId) !== undefined
     }
   },
-  created() {
-    this.getEvent()
+  async created() {
+    await this.getEvent()
+    await this.getEventAreas()
+
+    this.loading = false
   },
   methods: {
     async getEvent() {
       this.event = (await this.$apiClient.events.get(this.id)).payload.data
+    },
+
+    async getEventAreas() {
+      if (this.event) {
+        this.eventAreas = (await this.$apiClient.eventAreas.list({event: this.event.id})).payload.data
+      }
     },
 
     async join() {

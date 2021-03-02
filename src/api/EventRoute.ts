@@ -12,7 +12,7 @@ export class EventRoute extends ApiRoute<EventDto> {
    * @param id the event id
    */
   async join(id: string) {
-    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}/${id}/join`, {
+    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}/${id}/join/`, {
       method: 'POST'
     })
     const data = await response.data
@@ -24,7 +24,7 @@ export class EventRoute extends ApiRoute<EventDto> {
    * @param id the event id
    */
   async leave(id: string) {
-    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}/${id}/leave`, {
+    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}/${id}/leave/`, {
       method: 'POST'
     })
     const data = await response.data

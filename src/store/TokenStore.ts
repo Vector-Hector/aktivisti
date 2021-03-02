@@ -14,7 +14,12 @@ class TokenStore extends Store<TokenStoreState> {
     const rawToken = localStorage.getItem(KEY_TOKEN)
     let token = null
     if (rawToken !== null) {
-      token = JSON.parse(rawToken)
+      try {
+        token = JSON.parse(rawToken)
+      } catch (e) {
+        // parsing errors can just default to null
+        token = null
+      }
     }
 
     const rawUpdated = localStorage.getItem(KEY_UPDATED)

@@ -5,14 +5,14 @@
       <IonLabel position="floating">
         Benutzername oder E-Mail-Adresse
       </IonLabel>
-      <IonInput />
+      <IonInput v-model="username" />
     </IonItem>
 
     <IonItem>
       <IonLabel position="floating">
         Passwort
       </IonLabel>
-      <IonInput type="password" />
+      <IonInput v-model="password" type="password" />
     </IonItem>
 
     <IonItem lines="none">
@@ -52,50 +52,62 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { IonInput, IonLabel, IonItem, IonButton, IonCheckbox, IonItemDivider } from "@ionic/vue";
+import { defineComponent, PropType } from 'vue'
+import { IonInput, IonLabel, IonItem, IonButton, IonCheckbox, IonItemDivider } from '@ionic/vue'
 import { userStore } from '@/store/UserStore'
 import { uiStore } from '@/store/UiStore'
-import { authService } from "@/api/authService";
+import { authService } from '@/api/authService'
+import { RouteLocation } from 'vue-router'
 
 export default defineComponent({
-  name: "Login",
+  name: 'Login',
   components: {
     IonInput,
     IonLabel,
     IonItem,
     IonButton,
     IonCheckbox,
-    IonItemDivider,
+    IonItemDivider
+  },
+  props: {
+    redirect: {
+      type: Object as PropType<RouteLocation>,
+      required: false,
+      default: {name: 'events'}
+    }
   },
   data() {
-    return {};
+    return {
+      username: '',
+      password: ''
+    }
   },
   methods: {
     async login() {
-      userStore.mockLogin()
-      uiStore.toggleSidebar(true)
 
-      // TODO
       const userParams = {
-        // grant_type: 'password',
-        username: 'test',
-        password: 'test',
-        client_id: 'test'
+        grant_type: 'password',
+        username: this.username,
+        password: this.password,
+        client_id: process.env.VUE_APP_CLIENT_ID
       }
 
-      const auth = (await this.$oauth2Client.token(userParams)).response.data[0]
+      const authRequest = (await this.$oauth2Client.token(userParams))
 
-      authService.login(auth)
-
-      // TODO use user input and return data
+      if (authRequest.response.status !== 200) {
+        return
+      } else {
+        authService.login(authRequest.payload)
+        this.$router.push(this.redirect)
+      }
     }
-  },
-});
+  }
+})
 </script>
 
 <style lang="scss" scoped>
 @import "src/scss/_globals.scss";
+
 .checkbox-margin-right {
   margin-right: 10px;
 }

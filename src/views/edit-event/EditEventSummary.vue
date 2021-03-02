@@ -3,7 +3,7 @@
     v-if="event.id"
     class="container"
   >
-    <h2>{{ event.title }}</h2>
+    <h2>{{ event.name }}</h2>
     <div class="p-grid">
       <span class="campaign p-col">{{ event.campaign }}</span>
     </div>

@@ -8,7 +8,7 @@
         :key="campaign.id"
         class="campaign"
       >
-        {{ campaign.title }}
+        {{ campaign.name }}
         <Tag
           :value="organizationTypes.find(x => x.id === campaign.organization)?.name"
           severity="info"

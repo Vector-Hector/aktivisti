@@ -16,7 +16,7 @@
       >
         <template #item="slotProps">
           <div>
-            <div>{{ slotProps.item.title }}</div>
+            <div>{{ slotProps.item.name }}</div>
           </div>
         </template>
       </AutoComplete>
@@ -33,14 +33,14 @@
           href=""
           :to="`/events/${event.id}`"
         >
-          {{ event.title }}
+          {{ event.name }}
         </router-link>
         <span
-          v-if="event && event.campaign && event.campaign.title"
+          v-if="event && event.campaign && event.campaign.name"
           class="tag"
         >
           <Tag
-            :value="event.campaign.title"
+            :value="event.campaign.name"
             severity="info"
           />
         </span>
@@ -116,7 +116,7 @@ export default defineComponent({
           this.filteredCampaigns = [...this.campaigns]
         } else {
           this.filteredCampaigns = this.campaigns.filter((campaign: any) => {
-            return campaign.title.toLowerCase().startsWith(event.query.toLowerCase())
+            return campaign.name.toLowerCase().startsWith(event.query.toLowerCase())
           })
         }
       }, 250)
