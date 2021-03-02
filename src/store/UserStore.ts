@@ -5,7 +5,6 @@ interface UserState {
   loggedIn: boolean
   id: number | null
   username: string | null
-  token: string | null
   email: string | null
   location: LocationDto | null
 }
@@ -16,7 +15,6 @@ class UserStore extends Store<UserState> {
       loggedIn: false,
       id: null,
       username: null,
-      token: null,
       email: null,
       location: null
     }
@@ -24,14 +22,6 @@ class UserStore extends Store<UserState> {
 
   public locate(location: LocationDto) {
     this.state.location = location
-  }
-
-  public getToken(): string | null {
-    return this.state.token
-  }
-
-  public setToken(token: string) {
-    this.state.token = token
   }
 
   public unsetData() {
