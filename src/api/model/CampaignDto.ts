@@ -1,8 +1,8 @@
 export interface CampaignDto {
   id: number,
-  title: string,
+  name: string,
   type: number,
-  startDate: string,
-  endDate: string,
+  start_date: string,
+  end_date: string,
   organization: number
 }

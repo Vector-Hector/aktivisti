@@ -4,16 +4,16 @@ import { MapboxPlaceDto } from '@/api/model/MapboxPlaceDto'
 
 export interface EventDto {
   id: number,
-  type: EventTypes
-  title: string,
+  type: EventTypes,
+  name: string,
   metrics: number[],
   campaign: number,
-  startDate: string,
-  endDate: string,
+  start_date: string,
+  end_date: string,
   location: MapboxPlaceDto,
   published: boolean,
   description: string,
   participants: number[],
-  maxParticipants: number,
+  max_participants: number,
   public: boolean
 }

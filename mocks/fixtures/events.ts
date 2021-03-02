@@ -4,10 +4,10 @@ import { EventTypes } from '@/api/model/EventTypes'
 export const sampleEvents: EventDto[] = [{
   id: 1,
   type: EventTypes.DOOR_TO_DOOR,
-  title: 'Haustürwahlkampf Mitte Gruppe 1',
+  name: 'Haustürwahlkampf Mitte Gruppe 1',
   campaign: 1,
-  startDate: '2021-05-11T12:00',
-  endDate: '2021-05-11T13:00',
+  start_date: '2021-05-11T12:00',
+  end_date: '2021-05-11T13:00',
   public: true,
   location: {
     'mapbox_id': 'poi.816043858834',
@@ -18,15 +18,15 @@ export const sampleEvents: EventDto[] = [{
   metrics: [],
   description: 'Haustürwahlkampf in Berlin-Mitte Gruppe 1, Treffpunkt Volksbühne',
   participants: [],
-  maxParticipants: 10,
+  max_participants: 10,
   published: true
 }, {
   id: 2,
   type: EventTypes.DOOR_TO_DOOR,
-  title: 'Haustürwahlkampf Mitte Gruppe 2',
+  name: 'Haustürwahlkampf Mitte Gruppe 2',
   campaign: 1,
-  startDate: '2021-05-12T16:00',
-  endDate: '2021-05-12T17:00',
+  start_date: '2021-05-12T16:00',
+  end_date: '2021-05-12T17:00',
   public: true,
   location: {
     'mapbox_id': 'poi.618475354653',
@@ -37,15 +37,15 @@ export const sampleEvents: EventDto[] = [{
   metrics: [],
   description: 'Haustürwahlkampf in Berlin-Mitte Gruppe 2, Treffpunkt Hackerscher Markt',
   participants: [],
-  maxParticipants: 10,
+  max_participants: 10,
   published: true
 }, {
   id: 3,
   type: EventTypes.DOOR_TO_DOOR,
-  title: 'Haustürwahlkampf Mitte Gruppe 3',
+  name: 'Haustürwahlkampf Mitte Gruppe 3',
   campaign: 1,
-  startDate: '2021-05-12T16:00',
-  endDate: '2021-05-12T17:00',
+  start_date: '2021-05-12T16:00',
+  end_date: '2021-05-12T17:00',
   public: true,
   location: {
     'mapbox_id': 'poi.498216302235',
@@ -56,15 +56,15 @@ export const sampleEvents: EventDto[] = [{
   metrics: [],
   description: 'Haustürwahlkampf in Berlin-Mitte Gruppe 3, Treffpunkt Fernsehturm',
   participants: [],
-  maxParticipants: 10,
+  max_participants: 10,
   published: true
 }, {
   id: 4,
   type: EventTypes.DOOR_TO_DOOR,
-  title: 'Haustürwahlkampf Schöneiche',
+  name: 'Haustürwahlkampf Schöneiche',
   campaign: 1,
-  startDate: '2021-05-12T16:00',
-  endDate: '2021-05-12T17:00',
+  start_date: '2021-05-12T16:00',
+  end_date: '2021-05-12T17:00',
   public: true,
   location: {
     mapbox_id: 'address.8494522076113680',
@@ -81,15 +81,15 @@ export const sampleEvents: EventDto[] = [{
   metrics: [],
   description: 'Haustürwahlkampf in Schöneiche, Treffpunkt vor dem Rathaus',
   participants: [],
-  maxParticipants: 10,
+  max_participants: 10,
   published: true
 }, {
   id: 5,
   type: EventTypes.DOOR_TO_DOOR,
-  title: 'Haustürwahlkampf Stuttgart',
+  name: 'Haustürwahlkampf Stuttgart',
   campaign: 2,
-  startDate: '2021-05-12T16:00',
-  endDate: '2021-05-12T17:00',
+  start_date: '2021-05-12T16:00',
+  end_date: '2021-05-12T17:00',
   public: true,
   location: {
     mapbox_id: 'poi.206158487657',
@@ -106,22 +106,33 @@ export const sampleEvents: EventDto[] = [{
   metrics: [],
   description: 'Haustürwahlkampf in Stuttgart, Treffpunkt U-Charlottenplatz',
   participants: [2],
-  maxParticipants: 10,
+  max_participants: 10,
   published: true
 }]
 
-export const sampleCreatedEvent = {
+export const sampleCreatedEvent: EventDto = {
   id: 6,
   type: EventTypes.DOOR_TO_DOOR,
-  title: 'Neues Event',
+  name: 'Neues Event',
   campaign: 2,
-  startDate: '2021-05-12T16:00',
-  endDate: '2021-05-12T17:00',
+  start_date: '2021-05-12T16:00',
+  end_date: '2021-05-12T17:00',
   public: true,
-  location: null,
+  location: {
+    mapbox_id: 'address.8494522076113680',
+    name: 'Dorfaue 1, 15566 Schöneiche, Deutschland',
+    center: {
+      lat: 52.478898,
+      lng: 13.701116
+    },
+    geometry: {
+      type: 'Point',
+      coordinates: [13.701116, 52.478898]
+    }
+  },
   metrics: [],
   description: '',
   participants: [],
-  maxParticipants: 0,
+  max_participants: 0,
   published: false
 }

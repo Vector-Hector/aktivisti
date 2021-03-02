@@ -27,7 +27,7 @@
         <div class="p-col-12 p-md-9">
           <InputText
             id="eventName"
-            v-model="localEvent.title"
+            v-model="localEvent.name"
             type="text"
           />
         </div>
@@ -262,26 +262,26 @@ export default defineComponent({
     },
     endDate: {
       get(): Date | undefined {
-        if (this.localEvent.endDate) {
-          return new Date(this.localEvent.endDate)
+        if (this.localEvent.end_date) {
+          return new Date(this.localEvent.end_date)
         } else {
           return undefined
         }
       },
       set(value: Date) {
-        this.localEvent.endDate = value.toISOString()
+        this.localEvent.end_date = value.toISOString()
       }
     },
     startDate: {
       get(): Date | undefined {
-        if (this.localEvent.startDate) {
-          return new Date(this.localEvent.startDate)
+        if (this.localEvent.start_date) {
+          return new Date(this.localEvent.start_date)
         } else {
           return undefined
         }
       },
       set(value: Date) {
-        this.localEvent.startDate = value.toISOString()
+        this.localEvent.start_date = value.toISOString()
       }
     }
   },

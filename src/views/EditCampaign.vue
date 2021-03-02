@@ -14,7 +14,7 @@
         >Name der Kampagne</label>
         <div class="p-col-12 p-md-9">
           <IonItem>
-            <IonInput v-model="campaign.title" />
+            <IonInput v-model="campaign.name" />
           </IonItem>
         </div>
       </div>

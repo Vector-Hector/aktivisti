@@ -1,21 +1,16 @@
 import { Store } from '@/store/Store'
 import { LocationDto } from '@/api/model/LocationDto'
+import { UserDto } from '@/api/model/UserDto'
 
 interface UserState {
-  loggedIn: boolean
-  id: number | null
-  username: string | null
-  email: string | null
+  user: UserDto | null,
   location: LocationDto | null
 }
 
 class UserStore extends Store<UserState> {
   protected data(): UserState {
     return {
-      loggedIn: false,
-      id: null,
-      username: null,
-      email: null,
+      user: null,
       location: null
     }
   }
@@ -24,22 +19,12 @@ class UserStore extends Store<UserState> {
     this.state.location = location
   }
 
-  public unsetData() {
-    Object.assign(this.state, {})
+  public clearUser() {
+    this.state.user = null
   }
 
-  public setUser(userData: Partial<UserState>) {
-    Object.assign(this.state, {userData})
-  }
-
-  /**
-   * TODO: Remove from production codebase
-   */
-  public mockLogin() {
-    this.state.loggedIn = true
-    this.state.id = 1
-    this.state.username = "Aktivist"
-    this.state.email = "aktivist@die-linke.de"
+  public setUser(user: UserDto) {
+    this.state.user = user
   }
 }
 

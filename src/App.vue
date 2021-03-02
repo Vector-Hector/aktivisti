@@ -59,7 +59,6 @@ export default defineComponent({
 }
 
 
-
 .dielinke-logo {
   max-width: 240px;
   cursor: pointer;

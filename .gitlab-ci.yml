@@ -33,12 +33,12 @@ lint:
     paths:
       - node_modules/
 
-bundle:
+bundle-staging:
   image: node:12-alpine
   stage: bundle
   script:
     - npm ci
-    - NODE_ENV=development npm run build # for now we build for development!
+    - npm run build -- --mode staging # for now build against staging
   cache:
     paths:
       - node_modules/
