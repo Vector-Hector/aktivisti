@@ -12,7 +12,10 @@
       <IonLabel position="floating">
         Passwort
       </IonLabel>
-      <IonInput v-model="password" type="password" />
+      <IonInput
+        v-model="password"
+        type="password"
+      />
     </IonItem>
 
     <IonItem lines="none">
@@ -121,5 +124,9 @@ export default defineComponent({
 .sign-in-link {
   margin-top: 2em;
   text-align: center;
+}
+
+.label-floating.sc-ion-label-md-h  {
+  margin-bottom: 8px;
 }
 </style>
