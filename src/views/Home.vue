@@ -38,7 +38,7 @@
           <span class="popup-title">{{ event.name }}</span>
           <span class="popup-campaign">{{ event.campaign.name }}</span>
           <span class="popup-date">
-            {{ new Date(event.startDate).toLocaleString() }}
+            {{ new Date(event.start_date).toLocaleString() }}
           </span>
           <router-link
             class="join-link no-button-decoration"
