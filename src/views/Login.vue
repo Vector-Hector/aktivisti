@@ -57,8 +57,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IonInput, IonLabel, IonItem, IonButton, IonCheckbox, IonItemDivider } from '@ionic/vue'
-import { userStore } from '@/store/UserStore'
-import { uiStore } from '@/store/UiStore'
 import { authService } from '@/api/authService'
 import { RouteLocation } from 'vue-router'
 
@@ -87,7 +85,6 @@ export default defineComponent({
   },
   methods: {
     async login() {
-
       const userParams = {
         grant_type: 'password',
         username: this.username,

@@ -15,8 +15,8 @@
             <i class="pi pi-user avatar-placeholder" />
           </div>
           <div class="user-widget-details">
-            <span class="email">{{ userProfile.email }}</span>
-            <span class="username">@{{ userProfile.username }}</span>
+            <span class="email">{{ userProfile?.email }}</span>
+            <span class="username">@{{ userProfile?.username }}</span>
           </div>
         </div>
         <div class="menu-item">
@@ -149,6 +149,18 @@
             <span class="menu-item-link-text">Einstellungen</span>
           </router-link>
         </div>
+        <div
+          v-if="isLoggedIn"
+          class="menu-item"
+        >
+          <div
+            class="menu-item-link"
+            @click="logout()"
+          >
+            <i class="pi pi-sign-out" />
+            <span class="menu-item-link-text">Ausloggen</span>
+          </div>
+        </div>
       </div>
     </div>
   </Sidebar>
@@ -195,6 +207,10 @@ export default defineComponent({
     toggleSidebar(expanded: boolean) {
       uiStore.toggleSidebar(expanded)
     },
+    logout() {
+      authService.logout()
+      this.$router.push('/')
+    }
   }
 })
 </script>
