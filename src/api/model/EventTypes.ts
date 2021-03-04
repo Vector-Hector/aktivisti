@@ -1,5 +1,5 @@
 export enum EventTypes {
-  DOOR_TO_DOOR = 'DOOR_TO_DOOR'
+  DOOR_TO_DOOR = 'H'
 }
 
 export const eventTypeOptions: [{ key: string, label: string }] = [{

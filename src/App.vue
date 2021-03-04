@@ -1,12 +1,14 @@
 <template>
-  <div id="root">
-    <Topbar
-      :show-sidebar="showNavigation"
-    />
-    <NavigationSidebar />
+  <NavigationSidebar />
+  <IonApp>
+    <div id="root">
+      <Topbar
+        :show-sidebar="showNavigation"
+      />
 
-    <router-view />
-  </div>
+      <router-view />
+    </div>
+  </IonApp>
 </template>
 
 <script lang="ts">
@@ -14,12 +16,14 @@ import { defineComponent } from 'vue'
 import Topbar from '@/components/Topbar.vue'
 import NavigationSidebar from '@/components/NavigationSidebar.vue'
 import { uiStore } from '@/store/UiStore'
+import { IonApp } from '@ionic/vue'
 
 export default defineComponent({
   name: 'App',
   components: {
     NavigationSidebar,
-    Topbar
+    Topbar,
+    IonApp
   },
   data() {
     return {

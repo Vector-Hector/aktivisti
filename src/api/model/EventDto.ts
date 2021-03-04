@@ -4,7 +4,7 @@ import { MapboxPlaceDto } from '@/api/model/MapboxPlaceDto'
 
 export interface EventDto {
   id: number,
-  type: EventTypes,
+  event_type: EventTypes,
   name: string,
   metrics: number[],
   campaign: number,

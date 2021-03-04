@@ -9,17 +9,17 @@
     </div>
     <div class="p-grid">
       <span class="p-col-2">Start:</span><span class="start-date p-col-10">{{
-        new Date(event.startDate).toLocaleString([], dateOptions)
+        new Date(event.start_date).toLocaleString([], dateOptions)
       }}</span>
     </div>
     <div class="p-grid">
       <span class="p-col-2">Ende:</span><span class="start-date p-col-10">{{
-        event.endDate ? new Date(event.endDate).toLocaleString([], dateOptions) : ''
+        event.end_date ? new Date(event.end_date).toLocaleString([], dateOptions) : ''
       }}</span>
     </div>
     <div class="p-grid">
       <span class="participants p-col">
-        <i class="pi pi-user" /> {{ event.participants.length }}/{{ event.maxParticipants }}</span>
+        <i class="pi pi-user" /> {{ event.participants.length }}/{{ event.max_participants ?? '∞' }}</span>
     </div>
     <div class="p-grid">
       <p class="description p-col">

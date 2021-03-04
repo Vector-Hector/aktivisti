@@ -59,6 +59,7 @@ import { defineComponent, PropType } from 'vue'
 import { IonInput, IonLabel, IonItem, IonButton, IonCheckbox, IonItemDivider } from '@ionic/vue'
 import { authService } from '@/api/authService'
 import { RouteLocation } from 'vue-router'
+import { GrantType } from '@/api/OAuth2Client'
 
 export default defineComponent({
   name: 'Login',
@@ -85,21 +86,8 @@ export default defineComponent({
   },
   methods: {
     async login() {
-      const userParams = {
-        grant_type: 'password',
-        username: this.username,
-        password: this.password,
-        client_id: process.env.VUE_APP_CLIENT_ID
-      }
-
-      const authRequest = (await this.$oauth2Client.token(userParams))
-
-      if (authRequest.response.status !== 200) {
-        return
-      } else {
-        authService.login(authRequest.payload)
-        this.$router.push(this.redirect)
-      }
+      await authService.login(this.username, this.password)
+      this.$router.push(this.redirect)
     }
   }
 })

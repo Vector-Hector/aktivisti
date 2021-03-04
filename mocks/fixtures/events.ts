@@ -3,7 +3,7 @@ import { EventTypes } from '@/api/model/EventTypes'
 
 export const sampleEvents: EventDto[] = [{
   id: 1,
-  type: EventTypes.DOOR_TO_DOOR,
+  event_type: EventTypes.DOOR_TO_DOOR,
   name: 'Haustürwahlkampf Mitte Gruppe 1',
   campaign: 1,
   start_date: '2021-05-11T12:00',
@@ -22,7 +22,7 @@ export const sampleEvents: EventDto[] = [{
   published: true
 }, {
   id: 2,
-  type: EventTypes.DOOR_TO_DOOR,
+  event_type: EventTypes.DOOR_TO_DOOR,
   name: 'Haustürwahlkampf Mitte Gruppe 2',
   campaign: 1,
   start_date: '2021-05-12T16:00',
@@ -41,7 +41,7 @@ export const sampleEvents: EventDto[] = [{
   published: true
 }, {
   id: 3,
-  type: EventTypes.DOOR_TO_DOOR,
+  event_type: EventTypes.DOOR_TO_DOOR,
   name: 'Haustürwahlkampf Mitte Gruppe 3',
   campaign: 1,
   start_date: '2021-05-12T16:00',
@@ -60,7 +60,7 @@ export const sampleEvents: EventDto[] = [{
   published: true
 }, {
   id: 4,
-  type: EventTypes.DOOR_TO_DOOR,
+  event_type: EventTypes.DOOR_TO_DOOR,
   name: 'Haustürwahlkampf Schöneiche',
   campaign: 1,
   start_date: '2021-05-12T16:00',
@@ -85,7 +85,7 @@ export const sampleEvents: EventDto[] = [{
   published: true
 }, {
   id: 5,
-  type: EventTypes.DOOR_TO_DOOR,
+  event_type: EventTypes.DOOR_TO_DOOR,
   name: 'Haustürwahlkampf Stuttgart',
   campaign: 2,
   start_date: '2021-05-12T16:00',
@@ -112,7 +112,7 @@ export const sampleEvents: EventDto[] = [{
 
 export const sampleCreatedEvent: EventDto = {
   id: 6,
-  type: EventTypes.DOOR_TO_DOOR,
+  event_type: EventTypes.DOOR_TO_DOOR,
   name: 'Neues Event',
   campaign: 2,
   start_date: '2021-05-12T16:00',

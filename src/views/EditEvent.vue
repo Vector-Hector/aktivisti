@@ -1,16 +1,19 @@
 <template>
-  <Steps
-    :model="steps"
-    :readonly="false"
-  />
-  <router-view
-    v-slot="{Component}"
-    v-model:event="event"
-  >
-    <keep-alive>
-      <component :is="Component" />
-    </keep-alive>
-  </router-view>
+  <div class="edit-event">
+    <Steps
+      :model="steps"
+      :readonly="false"
+    />
+    <router-view
+      v-slot="{Component}"
+      v-model:event="event"
+      :campaigns="campaigns"
+    >
+      <keep-alive>
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
+  </div>
 </template>
 
 <script lang="ts">
@@ -20,9 +23,9 @@ import { EventTypes } from '@/api/model/EventTypes'
 import { EventDto } from '@/api/model/EventDto'
 import Steps from 'primevue/components/steps/Steps'
 import { RouteParams } from 'vue-router'
-import { ApiClient } from '@/api'
+import { apiClient } from '@/api/ApiClient'
+import { CampaignDto } from '@/api/model/CampaignDto'
 
-const apiClient = new ApiClient()
 
 export default defineComponent({
   name: 'EditEvent',
@@ -30,14 +33,18 @@ export default defineComponent({
     Steps
   },
   beforeRouteEnter: async (to, from, next) => {
+    const campaignRequest = await apiClient.campaigns.list()
     if (to.params.id) {
-      // TODO this.$apiClient doesn't work here
-      const response = await apiClient.events.get(to.params.id as string)
+      const eventRequest = await apiClient.events.get(to.params.id as string, ['metrics'])
       next((vm: any) => {
-        vm.event = response.payload.data
+        vm.event = eventRequest.payload.data
+        vm.campaigns = campaignRequest.payload.data
+        vm.metricRecords = eventRequest.payload.embedded.metrics
       })
     } else {
-      next()
+      next((vm: any) => {
+        vm.campaigns = campaignRequest.payload.data
+      })
     }
   },
   props: {
@@ -49,8 +56,9 @@ export default defineComponent({
   },
   data() {
     return {
+      campaigns: [] as CampaignDto[],
       event: {
-        type: EventTypes.DOOR_TO_DOOR,
+        event_type: EventTypes.DOOR_TO_DOOR,
         metrics: [],
         targets: {}
       } as Partial<EventDto>
@@ -88,13 +96,7 @@ export default defineComponent({
     }
   },
   methods: {
-    async getEvent() {
-      this.event = (await this.$apiClient.events.get(this.id!)).payload.data
-    },
-    setEvent(event: EventDto) {
-      this.event = event
-    },
-    resolveIfEventId(location: { name: string, params?: RouteParams }): string | undefined {
+    resolveIfEventId(location: { name: string, params?: RouteParams }): string {
       if (this.id) {
         return this.$router.resolve({
           ...location,
@@ -104,7 +106,7 @@ export default defineComponent({
           }
         })?.path
       } else {
-        return undefined
+        return ''
       }
     }
   }
@@ -113,4 +115,10 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 
+.edit-event {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+}
 </style>

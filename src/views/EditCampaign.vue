@@ -140,9 +140,9 @@ export default defineComponent({
     }
   },
   async created() {
-    Promise.all([
-      await this.getOrganizationTypes(),
-      await this.getCampaignTypes()
+    await Promise.all([
+      this.getOrganizationTypes(),
+      this.getCampaignTypes()
     ])
     this.getCampaign()
   },
@@ -157,17 +157,17 @@ export default defineComponent({
     },
     async getCampaign() {
       if (this.id) {
-        const response = await this.$apiClient.campaign.get(this.id)
+        const response = await this.$apiClient.campaigns.get(this.id)
         this.campaign = response.payload.data
       }
     },
     async saveCampaign() {
       if (this.id !== null) {
-        const response = await this.$apiClient.campaign.update(this.id, this.campaign)
+        const response = await this.$apiClient.campaigns.update(this.id, this.campaign)
         this.campaign = response.payload.data
         this.$router.push('/campaigns')
       } else {
-        const response = await this.$apiClient.campaign.create(this.campaign)
+        const response = await this.$apiClient.campaigns.create(this.campaign)
         this.campaign = response.payload.data
         this.$router.push('/campaigns')
       }

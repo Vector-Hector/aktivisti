@@ -1,87 +1,153 @@
 <template>
-  <div
+  <IonContent
     v-if="event !== null && loading === false"
-    class="event container"
+    class="event"
   >
-    <h2>{{ event.name }}</h2>
-    <div class="p-grid">
-      <span class="campaign p-col">{{ event.campaign }}</span>
-    </div>
-    <div class="p-grid">
-      <span class="p-col-2">Start:</span><span class="start-date p-col-10">{{
-        new Date(event.start_date).toLocaleString([], dateOptions)
-      }}</span>
-    </div>
-    <div class="p-grid">
-      <span class="p-col-2">Ende:</span><span class="start-date p-col-10">{{
-        event.endDate ? new Date(event.end_date).toLocaleString([], dateOptions) : ''
-      }}</span>
-    </div>
-    <div class="p-grid">
-      <span class="participants p-col">
-        <i class="pi pi-user" /> {{ event.participants.length }}/{{ event.max_participants }}</span>
-    </div>
-    <div class="p-grid">
-      <p class="description p-col">
-        {{ event.description }}
-      </p>
-    </div>
-    <div
-      class="areas p-grid"
-    >
+    <div class="container">
+      <IonGrid class="full-width">
+        <IonRow>
+          <IonCol>
+            <span
+              v-if="campaign"
+              class="campaign"
+            >{{ campaign.name }}</span>
+          </IonCol>
+        </IonRow>
+        <IonRow>
+          <IonCol>
+            <h2 class="event-name">
+              {{ event.name }}
+            </h2>
+          </IonCol>
+        </IonRow>
+
+        <IonRow>
+          <IonCol size="2">
+            Start:
+          </IonCol>
+          <IonCol
+            size="10"
+            class="start-date"
+          >
+            {{ new Date(event.start_date).toLocaleString([], dateOptions) }}
+          </IonCol>
+        </IonRow>
+        <IonRow>
+          <IonCol size="2">
+            Ende:
+          </IonCol>
+          <IonCol
+            class="start-date"
+            size="10"
+          >
+            {{ event.endDate ? new Date(event.end_date).toLocaleString([], dateOptions) : 'Nicht definiert' }}
+          </IonCol>
+        </IonRow>
+        <IonRow>
+          <IonCol size="12">
+            <span class="participants">
+              <i class="pi pi-user" /> {{ event.participants.length }}/{{ event.max_participants ?? '∞' }}
+            </span>
+            <p class="description">
+              {{ event.description }}
+            </p>
+          </IonCol>
+        </IonRow>
+      </IonGrid>
+
+
       <div
-        v-for="area in eventAreas"
-        :key="area.id"
+        class="areas"
       >
-        {{ area.name }}
+        <IonList
+          v-if="isMember"
+          class="area-list"
+        >
+          <IonItem
+            v-for="area in eventAreas"
+            :key="area.id"
+            :button="true"
+            @click="$router.push({ name: 'event-area-live', params: { id: area.id }})"
+          >
+            <IonLabel>
+              <h3>{{ area.name }}</h3>
+              <p>{{ countAddresses(area.area_details) }} Adressen</p>
+            </IonLabel>
+            <div
+              slot="end"
+              class="item-buttons"
+            >
+              <IonIcon
+                :style="{
+                  color: area.color
+                }"
+                name="ellipse"
+              />
+              <IonIcon
+                class="chevron"
+                name="chevron-forward"
+              />
+            </div>
+          </IonItem>
+        </IonList>
       </div>
-    </div>
-    <div class="p-grid  p-jc-end">
-      <Button
-        v-if="currentUserId === null"
-        disabled="disabled"
+
+      <router-link
+        v-if="!isLoggedIn"
+        :to="{ name: 'login' }"
+        button-type="tertiary"
       >
-        Anmelden um mitzumachen
-      </Button>
-      <Button
+        <Button>
+          Anmelden um mitzumachen
+        </Button>
+      </router-link>
+      <IonButton
         v-else-if="isMember"
         :disabled="joinLoading"
-        class="gray-button"
+        button-type="primary"
         @click="leave"
       >
         Doch nicht dabei
-      </Button>
-      <Button
+      </IonButton>
+      <IonButton
         v-else-if="!isMember"
         :disabled="joinLoading"
         @click="join"
       >
         Ich bin dabei
-      </Button>
-      <router-link
-        v-if="isMember"
-        :to="`/events/${event.id}/live`"
-        class="no-button-decoration"
-      >
-        <Button>
-          Starten
-        </Button>
-      </router-link>
+      </IonButton>
     </div>
-  </div>
+  </IonContent>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { EventDto } from '@/api/model/EventDto'
-import Button from 'primevue/components/button/Button'
-import { userStore } from '@/store/UserStore'
 import { EventAreaDto } from '@/api/model/EventAreaDto'
+import { AreaDetailsDto } from '@/api/model/AreaDetailsDto'
+import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonItem, IonLabel, IonList, IonRow } from '@ionic/vue'
+import { ellipse, chevronForward } from 'ionicons/icons'
+import { addIcons } from 'ionicons'
+import { authService } from '@/api/authService'
+import { userStore } from '@/store/UserStore'
+
+addIcons({
+  ellipse,
+  chevronForward
+})
 
 export default defineComponent({
   name: 'EventDetail',
   components: {
-    Button
+    IonButton,
+    IonList,
+    IonItem,
+    IonIcon,
+    IonLabel,
+    IonGrid,
+    IonCol,
+    IonRow,
+    IonContent
   },
   props: {
     id: {
@@ -93,6 +159,7 @@ export default defineComponent({
     return {
       event: null as EventDto | null,
       eventAreas: [] as EventAreaDto[],
+      campaign: null,
       loading: true,
       joinLoading: false,
       metrics: [
@@ -112,11 +179,11 @@ export default defineComponent({
     }
   },
   computed: {
-    currentUserId(): number | null {
-      return userStore.getState().user?.id ?? null
+    isLoggedIn(): boolean {
+      return authService.isLoggedIn()
     },
     isMember(): boolean {
-      return this.event?.participants.find((id) => id === this.currentUserId) !== undefined
+      return this.event?.participants.find((id) => id === userStore.getState().user?.id) !== undefined
     }
   },
   async created() {
@@ -127,7 +194,10 @@ export default defineComponent({
   },
   methods: {
     async getEvent() {
-      this.event = (await this.$apiClient.events.get(this.id)).payload.data
+      const eventRequest = (await this.$apiClient.events.get(this.id, ['campaign']))
+      this.event = eventRequest.payload.data
+
+      this.campaign = eventRequest.payload.embedded.campaign[0]
     },
 
     async getEventAreas() {
@@ -146,6 +216,11 @@ export default defineComponent({
       this.joinLoading = true
       this.event = (await this.$apiClient.events.leave(this.id)).payload.data
       this.joinLoading = false
+    },
+    countAddresses(areaDetails: AreaDetailsDto) {
+      return areaDetails.streets.reduce((acc, street) => {
+        return acc + street.addresses.length
+      }, 0)
     }
   }
 })
@@ -169,4 +244,24 @@ Button {
   font-weight: bold;
   display: block;
 }
+
+.full-width {
+  width: 100%;
+}
+
+.event-name {
+  margin: 0 0 1rem 0;
+}
+
+.chevron {
+  margin-left: 2rem;
+  font-size: 2rem;
+}
+
+.item-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 </style>

@@ -62,6 +62,7 @@
       "@typescript-eslint/no-unused-vars": [
         "warn"
       ],
+      "vue/no-deprecated-slot-attribute": "off",
       "indent": [
         "error",
         2
