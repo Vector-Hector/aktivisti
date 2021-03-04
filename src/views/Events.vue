@@ -9,7 +9,7 @@
         :suggestions="filteredCampaigns"
         :dropdown="true"
         placeholder="Alle Kampagnen"
-        field="title"
+        field="name"
         @clear="getEvents"
         @item-select="filterEvents"
         @complete="searchCampaign($event)"

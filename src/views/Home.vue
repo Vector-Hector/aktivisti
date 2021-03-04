@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <h2>Veranstaltungen in deiner Nähe</h2>
-
     <div class="autocomplete">
       <AutoComplete
         v-if="campaigns"
@@ -10,7 +9,7 @@
         :suggestions="filteredCampaigns"
         :dropdown="true"
         placeholder="Alle Kampagnen"
-        field="title"
+        field="name"
         @clear="getEvents"
         @item-select="filterEvents"
         @complete="searchCampaign($event)"

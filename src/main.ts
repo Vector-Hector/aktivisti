@@ -60,7 +60,7 @@ app.config.globalProperties.$oauth2Client = oauth2Client
 apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
   return response
 }, (error: any) => {
-  if (error.response.status === 401) {
+  if (error.response?.status === 401) {
     authService.logout()
   }
   return Promise.reject(error.response)
