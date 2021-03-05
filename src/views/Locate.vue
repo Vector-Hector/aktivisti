@@ -35,7 +35,7 @@ export default defineComponent({
     Geocoder
   },
   beforeRouteEnter (to, from, next) {
-    if (userStore.getLocation() !== null) {
+    if (userStore.getState().location !== null) {
       next({ path: '/map' })
     } else {
       next()

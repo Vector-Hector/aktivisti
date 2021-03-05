@@ -70,7 +70,7 @@ export default defineComponent({
     AutoComplete
   },
   beforeRouteEnter(to, from, next) {
-    if (userStore.getState().location == null && userStore.getLocation() == null) {
+    if (userStore.getState().location == null) {
       next({ name: 'splash' })
     }
     next()
@@ -80,7 +80,7 @@ export default defineComponent({
       zoom: 14,
       iconWidth: 25,
       iconHeight: 40,
-      center: { ...userStore.getState().location || userStore.getLocation() },
+      center: { ...userStore.getState().location },
       events: [] as EventDto[],
       filteredCampaigns: [] as CampaignDto[],
       campaigns: [] as CampaignDto[],
