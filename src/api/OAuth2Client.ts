@@ -3,8 +3,10 @@ import axios from 'axios'
 import { JSONResponse } from './JSONResponse'
 import { TokenDto } from './model/TokenDto'
 
+export type GrantType = 'password'
+
 interface OAuthTokenRequestParams {
-    // grant_type: 'password'
+    grant_type: GrantType
     username: string
     password: string
     scope?: string
@@ -30,3 +32,5 @@ export class OAuth2Client {
     return new JSONResponse<TokenDto>(response, data)
   }
 }
+
+export const oAuth2Client = new OAuth2Client()

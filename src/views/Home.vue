@@ -98,7 +98,7 @@ export default defineComponent({
       this.events = response.payload.data
     },
     async getCampaigns() {
-      const response = await this.$apiClient.campaign.list()
+      const response = await this.$apiClient.campaigns.list()
       this.campaigns = response.payload.data
     },
     searchCampaign(event: any) {

@@ -1,6 +1,15 @@
 import { APIEnvelope } from '@/api/model/APIEnvelope'
 import { JSONResponse } from '@/api/JSONResponse'
-import { AxiosInstance } from 'axios'
+import { AxiosInstance, Method } from 'axios'
+import { appendAsQueryParams } from '@/utils/url'
+
+interface RequestConfig {
+  path: string,
+  method: Method,
+  embed?: string[],
+  query?: { [key: string]: string[] | string | number | number[] }
+  data?: any
+}
 
 /**
  * Generic CRUD operation definitions for a route
@@ -12,41 +21,66 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
   constructor(protected baseUrl: string, protected path: string, protected axiosInstance: AxiosInstance) {
   }
 
-  async list(query: { [key: string]: any } = {}): Promise<JSONResponse<L>> {
-    const url = new URL(`${this.baseUrl}/${this.path}`)
-    Object.keys(query).forEach(key => url.searchParams.append(key, query[key]))
-    const response = await this.axiosInstance(url.toString())
+  async list(query: { [key: string]: any } = {}, embed: string[] = []): Promise<JSONResponse<L>> {
+
+    const response = await this.request({
+      path: this.path,
+      method: 'GET',
+      query,
+      embed,
+    })
     const data = response.data
     return new JSONResponse<L>(response, data)
   }
 
-  async get(id: string): Promise<JSONResponse<E>> {
-    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}/${id}`)
+  async get(id: string, embed: string[] = []): Promise<JSONResponse<E>> {
+    const response = await this.request({
+      path: `${this.path}${id}`,
+      method: 'GET',
+      embed
+    })
     const data = response.data
     return new JSONResponse<E>(response, data)
   }
 
   async create(body: Partial<T>): Promise<JSONResponse<E>> {
-    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}`, {
+    const response = await this.request({
+      path: this.path,
       method: 'POST',
-      data: JSON.stringify(body)
+      data: body
     })
     const data = response.data
     return new JSONResponse<E>(response, data)
   }
 
   async update(id: string, body: T): Promise<JSONResponse<E>> {
-    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}/${id}`, {
+    const response = await this.request({
+      path: `${this.path}${id}/`,
       method: 'PUT',
-      data: JSON.stringify(body)
+      data: body
     })
     const data = response.data
     return new JSONResponse<E>(response, data)
   }
 
   async delete(id: string): Promise<void> {
-    await this.axiosInstance(`${this.baseUrl}/${this.path}/${id}`, {
+    await this.request({
+      path: `${this.path}/${id}`,
       method: 'DELETE'
+    })
+  }
+
+  protected request(config: RequestConfig) {
+    const url = new URL(`${this.baseUrl}/${config.path}`)
+    if (config.embed?.length) {
+      appendAsQueryParams(url, { embed: config.embed })
+    }
+    if (config.query) {
+      appendAsQueryParams(url, config.query)
+    }
+    return this.axiosInstance(url.toString(), {
+      method: config.method,
+      data: config.data ? JSON.stringify(config.data) : undefined
     })
   }
 }

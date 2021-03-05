@@ -61,14 +61,14 @@ export default defineComponent({
   },
   methods: {
     deleteCampaign(id: string) {
-      this.$apiClient.campaign.delete(id)
+      this.$apiClient.campaigns.delete(id)
         .then(() => {
           // TODO check again, could be solved differently
           this.getCampaigns()
         })
     },
     async getCampaigns() {
-      const response = await this.$apiClient.campaign.list()
+      const response = await this.$apiClient.campaigns.list()
       this.organizationTypes = response.payload.embedded.organization
       this.campaigns = response.payload.data
     },

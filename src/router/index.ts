@@ -6,7 +6,6 @@ import EditEvent from '@/views/EditEvent.vue'
 import Campaigns from '@/views/Campaigns.vue'
 import EditCampaign from '@/views/EditCampaign.vue'
 import EventDetail from '@/views/EventDetail.vue'
-import EventLive from '@/views/EventLive.vue'
 import Locate from '@/views/Locate.vue'
 import CreateLead from '@/views/CreateLead.vue'
 import Login from '@/views/Login.vue'
@@ -17,7 +16,12 @@ import EditEventSummary from '@/views/edit-event/EditEventSummary.vue'
 import EditEventMapRoutes from '@/views/edit-event/map/EditEventMapRoutes.vue'
 import EditEventMap from '@/views/edit-event/EditEventMap.vue'
 import EditEventMapLocation from '@/views/edit-event/map/EditEventMapLocation.vue'
+import EventAreaLive from '@/views/EventAreaLive.vue'
 import { authService } from '@/api/authService'
+import EventAreaLiveOverview from '@/views/event-area-live/EventAreaLiveOverview.vue'
+import EventAreaLiveStreet from '@/views/event-area-live/EventAreaLiveStreet.vue'
+import EventAreaLiveMetrics from '@/views/event-area-live/EventAreaLiveMetrics.vue'
+
 
 const router = createRouter({
   history: createWebHistory(),
@@ -53,13 +57,34 @@ const router = createRouter({
       }
     },
     {
-      path: '/events/:id/live',
-      name: 'live-event',
-      component: EventLive,
+      path: '/events-area/:id/live',
+      name: 'event-area-live',
+      redirect: {name: 'event-area-live-overview'},
+      component: EventAreaLive,
       props: true,
       meta: {
         requiresAuth: true
-      }
+      },
+      children: [
+        {
+          path: 'overview',
+          component: EventAreaLiveOverview,
+          props: true,
+          name: 'event-area-live-overview',
+        },
+        {
+          path: 'street/:street',
+          component: EventAreaLiveStreet,
+          props: true,
+          name: 'event-area-live-street',
+        },
+        {
+          path: 'metrics/:street/:houseNumber',
+          component: EventAreaLiveMetrics,
+          props: true,
+          name: 'event-area-live-metrics',
+        }
+      ]
     },
     {
       path: '/events/edit/new',
@@ -91,7 +116,8 @@ const router = createRouter({
             {
               path: 'location',
               component: EditEventMapLocation,
-              name: 'edit-event-location'
+              name: 'edit-event-location',
+              props: true
             },
             {
               path: 'route-planner',
@@ -128,7 +154,7 @@ const router = createRouter({
     },
     {
       path: '/login',
-      component: Login,
+      component: Login
     },
     {
       path: '/register',
@@ -145,7 +171,7 @@ router.beforeEach((to, from, next) => {
   if (!authService.isLoggedIn() && to.matched.some(record => record.meta.requiresAuth)) {
     next({
       path: '/login',
-      params: { nextUrl: to.fullPath }
+      params: {nextUrl: to.fullPath}
     })
   } else {
     next()

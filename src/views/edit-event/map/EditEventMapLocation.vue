@@ -1,7 +1,6 @@
 <template>
   <Geocoder
     ref="geocoder"
-    :marker-options="false"
     :countries="['de']"
     :access-token="accessToken"
     :reverse-geocode="true"
@@ -39,21 +38,13 @@
         </a>
       </Button>
     </router-link>
-    <router-link
-      v-slot="{ href, navigate }"
-      custom
-      :to="{name: 'edit-event-routes'}"
+    <Button
+      :disabled="!event.location"
+      class="submit-button"
+      @click="saveAndProceed"
     >
-      <Button
-        :disabled="!event.location"
-        class="submit-button"
-        @click="navigate"
-      >
-        <a :href="href">
-          Routen zeichnen
-        </a>
-      </Button>
-    </router-link>
+      Routen zeichnen
+    </Button>
   </MapOverlay>
 </template>
 
@@ -67,6 +58,7 @@ import MapOverlay from '@/components/MapOverlay.vue'
 import Button from 'primevue/components/button/Button'
 import EditEventMixin from '@/views/edit-event/EditEventMixin'
 import { mapboxPlaceDtoFromGeocodeResult } from '@/api/model/MapboxPlaceDto'
+import { EventDto } from '@/api/model/EventDto'
 
 
 export default defineComponent({
@@ -80,6 +72,7 @@ export default defineComponent({
   mixins: [EditEventMixin],
   data() {
     return {
+      loading: false,
       accessToken: process.env.VUE_APP_MAPBOX_TOKEN
     }
   },
@@ -89,6 +82,12 @@ export default defineComponent({
     },
     updateGeocoder(location: LocationDto) {
       (this.$refs.geocoder as typeof Geocoder).query(`${location.lat},${location.lng}`)
+    },
+    async saveAndProceed() {
+      this.loading = true
+      this.localEvent = (await this.$apiClient.events.update(this.localEvent.id!.toString(), this.localEvent as EventDto)).payload.data
+      this.loading = false
+      this.$router.push({name: 'edit-event-routes'})
     }
   }
 })

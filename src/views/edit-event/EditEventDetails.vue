@@ -10,7 +10,7 @@
         <div class="p-col-12 p-md-9">
           <Dropdown
             id="eventType"
-            v-model="localEvent.type"
+            v-model="localEvent.event_type"
             :disabled="true"
             :options="eventTypes"
             option-label="label"
@@ -43,7 +43,7 @@
             v-model="localEvent.campaign"
             :options="campaigns"
             option-value="id"
-            option-label="title"
+            option-label="name"
             placeholder="Wähle eine Kampagne aus"
           />
         </div>
@@ -85,7 +85,7 @@
         <div class="p-col-12 p-md-9">
           <InputNumber
             id="eventParticipantsMax"
-            v-model="localEvent.maxParticipants"
+            v-model="localEvent.max_participants"
             show-buttons
             mode="decimal"
             :min="0"
@@ -114,7 +114,7 @@
         >Felder (geklopfte Türen etc.) auswählen</label>
         <div class="p-col-12 p-md-9">
           <MultiSelect
-            v-model="localEvent.metrics"
+            v-model="selectedMetrics"
             :options="metrics"
             option-label="name"
             placeholder="Metriken auswählen"
@@ -123,23 +123,21 @@
         </div>
       </div>
 
-      <div v-if="localEvent.metrics.length > 0">
-        <div
-          v-for="metric in localEvent.metrics"
-          :key="metric.name"
-        >
-          <div class="p-field p-grid">
-            <label
-              for="eventGoals"
-              class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-            >Zielvorgabe für {{ metric.name }} hinzufügen</label>
-            <div class="p-col-12 p-md-9">
-              <InputNumber
-                v-model="localEvent.targets[metric.name]"
-                show-buttons
-                :min="0"
-              />
-            </div>
+      <div
+        v-for="metricRecord in metricRecords"
+        :key="metricRecord.id"
+      >
+        <div class="p-field p-grid">
+          <label
+            for="eventGoals"
+            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+          >Zielvorgabe für {{ metricForMetricRecord(metricRecord).name }} hinzufügen</label>
+          <div class="p-col-12 p-md-9">
+            <InputNumber
+              v-model="metricRecord.target"
+              show-buttons
+              :min="0"
+            />
           </div>
         </div>
       </div>
@@ -223,11 +221,16 @@ import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
 import MultiSelect from 'primevue/multiselect'
 
-import { CampaignDto } from '@/api/model/CampaignDto'
 import { eventTypeOptions } from '@/api/model/EventTypes'
 import EditEventMixin from '@/views/edit-event/EditEventMixin'
 import { EventDto } from '@/api/model/EventDto'
+import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
+import { EventMetricDto } from '@/api/model/EventMetricDto'
 
+/**
+ * The details form of an event in this state the event can be either new (no id) or existing (has id)
+ * After entering the details the event is saved, as subsequent steps rely on the event already been created on the API
+ */
 export default defineComponent({
   name: 'EditEventDetails',
   components: {
@@ -242,14 +245,8 @@ export default defineComponent({
   mixins: [EditEventMixin],
   data() {
     return {
-      campaigns: [] as CampaignDto[],
-      metrics: [
-        {name: 'Geklopfte Türen', value: 'Geklopfte Türen'},
-        {name: 'Geöffnete Türen', value: 'Geöffnete Türen'},
-        {name: 'Gute Gespräche', value: 'Gute Gespräche'},
-        {name: 'Zustimmung', value: 'Zustimmung'},
-        {name: 'Unterschriften', value: 'Unterschriften'}
-      ],
+      metrics: [] as EventMetricDto[],
+      metricRecords: [] as Partial<EventMetricRecordDto>[],
       zoom: 6,
       iconWidth: 25,
       iconHeight: 40,
@@ -283,29 +280,62 @@ export default defineComponent({
       set(value: Date) {
         this.localEvent.start_date = value.toISOString()
       }
+    },
+    selectedMetrics: {
+      get(): EventMetricDto[] {
+        const metricRecordMetricIds = this.metricRecords.map(({metric}) => metric)
+        return this.metrics.filter(({id}) => {
+          return metricRecordMetricIds.includes(id)
+        })
+      },
+      set(metrics: EventMetricDto[]) {
+        this.metricRecords = metrics.map((metricItem) => {
+          const existingRecord = this.metricRecords.find(({metric}) => metric == metricItem.id)
+          return existingRecord ?? {
+            metric: metricItem.id,
+            event: this.event.id,
+            target: 0
+          }
+        })
+      }
     }
   },
-  created() {
-    this.getCampaigns()
+  async created() {
+    await this.getMetrics()
+    if (this.event.id) {
+      await this.getMetricRecords()
+    }
   },
   methods: {
-    async getCampaigns() {
-      const response = await this.$apiClient.campaign.list()
-      this.campaigns = response.payload.data
+    async getMetrics() {
+      const metricsRequest = await this.$apiClient.eventMetrics.list()
+      this.metrics = metricsRequest.payload.data
+    },
+    async getMetricRecords() {
+      const metricRecordsRequest = await this.$apiClient.eventMetricRecords.list({event: this.event.id})
+      this.metricRecords = metricRecordsRequest.payload.data
     },
     async saveAndProceed() {
       let newEvent
-      if (!this.event.id) {
-        newEvent = this.localEvent = (await this.$apiClient.events.create(this.event)).payload.data
+      if (!this.localEvent.id) {
+        newEvent = this.localEvent = (await this.$apiClient.events.create(this.localEvent)).payload.data
       } else {
-        newEvent = this.localEvent = (await this.$apiClient.events.update(this.event!.id!.toString(), this.event as EventDto)).payload.data
+        newEvent = this.localEvent = (await this.$apiClient.events.update(this.localEvent!.id!.toString(), this.localEvent as EventDto)).payload.data
       }
+      await this.$apiClient.events.batchUpdateMetricRecords(newEvent.id.toString(), this.metricRecords)
+
       this.$router.push({
         name: 'edit-event-location',
         params: {
           id: newEvent.id.toString()
         }
       })
+    },
+    metricForMetricRecord(record: EventMetricRecordDto): EventMetricDto | undefined {
+      return this.metrics.find(({id}) => record.metric === id)
+    },
+    metricRecordForMetricId(metricId: number): Partial<EventMetricRecordDto> | undefined {
+      return this.metricRecords.find(({metric}) => metricId === metric)
     }
   }
 })

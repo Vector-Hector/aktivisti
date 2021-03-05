@@ -210,9 +210,10 @@ export default defineComponent({
     features(): Feature[] {
       return this.areas.map((area) => {
         return {
-          ...area.feature,
+          type: 'Feature',
+          geometry: area.geometry,
+          id: area.feature_id,
           properties: {
-            ...area.feature.properties,
             // find the corresponding area and copy the color
             color: area.color
           }
@@ -223,7 +224,7 @@ export default defineComponent({
   methods: {
     handleCreatedFeatures(event: any) {
       for (const feature of event.features) {
-        const existingAreaIndex = this.areas.findIndex((area) => area.feature.id === feature.id)
+        const existingAreaIndex = this.areas.findIndex((area) => area.feature_id === feature.id)
         const updatedArea = Object.assign(
           {
             name: `Gebiet ${this.areas.length + 1}`,
@@ -232,7 +233,8 @@ export default defineComponent({
           },
           this.areas[existingAreaIndex] ?? {},
           {
-            feature
+            feature_id: feature.id,
+            geometry: feature.geometry
           }
         )
         if (existingAreaIndex > -1) {

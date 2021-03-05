@@ -27,20 +27,22 @@ import '@ionic/vue/css/text-transformation.css'
 import '@ionic/vue/css/flex-utils.css'
 import '@ionic/vue/css/display.css'
 
+
 import './scss/theme.scss' // primevue theme
 import './scss/_globals.scss'
 
 import 'mapbox-gl/dist/mapbox-gl.css'
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
 
-import { AxiosResponse } from 'axios'
+import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { authService } from './api/authService'
-import { OAuth2Client } from './api/OAuth2Client'
-import { ApiClient } from '@/api'
+import { oAuth2Client } from './api/OAuth2Client'
 import { userStore } from '@/store/UserStore'
 import { makeServer } from '../mocks/server'
+import { apiClient } from '@/api/ApiClient'
+import { tokenStore } from '@/store/TokenStore'
 
-if (process.env.VUE_APP_ENABLE_MOCKS === "true") {
+if (process.env.VUE_APP_ENABLE_MOCKS === 'true') {
   makeServer()
 }
 
@@ -50,12 +52,20 @@ const app = createApp(App)
   .use(router)
   .use(PrimeVue)
 
-const apiClient = new ApiClient()
-const oauth2Client = new OAuth2Client()
 
 app.config.globalProperties.$apiClient = apiClient
-app.config.globalProperties.$oauth2Client = oauth2Client
+app.config.globalProperties.$oauth2Client = oAuth2Client
 
+
+apiClient.axiosInstance.interceptors.request.use((request: AxiosRequestConfig) => {
+  if (tokenStore.getTokenDto() !== null) {
+    request.headers = {
+      ...request.headers,
+      'Authorization': `Bearer ${tokenStore.getTokenDto()!.access_token}`
+    }
+  }
+  return request
+})
 
 apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
   return response

@@ -5,6 +5,7 @@
   >
     <router-view
       v-model:event="localEvent"
+      :campaigns="campaigns"
     />
   </Map>
 </template>
