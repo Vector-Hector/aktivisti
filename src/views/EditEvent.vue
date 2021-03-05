@@ -26,7 +26,9 @@ import { RouteParams } from 'vue-router'
 import { apiClient } from '@/api/ApiClient'
 import { CampaignDto } from '@/api/model/CampaignDto'
 
-
+/**
+ * The parent component implementing the individual steps for creating an event
+ */
 export default defineComponent({
   name: 'EditEvent',
   components: {
@@ -48,6 +50,7 @@ export default defineComponent({
     }
   },
   props: {
+    // event id
     id: {
       type: String as PropType<string | null>,
       required: false,
@@ -96,6 +99,12 @@ export default defineComponent({
     }
   },
   methods: {
+    /**
+     * This function will resolve the edit event sub routes if an event id is available (meaning it has been created
+     * in the backend), otherwise the steps should be disabled and this function will return '' (undefined is not allowed
+     * as a routing target)
+     * @param location route parameters of the target route, (event-)id will be auto-filled by this function
+     */
     resolveIfEventId(location: { name: string, params?: RouteParams }): string {
       if (this.id) {
         return this.$router.resolve({

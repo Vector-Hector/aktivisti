@@ -221,13 +221,16 @@ import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
 import MultiSelect from 'primevue/multiselect'
 
-import { CampaignDto } from '@/api/model/CampaignDto'
 import { eventTypeOptions } from '@/api/model/EventTypes'
 import EditEventMixin from '@/views/edit-event/EditEventMixin'
 import { EventDto } from '@/api/model/EventDto'
 import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
 import { EventMetricDto } from '@/api/model/EventMetricDto'
 
+/**
+ * The details form of an event in this state the event can be either new (no id) or existing (has id)
+ * After entering the details the event is saved, as subsequent steps rely on the event already been created on the API
+ */
 export default defineComponent({
   name: 'EditEventDetails',
   components: {
