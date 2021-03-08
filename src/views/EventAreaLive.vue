@@ -7,13 +7,16 @@
       <IonGrid class="full-width">
         <IonRow>
           <IonCol>
-            <h2>Gebiet: {{ eventArea.name }}</h2>
+            <h2 class="event-area-title">
+              Gebiet: {{ eventArea.name }}
+            </h2>
           </IonCol>
         </IonRow>
         <IonRow>
           <IonCol>
-            <span class="event-name">{{ event.name }}</span>
-
+            <span class="event-name">
+              {{ event.name }}
+            </span>
           </IonCol>
         </IonRow>
         <IonRow>
@@ -78,6 +81,8 @@ export default defineComponent({
 <style lang="scss" scoped>
 @import "~@/scss/_globals.scss";
 
+
+
 label {
   text-align: left;
 }
@@ -85,6 +90,10 @@ label {
 .campaign {
   font-weight: bold;
   display: block;
+}
+
+.event-area-title {
+  margin: 0.8rem 0 0 0;
 }
 
 .map {

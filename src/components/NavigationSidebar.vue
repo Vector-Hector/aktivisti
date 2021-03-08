@@ -77,48 +77,12 @@
             <span class="menu-item-link-text">Termine auf Karte</span>
           </router-link>
         </div>
-        <div class="menu-item">
-          <router-link
-            class="menu-item-link"
-            to="/contact"
-          >
-            <i class="pi pi-users" />
-            <span class="menu-item-link-text">Kontakt zur LINKEN</span>
-          </router-link>
-        </div>
-        <div class="menu-item">
-          <router-link
-            class="menu-item-link"
-            to="/material"
-          >
-            <i class="pi pi-file" />
-            <span class="menu-item-link-text">Wahlkampfmaterial</span>
-          </router-link>
-        </div>
-        <div class="menu-item">
-          <router-link
-            class="menu-item-link"
-            to="/campaign-select"
-          >
-            <i class="pi pi-external-link" />
-            <span class="menu-item-link-text">Anderen Ort auswählen</span>
-          </router-link>
-        </div>
       </div>
       <div
-        v-if="isLoggedIn"
+        v-if="isManager"
         class="menu-group"
       >
         <hr class="menu-divider">
-        <div class="menu-item">
-          <router-link
-            class="menu-item-link"
-            to="/events"
-          >
-            <i class="pi pi-check-circle" />
-            <span class="menu-item-link-text">Meine Termine</span>
-          </router-link>
-        </div>
         <div class="menu-item">
           <router-link
             class="menu-item-link"
@@ -128,27 +92,9 @@
             <span class="menu-item-link-text">Kampagne erstellen</span>
           </router-link>
         </div>
-        <div class="menu-item">
-          <router-link
-            class="menu-item-link"
-            to="/events/edit/new"
-          >
-            <i class="pi pi-calendar-plus" />
-            <span class="menu-item-link-text">Event erstellen</span>
-          </router-link>
-        </div>
       </div>
       <div class="menu-group menu-bottom">
         <hr class="menu-divider">
-        <div class="menu-item">
-          <router-link
-            class="menu-item-link"
-            to="/settings"
-          >
-            <i class="pi pi-cog" />
-            <span class="menu-item-link-text">Einstellungen</span>
-          </router-link>
-        </div>
         <div
           v-if="isLoggedIn"
           class="menu-item"
@@ -188,6 +134,9 @@ export default defineComponent({
   computed: {
     isLoggedIn() {
       return authService.isLoggedIn()
+    },
+    isManager() {
+      return userStore.isManager()
     },
     userProfile() {
       return userStore.getState().user

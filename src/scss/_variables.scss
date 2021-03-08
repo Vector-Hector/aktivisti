@@ -17,6 +17,11 @@ $text-primary: $black;
 $text-inverted: invert($black);
 $primary: $red;
 
+$breakpoint-xs: 100%;
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
 
 $font-stack: 'Roboto', Arial, Helvetica, Geneva, sans-serif;
 $map-overlay-shadow: 0 0 10px 2px rgba(0,0,0,.1);

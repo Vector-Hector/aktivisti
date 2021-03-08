@@ -8,8 +8,9 @@
     </IonFabButton>
     <input
       class="counter-input-field"
-      type="number"
       :value="modelValue"
+      type="number"
+      @change="updateValue($event.target.value)"
     >
     <IonFabButton
       @click="$emit('update:modelValue', modelValue + 1)"
@@ -54,6 +55,12 @@ export default defineComponent({
   methods: {
     openSidebar() {
       uiStore.openSidebar()
+    },
+    updateValue(value: any) {
+      const parsedValue = parseInt(value)
+      if (parsedValue) {
+        this.$emit('update:modelValue', parsedValue)
+      }
     }
   }
 })
@@ -76,6 +83,17 @@ export default defineComponent({
   font-weight: bold;
   text-align: center;
   padding: 1rem 1rem;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
 }
 
 </style>

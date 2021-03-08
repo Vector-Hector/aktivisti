@@ -129,8 +129,7 @@
         @click="navigate"
       >
         <a :href="href">
-          Zusammenfassung
-        </a>
+          Zusammenfassung</a>
       </Button>
     </router-link>
   </MapOverlay>
@@ -143,7 +142,6 @@ import Marker from '@/lib/mapbox/Marker.vue'
 import EditEventMixin from '@/views/edit-event/EditEventMixin'
 import MapOverlay from '@/components/MapOverlay.vue'
 import Button from 'primevue/components/button/Button'
-import { ApiClient } from '@/api'
 import { Feature } from 'geojson'
 import DataTable from 'primevue/components/datatable/DataTable'
 import Column from 'primevue/components/column/Column'
@@ -152,8 +150,7 @@ import ProgressSpinner from 'primevue/components/progressspinner/ProgressSpinner
 import { routePlannerStyles } from '@/views/edit-event/map/route-planner.styles'
 import InputText from 'primevue/components/inputtext/InputText'
 import { EventAreaDto } from '@/api/model/EventAreaDto'
-
-const apiClient = new ApiClient()
+import { apiClient } from '@/api/ApiClient'
 
 const defaultColors = [
   '#E22A3A',

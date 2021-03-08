@@ -51,10 +51,8 @@ const router = createRouter({
     {
       path: '/events/:id',
       component: EventDetail,
-      props: true,
-      meta: {
-        requiresAuth: true
-      }
+      name: 'event-details',
+      props: true
     },
     {
       path: '/events-area/:id/live',
@@ -85,6 +83,11 @@ const router = createRouter({
           name: 'event-area-live-metrics',
         }
       ]
+    },
+    {
+      path: '/events/edit',
+      component: Events,
+      redirect: {name: 'edit-event-list'},
     },
     {
       path: '/events/edit/new',
@@ -154,7 +157,8 @@ const router = createRouter({
     },
     {
       path: '/login',
-      component: Login
+      component: Login,
+      name: 'login'
     },
     {
       path: '/register',

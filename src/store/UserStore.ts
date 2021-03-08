@@ -1,6 +1,6 @@
 import { Store } from '@/store/Store'
 import { LocationDto } from '@/api/model/LocationDto'
-import { UserDto } from '@/api/model/UserDto'
+import { CAMPAIGN_ADMIN, UserDto } from '@/api/model/UserDto'
 
 interface UserState {
   user: UserDto | null,
@@ -28,14 +28,22 @@ class UserStore extends Store<UserState> {
     }
   }
 
-  public locate(location: LocationDto) {
+  public locate(location: LocationDto | null) {
     this.state.location = location
     localStorage.setItem(KEY_LOCATION, JSON.stringify(location))
   }
 
   public clearUser() {
     this.state.user = null
-    localStorage.removeItem(KEY_LOCATION)
+  }
+
+  public clear() {
+    this.clearUser()
+    this.locate(null)
+  }
+
+  public isManager(): boolean {
+    return this.state.user?.roles.includes(CAMPAIGN_ADMIN) ?? false
   }
 
   public setUser(user: UserDto) {

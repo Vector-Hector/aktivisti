@@ -45,6 +45,7 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
 
     for (const key of Object.keys(localStorage)) {
       if (key.startsWith(this.localStorageMetricsPrefix)) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [_, eventAreaId, trackingSessionId, address] = unescape(key).split('.')
         if (!(trackingSessionId in this.state.sessions)) {
           this.state.sessions[trackingSessionId] = {
@@ -71,6 +72,16 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
     localStorage.setItem(this.toLocalStorageIdentifier(eventArea, address), JSON.stringify(metricValueMap))
   }
 
+  public clear() {
+    this.state.sessions = {}
+    this.state.trackingSessionId = null
+    for (const key of Object.keys(localStorage)) {
+      if (key === this.localStorageSessionIdKey || key.startsWith(this.localStorageMetricsPrefix)) {
+        localStorage.removeItem(key)
+      }
+    }
+  }
+
   getMetricsForAddress(eventArea: number, address: string): MetricValueMap | undefined {
     if (this.state.trackingSessionId !== null) {
       try {
@@ -92,7 +103,15 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
     }
   }
 
-  async collectMetricsForAddress(eventArea: number, address: string, metricValueMap: MetricValueMap) {
+  private aggregateForMetricRecordAndEventArea(eventArea: number, metricRecordId: number) {
+    return Object.entries(this.state.sessions[this.state.trackingSessionId!].eventAreas[eventArea])
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .reduce((acc, [_, valueMap]) => {
+        return acc + valueMap[metricRecordId]
+      }, 0)
+  }
+
+  async updateMetricsForAddress(eventArea: number, address: string, metricValueMap: MetricValueMap) {
     if (this.state.trackingSessionId === null) {
       await this.renewTrackingId()
     }
@@ -112,19 +131,21 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
         }
       }))
     }
-
+    if (!(eventArea in this.state.sessions[this.state.trackingSessionId!].eventAreas)) {
+      this.state.sessions[this.state.trackingSessionId!].eventAreas[eventArea] = {}
+    }
+    this.state.sessions[this.state.trackingSessionId!].eventAreas[eventArea][address] = metricValueMap
+    this.storeAddressInLocalStorage(eventArea, address, metricValueMap)
     for (const metric of metricsToUpdate) {
+      const metricId = parseInt(metric.metricRecordId)
+      const aggregatedMetricValue = this.aggregateForMetricRecordAndEventArea(eventArea, metricId)
       await apiClient.eventMetricRecordSubmissions.create({
         metric_record: parseInt(metric.metricRecordId),
         event_area: eventArea,
-        value: metric.value,
+        value: aggregatedMetricValue,
         tracking_session: this.state.trackingSessionId!
       })
-      this.storeAddressInLocalStorage(eventArea, address, metricValueMap)
-      if (!(eventArea in this.state.sessions[this.state.trackingSessionId!].eventAreas)) {
-        this.state.sessions[this.state.trackingSessionId!].eventAreas[eventArea] = {}
-      }
-      this.state.sessions[this.state.trackingSessionId!].eventAreas[eventArea][address] = metricValueMap
+
     }
   }
 }

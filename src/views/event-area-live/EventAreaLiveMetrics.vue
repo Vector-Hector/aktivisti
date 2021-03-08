@@ -1,31 +1,43 @@
 <template>
-  <h2>{{ street }} {{ houseNumber }}</h2>
-  <div
-    v-for="metricRecord in metricRecords"
-    :key="metricRecord.name"
-    class="metrics-input"
+  <h2>
+    Ergebnisse für: {{ street }} {{ houseNumber }}
+  </h2>
+  <IonGrid
+    v-if="metricRecords.length"
   >
-    <h3>{{ getMetricForId(metricRecord.metric).name }}</h3>
-    <CounterInput
+    <MetricsRow
+      v-for="metricRecord in metricRecords"
+      :key="metricRecord.name"
       :model-value="metricValues[metricRecord.id]"
+      :label="getMetricForId(metricRecord.metric).name"
+      class="metrics-input"
       @update:modelValue="updateMetricValue(metricRecord.id, $event)"
     />
-  </div>
+  </IonGrid>
+  <IonText
+    v-else
+    color="medium"
+  >
+    Für dieses wurden keine Metriken definiert
+  </IonText>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { EventAreaDto } from '@/api/model/EventAreaDto'
-import CounterInput from '@/components/CounterInput.vue'
 import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
 import { EventMetricDto } from '@/api/model/EventMetricDto'
 import { MetricValueMap, trackingSessionStore } from '@/store/TrackingSessionStore'
+import { IonGrid, IonText } from '@ionic/vue'
+import MetricsRow from '@/components/MetricsRow.vue'
 
 
 export default defineComponent({
   name: 'EventAreaLiveMetrics',
   components: {
-    CounterInput
+    MetricsRow,
+    IonGrid,
+    IonText
   },
   props: {
     eventArea: {
@@ -65,7 +77,7 @@ export default defineComponent({
         }
       },
       set(metrics: MetricValueMap) {
-        trackingSessionStore.collectMetricsForAddress(this.eventArea.id!, this.address, metrics)
+        trackingSessionStore.updateMetricsForAddress(this.eventArea.id!, this.address, metrics)
       }
     }
   },

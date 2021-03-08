@@ -1,16 +1,21 @@
 import router from '@/router'
 import { tokenStore } from '@/store/TokenStore'
 import { userStore } from '@/store/UserStore'
-import { TokenDto } from './model/TokenDto'
 import { apiClient } from '@/api/ApiClient'
 import { GrantType, oAuth2Client } from '@/api/OAuth2Client'
+import { trackingSessionStore } from '@/store/TrackingSessionStore'
 
 const authService = {
 
   logout() {
+    this.clear()
+    router.push('/login')
+  },
+
+  clear() {
     tokenStore.removeTokenDto()
     userStore.clearUser()
-    router.push('/login')
+    trackingSessionStore.clear()
   },
 
   async login(username: string, password: string) {

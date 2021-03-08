@@ -1,121 +1,137 @@
 <template>
   <IonContent
     v-if="event !== null && loading === false"
-    class="event"
   >
-    <div class="container">
-      <IonGrid class="full-width">
-        <IonRow>
-          <IonCol>
-            <span
-              v-if="campaign"
-              class="campaign"
-            >{{ campaign.name }}</span>
-          </IonCol>
-        </IonRow>
-        <IonRow>
-          <IonCol>
-            <h2 class="event-name">
-              {{ event.name }}
-            </h2>
-          </IonCol>
-        </IonRow>
+    <div class="event">
+      <div class="container">
+        <IonGrid class="full-width">
+          <IonRow>
+            <IonCol>
+              <span
+                v-if="campaign"
+                class="campaign"
+              >{{ campaign.name }}</span>
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol>
+              <h2 class="event-name">
+                {{ event.name }}
+              </h2>
+            </IonCol>
+          </IonRow>
 
-        <IonRow>
-          <IonCol size="2">
-            Start:
-          </IonCol>
-          <IonCol
-            size="10"
-            class="start-date"
-          >
-            {{ new Date(event.start_date).toLocaleString([], dateOptions) }}
-          </IonCol>
-        </IonRow>
-        <IonRow>
-          <IonCol size="2">
-            Ende:
-          </IonCol>
-          <IonCol
-            class="start-date"
-            size="10"
-          >
-            {{ event.endDate ? new Date(event.end_date).toLocaleString([], dateOptions) : 'Nicht definiert' }}
-          </IonCol>
-        </IonRow>
-        <IonRow>
-          <IonCol size="12">
-            <span class="participants">
-              <i class="pi pi-user" /> {{ event.participants.length }}/{{ event.max_participants ?? '∞' }}
-            </span>
-            <p class="description">
-              {{ event.description }}
-            </p>
-          </IonCol>
-        </IonRow>
-      </IonGrid>
-
-
-      <div
-        class="areas"
-      >
-        <IonList
-          v-if="isMember"
-          class="area-list"
-        >
-          <IonItem
-            v-for="area in eventAreas"
-            :key="area.id"
-            :button="true"
-            @click="$router.push({ name: 'event-area-live', params: { id: area.id }})"
-          >
-            <IonLabel>
-              <h3>{{ area.name }}</h3>
-              <p>{{ countAddresses(area.area_details) }} Adressen</p>
-            </IonLabel>
-            <div
-              slot="end"
-              class="item-buttons"
+          <IonRow>
+            <IonCol size="2">
+              Start:
+            </IonCol>
+            <IonCol
+              size="10"
+              class="start-date"
             >
-              <IonIcon
-                :style="{
-                  color: area.color
-                }"
-                name="ellipse"
-              />
-              <IonIcon
-                class="chevron"
-                name="chevron-forward"
-              />
-            </div>
-          </IonItem>
-        </IonList>
-      </div>
+              {{ new Date(event.start_date).toLocaleString([], dateOptions) }}
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol size="2">
+              Ende:
+            </IonCol>
+            <IonCol
+              class="start-date"
+              size="10"
+            >
+              {{ event.endDate ? new Date(event.end_date).toLocaleString([], dateOptions) : 'Nicht definiert' }}
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol size="12">
+              <span class="participants">
+                <i class="pi pi-user" /> {{ event.participants.length }}/{{ event.max_participants ?? '∞' }}
+              </span>
+              <p class="description">
+                {{ event.description }}
+              </p>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
+        <div
+          class="areas"
+        >
+          <IonList
+            v-if="isMember"
+            class="area-list"
+          >
+            <IonItem
+              v-for="area in eventAreas"
+              :key="area.id"
+              :button="true"
+              @click="$router.push({ name: 'event-area-live', params: { id: area.id }})"
+            >
+              <IonLabel>
+                <h3>{{ area.name }}</h3>
+                <p>{{ countAddresses(area.area_details) }} Adressen</p>
+              </IonLabel>
+              <div
+                slot="end"
+                class="item-buttons"
+              >
+                <IonIcon
+                  :style="{
+                    color: area.color
+                  }"
+                  name="ellipse"
+                />
+                <IonIcon
+                  class="chevron"
+                  name="chevron-forward"
+                />
+              </div>
+            </IonItem>
+          </IonList>
+        </div>
 
-      <router-link
-        v-if="!isLoggedIn"
-        :to="{ name: 'login' }"
-        button-type="tertiary"
-      >
-        <Button>
-          Anmelden um mitzumachen
-        </Button>
-      </router-link>
-      <IonButton
-        v-else-if="isMember"
-        :disabled="joinLoading"
-        button-type="primary"
-        @click="leave"
-      >
-        Doch nicht dabei
-      </IonButton>
-      <IonButton
-        v-else-if="!isMember"
-        :disabled="joinLoading"
-        @click="join"
-      >
-        Ich bin dabei
-      </IonButton>
+        <router-link
+          v-if="!isLoggedIn"
+          :to="{ name: 'login' }"
+          button-type="tertiary"
+        >
+          <IonButton>
+            Anmelden um mitzumachen
+          </IonButton>
+        </router-link>
+        <IonButton
+          v-else-if="isMember"
+          :disabled="joinLoading"
+          button-type="primary"
+          @click="leave"
+        >
+          Doch nicht dabei
+        </IonButton>
+        <IonButton
+          v-else-if="!isMember"
+          :disabled="joinLoading"
+          @click="join"
+        >
+          Ich bin dabei
+        </IonButton>
+      </div>
+      <div class="map-container">
+        <Map
+          ref="map"
+          :center="event.location.center"
+          :zoom-box="zoomBox"
+        >
+          <Marker
+            :location="event.location.center"
+          />
+          <DrawControl
+            :display-controls-default="false"
+            :features="areaFeatures"
+            :styles="routePlannerStyles"
+          />
+
+        </Map>
+      </div>
     </div>
   </IonContent>
 </template>
@@ -130,6 +146,12 @@ import { ellipse, chevronForward } from 'ionicons/icons'
 import { addIcons } from 'ionicons'
 import { authService } from '@/api/authService'
 import { userStore } from '@/store/UserStore'
+import Map from '@/lib/mapbox/Map.vue'
+import DrawControl from '@/lib/mapbox/DrawControl.vue'
+import Marker from '@/lib/mapbox/Marker.vue'
+import { BBox, Feature } from 'geojson'
+import { routePlannerStyles } from '@/views/edit-event/map/route-planner.styles'
+import { bbox } from '@turf/turf'
 
 addIcons({
   ellipse,
@@ -139,6 +161,9 @@ addIcons({
 export default defineComponent({
   name: 'EventDetail',
   components: {
+    Marker,
+    DrawControl,
+    Map,
     IonButton,
     IonList,
     IonItem,
@@ -162,6 +187,7 @@ export default defineComponent({
       campaign: null,
       loading: true,
       joinLoading: false,
+      routePlannerStyles: routePlannerStyles('#000000'),
       metrics: [
         {name: 'Geklopfte Türen', value: 'Geklopfte Türen'},
         {name: 'Geöffnete Türen', value: 'Geöffnete Türen'},
@@ -179,6 +205,24 @@ export default defineComponent({
     }
   },
   computed: {
+    areaFeatures(): Feature[] {
+      return this.eventAreas.map((area) => {
+        return {
+          type: 'Feature',
+          id: area.feature_id,
+          geometry: area.geometry,
+          properties: {
+            color: area.color
+          }
+        }
+      })
+    },
+    zoomBox(): BBox {
+      return this.areaFeatures.length > 0 ? bbox({
+        type: 'FeatureCollection',
+        features: this.areaFeatures
+      }) : bbox(this.event?.location.center)
+    },
     isLoggedIn(): boolean {
       return authService.isLoggedIn()
     },
@@ -232,6 +276,16 @@ export default defineComponent({
 
 label {
   text-align: left;
+}
+
+.event {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.map-container {
+  flex: 1
 }
 
 Button {

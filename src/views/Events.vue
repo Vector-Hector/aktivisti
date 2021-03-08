@@ -1,94 +1,134 @@
 <template>
   <div class="container">
     <h2>Events</h2>
-
     <div class="autocomplete">
-      <AutoComplete
-        v-if="campaigns.length > 0"
-        v-model="campaign"
-        :suggestions="filteredCampaigns"
-        :dropdown="true"
+      <IonSelect
+        v-model="filteredCampaigns"
+        :multiple="true"
         placeholder="Alle Kampagnen"
-        field="name"
-        @clear="getEvents"
-        @item-select="filterEvents"
-        @complete="searchCampaign($event)"
       >
-        <template #item="slotProps">
-          <div>
-            <div>{{ slotProps.item.name }}</div>
-          </div>
-        </template>
-      </AutoComplete>
+        <IonSelectOption
+          v-for="campaign in campaigns"
+          :key="campaign.id"
+          :value="campaign.id"
+        >
+          {{ campaign.name }}
+        </IonSelectOption>
+      </IonSelect>
     </div>
-
-    <ul class="events">
-      <li
+    <IonList
+      v-if="events.length > 0"
+    >
+      <IonItem
         v-for="event in events"
         :key="event.id"
-        class="event"
+        :button="true"
+        @click="goToEvent(event)"
       >
-        <router-link
-          class="event-link"
-          href=""
-          :to="`/events/${event.id}`"
+        <IonLabel>
+          <h3>{{ event.name }}</h3>
+          <p>{{ campaignById(event.campaign)?.name }}</p>
+        </IonLabel>
+        <div
+          slot="end"
+          class="item-buttons"
+          @click="$event.stopPropagation()"
         >
-          {{ event.name }}
-        </router-link>
-        <span
-          v-if="event && event.campaign && event.campaign.name"
-          class="tag"
-        >
-          <Tag
-            :value="event.campaign.name"
-            severity="info"
+          <router-link
+            v-if="isManager"
+            :to="{ name: 'edit-event-details', params: { id: event.id } }"
+          >
+            <IonIcon
+              class="edit-button"
+              name="pencil"
+            />
+          </router-link>
+          <IonIcon
+            v-if="isManager"
+            class="delete-button"
+            name="trash"
+            @click="$event.stopPropagation(); deleteEvent(event)"
           />
-        </span>
-
-        <!-- <Button
-          icon="pi pi-times"
-          class="p-button-danger p-button-text p-button-padding-unset"
-          @click="deleteEvent(event.id)"
-        />
-        <Button
-          icon="pi pi-pencil"
-          class="p-button-default p-button-text p-button-padding-unset"
-          @click="editEvent(event.id)"
-        /> -->
-      </li>
-    </ul>
-
-    <router-link
-      to="/events/new"
-      class="new-event-button"
-    >
-      <Button label="Event hinzufügen" />
-    </router-link>
+        </div>
+      </IonItem>
+    </IonList>
+    <div v-else>
+      <IonText color="medium">
+        Keine Events gefunden
+      </IonText>
+    </div>
+    <div class="buttons">
+      <router-link
+        v-if="isManager"
+        :to="{ name: 'edit-event-details-new' }"
+      >
+        <IonButton
+          color="primary"
+        >
+          <IonIcon
+            name="add"
+          />
+          Event erstellen
+        </IonButton>
+      </router-link>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Button from 'primevue/button'
-import Tag from 'primevue/tag'
-import AutoComplete from 'primevue/autocomplete'
 import { EventDto } from '@/api/model/EventDto.ts'
 import { CampaignDto } from '@/api/model/CampaignDto.ts'
+import {
+  IonButton,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonSelect,
+  IonSelectOption,
+  IonText,
+  modalController
+} from '@ionic/vue'
+import { addIcons } from 'ionicons'
+import { trash, pencil, add } from 'ionicons/icons'
+import ConfirmDelete from '@/components/modals/ConfirmDelete.vue'
+import { userStore } from '@/store/UserStore'
+
+addIcons({
+  trash, pencil, add
+})
 
 export default defineComponent({
   name: 'Events',
   components: {
-    Button,
-    Tag,
-    AutoComplete
+    IonSelect,
+    IonSelectOption,
+    IonButton,
+    IonList,
+    IonText,
+    IonItem,
+    IonLabel,
+    IonIcon
   },
   data() {
     return {
       events: [] as EventDto[],
       filteredCampaigns: [] as CampaignDto[],
-      campaigns: [] as CampaignDto[],
-      campaign: null as CampaignDto | null,
-      selectedCampaign: null as CampaignDto | null
+      campaigns: [] as CampaignDto[]
+    }
+  },
+  computed: {
+    isManager() {
+      return userStore.isManager()
+    }
+  },
+  watch: {
+    async filteredCampaigns(newValue) {
+      const response = await this.$apiClient.events.list({
+        campaign: newValue ?? undefined
+      })
+      this.events = response.payload.data
     }
   },
   created() {
@@ -96,11 +136,30 @@ export default defineComponent({
     this.getCampaigns()
   },
   methods: {
-    async deleteEvent(id: number) {
-      await this.$apiClient.events.delete(id.toString())
-      this.events = this.events.filter(item =>
-        item.id !== id
-      )
+    goToEvent(event: EventDto) {
+      this.$router.push({
+        name: 'event-details',
+        params: {
+          id: event.id
+        }
+      })
+    },
+    async deleteEvent(event: EventDto) {
+      const confirmation = await modalController
+        .create({
+          component: ConfirmDelete,
+          componentProps: {
+            event: event
+          }
+        })
+      await confirmation.present()
+      confirmation.onDidDismiss()
+        .then((result) => {
+          if (result.data) {
+            this.$apiClient.events.delete(event.id.toString())
+            this.events = this.events.filter(({id}) => id !== event.id)
+          }
+        })
     },
     async getEvents() {
       const response = await this.$apiClient.events.list()
@@ -111,21 +170,16 @@ export default defineComponent({
       this.campaigns = response.payload.data
     },
     searchCampaign(event: any) {
-      setTimeout(() => {
-        if (!event.query.trim().length) {
-          this.filteredCampaigns = [...this.campaigns]
-        } else {
-          this.filteredCampaigns = this.campaigns.filter((campaign: any) => {
-            return campaign.name.toLowerCase().startsWith(event.query.toLowerCase())
-          })
-        }
-      }, 250)
+      if (!event.query.trim().length) {
+        this.filteredCampaigns = [...this.campaigns]
+      } else {
+        this.filteredCampaigns = this.campaigns.filter((campaign: any) => {
+          return campaign.name.toLowerCase().startsWith(event.query.toLowerCase())
+        })
+      }
     },
-    async filterEvents() {
-      const response = await this.$apiClient.events.list({
-        campaign: this.campaign?.id ?? undefined
-      })
-      this.events = response.payload.data
+    campaignById(findId: number): CampaignDto | undefined {
+      return this.campaigns.find(({id}) => id === findId)
     }
   }
 })
@@ -134,34 +188,10 @@ export default defineComponent({
 <style lang="scss" scoped>
 @import 'src/scss/_globals.scss';
 
-.new-event-button {
-  text-decoration: none;
+.buttons {
   display: flex;
+  flex-direction: row;
   justify-content: flex-end;
-}
-
-Button {
-  margin-left: 10px;
-}
-
-ul {
-  list-style: none;
-}
-
-.events {
-  text-align: left;
-}
-
-.p-button-padding-unset {
-  padding: unset !important;
-}
-
-.event {
-  padding-bottom: 20px;
-}
-
-.tag {
-  margin-left: 10px;
 }
 
 .autocomplete {
@@ -170,8 +200,19 @@ ul {
   justify-content: flex-end;
 }
 
-ul {
-  padding-inline-start: 0;
-}
+.item-buttons {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
 
+  a {
+    display: inline-flex;
+    color: $black;
+  }
+
+  .delete-button {
+    margin-left: 0.6rem;
+
+  }
+}
 </style>
