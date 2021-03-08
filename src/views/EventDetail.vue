@@ -221,7 +221,7 @@ export default defineComponent({
       return this.areaFeatures.length > 0 ? bbox({
         type: 'FeatureCollection',
         features: this.areaFeatures
-      }) : bbox(this.event?.location.center)
+      }) : bbox([this.event?.location.center.lat, this.event?.location.center.lng])
     },
     isLoggedIn(): boolean {
       return authService.isLoggedIn()
