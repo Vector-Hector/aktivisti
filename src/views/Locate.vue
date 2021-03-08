@@ -34,6 +34,13 @@ export default defineComponent({
   components: {
     Geocoder
   },
+  beforeRouteEnter (to, from, next) {
+    if (userStore.getState().location !== null) {
+      next({ path: '/map' })
+    } else {
+      next()
+    }
+  },
   beforeRouteLeave(to, from, next) {
     // TODO: toggling global ui state seems to be kinda shitty, that should probably resolved by route hierarchy
     uiStore.toggleNavigation(true)
