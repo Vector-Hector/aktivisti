@@ -10,6 +10,7 @@ import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
 import { EventMetricRecordSubmissionDto } from '@/api/model/EventMetricRecordSubmissionDto'
 import { EventMetricDto } from '@/api/model/EventMetricDto'
 import { TrackingSessionDto } from '@/api/model/TrackingSessionDto'
+import { CompletionNoteDto } from '@/api/model/CompletionNoteDto'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -28,12 +29,12 @@ export class ApiClient {
   events = new EventRoute(this.baseURL, 'events/', this.axiosInstance)
   eventAreas = new ApiRoute<EventAreaDto>(this.baseURL, 'event-areas/', this.axiosInstance)
   eventMetrics = new ApiRoute<EventMetricDto>(this.baseURL, 'event-metrics/', this.axiosInstance)
+  completionNotes = new ApiRoute<CompletionNoteDto>(this.baseURL, 'completion-notes/', this.axiosInstance)
   eventMetricRecords = new ApiRoute<EventMetricRecordDto>(this.baseURL, 'event-metric-records/', this.axiosInstance)
   eventMetricRecordSubmissions = new ApiRoute<EventMetricRecordSubmissionDto>(this.baseURL, 'event-metric-record-submissions/', this.axiosInstance)
   campaigns = new ApiRoute<CampaignDto>(this.baseURL, 'campaigns/', this.axiosInstance)
   user = new ApiRoute<UserDto>(this.baseURL, 'users/', this.axiosInstance)
   campaignTypes = new ApiRoute<CampaignTypeDto>(this.baseURL, 'campaign-types/', this.axiosInstance)
-  organizationTypes = new ApiRoute<OrganizationTypeDto>(this.baseURL, 'organization-types/', this.axiosInstance)
   trackingSession = new ApiRoute<TrackingSessionDto>(this.baseURL, 'tracking-session/', this.axiosInstance)
 }
 

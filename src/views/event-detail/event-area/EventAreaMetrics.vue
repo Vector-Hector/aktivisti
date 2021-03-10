@@ -52,7 +52,7 @@ export default defineComponent({
     },
     metricValues: {
       get(): MetricValueMap {
-        const storedValues = trackingSessionStore.getMetricsForAddress(this.eventArea.id!, this.addressLabel)
+        const storedValues = trackingSessionStore.getMetricsForAddress(this.eventArea.id!, this.address!)
         if (storedValues) {
           return storedValues
         } else {
@@ -64,7 +64,7 @@ export default defineComponent({
         }
       },
       set(metrics: MetricValueMap) {
-        trackingSessionStore.updateMetricsForAddress(this.eventArea.id!, this.addressLabel, metrics)
+        trackingSessionStore.updateMetricsForAddress(this.eventArea.id!, this.address!, metrics)
       }
     }
   },
