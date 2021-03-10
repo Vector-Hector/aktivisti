@@ -1,8 +1,10 @@
 import { Geometry } from 'geojson'
 
 export interface AddressDetails {
+  street: string
   house_number: string
   geometry: Geometry
+  osm_id: string
 }
 
 export interface StreetDetails {
