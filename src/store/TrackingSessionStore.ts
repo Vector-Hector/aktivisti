@@ -1,6 +1,5 @@
 import { Store } from '@/store/Store'
 import { apiClient } from '@/api/ApiClient'
-import { AddressDetails } from '@/api/model/AreaDetailsDto'
 
 
 interface TrackingSessionState {
@@ -83,10 +82,10 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
     }
   }
 
-  getMetricsForAddress(eventArea: number, address: AddressDetails): MetricValueMap | undefined {
+  getMetricsForAddress(eventArea: number, address: string): MetricValueMap | undefined {
     if (this.state.trackingSessionId !== null) {
       try {
-        return this.state.sessions[this.state.trackingSessionId!].eventAreas[eventArea][address.osm_id]
+        return this.state.sessions[this.state.trackingSessionId!].eventAreas[eventArea][address]
       } catch (e) {
         // If TypeError arises there is no record yet
         return undefined
@@ -112,20 +111,14 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
       }, 0)
   }
 
-  async updateMetricsForAddress(eventArea: number, address: AddressDetails, metricValueMap: MetricValueMap) {
+  async updateMetricsForAddress(eventArea: number, address: string, metricValueMap: MetricValueMap) {
     if (this.state.trackingSessionId === null) {
       await this.renewTrackingId()
     }
     const metricsToUpdate: { metricRecordId: string, value: number }[] = []
-    // set a flag indicating that before this update no metrics were recorded
-    let fromIncompleteState = true
     try {
-      const oldMetrics = this.state.sessions[this.state.trackingSessionId!].eventAreas[eventArea][address.osm_id]
+      const oldMetrics = this.state.sessions[this.state.trackingSessionId!].eventAreas[eventArea][address]
       for (const [metricId, value] of Object.entries(oldMetrics)) {
-        if (value > 0) {
-          // if any value before this update was >0 this address was indicated as completed already
-          fromIncompleteState = false
-        }
         if (metricValueMap[metricId] !== value) {
           metricsToUpdate.push({metricRecordId: metricId, value: metricValueMap[metricId]})
         }
@@ -141,8 +134,8 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
     if (!(eventArea in this.state.sessions[this.state.trackingSessionId!].eventAreas)) {
       this.state.sessions[this.state.trackingSessionId!].eventAreas[eventArea] = {}
     }
-    this.state.sessions[this.state.trackingSessionId!].eventAreas[eventArea][address.osm_id] = metricValueMap
-    this.storeAddressInLocalStorage(eventArea, address.osm_id, metricValueMap)
+    this.state.sessions[this.state.trackingSessionId!].eventAreas[eventArea][address] = metricValueMap
+    this.storeAddressInLocalStorage(eventArea, address, metricValueMap)
     for (const metric of metricsToUpdate) {
       const metricId = parseInt(metric.metricRecordId)
       const aggregatedMetricValue = this.aggregateForMetricRecordAndEventArea(eventArea, metricId)
@@ -152,19 +145,8 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
         value: aggregatedMetricValue,
         tracking_session: this.state.trackingSessionId!
       })
-    }
-    // If we updated this address to only record zeroes that means we mark this address as incomplete
-    const toIncompleteState = metricsToUpdate.reduce((acc, item) => item.value + acc, 0) == 0
-    if (fromIncompleteState || toIncompleteState) {
-      // If there is any metric recorded for this address indicate completion to the backend, if not indicate incompletion
-      const completed = metricsToUpdate.some(({value}) => value > 0)
-      await apiClient.completionNotes.create({
-        target_id: address.osm_id,
-        completed: completed,
-        event_area: eventArea
-      })
-    }
 
+    }
   }
 }
 

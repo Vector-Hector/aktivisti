@@ -9,17 +9,11 @@
       <IonLabel>
         <h3>{{ street }} {{ address.house_number }}</h3>
       </IonLabel>
-      <div slot="end">
-        <IonIcon
-          v-if="completionNotes.includes(address.osm_id)"
-          class="finished-icon"
-          name="checkmark-circle"
-        />
-        <IonIcon
-          class="chevron"
-          name="chevron-forward"
-        />
-      </div>
+      <IonIcon
+        slot="end"
+        class="chevron"
+        name="chevron-forward"
+      />
     </IonItem>
   </IonList>
 </template>
@@ -30,13 +24,6 @@ import { IonIcon, IonItem, IonLabel, IonList } from '@ionic/vue'
 import { AddressDetails } from '@/api/model/AreaDetailsDto'
 import EventAreaStreetMixin from '@/views/event-detail/event-area/EventAreaStreetMixin'
 import EventAreaMixin from '@/views/event-detail/event-area/EventAreaMixin'
-import { addIcons } from 'ionicons'
-import { checkmarkCircle, chevronForward } from 'ionicons/icons'
-
-addIcons({
-  'checkmark-circle': checkmarkCircle,
-  chevronForward
-})
 
 
 export default defineComponent({
@@ -48,34 +35,12 @@ export default defineComponent({
     IonIcon
   },
   mixins: [EventAreaStreetMixin, EventAreaMixin],
-  data() {
-    return {
-      nextPoll: null as number | null,
-      completionNotes: [] as string[]
-    }
-  },
   computed: {
     sortedAddresses(): AddressDetails[] {
-      const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'})
+      const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
       return this.eventArea.area_details?.streets.find(({name}) => name === this.street)?.addresses?.sort((a, b) => {
         return collator.compare(a.house_number, b.house_number)
       }) ?? []
-    }
-  },
-  created() {
-    this.poll()
-  },
-  beforeUnmount() {
-    if (this.nextPoll !== null) {
-      clearTimeout(this.nextPoll!)
-    }
-  },
-  methods: {
-    async poll() {
-      this.completionNotes = (await this.$apiClient.completionNotes.list({event_area: this.eventArea.id})).payload.data
-        .filter(({completed}) => completed)
-        .map(({target_id}) => target_id)
-      this.nextPoll = setTimeout(() => this.poll(), 5000)
     }
   }
 })
@@ -106,11 +71,6 @@ label {
 .event-name {
   font-weight: bold;
   font-size: 1rem;
-}
-
-.finished-icon {
-  margin-right: 1rem;
-  color: $successButtonBg;
 }
 
 .full-width {
