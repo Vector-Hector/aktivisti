@@ -16,11 +16,17 @@ import EditEventSummary from '@/views/edit-event/EditEventSummary.vue'
 import EditEventMapRoutes from '@/views/edit-event/map/EditEventMapRoutes.vue'
 import EditEventMap from '@/views/edit-event/EditEventMap.vue'
 import EditEventMapLocation from '@/views/edit-event/map/EditEventMapLocation.vue'
-import EventAreaLive from '@/views/EventAreaLive.vue'
 import { authService } from '@/api/authService'
-import EventAreaLiveOverview from '@/views/event-area-live/EventAreaLiveOverview.vue'
-import EventAreaLiveStreet from '@/views/event-area-live/EventAreaLiveStreet.vue'
-import EventAreaLiveMetrics from '@/views/event-area-live/EventAreaLiveMetrics.vue'
+import EventAreaOverview from '@/views/event-detail/event-area/EventAreaOverview.vue'
+import EventAreaStreet from '@/views/event-detail/event-area/EventAreaStreet.vue'
+import EventAreaMetrics from '@/views/event-detail/event-area/EventAreaMetrics.vue'
+import EventAreaMetricsMap from '@/views/event-detail/event-area/EventAreaMetricsMap.vue'
+import EventDetailOverview from '@/views/event-detail/EventDetailOverview.vue'
+import EventDetailOverviewMap from '@/views/event-detail/EventDetailOverviewMap.vue'
+import EventDetailAreaMap from '@/views/event-detail/EventDetailAreaMap.vue'
+import EventDetailArea from '@/views/event-detail/EventDetailArea.vue'
+import EventAreaOverviewMap from '@/views/event-detail/event-area/EventAreaOverviewMap.vue'
+import EventAreaStreetMap from '@/views/event-detail/event-area/EventAreaStreetMap.vue'
 
 
 const router = createRouter({
@@ -50,44 +56,65 @@ const router = createRouter({
     },
     {
       path: '/events/:id',
+      name: 'event-detail',
       component: EventDetail,
-      name: 'event-details',
-      props: true
-    },
-    {
-      path: '/events-area/:id/live',
-      name: 'event-area-live',
-      redirect: {name: 'event-area-live-overview'},
-      component: EventAreaLive,
+      redirect: { name: 'event-detail-overview' },
       props: true,
-      meta: {
-        requiresAuth: true
-      },
       children: [
         {
           path: 'overview',
-          component: EventAreaLiveOverview,
+          name: 'event-detail-overview',
+          components: {
+            default: EventDetailOverview,
+            map: EventDetailOverviewMap
+          },
           props: true,
-          name: 'event-area-live-overview',
         },
         {
-          path: 'street/:street',
-          component: EventAreaLiveStreet,
+          path: 'area/:areaId',
+          name: 'event-detail-area',
+          redirect: { name: 'event-detail-area-overview' },
+          components: {
+            default: EventDetailArea,
+            map: EventDetailAreaMap
+          },
           props: true,
-          name: 'event-area-live-street',
-        },
-        {
-          path: 'metrics/:street/:houseNumber',
-          component: EventAreaLiveMetrics,
-          props: true,
-          name: 'event-area-live-metrics',
+          children: [
+            {
+              path: '',
+              name: 'event-detail-area-overview',
+              components: {
+                default: EventAreaOverview,
+                map: EventAreaOverviewMap
+              },
+              props: true
+            },
+            {
+              path: 'street/:street',
+              components: {
+                default: EventAreaStreet,
+                map: EventAreaStreetMap
+              },
+              props: true,
+              name: 'event-detail-area-street'
+            },
+            {
+              path: 'metrics/:street/:houseNumber',
+              components: {
+                default: EventAreaMetrics,
+                map: EventAreaMetricsMap
+              },
+              props: true,
+              name: 'event-detail-area-metrics'
+            }
+          ]
         }
       ]
     },
     {
       path: '/events/edit',
       component: Events,
-      redirect: {name: 'edit-event-list'},
+      redirect: {name: 'edit-event-list'}
     },
     {
       path: '/events/edit/new',

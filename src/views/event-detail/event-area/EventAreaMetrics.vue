@@ -1,6 +1,6 @@
 <template>
   <h2>
-    Ergebnisse für: {{ street }} {{ houseNumber }}
+    Ergebnisse für: {{ addressLabel }}
   </h2>
   <IonGrid
     v-if="metricRecords.length"
@@ -23,36 +23,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { EventAreaDto } from '@/api/model/EventAreaDto'
+import { defineComponent } from 'vue'
 import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
 import { EventMetricDto } from '@/api/model/EventMetricDto'
 import { MetricValueMap, trackingSessionStore } from '@/store/TrackingSessionStore'
 import { IonGrid, IonText } from '@ionic/vue'
 import MetricsRow from '@/components/MetricsRow.vue'
+import EventAreaMetricsMixin from '@/views/event-detail/event-area/EventAreaMetricsMixin'
 
 
 export default defineComponent({
-  name: 'EventAreaLiveMetrics',
+  name: 'EventAreaMetrics',
   components: {
     MetricsRow,
     IonGrid,
     IonText
   },
-  props: {
-    eventArea: {
-      type: Object as PropType<EventAreaDto>,
-      required: true
-    },
-    houseNumber: {
-      type: String as PropType<string>,
-      required: true
-    },
-    street: {
-      type: String as PropType<string>,
-      required: true
-    }
-  },
+  mixins: [EventAreaMetricsMixin],
   data() {
     return {
       metricRecords: [] as EventMetricRecordDto[],
@@ -60,12 +47,12 @@ export default defineComponent({
     }
   },
   computed: {
-    address(): string {
+    addressLabel(): string {
       return `${this.street} ${this.houseNumber}`
     },
     metricValues: {
       get(): MetricValueMap {
-        const storedValues = trackingSessionStore.getMetricsForAddress(this.eventArea.id!, this.address)
+        const storedValues = trackingSessionStore.getMetricsForAddress(this.eventArea.id!, this.addressLabel)
         if (storedValues) {
           return storedValues
         } else {
@@ -77,7 +64,7 @@ export default defineComponent({
         }
       },
       set(metrics: MetricValueMap) {
-        trackingSessionStore.updateMetricsForAddress(this.eventArea.id!, this.address, metrics)
+        trackingSessionStore.updateMetricsForAddress(this.eventArea.id!, this.addressLabel, metrics)
       }
     }
   },

@@ -42,6 +42,7 @@ export default defineComponent({
     provide(MapInject, map)
 
     watch(() => props.center, (newCenter) => {
+      if (!newCenter) return
       map.value?.setCenter([newCenter.lng, newCenter.lat])
     })
 
@@ -51,7 +52,7 @@ export default defineComponent({
 
     watch(() => props.zoomBox, (newBox) => {
       if (newBox) {
-        map.value?.fitBounds(newBox, {padding: 10})
+        map.value?.fitBounds(newBox, {padding: 20})
       }
     }, {immediate: true})
 
@@ -63,8 +64,8 @@ export default defineComponent({
       map.value = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/ctrlaltcoop/ckk88gdh90jle17nn8y76dp36',
-        center: [props.center.lng, props.center.lat],
-        zoom: props.zoom
+        zoom: props.zoom,
+        center: props.center
       })
       map.value.on('load', () => {
         map.value?.resize()

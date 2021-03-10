@@ -86,10 +86,10 @@
         <div class="menu-item">
           <router-link
             class="menu-item-link"
-            to="/campaigns/new"
+            to="/campaigns"
           >
             <i class="pi pi-info-circle" />
-            <span class="menu-item-link-text">Kampagne erstellen</span>
+            <span class="menu-item-link-text">Kampagnen verwalten</span>
           </router-link>
         </div>
       </div>

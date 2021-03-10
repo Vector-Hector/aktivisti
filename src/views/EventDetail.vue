@@ -1,157 +1,45 @@
 <template>
-  <IonContent
+  <div
     v-if="event !== null && loading === false"
+    class="event"
   >
-    <div class="event">
+    <IonContent
+      class="content"
+    >
       <div class="container">
-        <IonGrid class="full-width">
-          <IonRow>
-            <IonCol>
-              <span
-                v-if="campaign"
-                class="campaign"
-              >{{ campaign.name }}</span>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <h2 class="event-name">
-                {{ event.name }}
-              </h2>
-            </IonCol>
-          </IonRow>
-
-          <IonRow>
-            <IonCol size="2">
-              Start:
-            </IonCol>
-            <IonCol
-              size="10"
-              class="start-date"
-            >
-              {{ new Date(event.start_date).toLocaleString([], dateOptions) }}
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol size="2">
-              Ende:
-            </IonCol>
-            <IonCol
-              class="start-date"
-              size="10"
-            >
-              {{ event.endDate ? new Date(event.end_date).toLocaleString([], dateOptions) : 'Nicht definiert' }}
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol size="12">
-              <span class="participants">
-                <i class="pi pi-user" /> {{ event.participants.length }}/{{ event.max_participants ?? '∞' }}
-              </span>
-              <p class="description">
-                {{ event.description }}
-              </p>
-            </IonCol>
-          </IonRow>
-        </IonGrid>
-        <div
-          class="areas"
-        >
-          <IonList
-            v-if="isMember"
-            class="area-list"
-          >
-            <IonItem
-              v-for="area in eventAreas"
-              :key="area.id"
-              :button="true"
-              @click="$router.push({ name: 'event-area-live', params: { id: area.id }})"
-            >
-              <IonLabel>
-                <h3>{{ area.name }}</h3>
-                <p>{{ countAddresses(area.area_details) }} Adressen</p>
-              </IonLabel>
-              <div
-                slot="end"
-                class="item-buttons"
-              >
-                <IonIcon
-                  :style="{
-                    color: area.color
-                  }"
-                  name="ellipse"
-                />
-                <IonIcon
-                  class="chevron"
-                  name="chevron-forward"
-                />
-              </div>
-            </IonItem>
-          </IonList>
-        </div>
-
-        <router-link
-          v-if="!isLoggedIn"
-          :to="{ name: 'login' }"
-          button-type="tertiary"
-        >
-          <IonButton>
-            Anmelden um mitzumachen
-          </IonButton>
-        </router-link>
-        <IonButton
-          v-else-if="isMember"
-          :disabled="joinLoading"
-          button-type="primary"
-          @click="leave"
-        >
-          Doch nicht dabei
-        </IonButton>
-        <IonButton
-          v-else-if="!isMember"
-          :disabled="joinLoading"
-          @click="join"
-        >
-          Ich bin dabei
-        </IonButton>
+        <router-view
+          v-model:event="event"
+          v-model:eventAreas="eventAreas"
+        />
       </div>
-      <div class="map-container">
-        <Map
-          ref="map"
-          :center="event.location.center"
-          :zoom-box="zoomBox"
-        >
-          <Marker
-            :location="event.location.center"
-          />
-          <DrawControl
-            :display-controls-default="false"
-            :features="areaFeatures"
-            :styles="routePlannerStyles"
-          />
-
-        </Map>
-      </div>
+    </IonContent>
+    <div class="map-container">
+      <Map
+        ref="map"
+        :center="event.location.center"
+      >
+        <router-view
+          :event="event"
+          :event-areas="eventAreas"
+          name="map"
+        />
+      </Map>
     </div>
-  </IonContent>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { EventDto } from '@/api/model/EventDto'
 import { EventAreaDto } from '@/api/model/EventAreaDto'
-import { AreaDetailsDto } from '@/api/model/AreaDetailsDto'
-import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonItem, IonLabel, IonList, IonRow } from '@ionic/vue'
+import { IonContent } from '@ionic/vue'
 import { ellipse, chevronForward } from 'ionicons/icons'
 import { addIcons } from 'ionicons'
 import { authService } from '@/api/authService'
 import { userStore } from '@/store/UserStore'
 import Map from '@/lib/mapbox/Map.vue'
-import DrawControl from '@/lib/mapbox/DrawControl.vue'
-import Marker from '@/lib/mapbox/Marker.vue'
 import { BBox, Feature } from 'geojson'
-import { routePlannerStyles } from '@/views/edit-event/map/route-planner.styles'
-import { bbox } from '@turf/turf'
+import { bbox, circle } from '@turf/turf'
 
 addIcons({
   ellipse,
@@ -161,17 +49,7 @@ addIcons({
 export default defineComponent({
   name: 'EventDetail',
   components: {
-    Marker,
-    DrawControl,
     Map,
-    IonButton,
-    IonList,
-    IonItem,
-    IonIcon,
-    IonLabel,
-    IonGrid,
-    IonCol,
-    IonRow,
     IonContent
   },
   props: {
@@ -187,14 +65,6 @@ export default defineComponent({
       campaign: null,
       loading: true,
       joinLoading: false,
-      routePlannerStyles: routePlannerStyles('#000000'),
-      metrics: [
-        {name: 'Geklopfte Türen', value: 'Geklopfte Türen'},
-        {name: 'Geöffnete Türen', value: 'Geöffnete Türen'},
-        {name: 'Gute Gespräche', value: 'Gute Gespräche'},
-        {name: 'Zustimmung', value: 'Zustimmung'},
-        {name: 'Unterschriften', value: 'Unterschriften'}
-      ],
       dateOptions: {
         year: 'numeric',
         month: '2-digit',
@@ -221,7 +91,7 @@ export default defineComponent({
       return this.areaFeatures.length > 0 ? bbox({
         type: 'FeatureCollection',
         features: this.areaFeatures
-      }) : bbox([this.event?.location.center.lat, this.event?.location.center.lng])
+      }) : bbox(circle([this.event!.location.center.lng, this.event!.location.center.lat], 0.2))
     },
     isLoggedIn(): boolean {
       return authService.isLoggedIn()
@@ -240,7 +110,6 @@ export default defineComponent({
     async getEvent() {
       const eventRequest = (await this.$apiClient.events.get(this.id, ['campaign']))
       this.event = eventRequest.payload.data
-
       this.campaign = eventRequest.payload.embedded.campaign[0]
     },
 
@@ -248,23 +117,6 @@ export default defineComponent({
       if (this.event) {
         this.eventAreas = (await this.$apiClient.eventAreas.list({event: this.event.id})).payload.data
       }
-    },
-
-    async join() {
-      this.joinLoading = true
-      this.event = (await this.$apiClient.events.join(this.id)).payload.data
-      this.joinLoading = false
-    },
-
-    async leave() {
-      this.joinLoading = true
-      this.event = (await this.$apiClient.events.leave(this.id)).payload.data
-      this.joinLoading = false
-    },
-    countAddresses(areaDetails: AreaDetailsDto) {
-      return areaDetails.streets.reduce((acc, street) => {
-        return acc + street.addresses.length
-      }, 0)
     }
   }
 })
@@ -282,10 +134,6 @@ label {
   display: flex;
   flex-direction: column;
   height: 100%;
-}
-
-.map-container {
-  flex: 1
 }
 
 Button {
@@ -317,5 +165,14 @@ Button {
   flex-direction: row;
   align-items: center;
 }
+
+.content {
+  flex: 1
+}
+
+.map-container {
+  flex: 1
+}
+
 
 </style>

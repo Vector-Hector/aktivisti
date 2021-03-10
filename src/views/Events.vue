@@ -138,7 +138,7 @@ export default defineComponent({
   methods: {
     goToEvent(event: EventDto) {
       this.$router.push({
-        name: 'event-details',
+        name: 'event-detail',
         params: {
           id: event.id
         }

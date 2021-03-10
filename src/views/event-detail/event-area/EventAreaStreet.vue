@@ -1,10 +1,10 @@
 <template>
   <IonList>
     <IonItem
-      v-for="address in eventArea.area_details.streets.find(({name}) => name === street).addresses"
+      v-for="address in sortedAddresses"
       :key="address.house_number"
       :button="true"
-      @click="$router.push({ name: 'event-area-live-metrics', params: { houseNumber: address.house_number, street: street } })"
+      @click="$router.push({ name: 'event-detail-area-metrics', params: { houseNumber: address.house_number, street: street } })"
     >
       <IonLabel>
         <h3>{{ street }} {{ address.house_number }}</h3>
@@ -19,35 +19,30 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import { IonIcon, IonItem, IonLabel, IonList } from '@ionic/vue'
-import { EventAreaDto } from '@/api/model/EventAreaDto'
+import { AddressDetails } from '@/api/model/AreaDetailsDto'
+import EventAreaStreetMixin from '@/views/event-detail/event-area/EventAreaStreetMixin'
+import EventAreaMixin from '@/views/event-detail/event-area/EventAreaMixin'
 
 
 export default defineComponent({
-  name: 'EventAreaLiveStreet',
+  name: 'EventAreaStreet',
   components: {
     IonList,
     IonItem,
     IonLabel,
     IonIcon
   },
-  props: {
-    eventArea: {
-      type: Object as PropType<EventAreaDto>,
-      required: true
-    },
-    street: {
-      type: String as PropType<string>,
-      required: true
+  mixins: [EventAreaStreetMixin, EventAreaMixin],
+  computed: {
+    sortedAddresses(): AddressDetails[] {
+      const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+      return this.eventArea.area_details?.streets.find(({name}) => name === this.street)?.addresses?.sort((a, b) => {
+        return collator.compare(a.house_number, b.house_number)
+      }) ?? []
     }
-  },
-  data() {
-    return {}
-  },
-  created() {
-  },
-  methods: {}
+  }
 })
 
 </script>
