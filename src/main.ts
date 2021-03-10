@@ -77,12 +77,21 @@ apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
 })
 
 // hydrate profile on app start
-apiClient.user.get('me')
-  .then((profileRequest) => {
-    if (profileRequest.response.status == 200) {
-      userStore.setUser(profileRequest.payload.data)
-    }
-  })
-  .finally(() => {
-    app.mount('#app')
-  })
+if (authService.isLoggedIn()) {
+  apiClient.user.get('me')
+    .then((profileRequest) => {
+      if (profileRequest.response.status == 200) {
+        userStore.setUser(profileRequest.payload.data)
+      }
+    })
+    .catch((error: AxiosResponse) => {
+      if (error.status === 403) {
+        authService.clear()
+      }
+    })
+    .finally(() => {
+      app.mount('#app')
+    })
+} else {
+  app.mount('#app')
+}

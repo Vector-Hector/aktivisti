@@ -1,11 +1,11 @@
 <template>
   <div class="container">
-    <h2>Veranstaltungen in deiner Nähe</h2>
+    <h2>Events</h2>
+
     <div class="autocomplete">
       <AutoComplete
-        v-if="campaigns"
+        v-if="campaigns.length > 0"
         v-model="campaign"
-        class="autocomplete-width"
         :suggestions="filteredCampaigns"
         :dropdown="true"
         placeholder="Alle Kampagnen"
@@ -15,74 +15,75 @@
         @complete="searchCampaign($event)"
       >
         <template #item="slotProps">
-          <div class="">
+          <div>
             <div>{{ slotProps.item.name }}</div>
           </div>
         </template>
       </AutoComplete>
     </div>
-  </div>
-  <Map
-    :center="center"
-    :zoom="zoom"
-    map-style="mapbox://styles/mapbox/streets-v11"
-  >
-    <Marker
-      v-for="event in events"
-      :key="event.id"
-      :location="event.location.center"
+
+    <ul class="events">
+      <li
+        v-for="event in events"
+        :key="event.id"
+        class="event"
+      >
+        <router-link
+          class="event-link"
+          href=""
+          :to="`/events/${event.id}`"
+        >
+          {{ event.name }}
+        </router-link>
+        <span
+          v-if="event && event.campaign && event.campaign.name"
+          class="tag"
+        >
+          <Tag
+            :value="event.campaign.name"
+            severity="info"
+          />
+        </span>
+
+        <Button
+          icon="pi pi-times"
+          class="p-button-danger p-button-text p-button-padding-unset"
+          @click="deleteEvent(event.id)"
+        />
+        <Button
+          icon="pi pi-pencil"
+          class="p-button-default p-button-text p-button-padding-unset"
+          @click="editEvent(event.id)"
+        />
+      </li>
+    </ul>
+
+    <router-link
+      to="/events/new"
+      class="new-event-button"
     >
-      <Popup>
-        <div class="popup-contents">
-          <span class="popup-title">{{ event.name }}</span>
-          <span class="popup-campaign">{{ event.campaign.name }}</span>
-          <span class="popup-date">
-            {{ new Date(event.start_date).toLocaleString() }}
-          </span>
-          <router-link
-            class="join-link no-button-decoration"
-            :to="`/events/${event.id}`"
-          >
-            <Button class="p-button button-red join-button"> Mitmachen/Infos</Button>
-          </router-link>
-        </div>
-      </Popup>
-    </Marker>
-  </Map>
+      <Button label="Event hinzufügen" />
+    </router-link>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Map from '@/lib/mapbox/Map.vue'
-import Marker from '@/lib/mapbox/Marker.vue'
+import Button from 'primevue/button'
+import Tag from 'primevue/tag'
 import AutoComplete from 'primevue/autocomplete'
-import { EventDto } from '@/api/model/EventDto'
-import { CampaignDto } from '@/api/model/CampaignDto'
-import Popup from '@/lib/mapbox/Popup.vue'
-import { userStore } from '@/store/UserStore'
-import Button from 'primevue/components/button/Button'
+import { EventDto } from '@/api/model/EventDto.ts'
+import { CampaignDto } from '@/api/model/CampaignDto.ts'
 
 export default defineComponent({
-  name: 'Home',
+  name: 'Events',
   components: {
-    Popup,
-    Map,
-    Marker,
-    AutoComplete,
     Button,
-  },
-  beforeRouteEnter(to, from, next) {
-    if (userStore.getState().location == null) {
-      next({ name: 'splash' })
-    }
-    next()
+    Tag,
+    AutoComplete
   },
   data() {
     return {
-      zoom: 14,
-      iconWidth: 25,
-      iconHeight: 40,
-      center: { ...userStore.getState().location },
       events: [] as EventDto[],
       filteredCampaigns: [] as CampaignDto[],
       campaigns: [] as CampaignDto[],
@@ -95,6 +96,12 @@ export default defineComponent({
     this.getCampaigns()
   },
   methods: {
+    async deleteEvent(id: number) {
+      await this.$apiClient.events.delete(id.toString())
+      this.events = this.events.filter(item =>
+        item.id !== id
+      )
+    },
     async getEvents() {
       const response = await this.$apiClient.events.list()
       this.events = response.payload.data
@@ -122,43 +129,49 @@ export default defineComponent({
     }
   }
 })
-
 </script>
 
 <style lang="scss" scoped>
-.popup-title {
-  font-weight: bold;
-  display: block;
-  font-size: 1rem;
-}
+@import 'src/scss/_globals.scss';
 
-.popup-campaign {
-  display: block;
-  font-size: 0.9rem;
-}
-
-.popup-date {
-  display: block;
-  font-size: 0.9rem;
-}
-
-.map {
-  width: auto;
-}
-
-.join-link {
-  align-self: flex-end;
-
-  Button {
-    padding: 3px 6px;
-  }
-
-  margin-top: 6px;
-}
-
-.popup-contents {
+.new-event-button {
+  text-decoration: none;
   display: flex;
-  flex-direction: column;
+  justify-content: flex-end;
+}
+
+Button {
+  margin-left: 10px;
+}
+
+ul {
+  list-style: none;
+}
+
+.events {
+  text-align: left;
+}
+
+.p-button-padding-unset {
+  padding: unset !important;
+}
+
+.event {
+  padding-bottom: 20px;
+}
+
+.tag {
+  margin-left: 10px;
+}
+
+.autocomplete {
+  padding-bottom: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+ul {
+  padding-inline-start: 0;
 }
 
 </style>

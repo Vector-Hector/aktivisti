@@ -1,4 +1,4 @@
-function getColorFromPropertiesWithDefault(defaultColor: string, key = 'user_color') {
+export function getColorFromPropertiesWithDefault(defaultColor: string, key = 'user_color') {
   return ['case',
     ['has', key], ['get', key],
     defaultColor

@@ -65,7 +65,7 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
 
   async delete(id: string): Promise<void> {
     await this.request({
-      path: `${this.path}/${id}`,
+      path: `${this.path}${id}`,
       method: 'DELETE'
     })
   }

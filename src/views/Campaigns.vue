@@ -10,7 +10,7 @@
       >
         {{ campaign.name }}
         <Tag
-          :value="organizationTypes.find(x => x.id === campaign.organization)?.name"
+          :value="campaignTypes.find(x => x.id === campaign.campaign_type)?.name"
           severity="info"
         />
 
@@ -42,7 +42,7 @@ import { defineComponent } from 'vue'
 import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 import { CampaignDto } from '@/api/model/CampaignDto'
-import { OrganizationTypeDto } from '@/api/model/OrganizationTypeDto'
+import { CampaignTypeDto } from '@/api/model/CampaignTypeDto'
 
 export default defineComponent({
   name: 'Campaigns',
@@ -53,26 +53,26 @@ export default defineComponent({
   data() {
     return {
       campaigns: [] as CampaignDto[],
-      organizationTypes: [] as OrganizationTypeDto[]
+      campaignTypes: [] as CampaignTypeDto[]
     }
   },
   created() {
     this.getCampaigns()
   },
   methods: {
-    deleteCampaign(id: string) {
-      this.$apiClient.campaigns.delete(id)
+    deleteCampaign(id: number) {
+      this.$apiClient.campaigns.delete(id.toString())
         .then(() => {
           // TODO check again, could be solved differently
           this.getCampaigns()
         })
     },
     async getCampaigns() {
-      const response = await this.$apiClient.campaigns.list()
-      this.organizationTypes = response.payload.embedded.organization
+      const response = await this.$apiClient.campaigns.list({}, ['campaign_type'])
+      this.campaignTypes = response.payload.embedded.campaign_type
       this.campaigns = response.payload.data
     },
-    editCampaign(id: string) {
+    editCampaign(id: number) {
       this.$router.push(`/campaigns/${id}`)
     }
   }

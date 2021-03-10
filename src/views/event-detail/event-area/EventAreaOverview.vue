@@ -4,7 +4,7 @@
       v-for="street in eventArea.area_details.streets"
       :key="street.name"
       :button="true"
-      @click="$router.push({ name: 'event-area-live-street', params: { street: street.name } })"
+      @click="$router.push({ name: 'event-detail-area-street', params: { street: street.name } })"
     >
       <IonLabel>
         <h3>{{ street.name }}</h3>
@@ -20,33 +20,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import { IonIcon, IonItem, IonLabel, IonList } from '@ionic/vue'
-import { EventAreaDto } from '@/api/model/EventAreaDto'
+import EventAreaMixin from '@/views/event-detail/event-area/EventAreaMixin'
 
 
 export default defineComponent({
-  name: 'EventAreaLiveOverview',
+  name: 'EventAreaOverview',
   components: {
     IonList,
     IonItem,
     IonLabel,
     IonIcon
   },
-  props: {
-    eventArea: {
-      type: Object as PropType<EventAreaDto>,
-      required: true
-    }
-  },
-  data() {
-    return {
-      progress: 0
-    }
-  },
-  created() {
-  },
-  methods: {}
+  mixins: [EventAreaMixin],
 })
 
 </script>

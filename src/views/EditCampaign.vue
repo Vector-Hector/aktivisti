@@ -26,7 +26,7 @@
         >Start</label>
         <div class="p-col-12 p-md-9">
           <IonDatetime
-            v-model="campaign.startDate"
+            v-model="campaign.start_date"
             display-format="DD.MM.YY"
             placeholder="Wähle ein Startdatum aus"
           />
@@ -40,7 +40,7 @@
         >Ende</label>
         <div class="p-col-12 p-md-9">
           <IonDatetime
-            v-model="campaign.endDate"
+            v-model="campaign.end_date"
             display-format="DD.MM.YY"
             placeholder="Wähle ein Enddatum aus"
           />
@@ -54,7 +54,7 @@
         >Typ</label>
         <div class="p-col-12 p-md-9">
           <IonSelect
-            v-model="campaign.type"
+            v-model="campaign.campaign_type"
             placeholder="Wähle einen Kampagnen-Typ aus"
           >
             <IonSelectOption
@@ -63,27 +63,6 @@
               :value="campaignType.id"
             >
               {{ campaignType.name }}
-            </IonSelectOption>
-          </IonSelect>
-        </div>
-      </div>
-
-      <div class="p-field p-grid">
-        <label
-          for="campaign"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Bundes-, landes-, oder kreisweite Kampagne</label>
-        <div class="p-col-12 p-md-9">
-          <IonSelect
-            v-model="campaign.organization"
-            placeholder="Wähle ein Gebiet aus"
-          >
-            <IonSelectOption
-              v-for="organizationType in organizationTypes"
-              :key="organizationType.id"
-              :value="organizationType.id"
-            >
-              {{ organizationType.name }}
             </IonSelectOption>
           </IonSelect>
         </div>
@@ -140,17 +119,10 @@ export default defineComponent({
     }
   },
   async created() {
-    await Promise.all([
-      this.getOrganizationTypes(),
-      this.getCampaignTypes()
-    ])
+    await this.getCampaignTypes()
     this.getCampaign()
   },
   methods: {
-    async getOrganizationTypes() {
-      const response = await this.$apiClient.organizationTypes.list()
-      this.organizationTypes = response.payload.data
-    },
     async getCampaignTypes() {
       const response = await this.$apiClient.campaignTypes.list()
       this.campaignTypes = response.payload.data

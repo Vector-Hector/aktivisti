@@ -188,7 +188,7 @@ export function makeServer({environment = 'development'} = {}) {
         const body = JSON.parse(request.requestBody)
         return {data: sampleUsers.find(({username}) => username === body.email)} || new Response(400)
       })
-      
+
       this.post('/oauth2/token', () => {
         return {
           ...sampleToken
@@ -201,6 +201,7 @@ export function makeServer({environment = 'development'} = {}) {
         return {
           data: {
             ...body,
+
             area_details: sampleAreaDetails,
             id: 15
           }

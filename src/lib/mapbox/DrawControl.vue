@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, inject, onUnmounted, PropType, watch } from 'vue'
+import { defineComponent, inject, onUnmounted, PropType, watch, h } from 'vue'
 import MapboxDraw, { IMapboxDrawControls } from '@mapbox/mapbox-gl-draw'
 import { MapInject } from './Map.vue'
 import { Feature } from 'geojson'
@@ -35,7 +35,7 @@ export default defineComponent({
       userProperties: true,
       controls: props.controls,
       displayControlsDefault: props.displayControlsDefault,
-      styles: props.styles
+      styles: props.styles ?? [],
     })
 
     map.value.addControl(drawControl, 'top-right')
@@ -52,7 +52,7 @@ export default defineComponent({
       // determine deleted features
       const idsToDelete = difference(drawControl.getAll().features.map(({id}) => id), newFeatures.map(({id}) => id))
       drawControl.delete(idsToDelete as string[])
-    })
+    }, { immediate: true })
 
 
     const forwardEventAndUpdateFeatures = (eventName: ForwardedEvents, event: any) => {
@@ -71,6 +71,9 @@ export default defineComponent({
     return {
       changeMode: (mode: string) => { drawControl.changeMode(mode) }
     }
+  },
+  render() {
+    return h('span')
   }
 })
 

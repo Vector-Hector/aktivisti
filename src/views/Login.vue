@@ -59,7 +59,6 @@ import { defineComponent, PropType } from 'vue'
 import { IonInput, IonLabel, IonItem, IonButton, IonCheckbox, IonItemDivider } from '@ionic/vue'
 import { authService } from '@/api/authService'
 import { RouteLocation } from 'vue-router'
-import { GrantType } from '@/api/OAuth2Client'
 
 export default defineComponent({
   name: 'Login',
