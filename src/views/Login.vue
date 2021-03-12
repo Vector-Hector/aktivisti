@@ -1,45 +1,71 @@
 <template>
   <div class="container">
     <h2>Login</h2>
-    <IonItem>
-      <IonLabel position="floating">
-        Benutzername oder E-Mail-Adresse
-      </IonLabel>
-      <IonInput v-model="username" />
-    </IonItem>
-
-    <IonItem>
-      <IonLabel position="floating">
-        Passwort
-      </IonLabel>
-      <IonInput
-        v-model="password"
-        type="password"
-      />
-    </IonItem>
-
-    <IonItem lines="none">
-      <IonLabel>
-        <router-link
-          to="/password"
+    <Form @submit="login()">
+      <IonItem>
+        <IonLabel position="floating">
+          Benutzername oder E-Mail-Adresse
+        </IonLabel>
+        <Field
+          v-slot="{field}"
+          name="username"
+          :rules="isRequired"
         >
-          Passwort vergessen?
-        </router-link>
-      </IonLabel>
-    </IonItem>
-
-    <div class="control-buttons">
-      <IonItem lines="none">
-        <IonCheckbox class="checkbox-margin-right" />
-        <IonLabel>Angemeldet bleiben</IonLabel>
+          <IonInput
+            name="username"
+            v-bind="field"
+          />
+        </Field>
       </IonItem>
-      <IonButton
-        color="primary"
-        @click="login()"
-      >
-        Anmelden
-      </IonButton>
-    </div>
+      <ErrorMessage
+        name="username"
+        class="error"
+      />
+
+      <IonItem>
+        <IonLabel position="floating">
+          Passwort
+        </IonLabel>
+        <Field
+          v-slot="{field}"
+          name="password"
+          :rules="isRequired"
+        >
+          <IonInput
+            name="password"
+            v-bind="field"
+            type="password"
+          />
+        </Field>
+      </IonItem>
+      <ErrorMessage
+        name="password"
+        class="error"
+      />
+
+      <IonItem lines="none">
+        <IonLabel>
+          <router-link
+            to="/password"
+          >
+            Passwort vergessen?
+          </router-link>
+        </IonLabel>
+      </IonItem>
+
+      <div class="control-buttons">
+        <IonItem lines="none">
+          <IonCheckbox class="checkbox-margin-right" />
+          <IonLabel>Angemeldet bleiben</IonLabel>
+        </IonItem>
+        <IonButton
+          color="primary"
+          type="submit"
+        >
+          Anmelden
+        </IonButton>
+      </div>
+    </Form>
 
     <IonItemDivider />
 
@@ -59,6 +85,7 @@ import { defineComponent, PropType } from 'vue'
 import { IonInput, IonLabel, IonItem, IonButton, IonCheckbox, IonItemDivider } from '@ionic/vue'
 import { authService } from '@/api/authService'
 import { RouteLocation } from 'vue-router'
+import { Field, Form, ErrorMessage } from 'vee-validate'
 
 export default defineComponent({
   name: 'Login',
@@ -68,7 +95,10 @@ export default defineComponent({
     IonItem,
     IonButton,
     IonCheckbox,
-    IonItemDivider
+    IonItemDivider,
+    Field,
+    Form,
+    ErrorMessage
   },
   props: {
     redirect: {
@@ -78,9 +108,14 @@ export default defineComponent({
     }
   },
   data() {
+    function isRequired(value: string) {
+      if (!value) return 'Bitte fülle dieses Feld aus'
+      return true
+    }
     return {
       username: '',
-      password: ''
+      password: '',
+      isRequired,
     }
   },
   methods: {
@@ -94,6 +129,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import "src/scss/_globals.scss";
+@import "src/scss/_variables.scss";
 
 .checkbox-margin-right {
   margin-right: 10px;
@@ -113,4 +149,9 @@ export default defineComponent({
 .label-floating.sc-ion-label-md-h  {
   margin-bottom: 8px;
 }
+
+.error {
+  color: $orange;
+}
+
 </style>
