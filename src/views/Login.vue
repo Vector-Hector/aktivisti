@@ -17,10 +17,12 @@
           />
         </Field>
       </IonItem>
-      <ErrorMessage
-        name="username"
-        class="error"
-      />
+      <IonItem lines="none">
+        <ErrorMessage
+          name="username"
+          class="error"
+        />
+      </IonItem>
 
       <IonItem>
         <IonLabel position="floating">
@@ -38,10 +40,12 @@
           />
         </Field>
       </IonItem>
-      <ErrorMessage
-        name="password"
-        class="error"
-      />
+      <IonItem lines="none">
+        <ErrorMessage
+          name="password"
+          class="error"
+        />
+      </IonItem>
 
       <IonItem lines="none">
         <IonLabel>
@@ -98,7 +102,7 @@ export default defineComponent({
     IonItemDivider,
     Field,
     Form,
-    ErrorMessage
+    ErrorMessage,
   },
   props: {
     redirect: {
