@@ -17,7 +17,10 @@
           />
         </Field>
       </IonItem>
-      <IonItem lines="none">
+      <IonItem
+        class="error-wrapper"
+        lines="none"
+      >
         <ErrorMessage
           name="username"
           class="error"
@@ -40,7 +43,10 @@
           />
         </Field>
       </IonItem>
-      <IonItem lines="none">
+      <IonItem
+        class="error-wrapper"
+        lines="none"
+      >
         <ErrorMessage
           name="password"
           class="error"
