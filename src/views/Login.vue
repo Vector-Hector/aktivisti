@@ -129,7 +129,6 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import "src/scss/_globals.scss";
-@import "src/scss/_variables.scss";
 
 .checkbox-margin-right {
   margin-right: 10px;
@@ -148,10 +147,6 @@ export default defineComponent({
 
 .label-floating.sc-ion-label-md-h  {
   margin-bottom: 8px;
-}
-
-.error {
-  color: $orange;
 }
 
 </style>
