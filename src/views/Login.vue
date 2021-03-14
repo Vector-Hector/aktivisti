@@ -2,7 +2,7 @@
   <div class="container">
     <h2>Login</h2>
     <Form @submit="login()">
-      <IonItem>
+      <IonItem :class="{ 'item-has-focus': hasError }">
         <IonLabel position="floating">
           Benutzername oder E-Mail-Adresse
         </IonLabel>
@@ -27,7 +27,7 @@
         />
       </IonItem>
 
-      <IonItem>
+      <IonItem :class="{ 'item-has-focus': hasError }">
         <IonLabel position="floating">
           Passwort
         </IonLabel>
@@ -118,20 +118,24 @@ export default defineComponent({
     }
   },
   data() {
-    function isRequired(value: string) {
-      if (!value) return 'Bitte fülle dieses Feld aus'
-      return true
-    }
     return {
       username: '',
       password: '',
-      isRequired,
+      hasError: false,
     }
   },
   methods: {
     async login() {
       await authService.login(this.username, this.password)
       this.$router.push(this.redirect)
+    },
+    isRequired (value: string) {
+      if (!value) {
+        // TODO 
+        // this.hasError = true
+        return 'Bitte fülle dieses Feld aus'
+      }
+      return true
     }
   }
 })
@@ -158,5 +162,4 @@ export default defineComponent({
 .label-floating.sc-ion-label-md-h  {
   margin-bottom: 8px;
 }
-
 </style>
