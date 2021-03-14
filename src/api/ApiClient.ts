@@ -11,6 +11,7 @@ import { EventMetricRecordSubmissionDto } from '@/api/model/EventMetricRecordSub
 import { EventMetricDto } from '@/api/model/EventMetricDto'
 import { TrackingSessionDto } from '@/api/model/TrackingSessionDto'
 import { CompletionNoteDto } from '@/api/model/CompletionNoteDto'
+import { LeadDto } from '@/api/model/LeadDto'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -36,6 +37,7 @@ export class ApiClient {
   user = new ApiRoute<UserDto>(this.baseURL, 'users/', this.axiosInstance)
   campaignTypes = new ApiRoute<CampaignTypeDto>(this.baseURL, 'campaign-types/', this.axiosInstance)
   trackingSession = new ApiRoute<TrackingSessionDto>(this.baseURL, 'tracking-session/', this.axiosInstance)
+  leads = new ApiRoute<LeadDto>(this.baseURL, 'leads/', this.axiosInstance)
 }
 
 export const apiClient = new ApiClient()
