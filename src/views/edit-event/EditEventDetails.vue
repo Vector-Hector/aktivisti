@@ -163,7 +163,6 @@ import { defineComponent } from 'vue'
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
 import Calendar from 'primevue/calendar'
-import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
 import MultiSelect from 'primevue/multiselect'
@@ -184,7 +183,6 @@ export default defineComponent({
     InputText,
     Dropdown,
     Calendar,
-    Checkbox,
     Button,
     InputNumber,
     MultiSelect
