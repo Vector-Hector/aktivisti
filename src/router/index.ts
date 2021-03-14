@@ -41,9 +41,7 @@ const router = createRouter({
       path: '/create-lead',
       name: 'create-lead',
       component: CreateLead,
-      props: (route) => ({
-        eventId: parseInt(route.query.event as string)
-      })
+      props: route => ({ eventAreaId: route.query.eventArea ? parseInt(route.query.eventArea as string) : undefined })
     },
     {
       path: '/map',

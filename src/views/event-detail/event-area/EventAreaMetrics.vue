@@ -2,6 +2,13 @@
   <h2>
     Ergebnisse für: {{ addressLabel }}
   </h2>
+  <router-link
+    :to="{ name: 'create-lead', query: {eventArea: eventArea.id} }"
+  >
+    <IonButton>
+      Sympathisant*in registrieren
+    </IonButton>
+  </router-link>
   <IonGrid
     v-if="metricRecords.length"
   >
@@ -27,7 +34,7 @@ import { defineComponent } from 'vue'
 import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
 import { EventMetricDto } from '@/api/model/EventMetricDto'
 import { MetricValueMap, trackingSessionStore } from '@/store/TrackingSessionStore'
-import { IonGrid, IonText } from '@ionic/vue'
+import { IonButton, IonGrid, IonText } from '@ionic/vue'
 import MetricsRow from '@/components/MetricsRow.vue'
 import EventAreaMetricsMixin from '@/views/event-detail/event-area/EventAreaMetricsMixin'
 
@@ -37,7 +44,8 @@ export default defineComponent({
   components: {
     MetricsRow,
     IonGrid,
-    IonText
+    IonText,
+    IonButton
   },
   mixins: [EventAreaMetricsMixin],
   data() {

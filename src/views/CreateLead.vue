@@ -1,177 +1,181 @@
 <template>
-  <div class="container">
-    <h2>Als Interessent*in registrieren</h2>
-    <div class="p-fluid">
-      <div class="p-field p-grid">
-        <label
-          for="lastName"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Name</label>
-        <div class="p-col-12 p-md-9">
-          <InputText
-            id="lastName"
-            v-model="lead.last_name"
-            type="text"
-          />
-        </div>
-      </div>
-      <div class="p-field p-grid">
-        <label
-          for="firstName"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Vorname</label>
-        <div class="p-col-12 p-md-9">
-          <InputText
-            id="firstName"
-            v-model="lead.first_name"
-            type="text"
-          />
-        </div>
-      </div>
-      <div class="p-field p-grid">
-        <label
-          for="email"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >E-Mail</label>
-        <div class="p-col-12 p-md-9">
-          <InputText
-            id="email"
-            v-model="lead.email"
-            type="text"
-          />
-        </div>
-      </div>
-
-      <div class="p-field p-grid">
-        <label
-          for="phoneNumber"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Handy</label>
-        <div class="p-col-12 p-md-9">
-          <InputText
-            id="phoneNumber"
-            v-model="lead.phone_number"
-            type="text"
-          />
-        </div>
-      </div>
-
-      <div class="p-field p-grid">
-        <label
-          for="zip"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Postleitzahl</label>
-        <div class="p-col-12 p-md-9">
-          <InputText
-            id="zip"
-            v-model="lead.plz"
-            type="text"
-          />
-        </div>
-      </div>
-      <div class="p-field p-grid">
-        <label
-          for="city"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Ort</label>
-        <div class="p-col-12 p-md-9">
-          <InputText
-            id="city"
-            v-model="lead.city"
-            type="text"
-          />
-        </div>
+  <IonContent>
+    <div class="container">
+      <h2>Als Interessent*in registrieren</h2>
+      <IonItem>
+        <IonLabel>
+          Geschlecht
+        </IonLabel>
+        <IonSelect
+          id="gender"
+          v-model="lead.gender"
+          type="select"
+        >
+          <IonSelectOption
+            v-for="gender in genders"
+            :key="gender.value"
+            :value="gender.value"
+          >
+            {{ gender.label }}
+          </IonSelectOption>
+        </IonSelect>
+      </IonItem>
+      <IonItem>
+        <IonLabel position="floating">
+          Nachname
+        </IonLabel>
+        <IonInput
+          id="lastName"
+          v-model="lead.last_name"
+          type="text"
+        />
+      </IonItem>
+      <IonItem>
+        <IonLabel position="floating">
+          Vorname
+        </IonLabel>
+        <IonInput
+          id="firstName"
+          v-model="lead.first_name"
+          type="text"
+        />
+      </IonItem>
+      <IonItem>
+        <IonLabel position="floating">
+          E-Mail
+        </IonLabel>
+        <IonInput
+          id="email"
+          v-model="lead.email"
+          type="text"
+        />
+      </IonItem>
+      <IonItem>
+        <IonLabel position="floating">
+          Telefonnummer
+        </IonLabel>
+        <IonInput
+          id="phone"
+          v-model="lead.phone_number"
+          type="text"
+        />
+      </IonItem>
+      <IonItem>
+        <IonLabel position="floating">
+          Postleitzahl
+        </IonLabel>
+        <IonInput
+          id="plz"
+          v-model="lead.plz"
+          type="text"
+        />
+      </IonItem>
+      <IonItem>
+        <IonLabel position="floating">
+          Stadt
+        </IonLabel>
+        <IonInput
+          id="city"
+          v-model="lead.city"
+          type="text"
+        />
+      </IonItem>
+      <IonItem>
+        <IonLabel>
+          Ich bin DIE LINKE Mitglied
+        </IonLabel>
+        <IonCheckbox
+          id="isMember"
+          slot="start"
+          v-model="lead.is_party_member"
+        />
+      </IonItem>
+      <IonItem>
+        <IonLabel>
+          Ich möchte DIE LINKE Mitglied werden
+        </IonLabel>
+        <IonCheckbox
+          id="wantToBecomeMember"
+          slot="start"
+          v-model="lead.want_to_become_member"
+        />
+      </IonItem>
+      <IonItem>
+        <IonLabel>
+          Ich stimme der Datenschutzerklärung zu
+        </IonLabel>
+        <IonCheckbox
+          id="privacyOptIn"
+          slot="start"
+          v-model="lead.privacy_opt_in"
+        />
+      </IonItem>
+      <div class="control-buttons">
+        <IonButton
+          @click="saveLead"
+        >
+          Abschicken
+        </IonButton>
       </div>
     </div>
-    <div class="p-field-checkbox">
-      <Checkbox
-        id="isMember"
-        v-model="lead.is_party_member"
-        name="isMember"
-        :binary="true"
-      />
-      <label for="isMember">Ich bin DIE LINKE Mitglied</label>
-    </div>
-
-    <div class="p-field-checkbox">
-      <Checkbox
-        id="wantToBecomeMember"
-        v-model="lead.want_to_become_member"
-        name="wantToBecomeMember"
-        :binary="true"
-      />
-      <label for="wantToBecomeMember">Ich möchte DIE LINKE Mitglied werden</label>
-    </div>
-
-    <div class="p-field-checkbox">
-      <Checkbox
-        id="privacyOptIn"
-        v-model="lead.privacy_opt_in"
-        name="privacyOptIn"
-        :binary="true"
-      />
-      <label for="privacyOptIn">Ich stimme der Datenschutzerklärung zu</label>
-    </div>
-
-    <div class="control-buttons">
-      <Button
-        label="Speichern"
-        @click="saveLead"
-      />
-    </div>
-  </div>
-  <Dialog
-    v-model:visible="confirmOpen"
-    :closable="false"
-  >
-    Kontakt wurde erfolgreich registriert
-    <template #footer>
-      <Button
-        label="Ok"
-        autofocus
-        @click="confirm"
-      />
-    </template>
-  </Dialog>
+  </IonContent>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-
-import InputText from 'primevue/inputtext'
-import Checkbox from 'primevue/checkbox'
-import Button from 'primevue/button'
-
-import Dialog from 'primevue/dialog'
-import { CreateLeadDto } from '@/api/model/CreateLeadDto'
+import { LeadDto } from '@/api/model/LeadDto'
+import { IonButton, IonCheckbox, IonContent, IonInput, IonItem, IonLabel, IonSelect, IonSelectOption } from '@ionic/vue'
 
 
 export default defineComponent({
   name: 'CreateLead',
   components: {
-    InputText,
-    Checkbox,
-    Button,
-    Dialog
+    IonInput,
+    IonSelectOption,
+    IonSelect,
+    IonCheckbox,
+    IonButton,
+    IonContent,
+    IonLabel,
+    IonItem,
   },
   props: {
-    eventId: {
-      type: Number as PropType<number>,
-      required: true
+    eventAreaId: {
+      type: Number as PropType<number | undefined>,
+      required: false,
+      default: undefined
     }
   },
   data() {
     return {
       confirmOpen: false,
-      lead: {} as Partial<CreateLeadDto>
+      lead: {} as Partial<LeadDto>,
+      genders: [
+        {
+          value: 'm',
+          label: 'männlich'
+        },
+        {
+          value: 'w',
+          label: 'weiblich'
+        },
+        {
+          value: 'd',
+          label: 'divers'
+        }
+      ]
     }
   },
   methods: {
     async saveLead() {
-      this.confirmOpen = true
-    },
-    confirm() {
-      this.$router.replace({name: 'live-event', params: {id: this.eventId }})
+      // TODO: Error handling
+      await this.$apiClient.leads.create(
+        {
+          ...this.lead,
+          event_area: this.eventAreaId
+        })
+      // TODO: maybe add an explicit back route
+      this.$router.go(-1)
     }
   }
 })
