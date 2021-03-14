@@ -4,10 +4,12 @@ import { CAMPAIGN_ADMIN, UserDto } from '@/api/model/UserDto'
 
 interface UserState {
   user: UserDto | null,
-  location: LocationDto | null
+  location: LocationDto | null,
+  zoom: number | null
 }
 
 const KEY_LOCATION = 'LOCATION'
+const KEY_ZOOM = 'KEY_ZOOM'
 
 class UserStore extends Store<UserState> {
   protected data(): UserState {
@@ -21,16 +23,25 @@ class UserStore extends Store<UserState> {
         location = null
       }
     }
+    const zoomString = localStorage.getItem(KEY_ZOOM)
+    const zoom = zoomString ? parseInt(zoomString) : null
 
     return {
       user: null,
-      location
+      location,
+      zoom
     }
   }
 
   public locate(location: LocationDto | null) {
     this.state.location = location
     localStorage.setItem(KEY_LOCATION, JSON.stringify(location))
+  }
+
+  public setZoom(zoom: number | null) {
+    if (zoom) {
+      localStorage.setItem(KEY_ZOOM, zoom.toString())
+    }
   }
 
   public clearUser() {
