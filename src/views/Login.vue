@@ -58,7 +58,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IonInput, IonLabel, IonItem, IonButton, IonCheckbox, IonItemDivider } from '@ionic/vue'
 import { authService } from '@/api/authService'
-import { RouteLocation } from 'vue-router'
+import router from '@/router'
 
 export default defineComponent({
   name: 'Login',
@@ -71,10 +71,12 @@ export default defineComponent({
     IonItemDivider
   },
   props: {
-    redirect: {
-      type: Object as PropType<RouteLocation>,
+    next: {
+      type: String as PropType<string>,
       required: false,
-      default: {name: 'events'}
+      default: () => {
+        return router.resolve({name: 'events'}).path
+      }
     }
   },
   data() {
@@ -86,7 +88,7 @@ export default defineComponent({
   methods: {
     async login() {
       await authService.login(this.username, this.password)
-      this.$router.push(this.redirect)
+      this.$router.push(this.next)
     }
   }
 })
@@ -110,7 +112,7 @@ export default defineComponent({
   text-align: center;
 }
 
-.label-floating.sc-ion-label-md-h  {
+.label-floating.sc-ion-label-md-h {
   margin-bottom: 8px;
 }
 </style>

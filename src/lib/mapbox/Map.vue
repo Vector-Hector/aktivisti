@@ -23,6 +23,11 @@ export default defineComponent({
       type: Object as PropType<LocationDto>,
       required: true
     },
+    animate: {
+      type: Boolean as PropType<boolean>,
+      required: false,
+      default: true
+    },
     zoom: {
       type: Number as PropType<number>,
       default: 5
@@ -47,17 +52,17 @@ export default defineComponent({
     })
 
     watch(() => props.zoom, (newZoom) => {
-      map.value?.setZoom(newZoom)
+      map.value?.setZoom(newZoom, { animate: props.animate })
     })
 
     watch(() => props.zoomBox, (newBox) => {
       if (newBox) {
-        map.value?.fitBounds(newBox, {padding: 20})
+        map.value?.fitBounds(newBox, {padding: 20, animate: props.animate })
       }
     }, {immediate: true})
 
     const fitBounds = (...args: any) => {
-      map.value?.fitBounds(args)
+      map.value?.fitBounds(args, { animate: props.animate })
     }
 
     onMounted(() => {
