@@ -141,60 +141,7 @@
           </div>
         </div>
       </div>
-
-      <div class="p-field p-grid">
-        <label
-          for="eventTasks"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Aufgabenbeschreibung</label>
-        <div class="p-col-12 p-md-9">
-          <InputText
-            id="eventTasks"
-            v-model="localEvent.tasks"
-            type="text"
-          />
-        </div>
-      </div>
-
-      <div class="p-field p-grid">
-        <label
-          for="eventInfoLink"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Link zu Info-Material</label>
-        <div class="p-col-12 p-md-9">
-          <InputText
-            id="eventInfoLink"
-            v-model="localEvent.infoLink"
-            type="text"
-          />
-        </div>
-      </div>
-
-      <div class="p-field p-grid">
-        <label
-          for="eventContact"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Kontakt (Telefon, E-Mail)</label>
-        <div class="p-col-12 p-md-9">
-          <InputText
-            id="eventContact"
-            v-model="localEvent.contact"
-            type="text"
-          />
-        </div>
-      </div>
     </div>
-    <div class="p-field-checkbox">
-      <Checkbox
-        id="isNotPublic"
-        v-model="localEvent.isNotPublic"
-        name="isNotPublic"
-        value="public"
-        :binary="true"
-      />
-      <label for="isNotPublic">Nicht-öffentlich</label>
-    </div>
-
     <div class="control-buttons">
       <router-link to="/events">
         <Button
