@@ -183,7 +183,10 @@ const router = createRouter({
     {
       path: '/login',
       component: Login,
-      name: 'login'
+      name: 'login',
+      props: (route) => ({
+        next: route.query.next
+      })
     },
     {
       path: '/register',

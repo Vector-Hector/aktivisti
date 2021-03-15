@@ -15,8 +15,12 @@
     </IonContent>
     <div class="map-container">
       <Map
+        v-if="eventAreas"
         ref="map"
+        :zoom="15"
         :center="event.location.center"
+        :zoom-box="zoomBox"
+        :animate="false"
       >
         <router-view
           :event="event"
