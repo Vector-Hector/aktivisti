@@ -27,12 +27,12 @@
             for="eventName"
             class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
           >Name des Events</label>
-          <Field
-            v-slot="{field}"
-            name="name"
-            :rules="isRequired"
-          >
-            <div class="p-col-12 p-md-9">
+          <div class="p-col-12 p-md-9">
+            <!-- <Field
+              v-slot="{field}"
+              name="name"
+              :rules="isRequired"
+            >
               <InputText
                 id="eventName"
                 v-model="localEvent.name"
@@ -44,8 +44,13 @@
                 name="name"
                 class="error"
               />
-            </div>
-          </Field>
+            </Field> -->
+            <InputText
+              id="eventName"
+              v-model="localEvent.name"
+              type="text"
+            />
+          </div>
         </div>
 
         <div class="p-field p-grid">
@@ -189,7 +194,7 @@ import { EventDto } from '@/api/model/EventDto'
 import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
 import { EventMetricDto } from '@/api/model/EventMetricDto'
 
-import { Field, Form, ErrorMessage } from 'vee-validate'
+import { Form } from 'vee-validate'
 
 /**
  * The details form of an event in this state the event can be either new (no id) or existing (has id)
@@ -204,9 +209,7 @@ export default defineComponent({
     Button,
     InputNumber,
     MultiSelect,
-    Field,
     Form,
-    ErrorMessage,
   },
   mixins: [EditEventMixin],
   data() {
