@@ -1,7 +1,6 @@
 import { CampaignDto } from '@/api/model/CampaignDto'
 import { UserDto } from '@/api/model/UserDto'
 import { CampaignTypeDto } from '@/api/model/CampaignTypeDto'
-import { OrganizationTypeDto } from '@/api/model/OrganizationTypeDto'
 import { EventRoute } from '@/api/EventRoute'
 import { ApiRoute } from '@/api/ApiRoute'
 import axios from 'axios'

@@ -1,6 +1,7 @@
 <template>
   <div class="counter-input">
     <IonFabButton
+      class="counter-button"
       :disabled="modelValue <= 0"
       @click="$emit('update:modelValue', modelValue - 1)"
     >
@@ -13,6 +14,7 @@
       @change="updateValue($event.target.value)"
     >
     <IonFabButton
+      class="counter-button"
       @click="$emit('update:modelValue', modelValue + 1)"
     >
       <IonIcon name="add" />
@@ -76,13 +78,18 @@ export default defineComponent({
 }
 
 .counter-input-field {
-  width: 5rem;
+  width: 3rem;
   margin: 0 1rem;
-  font-size: 1.6rem;
+  font-size: 1rem;
   border: 1px solid;
   font-weight: bold;
   text-align: center;
-  padding: 1rem 1rem;
+  padding: 0.5rem;
+}
+
+.counter-button {
+  width: 2rem;
+  height: 2rem;
 }
 
 input::-webkit-outer-spin-button,

@@ -1,7 +1,10 @@
 <template>
-  <h2>
-    Ergebnisse für: {{ addressLabel }}
+  <h2 class="headline">
+    Ergebnisse für
   </h2>
+  <h3 class="address-headline">
+    {{ addressLabel }}
+  </h3>
   <router-link
     :to="{ name: 'create-lead', query: {eventArea: eventArea.id} }"
   >
@@ -9,6 +12,7 @@
       Sympathisant*in registrieren
     </IonButton>
   </router-link>
+
   <IonGrid
     v-if="metricRecords.length"
   >
@@ -125,6 +129,17 @@ label {
 
 .full-width {
   width: 100%;
+}
+
+.headline {
+  font-size: 1.2rem;
+  margin: 0.5rem 0 0 0;
+}
+
+.address-headline {
+  font-size: 1rem;
+  font-weight: bold;
+  margin: 0;
 }
 
 </style>

@@ -86,7 +86,7 @@ input[type=number] {
   display: flex;
   align-items: center;
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 1rem;
 }
 
 @media only screen and (max-width: $breakpoint-sm) {
