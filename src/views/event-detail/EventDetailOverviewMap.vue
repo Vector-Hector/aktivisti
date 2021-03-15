@@ -57,7 +57,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.map?.fitBounds(this.zoomBox as BBox2d)
+    this.map?.fitBounds(this.zoomBox as BBox2d, { animate: false })
   }
 })
 

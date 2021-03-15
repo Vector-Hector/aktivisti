@@ -1,78 +1,80 @@
 <template>
-  <div class="container">
-    <h2>Events</h2>
-    <div class="autocomplete">
-      <IonSelect
-        v-model="filteredCampaigns"
-        :multiple="true"
-        placeholder="Alle Kampagnen"
-      >
-        <IonSelectOption
-          v-for="campaign in campaigns"
-          :key="campaign.id"
-          :value="campaign.id"
+  <IonContent>
+    <div class="container">
+      <h2>Events</h2>
+      <div class="autocomplete">
+        <IonSelect
+          v-model="filteredCampaigns"
+          :multiple="true"
+          placeholder="Alle Kampagnen"
         >
-          {{ campaign.name }}
-        </IonSelectOption>
-      </IonSelect>
-    </div>
-    <IonList
-      v-if="events.length > 0"
-    >
-      <IonItem
-        v-for="event in events"
-        :key="event.id"
-        :button="true"
-        @click="goToEvent(event)"
+          <IonSelectOption
+            v-for="campaign in campaigns"
+            :key="campaign.id"
+            :value="campaign.id"
+          >
+            {{ campaign.name }}
+          </IonSelectOption>
+        </IonSelect>
+      </div>
+      <IonList
+        v-if="events.length > 0"
       >
-        <IonLabel>
-          <h3>{{ event.name }}</h3>
-          <p>{{ campaignById(event.campaign)?.name }}</p>
-        </IonLabel>
-        <div
-          slot="end"
-          class="item-buttons"
-          @click="$event.stopPropagation()"
+        <IonItem
+          v-for="event in events"
+          :key="event.id"
+          :button="true"
+          @click="goToEvent(event)"
         >
-          <router-link
-            v-if="isManager"
-            :to="{ name: 'edit-event-details', params: { id: event.id } }"
+          <IonLabel>
+            <h3>{{ event.name }}</h3>
+            <p>{{ campaignById(event.campaign)?.name }}</p>
+          </IonLabel>
+          <div
+            slot="end"
+            class="item-buttons"
+            @click="$event.stopPropagation()"
+          >
+            <router-link
+              v-if="isManager"
+              :to="{ name: 'edit-event-details', params: { id: event.id } }"
+            >
+              <IonIcon
+                class="edit-button"
+                name="pencil"
+              />
+            </router-link>
+            <IonIcon
+              v-if="isManager"
+              class="delete-button"
+              name="trash"
+              @click="$event.stopPropagation(); deleteEvent(event)"
+            />
+          </div>
+        </IonItem>
+      </IonList>
+      <div v-else>
+        <IonText color="medium">
+          Keine Events gefunden
+        </IonText>
+      </div>
+      <div class="buttons">
+        <router-link
+          v-if="isManager"
+          :to="{ name: 'edit-event-details-new' }"
+        >
+          <IonButton
+            color="primary"
           >
             <IonIcon
-              class="edit-button"
-              name="pencil"
+              name="add"
             />
-          </router-link>
-          <IonIcon
-            v-if="isManager"
-            class="delete-button"
-            name="trash"
-            @click="$event.stopPropagation(); deleteEvent(event)"
-          />
-        </div>
-      </IonItem>
-    </IonList>
-    <div v-else>
-      <IonText color="medium">
-        Keine Events gefunden
-      </IonText>
+            Event erstellen
+          </IonButton>
+        </router-link>
+      </div>
     </div>
-    <div class="buttons">
-      <router-link
-        v-if="isManager"
-        :to="{ name: 'edit-event-details-new' }"
-      >
-        <IonButton
-          color="primary"
-        >
-          <IonIcon
-            name="add"
-          />
-          Event erstellen
-        </IonButton>
-      </router-link>
-    </div>
-  </div>
+  </IonContent>
 </template>
 
 <script lang="ts">
@@ -80,7 +82,7 @@ import { defineComponent } from 'vue'
 import { EventDto } from '@/api/model/EventDto.ts'
 import { CampaignDto } from '@/api/model/CampaignDto.ts'
 import {
-  IonButton,
+  IonButton, IonContent,
   IonIcon,
   IonItem,
   IonLabel,
@@ -109,7 +111,8 @@ export default defineComponent({
     IonText,
     IonItem,
     IonLabel,
-    IonIcon
+    IonIcon,
+    IonContent,
   },
   data() {
     return {

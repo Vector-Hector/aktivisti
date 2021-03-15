@@ -20,7 +20,7 @@ import { authService } from '@/api/authService'
 import EventAreaOverview from '@/views/event-detail/event-area/EventAreaOverview.vue'
 import EventAreaStreet from '@/views/event-detail/event-area/EventAreaStreet.vue'
 import EventAreaMetrics from '@/views/event-detail/event-area/EventAreaMetrics.vue'
-import EventAreaMetricsMap from '@/views/event-detail/event-area/EventAreaMetricsMap.vue'
+import EventAreaMetricsMap from '@/views/event-detail/event-area/EventAreaMetricsMap'
 import EventDetailOverview from '@/views/event-detail/EventDetailOverview.vue'
 import EventDetailOverviewMap from '@/views/event-detail/EventDetailOverviewMap.vue'
 import EventDetailAreaMap from '@/views/event-detail/EventDetailAreaMap.vue'
@@ -41,9 +41,7 @@ const router = createRouter({
       path: '/create-lead',
       name: 'create-lead',
       component: CreateLead,
-      props: (route) => ({
-        eventId: parseInt(route.query.event as string)
-      })
+      props: route => ({ eventAreaId: route.query.eventArea ? parseInt(route.query.eventArea as string) : undefined })
     },
     {
       path: '/map',
@@ -185,7 +183,10 @@ const router = createRouter({
     {
       path: '/login',
       component: Login,
-      name: 'login'
+      name: 'login',
+      props: (route) => ({
+        next: route.query.next
+      })
     },
     {
       path: '/register',

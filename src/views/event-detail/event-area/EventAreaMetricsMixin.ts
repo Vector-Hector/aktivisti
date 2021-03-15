@@ -24,7 +24,7 @@ export default defineComponent({
     },
     bbox(): BBox2d | undefined {
       if (!this.location) return
-      return bbox(circle(this.location!, 0.1)) as BBox2d
+      return bbox(circle(this.location!, 0.05)) as BBox2d
     }
   }
 })

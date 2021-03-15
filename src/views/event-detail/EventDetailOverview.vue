@@ -89,7 +89,7 @@
 
   <router-link
     v-if="!isLoggedIn"
-    :to="{ name: 'login' }"
+    :to="{ name: 'login', query: {next: $router.resolve($route).path } }"
     button-type="tertiary"
   >
     <IonButton>
@@ -139,7 +139,7 @@ export default defineComponent({
     IonLabel,
     IonGrid,
     IonCol,
-    IonRow,
+    IonRow
   },
   props: {
     id: {

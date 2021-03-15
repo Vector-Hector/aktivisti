@@ -1,7 +1,18 @@
 <template>
-  <h2>
-    Ergebnisse für: {{ addressLabel }}
+  <h2 class="headline">
+    Ergebnisse für
   </h2>
+  <h3 class="address-headline">
+    {{ addressLabel }}
+  </h3>
+  <router-link
+    :to="{ name: 'create-lead', query: {eventArea: eventArea.id} }"
+  >
+    <IonButton>
+      Sympathisant*in registrieren
+    </IonButton>
+  </router-link>
+
   <IonGrid
     v-if="metricRecords.length"
   >
@@ -27,7 +38,7 @@ import { defineComponent } from 'vue'
 import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
 import { EventMetricDto } from '@/api/model/EventMetricDto'
 import { MetricValueMap, trackingSessionStore } from '@/store/TrackingSessionStore'
-import { IonGrid, IonText } from '@ionic/vue'
+import { IonButton, IonGrid, IonText } from '@ionic/vue'
 import MetricsRow from '@/components/MetricsRow.vue'
 import EventAreaMetricsMixin from '@/views/event-detail/event-area/EventAreaMetricsMixin'
 
@@ -37,7 +48,8 @@ export default defineComponent({
   components: {
     MetricsRow,
     IonGrid,
-    IonText
+    IonText,
+    IonButton
   },
   mixins: [EventAreaMetricsMixin],
   data() {
@@ -52,7 +64,7 @@ export default defineComponent({
     },
     metricValues: {
       get(): MetricValueMap {
-        const storedValues = trackingSessionStore.getMetricsForAddress(this.eventArea.id!, this.addressLabel)
+        const storedValues = trackingSessionStore.getMetricsForAddress(this.eventArea.id!, this.address!)
         if (storedValues) {
           return storedValues
         } else {
@@ -64,7 +76,7 @@ export default defineComponent({
         }
       },
       set(metrics: MetricValueMap) {
-        trackingSessionStore.updateMetricsForAddress(this.eventArea.id!, this.addressLabel, metrics)
+        trackingSessionStore.updateMetricsForAddress(this.eventArea.id!, this.address!, metrics)
       }
     }
   },
@@ -117,6 +129,17 @@ label {
 
 .full-width {
   width: 100%;
+}
+
+.headline {
+  font-size: 1.2rem;
+  margin: 0.5rem 0 0 0;
+}
+
+.address-headline {
+  font-size: 1rem;
+  font-weight: bold;
+  margin: 0;
 }
 
 </style>

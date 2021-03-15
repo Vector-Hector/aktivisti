@@ -23,6 +23,11 @@ export default defineComponent({
       type: Object as PropType<LocationDto>,
       required: true
     },
+    animate: {
+      type: Boolean as PropType<boolean>,
+      required: false,
+      default: true
+    },
     zoom: {
       type: Number as PropType<number>,
       default: 5
@@ -33,7 +38,7 @@ export default defineComponent({
       default: undefined
     }
   },
-  emits: ['update:zoom'],
+  emits: ['update:zoom', 'update:center', 'update:zoom'],
   setup(props, {emit}) {
     mapboxgl.accessToken = process.env.VUE_APP_MAPBOX_TOKEN
     const map = ref<mapboxgl.Map | null>(null)
@@ -47,17 +52,17 @@ export default defineComponent({
     })
 
     watch(() => props.zoom, (newZoom) => {
-      map.value?.setZoom(newZoom)
+      map.value?.setZoom(newZoom, { animate: props.animate })
     })
 
     watch(() => props.zoomBox, (newBox) => {
       if (newBox) {
-        map.value?.fitBounds(newBox, {padding: 20})
+        map.value?.fitBounds(newBox, {padding: 20, animate: props.animate })
       }
     }, {immediate: true})
 
     const fitBounds = (...args: any) => {
-      map.value?.fitBounds(args)
+      map.value?.fitBounds(args, { animate: props.animate })
     }
 
     onMounted(() => {
@@ -75,6 +80,13 @@ export default defineComponent({
         initialized.value = true
       })
       map.value.on('zoom', () => {
+        emit('update:zoom', map.value?.getZoom())
+      })
+      map.value.on('moveend', () => {
+        emit('update:center', map.value?.getCenter())
+      })
+
+      map.value.on('zoomend', () => {
         emit('update:zoom', map.value?.getZoom())
       })
     })
