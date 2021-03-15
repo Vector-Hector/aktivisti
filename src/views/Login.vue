@@ -1,8 +1,11 @@
 <template>
   <div class="container">
     <h2>Login</h2>
-    <Form @submit="login()">
-      <IonItem :class="{ 'item-has-focus': hasError }">
+    <Form
+      v-slot="{ errors }"
+      @submit="login()"
+    >
+      <IonItem :class="{ 'item-has-error': !!errors.username }">
         <IonLabel position="floating">
           Benutzername oder E-Mail-Adresse
         </IonLabel>
@@ -27,7 +30,7 @@
         />
       </IonItem>
 
-      <IonItem :class="{ 'item-has-focus': hasError }">
+      <IonItem :class="{ 'item-has-error': !!errors.password }">
         <IonLabel position="floating">
           Passwort
         </IonLabel>
@@ -131,8 +134,6 @@ export default defineComponent({
     },
     isRequired (value: string) {
       if (!value) {
-        // TODO 
-        // this.hasError = true
         return 'Bitte fülle dieses Feld aus'
       }
       return true
