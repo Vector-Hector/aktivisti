@@ -126,7 +126,6 @@ export default defineComponent({
     return {
       username: '',
       password: '',
-      hasError: false,
     }
   },
   methods: {
