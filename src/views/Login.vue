@@ -1,45 +1,84 @@
 <template>
   <div class="container">
     <h2>Login</h2>
-    <IonItem>
-      <IonLabel position="floating">
-        Benutzername oder E-Mail-Adresse
-      </IonLabel>
-      <IonInput v-model="username" />
-    </IonItem>
-
-    <IonItem>
-      <IonLabel position="floating">
-        Passwort
-      </IonLabel>
-      <IonInput
-        v-model="password"
-        type="password"
-      />
-    </IonItem>
-
-    <IonItem lines="none">
-      <IonLabel>
-        <router-link
-          to="/password"
+    <Form
+      v-slot="{ errors }"
+      @submit="login()"
+    >
+      <IonItem :class="{ 'item-has-error': !!errors.username }">
+        <IonLabel position="floating">
+          Benutzername oder E-Mail-Adresse
+        </IonLabel>
+        <Field
+          v-slot="{field}"
+          name="username"
+          :rules="isRequired"
         >
-          Passwort vergessen?
-        </router-link>
-      </IonLabel>
-    </IonItem>
-
-    <div class="control-buttons">
-      <IonItem lines="none">
-        <IonCheckbox class="checkbox-margin-right" />
-        <IonLabel>Angemeldet bleiben</IonLabel>
+          <IonInput
+            name="username"
+            v-bind="field"
+          />
+        </Field>
       </IonItem>
-      <IonButton
-        color="primary"
-        @click="login()"
+      <IonItem
+        class="error-wrapper"
+        lines="none"
       >
-        Anmelden
-      </IonButton>
-    </div>
+        <ErrorMessage
+          name="username"
+          class="error"
+        />
+      </IonItem>
+
+      <IonItem :class="{ 'item-has-error': !!errors.password }">
+        <IonLabel position="floating">
+          Passwort
+        </IonLabel>
+        <Field
+          v-slot="{field}"
+          name="password"
+          :rules="isRequired"
+        >
+          <IonInput
+            name="password"
+            v-bind="field"
+            type="password"
+          />
+        </Field>
+      </IonItem>
+      <IonItem
+        class="error-wrapper"
+        lines="none"
+      >
+        <ErrorMessage
+          name="password"
+          class="error"
+        />
+      </IonItem>
+
+      <IonItem lines="none">
+        <IonLabel>
+          <router-link
+            to="/password"
+          >
+            Passwort vergessen?
+          </router-link>
+        </IonLabel>
+      </IonItem>
+
+      <div class="control-buttons">
+        <IonItem lines="none">
+          <IonCheckbox class="checkbox-margin-right" />
+          <IonLabel>Angemeldet bleiben</IonLabel>
+        </IonItem>
+        <IonButton
+          color="primary"
+          type="submit"
+        >
+          Anmelden
+        </IonButton>
+      </div>
+    </Form>
 
     <IonItemDivider />
 
@@ -58,6 +97,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IonInput, IonLabel, IonItem, IonButton, IonCheckbox, IonItemDivider } from '@ionic/vue'
 import { authService } from '@/api/authService'
+import { Field, Form, ErrorMessage } from 'vee-validate'
 import router from '@/router'
 
 export default defineComponent({
@@ -68,7 +108,10 @@ export default defineComponent({
     IonItem,
     IonButton,
     IonCheckbox,
-    IonItemDivider
+    IonItemDivider,
+    Field,
+    Form,
+    ErrorMessage,
   },
   props: {
     next: {
@@ -82,13 +125,20 @@ export default defineComponent({
   data() {
     return {
       username: '',
-      password: ''
+      password: '',
+      hasError: false,
     }
   },
   methods: {
     async login() {
       await authService.login(this.username, this.password)
       this.$router.push(this.next)
+    },
+    isRequired (value: string) {
+      if (!value) {
+        return 'Bitte fülle dieses Feld aus'
+      }
+      return true
     }
   }
 })
