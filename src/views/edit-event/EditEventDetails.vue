@@ -1,159 +1,175 @@
 <template>
   <div class="container">
     <h2>Neues Event hinzufügen</h2>
-    <div class="p-fluid">
-      <div class="p-field p-grid">
-        <label
-          for="eventType"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Event-Typ</label>
-        <div class="p-col-12 p-md-9">
-          <Dropdown
-            id="eventType"
-            v-model="localEvent.event_type"
-            :disabled="true"
-            :options="eventTypes"
-            option-label="label"
-            option-value="key"
-            placeholder="Event-Typ"
-          />
-        </div>
-      </div>
-      <div class="p-field p-grid">
-        <label
-          for="eventName"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Name des Events</label>
-        <div class="p-col-12 p-md-9">
-          <InputText
-            id="eventName"
-            v-model="localEvent.name"
-            type="text"
-          />
-        </div>
-      </div>
-
-      <div class="p-field p-grid">
-        <label
-          for="campaign"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Kampagnenauswahl</label>
-        <div class="p-col-12 p-md-9">
-          <Dropdown
-            v-model="localEvent.campaign"
-            :options="campaigns"
-            option-value="id"
-            option-label="name"
-            placeholder="Wähle eine Kampagne aus"
-          />
-        </div>
-      </div>
-
-      <div class="p-field p-grid">
-        <label
-          for="startDate"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Beginn</label>
-        <div class="p-col-12 p-md-9">
-          <Calendar
-            v-model="startDate"
-            date-format="dd.mm.yy"
-            :show-time="true"
-          />
-        </div>
-      </div>
-
-      <div class="p-field p-grid">
-        <label
-          for="endDate"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Ende</label>
-        <div class="p-col-12 p-md-9">
-          <Calendar
-            v-model="endDate"
-            date-format="dd.mm.yy"
-            :show-time="true"
-          />
-        </div>
-      </div>
-
-      <div class="p-field p-grid">
-        <label
-          for="eventParticipantsMax"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        ># Personen</label>
-        <div class="p-col-12 p-md-9">
-          <InputNumber
-            id="eventParticipantsMax"
-            v-model="localEvent.max_participants"
-            show-buttons
-            mode="decimal"
-            :min="0"
-          />
-        </div>
-      </div>
-
-      <div class="p-field p-grid">
-        <label
-          for="eventInfo"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Weitere Informationen</label>
-        <div class="p-col-12 p-md-9">
-          <InputText
-            id="eventInfo"
-            v-model="localEvent.info"
-            type="text"
-          />
-        </div>
-      </div>
-
-      <div class="p-field p-grid">
-        <label
-          for="eventMetrics"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Felder (geklopfte Türen etc.) auswählen</label>
-        <div class="p-col-12 p-md-9">
-          <MultiSelect
-            v-model="selectedMetrics"
-            :options="metrics"
-            option-label="name"
-            placeholder="Metriken auswählen"
-            display="chip"
-          />
-        </div>
-      </div>
-
-      <div
-        v-for="metricRecord in metricRecords"
-        :key="metricRecord.id"
-      >
+    <Form
+      @submit="saveAndProceed()"
+    >
+      <div class="p-fluid">
         <div class="p-field p-grid">
           <label
-            for="eventGoals"
+            for="eventType"
             class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-          >Zielvorgabe für {{ metricForMetricRecord(metricRecord).name }} hinzufügen</label>
+          >Event-Typ</label>
+          <div class="p-col-12 p-md-9">
+            <Dropdown
+              id="eventType"
+              v-model="localEvent.event_type"
+              :disabled="true"
+              :options="eventTypes"
+              option-label="label"
+              option-value="key"
+              placeholder="Event-Typ"
+            />
+          </div>
+        </div>
+        <div class="p-field p-grid">
+          <label
+            for="eventName"
+            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+          >Name des Events</label>
+          <Field
+            v-slot="{field}"
+            name="name"
+            :rules="isRequired"
+          >
+            <div class="p-col-12 p-md-9">
+              <InputText
+                id="eventName"
+                v-model="localEvent.name"
+                name="name"
+                v-bind="field"
+                type="text"
+              />
+              <ErrorMessage
+                name="name"
+                class="error"
+              />
+            </div>
+          </Field>
+        </div>
+
+        <div class="p-field p-grid">
+          <label
+            for="campaign"
+            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+          >Kampagnenauswahl</label>
+          <div class="p-col-12 p-md-9">
+            <Dropdown
+              v-model="localEvent.campaign"
+              :options="campaigns"
+              option-value="id"
+              option-label="name"
+              placeholder="Wähle eine Kampagne aus"
+            />
+          </div>
+        </div>
+
+        <div class="p-field p-grid">
+          <label
+            for="startDate"
+            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+          >Beginn</label>
+          <div class="p-col-12 p-md-9">
+            <Calendar
+              v-model="startDate"
+              date-format="dd.mm.yy"
+              :show-time="true"
+            />
+          </div>
+        </div>
+
+        <div class="p-field p-grid">
+          <label
+            for="endDate"
+            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+          >Ende</label>
+          <div class="p-col-12 p-md-9">
+            <Calendar
+              v-model="endDate"
+              date-format="dd.mm.yy"
+              :show-time="true"
+            />
+          </div>
+        </div>
+
+        <div class="p-field p-grid">
+          <label
+            for="eventParticipantsMax"
+            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+          ># Personen</label>
           <div class="p-col-12 p-md-9">
             <InputNumber
-              v-model="metricRecord.target"
+              id="eventParticipantsMax"
+              v-model="localEvent.max_participants"
               show-buttons
+              mode="decimal"
               :min="0"
             />
           </div>
         </div>
+
+        <div class="p-field p-grid">
+          <label
+            for="eventInfo"
+            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+          >Weitere Informationen</label>
+          <div class="p-col-12 p-md-9">
+            <InputText
+              id="eventInfo"
+              v-model="localEvent.info"
+              type="text"
+            />
+          </div>
+        </div>
+
+        <div class="p-field p-grid">
+          <label
+            for="eventMetrics"
+            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+          >Felder (geklopfte Türen etc.) auswählen</label>
+          <div class="p-col-12 p-md-9">
+            <MultiSelect
+              v-model="selectedMetrics"
+              :options="metrics"
+              option-label="name"
+              placeholder="Metriken auswählen"
+              display="chip"
+            />
+          </div>
+        </div>
+
+        <div
+          v-for="metricRecord in metricRecords"
+          :key="metricRecord.id"
+        >
+          <div class="p-field p-grid">
+            <label
+              for="eventGoals"
+              class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+            >Zielvorgabe für {{ metricForMetricRecord(metricRecord).name }} hinzufügen</label>
+            <div class="p-col-12 p-md-9">
+              <InputNumber
+                v-model="metricRecord.target"
+                show-buttons
+                :min="0"
+              />
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="control-buttons">
-      <router-link to="/events">
+      <div class="control-buttons">
+        <router-link to="/events">
+          <Button
+            class="p-button-text"
+            label="Abbrechen"
+          />
+        </router-link>
         <Button
-          class="p-button-text"
-          label="Abbrechen"
+          type="submit"
+          label="Ort auswählen"
         />
-      </router-link>
-      <Button
-        label="Ort auswählen"
-        @click="saveAndProceed"
-      />
-    </div>
+      </div>
+    </Form>
   </div>
 </template>
 
@@ -173,6 +189,8 @@ import { EventDto } from '@/api/model/EventDto'
 import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
 import { EventMetricDto } from '@/api/model/EventMetricDto'
 
+import { Field, Form, ErrorMessage } from 'vee-validate'
+
 /**
  * The details form of an event in this state the event can be either new (no id) or existing (has id)
  * After entering the details the event is saved, as subsequent steps rely on the event already been created on the API
@@ -185,7 +203,10 @@ export default defineComponent({
     Calendar,
     Button,
     InputNumber,
-    MultiSelect
+    MultiSelect,
+    Field,
+    Form,
+    ErrorMessage,
   },
   mixins: [EditEventMixin],
   data() {
@@ -281,6 +302,12 @@ export default defineComponent({
     },
     metricRecordForMetricId(metricId: number): Partial<EventMetricRecordDto> | undefined {
       return this.metricRecords.find(({metric}) => metricId === metric)
+    },
+    isRequired (value: string) {
+      if (!value) {
+        return 'Bitte fülle dieses Feld aus'
+      }
+      return true
     }
   }
 })
