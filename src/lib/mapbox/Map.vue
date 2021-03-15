@@ -33,7 +33,7 @@ export default defineComponent({
       default: undefined
     }
   },
-  emits: ['update:zoom'],
+  emits: ['update:zoom', 'update:center', 'update:zoom'],
   setup(props, {emit}) {
     mapboxgl.accessToken = process.env.VUE_APP_MAPBOX_TOKEN
     const map = ref<mapboxgl.Map | null>(null)
@@ -75,6 +75,13 @@ export default defineComponent({
         initialized.value = true
       })
       map.value.on('zoom', () => {
+        emit('update:zoom', map.value?.getZoom())
+      })
+      map.value.on('moveend', () => {
+        emit('update:center', map.value?.getCenter())
+      })
+
+      map.value.on('zoomend', () => {
         emit('update:zoom', map.value?.getZoom())
       })
     })

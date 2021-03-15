@@ -24,8 +24,10 @@
   </div>
   <Map
     :center="center"
-    :zoom="zoom"
+    :zoom="zoom ?? 14"
     map-style="mapbox://styles/mapbox/streets-v11"
+    @update:center="updateUserLocation"
+    @update:zoom="updateUserZoom"
   >
     <Marker
       v-for="event in events"
@@ -61,6 +63,7 @@ import { CampaignDto } from '@/api/model/CampaignDto'
 import Popup from '@/lib/mapbox/Popup.vue'
 import { userStore } from '@/store/UserStore'
 import Button from 'primevue/components/button/Button'
+import { LocationDto } from '@/api/model/LocationDto'
 
 export default defineComponent({
   name: 'Home',
@@ -79,10 +82,10 @@ export default defineComponent({
   },
   data() {
     return {
-      zoom: 14,
+      zoom: userStore.getState().zoom,
       iconWidth: 25,
       iconHeight: 40,
-      center: { ...userStore.getState().location },
+      center: userStore.getState().location,
       events: [] as EventDto[],
       filteredCampaigns: [] as CampaignDto[],
       campaigns: [] as CampaignDto[],
@@ -95,6 +98,12 @@ export default defineComponent({
     this.getCampaigns()
   },
   methods: {
+    updateUserLocation(location: LocationDto) {
+      userStore.locate(location)
+    },
+    updateUserZoom(zoom: number) {
+      userStore.setZoom(zoom)
+    },
     async getEvents() {
       const response = await this.$apiClient.events.list()
       this.events = response.payload.data
