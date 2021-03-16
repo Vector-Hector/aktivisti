@@ -31,14 +31,14 @@
           <div class="p-col-12 p-md-9">
             <Field
               v-slot="{field}"
+              v-model="localEvent.name"
               name="name"
               :rules="isRequired"
             >
               <InputText
                 id="eventName"
-                v-model="localEvent.name"
-                name="name"
                 v-bind="field"
+                name="name"
                 type="text"
                 :class="{ 'p-invalid': errors.name }"
               />
@@ -58,18 +58,20 @@
           <div class="p-col-12 p-md-9">
             <Field
               v-slot="{ field }"
+              v-model="localEvent.campaign"
               name="campaign"
+              value="value"
               :rules="isRequired"
             >
               <Dropdown
-                v-model="localEvent.campaign"
                 :options="campaigns"
                 option-value="id"
                 option-label="name"
                 placeholder="Wähle eine Kampagne aus"
-                v-bind="field"
-                name="campaign"
+                :model-value="field.value"
                 :class="{ 'p-invalid': errors.campaign }"
+                @input="field.onInput.forEach((fn) => fn($event.value))"
+                @change="field.onChange.forEach((fn) => fn($event.value))"
               />
               <ErrorMessage
                 name="campaign"
