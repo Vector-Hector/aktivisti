@@ -10,13 +10,14 @@
           Benutzername oder E-Mail-Adresse
         </IonLabel>
         <Field
-          v-slot="{field}"
+          v-slot="{ field }"
           name="username"
           :rules="isRequired"
+          v-model="username"
         >
           <IonInput
-            name="username"
             v-bind="field"
+            type="text"
           />
         </Field>
       </IonItem>
@@ -35,12 +36,12 @@
           Passwort
         </IonLabel>
         <Field
-          v-slot="{field}"
+          v-slot="{ field }"
           name="password"
           :rules="isRequired"
+          v-model="password"
         >
           <IonInput
-            name="password"
             v-bind="field"
             type="password"
           />
