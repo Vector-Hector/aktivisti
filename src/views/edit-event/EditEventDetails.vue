@@ -2,6 +2,7 @@
   <div class="container">
     <h2>Neues Event hinzufügen</h2>
     <Form
+      v-slot="{ errors }"
       @submit="saveAndProceed()"
     >
       <div class="p-fluid">
@@ -28,7 +29,7 @@
             class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
           >Name des Events</label>
           <div class="p-col-12 p-md-9">
-            <!-- <Field
+            <Field
               v-slot="{field}"
               name="name"
               :rules="isRequired"
@@ -39,17 +40,13 @@
                 name="name"
                 v-bind="field"
                 type="text"
+                :class="{ 'p-invalid': errors.name }"
               />
               <ErrorMessage
                 name="name"
                 class="error"
               />
-            </Field> -->
-            <InputText
-              id="eventName"
-              v-model="localEvent.name"
-              type="text"
-            />
+            </Field>
           </div>
         </div>
 
@@ -61,22 +58,24 @@
           <div class="p-col-12 p-md-9">
             <Field
               v-slot="{ field }"
-              v-model="localEvent.campaign"
               name="campaign"
               :rules="isRequired"
             >
               <Dropdown
+                v-model="localEvent.campaign"
                 :options="campaigns"
                 option-value="id"
                 option-label="name"
                 placeholder="Wähle eine Kampagne aus"
                 v-bind="field"
+                name="campaign"
+                :class="{ 'p-invalid': errors.campaign }"
+              />
+              <ErrorMessage
+                name="campaign"
+                class="error"
               />
             </Field>
-            <ErrorMessage
-              name="campaign"
-              class="error"
-            />
           </div>
         </div>
 
@@ -86,11 +85,23 @@
             class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
           >Beginn</label>
           <div class="p-col-12 p-md-9">
-            <Calendar
-              v-model="startDate"
-              date-format="dd.mm.yy"
-              :show-time="true"
-            />
+            <Field
+              v-slot="{ field }"
+              name="startDate"
+              :rules="isRequired"
+            >
+              <Calendar
+                v-model="startDate"
+                date-format="dd.mm.yy"
+                :show-time="true"
+                v-bind="field"
+                :class="{'p-invalid': errors.startDate}"
+              />
+              <ErrorMessage
+                name="startDate"
+                class="error"
+              />
+            </Field>
           </div>
         </div>
 
@@ -232,7 +243,7 @@ export default defineComponent({
       zoom: 6,
       iconWidth: 25,
       iconHeight: 40,
-      center: {lat: 51.5, lng: 10}
+      center: {lat: 51.5, lng: 10},
     }
   },
   computed: {
