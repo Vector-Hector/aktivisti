@@ -59,12 +59,23 @@
             class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
           >Kampagnenauswahl</label>
           <div class="p-col-12 p-md-9">
-            <Dropdown
+            <Field
+              v-slot="{ field }"
+              name="campaign"
               v-model="localEvent.campaign"
-              :options="campaigns"
-              option-value="id"
-              option-label="name"
-              placeholder="Wähle eine Kampagne aus"
+              :rules="isRequired"
+            >
+              <Dropdown
+                :options="campaigns"
+                option-value="id"
+                option-label="name"
+                placeholder="Wähle eine Kampagne aus"
+                v-bind="field"
+              />
+            </Field>
+            <ErrorMessage
+              name="campaign"
+              class="error"
             />
           </div>
         </div>
@@ -194,7 +205,7 @@ import { EventDto } from '@/api/model/EventDto'
 import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
 import { EventMetricDto } from '@/api/model/EventMetricDto'
 
-import { Form } from 'vee-validate'
+import { Form, Field, ErrorMessage } from 'vee-validate'
 
 /**
  * The details form of an event in this state the event can be either new (no id) or existing (has id)
@@ -210,6 +221,8 @@ export default defineComponent({
     InputNumber,
     MultiSelect,
     Form,
+    Field,
+    ErrorMessage,
   },
   mixins: [EditEventMixin],
   data() {
