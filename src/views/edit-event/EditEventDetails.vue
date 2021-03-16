@@ -61,8 +61,8 @@
           <div class="p-col-12 p-md-9">
             <Field
               v-slot="{ field }"
-              name="campaign"
               v-model="localEvent.campaign"
+              name="campaign"
               :rules="isRequired"
             >
               <Dropdown

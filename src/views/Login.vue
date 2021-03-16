@@ -11,9 +11,9 @@
         </IonLabel>
         <Field
           v-slot="{ field }"
-          name="username"
-          :rules="isRequired"
           v-model="username"
+          :rules="isRequired"
+          name="username"
         >
           <IonInput
             v-bind="field"
@@ -37,9 +37,9 @@
         </IonLabel>
         <Field
           v-slot="{ field }"
-          name="password"
-          :rules="isRequired"
           v-model="password"
+          :rules="isRequired"
+          name="password"
         >
           <IonInput
             v-bind="field"
