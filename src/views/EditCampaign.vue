@@ -117,18 +117,27 @@
           >Typ</label>
           <div class="p-col-12 p-md-9">
             <IonItem :class="{ 'item-has-error': !!errors.campaign_type }">
-              <IonSelect
+              <Field
+                v-slot="{ field }"
                 v-model="campaign.campaign_type"
-                placeholder="Wähle einen Kampagnen-Typ aus"
+                name="campaign_type"
+                value="value"
+                :rules="isRequired"
               >
-                <IonSelectOption
-                  v-for="campaignType in campaignTypes"
-                  :key="campaignType.id"
-                  :value="campaignType.id"
+                <IonSelect
+                  placeholder="Wähle einen Kampagnen-Typ aus"
+                  :value="field.value"
+                  @ionChange="field.onChange.forEach((fn) => fn($event))"
                 >
-                  {{ campaignType.name }}
-                </IonSelectOption>
-              </IonSelect>
+                  <IonSelectOption
+                    v-for="campaignType in campaignTypes"
+                    :key="campaignType.id"
+                    :value="campaignType.id"
+                  >
+                    {{ campaignType.name }}
+                  </IonSelectOption>
+                </IonSelect>
+              </Field>
             </IonItem>
             <IonItem
               class="error-wrapper"
