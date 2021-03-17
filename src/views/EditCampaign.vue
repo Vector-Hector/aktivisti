@@ -6,83 +6,158 @@
     <h1 v-else>
       Neue Kampagne hinzufügen
     </h1>
-    <div class="p-fluid">
-      <div class="p-field p-grid">
-        <label
-          for="campaignName"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Name der Kampagne</label>
-        <div class="p-col-12 p-md-9">
-          <IonItem>
-            <IonInput v-model="campaign.name" />
-          </IonItem>
-        </div>
-      </div>
-
-      <div class="p-field p-grid">
-        <label
-          for="startDate"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Start</label>
-        <div class="p-col-12 p-md-9">
-          <IonDatetime
-            v-model="campaign.start_date"
-            display-format="DD.MM.YY"
-            placeholder="Wähle ein Startdatum aus"
-          />
-        </div>
-      </div>
-
-      <div class="p-field p-grid">
-        <label
-          for="startTime"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Ende</label>
-        <div class="p-col-12 p-md-9">
-          <IonDatetime
-            v-model="campaign.end_date"
-            display-format="DD.MM.YY"
-            placeholder="Wähle ein Enddatum aus"
-          />
-        </div>
-      </div>
-
-      <div class="p-field p-grid">
-        <label
-          for="campaign"
-          class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-        >Typ</label>
-        <div class="p-col-12 p-md-9">
-          <IonSelect
-            v-model="campaign.campaign_type"
-            placeholder="Wähle einen Kampagnen-Typ aus"
-          >
-            <IonSelectOption
-              v-for="campaignType in campaignTypes"
-              :key="campaignType.id"
-              :value="campaignType.id"
+    <Form
+      v-slot="{ errors }"
+      @submit="saveCampaign()"
+    >
+      <div class="p-fluid">
+        <div class="p-field p-grid">
+          <label
+            for="campaignName"
+            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+          >Name der Kampagne</label>
+          <div class="p-col-12 p-md-9">
+            <IonItem :class="{ 'item-has-error': !!errors.name }">
+              <Field
+                v-slot="{ field }"
+                v-model="campaign.name"
+                :rules="isRequired"
+                name="name"
+              >
+                <IonInput
+                  v-bind="field"
+                  type="text"
+                />
+              </Field>
+            </IonItem>
+            <IonItem
+              class="error-wrapper"
+              lines="none"
             >
-              {{ campaignType.name }}
-            </IonSelectOption>
-          </IonSelect>
+              <ErrorMessage
+                name="name"
+                class="error"
+              />
+            </IonItem>
+          </div>
+        </div>
+
+        <div class="p-field p-grid">
+          <label
+            for="startDate"
+            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+          >Start</label>
+          <div class="p-col-12 p-md-9">
+            <IonItem :class="{ 'item-has-error': !!errors.start_date }">
+              <Field
+                v-slot="{ field }"
+                v-model="campaign.start_date"
+                name="start_date"
+                value="value"
+                :rules="isRequired"
+              >
+                <IonDatetime
+                  display-format="DD.MM.YY"
+                  placeholder="Wähle ein Startdatum aus"
+                  :value="field.value"
+                  @ionChange="field.onChange.forEach((fn) => fn($event))"
+                />
+              </Field>
+            </IonItem>
+            <IonItem
+              class="error-wrapper"
+              lines="none"
+            >
+              <ErrorMessage
+                name="start_date"
+                class="error"
+              />
+            </IonItem>
+          </div>
+        </div>
+
+        <div class="p-field p-grid">
+          <label
+            for="startTime"
+            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+          >Ende</label>
+          <div class="p-col-12 p-md-9">
+            <IonItem :class="{ 'item-has-error': !!errors.end_date }">
+              <Field
+                v-slot="{ field }"
+                v-model="campaign.end_date"
+                name="end_date"
+                value="value"
+                :rules="isRequired"
+              >
+                <IonDatetime
+                  display-format="DD.MM.YY"
+                  placeholder="Wähle ein Enddatum aus"
+                  :value="field.value"
+                  @ionChange="field.onChange.forEach((fn) => fn($event))"
+                />
+              </Field>
+            </IonItem>
+            <IonItem
+              class="error-wrapper"
+              lines="none"
+            >
+              <ErrorMessage
+                name="end_date"
+                class="error"
+              />
+            </IonItem>
+          </div>
+        </div>
+
+        <div class="p-field p-grid">
+          <label
+            for="campaign"
+            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
+          >Typ</label>
+          <div class="p-col-12 p-md-9">
+            <IonItem :class="{ 'item-has-error': !!errors.campaign_type }">
+              <IonSelect
+                v-model="campaign.campaign_type"
+                placeholder="Wähle einen Kampagnen-Typ aus"
+              >
+                <IonSelectOption
+                  v-for="campaignType in campaignTypes"
+                  :key="campaignType.id"
+                  :value="campaignType.id"
+                >
+                  {{ campaignType.name }}
+                </IonSelectOption>
+              </IonSelect>
+            </IonItem>
+            <IonItem
+              class="error-wrapper"
+              lines="none"
+            >
+              <ErrorMessage
+                name="campaign_type"
+                class="error"
+              />
+            </IonItem>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="control-buttons">
-      <IonButton
-        color="medium"
-        @click="$router.push('/campaigns')"
-      >
-        Abbrechen
-      </IonButton>
-      <IonButton
-        color="primary"
-        @click="saveCampaign"
-      >
-        Speichern
-      </IonButton>
-    </div>
+      <div class="control-buttons">
+        <IonButton
+          color="medium"
+          @click="$router.push('/campaigns')"
+        >
+          Abbrechen
+        </IonButton>
+        <IonButton
+          color="primary"
+          type="submit"
+        >
+          Speichern
+        </IonButton>
+      </div>
+    </Form>
   </div>
 </template>
 
@@ -93,6 +168,7 @@ import { CampaignTypeDto } from '@/api/model/CampaignTypeDto'
 import { OrganizationTypeDto } from '@/api/model/OrganizationTypeDto'
 import { IonButton, IonInput, IonItem, IonDatetime, IonSelect, IonSelectOption } from '@ionic/vue'
 import { CampaignDto } from '@/api/model/CampaignDto'
+import { Field, Form, ErrorMessage } from 'vee-validate'
 
 export default defineComponent({
   name: 'EditCampaign',
@@ -102,7 +178,10 @@ export default defineComponent({
     IonItem,
     IonDatetime,
     IonSelect,
-    IonSelectOption
+    IonSelectOption,
+    Field,
+    Form,
+    ErrorMessage,
   },
   props: {
     id: {
@@ -143,6 +222,12 @@ export default defineComponent({
         this.campaign = response.payload.data
         this.$router.push('/campaigns')
       }
+    },
+    isRequired (value: string) {
+      if (!value) {
+        return 'Bitte fülle dieses Feld aus'
+      }
+      return true
     }
   }
 })
