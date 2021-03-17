@@ -89,15 +89,17 @@
           <div class="p-col-12 p-md-9">
             <Field
               v-slot="{ field }"
+              v-model="startDate"
               name="startDate"
+              value="value"
               :rules="isRequired"
             >
               <Calendar
-                v-model="startDate"
                 date-format="dd.mm.yy"
                 :show-time="true"
-                v-bind="field"
+                :model-value="field.value"
                 :class="{'p-invalid': errors.startDate}"
+                @date-select="field.onChange.forEach((fn) => fn($event))"
               />
               <ErrorMessage
                 name="startDate"
