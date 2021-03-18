@@ -44,7 +44,6 @@ html, body {
 }
 
 .item-has-error {
-  color: $danger;
   border-bottom: 1px solid $danger;
 
   .label-floating {
