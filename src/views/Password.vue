@@ -4,19 +4,46 @@
     <div>
       Gib deine E-Mail-Adresse ein und wir senden dir einen Link, um wieder zu deinem Konto zu gelangen.
     </div>
+    <Form
+      v-slot="{ errors }"
+      @submit="sendLink()"
+    >
+      <IonItem :class="{ 'item-has-error': !!errors.email }">
+        <IonLabel position="floating">
+          E-Mail-Adresse
+        </IonLabel>
+        <Field
+          v-slot="{ field }"
+          v-model="email"
+          name="email"
+          value="value"
+          :rules="isRequired"
+        >
+          <IonInput
+            type="email"
+            v-bind="field"
+          />
+        </Field>
+      </IonItem>
+      <IonItem
+        class="error-wrapper"
+        lines="none"
+      >
+        <ErrorMessage
+          name="email"
+          class="error"
+        />
+      </IonItem>
 
-    <IonItem>
-      <IonLabel position="floating">
-        E-Mail-Adresse
-      </IonLabel>
-      <IonInput type="email" />
-    </IonItem>
-
-    <div class="control-buttons">
-      <IonButton color="primary">
-        Sende Login Link
-      </IonButton>
-    </div>
+      <div class="control-buttons">
+        <IonButton
+          color="primary"
+          type="submit"
+        >
+          Sende Login Link
+        </IonButton>
+      </div>
+    </Form>
 
     <IonItemDivider />
 
@@ -40,6 +67,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { Field, Form, ErrorMessage } from 'vee-validate'
 import {
   IonInput,
   IonLabel,
@@ -56,11 +84,24 @@ export default defineComponent({
     IonItem,
     IonButton,
     IonItemDivider,
+    Field,
+    Form,
+    ErrorMessage,
   },
   data() {
     return {};
   },
-  methods: {},
+  methods: {
+    async sendLink() {
+
+    },
+    isRequired (value: string) {
+      if (!value) {
+        return 'Bitte fülle dieses Feld aus'
+      }
+      return true
+    }
+  },
 });
 </script>
 

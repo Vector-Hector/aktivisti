@@ -116,7 +116,7 @@
             class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
           >Typ</label>
           <div class="p-col-12 p-md-9">
-            <IonItem :class="{ 'item-has-error': !!errors.campaign_type }">
+            <IonItem :class="{ 'select-item-has-error': !!errors.campaign_type }">
               <Field
                 v-slot="{ field }"
                 v-model="campaign.campaign_type"
