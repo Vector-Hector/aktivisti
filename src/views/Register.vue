@@ -1,58 +1,158 @@
 <template>
   <div class="container">
     <h2>Anmelden</h2>
-    <IonItem>
-      <IonLabel position="floating">
-        E-Mail-Adresse
-      </IonLabel>
-      <IonInput type="email" />
-    </IonItem>
-
-    <IonItem>
-      <IonLabel position="floating">
-        Vorname
-      </IonLabel>
-      <IonInput />
-    </IonItem>
-
-    <IonItem>
-      <IonLabel position="floating">
-        Nachname
-      </IonLabel>
-      <IonInput />
-    </IonItem>
-
-    <IonItem>
-      <IonLabel position="floating">
-        Benutzername
-      </IonLabel>
-      <IonInput />
-    </IonItem>
-
-    <IonItem>
-      <IonLabel position="floating">
-        Passwort
-      </IonLabel>
-      <IonInput type="password" />
-    </IonItem>
-
-    <div class="privacy-margin">
-      Mit deiner Registrierung nimmst du die
-      <a
-        href="https://www.die-linke.de/seitenfuss/datenschutz/"
-        target="_blank"
-      >Datenschutzbestimmungen</a>
-      zur Kenntnis.
-    </div>
-
-    <div class="control-buttons">
-      <IonButton
-        color="primary"
-        @click="register()"
+    <Form
+      v-slot="{ errors }"
+      @submit="register()"
+    >
+      <IonItem :class="{ 'item-has-error': !!errors.email }">
+        <IonLabel position="floating">
+          E-Mail-Adresse
+        </IonLabel>
+        <Field
+          v-slot="{ field }"
+          v-model="email"
+          :rules="isRequired"
+          name="email"
+        >
+          <IonInput
+            v-bind="field"
+            type="email"
+          />
+        </Field>
+      </IonItem>
+      <IonItem
+        class="error-wrapper"
+        lines="none"
       >
-        Registrieren
-      </IonButton>
-    </div>
+        <ErrorMessage
+          name="email"
+          class="error"
+        />
+      </IonItem>
+
+      <IonItem :class="{ 'item-has-error': !!errors.givenname }">
+        <IonLabel position="floating">
+          Vorname
+        </IonLabel>
+        <Field
+          v-slot="{ field }"
+          v-model="givenname"
+          :rules="isRequired"
+          name="givenname"
+        >
+          <IonInput
+            v-bind="field"
+            type="text"
+          />
+        </Field>
+      </IonItem>
+      <IonItem
+        class="error-wrapper"
+        lines="none"
+      >
+        <ErrorMessage
+          name="givenname"
+          class="error"
+        />
+      </IonItem>
+
+      <IonItem :class="{ 'item-has-error': !!errors.surname }">
+        <IonLabel position="floating">
+          Nachname
+        </IonLabel>
+        <Field
+          v-slot="{ field }"
+          v-model="surname"
+          :rules="isRequired"
+          name="surname"
+        >
+          <IonInput
+            v-bind="field"
+            type="text"
+          />
+        </Field>
+      </IonItem>
+      <IonItem
+        class="error-wrapper"
+        lines="none"
+      >
+        <ErrorMessage
+          name="surname"
+          class="error"
+        />
+      </IonItem>
+
+      <IonItem :class="{ 'item-has-error': !!errors.username }">
+        <IonLabel position="floating">
+          Benutzername
+        </IonLabel>
+        <Field
+          v-slot="{ field }"
+          v-model="username"
+          :rules="isRequired"
+          name="username"
+        >
+          <IonInput
+            v-bind="field"
+            type="text"
+          />
+        </Field>
+      </IonItem>
+      <IonItem
+        class="error-wrapper"
+        lines="none"
+      >
+        <ErrorMessage
+          name="username"
+          class="error"
+        />
+      </IonItem>
+
+      <IonItem :class="{ 'item-has-error': !!errors.password }">
+        <IonLabel position="floating">
+          Passwort
+        </IonLabel>
+        <Field
+          v-slot="{ field }"
+          v-model="password"
+          :rules="isRequired"
+          name="password"
+        >
+          <IonInput
+            v-bind="field"
+            type="password"
+          />
+        </Field>
+      </IonItem>
+      <IonItem
+        class="error-wrapper"
+        lines="none"
+      >
+        <ErrorMessage
+          name="password"
+          class="error"
+        />
+      </IonItem>
+
+      <div class="privacy-margin">
+        Mit deiner Registrierung nimmst du die
+        <a
+          href="https://www.die-linke.de/seitenfuss/datenschutz/"
+          target="_blank"
+        >Datenschutzbestimmungen</a>
+        zur Kenntnis.
+      </div>
+
+      <div class="control-buttons">
+        <IonButton
+          color="primary"
+          type="submit"
+        >
+          Registrieren
+        </IonButton>
+      </div>
+    </Form>
 
     <IonItemDivider />
 
@@ -67,6 +167,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue"
+import { Field, Form, ErrorMessage } from 'vee-validate'
 
 import {
   IonInput,
@@ -84,13 +185,22 @@ export default defineComponent({
     IonItem,
     IonButton,
     IonItemDivider,
+    Field,
+    Form,
+    ErrorMessage,
   },
   data() {
     return {};
   },
   methods: {
     async register() {
-      // TODO send user data to the BE and receive token, userId etc.
+      // TODO
+    },
+    isRequired (value: string) {
+      if (!value) {
+        return 'Bitte fülle dieses Feld aus'
+      }
+      return true
     }
   }
 });
