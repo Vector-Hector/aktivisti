@@ -2,8 +2,8 @@
   <div class="container">
     <h2>Login</h2>
     <Form
-      v-slot="{ errors }"
-      @submit="login()"
+      v-slot="{ errors, setFieldError }"
+      @submit="login"
     >
       <IonItem :class="{ 'item-has-error': !!errors.username }">
         <IonLabel position="floating">
@@ -72,9 +72,21 @@
           <IonCheckbox class="checkbox-margin-right" />
           <IonLabel>Angemeldet bleiben</IonLabel>
         </IonItem>
+
+        <IonItem
+          class="error-wrapper"
+          lines="none"
+        >
+          <ErrorMessage
+            name="error"
+            class="error"
+          />
+        </IonItem>
+
         <IonButton
           color="primary"
           type="submit"
+          @click="setFieldError()"
         >
           Anmelden
         </IonButton>
@@ -130,9 +142,17 @@ export default defineComponent({
     }
   },
   methods: {
-    async login() {
-      await authService.login(this.username, this.password)
-      this.$router.push(this.next)
+    async login(values: any, actions: any) {
+      try {
+        await authService.login(this.username, this.password)
+        this.$router.push(this.next)
+      } catch (error) {
+        const errorMessage = `Die Benutzerdaten sind uns nicht bekannt. 
+          Bitte registriere dich oder korrigiere deine Eingabe.`
+        actions.setFieldError('error', errorMessage)
+        actions.setFieldError('username', ' ')
+        actions.setFieldError('password', ' ')
+      }
     },
     isRequired (value: string) {
       if (!value) {
