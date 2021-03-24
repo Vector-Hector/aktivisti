@@ -4,6 +4,6 @@ export enum EventTypes {
 
 export const eventTypeOptions: [{ key: string, label: string }] = [{
   key: EventTypes.DOOR_TO_DOOR,
-  label: 'Haustürwahlkampf'
+  label: 'Haustürgespräch'
 }]
 
