@@ -78,7 +78,7 @@
           lines="none"
         >
           <ErrorMessage
-            name="error"
+            name="non-field-error"
             class="error"
           />
         </IonItem>
@@ -124,7 +124,7 @@ export default defineComponent({
     IonItemDivider,
     Field,
     Form,
-    ErrorMessage,
+    ErrorMessage
   },
   props: {
     next: {
@@ -138,7 +138,7 @@ export default defineComponent({
   data() {
     return {
       username: '',
-      password: '',
+      password: ''
     }
   },
   methods: {
@@ -147,14 +147,16 @@ export default defineComponent({
         await authService.login(this.username, this.password)
         this.$router.push(this.next)
       } catch (error) {
-        const errorMessage = `Die Benutzerdaten sind uns nicht bekannt. 
-          Bitte registriere dich oder korrigiere deine Eingabe.`
-        actions.setFieldError('error', errorMessage)
-        actions.setFieldError('username', ' ')
-        actions.setFieldError('password', ' ')
+        if (error.response?.status == 400) {
+          actions.setFieldError('non-field-error', error.response?.data?.error_description)
+          actions.setFieldError('username', ' ')
+          actions.setFieldError('password', ' ')
+        } else {
+          actions.setFieldError('non-field-error', 'Ein unbekannter Fehler ist aufgetreten')
+        }
       }
     },
-    isRequired (value: string) {
+    isRequired(value: string) {
       if (!value) {
         return 'Bitte fülle dieses Feld aus'
       }
