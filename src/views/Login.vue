@@ -2,8 +2,8 @@
   <div class="container">
     <h2>Login</h2>
     <Form
-      v-slot="{ errors }"
-      @submit="login()"
+      v-slot="{ errors, setFieldError }"
+      @submit="login"
     >
       <IonItem :class="{ 'item-has-error': !!errors.username }">
         <IonLabel position="floating">
@@ -72,9 +72,21 @@
           <IonCheckbox class="checkbox-margin-right" />
           <IonLabel>Angemeldet bleiben</IonLabel>
         </IonItem>
+
+        <IonItem
+          class="error-wrapper"
+          lines="none"
+        >
+          <ErrorMessage
+            name="non-field-error"
+            class="error"
+          />
+        </IonItem>
+
         <IonButton
           color="primary"
           type="submit"
+          @click="setFieldError()"
         >
           Anmelden
         </IonButton>
@@ -112,7 +124,7 @@ export default defineComponent({
     IonItemDivider,
     Field,
     Form,
-    ErrorMessage,
+    ErrorMessage
   },
   props: {
     next: {
@@ -126,15 +138,25 @@ export default defineComponent({
   data() {
     return {
       username: '',
-      password: '',
+      password: ''
     }
   },
   methods: {
-    async login() {
-      await authService.login(this.username, this.password)
-      this.$router.push(this.next)
+    async login(values: any, actions: any) {
+      try {
+        await authService.login(this.username, this.password)
+        this.$router.push(this.next)
+      } catch (error) {
+        if (error.response?.status == 400) {
+          actions.setFieldError('non-field-error', error.response?.data?.error_description)
+          actions.setFieldError('username', ' ')
+          actions.setFieldError('password', ' ')
+        } else {
+          actions.setFieldError('non-field-error', 'Ein unbekannter Fehler ist aufgetreten')
+        }
+      }
     },
-    isRequired (value: string) {
+    isRequired(value: string) {
       if (!value) {
         return 'Bitte fülle dieses Feld aus'
       }
