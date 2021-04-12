@@ -24,15 +24,13 @@ Documentation resources for the used tools:
 npm install
 ```
 
-### Development credentials
+### Environment Variable
 
-For getting the map to work you need to add a mapbox access token to your development environment that is eligible for your local development domain (probably http://localhost:8080)
+As a template for the required environment variables you can use `.env.developmet.local.dist`. 
 
-Create a file .env.development.local and add the token like this:
+```bash
+$ cp -n .env.development.local.dist .env.development.local
 ```
-VUE_APP_MAPBOX_TOKEN=[token]
-```
-
 
 ### Serving the application during development (with hot-load)
 
