@@ -31,6 +31,18 @@ const authService = {
     userStore.setUser(profileRequest.payload.data)
   },
 
+  async renewLogin() {
+    const params = {
+      grant_type: 'refresh_token' as GrantType,
+      refresh_token: tokenStore.getTokenDto()?.refresh_token,
+      client_id: process.env.VUE_APP_CLIENT_ID
+    }
+    const authRequest = await oAuth2Client.token(params)
+    tokenStore.setTokenDto(authRequest.payload)
+    const profileRequest = await apiClient.user.get('me')
+    userStore.setUser(profileRequest.payload.data)
+  },
+
   isLoggedIn() {
     return !!tokenStore.getTokenDto()
   }
