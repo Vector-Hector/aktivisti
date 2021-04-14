@@ -7,8 +7,8 @@ export type GrantType = 'password'
 
 interface OAuthTokenRequestParams {
     grant_type: GrantType
-    username: string
-    password: string
+    username?: string
+    password?: string
     scope?: string
     client_id: string
 }
