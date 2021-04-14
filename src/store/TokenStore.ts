@@ -25,7 +25,7 @@ class TokenStore extends Store<TokenStoreState> {
     const rawUpdated = localStorage.getItem(KEY_UPDATED)
     let updated = null
     if (rawUpdated !== null) {
-      updated = new Date(parseInt(rawUpdated))
+      updated = new Date(rawUpdated)
     }
 
     return {
