@@ -197,7 +197,7 @@
         </router-link>
         <Button
           type="submit"
-          label="Ort auswählen"
+          label="Treffpunkt auswählen"
         />
       </div>
     </Form>
