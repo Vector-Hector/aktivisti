@@ -71,9 +71,7 @@ apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
   return response
 }, async (error: any) => {
   const originalRequest = error.config
-  if (error.response?.status === 401 && !originalRequest._retry &&
-    authService.isLoggedIn() && tokenStore.expiryDate && new Date() > tokenStore.expiryDate) {
-    originalRequest._retry = true
+  if ((error.response?.status === 403 || error.response?.status === 401) && tokenStore.expiryDate && (new Date() > tokenStore.expiryDate)) {
     await authService.renewLogin()
     // redo initial request
     return apiClient.axiosInstance(originalRequest)
