@@ -157,9 +157,14 @@ export default defineComponent({
         })
       await confirmation.present()
       confirmation.onDidDismiss()
-        .then((result) => {
+        .then(async (result) => {
           if (result.data) {
-            this.$apiClient.events.delete(event.id.toString())
+            try {
+              await this.$apiClient.events.delete(event.id.toString())
+            } catch (error) {
+              // TODO show message to user: This event couldn't be deleted...
+              return
+            }
             this.events = this.events.filter(({id}) => id !== event.id)
           }
         })
