@@ -122,14 +122,14 @@
     <router-link
       v-slot="{ href, navigate }"
       custom
-      :to="{name: 'edit-event-summary'}"
+      :to="{name: 'event-detail', params: { id: event.id }}"
     >
       <Button
         class="submit-button"
         @click="navigate"
       >
         <a :href="href">
-          Zusammenfassung</a>
+          Fertig</a>
       </Button>
     </router-link>
   </MapOverlay>
