@@ -10,6 +10,7 @@
         <router-view
           v-model:event="event"
           v-model:eventAreas="eventAreas"
+          :campaign="campaign"
         />
       </div>
     </IonContent>

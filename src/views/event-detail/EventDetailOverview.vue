@@ -262,6 +262,10 @@ export default defineComponent({
       type: Object as PropType<EventDto>,
       required: true
     },
+    campaign: {
+      type: Object as PropType<CampaignDto>,
+      required: true
+    },
     eventAreas: {
       type: Array as PropType<EventAreaDto[]>,
       required: true
@@ -271,7 +275,6 @@ export default defineComponent({
   emits: ['update:event'],
   data() {
     return {
-      campaign: null,
       loading: true,
       joinLoading: false,
       participations: [] as EventParticipationDto[],
