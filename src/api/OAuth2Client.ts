@@ -5,10 +5,10 @@ import { TokenDto } from './model/TokenDto'
 
 export type GrantType = 'password'
 
-interface OAuthTokenRequestParams {
+export interface OAuthTokenRequestParams {
     grant_type: GrantType
-    username: string
-    password: string
+    username?: string
+    password?: string
     scope?: string
     client_id: string
 }
