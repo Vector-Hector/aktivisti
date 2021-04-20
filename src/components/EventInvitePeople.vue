@@ -4,7 +4,7 @@
       <IonCol>
         <AutoComplete
           v-model="query"
-          placeholder="Tippen um Leute einzuladen"
+          placeholder="Tippen, um Leute einzuladen"
           field="username"
           class="w-100 d-flex flex-col"
           :suggestions="suggestedUsers"
