@@ -89,7 +89,68 @@
       </IonItem>
     </IonList>
   </div>
-
+  <div class="social-buttons">
+    <a
+      target="_blank"
+      :href="twitterShareUrl"
+    >
+      <IonButton
+        size="small"
+        color="light"
+      >
+        <IonIcon
+          name="logo-twitter"
+          slot="start"
+        />
+        tweet
+      </IonButton>
+    </a>
+    <a
+      target="_blank"
+      :href="facebookShareUrl"
+    >
+      <IonButton
+        size="small"
+        color="light"
+      >
+        <IonIcon
+          slot="start"
+          name="logo-facebook"
+        />
+        teilen
+      </IonButton>
+    </a>
+    <a
+      target="_blank"
+      :href="whatsappShareUrl"
+    >
+      <IonButton
+        size="small"
+        color="light"
+      >
+        <IonIcon
+          slot="start"
+          name="logo-whatsapp"
+        />
+        teilen
+      </IonButton>
+    </a>
+    <a
+      target="_blank"
+      :href="mailShareUrl"
+    >
+      <IonButton
+        size="small"
+        color="light"
+      >
+        <IonIcon
+          slot="start"
+          name="mail"
+        />
+        teilen
+      </IonButton>
+    </a>
+  </div>
   <IonRow>
     <IonCol size="6">
       <IonButton
@@ -149,17 +210,28 @@ import { EventDto } from '@/api/model/EventDto'
 import { EventAreaDto } from '@/api/model/EventAreaDto'
 import { AreaDetailsDto } from '@/api/model/AreaDetailsDto'
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonList, IonRow, modalController } from '@ionic/vue'
-import { ellipse, chevronForward } from 'ionicons/icons'
+import { ellipse, chevronForward, logoTwitter, logoFacebook, mail, logoWhatsapp } from 'ionicons/icons'
 import { addIcons } from 'ionicons'
 import { authService } from '@/api/authService'
 import { userStore } from '@/store/UserStore'
 import EventInvitePeopleModal from '@/components/modals/EventInvitePeopleModal.vue'
 import { apiClient } from '@/api/ApiClient'
 import { EventParticipationDto } from '@/api/model/EventParticipationDto'
+import { CampaignDto } from '@/api/model/CampaignDto'
+import {
+  createFacebookShareUrl,
+  createMailShareUrl,
+  createTwitterShareUrl,
+  createWhatsappShareUrl
+} from '@/utils/shareLinks'
 
 addIcons({
   ellipse,
-  chevronForward
+  chevronForward,
+  'logo-twitter': logoTwitter,
+  'logo-whatsapp': logoWhatsapp,
+  mail,
+  'logo-facebook': logoFacebook
 })
 
 export default defineComponent({
@@ -232,6 +304,48 @@ export default defineComponent({
     },
     isCampaignAdmin(): boolean {
       return userStore.isManager()
+    },
+    twitterShareUrl(): string {
+      return createTwitterShareUrl(
+        this.event.description,
+        window.location.origin + this.$router.resolve({
+          name: 'event-detail',
+          params: {
+            id: this.event.id
+          }
+        }).path,
+        []
+      )
+    },
+    facebookShareUrl(): string {
+      return createFacebookShareUrl(
+        window.location.origin + this.$router.resolve({
+          name: 'event-detail',
+          params: {
+            id: this.event.id
+          }
+        }).path
+      )
+    },
+    mailShareUrl(): string {
+      return createMailShareUrl(
+        window.location.origin + this.$router.resolve({
+          name: 'event-detail',
+          params: {
+            id: this.event.id
+          }
+        }).path
+      )
+    },
+    whatsappShareUrl(): string {
+      return createWhatsappShareUrl(
+        window.location.origin + this.$router.resolve({
+          name: 'event-detail',
+          params: {
+            id: this.event.id
+          }
+        }).path
+      )
     }
   },
   methods: {

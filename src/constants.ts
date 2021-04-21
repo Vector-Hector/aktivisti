@@ -1,0 +1,5 @@
+
+export const TWITTER_SHARE_URL = 'https://twitter.com/share'
+export const FACEBOOK_SHARE_URL = 'https://www.facebook.com/sharer/sharer.php'
+export const WHATSAPP_SHARE_URL = 'whatsapp://send'
+export const MAIL_SHARE_URL = 'mailto:'
