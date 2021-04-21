@@ -17,6 +17,21 @@
           </IonSelectOption>
         </IonSelect>
       </div>
+      <div class="buttons">
+        <router-link
+          v-if="isManager"
+          :to="{ name: 'edit-event-details-new' }"
+        >
+          <IonButton
+            color="primary"
+          >
+            <IonIcon
+              name="add"
+            />
+            Event erstellen
+          </IonButton>
+        </router-link>
+      </div>
       <IonList
         v-if="events.length > 0"
       >
@@ -57,21 +72,6 @@
         <IonText color="medium">
           Keine Events gefunden
         </IonText>
-      </div>
-      <div class="buttons">
-        <router-link
-          v-if="isManager"
-          :to="{ name: 'edit-event-details-new' }"
-        >
-          <IonButton
-            color="primary"
-          >
-            <IonIcon
-              name="add"
-            />
-            Event erstellen
-          </IonButton>
-        </router-link>
       </div>
     </div>
   </IonContent>

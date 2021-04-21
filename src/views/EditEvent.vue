@@ -89,12 +89,6 @@ export default defineComponent({
           name: 'edit-event-routes'
         }),
         disabled: !this.event.location || !this.event.id
-      }, {
-        label: 'Zusammenfassung',
-        to: this.resolveIfEventId({
-          name: 'edit-event-summary'
-        }),
-        disabled: !this.event.location || !this.event.id
       }]
     }
   },

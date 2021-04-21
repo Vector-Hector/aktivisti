@@ -12,7 +12,6 @@ import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
 import Password from '@/views/Password.vue'
 import EditEventDetails from '@/views/edit-event/EditEventDetails.vue'
-import EditEventSummary from '@/views/edit-event/EditEventSummary.vue'
 import EditEventMapRoutes from '@/views/edit-event/map/EditEventMapRoutes.vue'
 import EditEventMap from '@/views/edit-event/EditEventMap.vue'
 import EditEventMapLocation from '@/views/edit-event/map/EditEventMapLocation.vue'
@@ -27,6 +26,7 @@ import EventDetailAreaMap from '@/views/event-detail/EventDetailAreaMap.vue'
 import EventDetailArea from '@/views/event-detail/EventDetailArea.vue'
 import EventAreaOverviewMap from '@/views/event-detail/event-area/EventAreaOverviewMap.vue'
 import EventAreaStreetMap from '@/views/event-detail/event-area/EventAreaStreetMap.vue'
+import MyEvents from '@/views/MyEvents.vue'
 
 
 const router = createRouter({
@@ -45,12 +45,18 @@ const router = createRouter({
     },
     {
       path: '/map',
-      component: Home
+      component: Home,
+      name: 'events-map',
     },
     {
       path: '/events',
       component: Events,
       name: 'events'
+    },
+    {
+      path: '/my-events',
+      component: MyEvents,
+      name: 'my-events'
     },
     {
       path: '/events/:id',
@@ -153,11 +159,6 @@ const router = createRouter({
               name: 'edit-event-routes'
             }
           ]
-        },
-        {
-          path: 'summary',
-          component: EditEventSummary,
-          name: 'edit-event-summary'
         }
       ]
     },

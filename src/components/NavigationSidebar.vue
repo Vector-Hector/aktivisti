@@ -64,8 +64,17 @@
             class="menu-item-link"
             to="/events"
           >
-            <i class="pi pi-calendar" />
+            <IonIcon name="calendar-clear-outline" />
             <span class="menu-item-link-text">Alle Termine</span>
+          </router-link>
+        </div>
+        <div class="menu-item">
+          <router-link
+            class="menu-item-link"
+            :to="{ name: 'my-events' }"
+          >
+            <IonIcon name="calendar-outline" />
+            <span class="menu-item-link-text">Meine Termine</span>
           </router-link>
         </div>
         <div class="menu-item">
@@ -120,13 +129,21 @@ import { userStore } from '@/store/UserStore'
 import Sidebar from 'primevue/components/sidebar/Sidebar'
 import Button from 'primevue/components/button/Button'
 import { authService } from '@/api/authService'
+import { addIcons } from 'ionicons'
+import { calendarOutline, calendarClearOutline} from 'ionicons/icons'
+import { IonIcon } from '@ionic/vue'
 
+addIcons({
+  'calendar-outline': calendarOutline,
+  'calendar-clear-outline': calendarClearOutline
+})
 
 export default defineComponent({
   name: 'NavigationSidebar',
   components: {
     Sidebar,
-    Button
+    Button,
+    IonIcon,
   },
   data() {
     return {}
