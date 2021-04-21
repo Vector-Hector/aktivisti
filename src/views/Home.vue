@@ -62,7 +62,7 @@ import { EventDto } from '@/api/model/EventDto'
 import { CampaignDto } from '@/api/model/CampaignDto'
 import Popup from '@/lib/mapbox/Popup.vue'
 import { userStore } from '@/store/UserStore'
-import Button from 'primevue/components/button/Button'
+import Button from 'primevue/button'
 import { LocationDto } from '@/api/model/LocationDto'
 
 export default defineComponent({

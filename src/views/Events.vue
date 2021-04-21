@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <IonContent>
     <div class="container">
       <h2>Events</h2>
@@ -96,6 +97,7 @@ import { addIcons } from 'ionicons'
 import { trash, pencil, add } from 'ionicons/icons'
 import ConfirmDelete from '@/components/modals/ConfirmDelete.vue'
 import { userStore } from '@/store/UserStore'
+import Toast from 'primevue/toast'
 
 addIcons({
   trash, pencil, add
@@ -113,12 +115,14 @@ export default defineComponent({
     IonLabel,
     IonIcon,
     IonContent,
+    Toast,
   },
   data() {
     return {
       events: [] as EventDto[],
       filteredCampaigns: [] as CampaignDto[],
-      campaigns: [] as CampaignDto[]
+      campaigns: [] as CampaignDto[],
+      messages: [] as any,
     }
   },
   computed: {
@@ -162,7 +166,11 @@ export default defineComponent({
             try {
               await this.$apiClient.events.delete(event.id.toString())
             } catch (error) {
-              // TODO show message to user: This event couldn't be deleted...
+              this.$toast.add({
+                severity:'error',
+                summary: `${error.statusText ? error.statusText : 'Dieser Eintrag konnte nicht gelöscht werden.'}`,
+                detail: `Fehlercode: ${error.status}`
+              })
               return
             }
             this.events = this.events.filter(({id}) => id !== event.id)

@@ -4,6 +4,7 @@ import router from './router'
 import App from './App.vue'
 
 import PrimeVue from 'primevue/config'
+import ToastService from 'primevue/toastservice'
 
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
@@ -42,15 +43,16 @@ import { makeServer } from '../mocks/server'
 import { apiClient } from '@/api/ApiClient'
 import { tokenStore } from '@/store/TokenStore'
 
+
 if (process.env.VUE_APP_ENABLE_MOCKS === 'true') {
   makeServer()
 }
-
 
 const app = createApp(App)
   .use(IonicVue)
   .use(router)
   .use(PrimeVue)
+  .use(ToastService)
 
 
 app.config.globalProperties.$apiClient = apiClient

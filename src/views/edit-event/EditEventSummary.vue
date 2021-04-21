@@ -54,8 +54,8 @@ import { defineComponent, PropType } from 'vue'
 import { EventDto } from '@/api/model/EventDto'
 import { EventAreaDto } from '@/api/model/EventAreaDto'
 import EditEventMixin from '@/views/edit-event/EditEventMixin'
-import DataTable from 'primevue/components/datatable/DataTable'
-import Column from 'primevue/components/column/Column'
+import DataTable from 'primevue/datatable/DataTable'
+import Column from 'primevue/column'
 
 export default defineComponent({
   name: 'EditEventSummary',
