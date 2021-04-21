@@ -100,7 +100,7 @@
       >
         <IonIcon
           name="logo-twitter"
-          lot="start"
+          slot="start"
         />
         tweet
       </IonButton>
