@@ -34,16 +34,19 @@
         Ende:
       </IonCol>
       <IonCol
-        class="start-date"
+        class="end-date"
         size="10"
       >
-        {{ event.endDate ? new Date(event.end_date).toLocaleString([], dateOptions) : 'Nicht definiert' }}
+        {{ event.end_date ? new Date(event.end_date).toLocaleString([], dateOptions) : 'Nicht definiert' }}
       </IonCol>
     </IonRow>
     <IonRow>
       <IonCol size="12">
-        <span class="participants">
-          <i class="pi pi-user" /> {{ event.participants.length }}/{{ event.max_participants ?? '∞' }}
+        <span
+          class="participants"
+          @click="openInviteModal"
+        >
+          <i class="pi pi-user" /> {{ participations.length }}/{{ event.max_participants ?? '∞' }}
         </span>
         <p class="description">
           {{ event.description }}
@@ -86,31 +89,119 @@
       </IonItem>
     </IonList>
   </div>
-
-  <router-link
-    v-if="!isLoggedIn"
-    :to="{ name: 'login', query: {next: $router.resolve($route).path } }"
-    button-type="tertiary"
-  >
-    <IonButton>
-      Anmelden um mitzumachen
-    </IonButton>
-  </router-link>
-  <IonButton
-    v-else-if="isMember"
-    :disabled="joinLoading"
-    button-type="primary"
-    @click="leave"
-  >
-    Doch nicht dabei
-  </IonButton>
-  <IonButton
-    v-else-if="!isMember"
-    :disabled="joinLoading"
-    @click="join"
-  >
-    Ich bin dabei
-  </IonButton>
+  <div class="social-buttons">
+    <a
+      target="_blank"
+      :href="twitterShareUrl"
+    >
+      <IonButton
+        size="small"
+        color="light"
+      >
+        <IonIcon
+          name="logo-twitter"
+          slot="start"
+        />
+        tweet
+      </IonButton>
+    </a>
+    <a
+      target="_blank"
+      :href="facebookShareUrl"
+    >
+      <IonButton
+        size="small"
+        color="light"
+      >
+        <IonIcon
+          slot="start"
+          name="logo-facebook"
+        />
+        teilen
+      </IonButton>
+    </a>
+    <a
+      target="_blank"
+      :href="whatsappShareUrl"
+    >
+      <IonButton
+        size="small"
+        color="light"
+      >
+        <IonIcon
+          slot="start"
+          name="logo-whatsapp"
+        />
+        teilen
+      </IonButton>
+    </a>
+    <a
+      target="_blank"
+      :href="mailShareUrl"
+    >
+      <IonButton
+        size="small"
+        color="light"
+      >
+        <IonIcon
+          slot="start"
+          name="mail"
+        />
+        teilen
+      </IonButton>
+    </a>
+  </div>
+  <IonRow>
+    <IonCol size="6">
+      <IonButton
+        v-if="isCampaignAdmin"
+        class="full-width"
+        button-type="secondary"
+        @click="openInviteModal"
+      >
+        Leute einladen
+      </IonButton>
+    </IonCol>
+    <IonCol size="6">
+      <router-link
+        v-if="!isLoggedIn"
+        :to="{ name: 'login', query: {next: $router.resolve($route).path } }"
+        button-type="primary"
+        class="full-width"
+      >
+        <IonButton
+          class="full-width"
+        >
+          Anmelden um mitzumachen
+        </IonButton>
+      </router-link>
+      <IonButton
+        v-else-if="isMember"
+        :disabled="joinLoading"
+        class="full-width"
+        button-type="primary"
+        @click="leave"
+      >
+        Doch nicht dabei
+      </IonButton>
+      <IonButton
+        v-else-if="isInvited"
+        class="full-width"
+        :disabled="joinLoading"
+        @click="acceptInvite"
+      >
+        Einladung annehmen
+      </IonButton>
+      <IonButton
+        v-else-if="!isMember"
+        class="full-width"
+        :disabled="joinLoading"
+        @click="join"
+      >
+        Ich bin dabei
+      </IonButton>
+    </IonCol>
+  </IonRow>
 </template>
 
 <script lang="ts">
@@ -118,15 +209,29 @@ import { defineComponent, PropType } from 'vue'
 import { EventDto } from '@/api/model/EventDto'
 import { EventAreaDto } from '@/api/model/EventAreaDto'
 import { AreaDetailsDto } from '@/api/model/AreaDetailsDto'
-import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonList, IonRow } from '@ionic/vue'
-import { ellipse, chevronForward } from 'ionicons/icons'
+import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonList, IonRow, modalController } from '@ionic/vue'
+import { ellipse, chevronForward, logoTwitter, logoFacebook, mail, logoWhatsapp } from 'ionicons/icons'
 import { addIcons } from 'ionicons'
 import { authService } from '@/api/authService'
 import { userStore } from '@/store/UserStore'
+import EventInvitePeopleModal from '@/components/modals/EventInvitePeopleModal.vue'
+import { apiClient } from '@/api/ApiClient'
+import { EventParticipationDto } from '@/api/model/EventParticipationDto'
+import { CampaignDto } from '@/api/model/CampaignDto'
+import {
+  createFacebookShareUrl,
+  createMailShareUrl,
+  createTwitterShareUrl,
+  createWhatsappShareUrl
+} from '@/utils/shareLinks'
 
 addIcons({
   ellipse,
-  chevronForward
+  chevronForward,
+  'logo-twitter': logoTwitter,
+  'logo-whatsapp': logoWhatsapp,
+  mail,
+  'logo-facebook': logoFacebook
 })
 
 export default defineComponent({
@@ -141,6 +246,13 @@ export default defineComponent({
     IonCol,
     IonRow
   },
+  async beforeRouteEnter(to, from, next) {
+    const participations = (await apiClient.eventParticipations.list({event: to.params.id})).payload.data
+    next(vm => {
+      //@ts-ignore
+      vm.participations = participations
+    })
+  },
   props: {
     id: {
       type: String as PropType<string>,
@@ -154,6 +266,7 @@ export default defineComponent({
       type: Array as PropType<EventAreaDto[]>,
       required: true
     }
+
   },
   emits: ['update:event'],
   data() {
@@ -161,6 +274,7 @@ export default defineComponent({
       campaign: null,
       loading: true,
       joinLoading: false,
+      participations: [] as EventParticipationDto[],
       metrics: [
         {name: 'Geklopfte Türen', value: 'Geklopfte Türen'},
         {name: 'Geöffnete Türen', value: 'Geöffnete Türen'},
@@ -182,27 +296,102 @@ export default defineComponent({
       return authService.isLoggedIn()
     },
     isMember(): boolean {
-      return this.event?.participants.find((id) => id === userStore.getState().user?.id) !== undefined
+      const participation = this.participations.find(({user}) => user === userStore.getState().user?.id)
+      return participation !== undefined && !participation.is_pending_invitation
+    },
+    isInvited(): boolean {
+      return this.participations.find(({user}) => user === userStore.getState().user?.id)?.is_pending_invitation ?? false
+    },
+    isCampaignAdmin(): boolean {
+      return userStore.isManager()
+    },
+    twitterShareUrl(): string {
+      return createTwitterShareUrl(
+        this.event.description,
+        window.location.origin + this.$router.resolve({
+          name: 'event-detail',
+          params: {
+            id: this.event.id
+          }
+        }).path,
+        []
+      )
+    },
+    facebookShareUrl(): string {
+      return createFacebookShareUrl(
+        window.location.origin + this.$router.resolve({
+          name: 'event-detail',
+          params: {
+            id: this.event.id
+          }
+        }).path
+      )
+    },
+    mailShareUrl(): string {
+      return createMailShareUrl(
+        window.location.origin + this.$router.resolve({
+          name: 'event-detail',
+          params: {
+            id: this.event.id
+          }
+        }).path
+      )
+    },
+    whatsappShareUrl(): string {
+      return createWhatsappShareUrl(
+        window.location.origin + this.$router.resolve({
+          name: 'event-detail',
+          params: {
+            id: this.event.id
+          }
+        }).path
+      )
     }
   },
   methods: {
     async join() {
       this.joinLoading = true
-      const event = (await this.$apiClient.events.join(this.id)).payload.data
-      this.$emit('update:event', event)
+      await this.$apiClient.events.join(this.id)
+      await this.refreshParticipations()
       this.joinLoading = false
     },
-
     async leave() {
       this.joinLoading = true
-      const event = ((await this.$apiClient.events.leave(this.id))).payload.data
-      this.$emit('update:event', event)
+      await this.$apiClient.events.leave(this.id)
+      await this.refreshParticipations()
       this.joinLoading = false
+    },
+    async acceptInvite() {
+      this.joinLoading = true
+      const invite = this.participations.find(({user}) => user === userStore.getState().user?.id)
+      if (invite) {
+        await this.$apiClient.eventParticipations.accept(invite.id.toString())
+      }
+      await this.refreshParticipations()
+      this.joinLoading = false
+    },
+    async refreshParticipations() {
+      this.participations = (await apiClient.eventParticipations.list({event: this.event.id})).payload.data
     },
     countAddresses(areaDetails: AreaDetailsDto) {
       return areaDetails.streets.reduce((acc, street) => {
         return acc + street.addresses.length
       }, 0)
+    },
+    async openInviteModal() {
+      if (!this.isCampaignAdmin) return
+      const modal = await modalController
+        .create({
+          component: EventInvitePeopleModal,
+          componentProps: {
+            eventId: this.event.id
+          }
+        })
+      modal.onDidDismiss()
+        .then(
+          () => this.refreshParticipations()
+        )
+      await modal.present()
     }
   }
 })
@@ -224,12 +413,6 @@ label {
 
 .map-container {
   flex: 1
-}
-
-Button {
-  margin: 10px;
-  background: $red;
-  border: 1px solid $red;
 }
 
 .campaign {
@@ -254,6 +437,10 @@ Button {
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+.participants {
+  cursor: pointer;
 }
 
 </style>

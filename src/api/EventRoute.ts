@@ -3,6 +3,8 @@ import { APIEnvelope } from '@/api/model/APIEnvelope'
 import { ApiRoute } from '@/api/ApiRoute'
 import { JSONResponse } from '@/api/JSONResponse'
 import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
+import { BulkInviteDto } from '@/api/model/BulkInviteDto'
+import { EventParticipationDto } from '@/api/model/EventParticipationDto'
 
 /**
  * A class extending {@link ApiRoute} to implement some extra non-standard operations (join / leave)
@@ -40,5 +42,15 @@ export class EventRoute extends ApiRoute<EventDto> {
     })
     const data = response.data
     return new JSONResponse<APIEnvelope<EventDto>>(response, data)
+  }
+
+  async invite(id: string, body: BulkInviteDto) {
+    const response = await this.request({
+      path: `${this.path}${id}/invite/`,
+      data: body,
+      method: 'POST'
+    })
+    const data = response.data
+    return new JSONResponse<APIEnvelope<EventParticipationDto[]>>(response, data)
   }
 }
