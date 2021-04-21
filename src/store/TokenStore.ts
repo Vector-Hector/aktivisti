@@ -10,6 +10,7 @@ const KEY_TOKEN = 'KEY_TOKEN'
 const KEY_UPDATED = 'KEY_UPDATED'
 
 class TokenStore extends Store<TokenStoreState> {
+
   protected data(): TokenStoreState {
     const rawToken = localStorage.getItem(KEY_TOKEN)
     let token = null
@@ -25,7 +26,7 @@ class TokenStore extends Store<TokenStoreState> {
     const rawUpdated = localStorage.getItem(KEY_UPDATED)
     let updated = null
     if (rawUpdated !== null) {
-      updated = new Date(rawUpdated)
+      updated = new Date(parseInt(rawUpdated))
     }
 
     return {
