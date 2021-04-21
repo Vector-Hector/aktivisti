@@ -246,8 +246,9 @@ hr {
   justify-content: flex-end;
 }
 
-.navigation-sidebar {
-  :deep(.p-sidebar-content) {
+// cmp: https://www.primefaces.org/primevue/showcase/#/theming
+::v-deep(.navigation-sidebar.p-sidebar) {
+  .p-sidebar-content {
     height: 100%;
   }
 }
