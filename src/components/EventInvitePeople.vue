@@ -64,7 +64,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import AutoComplete from 'primevue/components/autocomplete/AutoComplete'
+import AutoComplete from 'primevue/autocomplete'
 import { IonButton, IonCol, IonIcon, IonItem, IonLabel, IonList, IonRow, IonText } from '@ionic/vue'
 import { EventParticipationDto } from '@/api/model/EventParticipationDto'
 import { UserDto } from '@/api/model/UserDto'
