@@ -117,8 +117,8 @@ import { defineComponent } from 'vue'
 import { uiStore } from '@/store/UiStore'
 import { userStore } from '@/store/UserStore'
 
-import Sidebar from 'primevue/components/sidebar/Sidebar'
-import Button from 'primevue/components/button/Button'
+import Sidebar from 'primevue/sidebar'
+import Button from 'primevue/button'
 import { authService } from '@/api/authService'
 
 
