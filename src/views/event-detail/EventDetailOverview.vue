@@ -34,10 +34,10 @@
         Ende:
       </IonCol>
       <IonCol
-        class="start-date"
+        class="end-date"
         size="10"
       >
-        {{ event.endDate ? new Date(event.end_date).toLocaleString([], dateOptions) : 'Nicht definiert' }}
+        {{ event.end_date ? new Date(event.end_date).toLocaleString([], dateOptions) : 'Nicht definiert' }}
       </IonCol>
     </IonRow>
     <IonRow>
