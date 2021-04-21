@@ -78,7 +78,8 @@ apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
     // redo initial request
     return apiClient.axiosInstance(originalRequest)
   } else {
-    authService.logout()
+    // TODO handle this differently: otherwise this gets executed with every other error
+    // authService.logout()
   }
   return Promise.reject(error.response)
 })
