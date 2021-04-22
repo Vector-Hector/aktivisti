@@ -1,13 +1,29 @@
 <template>
   <IonGrid class="full-width">
     <IonRow>
-      <IonCol>
+      <IonCol
+        class="ion-align-items-center d-flex"
+      >
         <span
           v-if="campaign"
           class="campaign"
         >
           {{ campaign.name }}
         </span>
+      </IonCol>
+      <IonCol
+        v-if="isCampaignAdmin"
+        size="auto"
+        class="ion-align-self-end"
+      >
+        <router-link :to="{ name: 'edit-event-details', params: { event: event.id }}">
+          <IonButton
+            fill="clear"
+            size="small"
+          >
+            <IonIcon name="pencil" />
+          </IonButton>
+        </router-link>
       </IonCol>
     </IonRow>
     <IonRow>
@@ -99,8 +115,8 @@
         color="light"
       >
         <IonIcon
-          name="logo-twitter"
           slot="start"
+          name="logo-twitter"
         />
         tweet
       </IonButton>
@@ -403,6 +419,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import "~@/scss/_globals.scss";
+@import "~@/scss/_utils.scss";
 
 label {
   text-align: left;
