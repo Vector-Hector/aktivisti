@@ -139,15 +139,15 @@
           </div>
         </div>
 
-        <div class="p-field p-grid">
+        <div class="p-field p-grid p-align-start">
           <label
-            for="eventInfo"
+            for="eventDescription"
             class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
           >Weitere Informationen</label>
           <div class="p-col-12 p-md-9">
-            <InputText
-              id="eventInfo"
-              v-model="localEvent.info"
+            <Textarea
+              id="eventDescription"
+              v-model="localEvent.description"
               type="text"
             />
           </div>
@@ -221,6 +221,7 @@ import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
 import { EventMetricDto } from '@/api/model/EventMetricDto'
 
 import { Form, Field, ErrorMessage } from 'vee-validate'
+import Textarea from 'primevue/components/textarea/Textarea'
 
 /**
  * The details form of an event in this state the event can be either new (no id) or existing (has id)
@@ -235,6 +236,7 @@ export default defineComponent({
     Button,
     InputNumber,
     MultiSelect,
+    Textarea,
     Form,
     Field,
     ErrorMessage,
