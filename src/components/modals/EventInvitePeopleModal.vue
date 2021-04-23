@@ -14,9 +14,6 @@ import { defineComponent, PropType } from 'vue'
 import { IonContent, IonHeader, IonToolbar } from '@ionic/vue'
 import EventInvitePeople from '@/components/EventInvitePeople.vue'
 
-
-
-
 export default defineComponent({
   name: 'EventInvitePeopleModal',
   components: {

@@ -130,7 +130,7 @@ import Sidebar from 'primevue/sidebar'
 import Button from 'primevue/button'
 import { authService } from '@/api/authService'
 import { addIcons } from 'ionicons'
-import { calendarOutline, calendarClearOutline} from 'ionicons/icons'
+import { calendarOutline, calendarClearOutline } from 'ionicons/icons'
 import { IonIcon } from '@ionic/vue'
 
 addIcons({
@@ -143,7 +143,7 @@ export default defineComponent({
   components: {
     Sidebar,
     Button,
-    IonIcon,
+    IonIcon
   },
   data() {
     return {}
@@ -192,6 +192,15 @@ export default defineComponent({
 .p-sidebar {
   padding: 0;
 }
+
+/*
+In this case the sidebar content is not reachable with ::v-slotted or ::v-deep as the opened sidebar is rendered
+outside the html hierarchy of this component - if someone finds a better soltion, much appreciated
+*/
+::v-global(.p-sidebar-content) {
+  height: 100%;
+}
+
 
 .menu {
   display: flex;
@@ -261,13 +270,6 @@ hr {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-}
-
-// cmp: https://www.primefaces.org/primevue/showcase/#/theming
-::v-deep(.navigation-sidebar.p-sidebar) {
-  .p-sidebar-content {
-    height: 100%;
-  }
 }
 
 .user-widget {
