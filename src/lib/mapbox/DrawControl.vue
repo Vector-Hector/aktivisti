@@ -13,7 +13,7 @@ export default defineComponent({
     controls: {
       type: Object as PropType<IMapboxDrawControls>,
       required: false,
-      default: {}
+      default: () => {}
     },
     displayControlsDefault: {
       type: Boolean as PropType<boolean>,

@@ -4,6 +4,7 @@ import router from './router'
 import App from './App.vue'
 
 import PrimeVue from 'primevue/config'
+import ToastService from 'primevue/toastservice'
 
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
@@ -42,15 +43,16 @@ import { makeServer } from '../mocks/server'
 import { apiClient } from '@/api/ApiClient'
 import { tokenStore } from '@/store/TokenStore'
 
+
 if (process.env.VUE_APP_ENABLE_MOCKS === 'true') {
   makeServer()
 }
-
 
 const app = createApp(App)
   .use(IonicVue)
   .use(router)
   .use(PrimeVue)
+  .use(ToastService)
 
 
 app.config.globalProperties.$apiClient = apiClient
@@ -72,13 +74,17 @@ apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
 }, async (error: any) => {
   const originalRequest = error.config
   if ((error.response?.status === 403 || error.response?.status === 401) && tokenStore.expiryDate && (new Date() > tokenStore.expiryDate)) {
-    await authService.renewLogin()
+    try {
+      await authService.renewLogin()
+    } catch (e) {
+      return Promise.reject(error.response)
+    }
     // redo initial request
     return apiClient.axiosInstance(originalRequest)
   } else {
-    authService.logout()
+    // all other request just fail regulary
+    return Promise.reject(error.response)
   }
-  return Promise.reject(error.response)
 })
 
 // hydrate profile on app start

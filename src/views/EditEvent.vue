@@ -21,7 +21,7 @@ import { defineComponent, PropType } from 'vue'
 
 import { EventTypes } from '@/api/model/EventTypes'
 import { EventDto } from '@/api/model/EventDto'
-import Steps from 'primevue/components/steps/Steps'
+import Steps from 'primevue/steps'
 import { RouteParams } from 'vue-router'
 import { apiClient } from '@/api/ApiClient'
 import { CampaignDto } from '@/api/model/CampaignDto'
