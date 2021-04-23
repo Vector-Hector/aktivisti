@@ -38,10 +38,11 @@ export default defineComponent({
   },
   computed: {
     zoomBox(): BBox {
+      const meetingPoint = circle([this.event!.location.center.lng, this.event!.location.center.lat], 0.2)
       return this.areaFeatures.length > 0 ? bbox({
         type: 'FeatureCollection',
-        features: this.areaFeatures
-      }) : bbox(circle([this.event!.location.center.lng, this.event!.location.center.lat], 0.2))
+        features: [...this.areaFeatures, meetingPoint]
+      }) : bbox(meetingPoint)
     },
     areaFeatures(): Feature[] {
       return this.eventAreas.map((area) => {
