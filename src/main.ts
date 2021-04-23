@@ -74,14 +74,17 @@ apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
 }, async (error: any) => {
   const originalRequest = error.config
   if ((error.response?.status === 403 || error.response?.status === 401) && tokenStore.expiryDate && (new Date() > tokenStore.expiryDate)) {
-    await authService.renewLogin()
+    try {
+      await authService.renewLogin()
+    } catch (e) {
+      return Promise.reject(error.response)
+    }
     // redo initial request
     return apiClient.axiosInstance(originalRequest)
   } else {
-    // TODO handle this differently: otherwise this gets executed with every other error
-    // authService.logout()
+    // all other request just fail regulary
+    return Promise.reject(error.response)
   }
-  return Promise.reject(error.response)
 })
 
 // hydrate profile on app start

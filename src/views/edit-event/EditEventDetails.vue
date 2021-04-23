@@ -221,7 +221,7 @@ import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
 import { EventMetricDto } from '@/api/model/EventMetricDto'
 
 import { Form, Field, ErrorMessage } from 'vee-validate'
-import Textarea from 'primevue/components/textarea/Textarea'
+import Textarea from 'primevue/textarea'
 
 /**
  * The details form of an event in this state the event can be either new (no id) or existing (has id)
