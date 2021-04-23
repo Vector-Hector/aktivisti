@@ -8,4 +8,5 @@ export interface EventParticipationDto {
   user_is_member: boolean
   user_email: string
   user_username: string
+  assigned_event_areas: number[]
 }

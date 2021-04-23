@@ -63,6 +63,16 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
     return new JSONResponse<E>(response, data)
   }
 
+  async patch(id: string, body: Partial<T>): Promise<JSONResponse<E>> {
+    const response = await this.request({
+      path: `${this.path}${id}/`,
+      method: 'PATCH',
+      data: body
+    })
+    const data = response.data
+    return new JSONResponse<E>(response, data)
+  }
+
   async delete(id: string): Promise<void> {
     await this.request({
       path: `${this.path}${id}`,

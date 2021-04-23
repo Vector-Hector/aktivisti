@@ -1,5 +1,6 @@
 <template>
   <NavigationSidebar />
+  <Toast position="top-right" />
   <IonApp>
     <div id="root">
       <Topbar
@@ -17,13 +18,15 @@ import Topbar from '@/components/Topbar.vue'
 import NavigationSidebar from '@/components/NavigationSidebar.vue'
 import { uiStore } from '@/store/UiStore'
 import { IonApp } from '@ionic/vue'
+import Toast from 'primevue/toast'
 
 export default defineComponent({
   name: 'App',
   components: {
     NavigationSidebar,
     Topbar,
-    IonApp
+    IonApp,
+    Toast,
   },
   data() {
     return {

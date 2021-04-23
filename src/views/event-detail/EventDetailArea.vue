@@ -2,6 +2,7 @@
   <router-view
     v-slot="{Component}"
     :event-area="eventArea"
+    :event="event"
   >
     <keep-alive>
       <component :is="Component" />
