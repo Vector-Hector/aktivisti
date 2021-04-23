@@ -10,9 +10,9 @@
     position="top-left"
   >
     <h1 class="headline">
-      Ort auswählen
+      Treffpunkt auswählen
     </h1>
-    <p>Wähle ein Ort über das Suchfeld auf der rechten Seite aus aus</p>
+    <p>Wähle ein Treffpunkt über das Suchfeld auf der rechten Seite aus aus</p>
   </MapOverlay>
   <Marker
     v-if="event.location?.center"

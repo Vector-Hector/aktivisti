@@ -70,7 +70,7 @@ export default defineComponent({
   computed: {
     steps(): any[] {
       return [{
-        label: 'Allgemein',
+        label: 'Beschreibung',
         to: this.$router.resolve({
           name: this.id !== null ? 'edit-event-details' : 'edit-event-details-new',
           params: {
@@ -78,13 +78,13 @@ export default defineComponent({
           }
         }).path
       }, {
-        label: 'Ort',
+        label: 'Treffpunkt',
         to: this.resolveIfEventId({
           name: 'edit-event-location'
         }),
         disabled: !this.event.id
       }, {
-        label: 'Abschnitte',
+        label: 'Gebiete',
         to: this.resolveIfEventId({
           name: 'edit-event-routes'
         }),

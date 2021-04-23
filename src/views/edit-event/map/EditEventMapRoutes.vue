@@ -18,10 +18,10 @@
     class="edit-routes-overlay"
   >
     <h1 class="headline">
-      Areale zeichnen
+      Gebiete zeichnen
     </h1>
     <p>
-      Wähle nun mit dem Polygonwerkzeug auf der rechten Seite Areale aus um die verschiedenen Einsatzgebiete zu
+      Wähle nun mit dem Polygonwerkzeug auf der rechten Seite Gebiete aus um die verschiedenen Einsatzgebiete zu
       beschreiben
     </p>
     <DataTable
