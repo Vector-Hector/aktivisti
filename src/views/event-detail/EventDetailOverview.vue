@@ -21,7 +21,7 @@
             fill="clear"
             size="small"
           >
-            <IonIcon name="pie-chart-outline" />
+            <IonIcon name="bar-chart-outline" />
           </IonButton>
         </router-link>
         <router-link :to="{ name: 'edit-event-details', params: { event: event.id }}">
@@ -234,7 +234,7 @@ import { EventDto } from '@/api/model/EventDto'
 import { EventAreaDto } from '@/api/model/EventAreaDto'
 import { AreaDetailsDto } from '@/api/model/AreaDetailsDto'
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonList, IonRow, modalController } from '@ionic/vue'
-import { ellipse, chevronForward, logoTwitter, logoFacebook, mail, logoWhatsapp, pieChartOutline } from 'ionicons/icons'
+import { ellipse, chevronForward, logoTwitter, logoFacebook, mail, logoWhatsapp, barChartOutline } from 'ionicons/icons'
 import { addIcons } from 'ionicons'
 import { authService } from '@/api/authService'
 import { userStore } from '@/store/UserStore'
@@ -256,7 +256,7 @@ addIcons({
   'logo-whatsapp': logoWhatsapp,
   mail,
   'logo-facebook': logoFacebook,
-  'pie-chart-outline': pieChartOutline
+  'bar-chart-outline': barChartOutline
 })
 
 export default defineComponent({
