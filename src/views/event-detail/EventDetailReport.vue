@@ -76,7 +76,7 @@ import {IonCol, IonGrid, IonIcon,IonRow} from "@ionic/vue";
 import {CampaignDto} from "@/api/model/CampaignDto";
 import {EventAreaDto} from "@/api/model/EventAreaDto";
 
-interface formattedDataOfArea {
+interface FormattedAreaData {
   id: number,
   color: string,
   completed_addresses: number,
@@ -86,7 +86,7 @@ interface formattedDataOfArea {
   [key: string]: any,
 }
 
-interface metricWithName {
+interface MetricWithName {
   id: number,
   name: string
 }
@@ -118,8 +118,8 @@ export default defineComponent({
   },
   data() {
     return {
-      formattedDataPerArea: [] as formattedDataOfArea[],
-      metricsWithName: [] as metricWithName[]
+      formattedDataPerArea: [] as FormattedAreaData[],
+      metricsWithName: [] as MetricWithName[]
     }
   },
   async created() {
@@ -128,7 +128,7 @@ export default defineComponent({
     for (const { id, color, name } of this.eventAreas ) {
       if (id) {
         const { completed_addresses, overall_addresses, counts_per_metric } = await this.fetchAreaMetricsReports(id)
-        const areaData : formattedDataOfArea = {
+        const areaData : FormattedAreaData = {
           id,
           color,
           completed_addresses,
