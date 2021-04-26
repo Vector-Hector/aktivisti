@@ -50,7 +50,7 @@
       />
       <Column
         field="completed_addresses"
-        header="Besuchte Addressen"
+        header="Besuchte Adressen"
         style="text-align:right"
         :footer="sumColumn('completed_addresses')"
       />
