@@ -24,7 +24,7 @@
     class="join-buttons"
   >
     <IonButton
-      v-if="participations.find((participation) => participation.user === user.id)?.assigned_event_areas.includes(eventArea.id)"
+      v-if="isUserEventAreaParticipant"
       @click="leaveArea"
     >
       Doch nicht hier mitmachen
@@ -107,6 +107,12 @@ export default defineComponent({
     },
     isUserEventParticipant(): boolean {
       return this.user !== null && this.participations.map((item) => item.user).includes(this.user.id)
+    },
+    isUserEventAreaParticipant(): boolean {
+      return (
+        this.user !== null
+        && this.participations.find((participation) => participation.user === this.user!.id)?.assigned_event_areas.includes(this.eventArea.id!)
+      ) ?? false
     },
     user() {
       return userStore.getState().user
