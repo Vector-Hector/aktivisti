@@ -27,6 +27,7 @@ import EventDetailArea from '@/views/event-detail/EventDetailArea.vue'
 import EventAreaOverviewMap from '@/views/event-detail/event-area/EventAreaOverviewMap.vue'
 import EventAreaStreetMap from '@/views/event-detail/event-area/EventAreaStreetMap.vue'
 import MyEvents from '@/views/MyEvents.vue'
+import EventDetailReport from "@/views/event-detail/EventDetailReport.vue";
 
 
 const router = createRouter({
@@ -73,6 +74,14 @@ const router = createRouter({
             map: EventDetailOverviewMap
           },
           props: true,
+        },
+        {
+          path: 'report',
+          components: {
+            default: EventDetailReport,
+            map: EventDetailOverviewMap
+          },
+          name: 'event-detail-report'
         },
         {
           path: 'area/:areaId',
