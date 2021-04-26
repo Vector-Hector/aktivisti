@@ -20,7 +20,7 @@
     </IonSelect>
   </IonItem>
   <IonButtons
-    v-else-if="user && participations.map((item) => item.user).includes(user.id)"
+    v-else-if="isUserEventParticipant"
     class="join-buttons"
   >
     <IonButton
@@ -104,6 +104,9 @@ export default defineComponent({
   computed: {
     isCampaignAdmin() {
       return userStore.isManager()
+    },
+    isUserEventParticipant(): boolean {
+      return this.user !== null && this.participations.map((item) => item.user).includes(this.user.id)
     },
     user() {
       return userStore.getState().user
