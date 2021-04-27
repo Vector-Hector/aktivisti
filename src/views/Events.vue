@@ -133,7 +133,7 @@ export default defineComponent({
   watch: {
     async filteredCampaigns(newValue) {
       const response = await this.$apiClient.events.list({
-        campaign: newValue ?? undefined
+        campaigns: newValue ?? undefined
       })
       this.events = response.payload.data
     }
