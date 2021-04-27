@@ -52,24 +52,24 @@
 
         <div class="p-field p-grid">
           <label
-            for="campaign"
+            for="campaigns"
             class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
           >Kampagnenauswahl</label>
           <div class="p-col-12 p-md-9">
             <Field
               v-slot="{ field }"
-              v-model="localEvent.campaign"
-              name="campaign"
+              v-model="localEvent.campaigns"
+              name="campaigns"
               value="value"
               :rules="isRequired"
             >
-              <Dropdown
+              <MultiSelect
                 :options="campaigns"
                 option-value="id"
                 option-label="name"
                 placeholder="Wähle eine Kampagne aus"
                 :model-value="field.value"
-                :class="{ 'p-invalid': errors.campaign }"
+                :class="{ 'p-invalid': errors.campaigns }"
                 @input="field.onInput.forEach((fn) => fn($event.value))"
                 @change="field.onChange.forEach((fn) => fn($event.value))"
               />

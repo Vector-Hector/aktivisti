@@ -44,7 +44,7 @@
         >
           <IonLabel>
             <h3>{{ event.name }}</h3>
-            <p>{{ campaignById(event.campaign)?.name }}</p>
+            <p>{{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}</p>
           </IonLabel>
           <div
             slot="end"
@@ -194,8 +194,8 @@ export default defineComponent({
         })
       }
     },
-    campaignById(findId: number): CampaignDto | undefined {
-      return this.campaigns.find(({id}) => id === findId)
+    campaignsByIds(findIds: number[]): CampaignDto[] {
+      return this.campaigns.filter(({id}) => findIds.includes(id))
     }
   }
 })
