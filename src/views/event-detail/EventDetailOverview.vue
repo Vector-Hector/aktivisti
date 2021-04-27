@@ -262,13 +262,6 @@ export default defineComponent({
     IonCol,
     IonRow
   },
-  async beforeRouteEnter(to, from, next) {
-    const participations = (await apiClient.eventParticipations.list({event: to.params.id})).payload.data
-    next(vm => {
-      //@ts-ignore
-      vm.participations = participations
-    })
-  },
   props: {
     id: {
       type: String as PropType<string>,
@@ -285,15 +278,17 @@ export default defineComponent({
     eventAreas: {
       type: Array as PropType<EventAreaDto[]>,
       required: true
+    },
+    participations: {
+      type: Array as PropType<EventParticipationDto[]>,
+      required: true
     }
-
   },
-  emits: ['update:event'],
+  emits: ['update:event', 'update:participations'],
   data() {
     return {
       loading: true,
       joinLoading: false,
-      participations: [] as EventParticipationDto[],
       metrics: [
         {name: 'Geklopfte Türen', value: 'Geklopfte Türen'},
         {name: 'Geöffnete Türen', value: 'Geöffnete Türen'},
@@ -390,7 +385,10 @@ export default defineComponent({
       this.joinLoading = false
     },
     async refreshParticipations() {
-      this.participations = (await apiClient.eventParticipations.list({event: this.event.id})).payload.data
+      this.$emit(
+        'update:participations',
+        (await apiClient.eventParticipations.list({event: this.event.id})).payload.data
+      )
     },
     countAddresses(areaDetails: AreaDetailsDto) {
       return areaDetails.streets.reduce((acc, street) => {

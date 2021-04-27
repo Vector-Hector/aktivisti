@@ -1,18 +1,31 @@
 <template>
-  <ion-header>
-    <ion-toolbar>
+  <IonHeader>
+    <IonToolbar>
       <ion-title>Leute einladen</ion-title>
-    </ion-toolbar>
-  </ion-header>
-  <ion-content class="ion-padding">
+      <IonButtons slot="end">
+        <IonButton @click="dismiss">
+          <IonIcon
+            name="close"
+          />
+        </IonButton>
+      </IonButtons>
+    </IonToolbar>
+  </IonHeader>
+  <IonContent class="ion-padding">
     <EventInvitePeople :event-id="eventId" />
-  </ion-content>
+  </IonContent>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IonContent, IonHeader, IonToolbar } from '@ionic/vue'
+import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonToolbar, modalController } from '@ionic/vue'
 import EventInvitePeople from '@/components/EventInvitePeople.vue'
+import { addIcons } from 'ionicons'
+import { close } from 'ionicons/icons'
+
+addIcons({
+  close
+})
 
 export default defineComponent({
   name: 'EventInvitePeopleModal',
@@ -20,12 +33,20 @@ export default defineComponent({
     IonContent,
     IonToolbar,
     IonHeader,
-    EventInvitePeople,
+    IonButton,
+    IonButtons,
+    IonIcon,
+    EventInvitePeople
   },
   props: {
     eventId: {
       type: Number as PropType<number>,
       required: true
+    }
+  },
+  methods: {
+    dismiss() {
+      modalController.dismiss()
     }
   }
 })

@@ -10,6 +10,7 @@
         <router-view
           v-model:event="event"
           v-model:eventAreas="eventAreas"
+          v-model:participations="participations"
           :campaign="campaign"
         />
       </div>
@@ -45,6 +46,8 @@ import { userStore } from '@/store/UserStore'
 import Map from '@/lib/mapbox/Map.vue'
 import { BBox, Feature } from 'geojson'
 import { bbox, circle } from '@turf/turf'
+import { EventParticipationDto } from '@/api/model/EventParticipationDto'
+import { apiClient } from '@/api/ApiClient'
 
 addIcons({
   ellipse,
@@ -57,6 +60,13 @@ export default defineComponent({
     Map,
     IonContent
   },
+  async beforeRouteEnter(to, from, next) {
+    const participations = (await apiClient.eventParticipations.list({event: to.params.id})).payload.data
+    next(vm => {
+      //@ts-ignore
+      vm.participations = participations
+    })
+  },
   props: {
     id: {
       type: String as PropType<string>,
@@ -65,6 +75,7 @@ export default defineComponent({
   },
   data() {
     return {
+      participations: [] as EventParticipationDto[],
       event: null as EventDto | null,
       eventAreas: [] as EventAreaDto[],
       campaign: null,
