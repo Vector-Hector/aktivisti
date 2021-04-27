@@ -4,7 +4,6 @@ import { CampaignTypeDto } from '@/api/model/CampaignTypeDto'
 import { EventRoute } from '@/api/EventRoute'
 import { ApiRoute } from '@/api/ApiRoute'
 import axios from 'axios'
-import { EventAreaDto } from '@/api/model/EventAreaDto'
 import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
 import { EventMetricRecordSubmissionDto } from '@/api/model/EventMetricRecordSubmissionDto'
 import { EventMetricDto } from '@/api/model/EventMetricDto'
@@ -12,6 +11,7 @@ import { TrackingSessionDto } from '@/api/model/TrackingSessionDto'
 import { CompletionNoteDto } from '@/api/model/CompletionNoteDto'
 import { LeadDto } from '@/api/model/LeadDto'
 import { EventDto } from '@/api/model/EventDto'
+import { EventAreaRoute } from "@/api/EventAreaRoute";
 import { EventParticipationRoute } from '@/api/EventParticipationRoute'
 
 /**
@@ -30,7 +30,7 @@ export class ApiClient {
 
   myEvents = new ApiRoute<EventDto>(this.baseURL, 'my-events/', this.axiosInstance)
   events = new EventRoute(this.baseURL, 'events/', this.axiosInstance)
-  eventAreas = new ApiRoute<EventAreaDto>(this.baseURL, 'event-areas/', this.axiosInstance)
+  eventAreas = new EventAreaRoute(this.baseURL, 'event-areas/', this.axiosInstance)
   eventMetrics = new ApiRoute<EventMetricDto>(this.baseURL, 'event-metrics/', this.axiosInstance)
   completionNotes = new ApiRoute<CompletionNoteDto>(this.baseURL, 'completion-notes/', this.axiosInstance)
   eventMetricRecords = new ApiRoute<EventMetricRecordDto>(this.baseURL, 'event-metric-records/', this.axiosInstance)

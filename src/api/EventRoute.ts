@@ -5,6 +5,7 @@ import { JSONResponse } from '@/api/JSONResponse'
 import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
 import { BulkInviteDto } from '@/api/model/BulkInviteDto'
 import { EventParticipationDto } from '@/api/model/EventParticipationDto'
+import { EventMetricReportDto } from "@/api/model/EventMetricReportDto";
 
 /**
  * A class extending {@link ApiRoute} to implement some extra non-standard operations (join / leave)
@@ -52,5 +53,13 @@ export class EventRoute extends ApiRoute<EventDto> {
     })
     const data = response.data
     return new JSONResponse<APIEnvelope<EventParticipationDto[]>>(response, data)
+  }
+
+  async report(id: string) {
+    const response = await  this.axiosInstance(`${this.baseUrl}/${this.path}${id}/report/`, {
+      method: 'GET'
+    })
+    const data = response.data
+    return new JSONResponse<APIEnvelope<EventMetricReportDto>>(response, data)
   }
 }
