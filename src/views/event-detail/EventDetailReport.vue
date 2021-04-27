@@ -123,7 +123,8 @@ export default defineComponent({
     }
   },
   async created() {
-    this.metricsWithName = await this.fetchMetricNames();
+    const { metrics } = await this.fetchMetricRecords();
+    this.metricsWithName = metrics
 
     for (const { id, color, name } of this.eventAreas ) {
       if (id) {
@@ -147,13 +148,9 @@ export default defineComponent({
       const response = await this.$apiClient.eventAreas.report(areaId)
       return response.payload.data
     },
-    async fetchMetricNames() : Promise<EventMetricDto[]>{
-      const response = await  this.$apiClient.eventMetrics.list()
-      return response.payload.data
-    },
-    async fetchMetricRecords(): Promise<EventMetricRecordDto[]>{
-      const response = await this.$apiClient.eventMetricRecords.list({event: this.event.id})
-      return  response.payload.data
+    async fetchMetricRecords(): Promise<{records: EventMetricRecordDto[], metrics: EventMetricDto[]}>{
+      const response = await this.$apiClient.eventMetricRecords.list({event: this.event.id}, ['metric'])
+      return  {records: response.payload.data, metrics: response.payload.embedded.metric}
     },
     sumColumn(columnName: string): number {
       return this.formattedDataPerArea.map((row) => row[columnName]).reduce((a, b) => a + b, 0)
