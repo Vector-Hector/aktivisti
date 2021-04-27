@@ -24,7 +24,7 @@ export function makeServer({environment = 'development'} = {}) {
         const campaignId = parseInt(request.queryParams.campaign)
         let events = sampleEvents
         if (campaignId) {
-          events = sampleEvents.filter(({campaign}) => campaign === campaignId)
+          events = sampleEvents.filter(({campaigns}) => campaigns.includes(campaignId))
         }
         return {
           data: events

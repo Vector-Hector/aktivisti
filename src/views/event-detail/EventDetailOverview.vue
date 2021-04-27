@@ -5,10 +5,10 @@
         class="ion-align-items-center d-flex"
       >
         <span
-          v-if="campaign"
-          class="campaign"
+          v-if="campaigns"
+          class="campaigns"
         >
-          {{ campaign.name }}
+          {{ campaigns.map(({name}) => name).join(',') }}
         </span>
       </IonCol>
       <IonCol
@@ -271,8 +271,8 @@ export default defineComponent({
       type: Object as PropType<EventDto>,
       required: true
     },
-    campaign: {
-      type: Object as PropType<CampaignDto>,
+    campaigns: {
+      type: Object as PropType<CampaignDto[]>,
       required: true
     },
     eventAreas: {

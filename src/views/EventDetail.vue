@@ -11,7 +11,7 @@
           v-model:event="event"
           v-model:eventAreas="eventAreas"
           v-model:participations="participations"
-          :campaign="campaign"
+          :campaigns="campaigns"
         />
       </div>
     </IonContent>
@@ -78,7 +78,7 @@ export default defineComponent({
       participations: [] as EventParticipationDto[],
       event: null as EventDto | null,
       eventAreas: [] as EventAreaDto[],
-      campaign: null,
+      campaigns: null,
       loading: true,
       joinLoading: false,
       dateOptions: {
@@ -124,9 +124,9 @@ export default defineComponent({
   },
   methods: {
     async getEvent() {
-      const eventRequest = (await this.$apiClient.events.get(this.id, ['campaign']))
+      const eventRequest = (await this.$apiClient.events.get(this.id, ['campaigns']))
       this.event = eventRequest.payload.data
-      this.campaign = eventRequest.payload.embedded.campaign[0]
+      this.campaigns = eventRequest.payload.embedded.campaigns
     },
 
     async getEventAreas() {
