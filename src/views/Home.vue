@@ -37,7 +37,7 @@
       <Popup>
         <div class="popup-contents">
           <span class="popup-title">{{ event.name }}</span>
-          <span class="popup-campaign">{{ event.campaign.name }}</span>
+          <span class="popup-campaign">{{ event.campaign?.name }}</span>
           <span class="popup-date">
             {{ new Date(event.start_date).toLocaleString() }}
           </span>
@@ -125,7 +125,7 @@ export default defineComponent({
     },
     async filterEvents() {
       const response = await this.$apiClient.events.list({
-        campaign: this.campaign?.id ?? undefined
+        campaigns: this.campaign?.id ?? undefined
       })
       this.events = response.payload.data
     }
