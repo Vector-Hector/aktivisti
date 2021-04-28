@@ -27,7 +27,7 @@
         field="name"
         header="Name"
         footer="Gesamt:"
-        footerStyle="text-align:right"
+        footer-style="text-align:right"
       >
         <template #body="{data}">
           <IonIcon

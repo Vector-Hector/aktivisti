@@ -89,7 +89,7 @@ export default defineComponent({
       events: [] as EventDto[],
       filteredCampaigns: [] as CampaignDto[],
       campaigns: [] as CampaignDto[],
-      campaign: null as CampaignDto | null,
+      campaign: userStore.getState().campaign,
       selectedCampaign: null as CampaignDto | null
     }
   },
@@ -104,8 +104,20 @@ export default defineComponent({
     updateUserZoom(zoom: number) {
       userStore.setZoom(zoom)
     },
+    updateUserCampaign(campaign: CampaignDto) {
+      userStore.setCampaign(campaign)
+    },
     async getEvents() {
-      const response = await this.$apiClient.events.list()
+      this.events = []
+      userStore.setCampaign(this.campaign)
+      let response
+      if (this.campaign) {
+        response = await this.$apiClient.events.list({
+          campaigns: this.campaign?.id ?? undefined
+        })
+      } else {
+        response = await this.$apiClient.events.list()
+      }
       this.events = response.payload.data
     },
     async getCampaigns() {
@@ -124,6 +136,9 @@ export default defineComponent({
       }, 250)
     },
     async filterEvents() {
+      this.events = []
+      userStore.setCampaign(this.campaign)
+
       const response = await this.$apiClient.events.list({
         campaigns: this.campaign?.id ?? undefined
       })
