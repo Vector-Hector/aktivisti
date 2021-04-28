@@ -1,13 +1,12 @@
 import { Store } from '@/store/Store'
 import { LocationDto } from '@/api/model/LocationDto'
 import { CAMPAIGN_ADMIN, UserDto } from '@/api/model/UserDto'
-import { CampaignDto } from '@/api/model/CampaignDto'
 
 interface UserState {
   user: UserDto | null,
   location: LocationDto | null,
   zoom: number | null,
-  campaign: CampaignDto | null
+  campaigns: number[] | null
 }
 
 const KEY_LOCATION = 'LOCATION'
@@ -29,14 +28,14 @@ class UserStore extends Store<UserState> {
     const zoomString = localStorage.getItem(KEY_ZOOM)
     const zoom = zoomString ? parseInt(zoomString) : null
 
-    const campaignString = localStorage.getItem(KEY_CAMPAIGN)
-    const campaign = campaignString ? JSON.parse(campaignString) : null
+    const campaignsString = localStorage.getItem(KEY_CAMPAIGN)
+    const campaigns = campaignsString ? JSON.parse(campaignsString) : null
 
     return {
       user: null,
       location,
       zoom,
-      campaign
+      campaigns
     }
   }
 
@@ -51,8 +50,9 @@ class UserStore extends Store<UserState> {
     }
   }
 
-  public setCampaign(campaign: CampaignDto | null) {
-    localStorage.setItem(KEY_CAMPAIGN, JSON.stringify(campaign))
+  public setCampaigns(campaigns: number[] | null) {
+    this.state.campaigns = campaigns
+    localStorage.setItem(KEY_CAMPAIGN, JSON.stringify(campaigns))
   }
 
   public clearUser() {

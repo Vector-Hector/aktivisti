@@ -120,7 +120,7 @@ export default defineComponent({
   data() {
     return {
       events: [] as EventDto[],
-      filteredCampaigns: [] as CampaignDto[],
+      filteredCampaigns: userStore.getState().campaigns,
       campaigns: [] as CampaignDto[],
       messages: [] as any,
     }
@@ -132,6 +132,7 @@ export default defineComponent({
   },
   watch: {
     async filteredCampaigns(newValue) {
+      this.updateUserCampaign(this.filteredCampaigns)
       const response = await this.$apiClient.events.list({
         campaigns: newValue ?? undefined
       })
@@ -143,6 +144,9 @@ export default defineComponent({
     this.getCampaigns()
   },
   methods: {
+    updateUserCampaign(campaigns: number[] | null) {
+      userStore.setCampaigns(campaigns)
+    },
     goToEvent(event: EventDto) {
       this.$router.push({
         name: 'event-detail',
@@ -178,21 +182,19 @@ export default defineComponent({
         })
     },
     async getEvents() {
-      const response = await this.$apiClient.events.list()
+      let response
+      if (this.filteredCampaigns) {
+        response = await this.$apiClient.events.list({
+          campaigns: this.filteredCampaigns ?? undefined
+        })
+      } else {
+        response = await this.$apiClient.events.list()
+      }
       this.events = response.payload.data
     },
     async getCampaigns() {
       const response = await this.$apiClient.campaigns.list()
       this.campaigns = response.payload.data
-    },
-    searchCampaign(event: any) {
-      if (!event.query.trim().length) {
-        this.filteredCampaigns = [...this.campaigns]
-      } else {
-        this.filteredCampaigns = this.campaigns.filter((campaign: any) => {
-          return campaign.name.toLowerCase().startsWith(event.query.toLowerCase())
-        })
-      }
     },
     campaignsByIds(findIds: number[]): CampaignDto[] {
       return this.campaigns.filter(({id}) => findIds.includes(id))
