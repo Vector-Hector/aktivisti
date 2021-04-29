@@ -11,8 +11,8 @@
         </IonLabel>
         <Field
           v-slot="{ field }"
-          v-model="email"
-          :rules="isRequired"
+          v-model="registrationData.email"
+          :rules="{ email: true, required: true }"
           name="email"
         >
           <IonInput
@@ -30,67 +30,14 @@
           class="error"
         />
       </IonItem>
-
-      <IonItem :class="{ 'item-has-error': !!errors.givenname }">
-        <IonLabel position="floating">
-          Vorname
-        </IonLabel>
-        <Field
-          v-slot="{ field }"
-          v-model="givenname"
-          :rules="isRequired"
-          name="givenname"
-        >
-          <IonInput
-            v-bind="field"
-            type="text"
-          />
-        </Field>
-      </IonItem>
-      <IonItem
-        class="error-wrapper"
-        lines="none"
-      >
-        <ErrorMessage
-          name="givenname"
-          class="error"
-        />
-      </IonItem>
-
-      <IonItem :class="{ 'item-has-error': !!errors.surname }">
-        <IonLabel position="floating">
-          Nachname
-        </IonLabel>
-        <Field
-          v-slot="{ field }"
-          v-model="surname"
-          :rules="isRequired"
-          name="surname"
-        >
-          <IonInput
-            v-bind="field"
-            type="text"
-          />
-        </Field>
-      </IonItem>
-      <IonItem
-        class="error-wrapper"
-        lines="none"
-      >
-        <ErrorMessage
-          name="surname"
-          class="error"
-        />
-      </IonItem>
-
       <IonItem :class="{ 'item-has-error': !!errors.username }">
         <IonLabel position="floating">
           Benutzername
         </IonLabel>
         <Field
           v-slot="{ field }"
-          v-model="username"
-          :rules="isRequired"
+          v-model="registrationData.username"
+          :rules="{ required: true }"
           name="username"
         >
           <IonInput
@@ -115,8 +62,8 @@
         </IonLabel>
         <Field
           v-slot="{ field }"
-          v-model="password"
-          :rules="isRequired"
+          v-model="registrationData.password"
+          :rules="{ required: true }"
           name="password"
         >
           <IonInput
@@ -131,6 +78,80 @@
       >
         <ErrorMessage
           name="password"
+          class="error"
+        />
+      </IonItem>
+      <IonItem :class="{ 'item-has-error': !!errors.plz }">
+        <IonLabel position="floating">
+          Postleitzahl
+        </IonLabel>
+        <Field
+          v-slot="{ field }"
+          v-model="registrationData.plz"
+          name="plz"
+          :rules="{ required: true }"
+        >
+          <IonInput
+            v-bind="field"
+            type="text"
+          />
+        </Field>
+      </IonItem>
+      <IonItem
+        class="error-wrapper"
+        lines="none"
+      >
+        <ErrorMessage
+          name="plz"
+          class="error"
+        />
+      </IonItem>
+      <IonItem :class="{ 'item-has-error': !!errors.first_name }">
+        <IonLabel position="floating">
+          Vorname
+        </IonLabel>
+        <Field
+          v-slot="{ field }"
+          v-model="registrationData.first_name"
+          name="first_name"
+        >
+          <IonInput
+            v-bind="field"
+            type="text"
+          />
+        </Field>
+      </IonItem>
+      <IonItem
+        class="error-wrapper"
+        lines="none"
+      >
+        <ErrorMessage
+          name="first_name"
+          class="error"
+        />
+      </IonItem>
+
+      <IonItem :class="{ 'item-has-error': !!errors.last_name }">
+        <IonLabel position="floating">
+          Nachname
+        </IonLabel>
+        <Field
+          v-slot="{ field }"
+          v-model="registrationData.last_name"
+          name="last_name"
+        >
+          <IonInput
+            v-bind="field"
+            type="text"
+          />
+        </Field>
+      </IonItem>
+      <IonItem
+        class="error-wrapper"
+        lines="none"
+      >
+        <ErrorMessage
+          name="last_name"
           class="error"
         />
       </IonItem>
@@ -166,7 +187,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue"
+import { defineComponent } from 'vue'
 import { Field, Form, ErrorMessage } from 'vee-validate'
 
 import {
@@ -174,11 +195,12 @@ import {
   IonLabel,
   IonItem,
   IonButton,
-  IonItemDivider,
-} from "@ionic/vue";
+  IonItemDivider
+} from '@ionic/vue'
+import { UserRegistrationDto } from '@/api/model/UserRegistrationDto'
 
 export default defineComponent({
-  name: "Register",
+  name: 'Register',
   components: {
     IonInput,
     IonLabel,
@@ -187,27 +209,24 @@ export default defineComponent({
     IonItemDivider,
     Field,
     Form,
-    ErrorMessage,
+    ErrorMessage
   },
   data() {
-    return {};
+    return {
+      registrationData: {} as Partial<UserRegistrationDto>
+    }
   },
   methods: {
     async register() {
       // TODO
-    },
-    isRequired (value: string) {
-      if (!value) {
-        return 'Bitte fülle dieses Feld aus'
-      }
-      return true
     }
   }
-});
+})
 </script>
 
 <style lang="scss" scoped>
 @import "src/scss/_globals.scss";
+
 .control-buttons {
   margin-top: 1em;
   flex-direction: column;
