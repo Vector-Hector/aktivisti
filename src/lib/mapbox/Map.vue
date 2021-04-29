@@ -12,6 +12,7 @@ import { defineComponent, provide, InjectionKey, PropType, ref, Ref, onMounted, 
 import mapboxgl from 'mapbox-gl'
 import { LocationDto } from '@/api/model/LocationDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import { isEqual } from 'lodash-es'
 
 
 export const MapInject: InjectionKey<Ref<mapboxgl.Map>> = Symbol()
@@ -46,8 +47,8 @@ export default defineComponent({
     const initialized = ref(false)
     provide(MapInject, map)
 
-    watch(() => props.center, (newCenter) => {
-      if (!newCenter) return
+    watch(() => props.center, (newCenter, oldCenter) => {
+      if (!newCenter || isEqual(newCenter, oldCenter)) return
       map.value?.setCenter([newCenter.lng, newCenter.lat])
     })
 

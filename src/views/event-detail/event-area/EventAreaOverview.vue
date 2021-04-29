@@ -1,61 +1,85 @@
 <template>
-  <IonItem v-if="isCampaignAdmin">
-    <IonLabel class="participant-select-label">
-      Teilnehmer
-    </IonLabel>
-    <IonSelect
-      v-if="isCampaignAdmin"
-      :value="eventAreaParticipants"
-      :multiple="true"
-      class="participant-select"
-      @ionChange="updateAreaParticipations"
-    >
-      <IonSelectOption
-        v-for="participation in participations"
-        :key="participation.id"
-        :value="participation.user"
-      >
-        {{ participation.user_username }}
-      </IonSelectOption>
-    </IonSelect>
-  </IonItem>
-  <IonButtons
-    v-else-if="isUserEventParticipant"
-    class="join-buttons"
+  <IonGrid
+    class="w-100 p-m-0"
   >
-    <IonButton
-      v-if="isUserEventAreaParticipant"
-      @click="leaveArea"
-    >
-      Doch nicht hier mitmachen
-    </IonButton>
-    <IonButton
-      v-else
-      color="primary"
-      fill="solid"
-      @click="joinArea"
-    >
-      In diesem Gebiet mitmachen
-    </IonButton>
-  </IonButtons>
-  <IonList>
-    <IonItem
-      v-for="street in eventArea.area_details.streets"
-      :key="street.name"
-      :button="true"
-      @click="$router.push({ name: 'event-detail-area-street', params: { street: street.name } })"
-    >
-      <IonLabel>
-        <h3>{{ street.name }}</h3>
-        <p>{{ street.addresses.length }} Adressen</p>
-      </IonLabel>
-      <IonIcon
-        slot="end"
-        class="chevron"
-        name="chevron-forward"
-      />
-    </IonItem>
-  </IonList>
+    <IonRow>
+      <IonCol>
+        <IonItem v-if="isCampaignAdmin">
+          <IonLabel class="participant-select-label">
+            Teilnehmer
+          </IonLabel>
+          <IonSelect
+            v-if="isCampaignAdmin"
+            :value="eventAreaParticipants"
+            :multiple="true"
+            class="participant-select"
+            @ionChange="updateAreaParticipations"
+          >
+            <IonSelectOption
+              v-for="participation in participations"
+              :key="participation.id"
+              :value="participation.user"
+            >
+              {{ participation.user_username }}
+            </IonSelectOption>
+          </IonSelect>
+        </IonItem>
+        <IonButtons
+          v-else-if="isUserEventParticipant"
+          class="join-buttons"
+        >
+          <IonButton
+            v-if="isUserEventAreaParticipant"
+            @click="leaveArea"
+          >
+            Doch nicht hier mitmachen
+          </IonButton>
+          <IonButton
+            v-else
+            color="primary"
+            fill="solid"
+            @click="joinArea"
+          >
+            In diesem Gebiet mitmachen
+          </IonButton>
+        </IonButtons>
+      </IonCol>
+      <IonCol
+        v-if="isCampaignAdmin"
+        size="auto"
+      >
+        <IonButton
+          fill="none"
+          :class="{ 'button-success': eventArea.is_completed }"
+          @click="openCompletionModal"
+        >
+          <IonIcon
+            name="checkmark-circle-outline"
+          />
+        </IonButton>
+      </IonCol>
+    </IonRow>
+    <IonRow>
+      <IonList class="address-list">
+        <IonItem
+          v-for="street in eventArea.area_details.streets"
+          :key="street.name"
+          :button="true"
+          @click="$router.push({ name: 'event-detail-area-street', params: { street: street.name } })"
+        >
+          <IonLabel>
+            <h3>{{ street.name }}</h3>
+            <p>{{ street.addresses.length }} Adressen</p>
+          </IonLabel>
+          <IonIcon
+            slot="end"
+            class="chevron"
+            name="chevron-forward"
+          />
+        </IonItem>
+      </IonList>
+    </IonRow>
+  </IonGrid>
 </template>
 
 <script lang="ts">
@@ -67,15 +91,25 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonRow,
+  IonCol,
+  IonGrid,
   IonSelect,
   IonSelectOption,
-  toastController
+  toastController,
+  alertController
 } from '@ionic/vue'
 import EventAreaMixin from '@/views/event-detail/event-area/EventAreaMixin'
 import { userStore } from '@/store/UserStore'
 import { EventParticipationDto } from '@/api/model/EventParticipationDto'
 import { isEqual } from 'lodash-es'
 import { uiStore } from '@/store/UiStore'
+import { addIcons } from 'ionicons'
+import { checkmarkCircleOutline } from 'ionicons/icons'
+
+addIcons({
+  'checkmark-circle-outline': checkmarkCircleOutline
+})
 
 export default defineComponent({
   name: 'EventAreaOverview',
@@ -87,7 +121,10 @@ export default defineComponent({
     IonSelect,
     IonSelectOption,
     IonButton,
-    IonButtons
+    IonButtons,
+    IonGrid,
+    IonRow,
+    IonCol
   },
   mixins: [EventAreaMixin],
   beforeRouteEnter(to, from, next) {
@@ -104,7 +141,7 @@ export default defineComponent({
       required: true
     }
   },
-  emits: ['update:participations'],
+  emits: ['update:participations', 'update:eventArea'],
   data() {
     return {
       eventAreaParticipants: [] as number[]
@@ -168,6 +205,41 @@ export default defineComponent({
         const changedItem = updatedParticipations.find(({id}) => item.id === id)
         return changedItem ?? item
       }))
+    },
+    async openCompletionModal() {
+      const confirmationAlert = await alertController
+        .create({
+          header: 'Aktionsgebiet erledigt',
+          message: `Das Aktionsgebiet ${this.eventArea.id} als erledigt markieren?`,
+          buttons: [
+            {
+              text: 'Cancel',
+              role: 'cancel',
+              cssClass: 'secondary'
+            },
+            {
+              text: 'Okay',
+              handler: () => {
+                this.$apiClient.eventAreas.patch(this.eventArea!.id!.toString(), {
+                  is_completed: !this.eventArea.is_completed
+                })
+                  .then((response) => {
+                    this.$emit('update:eventArea', response.payload.data)
+                  })
+                  .catch((e) => {
+                    toastController.create({
+                      position: 'bottom',
+                      color: 'danger',
+                      header: `Fehlercode: ${e.status}`,
+                      message: 'Das Aktionsgebiet konnte nicht aktualisiert werden',
+                      duration: 2000
+                    })
+                  })
+              }
+            }
+          ]
+        })
+      await confirmationAlert.present()
     },
     async updateAreaParticipations(event: any) {
       const participants = event.target!.value as number[]
@@ -255,4 +327,12 @@ label {
   justify-content: center;
 }
 
+.address-list {
+  width: 100%;
+  flex: 1 1 100%;
+}
+
+.button-success {
+  color: $successButtonBg;
+}
 </style>

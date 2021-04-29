@@ -69,9 +69,10 @@
       class="area-list"
     >
       <IonItem
-        v-for="area in eventAreas"
+        v-for="area in eventAreasSorted"
         :key="area.id"
         :button="true"
+        :class="{ 'greyed-out': area.is_completed }"
         @click="$router.push({ name: 'event-detail-area', params: { areaId: area.id }})"
       >
         <IonLabel>
@@ -83,6 +84,12 @@
           class="item-buttons"
         >
           <IonIcon
+            v-if="area.is_completed"
+            class="completed-icon"
+            name="checkmark-circle-outline"
+          />
+          <IonIcon
+            v-else
             :style="{
               color: area.color
             }"
@@ -217,7 +224,16 @@ import { EventDto } from '@/api/model/EventDto'
 import { EventAreaDto } from '@/api/model/EventAreaDto'
 import { AreaDetailsDto } from '@/api/model/AreaDetailsDto'
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonList, IonRow, modalController } from '@ionic/vue'
-import { ellipse, chevronForward, logoTwitter, logoFacebook, mail, logoWhatsapp, barChartOutline } from 'ionicons/icons'
+import {
+  ellipse,
+  chevronForward,
+  logoTwitter,
+  logoFacebook,
+  mail,
+  logoWhatsapp,
+  barChartOutline,
+  checkmarkCircleOutline
+} from 'ionicons/icons'
 import { addIcons } from 'ionicons'
 import { authService } from '@/api/authService'
 import { userStore } from '@/store/UserStore'
@@ -235,6 +251,7 @@ import {
 addIcons({
   ellipse,
   chevronForward,
+  'checkmark-circle-outline': checkmarkCircleOutline,
   'logo-twitter': logoTwitter,
   'logo-whatsapp': logoWhatsapp,
   mail,
@@ -298,6 +315,16 @@ export default defineComponent({
     }
   },
   computed: {
+    eventAreasSorted(): EventAreaDto[] {
+      const collator = new Intl.Collator('de', {caseFirst: 'upper'})
+      return [...this.eventAreas].sort((a, b) => {
+        if (a.is_completed) {
+          return 1
+        } else {
+          return collator.compare(a.name, b.name)
+        }
+      })
+    },
     isLoggedIn(): boolean {
       return authService.isLoggedIn()
     },
@@ -449,8 +476,16 @@ label {
   align-items: center;
 }
 
+.greyed-out {
+  opacity: 0.3;
+}
+
 .participants {
   cursor: pointer;
+}
+
+.completed-icon {
+  font-size: 1.2rem;
 }
 
 </style>

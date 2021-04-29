@@ -22,7 +22,7 @@
           ref="map"
           :zoom="15"
           :center="event.location.center"
-          :zoom-box="zoomBox"
+          :zoom-box="initialZoomBox"
           :animate="false"
         >
           <router-view
@@ -94,6 +94,7 @@ export default defineComponent({
       participations: [] as EventParticipationDto[],
       event: null as EventDto | null,
       eventAreas: [] as EventAreaDto[],
+      initialZoomBox: null as BBox | null,
       campaigns: null,
       loading: true,
       joinLoading: false,
@@ -134,8 +135,11 @@ export default defineComponent({
   },
   async created() {
     await this.getEventAreas()
-
     this.loading = false
+    this.initialZoomBox = this.areaFeatures.length > 0 ? bbox({
+      type: 'FeatureCollection',
+      features: this.areaFeatures
+    }) : bbox(circle([this.event!.location.center.lng, this.event!.location.center.lat], 0.2))
   },
   methods: {
     async getEventAreas() {
