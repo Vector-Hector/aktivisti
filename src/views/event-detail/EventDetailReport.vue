@@ -23,12 +23,14 @@
       class="metrics-table"
       :value="formattedDataPerArea"
     >
+      <!-- eslint-disable -->
       <Column
         field="name"
         header="Name"
         footer="Gesamt:"
-        footer-style="text-align:right"
+        footerStyle="text-align:right"
       >
+      <!-- eslint-enable -->
         <template #body="{data}">
           <IonIcon
             class="icon"
