@@ -1,82 +1,81 @@
 <template>
-  <Toast />
-  <IonContent>
-    <div class="container">
-      <h2>Events</h2>
-      <div class="autocomplete">
-        <IonSelect
-          v-model="filteredCampaigns"
-          :multiple="true"
-          placeholder="Alle Kampagnen"
-          :selected-text="campaigns.filter(campaign => filteredCampaigns.includes(campaign.id)).map(campaign => campaign.name).join(', ')"
-        >
-          <IonSelectOption
-            v-for="campaign in campaigns"
-            :key="campaign.id"
-            :value="campaign.id"
+  <div class="page">
+    <IonContent>
+      <div class="container">
+        <div class="autocomplete">
+          <IonSelect
+            v-model="filteredCampaigns"
+            :multiple="true"
+            placeholder="Alle Kampagnen"
+          :selected-text="campaigns.filter(campaign => filteredCampaigns.includes(campaign.id)).map(campaign => campaign.name).join(', ')">
+            <IonSelectOption
+              v-for="campaign in campaigns"
+              :key="campaign.id"
+              :value="campaign.id"
+            >
+              {{ campaign.name }}
+            </IonSelectOption>
+          </IonSelect>
+        </div>
+        <div class="buttons">
+          <router-link
+            v-if="isManager"
+            :to="{ name: 'edit-event-details-new' }"
           >
-            {{ campaign.name }}
-          </IonSelectOption>
-        </IonSelect>
-      </div>
-      <div class="buttons">
-        <router-link
-          v-if="isManager"
-          :to="{ name: 'edit-event-details-new' }"
-        >
-          <IonButton
-            color="primary"
-          >
-            <IonIcon
-              name="add"
-            />
-            Event erstellen
-          </IonButton>
-        </router-link>
-      </div>
-      <IonList
-        v-if="events.length > 0"
-      >
-        <IonItem
-          v-for="event in events"
-          :key="event.id"
-          :button="true"
-          @click="goToEvent(event)"
-        >
-          <IonLabel>
-            <h3>{{ event.name }}</h3>
-            <p>{{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}</p>
-          </IonLabel>
-          <div
-            slot="end"
-            class="item-buttons"
-            @click="$event.stopPropagation()"
-          >
-            <router-link
-              v-if="isManager"
-              :to="{ name: 'edit-event-details', params: { id: event.id } }"
+            <IonButton
+              color="primary"
             >
               <IonIcon
-                class="edit-button"
-                name="pencil"
+                name="add"
               />
-            </router-link>
-            <IonIcon
-              v-if="isManager"
-              class="delete-button"
-              name="trash"
-              @click="$event.stopPropagation(); deleteEvent(event)"
-            />
-          </div>
-        </IonItem>
-      </IonList>
-      <div v-else>
-        <IonText color="medium">
-          Keine Events gefunden
-        </IonText>
+              Event erstellen
+            </IonButton>
+          </router-link>
+        </div>
+        <IonList
+          v-if="events.length > 0"
+        >
+          <IonItem
+            v-for="event in events"
+            :key="event.id"
+            :button="true"
+            @click="goToEvent(event)"
+          >
+            <IonLabel>
+              <h3>{{ event.name }}</h3>
+              <p>{{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}</p>
+            </IonLabel>
+            <div
+              slot="end"
+              class="item-buttons"
+              @click="$event.stopPropagation()"
+            >
+              <router-link
+                v-if="isManager"
+                :to="{ name: 'edit-event-details', params: { id: event.id } }"
+              >
+                <IonIcon
+                  class="edit-button"
+                  name="pencil"
+                />
+              </router-link>
+              <IonIcon
+                v-if="isManager"
+                class="delete-button"
+                name="trash"
+                @click="$event.stopPropagation(); deleteEvent(event)"
+              />
+            </div>
+          </IonItem>
+        </IonList>
+        <div v-else>
+          <IonText color="medium">
+            Keine Events gefunden
+          </IonText>
+        </div>
       </div>
-    </div>
-  </IonContent>
+    </IonContent>
+  </div>
 </template>
 
 <script lang="ts">
@@ -84,7 +83,8 @@ import { defineComponent } from 'vue'
 import { EventDto } from '@/api/model/EventDto.ts'
 import { CampaignDto } from '@/api/model/CampaignDto.ts'
 import {
-  IonButton, IonContent,
+  IonButton,
+  IonContent,
   IonIcon,
   IonItem,
   IonLabel,
@@ -98,7 +98,6 @@ import { addIcons } from 'ionicons'
 import { trash, pencil, add } from 'ionicons/icons'
 import ConfirmDelete from '@/components/modals/ConfirmDelete.vue'
 import { userStore } from '@/store/UserStore'
-import Toast from 'primevue/toast'
 
 addIcons({
   trash, pencil, add
@@ -115,15 +114,14 @@ export default defineComponent({
     IonItem,
     IonLabel,
     IonIcon,
-    IonContent,
-    Toast,
+    IonContent
   },
   data() {
     return {
       events: [] as EventDto[],
       filteredCampaigns: userStore.getState().campaigns,
       campaigns: [] as CampaignDto[],
-      messages: [] as any,
+      messages: [] as any
     }
   },
   computed: {
@@ -172,7 +170,7 @@ export default defineComponent({
               await this.$apiClient.events.delete(event.id.toString())
             } catch (error) {
               this.$toast.add({
-                severity:'error',
+                severity: 'error',
                 summary: `${error.statusText ? error.statusText : 'Dieser Eintrag konnte nicht gelöscht werden.'}`,
                 detail: `Fehlercode: ${error.status}`
               })

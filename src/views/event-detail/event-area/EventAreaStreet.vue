@@ -32,6 +32,7 @@ import EventAreaStreetMixin from '@/views/event-detail/event-area/EventAreaStree
 import EventAreaMixin from '@/views/event-detail/event-area/EventAreaMixin'
 import { addIcons } from 'ionicons'
 import { checkmarkCircle, chevronForward } from 'ionicons/icons'
+import { uiStore } from '@/store/UiStore'
 
 addIcons({
   'checkmark-circle': checkmarkCircle,
@@ -48,6 +49,14 @@ export default defineComponent({
     IonIcon
   },
   mixins: [EventAreaStreetMixin, EventAreaMixin],
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      uiStore.setActiveElements({
+        // @ts-ignore
+        street: vm.street
+      })
+    })
+  },
   data() {
     return {
       nextPoll: null as number | null,

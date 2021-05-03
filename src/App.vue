@@ -3,30 +3,91 @@
   <Toast position="top-right" />
   <IonApp>
     <div id="root">
-      <Topbar
-        :show-sidebar="showNavigation"
-      />
-
-      <router-view />
+      <IonHeader
+        class="header-on-top"
+      >
+        <IonToolbar>
+          <IonButtons slot="start">
+            <transition
+              :name="titleTransition"
+            >
+              <IonButton
+                v-if="currentDepth <= 2"
+                @click="openSidebar"
+              >
+                <IonIcon
+                  name="menu-outline"
+                />
+              </IonButton>
+              <IonButton
+                v-else
+                @click="$router.go(-1)"
+              >
+                <IonIcon
+                  name="arrow-back"
+                />
+              </IonButton>
+            </transition>
+          </IonButtons>
+          <div class="title-wrapper">
+            <span
+              class="shadow-title"
+              aria-hidden="true"
+            >
+              <AppTitle :title="$route.meta.title?.()" :subtitle="$route.meta.subtitle?.()" />
+            </span>
+            <transition :name="titleTransition">
+              <AppTitle
+                :key="$route.path"
+                class="title"
+                :title="$route.meta.title?.()"
+                :subtitle="$route.meta.subtitle?.()"
+              />
+            </transition>
+          </div>
+        </IonToolbar>
+      </IonHeader>
+      <div id="main">
+        <router-view v-slot="{ Component }">
+          <transition :name="pageTransition">
+            <component :is="Component" />
+          </transition>
+        </router-view>
+      </div>
     </div>
   </IonApp>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Topbar from '@/components/Topbar.vue'
 import NavigationSidebar from '@/components/NavigationSidebar.vue'
 import { uiStore } from '@/store/UiStore'
-import { IonApp } from '@ionic/vue'
+import { IonApp, IonBackButton, IonButton, IonButtons, IonHeader, IonIcon, IonTitle, IonToolbar } from '@ionic/vue'
 import Toast from 'primevue/toast'
+import { addIcons } from 'ionicons'
+import { menuOutline, arrowBack } from 'ionicons/icons'
+import AppTitle from '@/components/AppTitle.vue'
+
+
+addIcons({
+  'menu-outline': menuOutline,
+  'arrow-back': arrowBack
+})
 
 export default defineComponent({
   name: 'App',
   components: {
+    AppTitle,
     NavigationSidebar,
-    Topbar,
     IonApp,
     Toast,
+    IonToolbar,
+    IonButtons,
+    IonButton,
+    IonTitle,
+    IonIcon,
+    IonBackButton,
+    IonHeader
   },
   data() {
     return {
@@ -38,23 +99,69 @@ export default defineComponent({
         label: 'Events',
         icon: 'pi pi-fw pi-calendar',
         to: '/events'
-      }]
+      }],
+      transitionDirection: null as string | null
     }
   },
   computed: {
+    currentDepth(): number {
+      return this.$route.path.split('/').length
+    },
+    titleSet(): { title: string, subtitle: string } {
+      return {
+        title: this.$route.meta.title,
+        subtitle: this.$route.meta.subtitle
+      }
+    },
     showNavigation() {
       return uiStore.getState().showNavigation
+    },
+    pageTransition(): string {
+      if (this.transitionDirection === null) {
+        return 'fade'
+      } else {
+        return `slide-${this.transitionDirection}`
+      }
+    },
+    titleTransition(): string {
+      if (this.transitionDirection === null) {
+        return 'fade'
+      } else {
+        return `fade-${this.transitionDirection}`
+      }
+    }
+  },
+  watch: {
+    '$route'(to, from) {
+      const toDepth = to.path.split('/').length
+      const fromDepth = from.path.split('/').length
+
+      if (toDepth === fromDepth) {
+        this.transitionDirection = null
+      } else {
+        this.transitionDirection = toDepth < fromDepth ? 'right' : 'left'
+      }
+    }
+  },
+  methods: {
+    openSidebar() {
+      uiStore.openSidebar()
     }
   }
 })
 </script>
 
 <style lang="scss" scoped>
-@import 'src/scss/_globals.scss';
+@import '~@/scss/_globals.scss';
+@import "~@/scss/_page-transitions.scss";
 
 #root {
   display: flex;
   flex-direction: column;
+}
+
+.shadow-title {
+  visibility: hidden;
 }
 
 .nav {
@@ -74,5 +181,23 @@ export default defineComponent({
 .p-menubar {
   background: white;
   border: 1px solid $red;
+}
+
+#main {
+  flex: 1;
+  position: relative;
+  display: flex;
+}
+
+.header-on-top {
+  z-index: 102;
+}
+
+.title-wrapper {
+  position: relative;
+  .title {
+    top: 0;
+    position: absolute;
+  }
 }
 </style>

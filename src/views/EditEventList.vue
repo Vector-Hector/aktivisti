@@ -1,7 +1,5 @@
 <template>
   <div class="container">
-    <h2>Events</h2>
-
     <div class="autocomplete">
       <AutoComplete
         v-if="campaigns.length > 0"

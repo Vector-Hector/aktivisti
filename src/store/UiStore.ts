@@ -1,15 +1,24 @@
 import { Store } from '@/store/Store'
 
+export interface TitleElements {
+  event?: string
+  campaigns?: string
+  street?: string
+  streetNumber?: string
+}
+
 interface UiState {
-  sidebarExpanded: boolean,
+  sidebarExpanded: boolean
   showNavigation: boolean
+  activeTitleElements: TitleElements
 }
 
 class UiStore extends Store<UiState> {
   protected data(): UiState {
     return {
       sidebarExpanded: false,
-      showNavigation: true
+      showNavigation: true,
+      activeTitleElements: {}
     }
   }
 
@@ -27,6 +36,14 @@ class UiStore extends Store<UiState> {
 
   public closeSidebar() {
     this.toggleSidebar(false)
+  }
+
+  public setActiveElements(titleElements: TitleElements) {
+    this.state.activeTitleElements =
+      {
+        ...this.state.activeTitleElements,
+        ...titleElements
+      }
   }
 }
 

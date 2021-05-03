@@ -1,12 +1,11 @@
 <template>
   <div class="container">
-    <h2>Meine Veranstaltungen</h2>
     <IonList>
       <div
         v-if="eventParticipations.length <= 0"
         class="placeholder"
       >
-        <IonText>Du nimmst an keinen Events teil - suche jetzt welche!</IonText>
+        <IonText>Du nimmst an keinen Veranstaltungen teil - suche jetzt welche!</IonText>
         <router-link
           :to="{ name: 'events-map' }"
         >

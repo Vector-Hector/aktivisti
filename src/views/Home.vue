@@ -1,5 +1,5 @@
 <template>
-  <IonContent>
+  <div class="page">
     <div class="container">
       <h2>Veranstaltungen in deiner Nähe</h2>
       <div class="autocomplete">
@@ -48,7 +48,7 @@
         </Popup>
       </Marker>
     </Map>
-  </IonContent>
+  </div>
 </template>
 
 <script lang="ts">
@@ -73,14 +73,13 @@ export default defineComponent({
     Popup,
     Map,
     Marker,
-    Button,
-    IonContent,
+    Button
     IonSelect,
     IonSelectOption
   },
   beforeRouteEnter(to, from, next) {
     if (userStore.getState().location == null) {
-      next({ name: 'splash' })
+      next({name: 'splash'})
     }
     next()
   },

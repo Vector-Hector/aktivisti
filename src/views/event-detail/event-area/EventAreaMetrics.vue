@@ -1,10 +1,4 @@
 <template>
-  <h2 class="headline">
-    Ergebnisse für
-  </h2>
-  <h3 class="address-headline">
-    {{ addressLabel }}
-  </h3>
   <router-link
     :to="{ name: 'create-lead', query: {eventArea: eventArea.id} }"
   >
@@ -41,6 +35,7 @@ import { MetricValueMap, trackingSessionStore } from '@/store/TrackingSessionSto
 import { IonButton, IonGrid, IonText } from '@ionic/vue'
 import MetricsRow from '@/components/MetricsRow.vue'
 import EventAreaMetricsMixin from '@/views/event-detail/event-area/EventAreaMetricsMixin'
+import { uiStore } from '@/store/UiStore'
 
 
 export default defineComponent({
@@ -52,6 +47,14 @@ export default defineComponent({
     IonButton
   },
   mixins: [EventAreaMetricsMixin],
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      uiStore.setActiveElements({
+        // @ts-ignore
+        streetNumber: vm.addressLabel
+      })
+    })
+  },
   data() {
     return {
       metricRecords: [] as EventMetricRecordDto[],

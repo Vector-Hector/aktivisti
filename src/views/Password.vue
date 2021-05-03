@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <h2>Passwort vergessen?</h2>
     <div>
       Gib deine E-Mail-Adresse ein und wir senden dir einen Link, um wieder zu deinem Konto zu gelangen.
     </div>

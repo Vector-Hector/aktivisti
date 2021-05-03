@@ -75,6 +75,7 @@ import EventAreaMixin from '@/views/event-detail/event-area/EventAreaMixin'
 import { userStore } from '@/store/UserStore'
 import { EventParticipationDto } from '@/api/model/EventParticipationDto'
 import { isEqual } from 'lodash-es'
+import { uiStore } from '@/store/UiStore'
 
 export default defineComponent({
   name: 'EventAreaOverview',
@@ -89,6 +90,14 @@ export default defineComponent({
     IonButtons
   },
   mixins: [EventAreaMixin],
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      uiStore.setActiveElements({
+        // @ts-ignore
+        eventArea: vm.eventArea.name,
+      })
+    })
+  },
   props: {
     participations: {
       type: Array as PropType<EventParticipationDto[]>,
