@@ -38,7 +38,7 @@ class UiStore extends Store<UiState> {
     this.toggleSidebar(false)
   }
 
-  public setActiveElements(titleElements: TitleElements) {
+  public updateActiveElements(titleElements: TitleElements) {
     this.state.activeTitleElements =
       {
         ...this.state.activeTitleElements,

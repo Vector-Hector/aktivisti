@@ -107,12 +107,6 @@ export default defineComponent({
     currentDepth(): number {
       return this.$route.path.split('/').length
     },
-    titleSet(): { title: string, subtitle: string } {
-      return {
-        title: this.$route.meta.title,
-        subtitle: this.$route.meta.subtitle
-      }
-    },
     showNavigation() {
       return uiStore.getState().showNavigation
     },

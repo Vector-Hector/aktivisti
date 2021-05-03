@@ -6,7 +6,7 @@
       {{ subtitle }}
     </IonTitle>
     <IonTitle>
-      {{ title ?? 'Wahlkampf-App' }}
+      {{ title }}
     </IonTitle>
   </div>
 </template>
@@ -25,7 +25,7 @@ export default defineComponent({
     title: {
       type: String as PropType<string>,
       required: false,
-      default: undefined
+      default: 'Wahlkampf App'
     },
     subtitle: {
       type: String as PropType<string>,
