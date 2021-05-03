@@ -5,11 +5,13 @@ import { CAMPAIGN_ADMIN, UserDto } from '@/api/model/UserDto'
 interface UserState {
   user: UserDto | null,
   location: LocationDto | null,
-  zoom: number | null
+  zoom: number | null,
+  campaigns: number[] | null
 }
 
 const KEY_LOCATION = 'LOCATION'
 const KEY_ZOOM = 'KEY_ZOOM'
+const KEY_CAMPAIGN = 'KEY_CAMPAIGN'
 
 class UserStore extends Store<UserState> {
   protected data(): UserState {
@@ -26,10 +28,14 @@ class UserStore extends Store<UserState> {
     const zoomString = localStorage.getItem(KEY_ZOOM)
     const zoom = zoomString ? parseInt(zoomString) : null
 
+    const campaignsString = localStorage.getItem(KEY_CAMPAIGN)
+    const campaigns = campaignsString ? JSON.parse(campaignsString) : null
+
     return {
       user: null,
       location,
-      zoom
+      zoom,
+      campaigns
     }
   }
 
@@ -42,6 +48,11 @@ class UserStore extends Store<UserState> {
     if (zoom) {
       localStorage.setItem(KEY_ZOOM, zoom.toString())
     }
+  }
+
+  public setCampaigns(campaigns: number[] | null) {
+    this.state.campaigns = campaigns
+    localStorage.setItem(KEY_CAMPAIGN, JSON.stringify(campaigns))
   }
 
   public clearUser() {
