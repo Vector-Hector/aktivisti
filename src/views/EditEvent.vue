@@ -42,7 +42,7 @@ export default defineComponent({
     if (to.params.id) {
       const eventRequest = await apiClient.events.get(to.params.id as string, ['metrics'])
       next((vm: any) => {
-        uiStore.setActiveElements({
+        uiStore.updateActiveElements({
           event: eventRequest.payload.data.name
         })
         vm.event = eventRequest.payload.data

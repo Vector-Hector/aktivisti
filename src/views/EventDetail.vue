@@ -76,7 +76,7 @@ export default defineComponent({
       vm.event = event
       //@ts-ignore
       vm.campaigns = campaigns
-      uiStore.setActiveElements({
+      uiStore.updateActiveElements({
         // @ts-ignore
         event: vm.event.name,
         campaigns: campaigns.map(({name}) => name).join(',')

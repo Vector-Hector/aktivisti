@@ -49,7 +49,7 @@ export default defineComponent({
   mixins: [EventAreaMetricsMixin],
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      uiStore.setActiveElements({
+      uiStore.updateActiveElements({
         // @ts-ignore
         streetNumber: vm.addressLabel
       })

@@ -92,7 +92,7 @@ export default defineComponent({
   mixins: [EventAreaMixin],
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      uiStore.setActiveElements({
+      uiStore.updateActiveElements({
         // @ts-ignore
         eventArea: vm.eventArea.name,
       })

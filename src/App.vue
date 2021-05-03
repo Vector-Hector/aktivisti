@@ -34,7 +34,10 @@
               class="shadow-title"
               aria-hidden="true"
             >
-              <AppTitle :title="$route.meta.title?.()" :subtitle="$route.meta.subtitle?.()" />
+              <AppTitle
+                :title="$route.meta.title?.()"
+                :subtitle="$route.meta.subtitle?.()"
+              />
             </span>
             <transition :name="titleTransition">
               <AppTitle

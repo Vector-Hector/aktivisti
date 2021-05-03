@@ -61,7 +61,6 @@ import { userStore } from '@/store/UserStore'
 import Button from 'primevue/button'
 import { LocationDto } from '@/api/model/LocationDto'
 import {
-  IonContent,
   IonSelect,
   IonSelectOption
 } from '@ionic/vue'

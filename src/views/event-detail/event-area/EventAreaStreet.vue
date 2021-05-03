@@ -51,7 +51,7 @@ export default defineComponent({
   mixins: [EventAreaStreetMixin, EventAreaMixin],
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      uiStore.setActiveElements({
+      uiStore.updateActiveElements({
         // @ts-ignore
         street: vm.street
       })
