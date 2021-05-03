@@ -43,6 +43,7 @@ import { makeServer } from '../mocks/server'
 import { apiClient } from '@/api/ApiClient'
 import { tokenStore } from '@/store/TokenStore'
 
+import './validate-rules'
 
 if (process.env.VUE_APP_ENABLE_MOCKS === 'true') {
   makeServer()
@@ -53,7 +54,6 @@ const app = createApp(App)
   .use(router)
   .use(PrimeVue)
   .use(ToastService)
-
 
 app.config.globalProperties.$apiClient = apiClient
 app.config.globalProperties.$oauth2Client = oAuth2Client
