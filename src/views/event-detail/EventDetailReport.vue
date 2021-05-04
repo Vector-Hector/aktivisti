@@ -1,82 +1,61 @@
 <template>
-  <IonGrid class="full-width">
-    <IonRow>
-      <IonCol
-        class="ion-align-items-center d-flex"
-      >
-        <span
-          v-if="campaigns"
-          class="campaigns"
-        >
-          {{ campaigns.map(({name}) => name).join(',') }}
-        </span>
-      </IonCol>
-    </IonRow>
-    <IonRow>
-      <IonCol>
-        <h2 class="event-name">
-          {{ event.name }}
-        </h2>
-      </IonCol>
-    </IonRow>
-    <DataTable
-      class="metrics-table"
-      :value="formattedDataPerArea"
-    >
-      <!-- eslint-disable -->
+  <DataTable
+    class="metrics-table"
+    :value="formattedDataPerArea"
+  >
+    <!-- eslint-disable -->
       <Column
-        field="name"
-        header="Name"
-        footer="Gesamt:"
-        footerStyle="text-align:right"
-      >
+      field="name"
+      header="Name"
+      footer="Gesamt:"
+      footerStyle="text-align:right"
+    >
       <!-- eslint-enable -->
-        <template #body="{data}">
-          <IonIcon
-            class="icon"
-            :style="{
+      <template #body="{data}">
+        <IonIcon
+          class="icon"
+          :style="{
               color: data.color
             }"
-            name="ellipse"
-          />
-          <span> {{ data.name }}</span>
-        </template>
-      </Column>
-      <Column
-        v-for="item of metricsWithName"
-        :key="item.id"
-        :field="item.id.toString()"
-        :header="item.name"
-        :footer="sumColumn(item.id.toString())"
-        style="text-align:right"
-      />
-      <Column
-        field="completed_addresses"
-        header="Besuchte Adressen"
-        style="text-align:right"
-        :footer="sumColumn('completed_addresses')"
-      />
-      <Column
-        field="overall_addresses"
-        header="Adressen im Gebiet"
-        style="text-align:right"
-        :footer="sumColumn('overall_addresses')"
-      />
-    </DataTable>
-  </IonGrid>
+          name="ellipse"
+        />
+        <span> {{ data.name }}</span>
+      </template>
+    </Column>
+    <Column
+      v-for="item of metricsWithName"
+      :key="item.id"
+      :field="item.id.toString()"
+      :header="item.name"
+      :footer="sumColumn(item.id.toString())"
+      style="text-align:right"
+    />
+    <Column
+      field="completed_addresses"
+      header="Besuchte Adressen"
+      style="text-align:right"
+      :footer="sumColumn('completed_addresses')"
+    />
+    <Column
+      field="overall_addresses"
+      header="Adressen im Gebiet"
+      style="text-align:right"
+      :footer="sumColumn('overall_addresses')"
+    />
+  </DataTable>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType} from "vue";
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import { EventDto } from '@/api/model/EventDto';
-import {EventMetricReportDto} from "@/api/model/EventMetricReportDto";
-import {EventMetricDto} from "@/api/model/EventMetricDto";
-import {EventMetricRecordDto} from "@/api/model/EventMetricRecordDto";
-import {IonCol, IonGrid, IonIcon,IonRow} from "@ionic/vue";
-import {CampaignDto} from "@/api/model/CampaignDto";
-import {EventAreaDto} from "@/api/model/EventAreaDto";
+import { defineComponent, PropType } from 'vue'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import { EventDto } from '@/api/model/EventDto'
+import { EventMetricReportDto } from '@/api/model/EventMetricReportDto'
+import { EventMetricDto } from '@/api/model/EventMetricDto'
+import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
+import { IonCol, IonGrid, IonIcon, IonRow } from '@ionic/vue'
+import { CampaignDto } from '@/api/model/CampaignDto'
+import { EventAreaDto } from '@/api/model/EventAreaDto'
 
 interface FormattedAreaData {
   id: number,
@@ -84,6 +63,7 @@ interface FormattedAreaData {
   completed_addresses: number,
   name: string,
   overall_addresses: number,
+
   // These keys will be used for dynamic metric ids
   [key: string]: any,
 }
@@ -98,12 +78,8 @@ export default defineComponent({
   components: {
     Column,
     DataTable,
-    IonCol,
-    IonIcon,
-    IonGrid,
-    IonRow
+    IonIcon
   },
-
   props: {
     campaigns: {
       type: Object as PropType<CampaignDto[]>,
@@ -125,13 +101,13 @@ export default defineComponent({
     }
   },
   async created() {
-    const { metrics } = await this.fetchMetricRecords();
+    const {metrics} = await this.fetchMetricRecords()
     this.metricsWithName = metrics
 
-    for (const { id, color, name } of this.eventAreas ) {
+    for (const {id, color, name} of this.eventAreas) {
       if (id) {
-        const { completed_addresses, overall_addresses, counts_per_metric } = await this.fetchAreaMetricsReports(id)
-        const areaData : FormattedAreaData = {
+        const {completed_addresses, overall_addresses, counts_per_metric} = await this.fetchAreaMetricsReports(id)
+        const areaData: FormattedAreaData = {
           id,
           color,
           completed_addresses,
@@ -146,13 +122,13 @@ export default defineComponent({
     }
   },
   methods: {
-    async fetchAreaMetricsReports(areaId: number): Promise<EventMetricReportDto>{
+    async fetchAreaMetricsReports(areaId: number): Promise<EventMetricReportDto> {
       const response = await this.$apiClient.eventAreas.report(areaId)
       return response.payload.data
     },
-    async fetchMetricRecords(): Promise<{records: EventMetricRecordDto[], metrics: EventMetricDto[]}>{
+    async fetchMetricRecords(): Promise<{ records: EventMetricRecordDto[], metrics: EventMetricDto[] }> {
       const response = await this.$apiClient.eventMetricRecords.list({event: this.event.id}, ['metric'])
-      return  {records: response.payload.data, metrics: response.payload.embedded.metric}
+      return {records: response.payload.data, metrics: response.payload.embedded.metric}
     },
     sumColumn(columnName: string): number {
       return this.formattedDataPerArea.map((row) => row[columnName]).reduce((a, b) => a + b, 0)

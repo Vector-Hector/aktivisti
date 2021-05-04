@@ -1,7 +1,6 @@
 <template>
   <IonContent>
     <div class="container">
-      <h2>Als Interessent*in registrieren</h2>
       <Form
         v-slot="{ errors }"
         @submit="saveLead()"

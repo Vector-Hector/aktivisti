@@ -1,13 +1,12 @@
 <template>
-  <IonContent>
+  <div class="page">
     <div class="container">
-      <h2>Veranstaltungen in deiner Nähe</h2>
       <div class="autocomplete">
         <IonSelect
           v-model="filteredCampaigns"
           :multiple="true"
           placeholder="Alle Kampagnen"
-          :selected-text="campaigns.filter(campaign => filteredCampaigns.includes(campaign.id)).map(campaign => campaign.name).join(', ')"
+          :selected-text="campaigns.filter(campaign => filteredCampaigns?.includes(campaign.id)).map(campaign => campaign.name).join(', ')"
         >
           <IonSelectOption
             v-for="campaign in campaigns"
@@ -48,7 +47,7 @@
         </Popup>
       </Marker>
     </Map>
-  </IonContent>
+  </div>
 </template>
 
 <script lang="ts">
@@ -62,7 +61,6 @@ import { userStore } from '@/store/UserStore'
 import Button from 'primevue/button'
 import { LocationDto } from '@/api/model/LocationDto'
 import {
-  IonContent,
   IonSelect,
   IonSelectOption
 } from '@ionic/vue'
@@ -74,13 +72,12 @@ export default defineComponent({
     Map,
     Marker,
     Button,
-    IonContent,
     IonSelect,
     IonSelectOption
   },
   beforeRouteEnter(to, from, next) {
     if (userStore.getState().location == null) {
-      next({ name: 'splash' })
+      next({name: 'splash'})
     }
     next()
   },

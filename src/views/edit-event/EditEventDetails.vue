@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <h2>Neues Event hinzufügen</h2>
     <Form
       v-slot="{ errors }"
       @submit="saveAndProceed()"

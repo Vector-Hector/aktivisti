@@ -1,35 +1,37 @@
 <template>
-  <div
-    v-if="event !== null && loading === false"
-    class="event"
-  >
-    <IonContent
-      class="content"
+  <div class="page">
+    <div
+      v-if="event !== null && loading === false"
+      class="event"
     >
-      <div class="container">
-        <router-view
-          v-model:event="event"
-          v-model:eventAreas="eventAreas"
-          v-model:participations="participations"
-          :campaigns="campaigns"
-        />
-      </div>
-    </IonContent>
-    <div class="map-container">
-      <Map
-        v-if="eventAreas"
-        ref="map"
-        :zoom="15"
-        :center="event.location.center"
-        :zoom-box="zoomBox"
-        :animate="false"
+      <IonContent
+        class="content"
       >
-        <router-view
-          :event="event"
-          :event-areas="eventAreas"
-          name="map"
-        />
-      </Map>
+        <div class="container">
+          <router-view
+            v-model:event="event"
+            v-model:eventAreas="eventAreas"
+            v-model:participations="participations"
+            :campaigns="campaigns"
+          />
+        </div>
+      </IonContent>
+      <div class="map-container">
+        <Map
+          v-if="eventAreas"
+          ref="map"
+          :zoom="15"
+          :center="event.location.center"
+          :zoom-box="zoomBox"
+          :animate="false"
+        >
+          <router-view
+            :event="event"
+            :event-areas="eventAreas"
+            name="map"
+          />
+        </Map>
+      </div>
     </div>
   </div>
 </template>
@@ -48,6 +50,8 @@ import { BBox, Feature } from 'geojson'
 import { bbox, circle } from '@turf/turf'
 import { EventParticipationDto } from '@/api/model/EventParticipationDto'
 import { apiClient } from '@/api/ApiClient'
+import { CampaignDto } from '@/api/model/CampaignDto'
+import { uiStore } from '@/store/UiStore'
 
 addIcons({
   ellipse,
@@ -62,9 +66,21 @@ export default defineComponent({
   },
   async beforeRouteEnter(to, from, next) {
     const participations = (await apiClient.eventParticipations.list({event: to.params.id})).payload.data
+    const eventRequest = (await apiClient.events.get(to.params.id.toString(), ['campaigns']))
+    const event = eventRequest.payload.data
+    const campaigns = eventRequest.payload.embedded.campaigns as CampaignDto[]
     next(vm => {
       //@ts-ignore
       vm.participations = participations
+      //@ts-ignore
+      vm.event = event
+      //@ts-ignore
+      vm.campaigns = campaigns
+      uiStore.updateActiveElements({
+        // @ts-ignore
+        event: vm.event.name,
+        campaigns: campaigns.map(({name}) => name).join(',')
+      })
     })
   },
   props: {
@@ -117,22 +133,13 @@ export default defineComponent({
     }
   },
   async created() {
-    await this.getEvent()
     await this.getEventAreas()
 
     this.loading = false
   },
   methods: {
-    async getEvent() {
-      const eventRequest = (await this.$apiClient.events.get(this.id, ['campaigns']))
-      this.event = eventRequest.payload.data
-      this.campaigns = eventRequest.payload.embedded.campaigns
-    },
-
     async getEventAreas() {
-      if (this.event) {
-        this.eventAreas = (await this.$apiClient.eventAreas.list({event: this.event.id})).payload.data
-      }
+      this.eventAreas = (await this.$apiClient.eventAreas.list({event: this.id})).payload.data
     }
   }
 })
@@ -148,6 +155,7 @@ label {
 
 .event {
   display: flex;
+  flex: 1;
   flex-direction: column;
   height: 100%;
 }

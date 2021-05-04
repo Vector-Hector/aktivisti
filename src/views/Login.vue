@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <h2>Login</h2>
     <Form
       v-slot="{ errors, setFieldError }"
       @submit="login"

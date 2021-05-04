@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <h2>Anmelden</h2>
     <Form
       v-slot="{ errors }"
       @submit="register()"

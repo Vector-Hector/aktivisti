@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from '@ionic/vue-router'
 
 import Home from '@/views/Home.vue'
 import Events from '@/views/Events.vue'
@@ -27,8 +27,8 @@ import EventDetailArea from '@/views/event-detail/EventDetailArea.vue'
 import EventAreaOverviewMap from '@/views/event-detail/event-area/EventAreaOverviewMap.vue'
 import EventAreaStreetMap from '@/views/event-detail/event-area/EventAreaStreetMap.vue'
 import MyEvents from '@/views/MyEvents.vue'
-import EventDetailReport from "@/views/event-detail/EventDetailReport.vue";
-
+import EventDetailReport from '@/views/event-detail/EventDetailReport.vue'
+import { uiStore } from '@/store/UiStore'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -42,29 +42,45 @@ const router = createRouter({
       path: '/create-lead',
       name: 'create-lead',
       component: CreateLead,
-      props: route => ({ eventAreaId: route.query.eventArea ? parseInt(route.query.eventArea as string) : undefined })
+      props: route => ({eventAreaId: route.query.eventArea ? parseInt(route.query.eventArea as string) : undefined}),
+      meta: {
+        title: () => 'Bei Linksaktiv anmelden'
+      }
     },
     {
       path: '/map',
       component: Home,
       name: 'events-map',
+      meta: {
+        title: () => 'Karte'
+      }
     },
     {
       path: '/events',
       component: Events,
-      name: 'events'
+      name: 'events',
+      meta: {
+        title: () => 'Veranstaltungen'
+      }
     },
     {
       path: '/my-events',
       component: MyEvents,
-      name: 'my-events'
+      name: 'my-events',
+      meta: {
+        title: () => 'Meine Veranstaltungen'
+      }
     },
     {
       path: '/events/:id',
       name: 'event-detail',
       component: EventDetail,
-      redirect: { name: 'event-detail-overview' },
+      redirect: {name: 'event-detail-overview'},
       props: true,
+      meta: {
+        title: () => uiStore.getState().activeTitleElements.event,
+        subtitle: () => uiStore.getState().activeTitleElements.campaigns
+      },
       children: [
         {
           path: 'overview',
@@ -73,7 +89,7 @@ const router = createRouter({
             default: EventDetailOverview,
             map: EventDetailOverviewMap
           },
-          props: true,
+          props: true
         },
         {
           path: 'report',
@@ -81,17 +97,25 @@ const router = createRouter({
             default: EventDetailReport,
             map: EventDetailOverviewMap
           },
-          name: 'event-detail-report'
+          name: 'event-detail-report',
+          meta: {
+            title: () => 'Ergebnisse',
+            subtitle: () => uiStore.getState().activeTitleElements.event
+          }
         },
         {
           path: 'area/:areaId',
           name: 'event-detail-area',
-          redirect: { name: 'event-detail-area-overview' },
+          redirect: {name: 'event-detail-area-overview'},
           components: {
             default: EventDetailArea,
             map: EventDetailAreaMap
           },
           props: true,
+          meta: {
+            title: () => 'Aktionsgebiete',
+            subtitle: () => uiStore.getState().activeTitleElements.event
+          },
           children: [
             {
               path: '',
@@ -108,6 +132,10 @@ const router = createRouter({
                 default: EventAreaStreet,
                 map: EventAreaStreetMap
               },
+              meta: {
+                title: () => 'Adressen',
+                subtitle: () => uiStore.getState().activeTitleElements.street
+              },
               props: true,
               name: 'event-detail-area-street'
             },
@@ -116,6 +144,10 @@ const router = createRouter({
               components: {
                 default: EventAreaMetrics,
                 map: EventAreaMetricsMap
+              },
+              meta: {
+                title: () => 'Metriken aufnehmen',
+                subtitle: () => uiStore.getState().activeTitleElements.streetNumber
               },
               props: true,
               name: 'event-detail-area-metrics'
@@ -133,6 +165,9 @@ const router = createRouter({
       path: '/events/edit/new',
       component: EditEvent,
       redirect: {name: 'edit-event-details-new'},
+      meta: {
+        title: () => 'Veranstaltung erstellen'
+      },
       children: [
         {
           path: 'details',
@@ -146,6 +181,10 @@ const router = createRouter({
       component: EditEvent,
       redirect: {name: 'edit-event-details'},
       props: true,
+      meta: {
+        subtitle: () => uiStore.getState().activeTitleElements.event,
+        title: () => 'Veranstaltung bearbeiten'
+      },
       children: [
         {
           path: 'details',
@@ -196,15 +235,24 @@ const router = createRouter({
       name: 'login',
       props: (route) => ({
         next: route.query.next
-      })
+      }),
+      meta: {
+        title: () => 'Einloggen'
+      }
     },
     {
       path: '/register',
-      component: Register
+      component: Register,
+      meta: {
+        title: () => 'Registrieren'
+      }
     },
     {
       path: '/password',
-      component: Password
+      component: Password,
+      meta: {
+        title: () => 'Passwort zurücksetzen'
+      }
     }
   ]
 })
@@ -219,6 +267,5 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
-
 
 export default router

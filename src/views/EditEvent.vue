@@ -1,18 +1,20 @@
 <template>
-  <div class="edit-event">
-    <Steps
-      :model="steps"
-      :readonly="false"
-    />
-    <router-view
-      v-slot="{Component}"
-      v-model:event="event"
-      :campaigns="campaigns"
-    >
-      <keep-alive>
-        <component :is="Component" />
-      </keep-alive>
-    </router-view>
+  <div class="page">
+    <div class="edit-event">
+      <Steps
+        :model="steps"
+        :readonly="false"
+      />
+      <router-view
+        v-slot="{Component}"
+        v-model:event="event"
+        :campaigns="campaigns"
+      >
+        <keep-alive>
+          <component :is="Component" />
+        </keep-alive>
+      </router-view>
+    </div>
   </div>
 </template>
 
@@ -25,6 +27,7 @@ import Steps from 'primevue/steps'
 import { RouteParams } from 'vue-router'
 import { apiClient } from '@/api/ApiClient'
 import { CampaignDto } from '@/api/model/CampaignDto'
+import { uiStore } from '@/store/UiStore'
 
 /**
  * The parent component implementing the individual steps for creating an event
@@ -39,6 +42,9 @@ export default defineComponent({
     if (to.params.id) {
       const eventRequest = await apiClient.events.get(to.params.id as string, ['metrics'])
       next((vm: any) => {
+        uiStore.updateActiveElements({
+          event: eventRequest.payload.data.name
+        })
         vm.event = eventRequest.payload.data
         vm.campaigns = campaignRequest.payload.data
         vm.metricRecords = eventRequest.payload.embedded.metrics
@@ -86,7 +92,7 @@ export default defineComponent({
       }, {
         label: 'Gebiete',
         to: this.resolveIfEventId({
-          name: 'edit-event-routes'
+          name: 'edit-event-routes',
         }),
         disabled: !this.event.location || !this.event.id
       }]
@@ -106,7 +112,7 @@ export default defineComponent({
           params: {
             ...location.params,
             id: this.id ?? undefined
-          }
+          },
         })?.path
       } else {
         return ''

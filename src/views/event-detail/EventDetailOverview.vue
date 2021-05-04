@@ -2,16 +2,6 @@
   <IonGrid class="full-width">
     <IonRow>
       <IonCol
-        class="ion-align-items-center d-flex"
-      >
-        <span
-          v-if="campaigns"
-          class="campaigns"
-        >
-          {{ campaigns.map(({name}) => name).join(',') }}
-        </span>
-      </IonCol>
-      <IonCol
         v-if="isCampaignAdmin"
         size="auto"
         class="ion-align-self-end"
@@ -32,13 +22,6 @@
             <IonIcon name="pencil" />
           </IonButton>
         </router-link>
-      </IonCol>
-    </IonRow>
-    <IonRow>
-      <IonCol>
-        <h2 class="event-name">
-          {{ event.name }}
-        </h2>
       </IonCol>
     </IonRow>
 
