@@ -18,9 +18,18 @@ export default defineComponent({
       required: true
     }
   },
+  emits: ['update:eventAreas'],
   computed: {
-    eventArea(): EventAreaDto {
-      return this.eventAreas.find(({id}) => id === parseInt(this.areaId))!
+    eventArea: {
+      get(): EventAreaDto {
+        return this.eventAreas.find(({id}) => id === parseInt(this.areaId))!
+      },
+      set(value: EventAreaDto) {
+        this.$emit('update:eventAreas', [
+          ...this.eventAreas.filter(({id}) => id !== value.id),
+          value
+        ])
+      }
     }
   }
 })

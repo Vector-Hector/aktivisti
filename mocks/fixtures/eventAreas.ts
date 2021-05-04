@@ -15,6 +15,7 @@ export const sampleEventAreas: EventAreaDto[] = [{
         [100.0, 1.0], [100.0, 0.0]]
     ]
   },
+  is_completed: false,
   area_details: sampleAreaDetails
 }, {
   id: 2,
@@ -29,6 +30,7 @@ export const sampleEventAreas: EventAreaDto[] = [{
         [100.0, 1.0], [100.0, 0.0]]
     ]
   },
+  is_completed: false,
   area_details: sampleAreaDetails
 }, {
   id: 3,
@@ -43,5 +45,6 @@ export const sampleEventAreas: EventAreaDto[] = [{
         [100.0, 1.0], [100.0, 0.0]]
     ]
   },
+  is_completed: false,
   area_details: sampleAreaDetails
 }]

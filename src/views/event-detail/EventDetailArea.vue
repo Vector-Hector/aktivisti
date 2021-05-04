@@ -1,7 +1,7 @@
 <template>
   <router-view
     v-slot="{Component}"
-    :event-area="eventArea"
+    v-model:event-area="eventArea"
     :event="event"
   >
     <keep-alive>

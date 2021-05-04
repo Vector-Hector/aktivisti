@@ -6,8 +6,9 @@ export interface EventAreaDto {
   id?: number
   name: string
   color: string
-  event: number,
-  feature_id: string,
+  event: number
+  feature_id: string
   geometry: Geometry
+  is_completed: boolean
   area_details?: AreaDetailsDto
 }
