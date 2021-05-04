@@ -210,7 +210,9 @@ export default defineComponent({
       const confirmationAlert = await alertController
         .create({
           header: 'Aktionsgebiet erledigt',
-          message: `Das Aktionsgebiet ${this.eventArea.id} als erledigt markieren?`,
+          message: this.eventArea.is_completed
+            ? `Das Aktionsgebiet ${this.eventArea.id} als <b>offen</b> markieren?`
+            :`Das Aktionsgebiet ${this.eventArea.id} als <b>erledigt</b> markieren?`,
           buttons: [
             {
               text: 'Cancel',

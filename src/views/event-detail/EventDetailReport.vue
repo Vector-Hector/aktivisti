@@ -4,7 +4,7 @@
     :value="formattedDataPerArea"
   >
     <!-- eslint-disable -->
-      <Column
+    <Column
       field="name"
       header="Name"
       footer="Gesamt:"
@@ -15,8 +15,8 @@
         <IonIcon
           class="icon"
           :style="{
-              color: data.color
-            }"
+            color: data.color
+          }"
           name="ellipse"
         />
         <span> {{ data.name }}</span>
@@ -53,7 +53,7 @@ import { EventDto } from '@/api/model/EventDto'
 import { EventMetricReportDto } from '@/api/model/EventMetricReportDto'
 import { EventMetricDto } from '@/api/model/EventMetricDto'
 import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
-import { IonCol, IonGrid, IonIcon, IonRow } from '@ionic/vue'
+import { IonIcon } from '@ionic/vue'
 import { CampaignDto } from '@/api/model/CampaignDto'
 import { EventAreaDto } from '@/api/model/EventAreaDto'
 
