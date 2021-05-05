@@ -199,12 +199,20 @@ const router = createRouter({
               path: 'location',
               component: EditEventMapLocation,
               name: 'edit-event-location',
-              props: true
+              props: true,
+              meta: {
+                subtitle: () => uiStore.getState().activeTitleElements.event,
+                title: () => 'Treffpunkt festlegen'
+              }
             },
             {
               path: 'route-planner',
               component: EditEventMapRoutes,
-              name: 'edit-event-routes'
+              name: 'edit-event-routes',
+              meta: {
+                subtitle: () => uiStore.getState().activeTitleElements.event,
+                title: () => 'Aktionsgebiete zeichnen'
+              }
             }
           ]
         }

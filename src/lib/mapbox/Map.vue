@@ -1,21 +1,29 @@
 <template>
   <div
-    id="map"
-    ref="mapContainer"
-    class="map"
+    class="drop-container"
+    @drop="onDrop"
+    @dragover.prevent
   >
-    <slot v-if="initialized" />
+    <div
+      id="map"
+      ref="mapContainer"
+      class="map"
+    >
+      <slot v-if="initialized" />
+    </div>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, provide, InjectionKey, PropType, ref, Ref, onMounted, watch } from 'vue'
-import mapboxgl from 'mapbox-gl'
+import mapboxgl, { Point } from 'mapbox-gl'
 import { LocationDto } from '@/api/model/LocationDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import { TinyEmitter } from 'tiny-emitter'
 import { isEqual } from 'lodash-es'
 
 
 export const MapInject: InjectionKey<Ref<mapboxgl.Map>> = Symbol()
+export const MapEventBus = new TinyEmitter()
 
 export default defineComponent({
   name: 'Map',
@@ -39,7 +47,7 @@ export default defineComponent({
       default: undefined
     }
   },
-  emits: ['update:zoom', 'update:center', 'update:zoom'],
+  emits: ['update:zoom', 'update:center', 'update:zoom', 'drop'],
   setup(props, {emit}) {
     mapboxgl.accessToken = process.env.VUE_APP_MAPBOX_TOKEN
     const map = ref<mapboxgl.Map | null>(null)
@@ -53,19 +61,24 @@ export default defineComponent({
     })
 
     watch(() => props.zoom, (newZoom) => {
-      map.value?.setZoom(newZoom, { animate: props.animate })
+      map.value?.setZoom(newZoom, {animate: props.animate})
     })
 
     watch(() => props.zoomBox, (newBox) => {
       if (newBox) {
-        map.value?.fitBounds(newBox, {padding: 20, animate: props.animate })
+        map.value?.fitBounds(newBox, {padding: 20, animate: props.animate})
       }
     }, {immediate: true})
 
     const fitBounds = (...args: any) => {
-      map.value?.fitBounds(args, { animate: props.animate })
+      map.value?.fitBounds(args, {animate: props.animate})
     }
 
+    const emitWithBus = (type: string, event: any) => {
+      // @ts-ignore
+      emit(type, event)
+      MapEventBus.emit(type, event)
+    }
     onMounted(() => {
       map.value = new mapboxgl.Map({
         container: 'map',
@@ -81,17 +94,32 @@ export default defineComponent({
         initialized.value = true
       })
       map.value.on('zoom', () => {
-        emit('update:zoom', map.value?.getZoom())
+        emitWithBus('update:zoom', map.value?.getZoom())
       })
       map.value.on('moveend', () => {
-        emit('update:center', map.value?.getCenter())
+        emitWithBus('update:center', map.value?.getCenter())
       })
 
       map.value.on('zoomend', () => {
-        emit('update:zoom', map.value?.getZoom())
+        emitWithBus('update:zoom', map.value?.getZoom())
       })
     })
+
+    const onDrop = (event: any) => {
+      const rect = mapContainer.value!.getBoundingClientRect()
+      const cursorPosition = new Point(
+        event.clientX - rect.left - mapContainer.value!.clientLeft,
+        event.clientY - rect.top - mapContainer.value!.clientTop
+      )
+      emitWithBus('drop', {
+        originalEvent: event,
+        coordinates: map.value!.unproject(cursorPosition)
+      })
+    }
+
     return {
+      map,
+      onDrop,
       initialized,
       mapContainer,
       fitBounds
@@ -104,5 +132,9 @@ export default defineComponent({
 .map {
   height: 100%;
   width: 100%;
+}
+
+.drop-container {
+  flex: 1;
 }
 </style>

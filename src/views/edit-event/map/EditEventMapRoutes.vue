@@ -11,7 +11,7 @@
     @draw:delete="handleDeletedFeatures"
   />
   <Marker
-    :location="event.location.center"
+    :location="event.location"
   />
   <MapOverlay
     position="top-left"

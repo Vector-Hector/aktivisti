@@ -28,7 +28,7 @@
       <Marker
         v-for="event in events"
         :key="event.id"
-        :location="event.location.center"
+        :location="event.location"
       >
         <Popup>
           <div class="popup-contents">

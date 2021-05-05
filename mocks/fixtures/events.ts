@@ -8,11 +8,10 @@ export const sampleEvents: EventDto[] = [{
   campaigns: [1],
   start_date: '2021-05-11T12:00',
   end_date: '2021-05-11T13:00',
+  location_description: 'Volksbühne Berlin, Linienstr. 227, Berlin, 10178, Deutschland',
   location: {
-    'mapbox_id': 'poi.816043858834',
-    'name': 'Volksbühne Berlin, Linienstr. 227, Berlin, 10178, Deutschland',
-    'center': {'lng': 13.411869, 'lat': 52.526887},
-    'geometry': {'coordinates': [13.411869, 52.526887], 'type': 'Point'}
+    lat: 52.526887,
+    lng: 13.411869
   },
   metrics: [],
   description: 'Haustürgespräch in Berlin-Mitte Gruppe 1, Treffpunkt Volksbühne',
@@ -26,11 +25,10 @@ export const sampleEvents: EventDto[] = [{
   campaigns: [1],
   start_date: '2021-05-12T16:00',
   end_date: '2021-05-12T17:00',
+  location_description: 'Hackescher Markt, Neue Promenade, Berlin, 10178, Deutschland',
   location: {
-    'mapbox_id': 'poi.618475354653',
-    'name': 'Hackescher Markt, Neue Promenade, Berlin, 10178, Deutschland',
-    'center': {'lng': 13.4023895, 'lat': 52.52288075},
-    'geometry': {'coordinates': [13.4023895, 52.52288075], 'type': 'Point'}
+    lat: 52.52288075,
+    lng: 13.4023895
   },
   metrics: [],
   description: 'Haustürgespräch in Berlin-Mitte Gruppe 2, Treffpunkt Hackerscher Markt',
@@ -44,11 +42,10 @@ export const sampleEvents: EventDto[] = [{
   campaigns: [1],
   start_date: '2021-05-12T16:00',
   end_date: '2021-05-12T17:00',
+  location_description: 'Berliner Fernsehturm, Panoramastr. 1, Berlin, 10178, Deutschland',
   location: {
-    'mapbox_id': 'poi.498216302235',
-    'name': 'Berliner Fernsehturm, Panoramastr. 1, Berlin, 10178, Deutschland',
-    'center': {'lng': 13.410165, 'lat': 52.520775},
-    'geometry': {'coordinates': [13.410165, 52.520775], 'type': 'Point'}
+    lat: 52.520775,
+    lng: 13.410165
   },
   metrics: [],
   description: 'Haustürgespräch in Berlin-Mitte Gruppe 3, Treffpunkt Fernsehturm',
@@ -62,18 +59,12 @@ export const sampleEvents: EventDto[] = [{
   campaigns: [1],
   start_date: '2021-05-12T16:00',
   end_date: '2021-05-12T17:00',
+  location_description: 'Dorfaue 1, 15566 Schöneiche, Deutschland',
   location: {
-    mapbox_id: 'address.8494522076113680',
-    name: 'Dorfaue 1, 15566 Schöneiche, Deutschland',
-    center: {
-      lat: 52.478898,
-      lng: 13.701116
-    },
-    geometry: {
-      type: 'Point',
-      coordinates: [13.701116, 52.478898]
-    }
+    lat: 52.478898,
+    lng: 13.701116
   },
+
   metrics: [],
   description: 'Haustürgespräch in Schöneiche, Treffpunkt vor dem Rathaus',
   participants: [],
@@ -86,17 +77,10 @@ export const sampleEvents: EventDto[] = [{
   campaigns: [2],
   start_date: '2021-05-12T16:00',
   end_date: '2021-05-12T17:00',
+  location_description: 'Charlottenplatz, Charlottenstr., Stuttgart, Baden-Württemberg 70173, Deutschland',
   location: {
-    mapbox_id: 'poi.206158487657',
-    name: 'Charlottenplatz, Charlottenstr., Stuttgart, Baden-Württemberg 70173, Deutschland',
-    center: {
-      lat: 48.7759025,
-      lng: 9.1829185
-    },
-    geometry: {
-      type: 'Point',
-      coordinates: [9.1829185, 48.7759025]
-    }
+    lat: 48.7759025,
+    lng: 9.1829185
   },
   metrics: [],
   description: 'Haustürgespräch in Stuttgart, Treffpunkt U-Charlottenplatz',
@@ -113,17 +97,10 @@ export const sampleCreatedEvent: EventDto = {
   start_date: '2021-05-12T16:00',
   end_date: '2021-05-12T17:00',
   location: {
-    mapbox_id: 'address.8494522076113680',
-    name: 'Dorfaue 1, 15566 Schöneiche, Deutschland',
-    center: {
-      lat: 52.478898,
-      lng: 13.701116
-    },
-    geometry: {
-      type: 'Point',
-      coordinates: [13.701116, 52.478898]
-    }
+    lat: 52.478898,
+    lng: 13.701116
   },
+  location_description: 'Dorfaue 1, 15566 Schöneiche, Deutschland',
   metrics: [],
   description: '',
   participants: [],
