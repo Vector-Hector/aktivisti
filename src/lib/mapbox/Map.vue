@@ -69,7 +69,7 @@ export default defineComponent({
     onMounted(() => {
       map.value = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/ctrlaltcoop/ckk88gdh90jle17nn8y76dp36',
+        style: process.env.VUE_APP_MAPBOX_STYLE,
         zoom: props.zoom,
         center: props.center
       })
