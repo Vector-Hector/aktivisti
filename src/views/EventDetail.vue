@@ -199,7 +199,8 @@ Button {
 }
 
 .map-container {
-  flex: 1
+  flex: 1;
+  display: flex;
 }
 
 
