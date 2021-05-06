@@ -25,14 +25,14 @@ class AuthService {
     userStore.setUser(profileRequest.payload.data)
   }
 
-  login(username: string, password: string) {
+  async login(username: string, password: string) {
     const userParams = {
       grant_type: 'password' as GrantType,
       username: username,
       password: password,
       client_id: process.env.VUE_APP_CLIENT_ID
     }
-    this.auth(userParams)
+    await this.auth(userParams)
   }
 
   async renewLogin() {
