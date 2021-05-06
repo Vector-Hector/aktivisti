@@ -12,8 +12,7 @@
           @item-select="emitResult($event)"
         >
           <template #item="slotProps">
-            <span class="place-caption-first-line">{{ slotProps.item.place_name.split(',')[0] }}</span>
-            <span class="place-caption-second-line">{{ slotProps.item.place_name.split(',').slice(1).join(', ') }}</span>
+            <GeocodingSuggestion :result="slotProps.item" />
           </template>
         </AutoComplete>
       </div>
@@ -26,23 +25,20 @@ import { defineComponent } from 'vue'
 import AutoComplete from 'primevue/autocomplete'
 import { geocodingService } from '@/utils/mapbox'
 import { GeocodeResult } from '@/types/GeocodeResult'
+import GeocodingSuggestion from '@/components/GeocodingSuggestion.vue'
 
-
-interface PlaceSuggestion {
-  title: string
-  subtitle: string
-}
 
 export default defineComponent({
   name: 'StandaloneGeocoder',
   components: {
-    AutoComplete
+    AutoComplete,
+    GeocodingSuggestion
   },
   emits: ['result'],
   data() {
     return {
       queryValue: '',
-      filteredPlaces: [] as PlaceSuggestion[]
+      filteredPlaces: [] as GeocodeResult[]
     }
   },
   methods: {
