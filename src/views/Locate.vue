@@ -7,6 +7,7 @@
       class="geocoder"
       :access-token="mapboxToken"
       :countries="['de']"
+      :standalone="true"
       @result="locate"
     />
     <router-link
@@ -82,6 +83,7 @@ export default defineComponent({
 .splash {
   display: flex;
   height: 100%;
+  width: 100%;
   flex-direction: column;
   align-content: center;
   align-items: center;

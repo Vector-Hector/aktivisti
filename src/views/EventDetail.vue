@@ -21,7 +21,7 @@
           v-if="eventAreas"
           ref="map"
           :zoom="15"
-          :center="event.location.center"
+          :center="event.location"
           :zoom-box="initialZoomBox"
           :animate="false"
         >
@@ -124,7 +124,7 @@ export default defineComponent({
       return this.areaFeatures.length > 0 ? bbox({
         type: 'FeatureCollection',
         features: this.areaFeatures
-      }) : bbox(circle([this.event!.location.center.lng, this.event!.location.center.lat], 0.2))
+      }) : bbox(circle([this.event!.location.lng, this.event!.location.lat], 0.2))
     },
     isLoggedIn(): boolean {
       return authService.isLoggedIn()
@@ -139,7 +139,7 @@ export default defineComponent({
     this.initialZoomBox = this.areaFeatures.length > 0 ? bbox({
       type: 'FeatureCollection',
       features: this.areaFeatures
-    }) : bbox(circle([this.event!.location.center.lng, this.event!.location.center.lat], 0.2))
+    }) : bbox(circle([this.event!.location.lng, this.event!.location.lat], 0.2))
   },
   methods: {
     async getEventAreas() {
@@ -199,7 +199,8 @@ Button {
 }
 
 .map-container {
-  flex: 1
+  flex: 1;
+  display: flex;
 }
 
 

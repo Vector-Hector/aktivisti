@@ -183,6 +183,9 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import 'src/scss/_globals.scss';
+.navigation-sidebar {
+  padding: 0;
+}
 
 .dielinke-logo {
   max-width: 240px;
@@ -201,6 +204,9 @@ outside the html hierarchy of this component - if someone finds a better soltion
   height: 100%;
 }
 
+::v-global(.navigation-sidebar) {
+  padding: 0 !important;
+}
 
 .menu {
   display: flex;

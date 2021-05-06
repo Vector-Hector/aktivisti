@@ -1,6 +1,6 @@
 <template>
   <Marker
-    :location="event.location.center"
+    :location="event.location"
   />
   <FeatureLayer
     :features="areaFeatures"
@@ -38,7 +38,7 @@ export default defineComponent({
   },
   computed: {
     zoomBox(): BBox {
-      const meetingPoint = circle([this.event!.location.center.lng, this.event!.location.center.lat], 0.2)
+      const meetingPoint = circle([this.event!.location.lng, this.event!.location.lat], 0.2)
       return this.areaFeatures.length > 0 ? bbox({
         type: 'FeatureCollection',
         features: [...this.areaFeatures, meetingPoint]

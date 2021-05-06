@@ -5,6 +5,7 @@ import App from './App.vue'
 
 import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
+import ConfirmationService from 'primevue/confirmationservice';
 
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
@@ -54,6 +55,7 @@ const app = createApp(App)
   .use(router)
   .use(PrimeVue)
   .use(ToastService)
+  .use(ConfirmationService)
 
 app.config.globalProperties.$apiClient = apiClient
 app.config.globalProperties.$oauth2Client = oAuth2Client

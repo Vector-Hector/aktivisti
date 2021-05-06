@@ -34,6 +34,11 @@ export default defineComponent({
       type: Boolean as PropType<boolean>,
       required: false,
       default: false
+    },
+    standalone: {
+      type: Boolean as PropType<boolean>,
+      required: false,
+      default: false
     }
   },
   emits: {
@@ -43,7 +48,6 @@ export default defineComponent({
   },
   setup(props, {emit}) {
     const map = inject(MapInject)
-    const standalone = ref(true)
 
     const geocodeControl = new MapboxGeocoder({
       mapboxgl: mapboxgl,
@@ -58,9 +62,11 @@ export default defineComponent({
     })
 
     onMounted(() => {
-      if (map?.value) {
-        map.value.addControl(geocodeControl)
-        standalone.value = false
+      if (!props.standalone) {
+        if (!map?.value) {
+          throw Error('Either mount the Geocoder as a child of Map or set standalone=true')
+        }
+        map?.value.addControl(geocodeControl)
       } else {
         geocodeControl.addTo(geocodeWrapper.value)
       }
@@ -72,7 +78,6 @@ export default defineComponent({
 
     return {
       geocodeWrapper,
-      standalone,
       query: (input: string) => geocodeControl.query(input)
     }
   }

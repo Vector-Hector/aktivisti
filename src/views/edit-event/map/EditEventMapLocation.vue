@@ -1,24 +1,51 @@
 <template>
-  <Geocoder
-    ref="geocoder"
-    :countries="['de']"
-    :access-token="accessToken"
-    :reverse-geocode="true"
-    @result="updateMarker"
-  />
+  <ConfirmationPopupWithComponent />
   <MapOverlay
     position="top-left"
+    class="location-overlay"
   >
     <h1 class="headline">
       Treffpunkt auswählen
     </h1>
-    <p>Wähle ein Treffpunkt über das Suchfeld auf der rechten Seite aus aus</p>
+    <p>Ziehe entweder das Markersymbol auf die Karte oder suche nach einem Ort über das Textfeld</p>
+    <div class="p-grid">
+      <div class="p-col">
+        <StandaloneGeocoder
+          :access-token="accessToken"
+          :standalone="true"
+          @result="handleResult($event.value)"
+        />
+      </div>
+      <div
+        v-if="event.location === null"
+        class="p-col marker-column"
+      >
+        <DraggableMarker
+          class="draggable-marker"
+          @dropped="markerDropped"
+        />
+      </div>
+      <div class="p-col-12">
+        <div class="p-fluid">
+          <div class="p-field">
+            <label for="locationDescription">Beschreibung</label>
+            <InputText
+              id="locationDescription"
+              ref="descriptionInput"
+              v-model="event.location_description"
+              type="text"
+              @keydown="touched = true"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   </MapOverlay>
   <Marker
-    v-if="event.location?.center"
+    v-if="event.location"
+    v-model:location="event.location"
     :draggable="true"
-    :location="event.location.center"
-    @update:location="updateGeocoder"
+    @update:location="updateDescription"
   />
   <MapOverlay
     class="navigation-overlay"
@@ -39,6 +66,7 @@
       </Button>
     </router-link>
     <Button
+      ref="confirmButton"
       :disabled="!event.location"
       class="submit-button"
       @click="saveAndProceed"
@@ -49,45 +77,90 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Geocoder from '@/lib/mapbox/Geocoder.vue'
+import { defineComponent, markRaw } from 'vue'
 import Marker from '@/lib/mapbox/Marker.vue'
 import { LocationDto } from '@/api/model/LocationDto'
 import { GeocodeResult } from '@/types/GeocodeResult'
 import MapOverlay from '@/components/MapOverlay.vue'
 import Button from 'primevue/button'
 import EditEventMixin from '@/views/edit-event/EditEventMixin'
-import { mapboxPlaceDtoFromGeocodeResult } from '@/api/model/MapboxPlaceDto'
 import { EventDto } from '@/api/model/EventDto'
+import InputText from 'primevue/inputtext'
+import StandaloneGeocoder from '@/components/StandaloneGeocoder.vue'
+import { geocodingService } from '@/utils/mapbox'
+import ConfirmationPopupWithComponent from '@/components/ConfirmationPopupWithComponent.vue'
+import ConfirmPlaceName from '@/components/confirmations/ConfirmPlaceName.vue'
+import DraggableMarker from '@/components/DraggableMarker.vue'
 
 
 export default defineComponent({
   name: 'EditEventMapLocation',
   components: {
+    DraggableMarker,
+    ConfirmationPopupWithComponent,
+    StandaloneGeocoder,
     MapOverlay,
     Marker,
-    Geocoder,
-    Button
+    Button,
+    InputText
   },
   mixins: [EditEventMixin],
   data() {
     return {
       loading: false,
-      accessToken: process.env.VUE_APP_MAPBOX_TOKEN
+      accessToken: process.env.VUE_APP_MAPBOX_TOKEN,
+      touched: !!this.event.location_description
     }
   },
   methods: {
-    updateMarker(geocoderResult: GeocodeResult) {
-      this.event.location = mapboxPlaceDtoFromGeocodeResult(geocoderResult)
+    handleResult(geocoderResult: GeocodeResult) {
+      if (this.touched) {
+        this.suggestPlaceName(geocoderResult.place_name)
+      } else {
+        this.event.location_description = geocoderResult.place_name
+      }
+      this.event.location = {
+        lat: geocoderResult.center[1],
+        lng: geocoderResult.center[0]
+      }
     },
-    updateGeocoder(location: LocationDto) {
-      (this.$refs.geocoder as typeof Geocoder).query(`${location.lat},${location.lng}`)
+    async updateDescription(location: LocationDto) {
+      const placeName = (await geocodingService.reverseGeocode({
+        query: [location.lng, location.lat],
+        mode: 'mapbox.places'
+      }).send()).body.features[0]?.place_name
+
+      if (this.touched) {
+        this.suggestPlaceName(placeName)
+      } else {
+        this.event.location_description = placeName
+      }
+    },
+    suggestPlaceName(placeName: string) {
+      this.$confirm.require({
+        icon: 'pi pi-info-circle',
+        message: `Bezeichnung dieses Ortes übernehmen?\n${placeName}`,
+        component: markRaw(ConfirmPlaceName),
+        componentProps: {
+          placeName
+        },
+        target: (this.$refs.descriptionInput as any).$el,
+        accept: () => {
+          this.event.location_description = placeName
+        },
+        reject: () => {
+        }
+      })
     },
     async saveAndProceed() {
       this.loading = true
       this.localEvent = (await this.$apiClient.events.update(this.localEvent.id!.toString(), this.localEvent as EventDto)).payload.data
       this.loading = false
       this.$router.push({name: 'edit-event-routes'})
+    },
+    markerDropped(event: any) {
+      this.event.location = event.coordinates
+      this.updateDescription(event.coordinates)
     }
   }
 })
@@ -111,6 +184,19 @@ Button {
 
 .headline {
   margin: 0;
+}
+
+::v-deep(.p-confirm-popup-message) {
+  white-space: pre-wrap;
+}
+
+.marker-column {
+  flex: 0;
+  align-self: center;
+}
+
+.location-overlay {
+  max-width: 30rem;
 }
 
 </style>

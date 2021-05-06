@@ -1,5 +1,5 @@
 import { EventTypes } from '@/api/model/EventTypes'
-import { MapboxPlaceDto } from '@/api/model/MapboxPlaceDto'
+import { LocationDto } from '@/api/model/LocationDto'
 
 
 export interface EventDto {
@@ -10,7 +10,8 @@ export interface EventDto {
   campaigns: number[]
   start_date: string
   end_date: string
-  location: MapboxPlaceDto
+  location: LocationDto
+  location_description: string
   published: boolean
   description: string
   participants: number[]
