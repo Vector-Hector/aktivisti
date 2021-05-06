@@ -68,39 +68,12 @@
       v-if="isMember"
       class="area-list"
     >
-      <IonItem
+      <EventAreaItem
         v-for="area in eventAreasSorted"
         :key="area.id"
-        :button="true"
-        :class="{ 'greyed-out': area.is_completed }"
-        @click="$router.push({ name: 'event-detail-area', params: { areaId: area.id }})"
-      >
-        <IonLabel>
-          <h3>{{ area.name }}</h3>
-          <p>{{ countAddresses(area.area_details) }} Adressen</p>
-        </IonLabel>
-        <div
-          slot="end"
-          class="item-buttons"
-        >
-          <IonIcon
-            v-if="area.is_completed"
-            class="completed-icon"
-            name="checkmark-circle-outline"
-          />
-          <IonIcon
-            v-else
-            :style="{
-              color: area.color
-            }"
-            name="ellipse"
-          />
-          <IonIcon
-            class="chevron"
-            name="chevron-forward"
-          />
-        </div>
-      </IonItem>
+        :area="area"
+        :participations="participations"
+      />
     </IonList>
   </div>
   <div class="social-buttons">
@@ -222,17 +195,21 @@
 import { defineComponent, PropType } from 'vue'
 import { EventDto } from '@/api/model/EventDto'
 import { EventAreaDto } from '@/api/model/EventAreaDto'
-import { AreaDetailsDto } from '@/api/model/AreaDetailsDto'
-import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonList, IonRow, modalController } from '@ionic/vue'
 import {
-  ellipse,
-  chevronForward,
+  IonButton,
+  IonCol,
+  IonGrid,
+  IonIcon,
+  IonList,
+  IonRow,
+  modalController
+} from '@ionic/vue'
+import {
   logoTwitter,
   logoFacebook,
   mail,
   logoWhatsapp,
   barChartOutline,
-  checkmarkCircleOutline
 } from 'ionicons/icons'
 import { addIcons } from 'ionicons'
 import { authService } from '@/api/authService'
@@ -247,11 +224,9 @@ import {
   createTwitterShareUrl,
   createWhatsappShareUrl
 } from '@/utils/shareLinks'
+import EventAreaItem from '@/components/EventAreaItem.vue'
 
 addIcons({
-  ellipse,
-  chevronForward,
-  'checkmark-circle-outline': checkmarkCircleOutline,
   'logo-twitter': logoTwitter,
   'logo-whatsapp': logoWhatsapp,
   mail,
@@ -262,14 +237,13 @@ addIcons({
 export default defineComponent({
   name: 'EventDetailOverview',
   components: {
+    EventAreaItem,
     IonButton,
     IonList,
-    IonItem,
     IonIcon,
-    IonLabel,
     IonGrid,
     IonCol,
-    IonRow
+    IonRow,
   },
   props: {
     id: {
@@ -409,11 +383,6 @@ export default defineComponent({
         (await apiClient.eventParticipations.list({event: this.event.id})).payload.data
       )
     },
-    countAddresses(areaDetails: AreaDetailsDto) {
-      return areaDetails.streets.reduce((acc, street) => {
-        return acc + street.addresses.length
-      }, 0)
-    },
     async openInviteModal() {
       if (!this.isCampaignAdmin) return
       const modal = await modalController
@@ -465,27 +434,9 @@ label {
   margin: 0 0 1rem 0;
 }
 
-.chevron {
-  margin-left: 2rem;
-  font-size: 2rem;
-}
-
-.item-buttons {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.greyed-out {
-  opacity: 0.3;
-}
-
 .participants {
   cursor: pointer;
 }
 
-.completed-icon {
-  font-size: 1.2rem;
-}
 
 </style>
