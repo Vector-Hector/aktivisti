@@ -22,8 +22,8 @@
           {{ eventForParticipation(participation).name }}
         </IonLabel>
         <i v-if="participation.is_pending_invitation">
-          {{ findInvitingUser(participation.user_inviting)?.username ?? 'Anyonym ' }}
-          hat dich eingeladen
+          {{ findInvitingUsers(participation.inviting_users).map(({username}) => username).join(',') ?? 'Unbekannt ' }}
+          <span v-if="participation.inviting_users.length > 1">haben</span><span v-else>hat</span> dich eingeladen
         </i>
         <div
           v-if="participation.is_pending_invitation"
@@ -77,10 +77,10 @@ export default defineComponent({
   methods: {
     async getEvents() {
       const responseData = (await this.$apiClient.eventParticipations.list(
-        {user: userStore.getState().user?.id}, ['event', 'user_inviting']
+        {user: userStore.getState().user?.id}, ['event', 'inviting_users']
       )).payload
       this.events = responseData.embedded.event
-      this.invitingUsers = responseData.embedded.user_inviting
+      this.invitingUsers = responseData.embedded.inviting_users
       this.eventParticipations = responseData.data
     },
     accept(eventParticipation: EventParticipationDto) {
@@ -94,8 +94,8 @@ export default defineComponent({
     eventForParticipation(participation: EventParticipationDto) {
       return this.events.find(({id}) => participation.event === id)
     },
-    findInvitingUser(findId: number): UserDto | undefined {
-      return this.invitingUsers.find(({id}) => findId === id)
+    findInvitingUsers(findIds: number[]): UserDto[] {
+      return this.invitingUsers.filter(({id}) => findIds.includes(id))
     }
   }
 })
