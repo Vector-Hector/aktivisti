@@ -29,8 +29,11 @@
             v-for="participation in displayedParticipations"
             :key="participation.id"
           >
-            <IonLabel>
+            <IonLabel v-if="participation.user_is_member">
               <b>{{ participation.user_username }}</b> {{ participation.user_email }}
+            </IonLabel>
+            <IonLabel v-else>
+              {{ participation.user_email }}
             </IonLabel>
             <div
               slot="end"
