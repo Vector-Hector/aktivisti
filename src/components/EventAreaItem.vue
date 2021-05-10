@@ -8,11 +8,16 @@
       <h3>{{ area.name }}</h3>
       <p>{{ countAddresses(area.area_details) }} Adressen</p>
     </IonLabel>
-    <IonIcon
-      v-if="participationsOfArea.map(participation => participation.user).includes(user?.id)"
-      class="area-indicator-icon"
-      name="person-circle-outline"
-    />
+    <span
+      title="Ich nehme teil"
+      class="popup-text"
+    >
+      <IonIcon
+        v-if="participationsOfArea.map(participation => participation.user).includes(user?.id)"
+        class="area-indicator-icon"
+        name="person-circle-outline"
+      />
+    </span>
     <IonBadge
       slot="end"
       color="light"
@@ -102,6 +107,7 @@ export default defineComponent({
   }
 })
 </script>
+
 <style lang="scss">
 
 .chevron {
@@ -122,6 +128,15 @@ export default defineComponent({
 
 .greyed-out {
   opacity: 0.3;
+}
+
+ion-icon {
+  pointer-events: none;
+}
+
+.popup-text {
+  display: flex;
+  color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.54);
 }
 
 </style>
