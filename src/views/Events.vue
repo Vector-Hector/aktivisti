@@ -33,6 +33,7 @@
             </IonButton>
           </router-link>
         </div>
+
         <IonList
           v-if="events.length > 0"
         >
@@ -69,11 +70,24 @@
             </div>
           </IonItem>
         </IonList>
+        
         <div v-else>
           <IonText color="medium">
             Keine Events gefunden
           </IonText>
         </div>
+        
+        <IonInfiniteScroll
+          id="infinite-scroll" 
+          threshold="100px" 
+          :disabled="isDisabled"
+          @ionInfinite="loadData($event)"
+        >
+          <IonInfiniteScrollContent
+            loading-spinner="bubbles"
+            loading-text="Loading more data..."
+          />
+        </IonInfiniteScroll>
       </div>
     </IonContent>
   </div>
@@ -93,7 +107,9 @@ import {
   IonSelect,
   IonSelectOption,
   IonText,
-  modalController
+  modalController,
+  IonInfiniteScroll, 
+  IonInfiniteScrollContent,
 } from '@ionic/vue'
 import { addIcons } from 'ionicons'
 import { trash, pencil, add } from 'ionicons/icons'
@@ -115,7 +131,9 @@ export default defineComponent({
     IonItem,
     IonLabel,
     IonIcon,
-    IonContent
+    IonContent,
+    IonInfiniteScroll, 
+    IonInfiniteScrollContent,
   },
   data() {
     return {
@@ -198,6 +216,24 @@ export default defineComponent({
     },
     campaignsByIds(findIds: number[]): CampaignDto[] {
       return this.campaigns.filter(({id}) => findIds.includes(id))
+    },
+    loadData (ev: any) {
+      setTimeout(() => {
+        this.pushData()
+        console.log('Loaded data');
+        ev.target.complete()
+
+        if (this.events.length == 1000) {
+          ev.target.disabled = true
+        }
+      }, 500)
+    },
+    pushData() {
+      const max = this.events.length + 20;
+      const min = max - 20;
+      // for (let i = min; i < max; i++) {
+      //   this.events.push(i);
+      // }
     }
   }
 })
