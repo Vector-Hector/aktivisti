@@ -232,11 +232,6 @@ export default defineComponent({
       this.offset += EVENT_LIST_CHUNK_SIZE
       const moreEvents = await this.getEvents()
 
-      console.log('VUE_APP_BASE_URL', process.env.VUE_APP_BASE_URL)
-      console.log('moreEvents', moreEvents)
-      console.log('offset', this.offset)
-      console.log('limit', this.limit)
-
       if (moreEvents.length == 0) {
         event.target.disabled = true
         return
