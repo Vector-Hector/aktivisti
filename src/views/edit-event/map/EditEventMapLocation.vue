@@ -66,7 +66,6 @@
       </Button>
     </router-link>
     <Button
-      ref="confirmButton"
       :disabled="!event.location"
       class="submit-button"
       :class="{
@@ -77,7 +76,6 @@
       Speichern und zurück
     </Button>
     <Button
-      ref="confirmButton"
       :disabled="!event.location"
       class="submit-button"
       @click="saveAndProceed"
