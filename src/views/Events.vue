@@ -85,7 +85,7 @@
         >
           <IonInfiniteScrollContent
             loading-spinner="bubbles"
-            loading-text="Loading more data..."
+            loading-text="Weitere Events laden..."
           />
         </IonInfiniteScroll>
       </div>
@@ -115,6 +115,7 @@ import { addIcons } from 'ionicons'
 import { trash, pencil, add } from 'ionicons/icons'
 import ConfirmDelete from '@/components/modals/ConfirmDelete.vue'
 import { userStore } from '@/store/UserStore'
+import { integer } from '@vee-validate/rules'
 
 addIcons({
   trash, pencil, add
@@ -140,7 +141,9 @@ export default defineComponent({
       events: [] as EventDto[],
       filteredCampaigns: userStore.getState().campaigns,
       campaigns: [] as CampaignDto[],
-      messages: [] as any
+      messages: [] as any,
+      limit: 500 as number,
+      offset: 0 as number
     }
   },
   computed: {
@@ -203,12 +206,27 @@ export default defineComponent({
       let response
       if (this.filteredCampaigns) {
         response = await this.$apiClient.events.list({
-          campaigns: this.filteredCampaigns ?? undefined
+          campaigns: this.filteredCampaigns ?? undefined,
+          limit: this.limit,
+          offset: this.offset
         })
       } else {
         response = await this.$apiClient.events.list()
       }
       this.events = response.payload.data
+    },
+    async returnEvents() {
+      let response
+      if (this.filteredCampaigns) {
+        response = await this.$apiClient.events.list({
+          campaigns: this.filteredCampaigns ?? undefined,
+          limit: this.limit,
+          offset: this.offset
+        })
+      } else {
+        response = await this.$apiClient.events.list()
+      }
+      return response.payload.data
     },
     async getCampaigns() {
       const response = await this.$apiClient.campaigns.list()
@@ -217,23 +235,24 @@ export default defineComponent({
     campaignsByIds(findIds: number[]): CampaignDto[] {
       return this.campaigns.filter(({id}) => findIds.includes(id))
     },
-    loadData (ev: any) {
-      setTimeout(() => {
+    async loadData (ev: any) {
+      setTimeout(async () => {
+        this.offset += 500
         this.pushData()
-        console.log('Loaded data');
         ev.target.complete()
 
-        if (this.events.length == 1000) {
+        if (this.events.length == 0) {
+          console.log('disabled')
           ev.target.disabled = true
         }
       }, 500)
     },
-    pushData() {
-      const max = this.events.length + 20;
-      const min = max - 20;
-      // for (let i = min; i < max; i++) {
-      //   this.events.push(i);
-      // }
+    async pushData() {
+      const newEvents = await this.returnEvents()
+      console.log(newEvents)
+      for (let i = 0; i < newEvents.length; i++) {
+        this.events.push(newEvents[i]);
+      }
     }
   }
 })
