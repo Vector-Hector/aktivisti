@@ -115,7 +115,13 @@ import { addIcons } from 'ionicons'
 import { trash, pencil, add } from 'ionicons/icons'
 import ConfirmDelete from '@/components/modals/ConfirmDelete.vue'
 import { userStore } from '@/store/UserStore'
-import { integer } from '@vee-validate/rules'
+
+interface CustomEvent {
+  target: {
+    complete: Function,
+    disabled: boolean
+  }
+}
 
 addIcons({
   trash, pencil, add
@@ -142,8 +148,8 @@ export default defineComponent({
       filteredCampaigns: userStore.getState().campaigns,
       campaigns: [] as CampaignDto[],
       messages: [] as any,
-      limit: 500 as number,
-      offset: 0 as number
+      limit: 50 as number,
+      offset: 0 as number,
     }
   },
   computed: {
@@ -160,8 +166,8 @@ export default defineComponent({
       this.events = response.payload.data
     }
   },
-  created() {
-    this.getEvents()
+  async created() {
+    this.events = await this.getEvents()
     this.getCampaigns()
   },
   methods: {
@@ -213,19 +219,6 @@ export default defineComponent({
       } else {
         response = await this.$apiClient.events.list()
       }
-      this.events = response.payload.data
-    },
-    async returnEvents() {
-      let response
-      if (this.filteredCampaigns) {
-        response = await this.$apiClient.events.list({
-          campaigns: this.filteredCampaigns ?? undefined,
-          limit: this.limit,
-          offset: this.offset
-        })
-      } else {
-        response = await this.$apiClient.events.list()
-      }
       return response.payload.data
     },
     async getCampaigns() {
@@ -235,24 +228,21 @@ export default defineComponent({
     campaignsByIds(findIds: number[]): CampaignDto[] {
       return this.campaigns.filter(({id}) => findIds.includes(id))
     },
-    async loadData (ev: any) {
+    async loadData (event: CustomEvent) {
       setTimeout(async () => {
-        this.offset += 500
-        this.pushData()
-        ev.target.complete()
+        this.offset += 50
+        const moreEvents = await this.getEvents()
 
-        if (this.events.length == 0) {
-          console.log('disabled')
-          ev.target.disabled = true
+        if (moreEvents.length == 0) {
+          event.target.disabled = true
         }
+
+        for (let i = 0; i < moreEvents.length; i++) {
+          this.events.push(moreEvents[i]);
+        }
+
+        event.target.complete()
       }, 500)
-    },
-    async pushData() {
-      const newEvents = await this.returnEvents()
-      console.log(newEvents)
-      for (let i = 0; i < newEvents.length; i++) {
-        this.events.push(newEvents[i]);
-      }
     }
   }
 })
