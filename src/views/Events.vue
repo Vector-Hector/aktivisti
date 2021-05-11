@@ -234,12 +234,12 @@ export default defineComponent({
 
         if (moreEvents.length == 0) {
           event.target.disabled = true
+          return
         }
 
         for (let i = 0; i < moreEvents.length; i++) {
           this.events.push(moreEvents[i]);
         }
-
         event.target.complete()
       }, 500)
     }
