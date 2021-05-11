@@ -227,7 +227,7 @@ export default defineComponent({
     campaignsByIds(findIds: number[]): CampaignDto[] {
       return this.campaigns.filter(({id}) => findIds.includes(id))
     },
-    async loadData (event: CustomEvent) {
+    loadData (event: CustomEvent) {
       setTimeout(async () => {
         this.offset += 50
         const moreEvents = await this.getEvents()
