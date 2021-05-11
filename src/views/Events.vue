@@ -238,8 +238,9 @@ export default defineComponent({
         }
 
         for (let i = 0; i < moreEvents.length; i++) {
-          this.events.push(moreEvents[i]);
+          this.events.push(moreEvents[i])
         }
+
         event.target.complete()
       }, 500)
     }
