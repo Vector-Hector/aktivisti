@@ -210,15 +210,11 @@ export default defineComponent({
     },
     async getEvents() {
       let response
-      if (this.filteredCampaigns) {
-        response = await this.$apiClient.events.list({
-          campaigns: this.filteredCampaigns ?? undefined,
-          limit: this.limit,
-          offset: this.offset
-        })
-      } else {
-        response = await this.$apiClient.events.list()
-      }
+      response = await this.$apiClient.events.list({
+        campaigns: this.filteredCampaigns ?? [],
+        limit: this.limit,
+        offset: this.offset
+      })
       return response.payload.data
     },
     async getCampaigns() {
