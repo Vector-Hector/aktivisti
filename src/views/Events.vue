@@ -114,6 +114,7 @@ import { addIcons } from 'ionicons'
 import { trash, pencil, add } from 'ionicons/icons'
 import ConfirmDelete from '@/components/modals/ConfirmDelete.vue'
 import { userStore } from '@/store/UserStore'
+import { EVENT_LIST_CHUNK_SIZE } from '@/constants'
 
 interface CustomEvent {
   target: {
@@ -147,7 +148,7 @@ export default defineComponent({
       filteredCampaigns: userStore.getState().campaigns,
       campaigns: [] as CampaignDto[],
       messages: [] as any,
-      limit: 50 as number,
+      limit: EVENT_LIST_CHUNK_SIZE as number,
       offset: 0 as number,
     }
   },
@@ -227,22 +228,17 @@ export default defineComponent({
     campaignsByIds(findIds: number[]): CampaignDto[] {
       return this.campaigns.filter(({id}) => findIds.includes(id))
     },
-    loadData (event: CustomEvent) {
-      setTimeout(async () => {
-        this.offset += 50
-        const moreEvents = await this.getEvents()
+    async loadData (event: CustomEvent) {
+      this.offset += EVENT_LIST_CHUNK_SIZE
+      const moreEvents = await this.getEvents()
 
-        if (moreEvents.length == 0) {
-          event.target.disabled = true
-          return
-        }
+      if (moreEvents.length == 0) {
+        event.target.disabled = true
+        return
+      }
 
-        for (let i = 0; i < moreEvents.length; i++) {
-          this.events.push(moreEvents[i])
-        }
-
-        event.target.complete()
-      }, 500)
+      this.events = this.events.concat(moreEvents)
+      event.target.complete()
     }
   }
 })
