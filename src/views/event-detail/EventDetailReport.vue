@@ -103,7 +103,6 @@ export default defineComponent({
   async created() {
     const {metrics} = await this.fetchMetricRecords()
     this.metricsWithName = metrics
-
     for (const {id, color, name} of this.eventAreas) {
       if (id) {
         const {completed_addresses, overall_addresses, counts_per_metric} = await this.fetchAreaMetricsReports(id)
@@ -115,7 +114,7 @@ export default defineComponent({
           overall_addresses
         }
         for (const {id: metricId} of this.metricsWithName) {
-          areaData[metricId] = counts_per_metric.find(({metric: metricId}) => metricId === metricId)?.count || 0
+          areaData[metricId] = counts_per_metric.find(({metric}) => metric === metricId)?.count || 0
         }
         this.formattedDataPerArea.push(areaData)
       }

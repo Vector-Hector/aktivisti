@@ -12,7 +12,7 @@
   >
     <MetricsRow
       v-for="metricRecord in metricRecords"
-      :key="metricRecord.name"
+      :key="metricRecord.metric"
       :model-value="metricValues[metricRecord.id]"
       :label="getMetricForId(metricRecord.metric).name"
       class="metrics-input"
