@@ -69,9 +69,20 @@
       ref="confirmButton"
       :disabled="!event.location"
       class="submit-button"
+      :class="{
+        'p-button-outlined': editMode
+      }"
+      @click="saveAndClose"
+    >
+      Speichern und zurück
+    </Button>
+    <Button
+      ref="confirmButton"
+      :disabled="!event.location"
+      class="submit-button"
       @click="saveAndProceed"
     >
-      Routen zeichnen
+      Gebiete zeichnen
     </Button>
   </MapOverlay>
 </template>
@@ -152,11 +163,23 @@ export default defineComponent({
         }
       })
     },
-    async saveAndProceed() {
+    async save() {
       this.loading = true
       this.localEvent = (await this.$apiClient.events.update(this.localEvent.id!.toString(), this.localEvent as EventDto)).payload.data
       this.loading = false
-      this.$router.push({name: 'edit-event-routes'})
+    },
+    async saveAndProceed() {
+      await this.save()
+      await this.$router.push({name: 'edit-event-routes'})
+    },
+    async saveAndClose() {
+      await this.save()
+      await this.$router.push({
+        name: 'event-detail',
+        params: {
+          id: this.event.id!.toString()
+        }
+      })
     },
     markerDropped(event: any) {
       this.event.location = event.coordinates
