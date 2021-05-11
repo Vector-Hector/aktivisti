@@ -103,7 +103,6 @@ export default defineComponent({
   async created() {
     const {metrics} = await this.fetchMetricRecords()
     this.metricsWithName = metrics
-    debugger
     for (const {id, color, name} of this.eventAreas) {
       if (id) {
         const {completed_addresses, overall_addresses, counts_per_metric} = await this.fetchAreaMetricsReports(id)
