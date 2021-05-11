@@ -78,7 +78,6 @@
         </div>
         
         <IonInfiniteScroll
-          id="infinite-scroll" 
           threshold="100px" 
           :disabled="isDisabled"
           @ionInfinite="loadData($event)"
