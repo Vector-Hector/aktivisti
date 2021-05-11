@@ -195,6 +195,11 @@
           />
         </router-link>
         <Button
+          v-if="editMode"
+          label="Speichern und zurück"
+          @click="saveAndClose()"
+        />
+        <Button
           type="submit"
           label="Treffpunkt auswählen"
         />
@@ -238,7 +243,7 @@ export default defineComponent({
     Textarea,
     Form,
     Field,
-    ErrorMessage,
+    ErrorMessage
   },
   mixins: [EditEventMixin],
   data() {
@@ -248,10 +253,13 @@ export default defineComponent({
       zoom: 6,
       iconWidth: 25,
       iconHeight: 40,
-      center: {lat: 51.5, lng: 10},
+      center: {lat: 51.5, lng: 10}
     }
   },
   computed: {
+    editMode(): boolean {
+      return !!(this.event.id && this.event.location)
+    },
     eventTypes() {
       return eventTypeOptions
     },
@@ -313,7 +321,7 @@ export default defineComponent({
       const metricRecordsRequest = await this.$apiClient.eventMetricRecords.list({event: this.event.id})
       this.metricRecords = metricRecordsRequest.payload.data
     },
-    async saveAndProceed() {
+    async save() {
       let newEvent
       if (!this.localEvent.id) {
         newEvent = this.localEvent = (await this.$apiClient.events.create(this.localEvent)).payload.data
@@ -321,9 +329,21 @@ export default defineComponent({
         newEvent = this.localEvent = (await this.$apiClient.events.update(this.localEvent!.id!.toString(), this.localEvent as EventDto)).payload.data
       }
       await this.$apiClient.events.batchUpdateMetricRecords(newEvent.id.toString(), this.metricRecords)
-
-      this.$router.push({
+      return newEvent
+    },
+    async saveAndProceed() {
+      const newEvent = await this.save()
+      await this.$router.push({
         name: 'edit-event-location',
+        params: {
+          id: newEvent.id.toString()
+        }
+      })
+    },
+    async saveAndClose() {
+      const newEvent = await this.save()
+      await this.$router.push({
+        name: 'event-detail',
         params: {
           id: newEvent.id.toString()
         }
@@ -335,7 +355,7 @@ export default defineComponent({
     metricRecordForMetricId(metricId: number): Partial<EventMetricRecordDto> | undefined {
       return this.metricRecords.find(({metric}) => metricId === metric)
     },
-    isRequired (value: string) {
+    isRequired(value: string) {
       if (!value) {
         return 'Bitte fülle dieses Feld aus'
       }
