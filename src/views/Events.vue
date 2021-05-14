@@ -116,7 +116,7 @@ import ConfirmDelete from '@/components/modals/ConfirmDelete.vue'
 import { userStore } from '@/store/UserStore'
 import { EVENT_LIST_CHUNK_SIZE } from '@/constants'
 
-interface CustomEvent {
+interface CustomScrollEvent {
   target: {
     complete: Function,
     disabled: boolean
@@ -224,7 +224,7 @@ export default defineComponent({
     campaignsByIds(findIds: number[]): CampaignDto[] {
       return this.campaigns.filter(({id}) => findIds.includes(id))
     },
-    async loadData (event: CustomEvent) {
+    async loadData (event: CustomScrollEvent) {
       this.offset += EVENT_LIST_CHUNK_SIZE
       const moreEvents = await this.getEvents()
 
