@@ -209,8 +209,7 @@ export default defineComponent({
         })
     },
     async getEvents() {
-      let response
-      response = await this.$apiClient.events.list({
+      const response = await this.$apiClient.events.list({
         campaigns: this.filteredCampaigns ?? [],
         limit: this.limit,
         offset: this.offset
