@@ -5,6 +5,9 @@
  */
 export function appendAsQueryParams(url: URL, object: any) {
   for (const [key, value] of Object.entries(object)) {
+    if (value === undefined) {
+      continue
+    }
     if (Array.isArray(value)) {
       // if it's an array append each item for the particular key
       value.forEach(item => url.searchParams.append(key, item))
