@@ -33,6 +33,7 @@
             </IonButton>
           </router-link>
         </div>
+
         <IonList
           v-if="events.length > 0"
         >
@@ -69,11 +70,23 @@
             </div>
           </IonItem>
         </IonList>
+        
         <div v-else>
           <IonText color="medium">
             Keine Events gefunden
           </IonText>
         </div>
+        
+        <IonInfiniteScroll
+          threshold="100px" 
+          :disabled="isDisabled"
+          @ionInfinite="loadData($event)"
+        >
+          <IonInfiniteScrollContent
+            loading-spinner="bubbles"
+            loading-text="Weitere Events laden..."
+          />
+        </IonInfiniteScroll>
       </div>
     </IonContent>
   </div>
@@ -93,12 +106,22 @@ import {
   IonSelect,
   IonSelectOption,
   IonText,
-  modalController
+  modalController,
+  IonInfiniteScroll, 
+  IonInfiniteScrollContent,
 } from '@ionic/vue'
 import { addIcons } from 'ionicons'
 import { trash, pencil, add } from 'ionicons/icons'
 import ConfirmDelete from '@/components/modals/ConfirmDelete.vue'
 import { userStore } from '@/store/UserStore'
+import { EVENT_LIST_CHUNK_SIZE } from '@/constants'
+
+interface CustomScrollEvent {
+  target: {
+    complete: Function,
+    disabled: boolean
+  }
+}
 
 addIcons({
   trash, pencil, add
@@ -115,14 +138,18 @@ export default defineComponent({
     IonItem,
     IonLabel,
     IonIcon,
-    IonContent
+    IonContent,
+    IonInfiniteScroll, 
+    IonInfiniteScrollContent,
   },
   data() {
     return {
       events: [] as EventDto[],
       filteredCampaigns: userStore.getState().campaigns,
       campaigns: [] as CampaignDto[],
-      messages: [] as any
+      messages: [] as any,
+      limit: EVENT_LIST_CHUNK_SIZE as number,
+      offset: 0 as number,
     }
   },
   computed: {
@@ -139,8 +166,8 @@ export default defineComponent({
       this.events = response.payload.data
     }
   },
-  created() {
-    this.getEvents()
+  async created() {
+    this.events = await this.getEvents()
     this.getCampaigns()
   },
   methods: {
@@ -182,15 +209,12 @@ export default defineComponent({
         })
     },
     async getEvents() {
-      let response
-      if (this.filteredCampaigns) {
-        response = await this.$apiClient.events.list({
-          campaigns: this.filteredCampaigns ?? undefined
-        })
-      } else {
-        response = await this.$apiClient.events.list()
-      }
-      this.events = response.payload.data
+      const response = await this.$apiClient.events.list({
+        campaigns: this.filteredCampaigns ?? [],
+        limit: this.limit,
+        offset: this.offset
+      })
+      return response.payload.data
     },
     async getCampaigns() {
       const response = await this.$apiClient.campaigns.list()
@@ -198,6 +222,18 @@ export default defineComponent({
     },
     campaignsByIds(findIds: number[]): CampaignDto[] {
       return this.campaigns.filter(({id}) => findIds.includes(id))
+    },
+    async loadData (event: CustomScrollEvent) {
+      this.offset += EVENT_LIST_CHUNK_SIZE
+      const moreEvents = await this.getEvents()
+
+      if (moreEvents.length == 0) {
+        event.target.disabled = true
+        return
+      }
+
+      this.events = this.events.concat(moreEvents)
+      event.target.complete()
     }
   }
 })
