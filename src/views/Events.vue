@@ -271,11 +271,3 @@ export default defineComponent({
   }
 }
 </style>
-
-function VUE_APP_BASE_URL(VUE_APP_BASE_URL: any) {
-  throw new Error('Function not implemented.')
-}
-
-function VUE_APP_BASE_URL(VUE_APP_BASE_URL: any) {
-  throw new Error('Function not implemented.')
-}
