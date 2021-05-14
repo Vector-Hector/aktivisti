@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <Form
-      v-slot="{ errors }"
-      @submit="register()"
+      v-slot="{ errors, isSubmitting }"
+      @submit="register"
     >
       <IonItem :class="{ 'item-has-error': !!errors.email }">
         <IonLabel position="floating">
@@ -163,11 +163,20 @@
         >Datenschutzbestimmungen</a>
         zur Kenntnis.
       </div>
-
+      <IonItem
+        class="error-wrapper"
+        lines="none"
+      >
+        <ErrorMessage
+          name="non-field-error"
+          class="error"
+        />
+      </IonItem>
       <div class="control-buttons">
         <IonButton
           color="primary"
           type="submit"
+          :disabled="isSubmitting"
         >
           Registrieren
         </IonButton>
@@ -216,8 +225,20 @@ export default defineComponent({
     }
   },
   methods: {
-    async register() {
-      // TODO
+    async register(values: any, actions: any) {
+      try {
+        await this.$apiClient.userRegistration.create(values)
+        await this.$router.push({name: 'register-success'})
+      } catch (error) {
+        console.log(error)
+        if (error.status === 400) {
+          actions.setErrors(error.data)
+        } else {
+          actions.setErrors({
+            'non-field-error': 'Ein unerwarteter Fehler ist aufgetreten'
+          })
+        }
+      }
     }
   }
 })

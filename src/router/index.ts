@@ -29,6 +29,7 @@ import EventAreaStreetMap from '@/views/event-detail/event-area/EventAreaStreetM
 import MyEvents from '@/views/MyEvents.vue'
 import EventDetailReport from '@/views/event-detail/EventDetailReport.vue'
 import { uiStore } from '@/store/UiStore'
+import RegistrationSucess from '@/views/RegistrationSucess.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -253,6 +254,14 @@ const router = createRouter({
       component: Register,
       meta: {
         title: () => 'Registrieren'
+      }
+    },
+    {
+      path: '/registration-success',
+      component: RegistrationSucess,
+      name: 'register-success',
+      meta: {
+        title: () => 'Registrierung erfolgreich'
       }
     },
     {

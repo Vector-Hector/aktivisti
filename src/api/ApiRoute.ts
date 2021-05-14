@@ -10,6 +10,26 @@ interface RequestConfig {
   query?: { [key: string]: string[] | string | number | number[] }
   data?: any
 }
+/**
+ * Shared definitions across api endpoint classes
+ */
+export class BaseApiRoute {
+  constructor(protected baseUrl: string, protected path: string, protected axiosInstance: AxiosInstance) {}
+
+  protected request(config: RequestConfig) {
+    const url = new URL(`${this.baseUrl}/${config.path}`)
+    if (config.embed?.length) {
+      appendAsQueryParams(url, {embed: config.embed})
+    }
+    if (config.query) {
+      appendAsQueryParams(url, config.query)
+    }
+    return this.axiosInstance(url.toString(), {
+      method: config.method,
+      data: config.data ? JSON.stringify(config.data) : undefined
+    })
+  }
+}
 
 /**
  * Generic CRUD operation definitions for a route
@@ -17,9 +37,8 @@ interface RequestConfig {
  * @template E Is the response format for a single entity, defaults to an enveloped T
  * @template L Is the response format for a list of entities, defaults to an enveloped T[]
  */
-export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
-  constructor(protected baseUrl: string, protected path: string, protected axiosInstance: AxiosInstance) {
-  }
+export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> extends BaseApiRoute {
+
 
   async list(query: { [key: string]: any } = {}, embed: string[] = []): Promise<JSONResponse<L>> {
 
@@ -27,7 +46,7 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
       path: this.path,
       method: 'GET',
       query,
-      embed,
+      embed
     })
     const data = response.data
     return new JSONResponse<L>(response, data)
@@ -77,20 +96,6 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> {
     await this.request({
       path: `${this.path}${id}`,
       method: 'DELETE'
-    })
-  }
-
-  protected request(config: RequestConfig) {
-    const url = new URL(`${this.baseUrl}/${config.path}`)
-    if (config.embed?.length) {
-      appendAsQueryParams(url, { embed: config.embed })
-    }
-    if (config.query) {
-      appendAsQueryParams(url, config.query)
-    }
-    return this.axiosInstance(url.toString(), {
-      method: config.method,
-      data: config.data ? JSON.stringify(config.data) : undefined
     })
   }
 }
