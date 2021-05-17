@@ -166,6 +166,9 @@ export default defineComponent({
     showCampaignLevel,
     async updateView() {
       const clusterResponse = await this.$apiClient.eventClusters.list(this.filterParams)
+      if (isEqual(this.clusters, clusterResponse.payload.data)) {
+        return
+      }
       this.clusters = clusterResponse.payload.data
       if (this.clusters.reduce((acc, item) => acc + item.count, 0) <= MAX_EVENTS) {
         this.clusterMode = false
