@@ -40,7 +40,7 @@ export default defineComponent({
   beforeRouteEnter: async (to, from, next) => {
     const campaignRequest = await apiClient.campaigns.list()
     if (to.params.id) {
-      const eventRequest = await apiClient.events.get(to.params.id as string, ['metrics'])
+      const eventRequest = await apiClient.events.get(to.params.id as string, ['eventmetricrecord_set'])
       next((vm: any) => {
         uiStore.updateActiveElements({
           event: eventRequest.payload.data.name

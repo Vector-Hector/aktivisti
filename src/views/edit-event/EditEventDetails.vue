@@ -98,6 +98,7 @@
                 :show-time="true"
                 :model-value="field.value"
                 :class="{'p-invalid': errors.startDate}"
+                :step-minute="15"
                 @date-select="field.onChange.forEach((fn) => fn($event))"
               />
               <ErrorMessage
@@ -118,6 +119,7 @@
               v-model="endDate"
               date-format="dd.mm.yy"
               :show-time="true"
+              :step-minute="15"
             />
           </div>
         </div>
@@ -268,7 +270,9 @@ export default defineComponent({
         if (this.localEvent.end_date) {
           return new Date(this.localEvent.end_date)
         } else {
-          return undefined
+          const defaultEndDate = new Date(this.startDate)
+          defaultEndDate.setHours((this.startDate.getHours()) + 1)
+          return defaultEndDate
         }
       },
       set(value: Date) {
@@ -276,11 +280,15 @@ export default defineComponent({
       }
     },
     startDate: {
-      get(): Date | undefined {
+      get(): Date {
         if (this.localEvent.start_date) {
           return new Date(this.localEvent.start_date)
         } else {
-          return undefined
+          // The current date and round to the next full hour
+          const now = new Date()
+          now.setHours(now.getHours() + Math.round(now.getMinutes() / 60))
+          now.setMinutes(0, 0, 0)
+          return now
         }
       },
       set(value: Date) {
