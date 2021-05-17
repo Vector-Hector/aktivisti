@@ -13,7 +13,7 @@
             :key="campaign.id"
             :value="campaign.id"
           >
-            {{ campaign.name }}
+            {{ campaign.name }} ({{ showCampaignLevel(campaign) }})
           </IonSelectOption>
         </IonSelect>
       </div>
@@ -64,6 +64,7 @@ import {
   IonSelect,
   IonSelectOption
 } from '@ionic/vue'
+import { showCampaignLevel } from '@/utils/showCampaignLevel'
 
 export default defineComponent({
   name: 'Home',
@@ -109,6 +110,7 @@ export default defineComponent({
     this.getCampaigns()
   },
   methods: {
+    showCampaignLevel,
     updateUserLocation(location: LocationDto) {
       userStore.locate(location)
     },

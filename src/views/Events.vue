@@ -14,7 +14,7 @@
               :key="campaign.id"
               :value="campaign.id"
             >
-              {{ campaign.name }}
+              {{ campaign.name }} ({{ showCampaignLevel(campaign) }})
             </IonSelectOption>
           </IonSelect>
         </div>
@@ -115,6 +115,7 @@ import { trash, pencil, add } from 'ionicons/icons'
 import ConfirmDelete from '@/components/modals/ConfirmDelete.vue'
 import { userStore } from '@/store/UserStore'
 import { EVENT_LIST_CHUNK_SIZE } from '@/constants'
+import { showCampaignLevel } from '@/utils/showCampaignLevel'
 
 interface CustomScrollEvent {
   target: {
@@ -171,6 +172,7 @@ export default defineComponent({
     this.getCampaigns()
   },
   methods: {
+    showCampaignLevel,
     updateUserCampaign(campaigns: number[] | null) {
       userStore.setCampaigns(campaigns)
     },
@@ -234,7 +236,7 @@ export default defineComponent({
 
       this.events = this.events.concat(moreEvents)
       event.target.complete()
-    }
+    },
   }
 })
 </script>
