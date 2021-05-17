@@ -68,7 +68,8 @@ const router = createRouter({
       component: MyEvents,
       name: 'my-events',
       meta: {
-        title: () => 'Meine Veranstaltungen'
+        title: () => 'Meine Veranstaltungen',
+        requiresAuth: true
       }
     },
     {
@@ -100,7 +101,8 @@ const router = createRouter({
           name: 'event-detail-report',
           meta: {
             title: () => 'Ergebnisse',
-            subtitle: () => uiStore.getState().activeTitleElements.event
+            subtitle: () => uiStore.getState().activeTitleElements.event,
+            requiresAuth: true
           }
         },
         {
@@ -147,7 +149,8 @@ const router = createRouter({
               },
               meta: {
                 title: () => 'Metriken aufnehmen',
-                subtitle: () => uiStore.getState().activeTitleElements.streetNumber
+                subtitle: () => uiStore.getState().activeTitleElements.streetNumber,
+                requiresAuth: true
               },
               props: true,
               name: 'event-detail-area-metrics'
@@ -161,7 +164,8 @@ const router = createRouter({
       component: EditEvent,
       redirect: {name: 'edit-event-details-new'},
       meta: {
-        title: () => 'Veranstaltung erstellen'
+        title: () => 'Veranstaltung erstellen',
+        requiresAuth: true
       },
       children: [
         {
@@ -178,7 +182,8 @@ const router = createRouter({
       props: true,
       meta: {
         subtitle: () => uiStore.getState().activeTitleElements.event,
-        title: () => 'Veranstaltung bearbeiten'
+        title: () => 'Veranstaltung bearbeiten',
+        requiresAuth: true
       },
       children: [
         {
