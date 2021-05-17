@@ -157,11 +157,6 @@ const router = createRouter({
       ]
     },
     {
-      path: '/events/edit',
-      component: Events,
-      redirect: {name: 'edit-event-list'}
-    },
-    {
       path: '/events/edit/new',
       component: EditEvent,
       redirect: {name: 'edit-event-details-new'},
