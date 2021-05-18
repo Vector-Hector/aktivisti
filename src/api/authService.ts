@@ -18,21 +18,25 @@ class AuthService {
     trackingSessionStore.clear()
   }
 
-  async auth(params: OAuthTokenRequestParams) {
+  async auth(params: OAuthTokenRequestParams, saveRefreshToken = false) {
     const authRequest = await oAuth2Client.token(params)
+    if (!saveRefreshToken) {
+      // do not persist the refresh token
+      delete authRequest.payload.refresh_token
+    }
     tokenStore.setTokenDto(authRequest.payload)
     const profileRequest = await apiClient.user.get('me')
     userStore.setUser(profileRequest.payload.data)
   }
 
-  async login(username: string, password: string) {
+  async login(username: string, password: string, saveRefreshToken = false) {
     const userParams = {
       grant_type: 'password' as GrantType,
       username: username,
       password: password,
       client_id: process.env.VUE_APP_CLIENT_ID
     }
-    await this.auth(userParams)
+    await this.auth(userParams, saveRefreshToken)
   }
 
   async renewLogin() {

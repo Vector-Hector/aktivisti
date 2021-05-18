@@ -68,7 +68,10 @@
 
       <div class="control-buttons">
         <IonItem lines="none">
-          <IonCheckbox class="checkbox-margin-right" />
+          <IonCheckbox
+            v-model="saveRefreshToken"
+            class="checkbox-margin-right"
+          />
           <IonLabel>Angemeldet bleiben</IonLabel>
         </IonItem>
 
@@ -137,13 +140,14 @@ export default defineComponent({
   data() {
     return {
       username: '',
-      password: ''
+      password: '',
+      saveRefreshToken: false,
     }
   },
   methods: {
     async login(values: any, actions: any) {
       try {
-        await authService.login(this.username, this.password)
+        await authService.login(this.username, this.password, this.saveRefreshToken)
         this.$router.push(this.next)
       } catch (error) {
         if (error.response?.status == 400) {
