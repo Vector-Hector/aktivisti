@@ -13,6 +13,7 @@ import { LeadDto } from '@/api/model/LeadDto'
 import { EventDto } from '@/api/model/EventDto'
 import { EventAreaRoute } from "@/api/EventAreaRoute";
 import { EventParticipationRoute } from '@/api/EventParticipationRoute'
+import { UserRegistrationDto } from '@/api/model/UserRegistrationDto'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -41,6 +42,7 @@ export class ApiClient {
   trackingSession = new ApiRoute<TrackingSessionDto>(this.baseURL, 'tracking-session/', this.axiosInstance)
   leads = new ApiRoute<LeadDto>(this.baseURL, 'leads/', this.axiosInstance)
   eventParticipations = new EventParticipationRoute(this.baseURL, 'event-participations/', this.axiosInstance)
+  userRegistration = new ApiRoute<UserRegistrationDto>(this.baseURL, 'account/register/', this.axiosInstance)
 }
 
 export const apiClient = new ApiClient()
