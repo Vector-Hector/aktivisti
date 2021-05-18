@@ -184,7 +184,7 @@ export default defineComponent({
             color: 'warning',
             duration: 3500,
             header: 'Hier ist zuviel los',
-            message: 'Nicht alle Events werden an gezeigt, da dies zuviel für die Karte wäre. Nutze die Listenansicht'
+            message: 'Nicht alle Events werden angezeigt, da dies zuviel für die Karte wäre. Nutze die Listenansicht'
 
           })
           toast.onDidDismiss()
