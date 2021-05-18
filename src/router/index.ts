@@ -242,7 +242,7 @@ const router = createRouter({
       component: Login,
       name: 'login',
       props: (route) => ({
-        next: route.query.next
+        next: route.params.nextUrl
       }),
       meta: {
         title: () => 'Einloggen'
@@ -268,8 +268,10 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   if (!authService.isLoggedIn() && to.matched.some(record => record.meta.requiresAuth)) {
     next({
-      path: '/login',
-      params: {nextUrl: to.fullPath}
+      name: 'login',
+      params: {
+        nextUrl: to.fullPath,
+      }
     })
   } else {
     next()
