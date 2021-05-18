@@ -20,6 +20,7 @@ import { LocationDto } from '@/api/model/LocationDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { TinyEmitter } from 'tiny-emitter'
 import { isEqual } from 'lodash-es'
+import { bboxPolygon } from '@turf/turf'
 
 
 export const MapInject: InjectionKey<Ref<mapboxgl.Map>> = Symbol()
@@ -47,7 +48,7 @@ export default defineComponent({
       default: undefined
     }
   },
-  emits: ['update:zoom', 'update:center', 'update:zoom', 'drop'],
+  emits: ['update:zoom', 'update:center', 'update:zoom', 'drop', 'update:boundingBox'],
   setup(props, {emit}) {
     mapboxgl.accessToken = process.env.VUE_APP_MAPBOX_TOKEN
     const map = ref<mapboxgl.Map | null>(null)
@@ -74,6 +75,16 @@ export default defineComponent({
       map.value?.fitBounds(args, {animate: props.animate})
     }
 
+    const getBoundingBox = () => {
+      const bounds = map.value!.getBounds()
+      return bboxPolygon([
+        bounds.getWest(),
+        bounds.getNorth(),
+        bounds.getEast(),
+        bounds.getSouth()
+      ])
+    }
+
     const emitWithBus = (type: string, event: any) => {
       // @ts-ignore
       emit(type, event)
@@ -93,15 +104,14 @@ export default defineComponent({
         }
         initialized.value = true
       })
-      map.value.on('zoom', () => {
-        emitWithBus('update:zoom', map.value?.getZoom())
-      })
       map.value.on('moveend', () => {
         emitWithBus('update:center', map.value?.getCenter())
+        emitWithBus('update:boundingBox', getBoundingBox())
       })
 
       map.value.on('zoomend', () => {
         emitWithBus('update:zoom', map.value?.getZoom())
+        emitWithBus('update:boundingBox', getBoundingBox())
       })
     })
 

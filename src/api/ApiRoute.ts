@@ -41,7 +41,6 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> extends BaseA
 
 
   async list(query: { [key: string]: any } = {}, embed: string[] = []): Promise<JSONResponse<L>> {
-
     const response = await this.request({
       path: this.path,
       method: 'GET',

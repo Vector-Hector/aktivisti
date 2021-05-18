@@ -45,8 +45,11 @@ class UserStore extends Store<UserState> {
   }
 
   public setZoom(zoom: number | null) {
+    this.state.zoom = zoom
     if (zoom) {
       localStorage.setItem(KEY_ZOOM, zoom.toString())
+    } else {
+      localStorage.removeItem(KEY_ZOOM)
     }
   }
 
