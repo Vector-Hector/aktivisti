@@ -17,3 +17,18 @@
 .button-solid {
   --border-radius: 0px;
 }
+
+
+
+ion-item {
+  &.no-background {
+    --background: tranparent;
+  }
+  &.no-padding {
+    &::part(native) {
+      padding: 0;
+      --ion-safe-area-right: 0;
+      --inner-padding-right: 0;
+    }
+  }
+}

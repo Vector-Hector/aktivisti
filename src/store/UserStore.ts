@@ -6,7 +6,7 @@ interface UserState {
   user: UserDto | null,
   location: LocationDto | null,
   zoom: number | null,
-  campaigns: number[] | null
+  campaign: number | null
 }
 
 const KEY_LOCATION = 'LOCATION'
@@ -28,14 +28,14 @@ class UserStore extends Store<UserState> {
     const zoomString = localStorage.getItem(KEY_ZOOM)
     const zoom = zoomString ? parseInt(zoomString) : null
 
-    const campaignsString = localStorage.getItem(KEY_CAMPAIGN)
-    const campaigns = campaignsString ? JSON.parse(campaignsString) : null
+    const campaignString = localStorage.getItem(KEY_CAMPAIGN)
+    const campaign = campaignString ? parseInt(campaignString) : null
 
     return {
       user: null,
       location,
       zoom,
-      campaigns
+      campaign
     }
   }
 
@@ -53,9 +53,13 @@ class UserStore extends Store<UserState> {
     }
   }
 
-  public setCampaigns(campaigns: number[] | null) {
-    this.state.campaigns = campaigns
-    localStorage.setItem(KEY_CAMPAIGN, JSON.stringify(campaigns))
+  public setCampaign(campaign: number | null) {
+    this.state.campaign = campaign
+    if (campaign === null) {
+      localStorage.removeItem(KEY_CAMPAIGN)
+    } else {
+      localStorage.setItem(KEY_CAMPAIGN, campaign!.toString())
+    }
   }
 
   public clearUser() {

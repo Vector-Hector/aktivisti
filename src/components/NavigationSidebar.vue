@@ -77,15 +77,6 @@
             <span class="menu-item-link-text">Meine Termine</span>
           </router-link>
         </div>
-        <div class="menu-item">
-          <router-link
-            class="menu-item-link"
-            to="/map"
-          >
-            <i class="pi pi-map-marker" />
-            <span class="menu-item-link-text">Termine auf Karte</span>
-          </router-link>
-        </div>
       </div>
       <div
         v-if="isManager"

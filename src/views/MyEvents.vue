@@ -7,7 +7,7 @@
       >
         <IonText>Du nimmst an keinen Veranstaltungen teil - suche jetzt welche!</IonText>
         <router-link
-          :to="{ name: 'events-map' }"
+          :to="{ name: 'events' }"
         >
           <IonButton>Jetzt nach Events suchen</IonButton>
         </router-link>
