@@ -2,7 +2,7 @@
   <div class="container">
     <Form
       v-slot="{ errors }"
-      @submit="saveAndProceed()"
+      @submit="saveAndProceed"
     >
       <div class="p-fluid">
         <div class="p-field p-grid">
@@ -82,14 +82,14 @@
 
         <div class="p-field p-grid">
           <label
-            for="startDate"
+            for="start_date"
             class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
           >Beginn</label>
           <div class="p-col-12 p-md-9">
             <Field
               v-slot="{ field }"
               v-model="startDate"
-              name="startDate"
+              name="start_date"
               value="value"
               :rules="isRequired"
             >
@@ -97,12 +97,12 @@
                 date-format="dd.mm.yy"
                 :show-time="true"
                 :model-value="field.value"
-                :class="{'p-invalid': errors.startDate}"
+                :class="{'p-invalid': errors.start_date}"
                 :step-minute="15"
                 @date-select="field.onChange.forEach((fn) => fn($event))"
               />
               <ErrorMessage
-                name="startDate"
+                name="start_date"
                 class="error"
               />
             </Field>
@@ -167,18 +167,21 @@
               placeholder="Metriken auswählen"
               display="chip"
             />
+            <ErrorMessage
+              name="metrics"
+              class="error"
+            />
           </div>
         </div>
-
         <div
-          v-for="metricRecord in metricRecords"
+          v-for="metricRecord in eventMetricRecords"
           :key="metricRecord.id"
         >
           <div class="p-field p-grid">
             <label
               for="eventGoals"
               class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-            >Zielvorgabe für {{ metricForMetricRecord(metricRecord).name }} hinzufügen</label>
+            >Zielvorgabe für {{ metricForMetricRecord(metricRecord)?.name }} hinzufügen</label>
             <div class="p-col-12 p-md-9">
               <InputNumber
                 v-model="metricRecord.target"
@@ -248,10 +251,10 @@ export default defineComponent({
     ErrorMessage
   },
   mixins: [EditEventMixin],
+  emits: ['update:eventMetricRecords'],
   data() {
     return {
       metrics: [] as EventMetricDto[],
-      metricRecords: [] as Partial<EventMetricRecordDto>[],
       zoom: 6,
       iconWidth: 25,
       iconHeight: 40,
@@ -267,13 +270,7 @@ export default defineComponent({
     },
     endDate: {
       get(): Date | undefined {
-        if (this.localEvent.end_date) {
-          return new Date(this.localEvent.end_date)
-        } else {
-          const defaultEndDate = new Date(this.startDate)
-          defaultEndDate.setHours((this.startDate.getHours()) + 1)
-          return defaultEndDate
-        }
+        return new Date(this.localEvent.end_date!)
       },
       set(value: Date) {
         this.localEvent.end_date = value.toISOString()
@@ -281,15 +278,7 @@ export default defineComponent({
     },
     startDate: {
       get(): Date {
-        if (this.localEvent.start_date) {
-          return new Date(this.localEvent.start_date)
-        } else {
-          // The current date and round to the next full hour
-          const now = new Date()
-          now.setHours(now.getHours() + Math.round(now.getMinutes() / 60))
-          now.setMinutes(0, 0, 0)
-          return now
-        }
+        return new Date(this.localEvent.start_date!)
       },
       set(value: Date) {
         this.localEvent.start_date = value.toISOString()
@@ -297,27 +286,36 @@ export default defineComponent({
     },
     selectedMetrics: {
       get(): EventMetricDto[] {
-        const metricRecordMetricIds = this.metricRecords.map(({metric}) => metric)
+        const metricRecordMetricIds = this.eventMetricRecords.map(({metric}) => metric)
         return this.metrics.filter(({id}) => {
           return metricRecordMetricIds.includes(id)
         })
       },
       set(metrics: EventMetricDto[]) {
-        this.metricRecords = metrics.map((metricItem) => {
-          const existingRecord = this.metricRecords.find(({metric}) => metric == metricItem.id)
+        this.$emit('update:eventMetricRecords', metrics.map((metricItem) => {
+          const existingRecord = this.eventMetricRecords.find(({metric}) => metric == metricItem.id)
           return existingRecord ?? {
             metric: metricItem.id,
             event: this.event.id,
             target: 0
           }
-        })
+        }))
       }
     }
   },
   async created() {
     await this.getMetrics()
-    if (this.event.id) {
-      await this.getMetricRecords()
+    if (!this.localEvent.start_date) {
+      const initialDate = new Date()
+      initialDate.setHours(initialDate.getHours() + Math.round(initialDate.getMinutes() / 60))
+      initialDate.setMinutes(0, 0, 0)
+      this.localEvent.start_date = initialDate.toISOString()
+    }
+
+    if (!this.localEvent.end_date) {
+      const initialDate = new Date(this.localEvent.start_date)
+      initialDate.setHours(initialDate.getHours() + 1)
+      this.localEvent.end_date = initialDate.toISOString()
     }
   },
   methods: {
@@ -325,28 +323,42 @@ export default defineComponent({
       const metricsRequest = await this.$apiClient.eventMetrics.list()
       this.metrics = metricsRequest.payload.data
     },
-    async getMetricRecords() {
-      const metricRecordsRequest = await this.$apiClient.eventMetricRecords.list({event: this.event.id})
-      this.metricRecords = metricRecordsRequest.payload.data
-    },
     async save() {
       let newEvent
       if (!this.localEvent.id) {
-        newEvent = this.localEvent = (await this.$apiClient.events.create(this.localEvent)).payload.data
+        newEvent = this.localEvent = (await this.$apiClient.events.create({
+          ...this.localEvent,
+          // need to supply the metrics during creation to pass validation
+          metrics: this.selectedMetrics.map(({id}) => id)
+        })).payload.data
       } else {
-        newEvent = this.localEvent = (await this.$apiClient.events.update(this.localEvent!.id!.toString(), this.localEvent as EventDto)).payload.data
+        newEvent = this.localEvent = (await this.$apiClient.events.update(this.localEvent!.id!.toString(), {
+          ...(this.localEvent as EventDto),
+          metrics: this.selectedMetrics.map(({id}) => id)
+        })).payload.data
       }
-      await this.$apiClient.events.batchUpdateMetricRecords(newEvent.id.toString(), this.metricRecords)
+      await this.$apiClient.events.batchUpdateMetricRecords(newEvent.id.toString(), this.eventMetricRecords)
       return newEvent
     },
-    async saveAndProceed() {
-      const newEvent = await this.save()
-      await this.$router.push({
-        name: 'edit-event-location',
-        params: {
-          id: newEvent.id.toString()
+    async saveAndProceed(data: Partial<EventDto>, actions: any) {
+      try {
+        const newEvent = await this.save()
+        await this.$router.push({
+          name: 'edit-event-location',
+          params: {
+            id: newEvent.id.toString()
+          }
+        })
+      } catch (e) {
+        console.dir(e)
+        if (e.status == 400) {
+          actions.setErrors(e.data)
+        } else {
+          actions.setErrors({
+            'non-field-error': 'Ein unbekannter Fehler ist aufgetreten'
+          })
         }
-      })
+      }
     },
     async saveAndClose() {
       const newEvent = await this.save()
@@ -361,7 +373,7 @@ export default defineComponent({
       return this.metrics.find(({id}) => record.metric === id)
     },
     metricRecordForMetricId(metricId: number): Partial<EventMetricRecordDto> | undefined {
-      return this.metricRecords.find(({metric}) => metricId === metric)
+      return this.eventMetricRecords.find(({metric}) => metricId === metric)
     },
     isRequired(value: string) {
       if (!value) {
