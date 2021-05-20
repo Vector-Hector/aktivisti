@@ -59,6 +59,7 @@ const app = createApp(App)
 
 app.config.globalProperties.$apiClient = apiClient
 app.config.globalProperties.$oauth2Client = oAuth2Client
+app.config.globalProperties.$router = router
 
 
 apiClient.axiosInstance.interceptors.request.use((request: AxiosRequestConfig) => {
@@ -83,6 +84,11 @@ apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
     }
     // redo initial request
     return apiClient.axiosInstance(originalRequest)
+  } else if (error.response?.status === 403 && tokenStore.expiryDate && (new Date() <= tokenStore.expiryDate)) {
+    // if logged in user still has a valid token but tries to fetch a resource they don't have permissions for
+    // redirect to home
+    router.push('/')
+    return Promise.reject(error.response)
   } else {
     // all other request just fail regulary
     return Promise.reject(error.response)
