@@ -308,31 +308,25 @@ export default defineComponent({
         return
       }
       this.clusters = clusterResponse.payload.data
-      if (this.clusters.reduce((acc, item) => acc + item.count, 0) <= MAX_EVENTS) {
-        this.clusterMode = false
-        const eventsResponse = await this.$apiClient.events.list(this.filterParams)
-        this.events = eventsResponse.payload.data
-        this.eventsPagination = eventsResponse.payload.pagination!
-      } else if (this.zoom! > 15) {
-        this.clusterMode = false
-        const eventsResponse = await this.$apiClient.events.list(this.filterParams)
-        this.events = eventsResponse.payload.data
-        this.eventsPagination = eventsResponse.payload.pagination!
-        if (!this.tooManyEventsWarningShowing) {
-          const toast = await toastController.create({
-            color: 'warning',
-            duration: 3500,
-            header: 'Hier ist zuviel los',
-            message: 'Nicht alle Events werden angezeigt, da dies zuviel für die Karte wäre. Nutze die Listenansicht'
-          })
-          toast.onDidDismiss()
-            .then(() => this.tooManyEventsWarningShowing = false)
-          await toast.present()
-          this.tooManyEventsWarningShowing = true
+      const eventCount = this.clusters.reduce((acc, item) => acc + item.count, 0)
+      // show events if we reached zoom level > 15 or less than 100 events are on the current page
+      this.clusterMode = !(eventCount <= MAX_EVENTS || this.zoom! > 15)
+      const eventsResponse = await this.$apiClient.events.list(this.filterParams)
+      this.events = eventsResponse.payload.data
+      this.eventsPagination = eventsResponse.payload.pagination!
 
-        }
-      } else {
-        this.clusterMode = true
+      // If the amount of events is still more than MAX_EVENTS show a warning that not all events are shown
+      if (!this.clusterMode && eventCount > MAX_EVENTS && !this.tooManyEventsWarningShowing) {
+        const toast = await toastController.create({
+          color: 'warning',
+          duration: 3500,
+          header: 'Hier ist zuviel los',
+          message: 'Nicht alle Events werden angezeigt, da dies zuviel für die Karte wäre. Nutze die Listenansicht'
+        })
+        toast.onDidDismiss()
+          .then(() => this.tooManyEventsWarningShowing = false)
+        await toast.present()
+        this.tooManyEventsWarningShowing = true
       }
     },
     async getCampaigns() {

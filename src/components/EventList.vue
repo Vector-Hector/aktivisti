@@ -120,16 +120,12 @@ export default defineComponent({
     }
   },
   emits: ['update:events', 'update:pagination'],
-  data() {
-    return {
-      limit: EVENT_LIST_CHUNK_SIZE as number,
-      offset: 0 as number,
-      isDisabled: false
-    }
-  },
   computed: {
     isManager() {
       return userStore.isManager()
+    },
+    isDisabled(): boolean {
+      return this.pagination?.total === this.events.length
     }
   },
   methods: {
@@ -170,7 +166,7 @@ export default defineComponent({
     async getEvents() {
       const response = await this.$apiClient.events.list({
         ...this.filterParams,
-        limit: this.pagination?.limit,
+        limit: EVENT_LIST_CHUNK_SIZE,
         offset: this.pagination?.offset
       })
       return response.payload.data
@@ -179,22 +175,14 @@ export default defineComponent({
       return this.campaigns.filter(({id}) => findIds.includes(id))
     },
     async loadData(event: CustomScrollEvent) {
-      if (this.pagination?.total === this.events.length) {
-        this.isDisabled = true
-        event.target.disabled = true
+      if (this.isDisabled) {
         return
       }
       this.$emit('update:pagination', {
         ...this.pagination,
-        offset: (this.pagination?.offset ?? 0) + EVENT_LIST_CHUNK_SIZE
+        offset: (this.events?.length ?? 0) + EVENT_LIST_CHUNK_SIZE
       })
       const moreEvents = await this.getEvents()
-
-      if (moreEvents.length == 0) {
-        this.isDisabled = true
-        event.target.disabled = true
-        return
-      }
 
       this.$emit('update:events', distinctBy(this.events.concat(moreEvents), (item) => item.id))
       event.target.complete()
