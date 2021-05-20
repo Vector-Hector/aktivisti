@@ -51,7 +51,7 @@
               >
                 <IonIcon
                   name="close"
-                  aria-label="Nutzer vom Event entfernen"
+                  aria-label="Nutzer von der Aktion entfernen"
                 />
               </IonButton>
             </div>

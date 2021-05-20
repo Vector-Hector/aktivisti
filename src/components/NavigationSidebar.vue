@@ -65,7 +65,7 @@
             to="/events"
           >
             <IonIcon name="calendar-clear-outline" />
-            <span class="menu-item-link-text">Alle Termine</span>
+            <span class="menu-item-link-text">Alle Aktionen</span>
           </router-link>
         </div>
         <div class="menu-item">
@@ -74,7 +74,7 @@
             :to="{ name: 'my-events' }"
           >
             <IonIcon name="calendar-outline" />
-            <span class="menu-item-link-text">Meine Termine</span>
+            <span class="menu-item-link-text">Meine Aktionen</span>
           </router-link>
         </div>
       </div>
