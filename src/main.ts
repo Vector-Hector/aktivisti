@@ -43,6 +43,7 @@ import { userStore } from '@/store/UserStore'
 import { makeServer } from '../mocks/server'
 import { apiClient } from '@/api/ApiClient'
 import { tokenStore } from '@/store/TokenStore'
+import { ErrorBus } from '@/utils/errorBus'
 
 import './validate-rules'
 
@@ -88,6 +89,9 @@ apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
     // if logged in user still has a valid token but tries to fetch a resource they don't have permissions for
     // redirect to home
     router.push('/')
+
+    // emited error is displayed in a toast alert
+    ErrorBus.emit("error", "Sie haben nicht genügend Rechte, um die angefragte Seite zu lesen.")
     return Promise.reject(error.response)
   } else {
     // all other request just fail regulary
