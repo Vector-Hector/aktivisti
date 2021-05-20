@@ -46,7 +46,7 @@ class AuthService {
       client_id: process.env.VUE_APP_CLIENT_ID
     }
     try {
-      await this.auth(params)
+      await this.auth(params, true)
     } catch (e) {
       // renewal failed, clear faulty credentials
       this.clear()
