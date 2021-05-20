@@ -60,7 +60,7 @@ const router = createRouter({
       component: MyEvents,
       name: 'my-events',
       meta: {
-        title: () => 'Meine Veranstaltungen',
+        title: () => 'Meine Aktionen',
         requiresAuth: true
       }
     },
@@ -157,7 +157,7 @@ const router = createRouter({
       redirect: {name: 'edit-event-details-new'},
       props: true,
       meta: {
-        title: () => 'Veranstaltung erstellen',
+        title: () => 'Aktion erstellen',
         requiresAuth: true
       },
       children: [
@@ -175,7 +175,7 @@ const router = createRouter({
       props: true,
       meta: {
         subtitle: () => uiStore.getState().activeTitleElements.event,
-        title: () => 'Veranstaltung bearbeiten',
+        title: () => 'Aktion bearbeiten',
         requiresAuth: true
       },
       children: [
