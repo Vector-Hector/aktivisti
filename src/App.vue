@@ -70,6 +70,7 @@ import Toast from 'primevue/toast'
 import { addIcons } from 'ionicons'
 import { menuOutline, arrowBack } from 'ionicons/icons'
 import AppTitle from '@/components/AppTitle.vue'
+import { ErrorBus } from '@/utils/errorBus'
 
 
 addIcons({
@@ -139,6 +140,14 @@ export default defineComponent({
         this.transitionDirection = toDepth < fromDepth ? 'right' : 'left'
       }
     }
+  },
+  mounted() {
+    ErrorBus.on('error', (message: String) => {
+      this.$toast.add({
+        severity: 'error',
+        summary: message
+      })
+    })
   },
   methods: {
     openSidebar() {
