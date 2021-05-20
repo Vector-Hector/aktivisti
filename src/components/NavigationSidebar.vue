@@ -68,7 +68,10 @@
             <span class="menu-item-link-text">Alle Termine</span>
           </router-link>
         </div>
-        <div class="menu-item">
+        <div
+          v-if="isLoggedIn"
+          class="menu-item"
+        >
           <router-link
             class="menu-item-link"
             :to="{ name: 'my-events' }"
