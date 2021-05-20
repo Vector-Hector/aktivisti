@@ -46,29 +46,6 @@
       >
         <IonContent>
           <div class="container">
-            <IonItem
-              class="no-background no-padding"
-            >
-              <IonLabel
-                class="small-label"
-                position="stacked"
-              >
-                Sortieren nach
-              </IonLabel>
-              <IonSelect
-                v-model="selectedSortOption"
-                class="block-select gray"
-                placeholder="Sortierung auswählen"
-              >
-                <IonSelectOption
-                  v-for="sortOption in sortOptions"
-                  :key="sortOption"
-                  :value="sortOption"
-                >
-                  {{ SortOptionLabels[sortOption] ?? sortOption }}
-                </IonSelectOption>
-              </IonSelect>
-            </IonItem>
             <CollapsibleFilters
               class="collapsible-filters"
               :activated-filter-count="activatedFilterCount"
@@ -130,6 +107,29 @@
                       :value="subAssociation.id"
                     >
                       {{ subAssociation.name }}
+                    </IonSelectOption>
+                  </IonSelect>
+                </IonItem>
+                <IonItem
+                  class="no-background no-padding"
+                >
+                  <IonLabel
+                    class="small-label"
+                    position="stacked"
+                  >
+                    Sortieren nach
+                  </IonLabel>
+                  <IonSelect
+                    v-model="selectedSortOption"
+                    class="block-select"
+                    placeholder="Sortierung auswählen"
+                  >
+                    <IonSelectOption
+                      v-for="sortOption in sortOptions"
+                      :key="sortOption"
+                      :value="sortOption"
+                    >
+                      {{ SortOptionLabels[sortOption] ?? sortOption }}
                     </IonSelectOption>
                   </IonSelect>
                 </IonItem>
