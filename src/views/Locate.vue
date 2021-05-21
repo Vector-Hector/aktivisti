@@ -12,7 +12,7 @@
     />
     <router-link
       v-if="location !== null"
-      to="/map"
+      to="/events"
     >
       <button
         class="confirm-button"
