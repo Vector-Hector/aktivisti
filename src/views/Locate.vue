@@ -1,7 +1,7 @@
 <template>
   <div class="splash">
     <h1 class="splash-message">
-      Finde Veranstaltungen in deiner Nähe
+      Finde Aktionen in deiner Nähe
     </h1>
     <Geocoder
       class="geocoder"

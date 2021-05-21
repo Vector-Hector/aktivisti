@@ -26,7 +26,7 @@
           <label
             for="eventName"
             class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-          >Name des Events</label>
+          >Name der Aktion</label>
           <div class="p-col-12 p-md-9">
             <Field
               v-slot="{field}"
