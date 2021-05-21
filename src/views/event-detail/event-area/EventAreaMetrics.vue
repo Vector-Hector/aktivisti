@@ -1,6 +1,6 @@
 <template>
   <router-link
-    :to="{ name: 'create-lead', query: {eventArea: eventArea.id} }"
+    :to="{ name: 'create-lead' }"
   >
     <IonButton>
       Sympathisant*in registrieren
