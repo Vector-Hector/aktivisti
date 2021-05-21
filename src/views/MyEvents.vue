@@ -6,11 +6,11 @@
           v-if="eventParticipations.length <= 0"
           class="placeholder"
         >
-          <IonText>Du nimmst an keinen Veranstaltungen teil - suche jetzt welche!</IonText>
+          <IonText>Du nimmst an keinen Aktion teil - suche jetzt welche!</IonText>
           <router-link
             :to="{ name: 'events' }"
           >
-            <IonButton>Jetzt nach Events suchen</IonButton>
+            <IonButton>Jetzt nach Aktionen suchen</IonButton>
           </router-link>
         </div>
         <IonItem

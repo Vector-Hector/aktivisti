@@ -102,7 +102,7 @@ export default defineComponent({
         icon: 'pi pi-plus',
         to: '/campaigns'
       }, {
-        label: 'Events',
+        label: 'Aktionen',
         icon: 'pi pi-fw pi-calendar',
         to: '/events'
       }],
