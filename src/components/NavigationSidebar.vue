@@ -80,6 +80,18 @@
             <span class="menu-item-link-text">Meine Aktionen</span>
           </router-link>
         </div>
+        <div
+          v-if="isLoggedIn"
+          class="menu-item"
+        >
+          <router-link
+            class="menu-item-link"
+            :to="{ name: 'edit-event-details-new' }"
+          >
+            <i class="pi pi-calendar-plus" />
+            <span class="menu-item-link-text">Aktion Erstellen</span>
+          </router-link>
+        </div>
       </div>
       <div
         v-if="isManager"
@@ -177,6 +189,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import 'src/scss/_globals.scss';
+
 .navigation-sidebar {
   padding: 0;
 }
