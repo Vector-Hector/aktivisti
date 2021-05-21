@@ -47,14 +47,6 @@ export default defineComponent({
     IonButton
   },
   mixins: [EventAreaMetricsMixin],
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      uiStore.updateActiveElements({
-        // @ts-ignore
-        streetNumber: vm.addressLabel
-      })
-    })
-  },
   data() {
     return {
       metricRecords: [] as EventMetricRecordDto[],
@@ -62,9 +54,6 @@ export default defineComponent({
     }
   },
   computed: {
-    addressLabel(): string {
-      return `${this.street} ${this.houseNumber}`
-    },
     metricValues: {
       get(): MetricValueMap {
         const storedValues = trackingSessionStore.getMetricsForAddress(this.eventArea.id!, this.address!)
@@ -81,6 +70,17 @@ export default defineComponent({
       set(metrics: MetricValueMap) {
         trackingSessionStore.updateMetricsForAddress(this.eventArea.id!, this.address!, metrics)
       }
+    }
+  },
+  watch: {
+    '$route.params': {
+      handler(params) {
+        uiStore.updateActiveElements({
+          // @ts-ignore
+          houseNumber: `${params.street} ${params.houseNumber}`
+        })
+      },
+      immediate: true
     }
   },
   async created() {

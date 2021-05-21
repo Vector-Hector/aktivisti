@@ -221,7 +221,7 @@ import {
   logoFacebook,
   mail,
   logoWhatsapp,
-  barChartOutline,
+  barChartOutline
 } from 'ionicons/icons'
 import { addIcons } from 'ionicons'
 import { authService } from '@/api/authService'
@@ -255,7 +255,7 @@ export default defineComponent({
     IonIcon,
     IonGrid,
     IonCol,
-    IonRow,
+    IonRow
   },
   props: {
     id: {

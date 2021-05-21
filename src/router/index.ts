@@ -141,7 +141,7 @@ const router = createRouter({
               },
               meta: {
                 title: () => 'Metriken aufnehmen',
-                subtitle: () => uiStore.getState().activeTitleElements.streetNumber,
+                subtitle: () => uiStore.getState().activeTitleElements.houseNumber,
                 requiresAuth: true
               },
               props: true,
