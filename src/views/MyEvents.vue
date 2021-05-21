@@ -1,55 +1,59 @@
 <template>
   <div class="container">
-    <IonList>
-      <div
-        v-if="eventParticipations.length <= 0"
-        class="placeholder"
-      >
-        <IonText>Du nimmst an keinen Veranstaltungen teil - suche jetzt welche!</IonText>
-        <router-link
-          :to="{ name: 'events' }"
-        >
-          <IonButton>Jetzt nach Events suchen</IonButton>
-        </router-link>
-      </div>
-      <IonItem
-        v-for="participation in eventParticipations"
-        :key="participation.id"
-        :button="true"
-        @click="$router.push({ name: 'event-detail', params: { id: participation.event } })"
-      >
-        <IonLabel>
-          {{ eventForParticipation(participation).name }}
-        </IonLabel>
-        <i v-if="participation.is_pending_invitation">
-          {{ findInvitingUsers(participation.inviting_users).map(({username}) => username).join(',') ?? 'Unbekannt ' }}
-          <span v-if="participation.inviting_users.length > 1">haben</span><span v-else>hat</span> dich eingeladen
-        </i>
+    <IonContent>
+      <IonList>
         <div
-          v-if="participation.is_pending_invitation"
-          slot="end"
-          class="action-buttons"
+          v-if="eventParticipations.length <= 0"
+          class="placeholder"
         >
-          <IonButton
-            @click.stop="accept(participation)"
+          <IonText>Du nimmst an keinen Veranstaltungen teil - suche jetzt welche!</IonText>
+          <router-link
+            :to="{ name: 'events' }"
           >
-            Annehmen
-          </IonButton>
-          <IonButton
-            fill="none"
-            @click.stop="reject(participation)"
-          >
-            Ablehnen
-          </IonButton>
+            <IonButton>Jetzt nach Events suchen</IonButton>
+          </router-link>
         </div>
-      </IonItem>
-    </IonList>
+        <IonItem
+          v-for="participation in eventParticipations"
+          :key="participation.id"
+          :button="true"
+          @click="$router.push({ name: 'event-detail', params: { id: participation.event } })"
+        >
+          <IonLabel>
+            {{ eventForParticipation(participation).name }}
+          </IonLabel>
+          <i v-if="participation.is_pending_invitation">
+            {{
+              findInvitingUsers(participation.inviting_users).map(({username}) => username).join(',') ?? 'Unbekannt '
+            }}
+            <span v-if="participation.inviting_users.length > 1">haben</span><span v-else>hat</span> dich eingeladen
+          </i>
+          <div
+            v-if="participation.is_pending_invitation"
+            slot="end"
+            class="action-buttons"
+          >
+            <IonButton
+              @click.stop="accept(participation)"
+            >
+              Annehmen
+            </IonButton>
+            <IonButton
+              fill="none"
+              @click.stop="reject(participation)"
+            >
+              Ablehnen
+            </IonButton>
+          </div>
+        </IonItem>
+      </IonList>
+    </IonContent>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { IonLabel, IonItem, IonList, IonButton, IonText } from '@ionic/vue'
+import { IonLabel, IonItem, IonList, IonButton, IonText, IonContent } from '@ionic/vue'
 import { EventDto } from '@/api/model/EventDto'
 import { userStore } from '@/store/UserStore'
 import { EventParticipationDto } from '@/api/model/EventParticipationDto'
@@ -62,7 +66,8 @@ export default defineComponent({
     IonLabel,
     IonItem,
     IonButton,
-    IonText
+    IonText,
+    IonContent,
   },
   data() {
     return {
