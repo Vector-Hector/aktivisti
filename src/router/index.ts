@@ -5,7 +5,7 @@ import Campaigns from '@/views/Campaigns.vue'
 import EditCampaign from '@/views/EditCampaign.vue'
 import EventDetail from '@/views/EventDetail.vue'
 import Locate from '@/views/Locate.vue'
-import CreateLead from '@/views/CreateLead.vue'
+import CreateLead from '@/views/event-detail/event-area/CreateLead.vue'
 import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
 import Password from '@/views/Password.vue'
@@ -37,15 +37,6 @@ const router = createRouter({
       path: '/',
       component: Locate,
       name: 'splash'
-    },
-    {
-      path: '/create-lead',
-      name: 'create-lead',
-      component: CreateLead,
-      props: route => ({eventAreaId: route.query.eventArea ? parseInt(route.query.eventArea as string) : undefined}),
-      meta: {
-        title: () => 'Bei Linksaktiv anmelden'
-      }
     },
     {
       path: '/events',
@@ -146,7 +137,17 @@ const router = createRouter({
               },
               props: true,
               name: 'event-detail-area-metrics'
-            }
+            },
+            {
+              path: 'create-lead',
+              name: 'create-lead',
+              component: CreateLead,
+              props: true,
+              meta: {
+                title: () => 'Bei Linksaktiv anmelden',
+                requiresAuth: true
+              },
+            },
           ]
         }
       ]
