@@ -12,8 +12,8 @@
     </a>
   </div>
   <Form
-    v-slot="{ errors }"
-    @submit="saveLead()"
+    v-slot="{ errors, isSubmitting }"
+    @submit="saveLead"
   >
     <IonItem :class="{ 'select-item-has-error': !!errors.gender }">
       <IonLabel>
@@ -139,7 +139,6 @@
       <Field
         v-slot="{ field }"
         v-model="lead.phone_number"
-        :rules="isRequired"
         name="phone_number"
       >
         <IonInput
@@ -269,6 +268,7 @@
       <IonButton
         color="primary"
         type="submit"
+        :disabled="isSubmitting"
       >
         Abschicken
       </IonButton>
@@ -277,11 +277,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { LeadDto } from '@/api/model/LeadDto'
-import { IonButton, IonCheckbox, IonInput, IonItem, IonLabel, IonSelect, IonSelectOption } from '@ionic/vue'
-import { Field, Form, ErrorMessage } from 'vee-validate'
-import EventAreaMixin from '@/views/event-detail/event-area/EventAreaMixin'
+import {
+  IonButton,
+  IonCheckbox,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonSelect,
+  IonSelectOption,
+  modalController
+} from '@ionic/vue'
+import { Field, Form, ErrorMessage, FormActions } from 'vee-validate'
+import CreateLeadQR from '@/components/modals/CreateLeadQR.vue'
 
 export default defineComponent({
   name: 'CreateLead',
@@ -297,7 +306,13 @@ export default defineComponent({
     Form,
     ErrorMessage
   },
-  mixins: [EventAreaMixin],
+  props: {
+    eventAreaId: {
+      type: Number as PropType<number | undefined>,
+      required: false,
+      default: undefined
+    }
+  },
   data() {
     return {
       confirmOpen: false,
@@ -319,26 +334,57 @@ export default defineComponent({
     }
   },
   methods: {
-    async saveLead() {
-      // TODO: Error handling
-      await this.$apiClient.leads.create(
-        {
-          ...this.lead,
-          event_area: this.eventArea.id
-        })
-      // TODO: maybe add an explicit back route
-      this.$router.go(-1)
+    async saveLead(data: Partial<LeadDto>, actions: FormActions<any>) {
+      try {
+        await this.$apiClient.leads.create(
+          {
+            ...this.lead,
+            event_area: this.eventAreaId
+          })
+        // TODO: maybe add an explicit back route
+        this.$router.go(-1)
+      } catch (e) {
+        actions.setErrors(e.data)
+      }
     },
     isRequired(value: string) {
       if (!value) {
         return 'Bitte fülle dieses Feld aus'
       }
       return true
+    },
+    async openQRCode() {
+      const modal = await modalController.create({
+        component: CreateLeadQR
+      })
+      await modal.present()
     }
   }
 })
 </script>
 
 <style lang="scss" scoped>
+@import "~@/scss/_variables.scss";
+
+.qr-link {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 0.7rem 0;
+}
+
+.qr-link-caption {
+  color: $red;
+  opacity: 0.7;
+  font-size: 0.8rem;
+  margin-right: 0.5rem;
+}
+
+.qr-link-image {
+  width: 1rem;
+  height: 1rem;
+}
+
 
 </style>
