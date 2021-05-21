@@ -138,18 +138,12 @@
       </IonButton>
     </a>
   </div>
-  <IonRow>
-    <IonCol size="6">
-      <IonButton
-        v-if="isCampaignAdmin"
-        class="full-width"
-        button-type="secondary"
-        @click="openInviteModal"
-      >
-        Leute einladen
-      </IonButton>
-    </IonCol>
-    <IonCol size="6">
+  <IonRow
+    v-if="!isLoggedIn"
+  >
+    <IonCol
+      size="12"
+    >
       <router-link
         v-if="!isLoggedIn"
         :to="{ name: 'login', query: {next: $router.resolve($route).path } }"
@@ -162,8 +156,26 @@
           Anmelden um mitzumachen
         </IonButton>
       </router-link>
+    </IonCol>
+  </IonRow>
+  <IonRow
+    v-else
+  >
+    <IonCol
+      size="6"
+    >
       <IonButton
-        v-else-if="isMember"
+        v-if="isCampaignAdmin"
+        class="full-width"
+        button-type="secondary"
+        @click="openInviteModal"
+      >
+        Leute einladen
+      </IonButton>
+    </IonCol>
+    <IonCol size="6">
+      <IonButton
+        v-if="isMember"
         :disabled="joinLoading"
         class="full-width"
         button-type="primary"
