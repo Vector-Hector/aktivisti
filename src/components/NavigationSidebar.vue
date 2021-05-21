@@ -44,7 +44,7 @@
             to="/login"
           >
             <i class="pi pi-sign-in" />
-            <span class="menu-item-link-text">Einloggen</span>
+            <span class="menu-item-link-text">Anmelden</span>
           </router-link>
         </div>
         <hr class="menu-divider">
@@ -107,7 +107,7 @@
             @click="logout()"
           >
             <i class="pi pi-sign-out" />
-            <span class="menu-item-link-text">Ausloggen</span>
+            <span class="menu-item-link-text">Abmelden</span>
           </div>
         </div>
       </div>

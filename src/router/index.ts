@@ -237,7 +237,7 @@ const router = createRouter({
         next: route.params.nextUrl
       }),
       meta: {
-        title: () => 'Einloggen'
+        title: () => 'Anmelden'
       }
     },
     {
