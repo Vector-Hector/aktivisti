@@ -52,7 +52,7 @@ const router = createRouter({
       component: EventMap,
       name: 'events',
       meta: {
-        title: () => 'Alle Termine'
+        title: () => 'Alle Aktionen'
       }
     },
     {

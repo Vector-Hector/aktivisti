@@ -18,7 +18,7 @@
               :options="eventTypes"
               option-label="label"
               option-value="key"
-              placeholder="Event-Typ"
+              placeholder="Aktions-Typ"
             />
           </div>
         </div>

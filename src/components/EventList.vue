@@ -39,9 +39,14 @@
     </IonItem>
   </IonList>
 
-  <div v-else>
-    <IonText color="medium">
-      Keine Events gefunden
+  <div
+    class="empty-list-placeholder"
+    v-else
+  >
+    <IonText
+      color="medium"
+    >
+      Keine Aktionen gefunden
     </IonText>
   </div>
 
@@ -52,7 +57,7 @@
   >
     <IonInfiniteScrollContent
       loading-spinner="bubbles"
-      loading-text="Weitere Events laden..."
+      loading-text="Weitere Aktionen laden..."
     />
   </IonInfiniteScroll>
 </template>
@@ -220,5 +225,11 @@ export default defineComponent({
     margin-left: 0.6rem;
 
   }
+}
+
+.empty-list-placeholder {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
 }
 </style>
