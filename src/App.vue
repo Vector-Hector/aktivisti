@@ -52,9 +52,11 @@
       </IonHeader>
       <div id="main">
         <router-view v-slot="{ Component }">
-          <transition :name="pageTransition">
-            <component :is="Component" />
-          </transition>
+          <keep-alive>
+            <transition :name="pageTransition">
+              <component :is="Component" />
+            </transition>
+          </keep-alive>
         </router-view>
       </div>
     </div>
@@ -201,6 +203,7 @@ export default defineComponent({
 
 .title-wrapper {
   position: relative;
+
   .title {
     top: 0;
     position: absolute;

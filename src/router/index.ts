@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router'
 
-import Home from '@/views/Home.vue'
-import Events from '@/views/Events.vue'
 import EditEvent from '@/views/EditEvent.vue'
 import Campaigns from '@/views/Campaigns.vue'
 import EditCampaign from '@/views/EditCampaign.vue'
@@ -30,6 +28,7 @@ import MyEvents from '@/views/MyEvents.vue'
 import EventDetailReport from '@/views/event-detail/EventDetailReport.vue'
 import { uiStore } from '@/store/UiStore'
 import RegistrationSucess from '@/views/RegistrationSucess.vue'
+import EventMap from '@/views/EventMap.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -49,19 +48,11 @@ const router = createRouter({
       }
     },
     {
-      path: '/map',
-      component: Home,
-      name: 'events-map',
-      meta: {
-        title: () => 'Karte'
-      }
-    },
-    {
       path: '/events',
-      component: Events,
+      component: EventMap,
       name: 'events',
       meta: {
-        title: () => 'Veranstaltungen'
+        title: () => 'Alle Termine'
       }
     },
     {

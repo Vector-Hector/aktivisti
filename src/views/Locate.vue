@@ -37,7 +37,7 @@ export default defineComponent({
   },
   beforeRouteEnter (to, from, next) {
     if (userStore.getState().location !== null) {
-      next({ path: '/map' })
+      next({ name: 'events' })
     } else {
       next()
     }

@@ -3,7 +3,9 @@
 @import "layout";
 @import "ionic";
 @import "page-transitions";
-@import "custom_icons";
+@import "custom-icons";
+
+@import "ionic-widgets/select";
 
 html, body {
   font-family: $font-stack;

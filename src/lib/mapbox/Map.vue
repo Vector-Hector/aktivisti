@@ -5,7 +5,7 @@
     @dragover.prevent
   >
     <div
-      id="map"
+      :id="mapUuid"
       ref="mapContainer"
       class="map"
     >
@@ -21,6 +21,7 @@ import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { TinyEmitter } from 'tiny-emitter'
 import { isEqual } from 'lodash-es'
 import { bboxPolygon } from '@turf/turf'
+import { uuidv4 } from '@/utils/uuid'
 
 
 export const MapInject: InjectionKey<Ref<mapboxgl.Map>> = Symbol()
@@ -50,6 +51,7 @@ export default defineComponent({
   },
   emits: ['update:zoom', 'update:center', 'update:zoom', 'drop', 'update:boundingBox'],
   setup(props, {emit}) {
+    const mapUuid = `map-${uuidv4()}`
     mapboxgl.accessToken = process.env.VUE_APP_MAPBOX_TOKEN
     const map = ref<mapboxgl.Map | null>(null)
     const mapContainer = ref<HTMLElement | null>(null)
@@ -92,7 +94,7 @@ export default defineComponent({
     }
     onMounted(() => {
       map.value = new mapboxgl.Map({
-        container: 'map',
+        container: mapUuid,
         style: process.env.VUE_APP_MAPBOX_STYLE,
         zoom: props.zoom,
         center: props.center
@@ -129,6 +131,7 @@ export default defineComponent({
 
     return {
       map,
+      mapUuid,
       onDrop,
       initialized,
       mapContainer,

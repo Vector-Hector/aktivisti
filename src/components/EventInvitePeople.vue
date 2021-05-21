@@ -132,7 +132,7 @@ export default defineComponent({
         roles: [],
         username: 'Nutzer einladen:',
         email: emailString,
-        isInvitePlaceholder: true
+        isInvitePlaceholder: true,
       }
     },
     async searchUsers(event: any) {
