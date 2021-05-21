@@ -4,7 +4,7 @@ export interface TitleElements {
   event?: string
   campaigns?: string
   street?: string
-  streetNumber?: string
+  houseNumber?: string
 }
 
 interface UiState {

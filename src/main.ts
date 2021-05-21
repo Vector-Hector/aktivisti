@@ -5,7 +5,7 @@ import App from './App.vue'
 
 import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
-import ConfirmationService from 'primevue/confirmationservice';
+import ConfirmationService from 'primevue/confirmationservice'
 
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
