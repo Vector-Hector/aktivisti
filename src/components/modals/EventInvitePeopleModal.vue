@@ -1,7 +1,7 @@
 <template>
   <IonHeader>
     <IonToolbar>
-      <ion-title>Leute einladen</ion-title>
+      <IonTitle>Leute einladen</IonTitle>
       <IonButtons slot="end">
         <IonButton @click="dismiss">
           <IonIcon
@@ -18,7 +18,16 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonToolbar, modalController } from '@ionic/vue'
+import {
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonTitle,
+  IonToolbar,
+  modalController
+} from '@ionic/vue'
 import EventInvitePeople from '@/components/EventInvitePeople.vue'
 import { addIcons } from 'ionicons'
 import { close } from 'ionicons/icons'
@@ -36,6 +45,7 @@ export default defineComponent({
     IonButton,
     IonButtons,
     IonIcon,
+    IonTitle,
     EventInvitePeople
   },
   props: {

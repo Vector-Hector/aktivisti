@@ -73,7 +73,7 @@
                 @change="field.onChange.forEach((fn) => fn($event.value))"
               />
               <ErrorMessage
-                name="campaign"
+                name="campaigns"
                 class="error"
               />
             </Field>
@@ -193,7 +193,6 @@
         </div>
       </div>
       <div class="control-buttons">
-
         <Button
           class="p-button-text"
           label="Abbrechen"
@@ -214,7 +213,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'

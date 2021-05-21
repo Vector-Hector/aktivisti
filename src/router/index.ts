@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router'
 
 import EditEvent from '@/views/EditEvent.vue'
-import Campaigns from '@/views/Campaigns.vue'
-import EditCampaign from '@/views/EditCampaign.vue'
 import EventDetail from '@/views/EventDetail.vue'
 import Locate from '@/views/Locate.vue'
 import CreateLead from '@/views/event-detail/event-area/CreateLead.vue'
@@ -215,25 +213,6 @@ const router = createRouter({
           ]
         }
       ]
-    },
-    {
-      path: '/campaigns',
-      component: Campaigns
-    },
-    {
-      path: '/campaigns/:id',
-      component: EditCampaign,
-      props: true,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/campaigns/new',
-      component: EditCampaign,
-      meta: {
-        requiresAuth: true
-      }
     },
     {
       path: '/login',

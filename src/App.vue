@@ -111,7 +111,7 @@ export default defineComponent({
   },
   computed: {
     currentDepth(): number {
-      return this.$route.path.split('/').length
+      return this.$route.path.split('/').filter(item => !!item).length
     },
     showNavigation() {
       return uiStore.getState().showNavigation

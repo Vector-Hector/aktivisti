@@ -12,6 +12,7 @@
             v-model:event="event"
             v-model:eventAreas="eventAreas"
             v-model:participations="participations"
+            :event-permissions="eventPermissions"
             :campaigns="campaigns"
           />
         </div>
@@ -52,6 +53,7 @@ import { EventParticipationDto } from '@/api/model/EventParticipationDto'
 import { apiClient } from '@/api/ApiClient'
 import { CampaignDto } from '@/api/model/CampaignDto'
 import { uiStore } from '@/store/UiStore'
+import { PermissionsDto } from '@/api/model/APIEnvelope'
 
 addIcons({
   ellipse,
@@ -66,9 +68,12 @@ export default defineComponent({
   },
   async beforeRouteEnter(to, from, next) {
     const participations = (await apiClient.eventParticipations.list({event: to.params.id})).payload.data
-    const eventRequest = (await apiClient.events.get(to.params.id.toString(), ['campaigns']))
+    const eventRequest = (await apiClient.events.get(to.params.id.toString(), ['campaigns'], {
+      show_permissions: true
+    }))
     const event = eventRequest.payload.data
     const campaigns = eventRequest.payload.embedded.campaigns as CampaignDto[]
+    const eventPermissions = eventRequest.payload.permissions
     next(vm => {
       //@ts-ignore
       vm.participations = participations
@@ -76,6 +81,8 @@ export default defineComponent({
       vm.event = event
       //@ts-ignore
       vm.campaigns = campaigns
+      //@ts-ignore
+      vm.eventPermissions = eventPermissions
       uiStore.updateActiveElements({
         // @ts-ignore
         event: vm.event.name,
@@ -98,6 +105,7 @@ export default defineComponent({
       campaigns: null,
       loading: true,
       joinLoading: false,
+      eventPermissions: null as PermissionsDto | null,
       dateOptions: {
         year: 'numeric',
         month: '2-digit',
