@@ -4,13 +4,13 @@ module.exports = {
       entry: 'src/main.ts',
       template: 'public/index.html',
       filename: 'index.html',
-      title: 'Wahlkampf App',
+      title: 'DIE LINKE. App',
     },
   },
   pwa: {
     themeColor: "#DF0303",
     msTileColor: "#DF0303",
-    name: "Wahlkampf App",
+    name: "DIE LINKE. App",
     manifestOptions: {
       icons: [
         {

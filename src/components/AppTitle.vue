@@ -25,7 +25,7 @@ export default defineComponent({
     title: {
       type: String as PropType<string>,
       required: false,
-      default: 'Wahlkampf App'
+      default: 'DIE LINKE. App'
     },
     subtitle: {
       type: String as PropType<string>,
