@@ -2,11 +2,13 @@
   <IonGrid class="full-width">
     <IonRow>
       <IonCol
-        v-if="isCampaignAdmin"
         size="auto"
         class="ion-align-self-end"
       >
-        <router-link :to="{ name: 'event-detail-report', params: { event: event.id }}">
+        <router-link
+          v-if="eventPermissions.report.GET"
+          :to="{ name: 'event-detail-report', params: { event: event.id }}"
+        >
           <IonButton
             fill="clear"
             size="small"
@@ -15,6 +17,7 @@
           </IonButton>
         </router-link>
         <router-link
+          v-if="eventPermissions.self.PUT"
           :to="{name: 'edit-event-details', params: { event: event.id }}"
           replace
         >
@@ -168,7 +171,7 @@
       size="6"
     >
       <IonButton
-        v-if="isCampaignAdmin"
+        v-if="eventPermissions.invite.POST"
         class="full-width"
         button-type="secondary"
         @click="openInviteModal"
@@ -240,6 +243,7 @@ import {
   createWhatsappShareUrl
 } from '@/utils/shareLinks'
 import EventAreaItem from '@/components/EventAreaItem.vue'
+import { PermissionsDto } from '@/api/model/APIEnvelope'
 
 addIcons({
   'logo-twitter': logoTwitter,
@@ -279,6 +283,10 @@ export default defineComponent({
     },
     participations: {
       type: Array as PropType<EventParticipationDto[]>,
+      required: true
+    },
+    eventPermissions: {
+      type: Object as PropType<PermissionsDto>,
       required: true
     }
   },
@@ -399,7 +407,6 @@ export default defineComponent({
       )
     },
     async openInviteModal() {
-      if (!this.isCampaignAdmin) return
       const modal = await modalController
         .create({
           component: EventInvitePeopleModal,

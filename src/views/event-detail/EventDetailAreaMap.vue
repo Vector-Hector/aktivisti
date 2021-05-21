@@ -11,7 +11,7 @@ import EventAreaMixin from '@/views/event-detail/EventDetailAreaMixin'
 
 
 export default defineComponent({
-  name: 'EventDetailArea',
+  name: 'EventDetailAreaMap',
   mixins: [EventAreaMixin]
 })
 

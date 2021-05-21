@@ -217,25 +217,6 @@ const router = createRouter({
       ]
     },
     {
-      path: '/campaigns',
-      component: Campaigns
-    },
-    {
-      path: '/campaigns/:id',
-      component: EditCampaign,
-      props: true,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/campaigns/new',
-      component: EditCampaign,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
       path: '/login',
       component: Login,
       name: 'login',

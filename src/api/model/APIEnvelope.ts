@@ -4,8 +4,19 @@ export interface Pagination {
   offset: number
 }
 
+type HttpOperation = 'GET' | 'PATCH' | 'POST' | 'PUT' | 'DELETE'
+
+export type HttpOperationPermissions = {
+  [httpOperation in HttpOperation]: boolean
+}
+
+export interface PermissionsDto {
+  self: HttpOperationPermissions
+  [operation: string]: HttpOperationPermissions
+}
 export interface APIEnvelope<T, E = any> {
   data: T
   embedded: E
-  pagination?: Pagination
+  pagination?: Pagination,
+  permissions: PermissionsDto
 }

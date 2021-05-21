@@ -56,6 +56,13 @@
               </IonButton>
             </div>
           </IonItem>
+          <IonItem
+            v-if="pendingUsersWithoutVisibleEmailAddresses > 0"
+          >
+            <IonLabel>
+              {{ pendingUsersWithoutVisibleEmailAddresses }} weitere per Mail eingeladen
+            </IonLabel>
+          </IonItem>
         </IonList>
         <IonText v-else>
           Keine Teilnehmer*innen, nutze das Eingabefeld um welche einzuladen
@@ -68,7 +75,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import AutoComplete from 'primevue/autocomplete'
-import { IonButton, IonCol, IonIcon, IonItem, IonLabel, IonList, IonRow, IonText } from '@ionic/vue'
+import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonList, IonRow, IonText } from '@ionic/vue'
 import { EventParticipationDto } from '@/api/model/EventParticipationDto'
 import { UserDto } from '@/api/model/UserDto'
 import { addIcons } from 'ionicons'
@@ -94,7 +101,8 @@ export default defineComponent({
     IonRow,
     IonCol,
     IonIcon,
-    IonButton
+    IonButton,
+    IonGrid
   },
   props: {
     eventId: {
@@ -110,16 +118,21 @@ export default defineComponent({
     }
   },
   computed: {
+    pendingUsersWithoutVisibleEmailAddresses(): number {
+      return this.participations.filter((item) => !item.user_is_member && item.user_email === null).length
+    },
     displayedParticipations(): EventParticipationDto[] {
-      return [...this.participations].filter((item) => {
-        return item.user != userStore.getState().user?.id
-      }).sort((a, b) => {
-        if (a.is_pending_invitation && !b.is_pending_invitation) {
-          return -1
-        } else {
-          return a.user_email.localeCompare(b.user_email)
-        }
-      })
+      return this.participations
+        .filter((item) => item.user_is_member || item.user_email !== null)
+        .filter((item) => {
+          return item.user != userStore.getState().user?.id
+        }).sort((a, b) => {
+          if (a.is_pending_invitation && !b.is_pending_invitation) {
+            return -1
+          } else {
+            return a.user_username.localeCompare(b.user_username)
+          }
+        })
     }
   },
   async created() {
@@ -132,7 +145,7 @@ export default defineComponent({
         roles: [],
         username: 'Nutzer einladen:',
         email: emailString,
-        isInvitePlaceholder: true,
+        isInvitePlaceholder: true
       }
     },
     async searchUsers(event: any) {
@@ -145,13 +158,20 @@ export default defineComponent({
     },
     async inviteUser(user: UserSuggestionItem) {
       this.query = ''
-      const response = await this.$apiClient.events.invite(this.eventId.toString(), {
+
+      const inviteRequestBody = user.isInvitePlaceholder ? {
+        users: [],
         email_addresses: [user.email]
-      })
-      for (const item of response.payload.data)
+      } : {
+        email_addresses: [],
+        users: [user.id]
+      }
+      const response = await this.$apiClient.events.invite(this.eventId.toString(), inviteRequestBody)
+      for (const item of response.payload.data) {
         if (!this.participations.find(({id}) => id === item.id)) {
           this.participations.push(item)
         }
+      }
     },
     async deleteParticipation(deleteId: number) {
       this.participations = this.participations.filter(({id}) => deleteId !== id)

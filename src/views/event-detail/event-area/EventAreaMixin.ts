@@ -3,6 +3,7 @@ import { EventAreaDto } from '@/api/model/EventAreaDto'
 import { Feature } from 'geojson'
 import { bbox } from '@turf/turf'
 import { EventDto } from '@/api/model/EventDto'
+import { PermissionsDto } from '@/api/model/APIEnvelope'
 
 export default defineComponent({
   props: {
@@ -13,6 +14,10 @@ export default defineComponent({
     },
     eventArea: {
       type: Object as PropType<EventAreaDto>,
+      required: true
+    },
+    areaPermissions: {
+      type: Object as PropType<PermissionsDto>,
       required: true
     }
   },

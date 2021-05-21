@@ -4,19 +4,18 @@
   >
     <IonRow>
       <IonCol>
-        <IonItem v-if="isCampaignAdmin">
+        <IonItem v-if="areaPermissions?.self?.PATCH">
           <IonLabel class="participant-select-label">
             Teilnehmer
           </IonLabel>
           <IonSelect
-            v-if="isCampaignAdmin"
             :value="eventAreaParticipants"
             :multiple="true"
             class="participant-select"
             @ionChange="updateAreaParticipations"
           >
             <IonSelectOption
-              v-for="participation in participations"
+              v-for="participation in onlyMemberParticipants"
               :key="participation.id"
               :value="participation.user"
             >
@@ -45,7 +44,7 @@
         </IonButtons>
       </IonCol>
       <IonCol
-        v-if="isCampaignAdmin"
+        v-if="areaPermissions?.self?.PATCH"
         size="auto"
       >
         <IonButton
@@ -127,11 +126,11 @@ export default defineComponent({
     IonCol
   },
   mixins: [EventAreaMixin],
-  beforeRouteEnter(to, from, next) {
+  beforeRouteEnter: async (to, from, next) => {
     next(vm => {
       uiStore.updateActiveElements({
         // @ts-ignore
-        eventArea: vm.eventArea.name,
+        eventArea: vm.eventArea.name
       })
     })
   },
@@ -159,6 +158,9 @@ export default defineComponent({
         this.user !== null
         && this.participations.find((participation) => participation.user === this.user!.id)?.assigned_event_areas.includes(this.eventArea.id!)
       ) ?? false
+    },
+    onlyMemberParticipants(): EventParticipationDto[] {
+      return this.participations.filter(item => item.user_is_member)
     },
     user() {
       return userStore.getState().user
@@ -212,7 +214,7 @@ export default defineComponent({
           header: 'Aktionsgebiet erledigt',
           message: this.eventArea.is_completed
             ? `Das Aktionsgebiet ${this.eventArea.id} als <b>offen</b> markieren?`
-            :`Das Aktionsgebiet ${this.eventArea.id} als <b>erledigt</b> markieren?`,
+            : `Das Aktionsgebiet ${this.eventArea.id} als <b>erledigt</b> markieren?`,
           buttons: [
             {
               text: 'Cancel',

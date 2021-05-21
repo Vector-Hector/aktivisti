@@ -93,21 +93,6 @@
           </router-link>
         </div>
       </div>
-      <div
-        v-if="isManager"
-        class="menu-group"
-      >
-        <hr class="menu-divider">
-        <div class="menu-item">
-          <router-link
-            class="menu-item-link"
-            to="/campaigns"
-          >
-            <i class="pi pi-info-circle" />
-            <span class="menu-item-link-text">Kampagnen verwalten</span>
-          </router-link>
-        </div>
-      </div>
       <div class="menu-group menu-bottom">
         <hr class="menu-divider">
         <div

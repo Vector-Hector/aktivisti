@@ -51,10 +51,11 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> extends BaseA
     return new JSONResponse<L>(response, data)
   }
 
-  async get(id: string, embed: string[] = []): Promise<JSONResponse<E>> {
+  async get(id: string, embed: string[] = [], query: { [key: string]: any } = {}): Promise<JSONResponse<E>> {
     const response = await this.request({
       path: `${this.path}${id}`,
       method: 'GET',
+      query,
       embed
     })
     const data = response.data
