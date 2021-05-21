@@ -6,7 +6,7 @@
       <span class="qr-link-caption">QR-Link zu diesem Formular</span>
       <img
         class="qr-link-image"
-        src="../assets/img/create-lead-qr.png"
+        src="../../../assets/img/create-lead-qr.png"
         alt="QR Code zum Linksaktiv-Formular"
       >
     </a>
