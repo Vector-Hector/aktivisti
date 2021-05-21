@@ -8,6 +8,7 @@
       <router-view
         v-slot="{Component}"
         v-model:event="event"
+        v-model:event-metric-records="metricRecords"
         :campaigns="campaigns"
       >
         <keep-alive>
@@ -28,6 +29,7 @@ import { RouteParams } from 'vue-router'
 import { apiClient } from '@/api/ApiClient'
 import { CampaignDto } from '@/api/model/CampaignDto'
 import { uiStore } from '@/store/UiStore'
+import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
 
 /**
  * The parent component implementing the individual steps for creating an event
@@ -47,7 +49,7 @@ export default defineComponent({
         })
         vm.event = eventRequest.payload.data
         vm.campaigns = campaignRequest.payload.data
-        vm.metricRecords = eventRequest.payload.embedded.metrics
+        vm.metricRecords = eventRequest.payload.embedded.eventmetricrecord_set
       })
     } else {
       next((vm: any) => {
@@ -66,6 +68,7 @@ export default defineComponent({
   data() {
     return {
       campaigns: [] as CampaignDto[],
+      metricRecords: [] as EventMetricRecordDto[],
       event: {
         event_type: EventTypes.DOOR_TO_DOOR,
         metrics: [],

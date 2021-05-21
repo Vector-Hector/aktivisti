@@ -1,6 +1,7 @@
 import { defineComponent, PropType } from 'vue'
 import { EventDto } from '@/api/model/EventDto'
 import { CampaignDto } from '@/api/model/CampaignDto'
+import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
 
 /**
  * A mixin for working with an event to avoid repetition
@@ -18,12 +19,16 @@ export default defineComponent({
       type: Object as PropType<Partial<EventDto>>,
       required: true
     },
+    eventMetricRecords: {
+      type: Array as PropType<EventMetricRecordDto[]>,
+      default: []
+    },
     campaigns: {
       type: Array as PropType<CampaignDto[]>,
       required: true
     }
   },
-  emits: ['update:event'],
+  emits: ['update:event', 'update:eventMetricRecords'],
   computed: {
     localEvent: {
       get(): Partial<EventDto> {
