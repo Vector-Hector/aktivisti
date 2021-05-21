@@ -14,7 +14,10 @@
             <IonIcon name="bar-chart-outline" />
           </IonButton>
         </router-link>
-        <router-link :to="{ name: 'edit-event-details', params: { event: event.id }}">
+        <router-link
+          :to="{name: 'edit-event-details', params: { event: event.id }}"
+          replace
+        >
           <IonButton
             fill="clear"
             size="small"

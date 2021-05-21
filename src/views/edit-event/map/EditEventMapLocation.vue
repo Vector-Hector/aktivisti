@@ -51,20 +51,12 @@
     class="navigation-overlay"
     position="bottom-right"
   >
-    <router-link
-      v-slot="{ href, navigate }"
-      custom
-      :to="{name: 'edit-event-details'}"
+    <Button
+      class="gray-button"
+      @click="$router.go(-1)"
     >
-      <Button
-        class="gray-button"
-        @click="navigate"
-      >
-        <a :href="href">
-          Zurück
-        </a>
-      </Button>
-    </router-link>
+      Zurück
+    </Button>
     <Button
       :disabled="!event.location"
       class="submit-button"

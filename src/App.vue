@@ -21,7 +21,7 @@
               </IonButton>
               <IonButton
                 v-else
-                @click="$router.go(-1)"
+                @click="backButton"
               >
                 <IonIcon
                   name="arrow-back"
@@ -154,6 +154,14 @@ export default defineComponent({
   methods: {
     openSidebar() {
       uiStore.openSidebar()
+    },
+    backButton() {
+      const backButtonRoute = this.$route.meta.backButtonRoute
+      if (backButtonRoute) {
+        this.$router.replace(backButtonRoute)
+      } else {
+        this.$router.go(-1)
+      }
     }
   }
 })

@@ -193,12 +193,12 @@
         </div>
       </div>
       <div class="control-buttons">
-        <router-link to="/events">
-          <Button
-            class="p-button-text"
-            label="Abbrechen"
-          />
-        </router-link>
+
+        <Button
+          class="p-button-text"
+          label="Abbrechen"
+          @click="$router.go(-1)"
+        />
         <Button
           v-if="editMode"
           label="Speichern und zurück"
@@ -214,7 +214,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
@@ -262,6 +262,13 @@ export default defineComponent({
     }
   },
   computed: {
+    backRoute(): string {
+      if (this.editMode && this.event) {
+        return this.$router.resolve({name: 'event-detail', params: {event: this.event.id!}}).fullPath
+      } else {
+        return '/events'
+      }
+    },
     editMode(): boolean {
       return !!(this.event.id && this.event.location)
     },

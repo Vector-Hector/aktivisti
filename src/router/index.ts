@@ -78,11 +78,11 @@ const router = createRouter({
         {
           path: 'overview',
           name: 'event-detail-overview',
+          props: true,
           components: {
             default: EventDetailOverview,
             map: EventDetailOverviewMap
-          },
-          props: true
+          }
         },
         {
           path: 'report',
@@ -155,6 +155,7 @@ const router = createRouter({
       path: '/events/edit/new',
       component: EditEvent,
       redirect: {name: 'edit-event-details-new'},
+      props: true,
       meta: {
         title: () => 'Veranstaltung erstellen',
         requiresAuth: true
@@ -181,7 +182,11 @@ const router = createRouter({
         {
           path: 'details',
           component: EditEventDetails,
-          name: 'edit-event-details'
+          props: true,
+          name: 'edit-event-details',
+          meta: {
+            backButtonRouter: '/events'
+          }
         },
         {
           path: 'map',
@@ -270,7 +275,7 @@ router.beforeEach((to, from, next) => {
     next({
       name: 'login',
       params: {
-        nextUrl: to.fullPath,
+        nextUrl: to.fullPath
       }
     })
   } else {
