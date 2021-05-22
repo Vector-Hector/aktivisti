@@ -13,7 +13,8 @@ export default defineComponent({
     controls: {
       type: Object as PropType<IMapboxDrawControls>,
       required: false,
-      default: () => {}
+      default: () => {
+      }
     },
     displayControlsDefault: {
       type: Boolean as PropType<boolean>,
@@ -35,7 +36,7 @@ export default defineComponent({
       userProperties: true,
       controls: props.controls,
       displayControlsDefault: props.displayControlsDefault,
-      styles: props.styles ?? [],
+      styles: props.styles ?? []
     })
 
     map.value.addControl(drawControl, 'top-right')
@@ -52,24 +53,35 @@ export default defineComponent({
       // determine deleted features
       const idsToDelete = difference(drawControl.getAll().features.map(({id}) => id), newFeatures.map(({id}) => id))
       drawControl.delete(idsToDelete as string[])
-    }, { immediate: true })
+    }, {immediate: true})
 
 
     const forwardEventAndUpdateFeatures = (eventName: ForwardedEvents, event: any) => {
       emit(eventName, event)
       emit('update:features', drawControl.getAll().features)
     }
+    const createListener = (event: any) => forwardEventAndUpdateFeatures('draw:create', event)
+    const deleteListener = (event: any) => forwardEventAndUpdateFeatures('draw:create', event)
+    const updateListener = (event: any) => forwardEventAndUpdateFeatures('draw:create', event)
+    const selectionChangeListener = (event: any) => forwardEventAndUpdateFeatures('draw:create', event)
     map!.value
-      .on('draw.create', (event) => forwardEventAndUpdateFeatures('draw:create', event))
-      .on('draw.delete', (event) => forwardEventAndUpdateFeatures('draw:delete', event))
-      .on('draw.update', (event) => forwardEventAndUpdateFeatures('draw:update', event))
-      .on('draw.selectionchange', (event) => emit('draw:selectionchange', event))
+      .on('draw.create', createListener)
+      .on('draw.delete', deleteListener)
+      .on('draw.update', updateListener)
+      .on('draw.selectionchange', selectionChangeListener)
 
     onUnmounted(() => {
+      map!.value
+        .off('draw.create', createListener)
+        .off('draw.delete', deleteListener)
+        .off('draw.update', updateListener)
+        .off('draw.selectionchange', selectionChangeListener)
       map?.value?.removeControl(drawControl)
     })
     return {
-      changeMode: (mode: string) => { drawControl.changeMode(mode) }
+      changeMode: (mode: string) => {
+        drawControl.changeMode(mode)
+      }
     }
   },
   render() {

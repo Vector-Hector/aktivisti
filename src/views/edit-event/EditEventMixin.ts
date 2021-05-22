@@ -30,6 +30,9 @@ export default defineComponent({
   },
   emits: ['update:event', 'update:eventMetricRecords'],
   computed: {
+    editMode(): boolean {
+      return !!(this.event.id && this.event.location)
+    },
     localEvent: {
       get(): Partial<EventDto> {
         return this.event

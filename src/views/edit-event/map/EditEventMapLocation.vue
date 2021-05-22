@@ -58,17 +58,14 @@
       Zurück
     </Button>
     <Button
-      :disabled="!event.location"
+      :disabled="!event.location || loading"
       class="submit-button"
-      :class="{
-        'p-button-outlined': editMode
-      }"
       @click="saveAndClose"
     >
       Speichern und zurück
     </Button>
     <Button
-      :disabled="!event.location"
+      :disabled="!event.location || loading"
       class="submit-button"
       @click="saveAndProceed"
     >
@@ -155,21 +152,47 @@ export default defineComponent({
     },
     async save() {
       this.loading = true
-      this.localEvent = (await this.$apiClient.events.update(this.localEvent.id!.toString(), this.localEvent as EventDto)).payload.data
-      this.loading = false
+      try {
+        this.localEvent = (await this.$apiClient.events.update(this.localEvent.id!.toString(), this.localEvent as EventDto)).payload.data
+      } catch (e) {
+        if (e.status === 400 && e.data['location']) {
+          this.$toast.add(
+            {severity: 'warn', summary: 'Ungültiger Ort', detail: e.data['location'][0], life: 3000, closable: true}
+          )
+        } else {
+          this.$toast.add(
+            {
+              severity: 'error',
+              summary: 'Fehler',
+              detail: 'Ein unerwarteter Fehler ist aufgetreten',
+              life: 3000,
+              closable: true
+            }
+          )
+        }
+        return false
+      } finally {
+        this.loading = false
+      }
+      return true
     },
     async saveAndProceed() {
-      await this.save()
-      await this.$router.push({name: 'edit-event-routes'})
+      const success = await this.save()
+      if (success) {
+        await this.$router.push({name: 'edit-event-routes'})
+      }
     },
     async saveAndClose() {
-      await this.save()
-      await this.$router.push({
-        name: 'event-detail',
-        params: {
-          id: this.event.id!.toString()
-        }
-      })
+      const success = await this.save()
+      if (success) {
+
+        await this.$router.push({
+          name: 'event-detail',
+          params: {
+            id: this.event.id!.toString()
+          }
+        })
+      }
     },
     markerDropped(event: any) {
       this.event.location = event.coordinates
