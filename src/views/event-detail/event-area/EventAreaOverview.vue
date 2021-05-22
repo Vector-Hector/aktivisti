@@ -213,8 +213,8 @@ export default defineComponent({
         .create({
           header: 'Aktionsgebiet erledigt',
           message: this.eventArea.is_completed
-            ? `Das Aktionsgebiet ${this.eventArea.id} als <b>offen</b> markieren?`
-            : `Das Aktionsgebiet ${this.eventArea.id} als <b>erledigt</b> markieren?`,
+            ? `Das Aktionsgebiet <b>${this.eventArea.name}</b> als <b>offen</b> markieren?`
+            : `Das Aktionsgebiet <b>${this.eventArea.name}</b> als <b>erledigt</b> markieren?`,
           buttons: [
             {
               text: 'Cancel',
