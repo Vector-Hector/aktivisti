@@ -183,9 +183,6 @@ const router = createRouter({
           component: EditEventDetails,
           props: true,
           name: 'edit-event-details',
-          meta: {
-            backButtonRouter: '/events'
-          }
         },
         {
           path: 'map',
