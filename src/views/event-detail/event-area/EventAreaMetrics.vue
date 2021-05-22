@@ -3,7 +3,7 @@
     :to="{ name: 'create-lead' }"
   >
     <IonButton>
-      Sympathisant*in registrieren
+      Kontakt registrieren
     </IonButton>
   </router-link>
 
