@@ -1,6 +1,7 @@
 <template>
   <Sidebar
     class="navigation-sidebar"
+    position="right"
     :visible="sidebarExpanded"
     :show-close-icon="false"
     @update:visible="toggleSidebar"
@@ -20,13 +21,13 @@
           </div>
         </div>
         <div class="menu-item">
-          <router-link
+          <MenuLink
             class="menu-item-link"
             to="/profile"
           >
             <i class="pi pi-user-edit" />
             <span class="menu-item-link-text">Mein Profil</span>
-          </router-link>
+          </MenuLink>
         </div>
       </div>
       <div
@@ -39,58 +40,53 @@
           @click="toggleSidebar(false)"
         />
         <div class="menu-item">
-          <router-link
-            class="menu-item-link"
+          <MenuLink
             to="/login"
           >
             <i class="pi pi-sign-in" />
             <span class="menu-item-link-text">Anmelden</span>
-          </router-link>
+          </MenuLink>
         </div>
         <hr class="menu-divider">
         <div class="menu-item">
-          <router-link
-            class="menu-item-link"
+          <MenuLink
             to="/register"
           >
             <i class="pi pi-id-card" />
             <span class="menu-item-link-text">Registrieren</span>
-          </router-link>
+          </MenuLink>
         </div>
       </div>
       <div class="menu-group">
         <div class="menu-item">
-          <router-link
-            class="menu-item-link"
+          <MenuLink
             to="/events"
           >
             <IonIcon name="calendar-clear-outline" />
             <span class="menu-item-link-text">Alle Aktionen</span>
-          </router-link>
+          </MenuLink>
         </div>
         <div
           v-if="isLoggedIn"
           class="menu-item"
         >
-          <router-link
-            class="menu-item-link"
+          <MenuLink
             :to="{ name: 'my-events' }"
           >
             <IonIcon name="calendar-outline" />
             <span class="menu-item-link-text">Meine Aktionen</span>
-          </router-link>
+          </MenuLink>
         </div>
         <div
           v-if="isLoggedIn"
           class="menu-item"
         >
-          <router-link
-            class="menu-item-link"
+          <MenuLink
             :to="{ name: 'edit-event-details-new' }"
           >
             <i class="pi pi-calendar-plus" />
             <span class="menu-item-link-text">Aktion Erstellen</span>
-          </router-link>
+          </MenuLink>
         </div>
       </div>
       <div class="menu-group menu-bottom">
@@ -123,6 +119,7 @@ import { authService } from '@/api/authService'
 import { addIcons } from 'ionicons'
 import { calendarOutline, calendarClearOutline } from 'ionicons/icons'
 import { IonIcon } from '@ionic/vue'
+import MenuLink from '@/components/MenuLink.vue'
 
 addIcons({
   'calendar-outline': calendarOutline,
@@ -132,6 +129,7 @@ addIcons({
 export default defineComponent({
   name: 'NavigationSidebar',
   components: {
+    MenuLink,
     Sidebar,
     Button,
     IonIcon
@@ -206,7 +204,7 @@ outside the html hierarchy of this component - if someone finds a better soltion
   height: 100%;
 }
 
-.menu-group {
+::v-deep(.menu-group) {
   background: $white;
 
   .menu-divider {
