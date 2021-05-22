@@ -40,8 +40,8 @@
   </IonList>
 
   <div
-    class="empty-list-placeholder"
     v-else
+    class="empty-list-placeholder"
   >
     <IonText
       color="medium"

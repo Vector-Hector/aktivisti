@@ -57,6 +57,11 @@ export default defineComponent({
       })
     }
   },
+  beforeRouteUpdate() {
+    uiStore.updateActiveElements({
+      event: this.event.name
+    })
+  },
   props: {
     // event id
     id: {
@@ -95,7 +100,7 @@ export default defineComponent({
       }, {
         label: 'Gebiete',
         to: this.resolveIfEventId({
-          name: 'edit-event-routes',
+          name: 'edit-event-routes'
         }),
         disabled: !this.event.location || !this.event.id
       }]
@@ -115,7 +120,7 @@ export default defineComponent({
           params: {
             ...location.params,
             id: this.id ?? undefined
-          },
+          }
         })?.path
       } else {
         return ''

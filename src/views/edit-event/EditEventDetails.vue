@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <Form
-      v-slot="{ errors }"
-      @submit="saveAndProceed"
+      v-slot="{ errors, isSubmitting, handleSubmit }"
+      :initial-values="localEvent"
     >
       <div class="p-fluid">
         <div class="p-field p-grid">
@@ -11,15 +11,25 @@
             class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
           >Event-Typ</label>
           <div class="p-col-12 p-md-9">
-            <Dropdown
-              id="eventType"
-              v-model="localEvent.event_type"
-              :disabled="true"
-              :options="eventTypes"
-              option-label="label"
-              option-value="key"
-              placeholder="Aktions-Typ"
-            />
+            <Field
+              v-slot="{ field, handleChange }"
+              name="event_type"
+            >
+              <Dropdown
+                id="eventType"
+                :model-value="field.value"
+                :disabled="true"
+                :options="eventTypes"
+                option-label="label"
+                option-value="key"
+                placeholder="Aktions-Typ"
+                @input="handleChange($event.value.map(({key}) => key))"
+              />
+              <ErrorMessage
+                class="error"
+                name="event_type"
+              />
+            </Field>
           </div>
         </div>
         <div class="p-field p-grid">
@@ -30,7 +40,6 @@
           <div class="p-col-12 p-md-9">
             <Field
               v-slot="{field}"
-              v-model="localEvent.name"
               name="name"
               :rules="isRequired"
             >
@@ -57,9 +66,7 @@
           <div class="p-col-12 p-md-9">
             <Field
               v-slot="{ field }"
-              v-model="localEvent.campaigns"
               name="campaigns"
-              value="value"
               :rules="isRequired"
             >
               <MultiSelect
@@ -87,19 +94,17 @@
           >Beginn</label>
           <div class="p-col-12 p-md-9">
             <Field
-              v-slot="{ field }"
-              v-model="startDate"
+              v-slot="{ field, handleChange }"
               name="start_date"
-              value="value"
               :rules="isRequired"
             >
               <Calendar
                 date-format="dd.mm.yy"
                 :show-time="true"
-                :model-value="field.value"
+                :model-value="new Date(field.value)"
                 :class="{'p-invalid': errors.start_date}"
                 :step-minute="15"
-                @date-select="field.onChange.forEach((fn) => fn($event))"
+                @date-select="handleChange($event.toISOString())"
               />
               <ErrorMessage
                 name="start_date"
@@ -111,33 +116,55 @@
 
         <div class="p-field p-grid">
           <label
-            for="endDate"
+            for="end_date"
             class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
           >Ende</label>
           <div class="p-col-12 p-md-9">
-            <Calendar
-              v-model="endDate"
-              date-format="dd.mm.yy"
-              :show-time="true"
-              :step-minute="15"
-            />
+            <Field
+              v-slot="{ field, handleChange }"
+              name="end_date"
+              :rules="isRequired"
+            >
+              <Calendar
+                date-format="dd.mm.yy"
+                :show-time="true"
+                :step-minute="15"
+                :model-value="new Date(field.value)"
+                @date-select="handleChange($event.toISOString())"
+              />
+              <ErrorMessage
+                name="end_date"
+                class="error"
+              />
+            </Field>
           </div>
         </div>
 
         <div class="p-field p-grid">
           <label
-            for="eventParticipantsMax"
+            for="max_participants"
             class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
           ># Personen</label>
-          <div class="p-col-12 p-md-9">
-            <InputNumber
-              id="eventParticipantsMax"
-              v-model="localEvent.max_participants"
-              show-buttons
-              mode="decimal"
-              :min="0"
-            />
-          </div>
+          <Field
+            v-slot="{ field, handleChange }"
+            name="max_participants"
+          >
+            <div class="p-col-12 p-md-9">
+              <InputNumber
+                id="max_participants"
+                show-buttons
+                name="max_participants"
+                mode="decimal"
+                :value="field.value"
+                :min="0"
+                @input="handleChange($event.value)"
+              />
+              <ErrorMessage
+                name="max_participants"
+                class="error"
+              />
+            </div>
+          </Field>
         </div>
 
         <div class="p-field p-grid p-align-start">
@@ -145,13 +172,18 @@
             for="eventDescription"
             class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
           >Weitere Informationen</label>
-          <div class="p-col-12 p-md-9">
-            <Textarea
-              id="eventDescription"
-              v-model="localEvent.description"
-              type="text"
-            />
-          </div>
+          <Field
+            v-slot="{ field }"
+            name="description"
+          >
+            <div class="p-col-12 p-md-9">
+              <Textarea
+                id="eventDescription"
+                v-bind="field"
+                type="text"
+              />
+            </div>
+          </Field>
         </div>
 
         <div class="p-field p-grid">
@@ -159,18 +191,25 @@
             for="eventMetrics"
             class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
           >Felder (geklopfte Türen etc.) auswählen</label>
+
           <div class="p-col-12 p-md-9">
-            <MultiSelect
-              v-model="selectedMetrics"
-              :options="metrics"
-              option-label="name"
-              placeholder="Metriken auswählen"
-              display="chip"
-            />
-            <ErrorMessage
+            <Field
+              v-slot="{ handleChange }"
               name="metrics"
-              class="error"
-            />
+            >
+              <MultiSelect
+                v-model="selectedMetrics"
+                :options="metrics"
+                option-label="name"
+                placeholder="Metriken auswählen"
+                display="chip"
+                @change="handleChange($event.value.map(({id}) => id))"
+              />
+              <ErrorMessage
+                name="metrics"
+                class="error"
+              />
+            </Field>
           </div>
         </div>
         <div
@@ -201,11 +240,14 @@
         <Button
           v-if="editMode"
           label="Speichern und zurück"
-          @click="saveAndClose()"
+          :disabled="isSubmitting"
+          @click="handleSubmit($event, saveAndClose)"
         />
         <Button
           type="submit"
+          :disabled="isSubmitting"
           label="Treffpunkt auswählen"
+          @click="handleSubmit($event, saveAndProceed)"
         />
       </div>
     </Form>
@@ -228,7 +270,7 @@ import { EventDto } from '@/api/model/EventDto'
 import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
 import { EventMetricDto } from '@/api/model/EventMetricDto'
 
-import { Form, Field, ErrorMessage } from 'vee-validate'
+import { Form, Field, ErrorMessage, FormActions } from 'vee-validate'
 import Textarea from 'primevue/textarea'
 
 /**
@@ -261,16 +303,6 @@ export default defineComponent({
     }
   },
   computed: {
-    backRoute(): string {
-      if (this.editMode && this.event) {
-        return this.$router.resolve({name: 'event-detail', params: {event: this.event.id!}}).fullPath
-      } else {
-        return '/events'
-      }
-    },
-    editMode(): boolean {
-      return !!(this.event.id && this.event.location)
-    },
     eventTypes() {
       return eventTypeOptions
     },
@@ -329,32 +361,31 @@ export default defineComponent({
       const metricsRequest = await this.$apiClient.eventMetrics.list()
       this.metrics = metricsRequest.payload.data
     },
-    async save() {
+    async save(eventData: Partial<EventDto>) {
       let newEvent
-      if (!this.localEvent.id) {
+      if (!eventData.id) {
         newEvent = this.localEvent = (await this.$apiClient.events.create({
-          ...this.localEvent,
+          ...eventData,
           // need to supply the metrics during creation to pass validation
           metrics: this.selectedMetrics.map(({id}) => id)
         })).payload.data
       } else {
-        newEvent = this.localEvent = (await this.$apiClient.events.update(this.localEvent!.id!.toString(), {
-          ...(this.localEvent as EventDto),
+        newEvent = this.localEvent = (await this.$apiClient.events.update(eventData.id!.toString(), {
+          ...(eventData as EventDto),
           metrics: this.selectedMetrics.map(({id}) => id)
         })).payload.data
       }
       await this.$apiClient.events.batchUpdateMetricRecords(newEvent.id.toString(), this.eventMetricRecords)
       return newEvent
     },
-    async saveAndProceed(data: Partial<EventDto>, actions: any) {
+    async saveEvent(values: Partial<EventDto>, actions: FormActions<any>): Promise<boolean> {
       try {
-        const newEvent = await this.save()
-        await this.$router.push({
-          name: 'edit-event-location',
-          params: {
-            id: newEvent.id.toString()
-          }
+        await this.save({
+          ...this.localEvent,
+          ...values
         })
+        actions.resetForm({values: this.localEvent, errors: {}})
+        return true
       } catch (e) {
         console.dir(e)
         if (e.status == 400) {
@@ -364,16 +395,30 @@ export default defineComponent({
             'non-field-error': 'Ein unbekannter Fehler ist aufgetreten'
           })
         }
+        return false
       }
     },
-    async saveAndClose() {
-      const newEvent = await this.save()
-      await this.$router.push({
-        name: 'event-detail',
-        params: {
-          id: newEvent.id.toString()
-        }
-      })
+    async saveAndProceed(values: Partial<EventDto>, actions: FormActions<any>) {
+      const success = await this.saveEvent(values, actions)
+      if (success) {
+        await this.$router.push({
+          name: 'edit-event-location',
+          params: {
+            id: this.localEvent.id!.toString()
+          }
+        })
+      }
+    },
+    async saveAndClose(values: Partial<EventDto>, actions: FormActions<any>) {
+      const success = await this.saveEvent(values, actions)
+      if (success) {
+        await this.$router.push({
+          name: 'event-detail',
+          params: {
+            id: this.localEvent.id!.toString()
+          }
+        })
+      }
     },
     metricForMetricRecord(record: EventMetricRecordDto): EventMetricDto | undefined {
       return this.metrics.find(({id}) => record.metric === id)
