@@ -156,12 +156,7 @@ export default defineComponent({
       uiStore.openSidebar()
     },
     backButton() {
-      const backButtonRoute = this.$route.meta.backButtonRoute
-      if (backButtonRoute) {
-        this.$router.replace(backButtonRoute)
-      } else {
-        this.$router.go(-1)
-      }
+      this.$router.go(-1)
     }
   }
 })
