@@ -168,16 +168,16 @@ import { Feature } from 'geojson'
 import { ClusterDto } from '@/api/model/ClusterDto'
 import ClusterLayer from '@/lib/mapbox/ClusterLayer.vue'
 import { isEqual } from 'lodash-es'
-
-const MAX_EVENTS = 100
 import { showCampaignLevel } from '@/utils/showCampaignLevel'
 import ResizableBottomSheet from '@/components/ResizableBottomSheet.vue'
 import CollapsibleFilters from '@/components/CollapsibleFilters.vue'
 import { SubAssociationDto } from '@/api/model/SubAssociationDto'
 import EventList from '@/components/EventList.vue'
 import { Pagination } from '@/api/model/APIEnvelope'
-import { LngLatBoundsLike } from 'mapbox-gl'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import { bboxPolygon } from '@turf/turf'
+
+const MAX_EVENTS = 100
 
 enum SortOption {
   START_DATE = 'start_date',
@@ -245,6 +245,9 @@ export default defineComponent({
       }
       return active
     },
+    boundingBoxJson() {
+      return userStore.getState().bbox ? bboxPolygon(userStore.getState().bbox!).geometry : null
+    },
     filteredCampaign: {
       get() {
         return userStore.getState().campaign ?? 0
@@ -261,7 +264,7 @@ export default defineComponent({
       return {
         sub_association: this.filteredSubAssociations.length > 0 ? this.filteredSubAssociations : undefined,
         campaigns: this.filteredCampaign > 0 ? this.filteredCampaign : undefined,
-        within: this.boundingBox ? JSON.stringify(this.boundingBox.geometry) : undefined,
+        within: this.boundingBoxJson ? JSON.stringify(this.boundingBoxJson) : undefined,
         order_by: this.selectedSortOption,
         limit: MAX_EVENTS
       }
