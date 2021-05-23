@@ -21,7 +21,6 @@
       </IonLabel>
       <Field
         v-slot="{ field }"
-        v-model="lead.gender"
         :rules="isRequired"
         name="gender"
       >
@@ -57,7 +56,6 @@
       </IonLabel>
       <Field
         v-slot="{ field }"
-        v-model="lead.last_name"
         :rules="isRequired"
         name="last_name"
       >
@@ -84,7 +82,6 @@
       </IonLabel>
       <Field
         v-slot="{ field }"
-        v-model="lead.first_name"
         :rules="isRequired"
         name="first_name"
       >
@@ -111,7 +108,6 @@
       </IonLabel>
       <Field
         v-slot="{ field }"
-        v-model="lead.email"
         :rules="isRequired"
         name="email"
       >
@@ -138,7 +134,6 @@
       </IonLabel>
       <Field
         v-slot="{ field }"
-        v-model="lead.phone_number"
         name="phone_number"
       >
         <IonInput
@@ -164,7 +159,6 @@
       </IonLabel>
       <Field
         v-slot="{ field }"
-        v-model="lead.plz"
         :rules="isRequired"
         name="plz"
       >
@@ -191,7 +185,6 @@
       </IonLabel>
       <Field
         v-slot="{ field }"
-        v-model="lead.city"
         :rules="isRequired"
         name="city"
       >
@@ -216,22 +209,34 @@
       <IonLabel>
         Ich bin DIE LINKE Mitglied
       </IonLabel>
-      <IonCheckbox
-        id="isMember"
-        slot="start"
-        v-model="lead.is_party_member"
-      />
+      <Field
+        v-slot="{ field }"
+        name="is_party_member"
+      >
+        <IonCheckbox
+          id="isMember"
+          slot="start"
+          v-bind="field"
+        />
+      </Field>
     </IonItem>
 
     <IonItem lines="none">
-      <IonLabel>
+      <IonLabel
+        for="wantsToBecomeMember"
+      >
         Ich möchte DIE LINKE Mitglied werden
       </IonLabel>
-      <IonCheckbox
-        id="wantToBecomeMember"
-        slot="start"
-        v-model="lead.want_to_become_member"
-      />
+      <Field
+        v-slot="{ field }"
+        name="wants_to_become_member"
+      >
+        <IonCheckbox
+          id="wantsToBecomeMember"
+          slot="start"
+          v-bind="field"
+        />
+      </Field>
     </IonItem>
 
     <IonItem
@@ -243,7 +248,6 @@
       </IonLabel>
       <Field
         v-slot="{ field }"
-        v-model="lead.privacy_opt_in"
         :rules="isRequired"
         name="privacy_opt_in"
       >
@@ -277,7 +281,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import { LeadDto } from '@/api/model/LeadDto'
 import {
   IonButton,
@@ -291,6 +295,7 @@ import {
 } from '@ionic/vue'
 import { Field, Form, ErrorMessage, FormActions } from 'vee-validate'
 import CreateLeadQR from '@/components/modals/CreateLeadQR.vue'
+import EventAreaMixin from '@/views/event-detail/event-area/EventAreaMixin'
 
 export default defineComponent({
   name: 'CreateLead',
@@ -306,13 +311,7 @@ export default defineComponent({
     Form,
     ErrorMessage
   },
-  props: {
-    eventAreaId: {
-      type: Number as PropType<number | undefined>,
-      required: false,
-      default: undefined
-    }
-  },
+  mixins: [EventAreaMixin],
   data() {
     return {
       confirmOpen: false,
@@ -335,12 +334,14 @@ export default defineComponent({
   },
   methods: {
     async saveLead(data: Partial<LeadDto>, actions: FormActions<any>) {
+      this.lead = data
       try {
         await this.$apiClient.leads.create(
           {
-            ...this.lead,
-            event_area: this.eventAreaId
+            ...data,
+            event_area: this.eventArea.id
           })
+        actions.resetForm()
         // TODO: maybe add an explicit back route
         this.$router.go(-1)
       } catch (e) {

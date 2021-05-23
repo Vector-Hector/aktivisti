@@ -1,11 +1,13 @@
 <template>
-  <router-link
-    :to="{ name: 'create-lead' }"
-  >
-    <IonButton>
-      Kontakt registrieren
-    </IonButton>
-  </router-link>
+  <div class="create-lead">
+    <router-link
+      :to="{ name: 'create-lead' }"
+    >
+      <IonButton>
+        Kontakt registrieren
+      </IonButton>
+    </router-link>
+  </div>
 
   <IonGrid
     v-if="metricRecords.length"
@@ -143,6 +145,12 @@ label {
   font-size: 1rem;
   font-weight: bold;
   margin: 0;
+}
+
+.create-lead {
+  display: flex;
+  justify-content: center;
+  margin: 0.5rem 0;
 }
 
 </style>
