@@ -1,55 +1,45 @@
 import { Store } from '@/store/Store'
-import { LocationDto } from '@/api/model/LocationDto'
 import { CAMPAIGN_ADMIN, UserDto } from '@/api/model/UserDto'
+import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import { SubAssociationDto } from '@/api/model/SubAssociationDto'
 
 interface UserState {
-  user: UserDto | null,
-  location: LocationDto | null,
-  zoom: number | null,
+  user: UserDto | null
+  homeAssociation: SubAssociationDto | null
+  bbox: BBox2d | null
   campaign: number | null
 }
 
-const KEY_LOCATION = 'LOCATION'
-const KEY_ZOOM = 'KEY_ZOOM'
+const KEY_BBOX = 'KEY_BBOX'
 const KEY_CAMPAIGN = 'KEY_CAMPAIGN'
+const KEY_HOMEASSOCIATION = 'KEY_HOMEASSOCIATION'
 
 class UserStore extends Store<UserState> {
   protected data(): UserState {
-
-    const locationString = localStorage.getItem(KEY_LOCATION)
-    let location = null
-    if (locationString !== null) {
-      try {
-        location = JSON.parse(locationString)
-      } catch (error) {
-        location = null
-      }
-    }
-    const zoomString = localStorage.getItem(KEY_ZOOM)
-    const zoom = zoomString ? parseInt(zoomString) : null
+    const bboxString = localStorage.getItem(KEY_BBOX)
+    const bbox = bboxString ? JSON.parse(bboxString) : null
 
     const campaignString = localStorage.getItem(KEY_CAMPAIGN)
     const campaign = campaignString ? parseInt(campaignString) : null
 
+
+    const homeAssociationString = localStorage.getItem(KEY_CAMPAIGN)
+    const homeAssociation = homeAssociationString ? JSON.parse(homeAssociationString) : null
+
     return {
       user: null,
-      location,
-      zoom,
+      bbox,
+      homeAssociation,
       campaign
     }
   }
 
-  public locate(location: LocationDto | null) {
-    this.state.location = location
-    localStorage.setItem(KEY_LOCATION, JSON.stringify(location))
-  }
-
-  public setZoom(zoom: number | null) {
-    this.state.zoom = zoom
-    if (zoom) {
-      localStorage.setItem(KEY_ZOOM, zoom.toString())
+  public setBbox(bbox: BBox2d | null) {
+    this.state.bbox = bbox
+    if (bbox) {
+      localStorage.setItem(KEY_BBOX, JSON.stringify(bbox))
     } else {
-      localStorage.removeItem(KEY_ZOOM)
+      localStorage.removeItem(KEY_BBOX)
     }
   }
 
@@ -62,13 +52,24 @@ class UserStore extends Store<UserState> {
     }
   }
 
+  public setHomeAssociation(value: SubAssociationDto) {
+    this.state.homeAssociation = value
+    localStorage.setItem(KEY_HOMEASSOCIATION, JSON.stringify(this.state.homeAssociation))
+  }
+
   public clearUser() {
     this.state.user = null
   }
 
+  public clearHomeAssociation() {
+    this.state.homeAssociation = null
+  }
+
+
   public clear() {
     this.clearUser()
-    this.locate(null)
+    this.clearHomeAssociation()
+    this.setBbox(null)
   }
 
   public isManager(): boolean {

@@ -4,6 +4,8 @@ import { userStore } from '@/store/UserStore'
 import { apiClient } from '@/api/ApiClient'
 import { GrantType, oAuth2Client, OAuthTokenRequestParams } from '@/api/OAuth2Client'
 import { trackingSessionStore } from '@/store/TrackingSessionStore'
+import { bbox, circle } from '@turf/turf'
+import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 
 class AuthService {
 
@@ -14,7 +16,7 @@ class AuthService {
 
   clear() {
     tokenStore.removeTokenDto()
-    userStore.clearUser()
+    userStore.clear()
     trackingSessionStore.clear()
   }
 
@@ -25,8 +27,9 @@ class AuthService {
       delete authRequest.payload.refresh_token
     }
     tokenStore.setTokenDto(authRequest.payload)
-    const profileRequest = await apiClient.user.get('me')
+    const profileRequest = await apiClient.user.get('me', ['sub_association'])
     userStore.setUser(profileRequest.payload.data)
+    userStore.setHomeAssociation(profileRequest.payload.embedded.sub_association?.[0] ?? null)
   }
 
   async login(username: string, password: string, saveRefreshToken = false) {
@@ -37,6 +40,12 @@ class AuthService {
       client_id: process.env.VUE_APP_CLIENT_ID
     }
     await this.auth(userParams, saveRefreshToken)
+
+    const center = userStore.getState().homeAssociation?.center
+    // when loggin in set the map on the bbox of the home association
+    if (center) {
+      userStore.setBbox(bbox(circle([center.lng, center.lat], 2)) as BBox2d)
+    }
   }
 
   async renewLogin() {

@@ -7,10 +7,17 @@ export interface TitleElements {
   houseNumber?: string
 }
 
+export enum BottomSheetState {
+  COLLAPSED = 'collapsed',
+  HALF = 'half',
+  EXPANDED = 'expanded'
+}
+
 interface UiState {
   sidebarExpanded: boolean
   showNavigation: boolean
   activeTitleElements: TitleElements
+  bottomSheetState: BottomSheetState
 }
 
 class UiStore extends Store<UiState> {
@@ -18,7 +25,8 @@ class UiStore extends Store<UiState> {
     return {
       sidebarExpanded: false,
       showNavigation: true,
-      activeTitleElements: {}
+      activeTitleElements: {},
+      bottomSheetState: BottomSheetState.COLLAPSED
     }
   }
 
@@ -36,6 +44,10 @@ class UiStore extends Store<UiState> {
 
   public closeSidebar() {
     this.toggleSidebar(false)
+  }
+
+  public setBottomSheetState(value: BottomSheetState) {
+    this.state.bottomSheetState = value
   }
 
   public updateActiveElements(titleElements: TitleElements) {

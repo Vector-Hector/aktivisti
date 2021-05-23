@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from '@ionic/vue-router'
 
 import EditEvent from '@/views/EditEvent.vue'
 import EventDetail from '@/views/EventDetail.vue'
-import Locate from '@/views/Locate.vue'
 import CreateLead from '@/views/event-detail/event-area/CreateLead.vue'
 import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
@@ -27,13 +26,14 @@ import { uiStore } from '@/store/UiStore'
 import RegistrationSucess from '@/views/RegistrationSucess.vue'
 import EventMap from '@/views/EventMap.vue'
 import Imprint from '@/views/Imprint.vue'
+import Splash from '@/views/Splash.vue'
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: '/',
-      component: Locate,
+      component: Splash,
       name: 'splash'
     },
     {
