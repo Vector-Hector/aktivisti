@@ -24,7 +24,7 @@
       </router-link>
 
       <router-link
-        to="/login"
+        to="/register"
         class="register-button"
       >
         <IonButton
