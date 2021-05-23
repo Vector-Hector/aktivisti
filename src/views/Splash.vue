@@ -15,7 +15,7 @@
       @result="locate"
     />
     <div
-      v-if="isLoggedIn"
+      v-if="!isLoggedIn"
       class="signin-buttons"
     >
       <router-link
