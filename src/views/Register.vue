@@ -156,13 +156,27 @@
           />
         </IonItem>
 
-        <div class="privacy-margin">
-          Mit deiner Registrierung nimmst du die
-          <a
-            href="https://www.die-linke.de/seitenfuss/datenschutz/"
-            target="_blank"
-          >Datenschutzbestimmungen</a>
-          zur Kenntnis.
+        <div class="privacy-disclaimer">
+          <IonText>
+            Mit deiner Registrierung nimmst du die
+            Als Nutzer:in der LINKEN App nimmst Du zur Kenntnis und stimmst zu, dass Du die per App erhaltenen und
+            übermittelten Daten zu keinem anderen Zweck als der Organisation von Aktionen der Partei DIE LINKE nutzt,
+            insbesondere diese weder speicherst, noch kopierst oder Dritten für andere Zwecke übermittelst. Du stimmst
+            zu,
+            dass Passwort stets vertraulich zu behandeln und jeden Verlust des Gerätes oder jede mögliche Offenbarung
+            des
+            Passwortes oder zweckwidrige Nutzung der App durch Dritte unverzüglich dem Bundesvorstand unter
+            <a href="mailto:datenschutz@die-linke.app">datenschutz@die-linke.app</a> mitzuteilen.
+            Du stimmst zu, jede Nachfrage Dritter zum Umfang der Datenverarbeitung der App an den Verantwortlichen beim
+            Bundesvorstand der Partei weiterzuleiten und dem Betroffenen die Kontaktdaten bzw. den Link zu den
+            <a
+              href="https://www.die-linke.de/seitenfuss/datenschutz"
+              target="_blank"
+            >
+              Datenschutzhinweisen
+            </a>
+            mitzuteilen.
+          </IonText>
         </div>
         <IonItem
           class="error-wrapper"
@@ -205,7 +219,7 @@ import {
   IonLabel,
   IonItem,
   IonButton,
-  IonItemDivider, IonContent
+  IonItemDivider, IonContent, IonText
 } from '@ionic/vue'
 import { UserRegistrationDto } from '@/api/model/UserRegistrationDto'
 
@@ -220,7 +234,8 @@ export default defineComponent({
     IonItemDivider,
     Field,
     Form,
-    ErrorMessage
+    ErrorMessage,
+    IonText
   },
   data() {
     return {
@@ -261,7 +276,8 @@ export default defineComponent({
   text-align: center;
 }
 
-.privacy-margin {
-  margin-top: 2em;
+.privacy-disclaimer {
+  padding: 0.2rem;
+  font-size: 0.8rem;
 }
 </style>

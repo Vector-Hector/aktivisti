@@ -91,6 +91,12 @@
       </div>
       <div class="menu-group menu-bottom">
         <hr class="menu-divider">
+        <div class="menu-item">
+          <MenuLink to="/imprint">
+            <span class="paragraph-icon">§</span>
+            <span class="menu-item-link-text">Impressum / Datenschutz</span>
+          </MenuLink>
+        </div>
         <div
           v-if="isLoggedIn"
           class="menu-item"
@@ -290,6 +296,10 @@ hr {
       padding: 0.3rem 0;
     }
   }
+}
+
+.paragraph-icon {
+  font-size: 0.9rem;
 }
 
 

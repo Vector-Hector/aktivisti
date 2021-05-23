@@ -13,6 +13,7 @@
   </div>
   <Form
     v-slot="{ errors, isSubmitting }"
+    ref="form"
     @submit="saveLead"
   >
     <IonItem :class="{ 'select-item-has-error': !!errors.gender }">
@@ -238,36 +239,6 @@
         />
       </Field>
     </IonItem>
-
-    <IonItem
-      lines="none"
-      :class="{ 'item-has-error': !!errors.privacy_opt_in }"
-    >
-      <IonLabel>
-        Ich stimme der Datenschutzerklärung zu
-      </IonLabel>
-      <Field
-        v-slot="{ field }"
-        :rules="isRequired"
-        name="privacy_opt_in"
-      >
-        <IonCheckbox
-          id="privacyOptIn"
-          slot="start"
-          v-bind="field"
-        />
-      </Field>
-    </IonItem>
-    <IonItem
-      class="error-wrapper"
-      lines="none"
-    >
-      <ErrorMessage
-        name="privacy_opt_in"
-        class="error"
-      />
-    </IonItem>
-
     <div class="control-buttons">
       <IonButton
         color="primary"
@@ -332,6 +303,11 @@ export default defineComponent({
       ]
     }
   },
+  watch: {
+    $route() {
+      (this.$refs.form as typeof Form)?.resetForm()
+    }
+  },
   methods: {
     async saveLead(data: Partial<LeadDto>, actions: FormActions<any>) {
       this.lead = data
@@ -339,7 +315,10 @@ export default defineComponent({
         await this.$apiClient.leads.create(
           {
             ...data,
-            event_area: this.eventArea.id
+            event_area: this.eventArea.id,
+            // The form will register the lead on the behalf of someone else - therefor a double opt in is necessary
+            // The first opt in here is implicit by offering the data in a person to person talk at the door
+            privacy_opt_in: true
           })
         actions.resetForm()
         // TODO: maybe add an explicit back route
