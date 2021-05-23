@@ -29,19 +29,23 @@
         <p>
           Die Partei DIE LINKE nimmt den Schutz Ihrer persönlichen Daten sehr ernst und hält sich strikt an die Regeln
           der Datenschutzgesetze.
-          weiterlesen:
           <a
             href="https://www.die-linke.de/seitenfuss/datenschutz/"
             target="_blank"
           >
-            https://www.die-linke.de/seitenfuss/datenschutz/
+            weiterlesen
           </a>
         </p>
         <h2>Haftung</h2>
         <p>
           Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und
           Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.
-          weiterlesen: <a href="https://www.die-linke.de/seitenfuss/impressum/haftungsausschluss/">https://www.die-linke.de/seitenfuss/impressum/haftungsausschluss/</a>
+          <a
+            href="https://www.die-linke.de/seitenfuss/impressum/haftungsausschluss/"
+            target="_blank"
+          >
+            weiterlesen
+          </a>
         </p>
       </IonText>
     </IonContent>
