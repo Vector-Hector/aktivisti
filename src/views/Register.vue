@@ -219,7 +219,10 @@ import {
   IonLabel,
   IonItem,
   IonButton,
-  IonItemDivider, IonContent, IonText
+  IonItemDivider,
+  IonContent,
+  IonText,
+  alertController
 } from '@ionic/vue'
 import { UserRegistrationDto } from '@/api/model/UserRegistrationDto'
 
@@ -242,6 +245,15 @@ export default defineComponent({
       registrationData: {} as Partial<UserRegistrationDto>
     }
   },
+  async created() {
+    const betaAlert = await alertController.create({
+      header: 'Geschlossene Beta',
+      message: 'Schön, dass du dich für unsere App interessiert. Derzeit befinden wir uns in einer geschlossenen ' +
+        'Beta-Phase.\nRegistrierungen sind derzeit nicht möglich. Um mitzumachen, muss ein*e Genoss*in dich einladen',
+      buttons: ['Okay']
+    })
+    await betaAlert.present()
+  },
   methods: {
     async register(values: any, actions: any) {
       try {
@@ -251,6 +263,10 @@ export default defineComponent({
         console.log(error)
         if (error.status === 400) {
           actions.setErrors(error.data)
+        } else if (error.status === 503) {
+          actions.setErrors({
+            'non-field-error': 'Diese Funktion steht derzeit nicht zur Verfügung'
+          })
         } else {
           actions.setErrors({
             'non-field-error': 'Ein unerwarteter Fehler ist aufgetreten'
