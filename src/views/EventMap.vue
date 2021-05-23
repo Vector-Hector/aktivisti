@@ -99,6 +99,7 @@
                     placeholder="Alle Verbände"
                     :multiple="true"
                     :selected-text="filteredSubAssociations.find(subAssociation => filteredSubAssociations.includes(subAssociation.id))?.name"
+                    @click="$event.stopImmediatePropagation(); openSubAssociationSelection()"
                   >
                     <IonRippleEffect />
                     <IonSelectOption
@@ -162,7 +163,7 @@ import {
   IonItem,
   IonLabel, IonRippleEffect,
   IonSelect,
-  IonSelectOption, toastController
+  IonSelectOption, modalController, toastController
 } from '@ionic/vue'
 import { Feature } from 'geojson'
 import { ClusterDto } from '@/api/model/ClusterDto'
@@ -176,6 +177,7 @@ import EventList from '@/components/EventList.vue'
 import { Pagination } from '@/api/model/APIEnvelope'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bboxPolygon } from '@turf/turf'
+import SelectSubAssociation from '@/components/modals/SelectSubAssociationModal.vue'
 
 const MAX_EVENTS = 100
 
@@ -289,6 +291,21 @@ export default defineComponent({
   },
   methods: {
     showCampaignLevel,
+    async openSubAssociationSelection() {
+      const modal = await modalController.create({
+        component: SelectSubAssociation,
+        componentProps: {
+          subAssociations: this.subAssociations,
+          initiallySelected: this.filteredSubAssociations
+        }
+      })
+      modal.onDidDismiss()
+        .then(({data}) => {
+          this.filteredSubAssociations = data ?? []
+        })
+      await modal.present()
+
+    },
     setBbox(value: BBox2d) {
       userStore.setBbox(value)
     },
