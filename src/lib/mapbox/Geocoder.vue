@@ -47,7 +47,6 @@ export default defineComponent({
     }
   },
   setup(props, {emit}) {
-    const map = inject(MapInject)
 
     const geocodeControl = new MapboxGeocoder({
       mapboxgl: mapboxgl,
@@ -63,6 +62,7 @@ export default defineComponent({
 
     onMounted(() => {
       if (!props.standalone) {
+        const map = inject(MapInject)
         if (!map?.value) {
           throw Error('Either mount the Geocoder as a child of Map or set standalone=true')
         }
@@ -73,7 +73,10 @@ export default defineComponent({
     })
 
     onUnmounted(() => {
-      map?.value?.removeControl(geocodeControl)
+      if (!props.standalone) {
+        const map = inject(MapInject)
+        map?.value?.removeControl(geocodeControl)
+      }
     })
 
     return {

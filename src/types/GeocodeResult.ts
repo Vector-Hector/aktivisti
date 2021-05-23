@@ -1,4 +1,5 @@
 import { Geometry } from 'geojson'
+import { LngLatBoundsLike } from 'mapbox-gl'
 
 export interface GeocodeResultContext {
   id: string
@@ -14,7 +15,7 @@ export interface GeocodeResultProperties {
 
 export interface GeocodeResult {
   id: string
-  boundingBox: number[]
+  bbox: [number, number, number, number]
   center: number[]
   context: GeocodeResultContext[]
   geometry: Geometry

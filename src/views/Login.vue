@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <Form
-      v-slot="{ errors, setFieldError }"
+      v-slot="{ errors, setFieldError, isSubmitting }"
       @submit="login"
     >
       <IonItem :class="{ 'item-has-error': !!errors.username }">
@@ -78,6 +78,7 @@
         <IonButton
           color="primary"
           type="submit"
+          :disabled="isSubmitting"
           @click="setFieldError()"
         >
           Anmelden
@@ -138,8 +139,9 @@ export default defineComponent({
     async login(values: any, actions: any) {
       try {
         await authService.login(this.username, this.password, this.saveRefreshToken)
-        this.$router.push(this.next)
+        await this.$router.push(this.next)
       } catch (error) {
+        console.dir(error)
         if (error.response?.status == 400) {
           actions.setFieldError('non-field-error', error.response?.data?.error_description)
           actions.setFieldError('username', ' ')

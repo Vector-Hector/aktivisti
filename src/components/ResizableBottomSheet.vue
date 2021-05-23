@@ -40,17 +40,14 @@ import { defineComponent, PropType } from 'vue'
 import { addIcons } from 'ionicons'
 import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons'
 import { IonIcon } from '@ionic/vue'
+import { BottomSheetState, uiStore } from '@/store/UiStore'
 
 addIcons({
   'chevron-down-outline': chevronDownOutline,
   'chevron-up-outline': chevronUpOutline
 })
 
-enum BottomSheetState {
-  COLLAPSED = 'collapsed',
-  HALF = 'half',
-  EXPANDED = 'expanded'
-}
+
 
 export default defineComponent({
   name: 'ResizableBottomSheet',
@@ -67,7 +64,16 @@ export default defineComponent({
   data() {
     return {
       BottomSheetState,
-      state: BottomSheetState.HALF as BottomSheetState
+    }
+  },
+  computed: {
+    state: {
+      get() {
+        return uiStore.getState().bottomSheetState
+      },
+      set(value: BottomSheetState) {
+        uiStore.setBottomSheetState(value)
+      }
     }
   },
   methods: {
@@ -116,7 +122,7 @@ export default defineComponent({
   }
 
   &.collapsed {
-    height: 5%;
+    height: 7%;
 
     .resize-button.expand {
       top: -20px;

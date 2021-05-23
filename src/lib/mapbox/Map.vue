@@ -14,13 +14,12 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, provide, InjectionKey, PropType, ref, Ref, onMounted, watch } from 'vue'
-import mapboxgl, { Point } from 'mapbox-gl'
+import { defineComponent, InjectionKey, onMounted, PropType, provide, Ref, ref, watch } from 'vue'
+import mapboxgl, { LngLatBoundsLike, Point } from 'mapbox-gl'
 import { LocationDto } from '@/api/model/LocationDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { TinyEmitter } from 'tiny-emitter'
 import { isEqual } from 'lodash-es'
-import { bboxPolygon } from '@turf/turf'
 import { uuidv4 } from '@/utils/uuid'
 
 
@@ -31,8 +30,9 @@ export default defineComponent({
   name: 'Map',
   props: {
     center: {
-      type: Object as PropType<LocationDto>,
-      required: true
+      type: Object as PropType<LocationDto | undefined>,
+      required: false,
+      default: [10.727275, 51.109919]  // center of germany
     },
     animate: {
       type: Boolean as PropType<boolean>,
@@ -47,6 +47,10 @@ export default defineComponent({
       type: Object as PropType<BBox2d>,
       required: false,
       default: undefined
+    },
+    boundingBox: {
+      type: Object as PropType<BBox2d>,
+      default: [5.98865807458, 47.3024876979, 15.0169958839, 54.983104153] // bbox germany
     }
   },
   emits: ['update:zoom', 'update:center', 'update:zoom', 'drop', 'update:boundingBox'],
@@ -58,33 +62,12 @@ export default defineComponent({
     const initialized = ref(false)
     provide(MapInject, map)
 
-    watch(() => props.center, (newCenter, oldCenter) => {
-      if (!newCenter || isEqual(newCenter, oldCenter)) return
-      map.value?.setCenter([newCenter.lng, newCenter.lat])
-    })
-
-    watch(() => props.zoom, (newZoom) => {
-      map.value?.setZoom(newZoom, {animate: props.animate})
-    })
-
-    watch(() => props.zoomBox, (newBox) => {
-      if (newBox) {
-        map.value?.fitBounds(newBox, {padding: 20, animate: props.animate})
-      }
-    }, {immediate: true})
-
     const fitBounds = (...args: any) => {
       map.value?.fitBounds(args, {animate: props.animate})
     }
 
     const getBoundingBox = () => {
-      const bounds = map.value!.getBounds()
-      return bboxPolygon([
-        bounds.getWest(),
-        bounds.getNorth(),
-        bounds.getEast(),
-        bounds.getSouth()
-      ])
+      return map.value!.getBounds().toArray().flat()
     }
 
     const emitWithBus = (type: string, event: any) => {
@@ -105,6 +88,28 @@ export default defineComponent({
           map.value?.fitBounds(props.zoomBox, {padding: 10})
         }
         initialized.value = true
+
+        watch(() => props.center, (newCenter, oldCenter) => {
+          if (!newCenter || isEqual(newCenter, oldCenter)) return
+          map.value?.setCenter([newCenter.lng, newCenter.lat])
+        })
+
+        watch(() => props.zoom, (newZoom) => {
+          map.value?.setZoom(newZoom, {animate: props.animate})
+        })
+
+        watch(() => props.zoomBox, (newBox) => {
+          if (newBox) {
+            map.value?.fitBounds(newBox, {padding: 20, animate: props.animate})
+          }
+        }, {immediate: true})
+
+        watch(() => props.boundingBox, (newBox) => {
+          if (newBox) {
+            map.value?.fitBounds(newBox, {animate: props.animate})
+          }
+        }, {immediate: true})
+
       })
       map.value.on('moveend', () => {
         emitWithBus('update:center', map.value?.getCenter())

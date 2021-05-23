@@ -3,9 +3,9 @@
     <div class="map-container">
       <Map
         v-model:zoom="zoom"
-        v-model:center="userLocation"
+        :bounding-box="bbox"
         map-style="mapbox://styles/mapbox/streets-v11"
-        @update:boundingBox="boundingBox = $event"
+        @update:boundingBox="setBbox($event)"
       >
         <span v-if="clusterMode">
           <ClusterLayer
@@ -157,7 +157,6 @@ import { CampaignDto } from '@/api/model/CampaignDto'
 import Popup from '@/lib/mapbox/Popup.vue'
 import { userStore } from '@/store/UserStore'
 import Button from 'primevue/button'
-import { LocationDto } from '@/api/model/LocationDto'
 import {
   IonContent,
   IonItem,
@@ -177,6 +176,8 @@ import CollapsibleFilters from '@/components/CollapsibleFilters.vue'
 import { SubAssociationDto } from '@/api/model/SubAssociationDto'
 import EventList from '@/components/EventList.vue'
 import { Pagination } from '@/api/model/APIEnvelope'
+import { LngLatBoundsLike } from 'mapbox-gl'
+import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 
 enum SortOption {
   START_DATE = 'start_date',
@@ -207,16 +208,16 @@ export default defineComponent({
     IonRippleEffect
   },
   beforeRouteEnter(to, from, next) {
-    if (userStore.getState().location == null) {
+    if (userStore.getState().bbox === null) {
       next({name: 'splash'})
+    } else {
+      next()
     }
-    next()
   },
   data() {
     return {
       iconWidth: 25,
       iconHeight: 40,
-      center: userStore.getState().location,
       events: [] as EventDto[],
       eventsPagination: null as Pagination | null,
       campaigns: [] as CampaignDto[],
@@ -228,7 +229,9 @@ export default defineComponent({
       sortOptions: Object.values(SortOption),
       filteredSubAssociations: [] as number[],
       SortOptionLabels,
-      subAssociations: [] as SubAssociationDto[]
+      subAssociations: [] as SubAssociationDto[],
+      zoom: 5 as number | null,
+      bbox: userStore.getState().bbox
     }
   },
   computed: {
@@ -252,22 +255,6 @@ export default defineComponent({
         } else {
           userStore.setCampaign(value)
         }
-      }
-    },
-    zoom: {
-      get() {
-        return userStore.getState().zoom
-      },
-      set(value: number) {
-        userStore.setZoom(value)
-      }
-    },
-    userLocation: {
-      get() {
-        return userStore.getState().location
-      },
-      set(value: LocationDto) {
-        userStore.locate(value)
       }
     },
     filterParams(): { [key: string]: any } {
@@ -299,6 +286,9 @@ export default defineComponent({
   },
   methods: {
     showCampaignLevel,
+    setBbox(value: BBox2d) {
+      userStore.setBbox(value)
+    },
     async getSubAssociations() {
       this.subAssociations = (await this.$apiClient.subAssociations.list()).payload.data
     },
