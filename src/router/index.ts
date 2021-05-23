@@ -6,7 +6,6 @@ import Locate from '@/views/Locate.vue'
 import CreateLead from '@/views/event-detail/event-area/CreateLead.vue'
 import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
-import Password from '@/views/Password.vue'
 import EditEventDetails from '@/views/edit-event/EditEventDetails.vue'
 import EditEventMapRoutes from '@/views/edit-event/map/EditEventMapRoutes.vue'
 import EditEventMap from '@/views/edit-event/EditEventMap.vue'
@@ -27,6 +26,7 @@ import EventDetailReport from '@/views/event-detail/EventDetailReport.vue'
 import { uiStore } from '@/store/UiStore'
 import RegistrationSucess from '@/views/RegistrationSucess.vue'
 import EventMap from '@/views/EventMap.vue'
+import Imprint from '@/views/Imprint.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -238,10 +238,10 @@ const router = createRouter({
       }
     },
     {
-      path: '/password',
-      component: Password,
+      path: '/imprint',
+      component: Imprint,
       meta: {
-        title: () => 'Passwort zurücksetzen'
+        title: () => 'Impressum'
       }
     }
   ]

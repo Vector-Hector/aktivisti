@@ -56,16 +56,6 @@
         />
       </IonItem>
 
-      <IonItem lines="none">
-        <IonLabel>
-          <router-link
-            to="/password"
-          >
-            Passwort vergessen?
-          </router-link>
-        </IonLabel>
-      </IonItem>
-
       <div class="control-buttons">
         <IonItem lines="none">
           <IonCheckbox
