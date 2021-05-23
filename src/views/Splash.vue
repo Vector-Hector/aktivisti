@@ -14,7 +14,10 @@
       :standalone="true"
       @result="locate"
     />
-    <div class="signin-buttons">
+    <div
+      v-if="isLoggedIn"
+      class="signin-buttons"
+    >
       <router-link
         to="/login"
       >
@@ -78,6 +81,9 @@ export default defineComponent({
       set(bbox: BBox2d | null) {
         userStore.setBbox(bbox)
       }
+    },
+    isLoggedIn() {
+      return userStore.getState().user
     }
   },
   created() {
