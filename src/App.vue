@@ -12,15 +12,7 @@
               :name="titleTransition"
             >
               <IonButton
-                v-if="currentDepth <= 2"
-                @click="openSidebar"
-              >
-                <IonIcon
-                  name="menu-outline"
-                />
-              </IonButton>
-              <IonButton
-                v-else
+                v-if="currentDepth > 2"
                 @click="backButton"
               >
                 <IonIcon
@@ -48,6 +40,17 @@
               />
             </transition>
           </div>
+          <IonButtons
+            slot="end"
+          >
+            <IonButton
+              @click="openSidebar"
+            >
+              <IonIcon
+                name="menu-outline"
+              />
+            </IonButton>
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
       <div id="main">
