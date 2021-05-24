@@ -51,7 +51,7 @@ import {
 } from '@ionic/vue'
 import { addIcons } from 'ionicons'
 import { close } from 'ionicons/icons'
-import { SubAssociationDto } from '@/api/model/SubAssociationDto'
+import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 
 addIcons({
   close
@@ -77,7 +77,7 @@ export default defineComponent({
   props: {
     initiallySelected: {
       type: Array as PropType<number[]>,
-      default: []
+      default: () => []
     },
     subAssociations: {
       type: Array as PropType<SubAssociationDto[]>,
@@ -106,7 +106,7 @@ export default defineComponent({
   },
   methods: {
     dismiss() {
-      modalController.dismiss(this.selected)
+      void modalController.dismiss(this.selected)
     },
     optionSelected(event: any) {
       const id = parseInt(event.detail.value)

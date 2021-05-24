@@ -40,7 +40,7 @@ import { defineComponent, PropType } from 'vue'
 import { addIcons } from 'ionicons'
 import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons'
 import { IonIcon } from '@ionic/vue'
-import { BottomSheetState, uiStore } from '@/store/UiStore'
+import { BottomSheetState, uiStore } from 'src/store/UiStore'
 
 addIcons({
   'chevron-down-outline': chevronDownOutline,
@@ -102,7 +102,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "~@/scss/_variables.scss";
+@import "src/css/_variables.scss";
 
 .resizable-bottom-sheet {
   display: flex;

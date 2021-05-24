@@ -1,0 +1,15 @@
+@import "src/css/_variables.scss";
+
+ion-select.block-select {
+  padding: 0.8rem 1rem .9rem 1rem;
+  border-bottom: 1px solid $text-primary;
+  flex: 1;
+  background: white;
+  &.gray {
+    background: $gray-100;
+  }
+
+  &::part(placeholder), &::part(icon) {
+    opacity: 1;
+  }
+}

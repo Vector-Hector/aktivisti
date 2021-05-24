@@ -28,7 +28,7 @@ import {
   IonToolbar,
   modalController
 } from '@ionic/vue'
-import EventInvitePeople from '@/components/EventInvitePeople.vue'
+import EventInvitePeople from 'src/components/EventInvitePeople.vue'
 import { addIcons } from 'ionicons'
 import { close } from 'ionicons/icons'
 
@@ -56,7 +56,7 @@ export default defineComponent({
   },
   methods: {
     dismiss() {
-      modalController.dismiss()
+      void modalController.dismiss()
     }
   }
 })

@@ -1,65 +1,26 @@
-
-# wk-frontend
-
-This project is the frontend application for the "DIE LINKE. App". It's a responsive Progressive Web App.
-
-## General
-
-This project uses Vue3 with Typescript and VueCLI for bootstrapping, building and serving during development. As UI component library we started with [PrimeVue](https://www.primefaces.org/primevue/showcase/#/) (⚠️ depracted now), but we are switching successively to [Ionic](https://ionicframework.com/docs/components).
-
-Documentation resources for the used tools:
-
-* VueCLI: https://cli.vuejs.org/
-* Vue (3): https://v3.vuejs.org/api/
-* Typescript: https://www.typescriptlang.org/
-
-⚠️ Lots of resources out there still refer to Vue2 while we use Vue3
+# DIE LINKE. App (wk-frontend)
 
 
-## Development
 
-### Install dependencies
-
-```
+## Install the dependencies
+```bash
 npm install
 ```
 
-### Environment Variable
-
-As a template for the required environment variables you can use `.env.developmet.local.dist`. 
-
+### Start the app in development mode (hot-code reloading, error reporting, etc.)
 ```bash
-$ cp -n .env.development.local.dist .env.development.local
+quasar dev
 ```
 
-### Serving the application during development (with hot-load)
-
-```
-npm run serve
-```
-
-### Compile for production
-
-```
-npm run build
-```
-
-### Run linter and auto-fix
-
-```
+### Lint the files
+```bash
 npm run lint
 ```
 
-### Contribution guidelines
+### Build the app for production
+```bash
+quasar build
+```
 
-Find contribution guidelines [here](./CONTRIBUTE.md)
-
-
-## Testing
-
-### Mock backend during testing or development
-
-While running the application in development or especially during automated e2e-tests we like to introduce a mocked API environment,
-to be independent of a backend to be running. For that matter [mirageJS](https://miragejs.com/) is utilized.
-It hooks into `fetch` calls effectively simulating a backend response according the configuration that lives in [server.ts](./src/server.js)
-
+### Customize the configuration
+See [Configuring quasar.conf.js](https://v2.quasar.dev/quasar-cli/quasar-conf-js).

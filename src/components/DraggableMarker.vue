@@ -11,9 +11,9 @@
 <script lang="ts">
 
 import { defineComponent } from 'vue'
-import { MapEventBus } from '@/lib/mapbox/Map.vue'
-import { uuidv4 } from '@/utils/uuid'
-import { LocationDto } from '@/api/model/LocationDto'
+import { MapEventBus } from 'src/mapbox/Map.vue'
+import { uuidv4 } from 'src/utils/uuid'
+import { LocationDto } from 'src/api/model/LocationDto'
 
 export default defineComponent({
   name: 'DraggableMarker',

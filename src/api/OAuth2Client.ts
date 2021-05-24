@@ -1,4 +1,4 @@
-import convertToFormData from '@/utils/convertToFormData'
+import convertToFormData from 'src/utils/convertToFormData'
 import axios from 'axios'
 import { JSONResponse } from './JSONResponse'
 import { TokenDto } from './model/TokenDto'

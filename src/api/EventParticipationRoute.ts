@@ -1,7 +1,7 @@
-import { APIEnvelope } from '@/api/model/APIEnvelope'
-import { ApiRoute } from '@/api/ApiRoute'
-import { JSONResponse } from '@/api/JSONResponse'
-import { EventParticipationDto } from '@/api/model/EventParticipationDto'
+import { APIEnvelope } from 'src/api/model/APIEnvelope'
+import { ApiRoute } from 'src/api/ApiRoute'
+import { JSONResponse } from 'src/api/JSONResponse'
+import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 
 /**
  * A class extending {@link ApiRoute} to implement some extra non-standard operations (join / leave)
@@ -28,7 +28,7 @@ export class EventParticipationRoute extends ApiRoute<EventParticipationDto> {
       method: 'POST'
     })
     const data = await response.data
-    return new JSONResponse<{}>(response, data)
+    return new JSONResponse<Record<string, unknown>>(response, data)
   }
 
 }

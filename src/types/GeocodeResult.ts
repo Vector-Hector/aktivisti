@@ -1,5 +1,4 @@
 import { Geometry } from 'geojson'
-import { LngLatBoundsLike } from 'mapbox-gl'
 
 export interface GeocodeResultContext {
   id: string

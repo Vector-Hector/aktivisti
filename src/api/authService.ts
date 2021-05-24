@@ -1,9 +1,8 @@
-import router from '@/router'
-import { tokenStore } from '@/store/TokenStore'
-import { userStore } from '@/store/UserStore'
-import { apiClient } from '@/api/ApiClient'
-import { GrantType, oAuth2Client, OAuthTokenRequestParams } from '@/api/OAuth2Client'
-import { trackingSessionStore } from '@/store/TrackingSessionStore'
+import { tokenStore } from 'src/store/TokenStore'
+import { userStore } from 'src/store/UserStore'
+import { apiClient } from 'src/api/ApiClient'
+import { GrantType, oAuth2Client, OAuthTokenRequestParams } from 'src/api/OAuth2Client'
+import { trackingSessionStore } from 'src/store/TrackingSessionStore'
 import { bbox, circle } from '@turf/turf'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 
@@ -11,7 +10,6 @@ class AuthService {
 
   logout() {
     this.clear()
-    router.push('/login')
   }
 
   clear() {
@@ -37,7 +35,7 @@ class AuthService {
       grant_type: 'password' as GrantType,
       username: username,
       password: password,
-      client_id: process.env.VUE_APP_CLIENT_ID
+      client_id: process.env.VUE_APP_CLIENT_ID!
     }
     await this.auth(userParams, saveRefreshToken)
 
@@ -52,7 +50,7 @@ class AuthService {
     const params = {
       grant_type: 'refresh_token' as GrantType,
       refresh_token: tokenStore.getTokenDto()?.refresh_token,
-      client_id: process.env.VUE_APP_CLIENT_ID
+      client_id: process.env.VUE_APP_CLIENT_ID!
     }
     try {
       await this.auth(params, true)

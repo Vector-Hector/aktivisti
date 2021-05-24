@@ -91,7 +91,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "~@/scss/_variables.scss";
+@import "src/css/_variables.scss";
 
 .collapsible-filters {
   background: $gray-100;

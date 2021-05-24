@@ -1,6 +1,6 @@
-import { Store } from '@/store/Store'
-import { apiClient } from '@/api/ApiClient'
-import { AddressDetails } from '@/api/model/AreaDetailsDto'
+import { Store } from 'src/store/Store'
+import { apiClient } from 'src/api/ApiClient'
+import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 
 
 interface TrackingSessionState {
@@ -86,7 +86,7 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
   getMetricsForAddress(eventArea: number, address: AddressDetails): MetricValueMap | undefined {
     if (this.state.trackingSessionId !== null) {
       try {
-        return this.state.sessions[this.state.trackingSessionId!].eventAreas[eventArea][address.osm_id]
+        return this.state.sessions[this.state.trackingSessionId].eventAreas[eventArea][address.osm_id]
       } catch (e) {
         // If TypeError arises there is no record yet
         return undefined

@@ -1,4 +1,4 @@
-import { ApiClient } from '@/api/ApiClient'
+import { ApiClient } from 'src/api/ApiClient'
 
 export {
   ApiClient

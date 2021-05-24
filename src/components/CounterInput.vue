@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { uiStore } from '@/store/UiStore'
+import { uiStore } from 'src/store/UiStore'
 import { IonFabButton, IonIcon } from '@ionic/vue'
 import { addIcons } from 'ionicons'
 import { remove, add } from 'ionicons/icons'
@@ -46,7 +46,7 @@ export default defineComponent({
       default: 0
     },
     showSidebar: {
-      type: Boolean as PropType<Boolean>,
+      type: Boolean as PropType<boolean>,
       default: true
     }
   },

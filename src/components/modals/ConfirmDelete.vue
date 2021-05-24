@@ -33,7 +33,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { EventDto } from '@/api/model/EventDto'
+import { EventDto } from 'src/api/model/EventDto'
 import {
   IonButton,
   IonButtons,
@@ -57,11 +57,11 @@ export default defineComponent({
     }
   },
   methods: {
-    dismiss() {
-      modalController.dismiss(false)
+    async dismiss() {
+      await modalController.dismiss(false)
     },
-    confirm() {
-      modalController.dismiss(true)
+    async confirm() {
+      await modalController.dismiss(true)
     }
   }
 })

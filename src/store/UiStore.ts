@@ -1,4 +1,4 @@
-import { Store } from '@/store/Store'
+import { Store } from 'src/store/Store'
 
 export interface TitleElements {
   event?: string

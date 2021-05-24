@@ -50,8 +50,8 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { EventAreaDto } from '@/api/model/EventAreaDto'
-import { EventParticipationDto } from '@/api/model/EventParticipationDto'
+import { EventAreaDto } from 'src/api/model/EventAreaDto'
+import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { IonBadge, IonIcon, IonItem, IonLabel } from '@ionic/vue'
 import { addIcons } from 'ionicons'
 import {
@@ -60,9 +60,9 @@ import {
   ellipse,
   personCircleOutline
 } from 'ionicons/icons'
-import { UserDto } from '@/api/model/UserDto'
-import { userStore } from '@/store/UserStore'
-import { AreaDetailsDto } from '@/api/model/AreaDetailsDto'
+import { UserDto } from 'src/api/model/UserDto'
+import { userStore } from 'src/store/UserStore'
+import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
 
 addIcons({
   ellipse,

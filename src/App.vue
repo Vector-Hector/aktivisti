@@ -1,27 +1,26 @@
 <template>
   <NavigationSidebar />
   <Toast position="top-right" />
-  <IonApp>
-    <div id="root">
-      <IonHeader
-        class="header-on-top"
-      >
-        <IonToolbar>
-          <IonButtons slot="start">
-            <transition
-              :name="titleTransition"
+  <div id="root">
+    <IonHeader
+      class="header-on-top"
+    >
+      <IonToolbar>
+        <IonButtons slot="start">
+          <transition
+            :name="titleTransition"
+          >
+            <IonButton
+              v-if="currentDepth > 2"
+              @click="backButton"
             >
-              <IonButton
-                v-if="currentDepth > 2"
-                @click="backButton"
-              >
-                <IonIcon
-                  name="arrow-back"
-                />
-              </IonButton>
-            </transition>
-          </IonButtons>
-          <div class="title-wrapper">
+              <IonIcon
+                name="arrow-back"
+              />
+            </IonButton>
+          </transition>
+        </IonButtons>
+        <div class="title-wrapper">
             <span
               class="shadow-title"
               aria-hidden="true"
@@ -31,51 +30,50 @@
                 :subtitle="$route.meta.subtitle?.()"
               />
             </span>
-            <transition :name="titleTransition">
-              <AppTitle
-                :key="$route.path"
-                class="title"
-                :title="$route.meta.title?.()"
-                :subtitle="$route.meta.subtitle?.()"
-              />
-            </transition>
-          </div>
-          <IonButtons
-            slot="end"
+          <transition :name="titleTransition">
+            <AppTitle
+              :key="$route.path"
+              class="title"
+              :title="$route.meta.title?.()"
+              :subtitle="$route.meta.subtitle?.()"
+            />
+          </transition>
+        </div>
+        <IonButtons
+          slot="end"
+        >
+          <IonButton
+            @click="openSidebar"
           >
-            <IonButton
-              @click="openSidebar"
-            >
-              <IonIcon
-                name="menu-outline"
-              />
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
-      <div id="main">
-        <router-view v-slot="{ Component }">
-          <keep-alive>
-            <transition :name="pageTransition">
-              <component :is="Component" />
-            </transition>
-          </keep-alive>
-        </router-view>
-      </div>
+            <IonIcon
+              name="menu-outline"
+            />
+          </IonButton>
+        </IonButtons>
+      </IonToolbar>
+    </IonHeader>
+    <div id="main">
+      <router-view v-slot="{ Component }">
+        <keep-alive>
+          <transition :name="pageTransition">
+            <component :is="Component" />
+          </transition>
+        </keep-alive>
+      </router-view>
     </div>
-  </IonApp>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import NavigationSidebar from '@/components/NavigationSidebar.vue'
-import { uiStore } from '@/store/UiStore'
-import { IonApp, IonBackButton, IonButton, IonButtons, IonHeader, IonIcon, IonTitle, IonToolbar } from '@ionic/vue'
+import NavigationSidebar from 'src/components/NavigationSidebar.vue'
+import { uiStore } from 'src/store/UiStore'
+import { IonBackButton, IonButton, IonButtons, IonHeader, IonIcon, IonTitle, IonToolbar } from '@ionic/vue'
 import Toast from 'primevue/toast'
 import { addIcons } from 'ionicons'
 import { menuOutline, arrowBack } from 'ionicons/icons'
-import AppTitle from '@/components/AppTitle.vue'
-import { ErrorBus } from '@/utils/errorBus'
+import AppTitle from 'src/components/AppTitle.vue'
+import { ErrorBus } from 'src/utils/errorBus'
 
 
 addIcons({
@@ -88,7 +86,6 @@ export default defineComponent({
   components: {
     AppTitle,
     NavigationSidebar,
-    IonApp,
     Toast,
     IonToolbar,
     IonButtons,
@@ -147,7 +144,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    ErrorBus.on('error', (message: String) => {
+    ErrorBus.on('error', (message: string) => {
       this.$toast.add({
         severity: 'error',
         summary: message
@@ -166,8 +163,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import '~@/scss/_globals.scss';
-@import "~@/scss/_page-transitions.scss";
+@import 'src/css/_globals.scss';
+@import "src/css/_page-transitions.scss";
 
 #root {
   display: flex;

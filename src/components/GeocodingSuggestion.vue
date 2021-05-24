@@ -4,7 +4,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { GeocodeResult } from '@/types/GeocodeResult'
+import { GeocodeResult } from 'src/types/GeocodeResult'
 
 export default defineComponent({
   name: 'GeocodingSuggestion',

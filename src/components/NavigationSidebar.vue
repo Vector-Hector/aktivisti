@@ -116,16 +116,16 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { uiStore } from '@/store/UiStore'
-import { userStore } from '@/store/UserStore'
+import { uiStore } from 'src/store/UiStore'
+import { userStore } from 'src/store/UserStore'
 
 import Sidebar from 'primevue/sidebar'
 import Button from 'primevue/button'
-import { authService } from '@/api/authService'
+import { authService } from 'src/api/authService'
 import { addIcons } from 'ionicons'
 import { calendarOutline, calendarClearOutline } from 'ionicons/icons'
 import { IonIcon } from '@ionic/vue'
-import MenuLink from '@/components/MenuLink.vue'
+import MenuLink from 'src/components/MenuLink.vue'
 
 addIcons({
   'calendar-outline': calendarOutline,
@@ -170,14 +170,14 @@ export default defineComponent({
     },
     logout() {
       authService.logout()
-      this.$router.push('/')
+      void this.$router.push('/')
     }
   }
 })
 </script>
 
 <style lang="scss" scoped>
-@import 'src/scss/_globals.scss';
+@import 'src/css/_globals.scss';
 
 .navigation-sidebar {
   padding: 0;

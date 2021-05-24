@@ -28,7 +28,7 @@ export default defineComponent({
       default: 'DIE LINKE. App'
     },
     subtitle: {
-      type: String as PropType<string>,
+      type: String as PropType<string | undefined>,
       required: false,
       default: undefined
     },

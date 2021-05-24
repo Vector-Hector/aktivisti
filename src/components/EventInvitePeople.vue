@@ -76,11 +76,11 @@
 import { defineComponent, PropType } from 'vue'
 import AutoComplete from 'primevue/autocomplete'
 import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonList, IonRow, IonText } from '@ionic/vue'
-import { EventParticipationDto } from '@/api/model/EventParticipationDto'
-import { UserDto } from '@/api/model/UserDto'
+import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
+import { UserDto } from 'src/api/model/UserDto'
 import { addIcons } from 'ionicons'
 import { mail } from 'ionicons/icons'
-import { userStore } from '@/store/UserStore'
+import { userStore } from 'src/store/UserStore'
 
 addIcons({
   mail
@@ -182,8 +182,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "~@/scss/utils";
-@import "~@/scss/_variables.scss";
+@import "src/css/utils";
+@import "src/css/_variables.scss";
 
 .user-autocomplete-username {
   font-weight: bold;

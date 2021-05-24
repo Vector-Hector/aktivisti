@@ -42,10 +42,10 @@ export default defineComponent({
   },
   methods: {
     dismiss() {
-      modalController.dismiss(false)
+      void modalController.dismiss(false)
     },
     confirm() {
-      modalController.dismiss(true)
+      void modalController.dismiss(true)
     }
   }
 })

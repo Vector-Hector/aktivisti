@@ -16,14 +16,14 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { uiStore } from '@/store/UiStore'
+import { uiStore } from 'src/store/UiStore'
 
 export default defineComponent({
   name: 'MenuLink',
   props: {
     to: {
       type: Object as PropType<any>,
-      default: ''
+      required: true
     }
   },
   methods: {

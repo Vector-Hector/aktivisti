@@ -1,5 +1,5 @@
-import { EventTypes } from '@/api/model/EventTypes'
-import { LocationDto } from '@/api/model/LocationDto'
+import { EventTypes } from 'src/api/model/EventTypes'
+import { LocationDto } from 'src/api/model/LocationDto'
 
 
 export interface EventDto {

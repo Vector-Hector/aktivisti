@@ -64,8 +64,8 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { EventDto } from '@/api/model/EventDto.ts'
-import { CampaignDto } from '@/api/model/CampaignDto.ts'
+import { EventDto } from 'src/api/model/EventDto'
+import { CampaignDto } from 'src/api/model/CampaignDto'
 import {
   IonIcon,
   IonItem,
@@ -78,15 +78,15 @@ import {
 } from '@ionic/vue'
 import { addIcons } from 'ionicons'
 import { trash, pencil, add } from 'ionicons/icons'
-import ConfirmDelete from '@/components/modals/ConfirmDelete.vue'
-import { userStore } from '@/store/UserStore'
-import { EVENT_LIST_CHUNK_SIZE } from '@/constants'
-import { Pagination } from '@/api/model/APIEnvelope'
-import { distinctBy } from '@/utils/array'
+import ConfirmDelete from 'src/components/modals/ConfirmDelete.vue'
+import { userStore } from 'src/store/UserStore'
+import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
+import { Pagination } from 'src/api/model/APIEnvelope'
+import { distinctBy } from 'src/utils/array'
 
 interface CustomScrollEvent {
   target: {
-    complete: Function,
+    complete: () => void,
     disabled: boolean
   }
 }
@@ -113,7 +113,7 @@ export default defineComponent({
     },
     events: {
       type: Array as PropType<EventDto[]>,
-      default: []
+      default: () => []
     },
     pagination: {
       type: Object as PropType<Pagination | null>,
@@ -121,7 +121,7 @@ export default defineComponent({
     },
     campaigns: {
       type: Array as PropType<CampaignDto[]>,
-      default: []
+      default: () => []
     }
   },
   emits: ['update:events', 'update:pagination'],
@@ -135,7 +135,7 @@ export default defineComponent({
   },
   methods: {
     goToEvent(event: EventDto) {
-      this.$router.push({
+      void this.$router.push({
         name: 'event-detail',
         params: {
           id: event.id
@@ -151,7 +151,7 @@ export default defineComponent({
           }
         })
       await confirmation.present()
-      confirmation.onDidDismiss()
+      await confirmation.onDidDismiss()
         .then(async (result) => {
           if (result.data) {
             try {
@@ -189,7 +189,7 @@ export default defineComponent({
       })
       const moreEvents = await this.getEvents()
 
-      this.$emit('update:events', distinctBy(this.events.concat(moreEvents), (item) => item.id))
+      this.$emit('update:events', distinctBy(this.events.concat(moreEvents), (item: EventDto) => item.id))
       event.target.complete()
     }
   }
@@ -197,7 +197,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import '../scss/globals';
+@import "src/css/variables";
 
 .buttons {
   display: flex;

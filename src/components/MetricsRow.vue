@@ -22,7 +22,7 @@ import { defineComponent, PropType } from 'vue'
 import { IonCol, IonRow } from '@ionic/vue'
 import { addIcons } from 'ionicons'
 import { remove, add } from 'ionicons/icons'
-import CounterInput from '@/components/CounterInput.vue'
+import CounterInput from 'src/components/CounterInput.vue'
 
 addIcons({
   remove,
@@ -51,7 +51,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "~@/scss/_variables.scss";
+@import "src/css/_variables.scss";
 
 .counter-input {
   width: 100%;

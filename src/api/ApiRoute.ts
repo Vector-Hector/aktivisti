@@ -1,7 +1,7 @@
-import { APIEnvelope } from '@/api/model/APIEnvelope'
-import { JSONResponse } from '@/api/JSONResponse'
+import { APIEnvelope } from 'src/api/model/APIEnvelope'
+import { JSONResponse } from 'src/api/JSONResponse'
 import { AxiosInstance, Method } from 'axios'
-import { appendAsQueryParams } from '@/utils/url'
+import { appendAsQueryParams } from 'src/utils/url'
 
 interface RequestConfig {
   path: string,
