@@ -5,7 +5,7 @@ import { MapInject } from './Map.vue'
 import { Feature } from 'geojson'
 import { difference, isEqual } from 'lodash-es'
 
-type ForwardedEvents = 'draw:create' | 'draw:update' | 'draw:delete'
+type ForwardedEvents = 'draw:create' | 'draw:update' | 'draw:delete' | 'draw:selectionchange'
 
 export default defineComponent({
   name: 'DrawControl',
@@ -61,9 +61,9 @@ export default defineComponent({
       emit('update:features', drawControl.getAll().features)
     }
     const createListener = (event: any) => forwardEventAndUpdateFeatures('draw:create', event)
-    const deleteListener = (event: any) => forwardEventAndUpdateFeatures('draw:create', event)
-    const updateListener = (event: any) => forwardEventAndUpdateFeatures('draw:create', event)
-    const selectionChangeListener = (event: any) => forwardEventAndUpdateFeatures('draw:create', event)
+    const deleteListener = (event: any) => forwardEventAndUpdateFeatures('draw:delete', event)
+    const updateListener = (event: any) => forwardEventAndUpdateFeatures('draw:update', event)
+    const selectionChangeListener = (event: any) => forwardEventAndUpdateFeatures('draw:selectionchange', event)
     map!.value
       .on('draw.create', createListener)
       .on('draw.delete', deleteListener)
