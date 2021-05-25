@@ -158,7 +158,6 @@
 
         <div class="privacy-disclaimer">
           <IonText>
-            Mit deiner Registrierung nimmst du die
             Als Nutzer:in der LINKEN App nimmst Du zur Kenntnis und stimmst zu, dass Du die per App erhaltenen und
             übermittelten Daten zu keinem anderen Zweck als der Organisation von Aktionen der Partei DIE LINKE nutzt,
             insbesondere diese weder speicherst, noch kopierst oder Dritten für andere Zwecke übermittelst. Du stimmst
@@ -248,8 +247,9 @@ export default defineComponent({
   async created() {
     const betaAlert = await alertController.create({
       header: 'Geschlossene Beta',
-      message: 'Schön, dass du dich für unsere App interessiert. Derzeit befinden wir uns in einer geschlossenen ' +
-        'Beta-Phase.\nRegistrierungen sind derzeit nicht möglich. Um mitzumachen, muss ein*e Genoss*in dich einladen',
+      message: 'Schön, dass du dich für die LINKE Wahlkampf-App interessierst. Derzeit befinden wir uns in einer ' +
+        'geschlossenen Beta-Phase. Registrierungen sind erst ab der nächsten Phase möglich. ' +
+        'Um jetzt schon mitzumachen, muss eine Genoss*in dich einladen.',
       buttons: ['Okay']
     })
     await betaAlert.present()
