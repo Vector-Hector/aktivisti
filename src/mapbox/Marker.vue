@@ -59,7 +59,8 @@ export default defineComponent({
       })
       marker.value
         .setLngLat([props.location.lng, props.location.lat])
-        .addTo(map!.value!)
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        .addTo(map!.value)
       initialized.value = true
 
       marker.value.on('dragend', () => {

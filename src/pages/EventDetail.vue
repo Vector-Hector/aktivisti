@@ -4,9 +4,6 @@
       v-if="event !== null && loading === false"
       class="event"
     >
-      <IonContent
-        class="content"
-      >
         <div class="container">
           <router-view
             v-model:event="event"
@@ -16,7 +13,6 @@
             :campaigns="campaigns"
           />
         </div>
-      </IonContent>
       <div class="map-container">
         <Map
           v-if="eventAreas"
@@ -41,7 +37,6 @@
 import { defineComponent, PropType } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
-import { IonContent } from '@ionic/vue'
 import { ellipse, chevronForward } from 'ionicons/icons'
 import { addIcons } from 'ionicons'
 import { authService } from 'src/api/authService'
@@ -63,8 +58,7 @@ addIcons({
 export default defineComponent({
   name: 'EventDetail',
   components: {
-    Map,
-    IonContent
+    Map
   },
   async beforeRouteEnter(to, from, next) {
     const participations = (await apiClient.eventParticipations.list({event: to.params.id})).payload.data

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <IonContent>
+
       <IonList>
         <div
           v-if="eventParticipations.length <= 0"
@@ -47,13 +47,13 @@
           </div>
         </IonItem>
       </IonList>
-    </IonContent>
+
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { IonLabel, IonItem, IonList, IonButton, IonText, IonContent } from '@ionic/vue'
+import { IonLabel, IonItem, IonList, IonButton, IonText } from '@ionic/vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { userStore } from 'src/store/UserStore'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
@@ -67,7 +67,7 @@ export default defineComponent({
     IonItem,
     IonButton,
     IonText,
-    IonContent,
+
   },
   data() {
     return {

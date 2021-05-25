@@ -1,5 +1,5 @@
 <template>
-  <IonContent>
+
     <div class="modal-content">
       <IonText color="dark">
         <h3 class="modal-title">
@@ -29,7 +29,7 @@
         </IonButton>
       </IonButtons>
     </div>
-  </IonContent>
+
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
@@ -37,7 +37,7 @@ import { EventDto } from 'src/api/model/EventDto'
 import {
   IonButton,
   IonButtons,
-  IonContent,
+
   IonText,
   modalController
 } from '@ionic/vue'
@@ -45,7 +45,7 @@ import {
 export default defineComponent({
   name: 'ConfirmDelete',
   components: {
-    IonContent,
+
     IonButtons,
     IonButton,
     IonText

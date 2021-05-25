@@ -10,7 +10,8 @@ export default boot(async () => {
       const profileRequest = await apiClient.user.get('me')
       userStore.setUser(profileRequest.payload.data)
 
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error)
       if (error.status === 403) {
         authService.clear()
       }

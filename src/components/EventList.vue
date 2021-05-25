@@ -1,43 +1,45 @@
 <template>
-  <IonList
+  <QList
     v-if="events.length > 0"
   >
-    <IonItem
+    <QItem
       v-for="event in events"
       :key="event.id"
-      :button="true"
+      clickable
+      v-ripple
       @click="goToEvent(event)"
     >
-      <IonLabel>
-        <h3>{{ event.name }}</h3>
-        <p>{{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}</p>
-      </IonLabel>
-      <div
-        slot="end"
-        class="item-buttons"
-      >
+      <QItemSection>
+        <QItemLabel>
+          <b>{{ event.name }}</b>
+        </QItemLabel>
+        <QItemLabel>
+          {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
+        </QItemLabel>
+      </QItemSection>
+      <QItemSection avatar>
         <router-link
           v-if="isManager"
           :to="{ name: 'edit-event-details', params: { id: event.id } }"
           @click="$event.stopPropagation()"
         >
-          <IonIcon
+          <QIcon
             class="edit-button"
-            name="pencil"
+            name="ion-pencil"
           />
         </router-link>
         <a
           @click="$event.stopPropagation(); deleteEvent(event)"
         >
-          <IonIcon
+          <QIcon
             v-if="isManager"
             class="delete-button"
-            name="trash"
+            name="ion-trash"
           />
         </a>
-      </div>
-    </IonItem>
-  </IonList>
+      </QItemSection>
+    </QItem>
+  </QList>
 
   <div
     v-else
@@ -50,11 +52,7 @@
     </IonText>
   </div>
 
-  <IonInfiniteScroll
-    threshold="100px"
-    :disabled="isDisabled"
-    @ionInfinite="loadData($event)"
-  >
+
     <IonInfiniteScrollContent
       loading-spinner="bubbles"
       loading-text="Weitere Aktionen laden..."
@@ -67,11 +65,6 @@ import { defineComponent, PropType } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import {
-  IonIcon,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonText,
   modalController,
   IonInfiniteScroll,
   IonInfiniteScrollContent
@@ -83,6 +76,7 @@ import { userStore } from 'src/store/UserStore'
 import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
 import { Pagination } from 'src/api/model/APIEnvelope'
 import { distinctBy } from 'src/utils/array'
+import { QItem, QItemLabel, QItemSection, QList } from 'quasar'
 
 interface CustomScrollEvent {
   target: {
@@ -98,11 +92,10 @@ addIcons({
 export default defineComponent({
   name: 'Events',
   components: {
-    IonList,
-    IonText,
-    IonItem,
-    IonLabel,
-    IonIcon,
+    QList,
+    QItem,
+    QItemLabel,
+    QItemSection,
     IonInfiniteScroll,
     IonInfiniteScrollContent
   },

@@ -1,5 +1,5 @@
 <template>
-  <IonContent>
+
     <div class="container">
       <Form
         v-slot="{ errors, isSubmitting }"
@@ -206,7 +206,7 @@
         </router-link>
       </div>
     </div>
-  </IonContent>
+
 </template>
 
 <script lang="ts">
@@ -219,7 +219,7 @@ import {
   IonItem,
   IonButton,
   IonItemDivider,
-  IonContent,
+
   IonText,
   alertController
 } from '@ionic/vue'
@@ -232,7 +232,7 @@ export default defineComponent({
     IonLabel,
     IonItem,
     IonButton,
-    IonContent,
+
     IonItemDivider,
     Field,
     Form,

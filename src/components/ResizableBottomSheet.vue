@@ -16,18 +16,18 @@
         class="resize-button expand"
         @click="expand"
       >
-        <IonIcon
+        <QIcon
           class="icon"
-          name="chevron-up-outline"
+          name="ion-chevron-up"
         />
       </button>
       <button
         class="resize-button shrink"
         @click="shrink"
       >
-        <IonIcon
+        <QIcon
           class="icon"
-          name="chevron-down-outline"
+          name="ion-chevron-down"
         />
       </button>
     </div>
@@ -37,22 +37,15 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { addIcons } from 'ionicons'
-import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons'
-import { IonIcon } from '@ionic/vue'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
-
-addIcons({
-  'chevron-down-outline': chevronDownOutline,
-  'chevron-up-outline': chevronUpOutline
-})
+import { QIcon } from 'quasar'
 
 
 
 export default defineComponent({
   name: 'ResizableBottomSheet',
   components: {
-    IonIcon
+    QIcon,
   },
   props: {
     title: {

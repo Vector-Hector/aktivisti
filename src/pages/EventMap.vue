@@ -44,106 +44,62 @@
       <ResizableBottomSheet
         title="Alle Aktionen"
       >
-        <IonContent>
-          <div class="container">
-            <CollapsibleFilters
-              class="collapsible-filters"
-              :activated-filter-count="activatedFilterCount"
-            >
-              <div class="filter-content">
-                <IonItem
-                  class="no-background no-padding"
-                >
-                  <IonLabel
-                    class="small-label"
-                    position="stacked"
-                  >
-                    Kampagne
-                  </IonLabel>
-                  <IonSelect
-                    v-model="filteredCampaign"
-                    class="block-select ion-activatable ripple-parent"
-                    placeholder="Alle Kampagnen"
-                    title="Kampagne auswählen"
-                    :selected-text="campaigns.find(campaign => filteredCampaign === campaign.id)?.name"
-                  >
-                    <IonRippleEffect />
-                    <IonSelectOption
-                      :key="0"
-                      :value="0"
-                    >
-                      Alle Kampagnen
-                    </IonSelectOption>
-                    <IonSelectOption
-                      v-for="campaign in campaigns"
-                      :key="campaign.id"
-                      :value="campaign.id"
-                    >
-                      {{ campaign.name }} ({{ showCampaignLevel(campaign) }})
-                    </IonSelectOption>
-                  </IonSelect>
-                </IonItem>
 
-                <IonItem
-                  class="no-background no-padding"
-                >
-                  <IonLabel
-                    class="small-label"
-                    position="stacked"
-                  >
-                    Bezirks/Kreisverband
-                  </IonLabel>
-                  <IonSelect
-                    v-model="filteredSubAssociations"
-                    class="block-select ion-activatable ripple-parent"
-                    placeholder="Alle Verbände"
-                    :multiple="true"
-                    :selected-text="filteredSubAssociations.find(subAssociation => filteredSubAssociations.includes(subAssociation.id))?.name"
-                    @click="$event.stopImmediatePropagation(); openSubAssociationSelection()"
-                  >
-                    <IonRippleEffect />
-                    <IonSelectOption
-                      v-for="subAssociation in subAssociations"
-                      :key="subAssociation.id"
-                      :value="subAssociation.id"
-                    >
-                      {{ subAssociation.name }}
-                    </IonSelectOption>
-                  </IonSelect>
-                </IonItem>
-                <IonItem
-                  class="no-background no-padding"
-                >
-                  <IonLabel
-                    class="small-label"
-                    position="stacked"
-                  >
-                    Sortieren nach
-                  </IonLabel>
-                  <IonSelect
-                    v-model="selectedSortOption"
-                    class="block-select"
-                    placeholder="Sortierung auswählen"
-                  >
-                    <IonSelectOption
-                      v-for="sortOption in sortOptions"
-                      :key="sortOption"
-                      :value="sortOption"
-                    >
-                      {{ SortOptionLabels[sortOption] ?? sortOption }}
-                    </IonSelectOption>
-                  </IonSelect>
-                </IonItem>
-              </div>
-            </CollapsibleFilters>
-            <EventList
-              v-model:events="events"
-              v-model:pagination="eventsPagination"
-              :filter-params="filterParams"
-              :campaigns="campaigns"
-            />
-          </div>
-        </IonContent>
+        <div class="container">
+          <CollapsibleFilters
+            class="collapsible-filters"
+            :activated-filter-count="activatedFilterCount"
+          >
+            <div class="filter-content">
+              <QSelect
+                filled
+                label="Kampagnen"
+                v-model="filteredCampaign"
+                :options="campaignOptions"
+                option-value="id"
+                option-label="name"
+              />
+              <QSelect
+                label="Bezirks/Kreisverband"
+                filled
+                multiple
+                v-model="filteredSubAssociations"
+                use-input
+                clearable
+                input-debounce="0"
+                :options="subAssociations"
+                option-value="id"
+                option-label="name"
+                placeholder="Alle Verbände"
+              >
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      Kein Verband gefunden
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </QSelect>
+              <QSelect
+                filled
+                v-model="selectedSortOption"
+                input-debounce="0"
+                label="Sortierung"
+                :options="sortOptions"
+                :option-value="(item) => item"
+                :option-label="(item) => SortOptionLabels[item]"
+                placeholder="Sortierung auswählen"
+              />
+            </div>
+          </CollapsibleFilters>
+          <EventList
+            v-model:events="events"
+            v-model:pagination="eventsPagination"
+            :filter-params="filterParams"
+            :campaigns="campaigns"
+          />
+        </div>
+
       </ResizableBottomSheet>
     </div>
   </div>
@@ -158,13 +114,6 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import Popup from 'src/mapbox/Popup.vue'
 import { userStore } from 'src/store/UserStore'
 import Button from 'primevue/button'
-import {
-  IonContent,
-  IonItem,
-  IonLabel, IonRippleEffect,
-  IonSelect,
-  IonSelectOption, modalController, toastController
-} from '@ionic/vue'
 import { Feature } from 'geojson'
 import { ClusterDto } from 'src/api/model/ClusterDto'
 import ClusterLayer from 'src/mapbox/ClusterLayer.vue'
@@ -177,7 +126,7 @@ import EventList from 'src/components/EventList.vue'
 import { Pagination } from 'src/api/model/APIEnvelope'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bboxPolygon } from '@turf/turf'
-import SelectSubAssociation from 'src/components/modals/SelectSubAssociationModal.vue'
+import { QSelect } from 'quasar'
 
 const MAX_EVENTS = 100
 
@@ -202,12 +151,7 @@ export default defineComponent({
     Map,
     Marker,
     Button,
-    IonSelect,
-    IonSelectOption,
-    IonLabel,
-    IonContent,
-    IonItem,
-    IonRippleEffect
+    QSelect
   },
   beforeRouteEnter(to, from, next) {
     if (userStore.getState().bbox === null) {
@@ -229,7 +173,7 @@ export default defineComponent({
       tooManyEventsWarningShowing: false,
       selectedSortOption: SortOption.START_DATE as SortOption,
       sortOptions: Object.values(SortOption),
-      filteredSubAssociations: [] as number[],
+      filteredSubAssociations: [] as SubAssociationDto[],
       SortOptionLabels,
       subAssociations: [] as SubAssociationDto[],
       zoom: 5 as number | null,
@@ -242,30 +186,39 @@ export default defineComponent({
       if (this.filteredSubAssociations.length > 0) {
         active++
       }
-      if (this.filteredCampaign > 0) {
+      if (this.filteredCampaign) {
         active++
       }
       return active
+    },
+    campaignOptions(): Partial<CampaignDto>[] {
+      return [
+        {
+          id: 0,
+          name: 'Alle Kampagnen'
+        },
+        ...this.campaigns
+      ]
     },
     boundingBoxJson() {
       return userStore.getState().bbox ? bboxPolygon(userStore.getState().bbox!).geometry : null
     },
     filteredCampaign: {
-      get() {
-        return userStore.getState().campaign ?? 0
+      get(): CampaignDto | undefined {
+        return this.campaigns.find(({id}) => userStore.getState().campaign === id)
       },
-      set(value) {
-        if (value < 1) {
-          userStore.setCampaign(null)
+      set(value: Partial<CampaignDto> | undefined) {
+        if (value?.id && value.id > 0) {
+          userStore.setCampaign(value.id)
         } else {
-          userStore.setCampaign(value)
+          userStore.setCampaign(null)
         }
       }
     },
     filterParams(): { [key: string]: any } {
       return {
-        sub_association: this.filteredSubAssociations.length > 0 ? this.filteredSubAssociations : undefined,
-        campaigns: this.filteredCampaign > 0 ? this.filteredCampaign : undefined,
+        sub_association: this.filteredSubAssociations.length > 0 ? this.filteredSubAssociations.map(({id}) => id) : undefined,
+        campaigns: this.filteredCampaign && this.filteredCampaign.id > 0 ? [this.filteredCampaign.id] : undefined,
         within: this.boundingBoxJson ? JSON.stringify(this.boundingBoxJson) : undefined,
         order_by: this.selectedSortOption,
         limit: MAX_EVENTS
@@ -285,27 +238,19 @@ export default defineComponent({
   async created() {
     await this.getCampaigns()
     await this.getSubAssociations()
-    if (userStore.getState().user?.sub_association) {
-      this.filteredSubAssociations = [...this.filteredSubAssociations, userStore.getState().user!.sub_association!]
+    const userSubAssociationId = userStore.getState().user?.sub_association
+    const userSubAssociation = this.subAssociations.find(({id}) => id === userSubAssociationId)
+    if (
+      userSubAssociation !== undefined
+    ) {
+      this.filteredSubAssociations = [
+        ...this.filteredSubAssociations,
+        userSubAssociation
+      ]
     }
   },
   methods: {
     showCampaignLevel,
-    async openSubAssociationSelection() {
-      const modal = await modalController.create({
-        component: SelectSubAssociation,
-        componentProps: {
-          subAssociations: this.subAssociations,
-          initiallySelected: this.filteredSubAssociations
-        }
-      })
-      void modal.onDidDismiss()
-        .then(({data}) => {
-          this.filteredSubAssociations = data ?? []
-        })
-      await modal.present()
-
-    },
     setBbox(value: BBox2d) {
       userStore.setBbox(value)
     },
@@ -327,16 +272,12 @@ export default defineComponent({
 
       // If the amount of events is still more than MAX_EVENTS show a warning that not all events are shown
       if (!this.clusterMode && eventCount > MAX_EVENTS && !this.tooManyEventsWarningShowing) {
-        const toast = await toastController.create({
-          color: 'warning',
-          duration: 3500,
-          header: 'Hier ist zuviel los',
-          message: 'Nicht alle Aktionen werden angezeigt, da dies zuviel für die Karte wäre. Nutze die Listenansicht'
+        this.$q.notify({
+          multiLine: true,
+          message: '<h5>Hier ist zuviel los</h5>Nicht alle Aktionen werden angezeigt, da dies zuviel für die Karte wäre. Nutze die Listenansicht',
+          html: true,
+          group: 'too-many-events-alert'
         })
-        void toast.onDidDismiss()
-          .then(() => this.tooManyEventsWarningShowing = false)
-        await toast.present()
-        this.tooManyEventsWarningShowing = true
       }
     },
     async getCampaigns() {

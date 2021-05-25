@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <IonContent>
+
       <IonText
         class="imprint-padding"
       >
@@ -48,18 +48,18 @@
           </a>
         </p>
       </IonText>
-    </IonContent>
+
   </div>
 </template>
 <script lang="ts">
 
 import { defineComponent } from 'vue'
-import { IonContent, IonText } from '@ionic/vue'
+import {  IonText } from '@ionic/vue'
 
 export default defineComponent({
   name: 'Imprint',
   components: {
-    IonContent,
+
     IonText
   }
 })

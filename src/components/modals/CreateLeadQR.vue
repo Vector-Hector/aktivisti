@@ -11,21 +11,19 @@
       </IonButtons>
     </IonToolbar>
   </IonHeader>
-  <IonContent class="ion-padding">
     <div class="qr-container">
       <img
         src="../../assets/img/create-lead-qr.png"
         alt="QR Code mit Link zu Linksaktiv"
       >
     </div>
-  </IonContent>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import {
   IonButton,
   IonButtons,
-  IonContent, IonHeader,
+   IonHeader,
   IonIcon, IonToolbar,
   modalController
 } from '@ionic/vue'
@@ -33,7 +31,7 @@ import {
 export default defineComponent({
   name: 'CreateLeadQR',
   components: {
-    IonContent,
+
     IonButtons,
     IonButton,
     IonIcon,

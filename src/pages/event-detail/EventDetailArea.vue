@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { IonCol, IonContent, IonGrid, IonRow } from '@ionic/vue'
+import { IonCol,  IonGrid, IonRow } from '@ionic/vue'
 import Map from 'src/mapbox/Map.vue'
 import FeatureLayer from 'src/mapbox/AreaFeatureLayer.vue'
 
@@ -26,7 +26,7 @@ export default defineComponent({
   components: {
     FeatureLayer,
     Map,
-    IonContent,
+
     IonGrid,
     IonRow,
     IonCol

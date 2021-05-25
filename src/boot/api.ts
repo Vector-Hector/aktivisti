@@ -40,7 +40,7 @@ export default boot(({app}) => {
       return Promise.reject(error.response)
     } else {
       // all other request just fail regulary
-      return Promise.reject(error.response)
+      return Promise.reject(error)
     }
   })
 

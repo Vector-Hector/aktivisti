@@ -1,25 +1,25 @@
 <template>
   <div class="app-title">
-    <IonTitle
+    <QToolbarTitle
       size="small"
     >
       {{ subtitle }}
-    </IonTitle>
-    <IonTitle>
+    </QToolbarTitle>
+    <QToolbarTitle>
       {{ title }}
-    </IonTitle>
+    </QToolbarTitle>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IonTitle } from '@ionic/vue'
+import { QToolbarTitle } from 'quasar'
 
 
 export default defineComponent({
   name: 'AppTitle',
   components: {
-    IonTitle
+    QToolbarTitle
   },
   props: {
     title: {

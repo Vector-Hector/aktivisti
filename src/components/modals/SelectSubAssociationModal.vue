@@ -11,7 +11,6 @@
       </IonButtons>
     </IonToolbar>
   </IonHeader>
-  <IonContent class="ion-padding">
     <IonSearchbar
       placeholder="Verbände filtern"
       @ionChange="filterTerm = $event.target.value"
@@ -30,7 +29,6 @@
         />
       </IonItem>
     </IonList>
-  </IonContent>
 </template>
 
 <script lang="ts">
@@ -38,7 +36,7 @@ import { defineComponent, PropType } from 'vue'
 import {
   IonButton,
   IonButtons,
-  IonContent,
+
   IonHeader,
   IonIcon,
   IonTitle,
@@ -61,7 +59,7 @@ export default defineComponent({
   name: 'SelectSubAssociationModal',
 
   components: {
-    IonContent,
+
     IonToolbar,
     IonHeader,
     IonButton,

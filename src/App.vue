@@ -2,24 +2,22 @@
   <NavigationSidebar />
   <Toast position="top-right" />
   <div id="root">
-    <IonHeader
+    <QHeader
       class="header-on-top"
     >
-      <IonToolbar>
-        <IonButtons slot="start">
-          <transition
-            :name="titleTransition"
-          >
-            <IonButton
-              v-if="currentDepth > 2"
-              @click="backButton"
-            >
-              <IonIcon
-                name="arrow-back"
-              />
-            </IonButton>
-          </transition>
-        </IonButtons>
+      <QToolbar>
+        <transition
+          v-if="currentDepth > 2"
+          :name="titleTransition"
+        >
+          <QBtn
+            @click="backButton"
+            icon="ion-arrow-back"
+            flat
+            round
+            :ripple-effect="false"
+          />
+        </transition>
         <div class="title-wrapper">
             <span
               class="shadow-title"
@@ -39,19 +37,15 @@
             />
           </transition>
         </div>
-        <IonButtons
-          slot="end"
-        >
-          <IonButton
-            @click="openSidebar"
-          >
-            <IonIcon
-              name="menu-outline"
-            />
-          </IonButton>
-        </IonButtons>
-      </IonToolbar>
-    </IonHeader>
+        <QBtn
+          icon="ion-menu"
+          @click="openSidebar"
+          flat
+          rounded
+          :ripple-effect="false"
+        />
+      </QToolbar>
+    </QHeader>
     <div id="main">
       <router-view v-slot="{ Component }">
         <keep-alive>
@@ -68,18 +62,11 @@
 import { defineComponent } from 'vue'
 import NavigationSidebar from 'src/components/NavigationSidebar.vue'
 import { uiStore } from 'src/store/UiStore'
-import { IonBackButton, IonButton, IonButtons, IonHeader, IonIcon, IonTitle, IonToolbar } from '@ionic/vue'
 import Toast from 'primevue/toast'
-import { addIcons } from 'ionicons'
-import { menuOutline, arrowBack } from 'ionicons/icons'
 import AppTitle from 'src/components/AppTitle.vue'
 import { ErrorBus } from 'src/utils/errorBus'
+import { QToolbar, QBtn } from 'quasar'
 
-
-addIcons({
-  'menu-outline': menuOutline,
-  'arrow-back': arrowBack
-})
 
 export default defineComponent({
   name: 'App',
@@ -87,13 +74,8 @@ export default defineComponent({
     AppTitle,
     NavigationSidebar,
     Toast,
-    IonToolbar,
-    IonButtons,
-    IonButton,
-    IonTitle,
-    IonIcon,
-    IonBackButton,
-    IonHeader
+    QToolbar,
+    QBtn
   },
   data() {
     return {
@@ -206,7 +188,7 @@ export default defineComponent({
 
 .title-wrapper {
   position: relative;
-
+  flex: 1;
   .title {
     top: 0;
     position: absolute;

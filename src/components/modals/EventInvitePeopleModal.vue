@@ -11,9 +11,7 @@
       </IonButtons>
     </IonToolbar>
   </IonHeader>
-  <IonContent class="ion-padding">
     <EventInvitePeople :event-id="eventId" />
-  </IonContent>
 </template>
 
 <script lang="ts">
@@ -21,7 +19,7 @@ import { defineComponent, PropType } from 'vue'
 import {
   IonButton,
   IonButtons,
-  IonContent,
+
   IonHeader,
   IonIcon,
   IonTitle,
@@ -39,7 +37,7 @@ addIcons({
 export default defineComponent({
   name: 'EventInvitePeopleModal',
   components: {
-    IonContent,
+
     IonToolbar,
     IonHeader,
     IonButton,
