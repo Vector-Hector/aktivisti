@@ -1,24 +1,23 @@
 <template>
   <NavigationSidebar />
   <Toast position="top-right" />
-  <div id="root">
-    <QHeader
-      class="header-on-top"
-    >
-      <QToolbar>
-        <transition
-          v-if="currentDepth > 2"
-          :name="titleTransition"
-        >
-          <QBtn
-            @click="backButton"
-            icon="ion-arrow-back"
-            flat
-            round
-            :ripple-effect="false"
-          />
-        </transition>
-        <div class="title-wrapper">
+  <QHeader
+    class="header-on-top"
+  >
+    <QToolbar>
+      <transition
+        v-if="currentDepth > 2"
+        :name="titleTransition"
+      >
+        <QBtn
+          @click="backButton"
+          icon="ion-arrow-back"
+          flat
+          round
+          :ripple-effect="false"
+        />
+      </transition>
+      <div class="title-wrapper">
             <span
               class="shadow-title"
               aria-hidden="true"
@@ -28,33 +27,32 @@
                 :subtitle="$route.meta.subtitle?.()"
               />
             </span>
-          <transition :name="titleTransition">
-            <AppTitle
-              :key="$route.path"
-              class="title"
-              :title="$route.meta.title?.()"
-              :subtitle="$route.meta.subtitle?.()"
-            />
-          </transition>
-        </div>
-        <QBtn
-          icon="ion-menu"
-          @click="openSidebar"
-          flat
-          rounded
-          :ripple-effect="false"
-        />
-      </QToolbar>
-    </QHeader>
-    <div id="main">
-      <router-view v-slot="{ Component }">
-        <keep-alive>
-          <transition :name="pageTransition">
-            <component :is="Component" />
-          </transition>
-        </keep-alive>
-      </router-view>
-    </div>
+        <transition :name="titleTransition">
+          <AppTitle
+            :key="$route.path"
+            class="title"
+            :title="$route.meta.title?.()"
+            :subtitle="$route.meta.subtitle?.()"
+          />
+        </transition>
+      </div>
+      <QBtn
+        icon="ion-menu"
+        @click="openSidebar"
+        flat
+        rounded
+        :ripple-effect="false"
+      />
+    </QToolbar>
+  </QHeader>
+  <div id="main">
+    <router-view v-slot="{ Component }">
+      <keep-alive>
+        <transition :name="pageTransition">
+          <component :is="Component" />
+        </transition>
+      </keep-alive>
+    </router-view>
   </div>
 </template>
 
@@ -189,6 +187,7 @@ export default defineComponent({
 .title-wrapper {
   position: relative;
   flex: 1;
+
   .title {
     top: 0;
     position: absolute;

@@ -3,12 +3,12 @@
     class="resizable-bottom-sheet"
     :class="state"
   >
-    <h2
+    <h3
       v-if="title"
       class="title"
     >
       {{ title }}
-    </h2>
+    </h3>
     <div
       class="size-controls"
     >
@@ -18,7 +18,7 @@
       >
         <QIcon
           class="icon"
-          name="ion-chevron-up"
+          :name="ionChevronUp"
         />
       </button>
       <button
@@ -27,25 +27,31 @@
       >
         <QIcon
           class="icon"
-          name="ion-chevron-down"
+          :name="ionChevronDown"
         />
       </button>
     </div>
-    <slot />
+
+    <QScrollArea
+      class="scrollable-content"
+    >
+      <slot />
+    </QScrollArea>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
-import { QIcon } from 'quasar'
-
+import { QIcon, QScrollArea } from 'quasar'
+import { ionChevronDown, ionChevronUp } from '@quasar/extras/ionicons-v5'
 
 
 export default defineComponent({
   name: 'ResizableBottomSheet',
   components: {
     QIcon,
+    QScrollArea
   },
   props: {
     title: {
@@ -57,6 +63,8 @@ export default defineComponent({
   data() {
     return {
       BottomSheetState,
+      ionChevronUp,
+      ionChevronDown
     }
   },
   computed: {
@@ -101,7 +109,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   background: white;
-  position: absolute;
+  position: relative;
   bottom: 0;
   width: 100%;
   transition: height 200ms ease-out;
@@ -112,6 +120,7 @@ export default defineComponent({
     border-bottom: 1px solid $red;
     margin: 0;
     padding: 0.5rem 1rem;
+    font-size: 1.5rem;
   }
 
   &.collapsed {
@@ -195,6 +204,11 @@ export default defineComponent({
   &.shrink {
     top: 0;
   }
+}
+
+.scrollable-content {
+  display: flex;
+  flex: 1;
 }
 
 

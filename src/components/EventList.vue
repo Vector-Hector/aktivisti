@@ -1,103 +1,82 @@
 <template>
-  <QList
+  <QInfiniteScroll
     v-if="events.length > 0"
+    @load="loadData"
+    :disable="events.length === pagination.total"
   >
     <QItem
-      v-for="event in events"
-      :key="event.id"
+      v-for="item in events"
+      :key="item.id"
       clickable
       v-ripple
-      @click="goToEvent(event)"
+      @click="goToEvent(item)"
     >
       <QItemSection>
         <QItemLabel>
-          <b>{{ event.name }}</b>
+          <b>{{ item.name }}</b>
         </QItemLabel>
         <QItemLabel>
-          {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
+          {{ campaignsByIds(item.campaigns).map(({name}) => name).join(',') }}
         </QItemLabel>
       </QItemSection>
       <QItemSection avatar>
         <router-link
           v-if="isManager"
-          :to="{ name: 'edit-event-details', params: { id: event.id } }"
+          :to="{ name: 'edit-event-details', params: { id: item.id } }"
           @click="$event.stopPropagation()"
         >
           <QIcon
             class="edit-button"
-            name="ion-pencil"
+            :name="ionPencil"
           />
         </router-link>
         <a
-          @click="$event.stopPropagation(); deleteEvent(event)"
+          @click="$event.stopPropagation(); deleteEvent(item)"
         >
           <QIcon
             v-if="isManager"
             class="delete-button"
-            name="ion-trash"
+            :name="ionTrash"
           />
         </a>
       </QItemSection>
     </QItem>
-  </QList>
-
+    <template v-slot:loading>
+      <div class="row justify-center q-my-md">
+        <QSpinnerDots color="primary" size="40px" />
+      </div>
+    </template>
+  </QInfiniteScroll>
   <div
     v-else
     class="empty-list-placeholder"
   >
-    <IonText
-      color="medium"
-    >
-      Keine Aktionen gefunden
-    </IonText>
+
+    Keine Aktionen gefunden
   </div>
-
-
-    <IonInfiniteScrollContent
-      loading-spinner="bubbles"
-      loading-text="Weitere Aktionen laden..."
-    />
-  </IonInfiniteScroll>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { CampaignDto } from 'src/api/model/CampaignDto'
-import {
-  modalController,
-  IonInfiniteScroll,
-  IonInfiniteScrollContent
-} from '@ionic/vue'
-import { addIcons } from 'ionicons'
-import { trash, pencil, add } from 'ionicons/icons'
-import ConfirmDelete from 'src/components/modals/ConfirmDelete.vue'
 import { userStore } from 'src/store/UserStore'
 import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
 import { Pagination } from 'src/api/model/APIEnvelope'
 import { distinctBy } from 'src/utils/array'
-import { QItem, QItemLabel, QItemSection, QList } from 'quasar'
+import { QIcon, QInfiniteScroll, QItem, QItemLabel, QItemSection, QSpinnerDots } from 'quasar'
+import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 
-interface CustomScrollEvent {
-  target: {
-    complete: () => void,
-    disabled: boolean
-  }
-}
-
-addIcons({
-  trash, pencil, add
-})
 
 export default defineComponent({
   name: 'Events',
   components: {
-    QList,
     QItem,
     QItemLabel,
     QItemSection,
-    IonInfiniteScroll,
-    IonInfiniteScrollContent
+    QInfiniteScroll,
+    QSpinnerDots,
+    QIcon
   },
   props: {
     filterParams: {
@@ -126,6 +105,12 @@ export default defineComponent({
       return this.pagination?.total === this.events.length
     }
   },
+  data() {
+    return {
+      ionTrash,
+      ionPencil
+    }
+  },
   methods: {
     goToEvent(event: EventDto) {
       void this.$router.push({
@@ -135,55 +120,51 @@ export default defineComponent({
         }
       })
     },
-    async deleteEvent(event: EventDto) {
-      const confirmation = await modalController
-        .create({
-          component: ConfirmDelete,
-          componentProps: {
-            event: event
-          }
-        })
-      await confirmation.present()
-      await confirmation.onDidDismiss()
-        .then(async (result) => {
-          if (result.data) {
-            try {
-              await this.$apiClient.events.delete(event.id.toString())
-            } catch (error) {
-              this.$toast.add({
-                severity: 'error',
-                summary: `${error.statusText ? error.statusText : 'Dieser Eintrag konnte nicht gelöscht werden.'}`,
-                detail: `Fehlercode: ${error.status}`
-              })
-              return
-            }
-            this.$emit('update:events', this.events.filter(({id}) => id !== event.id))
-          }
-        })
+    deleteEvent(event: EventDto) {
+      this.$q.dialog({
+        title: `${event.name} wirklich löschen?`,
+        message: `Das Event <b>"${event.name}"</b> wird gelöscht und kann nicht wiederhergestellt werden.`,
+        html: true,
+        cancel: true,
+        persistent: true
+      }).onOk(async () => {
+        try {
+          await this.$apiClient.events.delete(event.id.toString())
+          this.$emit('update:events', this.events.filter(({id}) => id !== event.id))
+        } catch (error) {
+          this.$toast.add({
+            severity: 'error',
+            summary: `${error.statusText ? error.statusText : 'Dieser Eintrag konnte nicht gelöscht werden.'}`,
+            detail: `Fehlercode: ${error.status}`
+          })
+          return
+        }
+      })
     },
-    async getEvents() {
+    async getEvents(pagination: Pagination) {
       const response = await this.$apiClient.events.list({
         ...this.filterParams,
-        limit: EVENT_LIST_CHUNK_SIZE,
-        offset: this.pagination?.offset
+        ...this.pagination,
+        ...pagination
       })
       return response.payload.data
     },
     campaignsByIds(findIds: number[]): CampaignDto[] {
       return this.campaigns.filter(({id}) => findIds.includes(id))
     },
-    async loadData(event: CustomScrollEvent) {
+    async loadData(index: number, done: () => void) {
       if (this.isDisabled) {
         return
       }
-      this.$emit('update:pagination', {
-        ...this.pagination,
-        offset: (this.events?.length ?? 0) + EVENT_LIST_CHUNK_SIZE
-      })
-      const moreEvents = await this.getEvents()
-
+      const pagination = {
+        ...this.pagination!,
+        limit: EVENT_LIST_CHUNK_SIZE,
+        offset: (this.events?.length ?? 0)
+      }
+      this.$emit('update:pagination', pagination)
+      const moreEvents = await this.getEvents(pagination)
       this.$emit('update:events', distinctBy(this.events.concat(moreEvents), (item: EventDto) => item.id))
-      event.target.complete()
+      done()
     }
   }
 })

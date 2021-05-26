@@ -41,67 +41,66 @@
           </span>
         </span>
       </Map>
-      <ResizableBottomSheet
-        title="Alle Aktionen"
-      >
-
-        <div class="container">
-          <CollapsibleFilters
-            class="collapsible-filters"
-            :activated-filter-count="activatedFilterCount"
-          >
-            <div class="filter-content">
-              <QSelect
-                filled
-                label="Kampagnen"
-                v-model="filteredCampaign"
-                :options="campaignOptions"
-                option-value="id"
-                option-label="name"
-              />
-              <QSelect
-                label="Bezirks/Kreisverband"
-                filled
-                multiple
-                v-model="filteredSubAssociations"
-                use-input
-                clearable
-                input-debounce="0"
-                :options="subAssociations"
-                option-value="id"
-                option-label="name"
-                placeholder="Alle Verbände"
-              >
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      Kein Verband gefunden
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </QSelect>
-              <QSelect
-                filled
-                v-model="selectedSortOption"
-                input-debounce="0"
-                label="Sortierung"
-                :options="sortOptions"
-                :option-value="(item) => item"
-                :option-label="(item) => SortOptionLabels[item]"
-                placeholder="Sortierung auswählen"
-              />
-            </div>
-          </CollapsibleFilters>
-          <EventList
-            v-model:events="events"
-            v-model:pagination="eventsPagination"
-            :filter-params="filterParams"
-            :campaigns="campaigns"
-          />
-        </div>
-
-      </ResizableBottomSheet>
     </div>
+    <ResizableBottomSheet
+      title="Alle Aktionen"
+    >
+      <div class="container">
+        <CollapsibleFilters
+          class="collapsible-filters"
+          :activated-filter-count="activatedFilterCount"
+        >
+          <div class="filter-content">
+            <QSelect
+              filled
+              label="Kampagnen"
+              v-model="filteredCampaign"
+              :options="campaignOptions"
+              option-value="id"
+              option-label="name"
+            />
+            <QSelect
+              label="Bezirks/Kreisverband"
+              filled
+              multiple
+              v-model="filteredSubAssociations"
+              use-input
+              clearable
+              input-debounce="0"
+              :options="subAssociations"
+              option-value="id"
+              option-label="name"
+              placeholder="Alle Verbände"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Kein Verband gefunden
+                  </q-item-section>
+                </q-item>
+              </template>
+            </QSelect>
+            <QSelect
+              filled
+              v-model="selectedSortOption"
+              input-debounce="0"
+              label="Sortierung"
+              :options="sortOptions"
+              :option-value="(item) => item"
+              :option-label="(item) => SortOptionLabels[item]"
+              placeholder="Sortierung auswählen"
+            />
+          </div>
+        </CollapsibleFilters>
+        <EventList
+          v-model:events="events"
+          v-model:pagination="eventsPagination"
+          :filter-params="filterParams"
+          :campaigns="campaigns"
+        />
+      </div>
+
+    </ResizableBottomSheet>
   </div>
 </template>
 

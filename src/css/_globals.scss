@@ -12,9 +12,10 @@ html, body {
   margin: 0;
   padding: 0;
   width: 100%;
-  height: auto;
+  height: 100%;
   min-height: 100%;
 }
+
 
 #app {
   font-family: $font-stack;
@@ -22,9 +23,11 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-#app, #root {
+#q-app {
   width: 100%;
   min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .control-buttons {
