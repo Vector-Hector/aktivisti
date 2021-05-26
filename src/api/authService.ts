@@ -35,7 +35,7 @@ class AuthService {
       grant_type: 'password' as GrantType,
       username: username,
       password: password,
-      client_id: process.env.VUE_APP_CLIENT_ID!
+      client_id: process.env.APP_CLIENT_ID!
     }
     await this.auth(userParams, saveRefreshToken)
 
@@ -50,7 +50,7 @@ class AuthService {
     const params = {
       grant_type: 'refresh_token' as GrantType,
       refresh_token: tokenStore.getTokenDto()?.refresh_token,
-      client_id: process.env.VUE_APP_CLIENT_ID!
+      client_id: process.env.APP_CLIENT_ID!
     }
     try {
       await this.auth(params, true)

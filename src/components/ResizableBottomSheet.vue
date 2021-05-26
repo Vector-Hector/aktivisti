@@ -121,6 +121,7 @@ export default defineComponent({
     margin: 0;
     padding: 0.5rem 1rem;
     font-size: 1.5rem;
+    line-height: 1.5rem;
   }
 
   &.collapsed {

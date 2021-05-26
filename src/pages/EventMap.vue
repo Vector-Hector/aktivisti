@@ -51,45 +51,59 @@
           :activated-filter-count="activatedFilterCount"
         >
           <div class="filter-content">
-            <QSelect
-              filled
-              label="Kampagnen"
-              v-model="filteredCampaign"
-              :options="campaignOptions"
-              option-value="id"
-              option-label="name"
-            />
-            <QSelect
-              label="Bezirks/Kreisverband"
-              filled
-              multiple
-              v-model="filteredSubAssociations"
-              use-input
-              clearable
-              input-debounce="0"
-              :options="subAssociations"
-              option-value="id"
-              option-label="name"
-              placeholder="Alle Verbände"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Kein Verband gefunden
-                  </q-item-section>
-                </q-item>
-              </template>
-            </QSelect>
-            <QSelect
-              filled
-              v-model="selectedSortOption"
-              input-debounce="0"
-              label="Sortierung"
-              :options="sortOptions"
-              :option-value="(item) => item"
-              :option-label="(item) => SortOptionLabels[item]"
-              placeholder="Sortierung auswählen"
-            />
+            <div class="select-wrapper">
+              <QSelect
+                :dropdownIcon="ionChevronDown"
+                :clearIcon="ionClose"
+                filled
+                label="Kampagnen"
+                v-model="filteredCampaign"
+                :options="campaignOptions"
+                option-value="id"
+                option-label="name"
+              />
+            </div>
+            <div class="select-wrapper">
+              <QSelect
+                class="filter-dropdown"
+                label="Bezirks/Kreisverband"
+                :dropdownIcon="ionChevronDown"
+                :clearIcon="ionClose"
+                filled
+                multiple
+                v-model="filteredSubAssociations"
+                use-input
+                clearable
+                input-debounce="0"
+                :options="subAssociations"
+                option-value="id"
+                option-label="name"
+                placeholder="Alle Verbände"
+              >
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      Kein Verband gefunden
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </QSelect>
+            </div>
+            <div class="select-wrapper">
+              <QSelect
+                class="filter-dropdown"
+                :dropdownIcon="ionChevronDown"
+                :clearIcon="ionClose"
+                filled
+                v-model="selectedSortOption"
+                input-debounce="0"
+                label="Sortierung"
+                :options="sortOptions"
+                :option-value="(item) => item"
+                :option-label="(item) => SortOptionLabels[item]"
+                placeholder="Sortierung auswählen"
+              />
+            </div>
           </div>
         </CollapsibleFilters>
         <EventList
@@ -126,6 +140,7 @@ import { Pagination } from 'src/api/model/APIEnvelope'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bboxPolygon } from '@turf/turf'
 import { QSelect } from 'quasar'
+import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 
 const MAX_EVENTS = 100
 
@@ -176,7 +191,9 @@ export default defineComponent({
       SortOptionLabels,
       subAssociations: [] as SubAssociationDto[],
       zoom: 5 as number | null,
-      bbox: userStore.getState().bbox
+      bbox: userStore.getState().bbox,
+      ionChevronDown,
+      ionClose,
     }
   },
   computed: {
@@ -343,5 +360,11 @@ export default defineComponent({
   font-weight: bold;
   margin: 0 0 0.6rem 0;
   display: flex;
+}
+
+.select-wrapper {
+  &:not(:last-of-type) {
+    margin: 0 0 1rem 0;
+  }
 }
 </style>

@@ -106,7 +106,7 @@ export default defineComponent({
   data() {
     return {
       loading: false,
-      accessToken: process.env.VUE_APP_MAPBOX_TOKEN,
+      accessToken: process.env.APP_MAPBOX_TOKEN,
       touched: !!this.event.location_description
     }
   },

@@ -58,7 +58,7 @@ export default defineComponent({
   emits: ['update:zoom', 'update:center', 'update:zoom', 'drop', 'update:boundingBox'],
   setup(props, {emit}) {
     const mapUuid = `map-${uuidv4()}`
-    mapboxgl.accessToken = process.env.VUE_APP_MAPBOX_TOKEN as string
+    mapboxgl.accessToken = process.env.APP_MAPBOX_TOKEN as string
     const map = ref<mapboxgl.Map | null>(null)
     const mapContainer = ref<HTMLElement | null>(null)
     const initialized = ref(false)
@@ -80,7 +80,7 @@ export default defineComponent({
     onMounted(() => {
       map.value = new mapboxgl.Map({
         container: mapUuid,
-        style: process.env.VUE_APP_MAPBOX_STYLE,
+        style: process.env.APP_MAPBOX_STYLE,
         zoom: props.zoom,
         center: props.center
       })

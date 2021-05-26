@@ -22,7 +22,7 @@ import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
  * All backend communication should be done using this class
  */
 export class ApiClient {
-  baseURL = process.env.VUE_APP_BASE_URL!
+  baseURL = process.env.APP_BASE_URL!
 
   axiosInstance = axios.create({
     baseURL: this.baseURL,

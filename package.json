@@ -6,7 +6,9 @@
   "author": "Jonatan Zint <jonatan@ctrl.alt.coop>",
   "private": true,
   "scripts": {
-    "lint": "eslint --ext .js,.ts,.vue ./",
+    "lint": "eslint './src/**/*.{ts,tsx,js,jsx,vue}' --max-warnings 0",
+    "dev": "quasar dev",
+    "build": "quasar build",
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {

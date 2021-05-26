@@ -9,7 +9,22 @@
 /* eslint-env node */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const {configure} = require('quasar/wrappers')
-const env = require('dotenv').config().parsed
+
+const filterAppEnvVariables = (envObject) => {
+  return Object.fromEntries(Object
+    .entries(envObject)
+    .filter(([key]) => key.startsWith('APP'))
+  )
+}
+
+// Read .env file and let process env ovewrite it if set
+const env = {
+  ...filterAppEnvVariables(require('dotenv').config().parsed),
+  ...filterAppEnvVariables(process.env)
+}
+
+console.info('Build environment')
+console.info('=================')
 console.dir(env)
 
 module.exports = configure(function (ctx) {

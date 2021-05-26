@@ -11,7 +11,7 @@
       >
         <QBtn
           @click="backButton"
-          icon="ion-arrow-back"
+          :icon="ionArrowBack"
           flat
           round
           :ripple-effect="false"
@@ -37,7 +37,7 @@
         </transition>
       </div>
       <QBtn
-        icon="ion-menu"
+        :icon="ionMenu"
         @click="openSidebar"
         flat
         rounded
@@ -64,6 +64,7 @@ import Toast from 'primevue/toast'
 import AppTitle from 'src/components/AppTitle.vue'
 import { ErrorBus } from 'src/utils/errorBus'
 import { QToolbar, QBtn } from 'quasar'
+import { ionArrowBack, ionMenu } from '@quasar/extras/ionicons-v5'
 
 
 export default defineComponent({
@@ -73,7 +74,7 @@ export default defineComponent({
     NavigationSidebar,
     Toast,
     QToolbar,
-    QBtn
+    QBtn,
   },
   data() {
     return {
@@ -86,7 +87,9 @@ export default defineComponent({
         icon: 'pi pi-fw pi-calendar',
         to: '/events'
       }],
-      transitionDirection: null as string | null
+      transitionDirection: null as string | null,
+      ionMenu,
+      ionArrowBack,
     }
   },
   computed: {

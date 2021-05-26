@@ -70,7 +70,7 @@ export default defineComponent({
   },
   data() {
     return {
-      mapboxToken: process.env.VUE_APP_MAPBOX_TOKEN
+      mapboxToken: process.env.APP_MAPBOX_TOKEN
     }
   },
   computed: {
