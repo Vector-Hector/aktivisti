@@ -18,24 +18,22 @@
       v-if="!isLoggedIn"
       class="signin-buttons"
     >
-      <router-link
+      <QBtn
         to="/login"
+        color="primary"
       >
-        <IonButton>
-          Anmelden
-        </IonButton>
-      </router-link>
+        Anmelden
+      </QBtn>
 
-      <router-link
+      <QBtn
         to="/register"
+        outline
+        flat
         class="register-button"
+        color="primary"
       >
-        <IonButton
-          fill="none"
-        >
-          Registrieren
-        </IonButton>
-      </router-link>
+        Registrieren
+      </QBtn>
     </div>
   </div>
 </template>
@@ -46,15 +44,15 @@ import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import Geocoder from 'src/mapbox/Geocoder.vue'
 import { userStore } from 'src/store/UserStore'
 import { GeocodeResult } from 'src/types/GeocodeResult'
-import { IonButton } from '@ionic/vue'
 import { bbox, circle } from '@turf/turf'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import { QBtn } from 'quasar'
 
 export default defineComponent({
   name: 'Splash',
   components: {
     Geocoder,
-    IonButton
+    QBtn
   },
   beforeRouteEnter(to, from, next) {
     if (userStore.getState().bbox !== null) {
@@ -93,7 +91,7 @@ export default defineComponent({
     async locate(result: GeocodeResult) {
       this.bbox = bbox(circle([result.center[0], result.center[1]], 2)) as BBox2d
       uiStore.setBottomSheetState(BottomSheetState.COLLAPSED)
-      await this.$router.push({ name: 'events' })
+      await this.$router.push({name: 'events'})
     }
   }
 })
@@ -107,6 +105,7 @@ export default defineComponent({
   display: flex;
   height: 100%;
   width: 100%;
+  flex: 1;
   flex-direction: column;
   background: white;
   align-items: center;

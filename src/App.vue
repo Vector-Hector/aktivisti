@@ -181,6 +181,7 @@ export default defineComponent({
   flex: 1;
   position: relative;
   display: flex;
+  flex-direction: column;
 }
 
 .header-on-top {

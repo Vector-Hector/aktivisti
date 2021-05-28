@@ -4,6 +4,8 @@ $red: #DF0303;
 $blue: #00C3E8;
 $orange: #FF8C00;
 
+$dark-red: #C10015;
+
 $gray-100: #f8f9fa;
 $gray-200: #e9ecef;
 $gray-300: #dee2e6;
@@ -16,8 +18,12 @@ $gray-900: #212529;
 
 $text-primary: $black;
 $text-inverted: invert($black);
+
 $primary: $red;
-$danger: $orange;
+
+
+$warning: $orange;
+$error: $dark-red;
 
 $breakpoint-xs: 100%;
 $breakpoint-sm: 576px;
