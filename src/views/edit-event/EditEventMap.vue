@@ -3,6 +3,7 @@
     ref="map"
     :center="initialCenter"
     :zoom="initialZoom"
+    :boundingBox="bbox"
   >
     <router-view
       v-model:event="localEvent"
@@ -15,7 +16,7 @@
 import { defineComponent } from 'vue'
 import Map from '@/lib/mapbox/Map.vue'
 import EditEventMixin from '@/views/edit-event/EditEventMixin'
-import { booleanPointInPolygon, polygon } from '@turf/turf'
+import { booleanPointInPolygon, polygon, point, buffer, bbox } from '@turf/turf'
 import mapboxgl from 'mapbox-gl'
 
 
@@ -31,7 +32,8 @@ export default defineComponent({
         lat: 51.1642292,
         lng: 10.4541194
       },
-      initialZoom: this.event.location ? 14 : 11
+      initialZoom: this.event.location ? 14 : 11,
+      bbox: this.event.location ? bbox(buffer(point([this.event.location?.lng, this.event.location?.lat]), 3, {units:'kilometers'})) : undefined
     }
   },
   watch: {
