@@ -4,9 +4,9 @@
     position="top-left"
     class="location-overlay"
   >
-    <h1 class="headline">
+    <h2 class="headline">
       Treffpunkt auswählen
-    </h1>
+    </h2>
     <p>Ziehe entweder das Markersymbol auf die Karte oder suche nach einem Ort über das Textfeld</p>
     <div class="p-grid">
       <div class="p-col">
@@ -217,7 +217,10 @@ Button {
 }
 
 .headline {
-  margin: 0;
+  margin: 0.5rem 0;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: bold;
 }
 
 ::v-deep(.p-confirm-popup-message) {

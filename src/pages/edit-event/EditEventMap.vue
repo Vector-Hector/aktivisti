@@ -64,5 +64,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-
+.edit-map {
+  flex: 1;
+}
 </style>

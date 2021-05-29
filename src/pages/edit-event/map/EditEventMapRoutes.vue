@@ -17,9 +17,9 @@
     position="top-left"
     class="edit-routes-overlay"
   >
-    <h1 class="headline">
+    <h2 class="headline">
       Gebiete zeichnen
-    </h1>
+    </h2>
     <p>
       Wähle nun mit dem Polygonwerkzeug auf der rechten Seite Gebiete aus um die verschiedenen Einsatzgebiete zu
       beschreiben
@@ -281,10 +281,6 @@ Button {
   margin-left: 1rem;
 }
 
-.headline {
-  margin: 0
-}
-
 .edit-routes-overlay {
   width: 35%;
   max-width: 750px;
@@ -313,6 +309,13 @@ Button {
 
 :deep(.name-cell) {
   width: 100%;
+}
+
+.headline {
+  margin: 0.5rem 0;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: bold;
 }
 
 </style>

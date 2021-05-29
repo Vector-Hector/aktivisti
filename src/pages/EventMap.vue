@@ -20,7 +20,7 @@
       </Map>
     </div>
     <ResizableBottomSheet
-      title="Alle Aktionen"
+      :title="$route.meta.title?.()"
     >
       <router-view />
     </ResizableBottomSheet>

@@ -1,8 +1,9 @@
 <template>
-  <div class="edit-event">
+  <QPage class="edit-event">
     <Steps
       :model="steps"
       :readonly="false"
+      class="steps"
     />
     <router-view
       v-slot="{Component}"
@@ -14,7 +15,7 @@
         <component :is="Component" />
       </keep-alive>
     </router-view>
-  </div>
+  </QPage>
 </template>
 
 <script lang="ts">
@@ -28,6 +29,7 @@ import { apiClient } from 'src/api/ApiClient'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { uiStore } from 'src/store/UiStore'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
+import { QPage } from 'quasar'
 
 /**
  * The parent component implementing the individual steps for creating an event
@@ -35,7 +37,8 @@ import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 export default defineComponent({
   name: 'EditEvent',
   components: {
-    Steps
+    Steps,
+    QPage
   },
   beforeRouteEnter: async (to, from, next) => {
     const campaignRequest = await apiClient.campaigns.list()
@@ -135,5 +138,7 @@ export default defineComponent({
   flex-direction: column;
   height: 100%;
   overflow: auto;
+  width: 100%;
 }
+
 </style>

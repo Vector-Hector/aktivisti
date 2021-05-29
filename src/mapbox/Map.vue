@@ -150,7 +150,6 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .map {
-  height: 100%;
   width: 100%;
 }
 

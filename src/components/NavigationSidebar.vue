@@ -125,6 +125,7 @@ import Button from 'primevue/button'
 import { authService } from 'src/api/authService'
 import MenuLink from 'src/components/MenuLink.vue'
 import { ionCalendarClearOutline, ionCalendarOutline } from '@quasar/extras/ionicons-v5'
+import { QIcon } from 'quasar'
 
 
 export default defineComponent({
@@ -133,6 +134,7 @@ export default defineComponent({
     MenuLink,
     Sidebar,
     Button,
+    QIcon
   },
   data() {
     return {
