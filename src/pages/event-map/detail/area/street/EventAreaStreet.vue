@@ -12,16 +12,17 @@
         </QItemLabel>
       </QItemSection>
       <QItemSection side>
-        <QIcon
-          v-if="completionNotes.includes(address.osm_id)"
-          class="finished-icon"
-          :name="ionCheckmarkCircle"
-        />
-        <QIcon
-          v-if="completionNotes.includes(address.osm_id)"
-          class="finished-icon"
-          :name="ionChevronForward"
-        />
+        <div class="row">
+          <QIcon
+            v-if="completionNotes.includes(address.osm_id)"
+            class="col finished-icon item-icon"
+            :name="ionCheckmarkCircle"
+          />
+          <QIcon
+            class="col item-icon"
+            :name="ionChevronForward"
+          />
+        </div>
       </QItemSection>
     </QItem>
   </QList>
@@ -44,7 +45,7 @@ export default defineComponent({
     QItemLabel,
     QItem,
     QItemSection,
-    QIcon,
+    QIcon
   },
   mixins: [EventAreaStreetMixin],
   beforeRouteEnter(to, from, next) {
@@ -125,6 +126,10 @@ label {
 
 .full-width {
   width: 100%;
+}
+
+.item-icon {
+  height: 24px;
 }
 
 </style>

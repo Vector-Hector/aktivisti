@@ -29,7 +29,7 @@
       :value="areas"
       class="editable-cells-table p-datatable-sm"
       edit-mode="cell"
-      @cell-edit-complete="updateAreaByIndex($event.index)"
+      @cell-edit-complete="updateArea($event.data)"
     >
       <Column
         header="Name"
@@ -54,7 +54,7 @@
       >
         <template #body="slotProps">
           <ProgressSpinner
-            v-if="updatingAreaInidizes.has(slotProps.index)"
+            v-if="updatingAreaFeatureIds.has(slotProps.data.feature_id)"
             class="progress-spinner"
           />
           <span v-else>
@@ -68,7 +68,7 @@
         <template #body="slotProps">
           <ColorPicker
             :model-value="slotProps.data.color.replace('#', '')"
-            @update:modelValue="slotProps.data.color = `#${$event}`; updateAreaByIndex(slotProps.index)"
+            @update:modelValue="slotProps.data.color = `#${$event}`; updateArea(slotProps.data)"
           />
         </template>
       </Column>
@@ -77,14 +77,14 @@
       >
         <template #body="slotProps">
           <ProgressSpinner
-            v-if="deletingAreaInidizes.has(slotProps.index)"
+            v-if="deletingAreaIds.has(slotProps.data.id)"
             class="progress-spinner"
           />
           <Button
             v-else
             class="p-button-danger"
             icon="pi pi-trash"
-            @click="deleteAreaByIndex(slotProps.index)"
+            @click="deleteAreaById(slotProps.data.id)"
           />
         </template>
       </Column>
@@ -187,8 +187,8 @@ export default defineComponent({
     return {
       routePlannerStyles: routePlannerStyles('#000000'),
       areas: [] as EventAreaDto[],
-      updatingAreaInidizes: new Set<number>(),
-      deletingAreaInidizes: new Set<number>(),
+      updatingAreaFeatureIds: new Set<string>(),
+      deletingAreaIds: new Set<number>(),
       drawControls: {
         polygon: true,
         trash: true
@@ -213,25 +213,31 @@ export default defineComponent({
   methods: {
     async handleCreatedFeatures(event: any) {
       for (const feature of event.features) {
-        const existingAreaIndex = this.areas.findIndex((area) => area.feature_id === feature.id)
+        const existingArea = this.areas.find((area) => area.feature_id === feature.id)
         const updatedArea = Object.assign(
           {
             name: `Gebiet ${this.areas.length + 1}`,
             color: defaultColors[this.areas.length] ?? defaultColors[0],
             event: this.event.id!
           },
-          this.areas[existingAreaIndex] ?? {},
+          existingArea ?? {},
           {
             feature_id: feature.id,
             geometry: feature.geometry
           }
         )
-        if (existingAreaIndex > -1) {
-          this.areas[existingAreaIndex] = updatedArea
-          await this.updateAreaByIndex(existingAreaIndex)
+        if (existingArea) {
+          this.areas = this.areas.map((area) => {
+            if (area.feature_id === updatedArea.feature_id) {
+              return updatedArea as EventAreaDto
+            } else {
+              return area
+            }
+          })
+          await this.updateArea(updatedArea)
         } else {
-          const index = this.areas.push(updatedArea) - 1
-          await this.updateAreaByIndex(index)
+          this.areas.push(updatedArea as EventAreaDto)
+          await this.updateArea(updatedArea)
         }
       }
     },
@@ -241,24 +247,31 @@ export default defineComponent({
         return !deletedIds.includes(id)
       })
     },
-    async updateAreaByIndex(areaIndex: number) {
-      const area = this.areas[areaIndex]
-      this.updatingAreaInidizes.add(areaIndex)
+    async updateArea(area: Partial<EventAreaDto>) {
+      this.updatingAreaFeatureIds.add(area.feature_id!)
+      let updatedArea: EventAreaDto
       if (area.id) {
-        this.areas[areaIndex] = (await apiClient.eventAreas.update(area.id.toString(), area)).payload.data
+        updatedArea = (await apiClient.eventAreas.update(area.id.toString(), area as EventAreaDto)).payload.data
       } else {
-        this.areas[areaIndex] = (await apiClient.eventAreas.create(area)).payload.data
+        updatedArea = (await apiClient.eventAreas.create(area)).payload.data
       }
-      this.updatingAreaInidizes.delete(areaIndex)
+      this.areas = this.areas.map((item) => {
+        if (item.feature_id === updatedArea.feature_id) {
+          return updatedArea
+        } else {
+          return item
+        }
+      })
+      this.updatingAreaFeatureIds.delete(updatedArea.feature_id)
     },
-    async deleteAreaByIndex(deleteIndex: number) {
-      const area = this.areas[deleteIndex]
-      this.deletingAreaInidizes.add(deleteIndex)
-      if (area.id) {
+    async deleteAreaById(deleteId: number) {
+      const area = this.areas.find(({id}) => id === deleteId)
+      this.deletingAreaIds.add(deleteId)
+      if (area?.id) {
         await apiClient.eventAreas.delete(area.id.toString())
       }
-      this.areas = this.areas.filter(({id}) => area.id !== id)
-      this.deletingAreaInidizes.delete(deleteIndex)
+      this.areas = this.areas.filter(({id}) => area?.id !== id)
+      this.deletingAreaIds.delete(deleteId)
     },
     drawArea() {
       (this.$refs.draw as typeof DrawControl).changeMode('draw_polygon')

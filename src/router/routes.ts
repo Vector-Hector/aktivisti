@@ -84,7 +84,8 @@ const routes = [
             name: 'event-detail-overview'
           },
           {
-            path: 'report/:id',
+            path: 'report',
+            props: true,
             components: {
               default: EventDetailReport,
               map: EventDetailMap

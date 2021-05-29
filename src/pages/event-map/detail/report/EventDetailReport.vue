@@ -56,6 +56,8 @@ import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { ionEllipse } from '@quasar/extras/ionicons-v5'
+import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
+import { QIcon } from 'quasar'
 
 interface FormattedAreaData {
   id: number,
@@ -77,22 +79,10 @@ export default defineComponent({
   name: 'EventDetailReport',
   components: {
     Column,
-    DataTable
+    DataTable,
+    QIcon
   },
-  props: {
-    campaigns: {
-      type: Object as PropType<CampaignDto[]>,
-      required: true
-    },
-    event: {
-      type: Object as PropType<EventDto>,
-      required: true
-    },
-    eventAreas: {
-      type: Array as PropType<EventAreaDto[]>,
-      required: true
-    }
-  },
+  mixins: [EventDetailStoreMixin],
   data() {
     return {
       formattedDataPerArea: [] as FormattedAreaData[],
