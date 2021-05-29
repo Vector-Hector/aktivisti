@@ -62,7 +62,8 @@
           <MenuLink
             to="/events"
           >
-            <IonIcon name="calendar-clear-outline" />
+            <QIcon
+              :name="ionCalendarClearOutline" />
             <span class="menu-item-link-text">Alle Aktionen</span>
           </MenuLink>
         </div>
@@ -73,7 +74,7 @@
           <MenuLink
             :to="{ name: 'my-events' }"
           >
-            <IonIcon name="calendar-outline" />
+            <QIcon :name="ionCalendarOutline" />
             <span class="menu-item-link-text">Meine Aktionen</span>
           </MenuLink>
         </div>
@@ -122,15 +123,9 @@ import { userStore } from 'src/store/UserStore'
 import Sidebar from 'primevue/sidebar'
 import Button from 'primevue/button'
 import { authService } from 'src/api/authService'
-import { addIcons } from 'ionicons'
-import { calendarOutline, calendarClearOutline } from 'ionicons/icons'
-import { IonIcon } from '@ionic/vue'
 import MenuLink from 'src/components/MenuLink.vue'
+import { ionCalendarClearOutline, ionCalendarOutline } from '@quasar/extras/ionicons-v5'
 
-addIcons({
-  'calendar-outline': calendarOutline,
-  'calendar-clear-outline': calendarClearOutline
-})
 
 export default defineComponent({
   name: 'NavigationSidebar',
@@ -138,10 +133,12 @@ export default defineComponent({
     MenuLink,
     Sidebar,
     Button,
-    IonIcon
   },
   data() {
-    return {}
+    return {
+      ionCalendarOutline,
+      ionCalendarClearOutline,
+    }
   },
   computed: {
     isLoggedIn() {

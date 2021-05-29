@@ -1,9 +1,4 @@
-import { defineRule } from 'vee-validate'
-import { required, email } from '@vee-validate/rules'
 import { boot } from 'quasar/wrappers'
-
-defineRule('required', required)
-defineRule('email', email)
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {

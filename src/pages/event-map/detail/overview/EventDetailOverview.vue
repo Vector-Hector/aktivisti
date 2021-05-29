@@ -166,9 +166,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
-import {
-  modalController
-} from '@ionic/vue'
 import { authService } from 'src/api/authService'
 import { userStore } from 'src/store/UserStore'
 import EventInvitePeopleModal from 'src/components/modals/EventInvitePeopleModal.vue'
@@ -317,19 +314,16 @@ export default defineComponent({
     async refreshParticipations() {
       this.participations = (await apiClient.eventParticipations.list({event: this.event.id})).payload.data
     },
-    async openInviteModal() {
-      const modal = await modalController
-        .create({
-          component: EventInvitePeopleModal,
-          componentProps: {
-            eventId: this.event.id
-          }
+    openInviteModal() {
+      this.$q.dialog({
+        component: EventInvitePeopleModal,
+        componentProps: {
+          eventId: this.event.id
+        }
+      })
+        .onDismiss(() => {
+          void this.refreshParticipations()
         })
-      void modal.onDidDismiss()
-        .then(
-          () => this.refreshParticipations()
-        )
-      await modal.present()
     }
   }
 })

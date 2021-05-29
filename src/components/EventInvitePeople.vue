@@ -1,15 +1,17 @@
 <template>
-  <IonGrid>
-    <IonRow>
-      <IonCol>
-        <AutoComplete
-          v-model="query"
+  <div class="q-qa-sm">
+    <div class="row">
+      <div class="col">
+        <QSelect
+          use-input
+          :model-value="selectedUsers"
+          :multiple="true"
           placeholder="Tippen, um Leute einzuladen"
-          field="username"
+          :option-label="userLabel"
           class="w-100 d-flex flex-col"
-          :suggestions="suggestedUsers"
-          @complete="searchUsers($event)"
-          @itemSelect="inviteUser($event.value)"
+          :options="suggestedUsers"
+          @filter="searchUsers"
+          @add="inviteUser($event.value)"
         >
           <template #item="slotProps">
             <div class="user-autocomplete-username">
@@ -19,72 +21,73 @@
               {{ slotProps.item.email }}
             </div>
           </template>
-        </AutoComplete>
-      </IonCol>
-    </IonRow>
-    <IonRow>
-      <IonCol>
-        <IonList v-if="participations.length > 0">
-          <IonItem
+        </QSelect>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <QList v-if="participations.length > 0">
+          <QItem
             v-for="participation in displayedParticipations"
             :key="participation.id"
           >
-            <IonLabel v-if="participation.user_is_member">
-              <b>{{ participation.user_username }}</b> {{ participation.user_email }}
-            </IonLabel>
-            <IonLabel v-else>
-              {{ participation.user_email }}
-            </IonLabel>
-            <div
-              slot="end"
-              class="invitation-item-actions"
-            >
-              <IonIcon
-                v-if="participation.is_pending_invitation"
-                name="mail"
-                class="invited-button"
-                aria-label="Nutzer hat Einladung erhalten"
-              />
-              <IonButton
-                fill="none"
-                @click="deleteParticipation(participation.id)"
+            <QItemSection>
+              <QItemLabel v-if="participation.user_is_member">
+                <b>{{ participation.user_username }}</b> {{ participation.user_email }}
+              </QItemLabel>
+              <QItemLabel v-else>
+                {{ participation.user_email }}
+              </QItemLabel>
+            </QItemSection>
+
+            <QItemSection side>
+              <div
+                class="invitation-item-actions"
               >
-                <IonIcon
-                  name="close"
-                  aria-label="Nutzer von der Aktion entfernen"
+                <QIcon
+                  v-if="participation.is_pending_invitation"
+                  :name="ionMail"
+                  class="invited-button"
+                  aria-label="Nutzer hat Einladung erhalten"
                 />
-              </IonButton>
-            </div>
-          </IonItem>
-          <IonItem
+                <QIcon
+                  fill="none"
+                  @click="deleteParticipation(participation.id)"
+                >
+                  <QIcon
+                    :name="ionClose"
+                    aria-label="Nutzer von der Aktion entfernen"
+                  />
+                </QIcon>
+              </div>
+            </QItemSection>
+
+          </QItem>
+          <QItem
             v-if="pendingUsersWithoutVisibleEmailAddresses > 0"
           >
-            <IonLabel>
-              {{ pendingUsersWithoutVisibleEmailAddresses }} weitere per Mail eingeladen
-            </IonLabel>
-          </IonItem>
-        </IonList>
-        <IonText v-else>
+            <QItemSection>
+              <QItemLabel>
+                {{ pendingUsersWithoutVisibleEmailAddresses }} weitere per Mail eingeladen
+              </QItemLabel>
+            </QItemSection>
+          </QItem>
+        </QList>
+        <p v-else>
           Keine Teilnehmer*innen, nutze das Eingabefeld um welche einzuladen
-        </IonText>
-      </IonCol>
-    </IonRow>
-  </IonGrid>
+        </p>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import AutoComplete from 'primevue/autocomplete'
-import { IonButton, IonCol, IonGrid, IonIcon, IonItem, IonLabel, IonList, IonRow, IonText } from '@ionic/vue'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { UserDto } from 'src/api/model/UserDto'
-import { addIcons } from 'ionicons'
-import { mail } from 'ionicons/icons'
 import { userStore } from 'src/store/UserStore'
-
-addIcons({
-  mail
-})
+import { ionClose, ionMail } from '@quasar/extras/ionicons-v5'
+import { QIcon, QItem, QItemLabel, QItemSection, QList, QSelect } from 'quasar'
 
 interface UserSuggestionItem extends UserDto {
   isInvitePlaceholder?: boolean
@@ -93,16 +96,12 @@ interface UserSuggestionItem extends UserDto {
 export default defineComponent({
   name: 'EventInvitePeople',
   components: {
-    AutoComplete,
-    IonList,
-    IonItem,
-    IonLabel,
-    IonText,
-    IonRow,
-    IonCol,
-    IonIcon,
-    IonButton,
-    IonGrid
+    QSelect,
+    QList,
+    QItem,
+    QItemLabel,
+    QItemSection,
+    QIcon
   },
   props: {
     eventId: {
@@ -113,8 +112,11 @@ export default defineComponent({
   data() {
     return {
       query: '',
+      selectedUsers: [],
       suggestedUsers: [] as UserSuggestionItem[],
-      participations: [] as EventParticipationDto[]
+      participations: [] as EventParticipationDto[],
+      ionMail,
+      ionClose
     }
   },
   computed: {
@@ -139,6 +141,9 @@ export default defineComponent({
     this.participations = (await this.$apiClient.eventParticipations.list({event: this.eventId})).payload.data
   },
   methods: {
+    userLabel(item: UserSuggestionItem) {
+      return `${item.username} ${item.email ?? ''}`
+    },
     getInvitePlaceholder(emailString: string): UserSuggestionItem {
       return {
         id: -1,
@@ -148,13 +153,15 @@ export default defineComponent({
         isInvitePlaceholder: true
       }
     },
-    async searchUsers(event: any) {
-      const suggestions = (await this.$apiClient.user.list({query: event.query})).payload.data
+    async searchUsers(query: string, update: any) {
+      const suggestions = (await this.$apiClient.user.list({query: query})).payload.data
       // Show the invite user option in autocomplete if the email is not yet part of our suggestions
-      if (event.query.includes('@') && !suggestions.map(({email}) => email).includes(event.query)) {
-        suggestions.push(this.getInvitePlaceholder(event.query))
+      if (query.includes('@') && !suggestions.map(({email}) => email).includes(query)) {
+        suggestions.push(this.getInvitePlaceholder(query))
       }
-      this.suggestedUsers = suggestions
+      update(() => {
+        this.suggestedUsers = suggestions
+      })
     },
     async inviteUser(user: UserSuggestionItem) {
       this.query = ''

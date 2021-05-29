@@ -109,9 +109,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-import {
-  alertController
-} from '@ionic/vue'
 import { UserRegistrationDto } from 'src/api/model/UserRegistrationDto'
 import { QBtn, QForm, QInput } from 'quasar'
 import FormError from 'components/FormError.vue'
@@ -131,15 +128,13 @@ export default defineComponent({
       submitting: false
     }
   },
-  async created() {
-    const betaAlert = await alertController.create({
-      header: 'Geschlossene Beta',
+  created() {
+    this.$q.dialog({
+      title: 'Geschlossene Beta',
       message: 'Schön, dass du dich für die LINKE Wahlkampf-App interessierst. Derzeit befinden wir uns in einer ' +
         'geschlossenen Beta-Phase. Registrierungen sind erst ab der nächsten Phase möglich. ' +
-        'Um jetzt schon mitzumachen, muss eine Genoss*in dich einladen.',
-      buttons: ['Okay']
+        'Um jetzt schon mitzumachen, muss eine Genoss*in dich einladen.'
     })
-    await betaAlert.present()
   },
   methods: {
     async register() {

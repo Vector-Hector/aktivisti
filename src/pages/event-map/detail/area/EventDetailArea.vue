@@ -13,7 +13,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { IonCol,  IonGrid, IonRow } from '@ionic/vue'
 import Map from 'src/mapbox/Map.vue'
 import FeatureLayer from 'src/mapbox/AreaFeatureLayer.vue'
 import { apiClient } from 'src/api/ApiClient'
@@ -25,10 +24,6 @@ export default defineComponent({
   components: {
     FeatureLayer,
     Map,
-
-    IonGrid,
-    IonRow,
-    IonCol
   },
   mixins: [EventDetailMixin],
   async beforeRouteEnter(to, from, next) {

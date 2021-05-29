@@ -37,7 +37,6 @@ const routes = [
   },
   {
     path: '/my-events',
-    redirect: {name: 'my-events'},
     component: MyEvents,
     name: 'my-events',
     meta: {

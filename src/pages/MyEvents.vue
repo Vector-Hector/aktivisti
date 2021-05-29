@@ -1,72 +1,78 @@
 <template>
   <div class="container">
-      <IonList>
-        <div
-          v-if="eventParticipations.length <= 0"
-          class="placeholder"
-        >
-          <IonText>Du nimmst an keinen Aktion teil - suche jetzt welche!</IonText>
-          <router-link
-            :to="{ name: 'events' }"
-          >
-            <IonButton>Jetzt nach Aktionen suchen</IonButton>
-          </router-link>
-        </div>
-        <IonItem
-          v-for="participation in eventParticipations"
-          :key="participation.id"
-          :button="true"
-          @click="$router.push({ name: 'event-detail', params: { id: participation.event } })"
-        >
-          <IonLabel>
+    <QList>
+      <div
+        v-if="eventParticipations.length <= 0"
+        class="placeholder"
+      >
+        <p>Du nimmst an keinen Aktion teil - suche jetzt welche!</p>
+        <QBtn
+          label="Jetzt nach Aktionen suchen"
+          :to="{ name: 'events' }"
+          color="primary"
+        />
+      </div>
+      <QItem
+        v-for="participation in eventParticipations"
+        :key="participation.id"
+        :clickable="true"
+        :to="{ name: 'event-detail', params: { id: participation.event } }"
+      >
+        <QItemSection>
+          <QItemLabel>
             {{ eventForParticipation(participation).name }}
-          </IonLabel>
-          <i v-if="participation.is_pending_invitation">
-            {{
-              findInvitingUsers(participation.inviting_users).map(({username}) => username).join(',') ?? 'Unbekannt '
-            }}
-            <span v-if="participation.inviting_users.length > 1">haben</span><span v-else>hat</span> dich eingeladen
-          </i>
+          </QItemLabel>
+          <QItemLabel>
+            <i v-if="participation.is_pending_invitation">
+              {{
+                findInvitingUsers(participation.inviting_users).map(({username}) => username).join(',') ?? 'Unbekannt '
+              }}
+              <span v-if="participation.inviting_users.length > 1">haben</span><span v-else>hat</span> dich eingeladen
+            </i>
+          </QItemLabel>
+
+        </QItemSection>
+        <QItemSection side>
           <div
             v-if="participation.is_pending_invitation"
-            slot="end"
             class="action-buttons"
           >
-            <IonButton
-              @click.stop="accept(participation)"
+            <QBtn
+              color="primary"
+              @click.prevent.stop="accept(participation)"
             >
               Annehmen
-            </IonButton>
-            <IonButton
-              fill="none"
-              @click.stop="reject(participation)"
+            </QBtn>
+            <QBtn
+              flat
+              @click.prevent.stop="reject(participation)"
             >
               Ablehnen
-            </IonButton>
+            </QBtn>
           </div>
-        </IonItem>
-      </IonList>
+        </QItemSection>
+      </QItem>
+    </QList>
 
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { IonLabel, IonItem, IonList, IonButton, IonText } from '@ionic/vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { userStore } from 'src/store/UserStore'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { UserDto } from 'src/api/model/UserDto'
+import { QBtn, QItem, QItemLabel, QItemSection, QList } from 'quasar'
 
 export default defineComponent({
   name: 'MyEvents',
   components: {
-    IonList,
-    IonLabel,
-    IonItem,
-    IonButton,
-    IonText,
-
+    QList,
+    QItem,
+    QItemLabel,
+    QItemSection,
+    QBtn,
   },
   data() {
     return {
