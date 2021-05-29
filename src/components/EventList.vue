@@ -160,6 +160,7 @@ export default defineComponent({
         ...this.pagination,
         ...pagination
       })
+      this.$emit('update:pagination', response.payload.pagination)
       return response.payload.data
     },
     campaignsByIds(findIds: number[]): CampaignDto[] {
@@ -174,7 +175,6 @@ export default defineComponent({
         limit: EVENT_LIST_CHUNK_SIZE,
         offset: (this.events?.length ?? 0)
       }
-      this.$emit('update:pagination', pagination)
       const moreEvents = await this.getEvents(pagination)
       this.$emit('update:events', distinctBy(this.events.concat(moreEvents), (item: EventDto) => item.id))
       done()

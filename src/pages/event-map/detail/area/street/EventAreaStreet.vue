@@ -1,55 +1,52 @@
 <template>
-  <IonList>
-    <IonItem
+  <QList>
+    <QItem
       v-for="address in sortedAddresses"
       :key="address.house_number"
-      :button="true"
-      @click="$router.push({ name: 'event-detail-area-metrics', params: { houseNumber: address.house_number, street: street } })"
+      :clickable="true"
+      :to="{ name: 'event-detail-area-metrics', params: { houseNumber: address.house_number, street: street } }"
     >
-      <IonLabel>
-        <h3>{{ street }} {{ address.house_number }}</h3>
-      </IonLabel>
-      <div slot="end">
-        <IonIcon
+      <QItemSection>
+        <QItemLabel>
+          {{ street }} {{ address.house_number }}
+        </QItemLabel>
+      </QItemSection>
+      <QItemSection side>
+        <QIcon
           v-if="completionNotes.includes(address.osm_id)"
           class="finished-icon"
-          name="checkmark-circle"
+          :name="ionCheckmarkCircle"
         />
-        <IonIcon
-          class="chevron"
-          name="chevron-forward"
+        <QIcon
+          v-if="completionNotes.includes(address.osm_id)"
+          class="finished-icon"
+          :name="ionChevronForward"
         />
-      </div>
-    </IonItem>
-  </IonList>
+      </QItemSection>
+    </QItem>
+  </QList>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { IonIcon, IonItem, IonLabel, IonList } from '@ionic/vue'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
-import EventAreaStreetMixin from 'src/pages/event-detail/event-area/EventAreaStreetMixin'
-import EventAreaMixin from 'src/pages/event-detail/event-area/EventAreaMixin'
-import { addIcons } from 'ionicons'
-import { checkmarkCircle, chevronForward } from 'ionicons/icons'
 import { uiStore } from 'src/store/UiStore'
 import Timeout = NodeJS.Timeout
-
-addIcons({
-  'checkmark-circle': checkmarkCircle,
-  chevronForward
-})
+import EventAreaStreetMixin from 'pages/event-map/detail/area/street/EventAreaStreetMixin'
+import { ionCheckmarkCircle, ionChevronForward } from '@quasar/extras/ionicons-v5'
+import { QIcon, QItem, QItemLabel, QItemSection, QList } from 'quasar'
 
 
 export default defineComponent({
   name: 'EventAreaStreet',
   components: {
-    IonList,
-    IonItem,
-    IonLabel,
-    IonIcon
+    QList,
+    QItemLabel,
+    QItem,
+    QItemSection,
+    QIcon,
   },
-  mixins: [EventAreaStreetMixin, EventAreaMixin],
+  mixins: [EventAreaStreetMixin],
   beforeRouteEnter(to, from, next) {
     next(vm => {
       uiStore.updateActiveElements({
@@ -61,7 +58,9 @@ export default defineComponent({
   data() {
     return {
       nextPoll: null as Timeout | null,
-      completionNotes: [] as string[]
+      completionNotes: [] as string[],
+      ionChevronForward,
+      ionCheckmarkCircle
     }
   },
   computed: {
@@ -75,7 +74,7 @@ export default defineComponent({
   async created() {
     await this.poll()
   },
-  beforeUnmount() {
+  unmounted() {
     if (this.nextPoll !== null) {
       clearTimeout(this.nextPoll)
     }

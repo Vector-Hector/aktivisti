@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-
       <IonList>
         <div
           v-if="eventParticipations.length <= 0"

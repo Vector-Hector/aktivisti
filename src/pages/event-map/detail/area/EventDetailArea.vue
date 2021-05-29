@@ -2,7 +2,7 @@
   <router-view
     v-slot="{Component}"
     v-model:event-area="eventArea"
-    :area-permissions="areaPermissions"
+    :area-permissions="eventAreaPermissions"
     :event="event"
   >
     <keep-alive>
@@ -16,10 +16,9 @@ import { defineComponent } from 'vue'
 import { IonCol,  IonGrid, IonRow } from '@ionic/vue'
 import Map from 'src/mapbox/Map.vue'
 import FeatureLayer from 'src/mapbox/AreaFeatureLayer.vue'
-
-import EventAreaMixin from 'src/pages/event-detail/EventDetailAreaMixin'
 import { apiClient } from 'src/api/ApiClient'
-import { PermissionsDto } from 'src/api/model/APIEnvelope'
+import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
+import { eventDetailStore } from 'src/store/EventDetailStore'
 
 export default defineComponent({
   name: 'EventDetailArea',
@@ -31,24 +30,17 @@ export default defineComponent({
     IonRow,
     IonCol
   },
-  mixins: [EventAreaMixin],
+  mixins: [EventDetailMixin],
   async beforeRouteEnter(to, from, next) {
     const response = await apiClient.eventAreas.get(
       to.params.areaId as string,
       [],
       {show_permissions: true}
     )
-    next(vm => {
-      //@ts-ignore
-      vm.eventArea = response.payload.data
-      //@ts-ignore
-      vm.areaPermissions = response.payload.permissions
-    })
-  },
-  data() {
-    return {
-      areaPermissions: null as PermissionsDto | null
-    }
+    eventDetailStore.setEventArea(response.payload.data)
+    eventDetailStore.setEventAreaPermissions(response.payload.permissions)
+
+    next()
   }
 })
 

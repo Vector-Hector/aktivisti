@@ -2,8 +2,8 @@ import { defineComponent, PropType } from 'vue'
 import { Feature, Point } from 'geojson'
 import { bbox, center, circle } from '@turf/turf'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
-import EventAreaStreetMixin from 'src/pages/event-detail/event-area/EventAreaStreetMixin'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import EventAreaStreetMixin from 'pages/event-map/detail/area/street/EventAreaStreetMixin'
 
 export default defineComponent({
   mixins: [EventAreaStreetMixin],

@@ -1,14 +1,11 @@
 <template>
-  <NavigationSidebar />
   <Toast position="top-right" />
-  <QHeader
-    class="header-on-top"
-  >
-    <QToolbar>
-      <transition
-        v-if="currentDepth > 2"
-        :name="titleTransition"
-      >
+  <QLayout view="hHr LpR ffr">
+    <QHeader
+      class="bg-primary text-white"
+      elevated
+    >
+      <QToolbar>
         <QBtn
           @click="backButton"
           :icon="ionArrowBack"
@@ -16,44 +13,30 @@
           round
           :ripple-effect="false"
         />
-      </transition>
-      <div class="title-wrapper">
-            <span
-              class="shadow-title"
-              aria-hidden="true"
-            >
-              <AppTitle
-                :title="$route.meta.title?.()"
-                :subtitle="$route.meta.subtitle?.()"
-              />
-            </span>
-        <transition :name="titleTransition">
-          <AppTitle
-            :key="$route.path"
-            class="title"
-            :title="$route.meta.title?.()"
-            :subtitle="$route.meta.subtitle?.()"
-          />
-        </transition>
-      </div>
-      <QBtn
-        :icon="ionMenu"
-        @click="openSidebar"
-        flat
-        rounded
-        :ripple-effect="false"
-      />
-    </QToolbar>
-  </QHeader>
-  <div id="main">
-    <router-view v-slot="{ Component }">
-      <keep-alive>
-        <transition :name="pageTransition">
+        <QToolbarTitle>
+          {{ $route.meta.title?.() }}
+        </QToolbarTitle>
+        <QBtn
+          :icon="ionMenu"
+          @click="openSidebar"
+          dense
+          flat
+          round
+        />
+      </QToolbar>
+
+    </QHeader>
+    <NavigationSidebar />
+    <QPageContainer
+      class="d-flex"
+    >
+      <router-view v-slot="{ Component }">
+        <keep-alive>
           <component :is="Component" />
-        </transition>
-      </keep-alive>
-    </router-view>
-  </div>
+        </keep-alive>
+      </router-view>
+    </QPageContainer>
+  </QLayout>
 </template>
 
 <script lang="ts">
@@ -63,7 +46,7 @@ import { uiStore } from 'src/store/UiStore'
 import Toast from 'primevue/toast'
 import AppTitle from 'src/components/AppTitle.vue'
 import { ErrorBus } from 'src/utils/errorBus'
-import { QToolbar, QBtn } from 'quasar'
+import { QToolbar, QBtn, QPageContainer, QLayout, QHeader, QToolbarTitle } from 'quasar'
 import { ionArrowBack, ionMenu } from '@quasar/extras/ionicons-v5'
 
 
@@ -75,6 +58,10 @@ export default defineComponent({
     Toast,
     QToolbar,
     QBtn,
+    QPageContainer,
+    QLayout,
+    QToolbarTitle,
+    QHeader
   },
   data() {
     return {
@@ -89,7 +76,7 @@ export default defineComponent({
       }],
       transitionDirection: null as string | null,
       ionMenu,
-      ionArrowBack,
+      ionArrowBack
     }
   },
   computed: {

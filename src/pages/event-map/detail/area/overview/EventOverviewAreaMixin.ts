@@ -1,18 +1,10 @@
 import { defineComponent, PropType } from 'vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
-import { EventDto } from 'src/api/model/EventDto'
+import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 
 export default defineComponent({
+  mixins: [EventDetailMixin],
   props: {
-    event: {
-      type: Object as PropType<EventDto>,
-      required: true
-
-    },
-    eventAreas: {
-      type: Array as PropType<EventAreaDto[]>,
-      required: true
-    },
     areaId: {
       type: String as PropType<string>,
       required: true

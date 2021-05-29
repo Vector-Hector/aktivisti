@@ -12,12 +12,12 @@
     >
       <!-- eslint-enable -->
       <template #body="{data}">
-        <IonIcon
+        <QIcon
           class="icon"
           :style="{
             color: data.color
           }"
-          name="ellipse"
+          :name="ionEllipse"
         />
         <span> {{ data.name }}</span>
       </template>
@@ -53,9 +53,9 @@ import { EventDto } from 'src/api/model/EventDto'
 import { EventMetricReportDto } from 'src/api/model/EventMetricReportDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
-import { IonIcon } from '@ionic/vue'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
+import { ionEllipse } from '@quasar/extras/ionicons-v5'
 
 interface FormattedAreaData {
   id: number,
@@ -77,8 +77,7 @@ export default defineComponent({
   name: 'EventDetailReport',
   components: {
     Column,
-    DataTable,
-    IonIcon
+    DataTable
   },
   props: {
     campaigns: {
@@ -97,7 +96,8 @@ export default defineComponent({
   data() {
     return {
       formattedDataPerArea: [] as FormattedAreaData[],
-      metricsWithName: [] as MetricWithName[]
+      metricsWithName: [] as MetricWithName[],
+      ionEllipse
     }
   },
   async created() {

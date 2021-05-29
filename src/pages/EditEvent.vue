@@ -1,21 +1,19 @@
 <template>
-  <div class="page">
-    <div class="edit-event">
-      <Steps
-        :model="steps"
-        :readonly="false"
-      />
-      <router-view
-        v-slot="{Component}"
-        v-model:event="event"
-        v-model:event-metric-records="metricRecords"
-        :campaigns="campaigns"
-      >
-        <keep-alive>
-          <component :is="Component" />
-        </keep-alive>
-      </router-view>
-    </div>
+  <div class="edit-event">
+    <Steps
+      :model="steps"
+      :readonly="false"
+    />
+    <router-view
+      v-slot="{Component}"
+      v-model:event="event"
+      v-model:event-metric-records="metricRecords"
+      :campaigns="campaigns"
+    >
+      <keep-alive>
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
   </div>
 </template>
 

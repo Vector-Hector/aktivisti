@@ -1,0 +1,131 @@
+<template>
+  <span v-if="clusterMode">
+    <ClusterLayer
+      :clusters="clusters"
+    />
+  </span>
+  <span
+    v-else
+  >
+    <span
+      v-for="event in events"
+      :key="event.id"
+    >
+      <Marker
+        :location="event.location"
+      >
+        <Popup>
+          <div class="popup-contents">
+            <span class="popup-title">{{ event.name }}</span>
+            <span class="popup-campaign">{{ event.campaigns?.map(({name}) => name).join(',') }}</span>
+            <span class="popup-date">
+              {{ new Date(event.start_date).toLocaleString() }}
+            </span>
+            <router-link
+              class="join-link no-button-decoration"
+              :to="`/events/${event.id}`"
+            >
+              <QBtn
+                label="Mitmachen/Infos"
+                color="primary"
+              />
+            </router-link>
+          </div>
+        </Popup>
+      </Marker>
+    </span>
+  </span>
+</template>
+<script lang="ts">
+import { defineComponent, inject, onUnmounted } from 'vue'
+import Popup from 'src/mapbox/Popup.vue'
+import Marker from 'src/mapbox/Marker.vue'
+import { MapInject } from 'src/mapbox/Map.vue'
+import { ClusterDto } from 'src/api/model/ClusterDto'
+import { EVENT_MAP_MAX_EVENTS } from 'src/constants'
+import ClusterLayer from 'src/mapbox/ClusterLayer.vue'
+import EventsOverviewMixin from 'pages/event-map/overview/EventsOverviewMixin'
+import { eventOverviewStore } from 'src/store/EventOverviewStore'
+import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import { QBtn } from 'quasar'
+
+export default defineComponent({
+  name: 'EventOverviewMap',
+  mixins: [EventsOverviewMixin],
+  components: {
+    Popup,
+    Marker,
+    QBtn,
+    ClusterLayer
+  },
+  setup() {
+    const map = inject(MapInject)!
+
+    const updateBounds = () => {
+      eventOverviewStore.setBbox(map.value?.getBounds().toArray().flat() as BBox2d)
+    }
+
+    map.value.on('zoomend', updateBounds)
+    map.value.on('moveend', updateBounds)
+    onUnmounted(() => {
+      map.value.off('zoomend', updateBounds)
+      map.value.off('moveend', updateBounds)
+    })
+    return {
+      map
+    }
+  },
+  computed: {
+    clusterTotal(): number {
+      return this.clusters.reduce((acc: number, item: ClusterDto) => acc + item.count, 0)
+    },
+    clusterMode(): boolean {
+      return this.clusterTotal > EVENT_MAP_MAX_EVENTS
+    }
+  },
+  watch: {
+    clusterMode(isClusterMode) {
+      if (isClusterMode && (this.map?.getZoom() ?? 0 > 15)) {
+        this.$q.notify({
+          multiLine: true,
+          message: '<h5>Hier ist zuviel los</h5>Nicht alle Aktionen werden angezeigt, da dies zuviel für die Karte wäre. Nutze die Listenansicht',
+          html: true,
+          group: 'too-many-events-alert'
+        })
+      }
+    }
+  }
+})
+</script>
+<style lang="scss" scoped>
+.popup-title {
+  font-weight: bold;
+  display: block;
+  font-size: 1rem;
+}
+
+.popup-campaign {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.popup-date {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.join-link {
+  align-self: flex-end;
+
+  Button {
+    padding: 3px 6px;
+  }
+
+  margin-top: 6px;
+}
+
+.popup-contents {
+  display: flex;
+  flex-direction: column;
+}
+</style>

@@ -1,16 +1,18 @@
 <template>
   <div class="create-lead">
-    <router-link
+    <QBtn
       :to="{ name: 'create-lead' }"
+      flat
+      outline
+      color="primary"
     >
-      <IonButton>
-        Kontakt registrieren
-      </IonButton>
-    </router-link>
+      Kontakt registrieren
+    </QBtn>
   </div>
 
-  <IonGrid
+  <div
     v-if="metricRecords.length"
+    class="q-pt-md q-gutter-md"
   >
     <MetricsRow
       v-for="metricRecord in metricRecords"
@@ -20,13 +22,12 @@
       class="metrics-input"
       @update:modelValue="updateMetricValue(metricRecord.id, $event)"
     />
-  </IonGrid>
-  <IonText
+  </div>
+  <p
     v-else
-    color="medium"
   >
     Für dieses wurden keine Metriken definiert
-  </IonText>
+  </p>
 </template>
 
 <script lang="ts">
@@ -34,19 +35,17 @@ import { defineComponent } from 'vue'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { MetricValueMap, trackingSessionStore } from 'src/store/TrackingSessionStore'
-import { IonButton, IonGrid, IonText } from '@ionic/vue'
 import MetricsRow from 'src/components/MetricsRow.vue'
-import EventAreaMetricsMixin from 'src/pages/event-detail/event-area/EventAreaMetricsMixin'
 import { uiStore } from 'src/store/UiStore'
+import EventAreaMetricsMixin from 'pages/event-map/detail/area/metrics/EventAreaMetricsMixin'
+import { QBtn } from 'quasar'
 
 
 export default defineComponent({
   name: 'EventAreaMetrics',
   components: {
     MetricsRow,
-    IonGrid,
-    IonText,
-    IonButton
+    QBtn
   },
   mixins: [EventAreaMetricsMixin],
   data() {
