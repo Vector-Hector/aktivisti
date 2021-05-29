@@ -46,15 +46,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import { EventDto } from 'src/api/model/EventDto'
 import { EventMetricReportDto } from 'src/api/model/EventMetricReportDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
-import { CampaignDto } from 'src/api/model/CampaignDto'
-import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { ionEllipse } from '@quasar/extras/ionicons-v5'
 import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { QIcon } from 'quasar'
