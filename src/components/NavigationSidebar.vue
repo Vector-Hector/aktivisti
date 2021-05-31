@@ -1,10 +1,8 @@
 <template>
-  <Sidebar
+  <QDrawer
+    side="right"
     class="navigation-sidebar"
-    position="right"
-    :visible="sidebarExpanded"
-    :show-close-icon="false"
-    @update:visible="toggleSidebar"
+    v-model="sidebarExpanded"
   >
     <div class="menu">
       <div
@@ -22,7 +20,6 @@
         </div>
         <div class="menu-item">
           <MenuLink
-            class="menu-item-link"
             to="/profile"
           >
             <i class="pi pi-user-edit" />
@@ -112,27 +109,25 @@
         </div>
       </div>
     </div>
-  </Sidebar>
+  </QDrawer>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { uiStore } from 'src/store/UiStore'
 import { userStore } from 'src/store/UserStore'
-
-import Sidebar from 'primevue/sidebar'
 import Button from 'primevue/button'
 import { authService } from 'src/api/authService'
 import MenuLink from 'src/components/MenuLink.vue'
 import { ionCalendarClearOutline, ionCalendarOutline } from '@quasar/extras/ionicons-v5'
-import { QIcon } from 'quasar'
+import { QDrawer, QIcon } from 'quasar'
 
 
 export default defineComponent({
   name: 'NavigationSidebar',
   components: {
     MenuLink,
-    Sidebar,
+    QDrawer,
     Button,
     QIcon
   },
@@ -152,21 +147,16 @@ export default defineComponent({
     userProfile() {
       return userStore.getState().user
     },
-    sidebarExpanded() {
-      return uiStore.getState().sidebarExpanded
-    }
-  },
-  watch: {
-    $route: {
-      handler() {
-        this.toggleSidebar(false)
+    sidebarExpanded: {
+      get(): boolean {
+        return uiStore.getState().sidebarExpanded
+      },
+      set(value: boolean) {
+        uiStore.toggleSidebar(value)
       }
     }
   },
   methods: {
-    toggleSidebar(expanded: boolean) {
-      uiStore.toggleSidebar(expanded)
-    },
     logout() {
       authService.logout()
       void this.$router.push('/')

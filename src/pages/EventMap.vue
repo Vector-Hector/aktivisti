@@ -10,11 +10,9 @@
           v-slot="{ Component }"
           name="map"
         >
-          <keep-alive>
             <component
               :is="Component"
             />
-          </keep-alive>
         </router-view>
       </Map>
     </div>
