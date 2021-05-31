@@ -1,7 +1,6 @@
 <template>
   <router-view
     name="map"
-    :event-area="eventArea"
   />
 </template>
 

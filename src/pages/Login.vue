@@ -11,7 +11,6 @@
       />
       <QInput
         label="Passwort"
-        v-bind="field"
         v-model="password"
         :rules="[$validationRules.isRequired]"
         type="password"

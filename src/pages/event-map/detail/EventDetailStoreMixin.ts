@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
@@ -8,6 +8,12 @@ import { eventDetailStore } from 'src/store/EventDetailStore'
 
 export default defineComponent({
   name: 'EventDetailStoreMixin',
+  props: {
+    id: {
+      type: String as PropType<string>,
+      required: true
+    }
+  },
   computed: {
     participations: {
       get(): EventParticipationDto[] {

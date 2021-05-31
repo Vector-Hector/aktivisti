@@ -22,7 +22,7 @@ export default defineComponent({
   name: 'MenuLink',
   props: {
     to: {
-      type: Object as PropType<any>,
+      type: [String, Object] as PropType<any>,
       required: true
     }
   },

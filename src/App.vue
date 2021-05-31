@@ -7,6 +7,7 @@
     >
       <QToolbar>
         <QBtn
+          v-if="currentDepth > 2"
           @click="backButton"
           :icon="ionArrowBack"
           flat

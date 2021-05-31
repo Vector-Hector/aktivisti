@@ -2,7 +2,6 @@
   <QPage class="event-map">
     <div class="map-container">
       <Map
-        v-model:zoom="zoom"
         :bounding-box="bbox"
         map-style="mapbox://styles/mapbox/streets-v11"
         @update:boundingBox="setBbox($event)"

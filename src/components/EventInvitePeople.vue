@@ -154,10 +154,15 @@ export default defineComponent({
       }
     },
     async searchUsers(query: string, update: any) {
-      const suggestions = (await this.$apiClient.user.list({query: query})).payload.data
-      // Show the invite user option in autocomplete if the email is not yet part of our suggestions
-      if (query.includes('@') && !suggestions.map(({email}) => email).includes(query)) {
-        suggestions.push(this.getInvitePlaceholder(query))
+      let suggestions: UserSuggestionItem[]
+      if (query) {
+        suggestions = (await this.$apiClient.user.list({query: query})).payload.data
+        // Show the invite user option in autocomplete if the email is not yet part of our suggestions
+        if (query.includes('@') && !suggestions.map(({email}) => email).includes(query)) {
+          suggestions.push(this.getInvitePlaceholder(query))
+        }
+      } else {
+        suggestions = []
       }
       update(() => {
         this.suggestedUsers = suggestions

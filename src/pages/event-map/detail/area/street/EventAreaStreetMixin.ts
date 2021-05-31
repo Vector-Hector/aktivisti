@@ -11,6 +11,10 @@ export default defineComponent({
     street: {
       type: String as PropType<string>,
       required: true
+    },
+    areaId: {
+      type: String as PropType<string>,
+      required: true
     }
   },
   computed: {
