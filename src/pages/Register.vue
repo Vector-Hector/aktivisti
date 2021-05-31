@@ -1,278 +1,161 @@
 <template>
 
-    <div class="container">
-      <Form
-        v-slot="{ errors, isSubmitting }"
-        @submit="register"
-      >
-        <IonItem :class="{ 'item-has-error': !!errors.email }">
-          <IonLabel position="floating">
-            E-Mail-Adresse
-          </IonLabel>
-          <Field
-            v-slot="{ field }"
-            v-model="registrationData.email"
-            :rules="{ email: true, required: true }"
-            name="email"
-          >
-            <IonInput
-              v-bind="field"
-              type="email"
-            />
-          </Field>
-        </IonItem>
-        <IonItem
-          class="error-wrapper"
-          lines="none"
-        >
-          <ErrorMessage
-            name="email"
-            class="error"
-          />
-        </IonItem>
-        <IonItem :class="{ 'item-has-error': !!errors.username }">
-          <IonLabel position="floating">
-            Benutzername
-          </IonLabel>
-          <Field
-            v-slot="{ field }"
-            v-model="registrationData.username"
-            :rules="{ required: true }"
-            name="username"
-          >
-            <IonInput
-              v-bind="field"
-              type="text"
-            />
-          </Field>
-        </IonItem>
-        <IonItem
-          class="error-wrapper"
-          lines="none"
-        >
-          <ErrorMessage
-            name="username"
-            class="error"
-          />
-        </IonItem>
+  <div class="container">
+    <QForm
+      @submit="register"
+    >
+      <QInput
+        v-model="registrationData.email"
+        :rules="[$validationRules.isRequired, $validationRules.email]"
+        name="email"
+        label="E-Mailadresse"
+        :error-message="errors.email?.[0]"
+        :error="!!errors.email?.length"
+      />
+      <QInput
+        v-model="registrationData.username"
+        :rules="[$validationRules.isRequired]"
+        name="username"
+        label="Username"
+        :error-message="errors.username?.[0]"
+        :error="!!errors.username?.length"
+      />
+      <QInput
+        v-model="registrationData.password"
+        :rules="[$validationRules.isRequired]"
+        name="password"
+        type="password"
+        label="Passwort"
+        :minlength="6"
+        :error-message="errors.password?.[0]"
+        :error="!!errors.password?.length"
+      />
+      <QInput
+        v-model="registrationData.plz"
+        :rules="[$validationRules.isRequired]"
+        :maxlength="5"
+        :minlength="5"
+        label="Postleitzahl"
+        name="plz"
+        :error-message="errors.plz?.[0]"
+        :error="!!errors.plz?.length"
+      />
+      <QInput
+        v-model="registrationData.first_name"
+        name="first_name"
+        label="Vorname"
+        :error-message="errors.first_name?.[0]"
+        :error="!!errors.first_name?.length"
+      />
+      <QInput
+        v-model="registrationData.last_name"
+        name="last_name"
+        label="Nachname"
+        :error-message="errors.last_name?.[0]"
+        :error="!!errors.last_name?.length"
+      />
 
-        <IonItem :class="{ 'item-has-error': !!errors.password }">
-          <IonLabel position="floating">
-            Passwort
-          </IonLabel>
-          <Field
-            v-slot="{ field }"
-            v-model="registrationData.password"
-            :rules="{ required: true }"
-            name="password"
-          >
-            <IonInput
-              v-bind="field"
-              type="password"
-            />
-          </Field>
-        </IonItem>
-        <IonItem
-          class="error-wrapper"
-          lines="none"
-        >
-          <ErrorMessage
-            name="password"
-            class="error"
-          />
-        </IonItem>
-        <IonItem :class="{ 'item-has-error': !!errors.plz }">
-          <IonLabel position="floating">
-            Postleitzahl
-          </IonLabel>
-          <Field
-            v-slot="{ field }"
-            v-model="registrationData.plz"
-            name="plz"
-            :rules="{ required: true }"
-          >
-            <IonInput
-              v-bind="field"
-              type="text"
-            />
-          </Field>
-        </IonItem>
-        <IonItem
-          class="error-wrapper"
-          lines="none"
-        >
-          <ErrorMessage
-            name="plz"
-            class="error"
-          />
-        </IonItem>
-        <IonItem :class="{ 'item-has-error': !!errors.first_name }">
-          <IonLabel position="floating">
-            Vorname
-          </IonLabel>
-          <Field
-            v-slot="{ field }"
-            v-model="registrationData.first_name"
-            name="first_name"
-          >
-            <IonInput
-              v-bind="field"
-              type="text"
-            />
-          </Field>
-        </IonItem>
-        <IonItem
-          class="error-wrapper"
-          lines="none"
-        >
-          <ErrorMessage
-            name="first_name"
-            class="error"
-          />
-        </IonItem>
+      <div class="privacy-disclaimer">
+        <p>
 
-        <IonItem :class="{ 'item-has-error': !!errors.last_name }">
-          <IonLabel position="floating">
-            Nachname
-          </IonLabel>
-          <Field
-            v-slot="{ field }"
-            v-model="registrationData.last_name"
-            name="last_name"
+          Als Nutzer:in der LINKEN App nimmst Du zur Kenntnis und stimmst zu, dass Du die per App erhaltenen und
+          übermittelten Daten zu keinem anderen Zweck als der Organisation von Aktionen der Partei DIE LINKE
+          nutzt,
+          insbesondere diese weder speicherst, noch kopierst oder Dritten für andere Zwecke übermittelst. Du
+          stimmst
+          zu,
+          dass Passwort stets vertraulich zu behandeln und jeden Verlust des Gerätes oder jede mögliche
+          Offenbarung
+          des
+          Passwortes oder zweckwidrige Nutzung der App durch Dritte unverzüglich dem Bundesvorstand unter
+          <a href="mailto:datenschutz@die-linke.app" class="primary-link">datenschutz@die-linke.app</a> mitzuteilen.
+          Du stimmst zu, jede Nachfrage Dritter zum Umfang der Datenverarbeitung der App an den Verantwortlichen
+          beim
+          Bundesvorstand der Partei weiterzuleiten und dem Betroffenen die Kontaktdaten bzw. den Link zu den
+          <a
+            href="https://www.die-linke.de/seitenfuss/datenschutz"
+            target="_blank"
+            class="primary-link"
           >
-            <IonInput
-              v-bind="field"
-              type="text"
-            />
-          </Field>
-        </IonItem>
-        <IonItem
-          class="error-wrapper"
-          lines="none"
-        >
-          <ErrorMessage
-            name="last_name"
-            class="error"
-          />
-        </IonItem>
-
-        <div class="privacy-disclaimer">
-          <IonText>
-            Als Nutzer:in der LINKEN App nimmst Du zur Kenntnis und stimmst zu, dass Du die per App erhaltenen und
-            übermittelten Daten zu keinem anderen Zweck als der Organisation von Aktionen der Partei DIE LINKE nutzt,
-            insbesondere diese weder speicherst, noch kopierst oder Dritten für andere Zwecke übermittelst. Du stimmst
-            zu,
-            dass Passwort stets vertraulich zu behandeln und jeden Verlust des Gerätes oder jede mögliche Offenbarung
-            des
-            Passwortes oder zweckwidrige Nutzung der App durch Dritte unverzüglich dem Bundesvorstand unter
-            <a href="mailto:datenschutz@die-linke.app">datenschutz@die-linke.app</a> mitzuteilen.
-            Du stimmst zu, jede Nachfrage Dritter zum Umfang der Datenverarbeitung der App an den Verantwortlichen beim
-            Bundesvorstand der Partei weiterzuleiten und dem Betroffenen die Kontaktdaten bzw. den Link zu den
-            <a
-              href="https://www.die-linke.de/seitenfuss/datenschutz"
-              target="_blank"
-            >
-              Datenschutzhinweisen
-            </a>
-            mitzuteilen.
-          </IonText>
-        </div>
-        <IonItem
-          class="error-wrapper"
-          lines="none"
-        >
-          <ErrorMessage
-            name="non-field-error"
-            class="error"
-          />
-        </IonItem>
-        <div class="control-buttons">
-          <IonButton
-            color="primary"
-            type="submit"
-            :disabled="isSubmitting"
-          >
-            Registrieren
-          </IonButton>
-        </div>
-      </Form>
-
-      <IonItemDivider />
-
-      <div class="sign-up-link">
-        Du bist bereits angemeldet?
-        <router-link to="/login">
-          Zum Login
-        </router-link>
+            Datenschutzhinweisen
+          </a>
+          mitzuteilen.
+        </p>
       </div>
+      <FormError
+        :error="errors.non_field_error?.[0]"
+      />
+      <div class="control-buttons">
+        <QBtn
+          color="primary"
+          type="submit"
+          :disabled="submitting"
+        >
+          Registrieren
+        </QBtn>
+      </div>
+    </QForm>
+
+    <div class="sign-up-link">
+      Du bist bereits angemeldet?
+      <router-link to="/login" class="primary-link">
+        Zum Login
+      </router-link>
     </div>
+  </div>
 
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { Field, Form, ErrorMessage } from 'vee-validate'
 
-import {
-  IonInput,
-  IonLabel,
-  IonItem,
-  IonButton,
-  IonItemDivider,
-
-  IonText,
-  alertController
-} from '@ionic/vue'
 import { UserRegistrationDto } from 'src/api/model/UserRegistrationDto'
+import { QBtn, QForm, QInput } from 'quasar'
+import FormError from 'components/FormError.vue'
 
 export default defineComponent({
   name: 'Register',
   components: {
-    IonInput,
-    IonLabel,
-    IonItem,
-    IonButton,
-
-    IonItemDivider,
-    Field,
-    Form,
-    ErrorMessage,
-    IonText
+    FormError,
+    QInput,
+    QBtn,
+    QForm,
   },
   data() {
     return {
-      registrationData: {} as Partial<UserRegistrationDto>
+      registrationData: {} as Partial<UserRegistrationDto>,
+      errors: {},
+      submitting: false
     }
   },
-  async created() {
-    const betaAlert = await alertController.create({
-      header: 'Geschlossene Beta',
+  created() {
+    this.$q.dialog({
+      title: 'Geschlossene Beta',
       message: 'Schön, dass du dich für die LINKE Wahlkampf-App interessierst. Derzeit befinden wir uns in einer ' +
         'geschlossenen Beta-Phase. Registrierungen sind erst ab der nächsten Phase möglich. ' +
-        'Um jetzt schon mitzumachen, muss eine Genoss*in dich einladen.',
-      buttons: ['Okay']
+        'Um jetzt schon mitzumachen, muss eine Genoss*in dich einladen.'
     })
-    await betaAlert.present()
   },
   methods: {
-    async register(values: any, actions: any) {
+    async register() {
+      this.submitting = true
       try {
-        await this.$apiClient.userRegistration.create(values)
+        await this.$apiClient.userRegistration.create(this.registrationData)
         await this.$router.push({name: 'register-success'})
       } catch (error) {
-        console.log(error)
-        if (error.status === 400) {
-          actions.setErrors(error.data)
-        } else if (error.status === 503) {
-          actions.setErrors({
-            'non-field-error': 'Diese Funktion steht derzeit nicht zur Verfügung'
-          })
+        if (error.response.status === 400) {
+          this.errors = error.response.data
+        } else if (error.response.status === 503) {
+          this.errors = {
+            'non_field_error': 'Diese Funktion steht derzeit nicht zur Verfügung'
+          }
         } else {
-          actions.setErrors({
-            'non-field-error': 'Ein unerwarteter Fehler ist aufgetreten'
-          })
+          this.errors = {
+            'non_field_error': 'Ein unerwarteter Fehler ist aufgetreten'
+          }
         }
       }
+      this.submitting = false
     }
   }
 })

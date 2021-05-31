@@ -1,43 +1,43 @@
 <template>
-  <div class="splash">
-    <img
-      src="../assets/logo_dielinke.png"
-      class="logo-splash"
-    >
-    <h2 class="splash-message">
-      Finde Aktionen in deiner Nähe
-    </h2>
-    <Geocoder
-      class="geocoder"
-      :access-token="mapboxToken"
-      :countries="['de']"
-      :standalone="true"
-      @result="locate"
-    />
-    <div
-      v-if="!isLoggedIn"
-      class="signin-buttons"
-    >
-      <router-link
-        to="/login"
+  <QPage>
+    <div class="splash">
+      <img
+        src="../assets/logo_dielinke.png"
+        class="logo-splash"
       >
-        <IonButton>
+      <h2 class="splash-message">
+        Finde Aktionen in deiner Nähe
+      </h2>
+      <Geocoder
+        class="geocoder"
+        :access-token="mapboxToken"
+        :countries="['de']"
+        :standalone="true"
+        @result="locate"
+      />
+      <div
+        v-if="!isLoggedIn"
+        class="signin-buttons"
+      >
+        <QBtn
+          to="/login"
+          color="primary"
+        >
           Anmelden
-        </IonButton>
-      </router-link>
+        </QBtn>
 
-      <router-link
-        to="/register"
-        class="register-button"
-      >
-        <IonButton
-          fill="none"
+        <QBtn
+          to="/register"
+          outline
+          flat
+          class="register-button"
+          color="primary"
         >
           Registrieren
-        </IonButton>
-      </router-link>
+        </QBtn>
+      </div>
     </div>
-  </div>
+  </QPage>
 </template>
 
 <script lang="ts">
@@ -46,15 +46,16 @@ import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import Geocoder from 'src/mapbox/Geocoder.vue'
 import { userStore } from 'src/store/UserStore'
 import { GeocodeResult } from 'src/types/GeocodeResult'
-import { IonButton } from '@ionic/vue'
 import { bbox, circle } from '@turf/turf'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import { QBtn, QPage } from 'quasar'
 
 export default defineComponent({
   name: 'Splash',
   components: {
     Geocoder,
-    IonButton
+    QBtn,
+    QPage
   },
   beforeRouteEnter(to, from, next) {
     if (userStore.getState().bbox !== null) {
@@ -93,7 +94,7 @@ export default defineComponent({
     async locate(result: GeocodeResult) {
       this.bbox = bbox(circle([result.center[0], result.center[1]], 2)) as BBox2d
       uiStore.setBottomSheetState(BottomSheetState.COLLAPSED)
-      await this.$router.push({ name: 'events' })
+      await this.$router.push({name: 'events'})
     }
   }
 })
@@ -107,13 +108,14 @@ export default defineComponent({
   display: flex;
   height: 100%;
   width: 100%;
+  flex: 1;
   flex-direction: column;
   background: white;
   align-items: center;
 }
 
 .splash-message {
-  margin: 4rem 0 0;
+  margin: 3rem 0 0;
   font-size: 1.1rem;
   font-weight: bold;
   text-align: center;
@@ -136,6 +138,7 @@ export default defineComponent({
 
 .logo-splash {
   width: 50%;
+  margin: 1rem 0;
 }
 
 .signin-buttons {

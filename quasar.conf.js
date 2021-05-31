@@ -49,7 +49,7 @@ module.exports = configure(function (ctx) {
       'api',
       'hydrate',
       'primevue',
-      'vee-validate',
+      'validation-rules',
       'mapbox'
     ],
 
@@ -106,7 +106,7 @@ module.exports = configure(function (ctx) {
     framework: {
       config: {},
 
-      // iconSet: 'material-icons', // Quasar icon set
+      iconSet: 'svg-ionicons-v5', // Quasar icon set
       // lang: 'en-US', // Quasar language pack
 
       // For special cases outside of where the auto-import stategy can have an impact
@@ -118,7 +118,8 @@ module.exports = configure(function (ctx) {
 
       // Quasar plugins
       plugins: [
-        'Dialog'
+        'Dialog',
+        'Notify'
       ]
     },
 

@@ -4,43 +4,55 @@
     @load="loadData"
     :disable="events.length === pagination.total"
   >
-    <QItem
-      v-for="item in events"
-      :key="item.id"
-      clickable
-      v-ripple
-      @click="goToEvent(item)"
-    >
-      <QItemSection>
-        <QItemLabel>
-          <b>{{ item.name }}</b>
-        </QItemLabel>
-        <QItemLabel>
-          {{ campaignsByIds(item.campaigns).map(({name}) => name).join(',') }}
-        </QItemLabel>
-      </QItemSection>
-      <QItemSection avatar>
-        <router-link
-          v-if="isManager"
-          :to="{ name: 'edit-event-details', params: { id: item.id } }"
-          @click="$event.stopPropagation()"
-        >
-          <QIcon
-            class="edit-button"
-            :name="ionPencil"
-          />
-        </router-link>
-        <a
-          @click="$event.stopPropagation(); deleteEvent(item)"
-        >
-          <QIcon
-            v-if="isManager"
-            class="delete-button"
-            :name="ionTrash"
-          />
-        </a>
-      </QItemSection>
-    </QItem>
+    <QList>
+      <QItem
+        v-for="item in events"
+        :key="item.id"
+        clickable
+        v-ripple
+        @click="goToEvent(item)"
+      >
+        <QItemSection>
+          <QItemLabel>
+            <b>{{ item.name }}</b>
+          </QItemLabel>
+          <QItemLabel>
+            {{ campaignsByIds(item.campaigns).map(({name}) => name).join(',') }}
+          </QItemLabel>
+        </QItemSection>
+
+        <QItemSection side>
+          <div class="text-grey-8 q-gutter-xs">
+            <router-link
+              v-if="isManager"
+              class="text-grey-8"
+              :to="{ name: 'edit-event-details', params: { id: item.id } }"
+              @click="$event.stopPropagation()"
+            >
+              <QIcon
+                flat
+                dense
+                class="edit-button"
+                size="24px"
+                :name="ionPencil"
+              />
+            </router-link>
+            <a
+              @click="$event.stopPropagation(); deleteEvent(item)"
+            >
+              <QIcon
+                flat
+                dense
+                v-if="isManager"
+                class="delete-button"
+                size="24px"
+                :name="ionTrash"
+              />
+            </a>
+          </div>
+        </QItemSection>
+      </QItem>
+    </QList>
     <template v-slot:loading>
       <div class="row justify-center q-my-md">
         <QSpinnerDots color="primary" size="40px" />
@@ -64,7 +76,7 @@ import { userStore } from 'src/store/UserStore'
 import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
 import { Pagination } from 'src/api/model/APIEnvelope'
 import { distinctBy } from 'src/utils/array'
-import { QIcon, QInfiniteScroll, QItem, QItemLabel, QItemSection, QSpinnerDots } from 'quasar'
+import { QIcon, QInfiniteScroll, QItem, QItemLabel, QItemSection, QList, QSpinnerDots } from 'quasar'
 import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 
 
@@ -76,7 +88,8 @@ export default defineComponent({
     QItemSection,
     QInfiniteScroll,
     QSpinnerDots,
-    QIcon
+    QIcon,
+    QList
   },
   props: {
     filterParams: {
@@ -147,6 +160,7 @@ export default defineComponent({
         ...this.pagination,
         ...pagination
       })
+      this.$emit('update:pagination', response.payload.pagination)
       return response.payload.data
     },
     campaignsByIds(findIds: number[]): CampaignDto[] {
@@ -161,7 +175,6 @@ export default defineComponent({
         limit: EVENT_LIST_CHUNK_SIZE,
         offset: (this.events?.length ?? 0)
       }
-      this.$emit('update:pagination', pagination)
       const moreEvents = await this.getEvents(pagination)
       this.$emit('update:events', distinctBy(this.events.concat(moreEvents), (item: EventDto) => item.id))
       done()

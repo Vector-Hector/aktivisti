@@ -1,83 +1,85 @@
 <template>
-  <IonItem
-    :button="true"
+  <QItem
+    :clickable="true"
     :class="{ 'greyed-out': area.is_completed }"
-    @click="$router.push({ name: 'event-detail-area', params: { areaId: area.id }})"
+    :to="{ name: 'event-detail-area', params: { areaId: area.id }}"
   >
-    <IonLabel>
-      <h3>{{ area.name }}</h3>
-      <p>{{ countAddresses(area.area_details) }} Adressen</p>
-    </IonLabel>
-    <span
-      title="Ich nehme teil"
-      class="popup-text"
-    >
-      <IonIcon
-        v-if="participationsOfArea.map(participation => participation.user).includes(user?.id)"
-        class="area-indicator-icon"
-        name="person-circle-outline"
-      />
-    </span>
-    <IonBadge
-      slot="end"
-      color="light"
-    >
-      {{ participationsOfArea.length }}
-    </IonBadge>
-    <div
-      slot="end"
-      class="item-buttons"
-    >
-      <IonIcon
-        v-if="area.is_completed"
-        class="area-indicator-icon"
-        name="checkmark-circle-outline"
-      />
-      <IonIcon
-        v-else
-        class="area-indicator-icon"
-        :style="{
-          color: area.color
-        }"
-        name="ellipse"
-      />
-      <IonIcon
-        class="chevron"
-        name="chevron-forward"
-      />
-    </div>
-  </IonItem>
+    <QItemSection>
+      <QItemLabel>
+        {{ area.name }}
+      </QItemLabel>
+
+      <QItemLabel>
+        {{ countAddresses(area.area_details) }} Adressen
+      </QItemLabel>
+    </QItemSection>
+
+    <QItemSection side>
+      <div
+        class="item-buttons"
+      >
+        <span
+          title="Ich nehme teil"
+          class="popup-text"
+        >
+        <QIcon
+          v-if="participationsOfArea.map(participation => participation.user).includes(user?.id)"
+          class="area-indicator-icon"
+          :name="ionPersonCircleOutline"
+        />
+      </span>
+        <QBadge
+          outline
+          color="primary"
+          class="participant-badge"
+        >
+          {{ participationsOfArea.length }}
+        </QBadge>
+        <QIcon
+          v-if="area.is_completed"
+          class="area-indicator-icon"
+          :name="ionCheckmarkCircleOutline"
+        />
+        <QIcon
+          v-else
+          class="area-indicator-icon"
+          :style="{
+            color: area.color
+          }"
+          :name="ionEllipse"
+        />
+        <QIcon
+          class="chevron"
+          :name="ionChevronForward"
+        />
+      </div>
+    </QItemSection>
+  </QItem>
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { IonBadge, IonIcon, IonItem, IonLabel } from '@ionic/vue'
-import { addIcons } from 'ionicons'
-import {
-  checkmarkCircleOutline,
-  chevronForward,
-  ellipse,
-  personCircleOutline
-} from 'ionicons/icons'
 import { UserDto } from 'src/api/model/UserDto'
 import { userStore } from 'src/store/UserStore'
 import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
+import { QBadge, QIcon, QItem, QItemLabel, QItemSection } from 'quasar'
+import {
+  ionCheckmarkCircleOutline,
+  ionChevronForward,
+  ionEllipse,
+  ionPersonCircleOutline
+} from '@quasar/extras/ionicons-v5'
 
-addIcons({
-  ellipse,
-  chevronForward,
-  'checkmark-circle-outline': checkmarkCircleOutline,
-  'person-circle-outline': personCircleOutline
-})
 
 export default defineComponent({
   name: 'EventAreaItem',
   components: {
-    IonIcon,
-    IonItem,
-    IonLabel,
-    IonBadge,
+    QIcon,
+    QItem,
+    QItemSection,
+    QItemLabel,
+    QBadge
   },
   props: {
     area: {
@@ -87,6 +89,14 @@ export default defineComponent({
     participations: {
       type: Object as PropType<EventParticipationDto[]>,
       required: true
+    }
+  },
+  data() {
+    return {
+      ionPersonCircleOutline,
+      ionCheckmarkCircleOutline,
+      ionEllipse,
+      ionChevronForward
     }
   },
   computed: {
@@ -103,7 +113,7 @@ export default defineComponent({
       return areaDetails.streets.reduce((acc, street) => {
         return acc + street.addresses.length
       }, 0)
-    },
+    }
   }
 })
 </script>
@@ -111,13 +121,13 @@ export default defineComponent({
 <style lang="scss">
 
 .chevron {
-  margin-left: 2rem;
+  margin-left: 1rem;
   font-size: 2rem;
 }
 
 .area-indicator-icon {
   font-size: 1.2rem;
-  width: 1.7rem;
+  margin-left: 1rem;
 }
 
 .item-buttons {
@@ -130,13 +140,13 @@ export default defineComponent({
   opacity: 0.3;
 }
 
-ion-icon {
-  pointer-events: none;
-}
-
 .popup-text {
   display: flex;
   color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.54);
+}
+
+.participant-badge {
+  margin-left: 1rem;
 }
 
 </style>

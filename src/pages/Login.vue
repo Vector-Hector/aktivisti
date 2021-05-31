@@ -1,97 +1,45 @@
 <template>
   <div class="container">
-    <Form
-      v-slot="{ errors, setFieldError, isSubmitting }"
+    <QForm
       @submit="login"
     >
-      <IonItem :class="{ 'item-has-error': !!errors.username }">
-        <IonLabel position="floating">
-          Benutzername oder E-Mail-Adresse
-        </IonLabel>
-        <Field
-          v-slot="{ field }"
-          v-model="username"
-          :rules="isRequired"
-          name="username"
-        >
-          <IonInput
-            v-bind="field"
-            type="text"
-          />
-        </Field>
-      </IonItem>
-      <IonItem
-        class="error-wrapper"
-        lines="none"
-      >
-        <ErrorMessage
-          name="username"
-          class="error"
-        />
-      </IonItem>
-
-      <IonItem :class="{ 'item-has-error': !!errors.password }">
-        <IonLabel position="floating">
-          Passwort
-        </IonLabel>
-        <Field
-          v-slot="{ field }"
-          v-model="password"
-          :rules="isRequired"
-          name="password"
-        >
-          <IonInput
-            v-bind="field"
-            type="password"
-          />
-        </Field>
-      </IonItem>
-      <IonItem
-        class="error-wrapper"
-        lines="none"
-      >
-        <ErrorMessage
-          name="password"
-          class="error"
-        />
-      </IonItem>
+      <QInput
+        label="Benutzername"
+        v-model="username"
+        :rules="[$validationRules.isRequired]"
+        type="text"
+      />
+      <QInput
+        label="Passwort"
+        v-model="password"
+        :rules="[$validationRules.isRequired]"
+        type="password"
+      />
 
       <div class="control-buttons">
-        <IonItem lines="none">
-          <IonCheckbox
-            v-model="saveRefreshToken"
-            class="checkbox-margin-right"
-          />
-          <IonLabel>Angemeldet bleiben</IonLabel>
-        </IonItem>
 
-        <IonItem
-          class="error-wrapper"
-          lines="none"
-        >
-          <ErrorMessage
-            name="non-field-error"
-            class="error"
-          />
-        </IonItem>
-
-        <IonButton
+        <QCheckbox
+          v-model="saveRefreshToken"
+          label="Angemeldet bleiben"
+          class="checkbox-margin-right"
+        />
+        <FormError :error="generalError" />
+        <QBtn
           color="primary"
+          class="submit-button"
           type="submit"
-          :disabled="isSubmitting"
-          @click="setFieldError()"
+          :disabled="submitting"
         >
           Anmelden
-        </IonButton>
+        </QBtn>
       </div>
-    </Form>
-
-    <IonItemDivider />
+    </QForm>
 
     <div class="sign-in-link">
       Noch kein Konto?
       <router-link
         to="/register"
+        class="primary-link"
       >
         Hier registrieren
       </router-link>
@@ -101,22 +49,18 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IonInput, IonLabel, IonItem, IonButton, IonCheckbox, IonItemDivider } from '@ionic/vue'
 import { authService } from 'src/api/authService'
-import { Field, Form, ErrorMessage } from 'vee-validate'
+import { QBtn, QCheckbox, QForm, QInput } from 'quasar'
+import FormError from 'components/FormError.vue'
 
 export default defineComponent({
   name: 'Login',
   components: {
-    IonInput,
-    IonLabel,
-    IonItem,
-    IonButton,
-    IonCheckbox,
-    IonItemDivider,
-    Field,
-    Form,
-    ErrorMessage
+    FormError,
+    QForm,
+    QBtn,
+    QInput,
+    QCheckbox
   },
   props: {
     next: {
@@ -127,39 +71,38 @@ export default defineComponent({
   },
   data() {
     return {
+      submitting: false,
       username: '',
       password: '',
-      saveRefreshToken: false,
+      generalError: null as string | null,
+      saveRefreshToken: false
     }
   },
   methods: {
-    async login(values: any, actions: any) {
+    async login() {
+      this.submitting = true
+      this.generalError = null
       try {
         await authService.login(this.username, this.password, this.saveRefreshToken)
         await this.$router.push(this.next)
       } catch (error) {
-        console.dir(error)
         if (error.response?.status == 400) {
-          actions.setFieldError('non-field-error', error.response?.data?.error_description)
-          actions.setFieldError('username', ' ')
-          actions.setFieldError('password', ' ')
-        } else {
-          actions.setFieldError('non-field-error', 'Ein unbekannter Fehler ist aufgetreten')
+          this.generalError = error.response?.data?.error_description
         }
       }
-    },
-    isRequired(value: string) {
-      if (!value) {
-        return 'Bitte fülle dieses Feld aus'
-      }
-      return true
+      this.submitting = false
     }
   }
 })
 </script>
 
 <style lang="scss" scoped>
-@import "src/css/_globals.scss";
+@import "src/css/variables.scss";
+
+.error {
+  display: inline-flex;
+  flex-direction: column;
+}
 
 .checkbox-margin-right {
   margin-right: 10px;
@@ -169,6 +112,11 @@ export default defineComponent({
   margin-top: 1em;
   flex-direction: column;
   align-items: flex-end;
+  border-bottom: 1px solid $gray-400;
+}
+
+.submit-button {
+  margin: 1rem 0 3rem 0;
 }
 
 .sign-in-link {

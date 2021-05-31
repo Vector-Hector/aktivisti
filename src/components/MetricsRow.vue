@@ -1,39 +1,25 @@
 <template>
-  <IonRow>
-    <IonCol
-      class="label-wrapper"
-      size="12"
-      size-sm="6"
-      size-md="4"
-    >
-      {{ label }}
-    </IonCol>
-    <IonCol>
-      <CounterInput
-        :model-value="modelValue"
-        @update:model-value="$emit('update:modelValue', $event)"
-      />
-    </IonCol>
-  </IonRow>
+  <div class="row q-col-gutter-y-sm">
+      <div class="col-12 col-sm-6 col-md-4 label-col">
+        <div class="label">{{ label }}</div>
+      </div>
+      <div class="col-12 col-sm-6 col-md-8">
+        <CounterInput
+          :model-value="modelValue"
+          @update:model-value="$emit('update:modelValue', $event)"
+        />
+      </div>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IonCol, IonRow } from '@ionic/vue'
-import { addIcons } from 'ionicons'
-import { remove, add } from 'ionicons/icons'
 import CounterInput from 'src/components/CounterInput.vue'
 
-addIcons({
-  remove,
-  add
-})
 
 export default defineComponent({
   name: 'MetricsRow',
   components: {
-    IonRow,
-    IonCol,
     CounterInput
   },
   props: {
@@ -82,16 +68,13 @@ input[type=number] {
   -moz-appearance: textfield; /* Firefox */
 }
 
-.label-wrapper {
+.label-col {
   display: flex;
   align-items: center;
-  font-weight: bold;
-  font-size: 1rem;
+  justify-content: center;
 }
 
-@media only screen and (max-width: $breakpoint-sm) {
-  .label-wrapper {
-    justify-content: center;
-  }
+.label {
+  font-weight: bold;
 }
 </style>

@@ -1,59 +1,48 @@
 <template>
-  <NavigationSidebar />
   <Toast position="top-right" />
-  <QHeader
-    class="header-on-top"
-  >
-    <QToolbar>
-      <transition
-        v-if="currentDepth > 2"
-        :name="titleTransition"
-      >
+  <QLayout view="hHr LpR ffr">
+    <QHeader
+      class="bg-primary text-white"
+      elevated
+    >
+      <QToolbar>
         <QBtn
+          v-if="currentDepth > 2"
           @click="backButton"
           :icon="ionArrowBack"
           flat
           round
           :ripple-effect="false"
         />
-      </transition>
-      <div class="title-wrapper">
-            <span
-              class="shadow-title"
-              aria-hidden="true"
-            >
-              <AppTitle
-                :title="$route.meta.title?.()"
-                :subtitle="$route.meta.subtitle?.()"
-              />
-            </span>
-        <transition :name="titleTransition">
-          <AppTitle
-            :key="$route.path"
-            class="title"
-            :title="$route.meta.title?.()"
-            :subtitle="$route.meta.subtitle?.()"
-          />
-        </transition>
-      </div>
-      <QBtn
-        :icon="ionMenu"
-        @click="openSidebar"
-        flat
-        rounded
-        :ripple-effect="false"
-      />
-    </QToolbar>
-  </QHeader>
-  <div id="main">
-    <router-view v-slot="{ Component }">
-      <keep-alive>
-        <transition :name="pageTransition">
-          <component :is="Component" />
-        </transition>
-      </keep-alive>
-    </router-view>
-  </div>
+        <QToolbarTitle class="title-wrapper col">
+          <span class="title">
+            {{ $route.meta.title?.() }}
+          </span>
+          <span class="subtitle">
+            {{ $route.meta.subtitle?.() }}
+          </span>
+        </QToolbarTitle>
+        <QToolbarTitle class="subtitle">
+        </QToolbarTitle>
+        <QBtn
+          :icon="ionMenu"
+          @click="openSidebar"
+          dense
+          flat
+          round
+        />
+      </QToolbar>
+
+    </QHeader>
+    <NavigationSidebar />
+    <QPageContainer
+      class="d-flex"
+    >
+      <router-view v-slot="{ Component }">
+        <component :is="Component" />
+      </router-view>
+    </QPageContainer>
+  </QLayout>
 </template>
 
 <script lang="ts">
@@ -63,7 +52,7 @@ import { uiStore } from 'src/store/UiStore'
 import Toast from 'primevue/toast'
 import AppTitle from 'src/components/AppTitle.vue'
 import { ErrorBus } from 'src/utils/errorBus'
-import { QToolbar, QBtn } from 'quasar'
+import { QToolbar, QBtn, QPageContainer, QLayout, QHeader, QToolbarTitle } from 'quasar'
 import { ionArrowBack, ionMenu } from '@quasar/extras/ionicons-v5'
 
 
@@ -75,6 +64,10 @@ export default defineComponent({
     Toast,
     QToolbar,
     QBtn,
+    QPageContainer,
+    QLayout,
+    QToolbarTitle,
+    QHeader
   },
   data() {
     return {
@@ -89,7 +82,7 @@ export default defineComponent({
       }],
       transitionDirection: null as string | null,
       ionMenu,
-      ionArrowBack,
+      ionArrowBack
     }
   },
   computed: {
@@ -147,53 +140,24 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import 'src/css/_globals.scss';
-@import "src/css/_page-transitions.scss";
 
-#root {
+.title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  display: flex;
+}
+
+.subtitle {
+  color: $gray-100;
+  font-size: 0.7rem;
+  font-weight: 400;
+  display: flex;
+}
+
+.title-wrapper {
   display: flex;
   flex-direction: column;
 }
 
-.shadow-title {
-  visibility: hidden;
-}
 
-.nav {
-  padding-bottom: 100px;
-}
-
-.router-link {
-  padding-right: 10px;
-}
-
-
-.dielinke-logo {
-  max-width: 240px;
-  cursor: pointer;
-}
-
-.p-menubar {
-  background: white;
-  border: 1px solid $red;
-}
-
-#main {
-  flex: 1;
-  position: relative;
-  display: flex;
-}
-
-.header-on-top {
-  z-index: 102;
-}
-
-.title-wrapper {
-  position: relative;
-  flex: 1;
-
-  .title {
-    top: 0;
-    position: absolute;
-  }
-}
 </style>
