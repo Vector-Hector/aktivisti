@@ -13,8 +13,15 @@
           round
           :ripple-effect="false"
         />
-        <QToolbarTitle>
-          {{ $route.meta.title?.() }}
+        <QToolbarTitle class="title-wrapper col">
+          <span class="title">
+            {{ $route.meta.title?.() }}
+          </span>
+          <span class="subtitle">
+            {{ $route.meta.subtitle?.() }}
+          </span>
+        </QToolbarTitle>
+        <QToolbarTitle class="subtitle">
         </QToolbarTitle>
         <QBtn
           :icon="ionMenu"
@@ -132,54 +139,24 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import 'src/css/_globals.scss';
-@import "src/css/_page-transitions.scss";
 
-#root {
+.title {
+  font-size: 1.1rem;
+  font-weight: 500;
   display: flex;
-  flex-direction: column;
 }
 
-.shadow-title {
-  visibility: hidden;
-}
-
-.nav {
-  padding-bottom: 100px;
-}
-
-.router-link {
-  padding-right: 10px;
-}
-
-
-.dielinke-logo {
-  max-width: 240px;
-  cursor: pointer;
-}
-
-.p-menubar {
-  background: white;
-  border: 1px solid $red;
-}
-
-#main {
-  flex: 1;
-  position: relative;
+.subtitle {
+  color: $gray-100;
+  font-size: 0.7rem;
+  font-weight: 400;
   display: flex;
-  flex-direction: column;
-}
-
-.header-on-top {
-  z-index: 102;
 }
 
 .title-wrapper {
-  position: relative;
-  flex: 1;
-
-  .title {
-    top: 0;
-    position: absolute;
-  }
+  display: flex;
+  flex-direction: column;
 }
+
+
 </style>

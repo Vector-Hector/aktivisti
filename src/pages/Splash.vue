@@ -1,41 +1,43 @@
 <template>
-  <div class="splash">
-    <img
-      src="../assets/logo_dielinke.png"
-      class="logo-splash"
-    >
-    <h2 class="splash-message">
-      Finde Aktionen in deiner Nähe
-    </h2>
-    <Geocoder
-      class="geocoder"
-      :access-token="mapboxToken"
-      :countries="['de']"
-      :standalone="true"
-      @result="locate"
-    />
-    <div
-      v-if="!isLoggedIn"
-      class="signin-buttons"
-    >
-      <QBtn
-        to="/login"
-        color="primary"
+  <QPage>
+    <div class="splash">
+      <img
+        src="../assets/logo_dielinke.png"
+        class="logo-splash"
       >
-        Anmelden
-      </QBtn>
+      <h2 class="splash-message">
+        Finde Aktionen in deiner Nähe
+      </h2>
+      <Geocoder
+        class="geocoder"
+        :access-token="mapboxToken"
+        :countries="['de']"
+        :standalone="true"
+        @result="locate"
+      />
+      <div
+        v-if="!isLoggedIn"
+        class="signin-buttons"
+      >
+        <QBtn
+          to="/login"
+          color="primary"
+        >
+          Anmelden
+        </QBtn>
 
-      <QBtn
-        to="/register"
-        outline
-        flat
-        class="register-button"
-        color="primary"
-      >
-        Registrieren
-      </QBtn>
+        <QBtn
+          to="/register"
+          outline
+          flat
+          class="register-button"
+          color="primary"
+        >
+          Registrieren
+        </QBtn>
+      </div>
     </div>
-  </div>
+  </QPage>
 </template>
 
 <script lang="ts">
@@ -46,13 +48,14 @@ import { userStore } from 'src/store/UserStore'
 import { GeocodeResult } from 'src/types/GeocodeResult'
 import { bbox, circle } from '@turf/turf'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
-import { QBtn } from 'quasar'
+import { QBtn, QPage } from 'quasar'
 
 export default defineComponent({
   name: 'Splash',
   components: {
     Geocoder,
-    QBtn
+    QBtn,
+    QPage
   },
   beforeRouteEnter(to, from, next) {
     if (userStore.getState().bbox !== null) {
@@ -112,7 +115,7 @@ export default defineComponent({
 }
 
 .splash-message {
-  margin: 4rem 0 0;
+  margin: 3rem 0 0;
   font-size: 1.1rem;
   font-weight: bold;
   text-align: center;
@@ -135,6 +138,7 @@ export default defineComponent({
 
 .logo-splash {
   width: 50%;
+  margin: 1rem 0;
 }
 
 .signin-buttons {

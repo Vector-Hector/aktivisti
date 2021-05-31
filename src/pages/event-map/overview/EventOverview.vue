@@ -15,6 +15,7 @@
             :options="campaignOptions"
             option-value="id"
             option-label="name"
+            use-chips
           />
         </div>
         <div class="select-wrapper">
@@ -27,12 +28,13 @@
             multiple
             v-model="filteredSubAssociations"
             use-input
+            use-chips
             clearable
             input-debounce="0"
-            :options="subAssociations"
+            :options="suggestedSubassociations"
+            @filter="filterSubAssociations"
             option-value="id"
             option-label="name"
-            placeholder="Alle Verbände"
           >
             <template v-slot:no-option>
               <q-item>
@@ -124,6 +126,7 @@ export default defineComponent({
       filteredSubAssociations: [] as SubAssociationDto[],
       SortOptionLabels,
       subAssociations: [] as SubAssociationDto[],
+      suggestedSubassociations: [] as SubAssociationDto[],
       bbox: userStore.getState().bbox,
       ionChevronDown,
       ionClose
@@ -132,7 +135,7 @@ export default defineComponent({
   computed: {
     activatedFilterCount(): number {
       let active = 0
-      if (this.filteredSubAssociations.length > 0) {
+      if (this.filteredSubAssociations?.length > 0) {
         active++
       }
       if (this.filteredCampaign) {
@@ -163,7 +166,7 @@ export default defineComponent({
     },
     filterParams(): { [key: string]: any } {
       return {
-        sub_association: this.filteredSubAssociations.length > 0 ? this.filteredSubAssociations.map(({id}) => id) : undefined,
+        sub_association: this.filteredSubAssociations?.length > 0 ? this.filteredSubAssociations.map(({id}) => id) : undefined,
         campaigns: this.filteredCampaign && this.filteredCampaign.id > 0 ? [this.filteredCampaign.id] : undefined,
         within: this.boundingBoxJson ? JSON.stringify(this.boundingBoxJson) : undefined,
         order_by: this.selectedSortOption,
@@ -197,6 +200,19 @@ export default defineComponent({
   },
   methods: {
     showCampaignLevel,
+    filterSubAssociations(value: string, update: any) {
+      if (!value) {
+        update(() => {
+          this.suggestedSubassociations = this.subAssociations
+        })
+        return
+      }
+
+      update(() => {
+        const lowercasedValue = value.toLowerCase()
+        this.suggestedSubassociations = this.subAssociations.filter(({name}) => name.toLowerCase().includes(lowercasedValue))
+      })
+    },
     async getSubAssociations() {
       this.subAssociations = (await this.$apiClient.subAssociations.list()).payload.data
     },
