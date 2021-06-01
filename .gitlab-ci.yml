@@ -24,7 +24,7 @@ stages:
   - cleanup
 
 lint:
-  image: node:12-alpine
+  image: node:16-alpine
   stage: test
   script:
     - npm ci
@@ -34,7 +34,7 @@ lint:
       - node_modules/
 
 bundle-staging:
-  image: node:12-alpine
+  image: node:16-alpine
   stage: bundle
   script:
     - npm ci

@@ -24,6 +24,8 @@ Documentation resources for the used tools:
 
 ### Install dependencies
 
+Make sure you are running **node version 16** in development
+
 ```
 npm install
 ```
