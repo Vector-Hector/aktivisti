@@ -23,9 +23,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import AutoComplete from 'primevue/autocomplete'
-import { geocodingService } from '@/utils/mapbox'
-import { GeocodeResult } from '@/types/GeocodeResult'
-import GeocodingSuggestion from '@/components/GeocodingSuggestion.vue'
+import { geocodingService } from 'src/utils/mapbox'
+import { GeocodeResult } from 'src/types/GeocodeResult'
+import GeocodingSuggestion from 'src/components/GeocodingSuggestion.vue'
 
 
 export default defineComponent({

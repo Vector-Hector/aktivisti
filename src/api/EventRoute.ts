@@ -1,11 +1,11 @@
-import { EventDto } from '@/api/model/EventDto'
-import { APIEnvelope } from '@/api/model/APIEnvelope'
-import { ApiRoute } from '@/api/ApiRoute'
-import { JSONResponse } from '@/api/JSONResponse'
-import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
-import { BulkInviteDto } from '@/api/model/BulkInviteDto'
-import { EventParticipationDto } from '@/api/model/EventParticipationDto'
-import { EventMetricReportDto } from "@/api/model/EventMetricReportDto";
+import { EventDto } from 'src/api/model/EventDto'
+import { APIEnvelope } from 'src/api/model/APIEnvelope'
+import { ApiRoute } from 'src/api/ApiRoute'
+import { JSONResponse } from 'src/api/JSONResponse'
+import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
+import { BulkInviteDto } from 'src/api/model/BulkInviteDto'
+import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
+import { EventMetricReportDto } from 'src/api/model/EventMetricReportDto';
 
 /**
  * A class extending {@link ApiRoute} to implement some extra non-standard operations (join / leave)

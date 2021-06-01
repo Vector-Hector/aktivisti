@@ -1,8 +1,8 @@
-import { APIEnvelope } from '@/api/model/APIEnvelope'
-import { ApiRoute } from '@/api/ApiRoute'
-import { JSONResponse } from '@/api/JSONResponse'
-import { EventMetricReportDto } from "@/api/model/EventMetricReportDto";
-import { EventAreaDto } from "@/api/model/EventAreaDto";
+import { APIEnvelope } from 'src/api/model/APIEnvelope'
+import { ApiRoute } from 'src/api/ApiRoute'
+import { JSONResponse } from 'src/api/JSONResponse'
+import { EventMetricReportDto } from 'src/api/model/EventMetricReportDto';
+import { EventAreaDto } from 'src/api/model/EventAreaDto';
 
 /**
  * A class extending {@link ApiRoute} to implement some extra non-standard operations (report)

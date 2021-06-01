@@ -6,26 +6,30 @@
       class="headline"
       @click="toggle"
     >
-      <IonIcon
-        name="funnel"
+      <QIcon
+        :name="ionFunnel"
         class="filter-icon"
       />
       <div
         class="headline-caption"
       >
-        <h3>Filter</h3>
-        <IonBadge
+        <h4
+          class="filter-title"
+        >
+          Filter
+        </h4>
+        <QBadge
           v-if="activatedFilterCount > 0"
         >
           {{ activatedFilterCount }} gesetzt
-        </IonBadge>
+        </QBadge>
       </div>
       <span
         class="chevron-icon"
         :class="{ rotated: !collapsed }"
       >
-        <IonIcon
-          name="chevron-down-outline"
+        <QIcon
+          :name="ionChevronDown"
         />
       </span>
     </div>
@@ -41,20 +45,15 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { addIcons } from 'ionicons'
-import { funnel, filterOutline } from 'ionicons/icons'
-import { IonBadge, IonIcon } from '@ionic/vue'
+import { ionChevronDown, ionFunnel } from '@quasar/extras/ionicons-v5'
+import { QBadge, QIcon } from 'quasar'
 
-addIcons({
-  funnel,
-  'filter-outline': filterOutline
-})
 
 export default defineComponent({
   name: 'CollapsibleFilters',
   components: {
-    IonIcon,
-    IonBadge
+    QIcon,
+    QBadge
   },
   props: {
     activatedFilterCount: {
@@ -65,7 +64,9 @@ export default defineComponent({
   emits: ['update:collapsed'],
   data() {
     return {
-      collapsed: true
+      collapsed: true,
+      ionFunnel,
+      ionChevronDown,
     }
   },
   computed: {
@@ -91,7 +92,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "~@/scss/_variables.scss";
+@import "src/css/_variables.scss";
 
 .collapsible-filters {
   background: $gray-100;
@@ -122,6 +123,11 @@ export default defineComponent({
   .filter-icon, .chevron-icon {
     font-size: 1.4rem;
     padding: 0.8rem 1rem .9rem 1rem;
+  }
+
+  .filter-title {
+    margin: 0 1rem 0 0;
+    font-size: 1.5rem;
   }
 
   .chevron-icon {

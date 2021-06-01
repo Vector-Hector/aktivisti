@@ -1,5 +1,5 @@
-import { appendAsQueryParams } from '@/utils/url'
-import { FACEBOOK_SHARE_URL, MAIL_SHARE_URL, TWITTER_SHARE_URL, WHATSAPP_SHARE_URL } from '@/constants'
+import { appendAsQueryParams } from 'src/utils/url'
+import { FACEBOOK_SHARE_URL, MAIL_SHARE_URL, TWITTER_SHARE_URL, WHATSAPP_SHARE_URL } from 'src/constants'
 
 
 export function createTwitterShareUrl(text: string, linkedUrl: string, tags: string[]): string {

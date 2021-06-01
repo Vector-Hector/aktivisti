@@ -1,7 +1,6 @@
 <template>
   <router-link
     v-slot="{ href, navigate }"
-    class="menu-item-link"
     custom
     :to="to"
   >
@@ -16,14 +15,14 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { uiStore } from '@/store/UiStore'
+import { uiStore } from 'src/store/UiStore'
 
 export default defineComponent({
   name: 'MenuLink',
   props: {
     to: {
-      type: Object as PropType<any>,
-      default: ''
+      type: [String, Object] as PropType<any>,
+      required: true
     }
   },
   methods: {
@@ -34,3 +33,9 @@ export default defineComponent({
   }
 })
 </script>
+<style lang="scss" scoped>
+.menu-item-link {
+  align-items: center;
+}
+
+</style>

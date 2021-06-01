@@ -1,44 +1,40 @@
 <template>
   <div class="counter-input">
-    <IonFabButton
+    <QBtn
+      fab-mini
+      :icon="ionRemove"
+      color="primary"
       class="counter-button"
       :disabled="modelValue <= 0"
       @click="$emit('update:modelValue', modelValue - 1)"
-    >
-      <IonIcon name="remove" />
-    </IonFabButton>
+    />
     <input
       class="counter-input-field"
       :value="modelValue"
       type="number"
       @change="updateValue($event.target.value)"
     >
-    <IonFabButton
+    <QBtn
+      fab-mini
+      :icon="ionAdd"
+      color="primary"
       class="counter-button"
       @click="$emit('update:modelValue', modelValue + 1)"
-    >
-      <IonIcon name="add" />
-    </IonFabButton>
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { uiStore } from '@/store/UiStore'
-import { IonFabButton, IonIcon } from '@ionic/vue'
-import { addIcons } from 'ionicons'
-import { remove, add } from 'ionicons/icons'
+import { uiStore } from 'src/store/UiStore'
+import { ionAdd, ionRemove } from '@quasar/extras/ionicons-v5'
+import { QBtn } from 'quasar'
 
-addIcons({
-  remove,
-  add
-})
 
 export default defineComponent({
   name: 'CounterInput',
   components: {
-    IonIcon,
-    IonFabButton
+    QBtn,
   },
   props: {
     modelValue: {
@@ -46,13 +42,16 @@ export default defineComponent({
       default: 0
     },
     showSidebar: {
-      type: Boolean as PropType<Boolean>,
+      type: Boolean as PropType<boolean>,
       default: true
     }
   },
   emits: ['update:modelValue'],
   data() {
-    return {}
+    return {
+      ionRemove,
+      ionAdd
+    }
   },
   methods: {
     openSidebar() {
@@ -94,13 +93,13 @@ export default defineComponent({
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-    /* display: none; <- Crashes Chrome on hover */
-    -webkit-appearance: none;
-    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
 input[type=number] {
-    -moz-appearance:textfield; /* Firefox */
+  -moz-appearance: textfield; /* Firefox */
 }
 
 </style>

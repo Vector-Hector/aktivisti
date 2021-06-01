@@ -1,4 +1,4 @@
-import convertToFormData from '@/utils/convertToFormData'
+import convertToFormData from 'src/utils/convertToFormData'
 import axios from 'axios'
 import { JSONResponse } from './JSONResponse'
 import { TokenDto } from './model/TokenDto'
@@ -14,7 +14,7 @@ export interface OAuthTokenRequestParams {
 }
 
 export class OAuth2Client {
-  baseURL = `${process.env.VUE_APP_AUTH_URL}/token/`
+  baseURL = `${process.env.APP_AUTH_URL}/token/`
 
   axiosInstance = axios.create({
     baseURL: this.baseURL,

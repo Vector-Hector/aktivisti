@@ -1,7 +1,7 @@
-import { Store } from '@/store/Store'
-import { CAMPAIGN_ADMIN, UserDto } from '@/api/model/UserDto'
+import { Store } from 'src/store/Store'
+import { CAMPAIGN_ADMIN, UserDto } from 'src/api/model/UserDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
-import { SubAssociationDto } from '@/api/model/SubAssociationDto'
+import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 
 interface UserState {
   user: UserDto | null
@@ -48,7 +48,7 @@ class UserStore extends Store<UserState> {
     if (campaign === null) {
       localStorage.removeItem(KEY_CAMPAIGN)
     } else {
-      localStorage.setItem(KEY_CAMPAIGN, campaign!.toString())
+      localStorage.setItem(KEY_CAMPAIGN, campaign.toString())
     }
   }
 

@@ -1,5 +1,5 @@
 import { Geometry } from 'geojson'
-import { AreaDetailsDto } from '@/api/model/AreaDetailsDto'
+import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
 
 
 export interface OperationAreaDto {

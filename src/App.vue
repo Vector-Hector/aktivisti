@@ -1,102 +1,73 @@
 <template>
-  <NavigationSidebar />
   <Toast position="top-right" />
-  <IonApp>
-    <div id="root">
-      <IonHeader
-        class="header-on-top"
-      >
-        <IonToolbar>
-          <IonButtons slot="start">
-            <transition
-              :name="titleTransition"
-            >
-              <IonButton
-                v-if="currentDepth > 2"
-                @click="backButton"
-              >
-                <IonIcon
-                  name="arrow-back"
-                />
-              </IonButton>
-            </transition>
-          </IonButtons>
-          <div class="title-wrapper">
-            <span
-              class="shadow-title"
-              aria-hidden="true"
-            >
-              <AppTitle
-                :title="$route.meta.title?.()"
-                :subtitle="$route.meta.subtitle?.()"
-              />
-            </span>
-            <transition :name="titleTransition">
-              <AppTitle
-                :key="$route.path"
-                class="title"
-                :title="$route.meta.title?.()"
-                :subtitle="$route.meta.subtitle?.()"
-              />
-            </transition>
-          </div>
-          <IonButtons
-            slot="end"
-          >
-            <IonButton
-              @click="openSidebar"
-            >
-              <IonIcon
-                name="menu-outline"
-              />
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
-      <div id="main">
-        <router-view v-slot="{ Component }">
-          <keep-alive>
-            <transition :name="pageTransition">
-              <component :is="Component" />
-            </transition>
-          </keep-alive>
-        </router-view>
-      </div>
-    </div>
-  </IonApp>
+  <QLayout view="hHr LpR ffr">
+    <QHeader
+      class="bg-primary text-white"
+      elevated
+    >
+      <QToolbar>
+        <QBtn
+          v-if="currentDepth > 2"
+          @click="backButton"
+          :icon="ionArrowBack"
+          flat
+          round
+          :ripple-effect="false"
+        />
+        <QToolbarTitle class="title-wrapper col">
+          <span class="title">
+            {{ $route.meta.title?.() }}
+          </span>
+          <span class="subtitle">
+            {{ $route.meta.subtitle?.() }}
+          </span>
+        </QToolbarTitle>
+        <QToolbarTitle class="subtitle">
+        </QToolbarTitle>
+        <QBtn
+          :icon="ionMenu"
+          @click="openSidebar"
+          dense
+          flat
+          round
+        />
+      </QToolbar>
+
+    </QHeader>
+    <NavigationSidebar />
+    <QPageContainer
+      class="d-flex"
+    >
+      <router-view v-slot="{ Component }">
+        <component :is="Component" />
+      </router-view>
+    </QPageContainer>
+  </QLayout>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import NavigationSidebar from '@/components/NavigationSidebar.vue'
-import { uiStore } from '@/store/UiStore'
-import { IonApp, IonBackButton, IonButton, IonButtons, IonHeader, IonIcon, IonTitle, IonToolbar } from '@ionic/vue'
+import NavigationSidebar from 'src/components/NavigationSidebar.vue'
+import { uiStore } from 'src/store/UiStore'
 import Toast from 'primevue/toast'
-import { addIcons } from 'ionicons'
-import { menuOutline, arrowBack } from 'ionicons/icons'
-import AppTitle from '@/components/AppTitle.vue'
-import { ErrorBus } from '@/utils/errorBus'
+import AppTitle from 'src/components/AppTitle.vue'
+import { ErrorBus } from 'src/utils/errorBus'
+import { QToolbar, QBtn, QPageContainer, QLayout, QHeader, QToolbarTitle } from 'quasar'
+import { ionArrowBack, ionMenu } from '@quasar/extras/ionicons-v5'
 
-
-addIcons({
-  'menu-outline': menuOutline,
-  'arrow-back': arrowBack
-})
 
 export default defineComponent({
   name: 'App',
   components: {
     AppTitle,
     NavigationSidebar,
-    IonApp,
     Toast,
-    IonToolbar,
-    IonButtons,
-    IonButton,
-    IonTitle,
-    IonIcon,
-    IonBackButton,
-    IonHeader
+    QToolbar,
+    QBtn,
+    QPageContainer,
+    QLayout,
+    QToolbarTitle,
+    QHeader
   },
   data() {
     return {
@@ -109,7 +80,9 @@ export default defineComponent({
         icon: 'pi pi-fw pi-calendar',
         to: '/events'
       }],
-      transitionDirection: null as string | null
+      transitionDirection: null as string | null,
+      ionMenu,
+      ionArrowBack
     }
   },
   computed: {
@@ -147,7 +120,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    ErrorBus.on('error', (message: String) => {
+    ErrorBus.on('error', (message: string) => {
       this.$toast.add({
         severity: 'error',
         summary: message
@@ -166,53 +139,25 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import '~@/scss/_globals.scss';
-@import "~@/scss/_page-transitions.scss";
+@import 'src/css/_globals.scss';
 
-#root {
+.title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  display: flex;
+}
+
+.subtitle {
+  color: $gray-100;
+  font-size: 0.7rem;
+  font-weight: 400;
+  display: flex;
+}
+
+.title-wrapper {
   display: flex;
   flex-direction: column;
 }
 
-.shadow-title {
-  visibility: hidden;
-}
 
-.nav {
-  padding-bottom: 100px;
-}
-
-.router-link {
-  padding-right: 10px;
-}
-
-
-.dielinke-logo {
-  max-width: 240px;
-  cursor: pointer;
-}
-
-.p-menubar {
-  background: white;
-  border: 1px solid $red;
-}
-
-#main {
-  flex: 1;
-  position: relative;
-  display: flex;
-}
-
-.header-on-top {
-  z-index: 102;
-}
-
-.title-wrapper {
-  position: relative;
-
-  .title {
-    top: 0;
-    position: absolute;
-  }
-}
 </style>

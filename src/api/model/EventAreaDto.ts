@@ -1,4 +1,4 @@
-import { AreaDetailsDto } from '@/api/model/AreaDetailsDto'
+import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
 import { Geometry } from 'geojson'
 
 

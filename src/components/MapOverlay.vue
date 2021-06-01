@@ -22,8 +22,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import '~@/scss/_globals.scss';
-@import "~@/scss/_map.scss";
+@import 'src/css/_globals.scss';
+@import "src/css/_map.scss";
 
 .top-right {
   top: 0;

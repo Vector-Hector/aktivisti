@@ -1,5 +1,5 @@
-import { Store } from '@/store/Store'
-import { TokenDto } from '@/api/model/TokenDto'
+import { Store } from 'src/store/Store'
+import { TokenDto } from 'src/api/model/TokenDto'
 
 interface TokenStoreState {
   token: TokenDto | null

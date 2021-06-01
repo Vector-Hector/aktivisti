@@ -18,13 +18,13 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { uiStore } from '@/store/UiStore'
+import { uiStore } from 'src/store/UiStore'
 
 export default defineComponent({
   name: 'Topbar',
   props: {
     showSidebar: {
-      type: Boolean as PropType<Boolean>,
+      type: Boolean as PropType<boolean>,
       default: true
     }
   },
@@ -40,7 +40,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import 'src/scss/_globals.scss';
+@import 'src/css/_globals.scss';
 
 .topbar {
   display: flex;

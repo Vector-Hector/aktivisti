@@ -1,28 +1,28 @@
-import { CampaignDto } from '@/api/model/CampaignDto'
-import { UserDto } from '@/api/model/UserDto'
-import { CampaignTypeDto } from '@/api/model/CampaignTypeDto'
-import { EventRoute } from '@/api/EventRoute'
-import { ApiRoute } from '@/api/ApiRoute'
+import { CampaignDto } from 'src/api/model/CampaignDto'
+import { UserDto } from 'src/api/model/UserDto'
+import { CampaignTypeDto } from 'src/api/model/CampaignTypeDto'
+import { EventRoute } from 'src/api/EventRoute'
+import { ApiRoute } from 'src/api/ApiRoute'
 import axios from 'axios'
-import { EventMetricRecordDto } from '@/api/model/EventMetricRecordDto'
-import { EventMetricRecordSubmissionDto } from '@/api/model/EventMetricRecordSubmissionDto'
-import { EventMetricDto } from '@/api/model/EventMetricDto'
-import { TrackingSessionDto } from '@/api/model/TrackingSessionDto'
-import { CompletionNoteDto } from '@/api/model/CompletionNoteDto'
-import { LeadDto } from '@/api/model/LeadDto'
-import { EventDto } from '@/api/model/EventDto'
-import { EventAreaRoute } from "@/api/EventAreaRoute";
-import { EventParticipationRoute } from '@/api/EventParticipationRoute'
-import { UserRegistrationDto } from '@/api/model/UserRegistrationDto'
-import { ClusterDto } from '@/api/model/ClusterDto'
-import { SubAssociationDto } from '@/api/model/SubAssociationDto'
+import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
+import { EventMetricRecordSubmissionDto } from 'src/api/model/EventMetricRecordSubmissionDto'
+import { EventMetricDto } from 'src/api/model/EventMetricDto'
+import { TrackingSessionDto } from 'src/api/model/TrackingSessionDto'
+import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
+import { LeadDto } from 'src/api/model/LeadDto'
+import { EventDto } from 'src/api/model/EventDto'
+import { EventAreaRoute } from 'src/api/EventAreaRoute';
+import { EventParticipationRoute } from 'src/api/EventParticipationRoute'
+import { UserRegistrationDto } from 'src/api/model/UserRegistrationDto'
+import { ClusterDto } from 'src/api/model/ClusterDto'
+import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
  * All backend communication should be done using this class
  */
 export class ApiClient {
-  baseURL = `${process.env.VUE_APP_BASE_URL}`
+  baseURL = process.env.APP_BASE_URL!
 
   axiosInstance = axios.create({
     baseURL: this.baseURL,

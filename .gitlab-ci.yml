@@ -38,7 +38,7 @@ bundle-staging:
   stage: bundle
   script:
     - npm ci
-    - npm run build -- --mode staging # for now build against staging
+    - npm run build
   cache:
     paths:
       - node_modules/

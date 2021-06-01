@@ -1,15 +1,6 @@
-import { ApiClient } from './api'
-import { OAuth2Client } from './api/OAuth2Client'
-
+// Mocks all files ending in `.vue` showing them as plain Vue instances
 declare module '*.vue' {
-  import type { DefineComponent } from 'vue'
-  const component: DefineComponent<{}, {}, any>
+  import { ComponentOptions } from 'vue'
+  const component: ComponentOptions
   export default component
-}
-
-declare module '@vue/runtime-core' {
-  interface ComponentCustomProperties {
-    $apiClient: ApiClient
-    $oauth2Client: OAuth2Client
-  }
 }
