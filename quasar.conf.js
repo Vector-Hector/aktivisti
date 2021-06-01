@@ -19,7 +19,7 @@ const filterAppEnvVariables = (envObject) => {
 
 // Read .env file and let process env ovewrite it if set
 const env = {
-  ...filterAppEnvVariables(require('dotenv').config().parsed),
+  ...filterAppEnvVariables(require('dotenv').config().parsed ?? {}),
   ...filterAppEnvVariables(process.env)
 }
 
