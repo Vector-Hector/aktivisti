@@ -34,7 +34,7 @@
         <Button
           icon="pi pi-times"
           class="p-button-text p-button-rounded close-sidebar-button"
-          @click="toggleSidebar(false)"
+          @click="sidebarExpanded = false"
         />
         <div class="menu-item">
           <MenuLink
