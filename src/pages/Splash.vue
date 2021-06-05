@@ -1,5 +1,5 @@
 <template>
-  <QPage>
+  <QPage class="splash-page">
     <div class="splash">
       <img
         src="../assets/logo_dielinke.png"
@@ -103,6 +103,10 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import "src/css/_globals.scss";
+
+.splash-page {
+  flex: 1;
+}
 
 .splash {
   display: flex;
