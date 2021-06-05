@@ -52,9 +52,13 @@ class UserStore extends Store<UserState> {
     }
   }
 
-  public setHomeAssociation(value: SubAssociationDto) {
+  public setHomeAssociation(value: SubAssociationDto | null) {
     this.state.homeAssociation = value
-    localStorage.setItem(KEY_HOMEASSOCIATION, JSON.stringify(this.state.homeAssociation))
+    if (value !== null) {
+      localStorage.setItem(KEY_HOMEASSOCIATION, JSON.stringify(this.state.homeAssociation))
+    } else {
+      localStorage.removeItem(KEY_HOMEASSOCIATION)
+    }
   }
 
   public clearUser() {

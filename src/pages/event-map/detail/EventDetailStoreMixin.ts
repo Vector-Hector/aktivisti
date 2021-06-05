@@ -2,7 +2,7 @@ import { defineComponent, PropType } from 'vue'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
-import { PermissionsDto } from 'src/api/model/APIEnvelope'
+import { PermissionHintsDto } from 'src/api/model/APIEnvelope'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { eventDetailStore } from 'src/store/EventDetailStore'
 
@@ -40,10 +40,10 @@ export default defineComponent({
       }
     },
     eventPermissions: {
-      get(): PermissionsDto | null {
+      get(): PermissionHintsDto | null {
         return eventDetailStore.getState().eventPermissions
       },
-      set(value: PermissionsDto) {
+      set(value: PermissionHintsDto) {
         eventDetailStore.setEventPermissions(value)
       }
     },
@@ -56,10 +56,10 @@ export default defineComponent({
       }
     },
     eventAreaPermissions: {
-      get(): PermissionsDto | null {
+      get(): PermissionHintsDto | null {
         return eventDetailStore.getState().eventAreaPermissions
       },
-      set(value: PermissionsDto) {
+      set(value: PermissionHintsDto) {
         eventDetailStore.setEventAreaPermissions(value)
       }
     },

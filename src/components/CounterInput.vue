@@ -54,8 +54,8 @@ export default defineComponent({
     }
   },
   methods: {
-    openSidebar() {
-      uiStore.openSidebar()
+    toggleSidebar() {
+      uiStore.toggleSidebar()
     },
     updateValue(value: any) {
       const parsedValue = parseInt(value)

@@ -10,7 +10,7 @@ export type HttpOperationPermissions = {
   [httpOperation in HttpOperation]: boolean
 }
 
-export interface PermissionsDto {
+export interface PermissionHintsDto {
   self: HttpOperationPermissions
   [operation: string]: HttpOperationPermissions
 }
@@ -18,5 +18,5 @@ export interface APIEnvelope<T, E = any> {
   data: T
   embedded: E
   pagination?: Pagination,
-  permissions: PermissionsDto
+  permissions: PermissionHintsDto
 }
