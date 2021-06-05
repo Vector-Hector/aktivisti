@@ -53,7 +53,7 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> extends BaseA
 
   async get(id: string, embed: string[] = [], query: { [key: string]: any } = {}): Promise<JSONResponse<E>> {
     const response = await this.request({
-      path: `${this.path}${id}`,
+      path: `${this.path}${id}/`,
       method: 'GET',
       query,
       embed
@@ -62,31 +62,34 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> extends BaseA
     return new JSONResponse<E>(response, data)
   }
 
-  async create(body: Partial<T>): Promise<JSONResponse<E>> {
+  async create(body: Partial<T>, embed: string[] = []): Promise<JSONResponse<E>> {
     const response = await this.request({
       path: this.path,
       method: 'POST',
-      data: body
+      data: body,
+      embed
     })
     const data = response.data
     return new JSONResponse<E>(response, data)
   }
 
-  async update(id: string, body: T): Promise<JSONResponse<E>> {
+  async update(id: string, body: T, embed: string[] = []): Promise<JSONResponse<E>> {
     const response = await this.request({
       path: `${this.path}${id}/`,
       method: 'PUT',
-      data: body
+      data: body,
+      embed,
     })
     const data = response.data
     return new JSONResponse<E>(response, data)
   }
 
-  async patch(id: string, body: Partial<T>): Promise<JSONResponse<E>> {
+  async patch(id: string, body: Partial<T>, embed: string[] = []): Promise<JSONResponse<E>> {
     const response = await this.request({
       path: `${this.path}${id}/`,
       method: 'PATCH',
-      data: body
+      data: body,
+      embed
     })
     const data = response.data
     return new JSONResponse<E>(response, data)
@@ -94,7 +97,7 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> extends BaseA
 
   async delete(id: string): Promise<void> {
     await this.request({
-      path: `${this.path}${id}`,
+      path: `${this.path}${id}/`,
       method: 'DELETE'
     })
   }

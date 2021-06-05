@@ -6,4 +6,11 @@ export interface UserDto {
   email: string
   roles: number[]
   sub_association?: number
+  is_superuser: boolean
+  is_staff: boolean
+  phone_number: string
+  plz: string
+  first_name: string
+  last_name: string
+  email_notification_settings: number | null
 }

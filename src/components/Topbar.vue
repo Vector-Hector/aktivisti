@@ -32,8 +32,8 @@ export default defineComponent({
     return {}
   },
   methods: {
-    openSidebar() {
-      uiStore.openSidebar()
+    toggleSidebar() {
+      uiStore.toggleSidebar()
     }
   }
 })

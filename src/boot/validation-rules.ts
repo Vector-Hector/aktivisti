@@ -24,7 +24,7 @@ const validationRules = {
     } else {
       return 'Dies ist keine gültige E-Mailadresse'
     }
-  }
+  },
 }
 
 export default boot(({app}) => {

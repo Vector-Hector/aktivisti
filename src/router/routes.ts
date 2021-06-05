@@ -27,6 +27,7 @@ import EventAreaStreetMap from 'pages/event-map/detail/area/street/EventAreaStre
 import EventAreaMetrics from 'pages/event-map/detail/area/metrics/EventAreaMetrics.vue'
 import EventAreaMetricsMap from 'pages/event-map/detail/area/metrics/EventAreaMetricsMap'
 import CreateLead from 'pages/event-map/detail/area/lead/CreateLead.vue'
+import Profile from 'pages/Profile.vue'
 
 
 const routes = [
@@ -34,6 +35,14 @@ const routes = [
     path: '/',
     component: Splash,
     name: 'splash'
+  },
+  {
+    path: '/profile',
+    component: Profile,
+    name: 'profile',
+    meta: {
+      title: () => 'Mein Profil'
+    }
   },
   {
     path: '/my-events',

@@ -3,16 +3,16 @@ import { EventDto } from 'src/api/model/EventDto'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { CampaignDto } from 'src/api/model/CampaignDto'
-import { PermissionsDto } from 'src/api/model/APIEnvelope'
+import { PermissionHintsDto } from 'src/api/model/APIEnvelope'
 
 interface EventDetailStoreState {
   event: EventDto | null
   eventAreas: EventAreaDto[]
   eventArea: EventAreaDto | null
-  eventAreaPermissions: PermissionsDto | null
+  eventAreaPermissions: PermissionHintsDto | null
   participations: EventParticipationDto[]
   campaigns: CampaignDto[]
-  eventPermissions: PermissionsDto | null
+  eventPermissions: PermissionHintsDto | null
 }
 
 class EventDetailStore extends Store<EventDetailStoreState> {
@@ -37,7 +37,7 @@ class EventDetailStore extends Store<EventDetailStoreState> {
     this.state.eventArea = eventArea
   }
 
-  public setEventAreaPermissions(permissions: PermissionsDto | null) {
+  public setEventAreaPermissions(permissions: PermissionHintsDto | null) {
     this.state.eventAreaPermissions = permissions
   }
 
@@ -49,7 +49,7 @@ class EventDetailStore extends Store<EventDetailStoreState> {
     this.state.eventAreas = eventAreas
   }
 
-  public setEventPermissions(permissions: PermissionsDto | null) {
+  public setEventPermissions(permissions: PermissionHintsDto | null) {
     this.state.eventPermissions = permissions
   }
 

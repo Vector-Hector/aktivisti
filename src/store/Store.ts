@@ -5,11 +5,8 @@ import {reactive, readonly} from 'vue';
 export abstract class Store<T extends Object> {
     protected state: T;
 
-    constructor(initialData: Partial<T> = {}) {
-      const data = {
-        ...this.data(),
-        ...initialData
-      };
+    constructor() {
+      const data = this.data();
       this.setup(data);
       this.state = reactive(data) as T;
     }

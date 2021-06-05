@@ -84,12 +84,14 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { UserDto } from 'src/api/model/UserDto'
 import { userStore } from 'src/store/UserStore'
 import { ionClose, ionMail } from '@quasar/extras/ionicons-v5'
 import { QIcon, QItem, QItemLabel, QItemSection, QList, QSelect } from 'quasar'
 
-interface UserSuggestionItem extends UserDto {
+interface UserSuggestionItem {
+  id: number
+  username: string
+  email: string
   isInvitePlaceholder?: boolean
 }
 
@@ -147,7 +149,6 @@ export default defineComponent({
     getInvitePlaceholder(emailString: string): UserSuggestionItem {
       return {
         id: -1,
-        roles: [],
         username: 'Nutzer einladen:',
         email: emailString,
         isInvitePlaceholder: true

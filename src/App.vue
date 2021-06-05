@@ -26,7 +26,7 @@
         </QToolbarTitle>
         <QBtn
           :icon="ionMenu"
-          @click="openSidebar"
+          @click="toggleSidebar"
           dense
           flat
           round
@@ -128,8 +128,8 @@ export default defineComponent({
     })
   },
   methods: {
-    openSidebar() {
-      uiStore.openSidebar()
+    toggleSidebar() {
+      uiStore.toggleSidebar(!uiStore.getState().sidebarExpanded)
     },
     backButton() {
       this.$router.go(-1)
