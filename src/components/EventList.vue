@@ -19,6 +19,9 @@
           <QItemLabel>
             {{ campaignsByIds(item.campaigns).map(({name}) => name).join(',') }}
           </QItemLabel>
+          <QItemLabel>
+            {{ $utils.dateFormat(item.start_date) }}
+          </QItemLabel>
         </QItemSection>
 
         <QItemSection side>
