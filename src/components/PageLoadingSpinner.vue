@@ -10,7 +10,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { QPage, QSpinnerPuff } from 'quasar'
+import { QSpinnerPuff } from 'quasar'
 
 export default defineComponent({
   name: 'PageLoadingSpinner',
