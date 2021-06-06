@@ -50,7 +50,8 @@ module.exports = configure(function (ctx) {
       'hydrate',
       'primevue',
       'validation-rules',
-      'mapbox'
+      'mapbox',
+      'utils'
     ],
 
     // https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
