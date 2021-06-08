@@ -38,7 +38,7 @@ As a template for the required environment variables you can use `.env.dist`.
 $ cp -n .env.dist .env
 ```
 
-You can also define and overwrite variables directly as env var like `APP_VARIABLE=foo npm run serve`
+You can also define and overwrite variables directly as env var like `APP_VARIABLE=foo npm run dev`
 
 ⚠️ We are only parsing variables prefixed with `APP_`
 ⚠️ Quasar will replace all references to process.env with the actual substitute, so all variables that are referenced in the code **need** to be
@@ -48,7 +48,7 @@ use a safe access to `process` with a proper default value in constants.
 ### Serving the application during development (with hot-reload)
 
 ```
-npm run serve
+npm run dev
 ```
 
 ### Compile for production
