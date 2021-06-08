@@ -3,15 +3,27 @@ import { CAMPAIGN_ADMIN, UserDto } from 'src/api/model/UserDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 
+
+export enum SortOption {
+  START_DATE = 'start_date',
+  NAME = 'name'
+}
+
+export interface EventFilterPreferences {
+  subAssociations: number[],
+  campaign: number | undefined,
+  sorting: SortOption
+}
+
 interface UserState {
   user: UserDto | null
   homeAssociation: SubAssociationDto | null
   bbox: BBox2d | null
-  campaign: number | null
+  filterPreferences: EventFilterPreferences
 }
 
 const KEY_BBOX = 'KEY_BBOX'
-const KEY_CAMPAIGN = 'KEY_CAMPAIGN'
+const KEY_FILTERPREFERENCES = 'KEY_FILTERPREFERENCES'
 const KEY_HOMEASSOCIATION = 'KEY_HOMEASSOCIATION'
 
 class UserStore extends Store<UserState> {
@@ -19,18 +31,22 @@ class UserStore extends Store<UserState> {
     const bboxString = localStorage.getItem(KEY_BBOX)
     const bbox = bboxString ? JSON.parse(bboxString) : null
 
-    const campaignString = localStorage.getItem(KEY_CAMPAIGN)
-    const campaign = campaignString ? parseInt(campaignString) : null
+    const filterPreferencesString = localStorage.getItem(KEY_FILTERPREFERENCES)
+    const filterPreferences = filterPreferencesString ? JSON.parse(filterPreferencesString) : null
 
 
-    const homeAssociationString = localStorage.getItem(KEY_CAMPAIGN)
+    const homeAssociationString = localStorage.getItem(KEY_HOMEASSOCIATION)
     const homeAssociation = homeAssociationString ? JSON.parse(homeAssociationString) : null
 
     return {
       user: null,
       bbox,
       homeAssociation,
-      campaign
+      filterPreferences: filterPreferences ?? {
+        subAssociations: [],
+        campaign: undefined,
+        sorting: SortOption.START_DATE
+      }
     }
   }
 
@@ -43,13 +59,9 @@ class UserStore extends Store<UserState> {
     }
   }
 
-  public setCampaign(campaign: number | null) {
-    this.state.campaign = campaign
-    if (campaign === null) {
-      localStorage.removeItem(KEY_CAMPAIGN)
-    } else {
-      localStorage.setItem(KEY_CAMPAIGN, campaign.toString())
-    }
+  public setFilterPreferences(filterPreferences: EventFilterPreferences) {
+    this.state.filterPreferences = filterPreferences
+    localStorage.setItem(KEY_FILTERPREFERENCES, JSON.stringify(filterPreferences))
   }
 
   public setHomeAssociation(value: SubAssociationDto | null) {
