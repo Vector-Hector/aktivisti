@@ -13,9 +13,10 @@
             label="Kampagnen"
             v-model="filteredCampaign"
             :options="campaignOptions"
+            emit-value
+            map-options
             option-value="id"
             option-label="name"
-            use-chips
           />
         </div>
         <div class="select-wrapper">
@@ -29,6 +30,8 @@
             v-model="filteredSubAssociations"
             use-input
             use-chips
+            emit-value
+            map-options
             clearable
             input-debounce="0"
             :options="suggestedSubassociations"
@@ -55,7 +58,6 @@
             input-debounce="0"
             label="Sortierung"
             :options="sortOptions"
-            :option-value="(item) => item"
             :option-label="(item) => SortOptionLabels[item]"
             placeholder="Sortierung auswählen"
           />
@@ -75,7 +77,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { CampaignDto } from 'src/api/model/CampaignDto'
-import { userStore } from 'src/store/UserStore'
+import { SortOption, userStore } from 'src/store/UserStore'
 import { Feature } from 'geojson'
 import { isEqual } from 'lodash-es'
 import { showCampaignLevel } from 'src/utils/showCampaignLevel'
@@ -88,11 +90,6 @@ import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import EventsOverviewMixin from 'pages/event-map/overview/EventsOverviewMixin'
 import { EVENT_MAP_MAX_EVENTS } from 'src/constants'
 
-
-enum SortOption {
-  START_DATE = 'start_date',
-  NAME = 'name'
-}
 
 const SortOptionLabels = {
   [SortOption.START_DATE]: 'Datum (Beginn)',
@@ -121,9 +118,7 @@ export default defineComponent({
       eventsPagination: null as Pagination | null,
       campaigns: [] as CampaignDto[],
       boundingBox: null as Feature | null,
-      selectedSortOption: SortOption.START_DATE as SortOption,
       sortOptions: Object.values(SortOption),
-      filteredSubAssociations: [] as SubAssociationDto[],
       SortOptionLabels,
       subAssociations: [] as SubAssociationDto[],
       suggestedSubassociations: [] as SubAssociationDto[],
@@ -133,6 +128,39 @@ export default defineComponent({
     }
   },
   computed: {
+    selectedSortOption: {
+      get(): SortOption {
+        return userStore.getState().filterPreferences.sorting
+      },
+      set(value: SortOption) {
+        userStore.setFilterPreferences({
+          ...userStore.getState().filterPreferences,
+          sorting: value
+        })
+      }
+    },
+    filteredSubAssociations: {
+      get(): number[] {
+        return userStore.getState().filterPreferences.subAssociations
+      },
+      set(value: number[]) {
+        userStore.setFilterPreferences({
+          ...userStore.getState().filterPreferences,
+          subAssociations: value
+        })
+      }
+    },
+    filteredCampaign: {
+      get(): number | undefined {
+        return userStore.getState().filterPreferences.campaign
+      },
+      set(value: number) {
+        userStore.setFilterPreferences({
+          ...userStore.getState().filterPreferences,
+          campaign: value
+        })
+      }
+    },
     activatedFilterCount(): number {
       let active = 0
       if (this.filteredSubAssociations?.length > 0) {
@@ -152,22 +180,10 @@ export default defineComponent({
         ...this.campaigns
       ]
     },
-    filteredCampaign: {
-      get(): CampaignDto | undefined {
-        return this.campaigns.find(({id}) => userStore.getState().campaign === id)
-      },
-      set(value: Partial<CampaignDto> | undefined) {
-        if (value?.id && value.id > 0) {
-          userStore.setCampaign(value.id)
-        } else {
-          userStore.setCampaign(null)
-        }
-      }
-    },
     filterParams(): { [key: string]: any } {
       return {
-        sub_association: this.filteredSubAssociations?.length > 0 ? this.filteredSubAssociations.map(({id}) => id) : undefined,
-        campaigns: this.filteredCampaign && this.filteredCampaign.id > 0 ? [this.filteredCampaign.id] : undefined,
+        sub_association: this.filteredSubAssociations?.length > 0 ? this.filteredSubAssociations : undefined,
+        campaigns: this.filteredCampaign ? [this.filteredCampaign] : undefined,
         within: this.boundingBoxJson ? JSON.stringify(this.boundingBoxJson) : undefined,
         order_by: this.selectedSortOption,
         limit: EVENT_MAP_MAX_EVENTS
@@ -187,16 +203,7 @@ export default defineComponent({
   async created() {
     await this.getCampaigns()
     await this.getSubAssociations()
-    const userSubAssociationId = userStore.getState().user?.sub_association
-    const userSubAssociation = this.subAssociations.find(({id}) => id === userSubAssociationId)
-    if (
-      userSubAssociation !== undefined
-    ) {
-      this.filteredSubAssociations = [
-        ...this.filteredSubAssociations,
-        userSubAssociation
-      ]
-    }
+    this.suggestedSubassociations = this.subAssociations
   },
   methods: {
     showCampaignLevel,
@@ -207,7 +214,6 @@ export default defineComponent({
         })
         return
       }
-
       update(() => {
         const lowercasedValue = value.toLowerCase()
         this.suggestedSubassociations = this.subAssociations.filter(({name}) => name.toLowerCase().includes(lowercasedValue))
