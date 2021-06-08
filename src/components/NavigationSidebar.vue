@@ -14,7 +14,7 @@
             <i class="pi pi-user avatar-placeholder" />
           </div>
           <div class="user-widget-details">
-            <span class="name">{{ userFullname }}</span>
+            <span v-if="userFullname.length>0" class="name">{{ userFullname }}</span>
             <span class="username">@{{ userName }}</span>
           </div>
         </div>
@@ -148,7 +148,9 @@ export default defineComponent({
       return userStore.getState().user?.username
     },
     userFullname() {
-      return `${userStore.getState().user?.first_name} ${userStore.getState().user?.last_name}`
+      const first_name = userStore.getState().user?.first_name
+      const last_name = userStore.getState().user?.last_name
+      return [first_name, last_name].filter(Boolean).join(' ')
     },
     sidebarExpanded: {
       get(): boolean {
