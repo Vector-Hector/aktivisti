@@ -1,5 +1,5 @@
 <template>
-  <QPage class="edit-event">
+  <QPage class="edit-event q-pa-sm">
     <Steps
       :model="steps"
       :readonly="false"
@@ -29,7 +29,7 @@ import { apiClient } from 'src/api/ApiClient'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { uiStore } from 'src/store/UiStore'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
-import { QPage } from 'quasar'
+import { QPage, QPopupProxy } from 'quasar'
 
 /**
  * The parent component implementing the individual steps for creating an event
@@ -38,7 +38,8 @@ export default defineComponent({
   name: 'EditEvent',
   components: {
     Steps,
-    QPage
+    QPage,
+    QPopupProxy
   },
   beforeRouteEnter: async (to, from, next) => {
     const campaignRequest = await apiClient.campaigns.list()
