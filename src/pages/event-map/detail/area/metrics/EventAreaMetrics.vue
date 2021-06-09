@@ -36,7 +36,7 @@ import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { MetricValueMap, trackingSessionStore } from 'src/store/TrackingSessionStore'
 import MetricsRow from 'src/components/MetricsRow.vue'
-import { uiStore } from 'src/store/UiStore'
+import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import EventAreaMetricsMixin from 'pages/event-map/detail/area/metrics/EventAreaMetricsMixin'
 import { QBtn } from 'quasar'
 
@@ -47,9 +47,21 @@ export default defineComponent({
     MetricsRow,
     QBtn
   },
+  beforeRouteEnter(from, to, next) {
+    const previousBottomSheetState = uiStore.getState().bottomSheetState
+    next(vm => {
+      // @ts-ignore
+      vm.previousBottomSheetState = previousBottomSheetState
+      uiStore.setBottomSheetStateAtLeast(BottomSheetState.EXPANDED)
+    })
+  },
+  beforeRouteLeave() {
+    uiStore.setBottomSheetState(this.previousBottomSheetState)
+  },
   mixins: [EventAreaMetricsMixin],
   data() {
     return {
+      previousBottomSheetState: BottomSheetState.HALF,
       metricRecords: [] as EventMetricRecordDto[],
       metrics: [] as EventMetricDto[]
     }
@@ -100,7 +112,6 @@ export default defineComponent({
       }
     }
   }
-
 })
 
 </script>

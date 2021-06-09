@@ -13,6 +13,12 @@ export enum BottomSheetState {
   EXPANDED = 'expanded'
 }
 
+const BottomSheetStateOrder: { [key in BottomSheetState]: number } = {
+  [BottomSheetState.COLLAPSED]: 0,
+  [BottomSheetState.HALF]: 1,
+  [BottomSheetState.EXPANDED]: 2
+}
+
 interface UiState {
   sidebarExpanded: boolean
   showNavigation: boolean
@@ -38,12 +44,10 @@ class UiStore extends Store<UiState> {
     this.state.sidebarExpanded = expanded
   }
 
-  public openSidebar() {
-    this.toggleSidebar(true)
-  }
-
-  public closeSidebar() {
-    this.toggleSidebar(false)
+  public setBottomSheetStateAtLeast(value: BottomSheetState) {
+    if (BottomSheetStateOrder[value] > BottomSheetStateOrder[this.state.bottomSheetState]) {
+      this.state.bottomSheetState = value
+    }
   }
 
   public setBottomSheetState(value: BottomSheetState) {
