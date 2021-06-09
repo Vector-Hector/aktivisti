@@ -2,7 +2,7 @@ import { appendAsQueryParams } from 'src/utils/url'
 import { FACEBOOK_SHARE_URL, MAIL_SHARE_URL, TWITTER_SHARE_URL, WHATSAPP_SHARE_URL } from 'src/constants'
 import { EventDto } from 'src/api/model/EventDto'
 
-function makeShareText(event: EventDto, link: string, withLink = true) {
+function makeShareText(event: EventDto, link?: string) {
   const formattedDate = new Date(event.start_date).toLocaleString([], {
     day: '2-digit',
     month: '2-digit',
@@ -10,12 +10,12 @@ function makeShareText(event: EventDto, link: string, withLink = true) {
     hour: '2-digit',
     minute: '2-digit'
   })
-  return `${event.name}\n${formattedDate}\n${withLink ? link : ''}`
+  return `${event.name}\n${formattedDate}${link ? '\n' + link : ''}`
 }
 
 export function createTwitterShareUrl(linkedUrl: string, tags: string[], event: EventDto): string {
   const url = new URL(TWITTER_SHARE_URL)
-  const text = makeShareText(event, linkedUrl, false)
+  const text = makeShareText(event)
   appendAsQueryParams(url, {
     text,
     url: linkedUrl,
@@ -44,6 +44,6 @@ export function createWhatsappShareUrl(linkedUrl: string, event: EventDto): stri
 
 export function createMailShareUrl(linkedUrl: string, event: EventDto): string {
   const subjectLine = 'Mach\' mit bei der Aktion von DIE LINKE'
-  const text = makeShareText(event, linkedUrl, true)
+  const text = makeShareText(event, linkedUrl)
   return `${MAIL_SHARE_URL}?subject=${subjectLine}&body=${encodeURIComponent(text)}`
 }
