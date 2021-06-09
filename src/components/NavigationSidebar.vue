@@ -14,8 +14,8 @@
             <i class="pi pi-user avatar-placeholder" />
           </div>
           <div class="user-widget-details">
-            <span class="email">{{ userProfile?.email }}</span>
-            <span class="username">@{{ userProfile?.username }}</span>
+            <span v-if="userFullname.length>0" class="name">{{ userFullname }}</span>
+            <span class="username">@{{ userName }}</span>
           </div>
         </div>
         <div class="menu-item">
@@ -144,8 +144,13 @@ export default defineComponent({
     isManager() {
       return userStore.isManager()
     },
-    userProfile() {
-      return userStore.getState().user
+    userName() {
+      return userStore.getState().user?.username
+    },
+    userFullname() {
+      const first_name = userStore.getState().user?.first_name
+      const last_name = userStore.getState().user?.last_name
+      return [first_name, last_name].filter(Boolean).join(' ')
     },
     sidebarExpanded: {
       get(): boolean {

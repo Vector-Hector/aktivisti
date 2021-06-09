@@ -8,7 +8,7 @@
         <div class="realname" v-if="realName">
           {{ realName }}
         </div>
-        <div class="username" :class="{ 'onlyname': realName }">{{ user?.username }}</div>
+        <div class="username" :class="{ 'onlyname': realName }">@{{ user?.username }}</div>
       </div>
     </div>
     <QSeparator class="profile-section-divider" />
