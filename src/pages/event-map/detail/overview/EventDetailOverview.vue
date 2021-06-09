@@ -248,14 +248,14 @@ export default defineComponent({
     },
     twitterShareUrl(): string {
       return createTwitterShareUrl(
-        this.event.description,
         `${window.location.origin}${this.$router.resolve({
           name: 'event-detail',
           params: {
             id: this.event.id
           }
         }).path}`,
-        []
+        [],
+        this.event
       )
     },
     facebookShareUrl(): string {
@@ -275,7 +275,8 @@ export default defineComponent({
           params: {
             id: this.event.id
           }
-        }).path
+        }).path,
+        this.event
       )
     },
     whatsappShareUrl(): string {
@@ -285,7 +286,8 @@ export default defineComponent({
           params: {
             id: this.event.id
           }
-        }).path
+        }).path,
+        this.event
       )
     }
   },
