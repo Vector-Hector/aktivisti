@@ -238,7 +238,7 @@ const routes = [
     component: Login,
     name: 'login',
     props: (route: any) => ({
-      next: route.params.nextUrl
+      next: route.query.next
     }),
     meta: {
       title: () => 'Anmelden'
