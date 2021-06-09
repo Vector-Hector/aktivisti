@@ -1,277 +1,132 @@
 <template>
   <div class="container">
-    <Form
-      v-slot="{ errors, isSubmitting, handleSubmit }"
-      :initial-values="localEvent"
-    >
-      <div class="p-fluid">
-        <div class="p-field p-grid">
-          <label
-            for="eventType"
-            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-          >Event-Typ</label>
-          <div class="p-col-12 p-md-9">
-            <Field
-              v-slot="{ field, handleChange }"
-              name="event_type"
-            >
-              <Dropdown
-                id="eventType"
-                :model-value="field.value"
-                :disabled="true"
-                :options="eventTypes"
-                option-label="label"
-                option-value="key"
-                placeholder="Aktions-Typ"
-                @input="handleChange($event.value.map(({key}) => key))"
-              />
-              <ErrorMessage
-                class="error"
-                name="event_type"
-              />
-            </Field>
-          </div>
-        </div>
-        <div class="p-field p-grid">
-          <label
-            for="eventName"
-            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-          >Name der Aktion</label>
-          <div class="p-col-12 p-md-9">
-            <Field
-              v-slot="{field}"
-              name="name"
-              :rules="isRequired"
-            >
-              <InputText
-                id="eventName"
-                v-bind="field"
-                name="name"
-                type="text"
-                :class="{ 'p-invalid': errors.name }"
-              />
-              <ErrorMessage
-                name="name"
-                class="error"
-              />
-            </Field>
-          </div>
-        </div>
+    <QForm>
+      <QSelect
+        v-model="localEvent.event_type"
+        label="Aktionstyp"
+        :disabled="true"
+        :options="eventTypes"
+        option-label="label"
+        option-value="key"
+        :error-message="errors.event_type?.[0]"
+        :error="!!errors.event_type?.length"
+      />
+      <QInput
+        v-model="localEvent.name"
+        label="Name der Aktion"
+        :error-message="errors.name?.[0]"
+        :error="!!errors.name?.length"
+        :rules="[$validationRules.isRequired]"
+      />
+      <QSelect
+        v-model="localEvent.campaigns"
+        label="Kampagne"
+        placeholder="Wähle eine Kampagne aus"
+        :multiple="true"
+        :options="campaigns"
+        option-label="name"
+        option-value="id"
+        map-options
+        emit-value
+        :error-message="errors.campaigns?.[0]"
+        :error="!!errors.campaigns?.length"
+      />
+      <DateTimeInput
+        :input-props="{ label: 'Startdatum' }"
+        :time-props="{ minuteOptions: [0, 15, 30, 45] }"
+        v-model="localEvent.start_date"
+        :model-value="new Date(localEvent.start_date)"
+        @update:model-value="localEvent.start_date = $event.toISOString()"
+        :error-message="errors.start_date?.[0]"
+        :error="!!errors.start_date?.length"
+      />
+      <DateTimeInput
+        :input-props="{ label: 'Enddatum' }"
+        :time-props="{ minuteOptions: [0, 15, 30, 45] }"
+        :model-value="new Date(localEvent.end_date)"
+        @update:model-value="localEvent.end_date = $event.toISOString()"
+        :error-message="errors.end_date?.[0]"
+        :error="!!errors.end_date?.length"
+        :rules="[$validationRules.isRequired]"
+      />
+      <QInput
+        v-model="localEvent.max_participants"
+        label="Maximale Teilnehmer*innenzahl"
+        type="number"
+        :error-message="errors.max_participants?.[0]"
+        :error="!!errors.max_participants?.length"
+      />
+      <QInput
+        type="textarea"
+        label="Beschreibung"
+        v-model="localEvent.description"
+      />
+      <QSelect
+        label="Metriken"
+        v-model="selectedMetrics"
+        :options="metrics"
+        option-label="name"
+        placeholder="Metriken auswählen"
+        :multiple="true"
+        use-chips
+        :error-message="errors.metrics?.[0]"
+        :error="!!errors.metrics?.length"
+      />
 
-        <div class="p-field p-grid">
-          <label
-            for="campaigns"
-            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-          >Kampagnenauswahl</label>
-          <div class="p-col-12 p-md-9">
-            <Field
-              v-slot="{ field }"
-              name="campaigns"
-              :rules="isRequired"
-            >
-              <MultiSelect
-                :options="campaigns"
-                option-value="id"
-                option-label="name"
-                placeholder="Wähle eine Kampagne aus"
-                :model-value="field.value"
-                :class="{ 'p-invalid': errors.campaigns }"
-                @input="field.onInput.forEach((fn) => fn($event.value))"
-                @change="field.onChange.forEach((fn) => fn($event.value))"
-              />
-              <ErrorMessage
-                name="campaigns"
-                class="error"
-              />
-            </Field>
-          </div>
-        </div>
+      <QSelect
+        label="Sichtbarkeit"
+        v-model="localEvent.visibility"
+        :options="Object.values(VisibilityOptions)"
+        :option-label="(item) => VisibilityLabels[item]"
+        :error-message="errors.visibility?.[0]"
+        :error="!!errors.visibility?.length"
+      />
 
-        <div class="p-field p-grid">
-          <label
-            for="start_date"
-            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-          >Beginn</label>
-          <div class="p-col-12 p-md-9">
-            <Field
-              v-slot="{ field, handleChange }"
-              name="start_date"
-              :rules="isRequired"
-            >
-              <Calendar
-                date-format="dd.mm.yy"
-                :show-time="true"
-                :model-value="new Date(field.value)"
-                :class="{'p-invalid': errors.start_date}"
-                :step-minute="15"
-                @date-select="handleChange($event.toISOString())"
-              />
-              <ErrorMessage
-                name="start_date"
-                class="error"
-              />
-            </Field>
-          </div>
-        </div>
-
-        <div class="p-field p-grid">
-          <label
-            for="end_date"
-            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-          >Ende</label>
-          <div class="p-col-12 p-md-9">
-            <Field
-              v-slot="{ field, handleChange }"
-              name="end_date"
-              :rules="isRequired"
-            >
-              <Calendar
-                date-format="dd.mm.yy"
-                :show-time="true"
-                :step-minute="15"
-                :model-value="new Date(field.value)"
-                @date-select="handleChange($event.toISOString())"
-              />
-              <ErrorMessage
-                name="end_date"
-                class="error"
-              />
-            </Field>
-          </div>
-        </div>
-
-        <div class="p-field p-grid">
-          <label
-            for="max_participants"
-            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-          ># Personen</label>
-          <Field
-            v-slot="{ field, handleChange }"
-            name="max_participants"
-          >
-            <div class="p-col-12 p-md-9">
-              <InputNumber
-                id="max_participants"
-                show-buttons
-                name="max_participants"
-                mode="decimal"
-                :value="field.value"
-                :min="0"
-                @input="handleChange($event.value)"
-              />
-              <ErrorMessage
-                name="max_participants"
-                class="error"
-              />
-            </div>
-          </Field>
-        </div>
-
-        <div class="p-field p-grid p-align-start">
-          <label
-            for="eventDescription"
-            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-          >Weitere Informationen</label>
-          <Field
-            v-slot="{ field }"
-            name="description"
-          >
-            <div class="p-col-12 p-md-9">
-              <Textarea
-                id="eventDescription"
-                v-bind="field"
-                type="text"
-              />
-            </div>
-          </Field>
-        </div>
-
-        <div class="p-field p-grid">
-          <label
-            for="eventMetrics"
-            class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-          >Felder (geklopfte Türen etc.) auswählen</label>
-
-          <div class="p-col-12 p-md-9">
-            <Field
-              v-slot="{ handleChange }"
-              name="metrics"
-            >
-              <MultiSelect
-                v-model="selectedMetrics"
-                :options="metrics"
-                option-label="name"
-                placeholder="Metriken auswählen"
-                display="chip"
-                @change="handleChange($event.value.map(({id}) => id))"
-              />
-              <ErrorMessage
-                name="metrics"
-                class="error"
-              />
-            </Field>
-          </div>
-        </div>
-        <div
-          v-for="metricRecord in eventMetricRecords"
-          :key="metricRecord.id"
-        >
-          <div class="p-field p-grid">
-            <label
-              for="eventGoals"
-              class="p-col-12 p-mb-2 p-md-3 p-mb-md-0"
-            >Zielvorgabe für {{ metricForMetricRecord(metricRecord)?.name }} hinzufügen</label>
-            <div class="p-col-12 p-md-9">
-              <InputNumber
-                v-model="metricRecord.target"
-                show-buttons
-                :min="0"
-              />
-            </div>
-          </div>
-        </div>
+      <div
+        v-for="metricRecord in eventMetricRecords"
+        :key="metricRecord.id"
+      >
+        <QInput
+          type="number"
+          :label="`Zielvorgabe für ${metricForMetricRecord(metricRecord)?.name}`"
+          v-model="metricRecord.target"
+        />
       </div>
       <div class="control-buttons">
-        <Button
-          class="p-button-text"
+        <QBtn
+          flat
           label="Abbrechen"
           @click="$router.go(-1)"
         />
-        <Button
+        <QBtn
           v-if="editMode"
           label="Speichern und zurück"
+          color="primary"
           :disabled="isSubmitting"
-          @click="handleSubmit($event, saveAndClose)"
+          @click="saveAndClose"
         />
-        <Button
+        <QBtn
           type="submit"
           :disabled="isSubmitting"
+          color="primary"
           label="Treffpunkt auswählen"
-          @click="handleSubmit($event, saveAndProceed)"
+          @click="saveAndProceed"
         />
       </div>
-    </Form>
+    </QForm>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-import InputText from 'primevue/inputtext'
-import Dropdown from 'primevue/dropdown'
-import Calendar from 'primevue/calendar'
-import Button from 'primevue/button'
-import InputNumber from 'primevue/inputnumber'
-import MultiSelect from 'primevue/multiselect'
-
 import { eventTypeOptions } from 'src/api/model/EventTypes'
 import EditEventMixin from 'src/pages/edit-event/EditEventMixin'
-import { EventDto } from 'src/api/model/EventDto'
+import { EventDto, VisibilityLabels, VisibilityOptions } from 'src/api/model/EventDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
-
-import { Form, Field, ErrorMessage, FormActions } from 'vee-validate'
-import Textarea from 'primevue/textarea'
+import { date, QBtn, QForm, QInput, QSelect } from 'quasar'
+import DateTimeInput from 'components/DateTimeInput.vue'
 
 /**
  * The details form of an event in this state the event can be either new (no id) or existing (has id)
@@ -280,26 +135,21 @@ import Textarea from 'primevue/textarea'
 export default defineComponent({
   name: 'EditEventDetails',
   components: {
-    InputText,
-    Dropdown,
-    Calendar,
-    Button,
-    InputNumber,
-    MultiSelect,
-    Textarea,
-    Form,
-    Field,
-    ErrorMessage
+    DateTimeInput,
+    QBtn,
+    QForm,
+    QSelect,
+    QInput
   },
   mixins: [EditEventMixin],
   emits: ['update:eventMetricRecords'],
   data() {
     return {
+      VisibilityLabels,
+      VisibilityOptions,
       metrics: [] as EventMetricDto[],
-      zoom: 6,
-      iconWidth: 25,
-      iconHeight: 40,
-      center: {lat: 51.5, lng: 10}
+      errors: {},
+      isSubmitting: false
     }
   },
   computed: {
@@ -341,6 +191,14 @@ export default defineComponent({
       }
     }
   },
+  watch: {
+    startDate() {
+      this.fixEndDateAfterStartDate()
+    },
+    endDate() {
+      this.fixEndDateAfterStartDate()
+    }
+  },
   async created() {
     await this.getMetrics()
     if (!this.localEvent.start_date) {
@@ -357,6 +215,11 @@ export default defineComponent({
     }
   },
   methods: {
+    fixEndDateAfterStartDate() {
+      if (this.endDate! < this.startDate) {
+        this.endDate = date.addToDate(new Date(this.startDate), {hours: 1})
+      }
+    },
     async getMetrics() {
       const metricsRequest = await this.$apiClient.eventMetrics.list()
       this.metrics = metricsRequest.payload.data
@@ -378,28 +241,27 @@ export default defineComponent({
       await this.$apiClient.events.batchUpdateMetricRecords(newEvent.id.toString(), this.eventMetricRecords)
       return newEvent
     },
-    async saveEvent(values: Partial<EventDto>, actions: FormActions<any>): Promise<boolean> {
+    async saveEvent(): Promise<boolean> {
+      this.isSubmitting = true
       try {
-        await this.save({
-          ...this.localEvent,
-          ...values
-        })
-        actions.resetForm({values: this.localEvent, errors: {}})
+        await this.save(this.localEvent)
         return true
       } catch (e) {
         console.dir(e)
-        if (e.status == 400) {
-          actions.setErrors(e.data)
+        if (e.response?.status === 400) {
+          this.errors = e.response.data
         } else {
-          actions.setErrors({
+          this.errors = {
             'non-field-error': 'Ein unbekannter Fehler ist aufgetreten'
-          })
+          }
         }
         return false
+      } finally {
+        this.isSubmitting = false
       }
     },
-    async saveAndProceed(values: Partial<EventDto>, actions: FormActions<any>) {
-      const success = await this.saveEvent(values, actions)
+    async saveAndProceed() {
+      const success = await this.saveEvent()
       if (success) {
         await this.$router.push({
           name: 'edit-event-location',
@@ -409,8 +271,8 @@ export default defineComponent({
         })
       }
     },
-    async saveAndClose(values: Partial<EventDto>, actions: FormActions<any>) {
-      const success = await this.saveEvent(values, actions)
+    async saveAndClose() {
+      const success = await this.saveEvent()
       if (success) {
         await this.$router.push({
           name: 'event-detail',
@@ -437,25 +299,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-label {
-  text-align: left;
+.control-buttons {
+  margin: 1rem 0;
 }
-
-:deep(.p-dialog) {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 960px;
-}
-
-Button {
-  margin: 10px;
-}
-
-.map-location-chooser {
-  height: 50vh;
-  width: 100%;
-  max-width: 960px;
-}
-
 </style>

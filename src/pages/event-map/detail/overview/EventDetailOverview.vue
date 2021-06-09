@@ -298,9 +298,17 @@ export default defineComponent({
     },
     async leave() {
       this.joinLoading = true
-      await this.$apiClient.events.leave(this.id)
-      await this.refreshParticipations()
-      this.joinLoading = false
+      try {
+        await this.$apiClient.events.leave(this.id)
+        await this.refreshParticipations()
+      } catch (e) {
+        // getting 404 means the event is vanished from queryable objects, lost access
+        if (e.response?.status === 404) {
+          this.$router.go(-1)
+        }
+      } finally {
+        this.joinLoading = false
+      }
     },
     async acceptInvite() {
       this.joinLoading = true

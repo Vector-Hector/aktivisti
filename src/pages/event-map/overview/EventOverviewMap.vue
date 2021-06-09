@@ -85,12 +85,14 @@ export default defineComponent({
   },
   watch: {
     clusterMode(isClusterMode) {
-      if (isClusterMode && (this.map?.getZoom() ?? 0 > 15)) {
+      if (isClusterMode && ((this.map?.getZoom() ?? 0) > 15)) {
         this.$q.notify({
           multiLine: true,
-          message: '<h5>Hier ist zuviel los</h5>Nicht alle Aktionen werden angezeigt, da dies zuviel für die Karte wäre. Nutze die Listenansicht',
+          message: '<h5 class="too-many-events-headline">Hier ist zuviel los</h5>' +
+            'Nicht alle Aktionen werden angezeigt, da dies zuviel für die Karte wäre. Nutze die Listenansicht',
           html: true,
-          group: 'too-many-events-alert'
+          group: 'too-many-events-alert',
+          color: 'warning'
         })
       }
     }
@@ -127,5 +129,9 @@ export default defineComponent({
 .popup-contents {
   display: flex;
   flex-direction: column;
+}
+
+::v-global(.too-many-events-headline) {
+  margin: 0;
 }
 </style>

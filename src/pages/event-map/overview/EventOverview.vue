@@ -186,7 +186,12 @@ export default defineComponent({
         campaigns: this.filteredCampaign ? [this.filteredCampaign] : undefined,
         within: this.boundingBoxJson ? JSON.stringify(this.boundingBoxJson) : undefined,
         order_by: this.selectedSortOption,
-        limit: EVENT_MAP_MAX_EVENTS
+        limit: EVENT_MAP_MAX_EVENTS,
+        end_date_after: new Date().toISOString(),
+        // TODO: jonatan@ctrl.alt.coop
+        // atm it's well possible to not set an end date of an event making it indefinitely going, so we include them
+        // in the query... Maybe we should rethink that (mandatory/default end date?)
+        end_date_include_null: true
       }
     }
   },
