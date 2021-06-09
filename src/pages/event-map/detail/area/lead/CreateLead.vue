@@ -45,7 +45,7 @@
       @submit="saveLead"
     >
       <QSelect
-        label="Geschlecht"
+        label="Geschlecht *"
         v-model="lead.gender"
         emit-value
         :rules="[$validationRules.isRequired]"
@@ -57,21 +57,21 @@
         :error="!!errors.gender?.length"
       />
       <QInput
-        label="Nachname"
+        label="Nachname *"
         v-model="lead.last_name"
         :rules="[$validationRules.isRequired]"
         :error-message="errors.last_name?.[0]"
         :error="!!errors.last_name?.length"
       />
       <QInput
-        label="Vorname"
+        label="Vorname *"
         v-model="lead.first_name"
         :rules="[$validationRules.isRequired]"
         :error-message="errors.first_name?.[0]"
         :error="!!errors.first_name?.length"
       />
       <QInput
-        label="E-Mail"
+        label="E-Mail *"
         v-model="lead.email"
         :rules="[$validationRules.isRequired, $validationRules.email]"
         :error-message="errors.email?.[0]"
@@ -80,12 +80,11 @@
       <QInput
         label="Telefonnummer"
         v-model="lead.phone_number"
-        :rules="[$validationRules.isRequired]"
         :error-message="errors.phone_number?.[0]"
         :error="!!errors.phone_number?.length"
       />
       <QInput
-        label="Postleitzahl"
+        label="Postleitzahl *"
         v-model="lead.plz"
         :minlength="5"
         :maxlength="5"
@@ -97,7 +96,6 @@
       <QInput
         label="Stadt"
         v-model="lead.city"
-        :rules="[$validationRules.isRequired]"
         :error-message="errors.city?.[0]"
         :error="!!errors.city?.length"
       />
