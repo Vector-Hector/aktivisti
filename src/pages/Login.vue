@@ -75,7 +75,7 @@ export default defineComponent({
       username: '',
       password: '',
       generalError: null as string | null,
-      saveRefreshToken: false
+      saveRefreshToken: true
     }
   },
   methods: {
