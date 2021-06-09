@@ -148,12 +148,7 @@ export default defineComponent({
       VisibilityLabels,
       VisibilityOptions,
       metrics: [] as EventMetricDto[],
-      zoom: 6,
-      iconWidth: 25,
-      iconHeight: 40,
-      center: {lat: 51.5, lng: 10},
       errors: {},
-      date: new Date('2021-06-08T09:06:27.459+06:00'),
       isSubmitting: false
     }
   },
