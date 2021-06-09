@@ -36,7 +36,7 @@ import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { MetricValueMap, trackingSessionStore } from 'src/store/TrackingSessionStore'
 import MetricsRow from 'src/components/MetricsRow.vue'
-import { BottomSheetState, uiStore } from 'src/store/UiStore'
+import { uiStore } from 'src/store/UiStore'
 import EventAreaMetricsMixin from 'pages/event-map/detail/area/metrics/EventAreaMetricsMixin'
 import { QBtn } from 'quasar'
 
