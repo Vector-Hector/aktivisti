@@ -47,21 +47,9 @@ export default defineComponent({
     MetricsRow,
     QBtn
   },
-  beforeRouteEnter(from, to, next) {
-    const previousBottomSheetState = uiStore.getState().bottomSheetState
-    next(vm => {
-      // @ts-ignore
-      vm.previousBottomSheetState = previousBottomSheetState
-      uiStore.setBottomSheetStateAtLeast(BottomSheetState.EXPANDED)
-    })
-  },
-  beforeRouteLeave() {
-    uiStore.setBottomSheetState(this.previousBottomSheetState)
-  },
   mixins: [EventAreaMetricsMixin],
   data() {
     return {
-      previousBottomSheetState: BottomSheetState.HALF,
       metricRecords: [] as EventMetricRecordDto[],
       metrics: [] as EventMetricDto[]
     }
