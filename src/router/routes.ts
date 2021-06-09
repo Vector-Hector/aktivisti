@@ -214,7 +214,6 @@ const routes = [
             path: 'location',
             component: EditEventMapLocation,
             name: 'edit-event-location',
-            props: true,
             meta: {
               subtitle: () => uiStore.getState().activeTitleElements.event,
               title: () => 'Treffpunkt festlegen'

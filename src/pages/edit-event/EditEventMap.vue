@@ -1,5 +1,6 @@
 <template>
   <Map
+    v-if="bbox"
     ref="map"
     :bounding-box="bbox"
   >
@@ -16,6 +17,7 @@ import Map from 'src/mapbox/Map.vue'
 import EditEventMixin from 'src/pages/edit-event/EditEventMixin'
 import { point, buffer, bbox } from '@turf/turf'
 import { userStore } from 'src/store/UserStore'
+import { BBox } from '@turf/helpers/dist/js/lib/geojson'
 
 export default defineComponent({
   name: 'EditEventMap',
@@ -23,12 +25,12 @@ export default defineComponent({
     Map
   },
   mixins: [EditEventMixin],
-  data() {
-    return {
-      bbox:
-        this.event.location ? bbox(buffer(point([this.event.location?.lng, this.event.location?.lat]), 3, {units:'kilometers'}))
-          : (userStore.getState().bbox ?? undefined)
-    }
+  computed: {
+    bbox(): BBox | undefined {
+      return this.event.location
+        ? bbox(buffer(point([this.event.location?.lng, this.event.location?.lat]), 3, {units: 'kilometers'}))
+        : (userStore.getState().bbox ?? undefined)
+      }
   }
 })
 </script>

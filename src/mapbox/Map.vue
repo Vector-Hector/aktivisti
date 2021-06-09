@@ -82,7 +82,8 @@ export default defineComponent({
         container: mapUuid,
         style: process.env.APP_MAPBOX_STYLE,
         zoom: props.zoom,
-        center: props.center
+        center: props.center,
+        bounds: props.boundingBox
       })
       map.value.on('load', () => {
         map.value?.resize()
