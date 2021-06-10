@@ -1,22 +1,29 @@
-import {reactive, readonly} from 'vue';
+import { reactive, readonly } from 'vue'
 
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export abstract class Store<T extends Object> {
-    protected state: T;
+  protected state: T
 
-    constructor() {
-      const data = this.data();
-      this.setup(data);
-      this.state = reactive(data) as T;
-    }
+  constructor() {
+    const data = this.data()
+    this.setup(data)
+    this.state = reactive(data) as T
+  }
 
-    protected abstract data(): T
+  protected abstract data(): T
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function
-    protected setup(data: T): void {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function
+  protected setup(data: T): void {
+  }
 
-    public getState(): T {
-      return readonly(this.state) as T
-    }
+  public getState(): T {
+    return readonly(this.state) as T
+  }
+
+  public reset() {
+    const data = this.data()
+    this.setup(data)
+    this.state = reactive(data) as T
+  }
 }

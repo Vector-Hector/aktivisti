@@ -26,6 +26,6 @@ export interface EventDto {
   location_description: string
   published: boolean
   description: string
-  participants: number[]
+  participants: number
   max_participants: number
 }
