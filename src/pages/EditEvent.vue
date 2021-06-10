@@ -22,7 +22,7 @@
 import { defineComponent, PropType } from 'vue'
 
 import { EventTypes } from 'src/api/model/EventTypes'
-import { EventDto } from 'src/api/model/EventDto'
+import { EventDto, VisibilityOptions } from 'src/api/model/EventDto'
 import Steps from 'primevue/steps'
 import { RouteParams } from 'vue-router'
 import { apiClient } from 'src/api/ApiClient'
@@ -79,7 +79,8 @@ export default defineComponent({
       event: {
         event_type: EventTypes.DOOR_TO_DOOR,
         metrics: [],
-        targets: {}
+        targets: {},
+        visibility: VisibilityOptions.Public,
       } as Partial<EventDto>
     }
   },
