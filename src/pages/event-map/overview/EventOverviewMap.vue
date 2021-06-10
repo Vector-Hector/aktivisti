@@ -21,15 +21,12 @@
             <span class="popup-date">
               {{ new Date(event.start_date).toLocaleString() }}
             </span>
-            <router-link
-              class="join-link no-button-decoration"
+            <QBtn
+              label="Mitmachen/Infos"
+              color="primary"
               :to="`/events/${event.id}`"
-            >
-              <QBtn
-                label="Mitmachen/Infos"
-                color="primary"
-              />
-            </router-link>
+              @click="maybeExpandBottomsheet"
+            />
           </div>
         </Popup>
       </Marker>
@@ -48,6 +45,7 @@ import EventsOverviewMixin from 'pages/event-map/overview/EventsOverviewMixin'
 import { eventOverviewStore } from 'src/store/EventOverviewStore'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { QBtn } from 'quasar'
+import { BottomSheetState, uiStore } from 'src/store/UiStore'
 
 export default defineComponent({
   name: 'EventOverviewMap',
@@ -95,6 +93,11 @@ export default defineComponent({
           color: 'warning'
         })
       }
+    }
+  },
+  methods: {
+    maybeExpandBottomsheet() {
+      uiStore.setBottomSheetStateAtLeast(BottomSheetState.HALF)
     }
   }
 })

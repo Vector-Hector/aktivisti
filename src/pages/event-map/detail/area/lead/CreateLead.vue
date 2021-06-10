@@ -129,6 +129,7 @@ import { QBtn, QCard, QCheckbox, QDialog, QForm, QInput, QSelect, QToolbar, QToo
 import FormError from 'components/FormError.vue'
 import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { ionClose } from '@quasar/extras/ionicons-v5'
+import { BottomSheetState, uiStore } from 'src/store/UiStore'
 
 export default defineComponent({
   name: 'CreateLead',
@@ -145,8 +146,20 @@ export default defineComponent({
     QCard
   },
   mixins: [EventDetailStoreMixin],
+  beforeRouteEnter(from, to, next) {
+    const previousBottomSheetState = uiStore.getState().bottomSheetState
+    next(vm => {
+      // @ts-ignore
+      vm.previousBottomSheetState = previousBottomSheetState
+      uiStore.setBottomSheetStateAtLeast(BottomSheetState.EXPANDED)
+    })
+  },
+  beforeRouteLeave() {
+    uiStore.setBottomSheetState(this.previousBottomSheetState)
+  },
   data() {
     return {
+      previousBottomSheetState: BottomSheetState.HALF,
       qrCodeOpen: false,
       confirmOpen: false,
       lead: {
