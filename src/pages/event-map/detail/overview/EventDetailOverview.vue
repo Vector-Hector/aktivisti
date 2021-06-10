@@ -187,6 +187,7 @@ import {
   ionPencil
 } from '@quasar/extras/ionicons-v5'
 import { QBtn, QList } from 'quasar'
+import { BottomSheetState, uiStore } from 'src/store/UiStore'
 
 
 export default defineComponent({
@@ -202,6 +203,10 @@ export default defineComponent({
       type: String as PropType<string>,
       required: true
     }
+  },
+  beforeRouteEnter(from, to, next) {
+    uiStore.setBottomSheetStateAtLeast(BottomSheetState.HALF)
+    next()
   },
   data() {
     return {
