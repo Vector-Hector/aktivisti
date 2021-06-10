@@ -2,6 +2,7 @@ import { Store } from 'src/store/Store'
 import { CAMPAIGN_ADMIN, UserDto } from 'src/api/model/UserDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
+import { parseIfPossible } from 'src/utils/json'
 
 
 export enum SortOption {
@@ -32,11 +33,10 @@ class UserStore extends Store<UserState> {
     const bbox = bboxString ? JSON.parse(bboxString) : null
 
     const filterPreferencesString = localStorage.getItem(KEY_FILTERPREFERENCES)
-    const filterPreferences = filterPreferencesString ? JSON.parse(filterPreferencesString) : null
-
+    const filterPreferences = parseIfPossible(filterPreferencesString) as EventFilterPreferences | null
 
     const homeAssociationString = localStorage.getItem(KEY_HOMEASSOCIATION)
-    const homeAssociation = homeAssociationString ? JSON.parse(homeAssociationString) : null
+    const homeAssociation = parseIfPossible(homeAssociationString) as SubAssociationDto | null
 
     return {
       user: null,
