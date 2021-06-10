@@ -1,111 +1,106 @@
 <template>
-  <DataTable
-    class="metrics-table"
-    :value="formattedDataPerArea"
-  >
-    <!-- eslint-disable -->
-    <Column
-      field="name"
-      header="Name"
-      footer="Gesamt:"
-      footerStyle="text-align:right"
+    <QTable
+      :columns="columns"
+      :flat=!$q.screen.lt.md
+      :grid=$q.screen.lt.md
+      :rows="rows"
+      hide-pagination
+      row-key="name"
     >
-      <!-- eslint-enable -->
-      <template #body="{data}">
-        <QIcon
-          class="icon"
-          :style="{
-            color: data.color
-          }"
-          :name="ionEllipse"
-        />
-        <span> {{ data.name }}</span>
+      <template v-slot:body-cell-areaName="props">
+        <QTd :props="props">
+          <div>
+            <QIcon
+              v-if="props.row.areaColor"
+              class="area-indicator-icon"
+              :name="ionEllipse"
+              :style="{ color: props.row.areaColor }"
+            />
+            {{props.value}}
+          </div>
+        </QTd>
       </template>
-    </Column>
-    <Column
-      v-for="item of metricsWithName"
-      :key="item.id"
-      :field="item.id.toString()"
-      :header="item.name"
-      :footer="sumColumn(item.id.toString())"
-      style="text-align:right"
-    />
-    <Column
-      field="completed_addresses"
-      header="Besuchte Adressen"
-      style="text-align:right"
-      :footer="sumColumn('completed_addresses')"
-    />
-    <Column
-      field="overall_addresses"
-      header="Adressen im Gebiet"
-      style="text-align:right"
-      :footer="sumColumn('overall_addresses')"
-    />
-  </DataTable>
+    </QTable>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
 import { EventMetricReportDto } from 'src/api/model/EventMetricReportDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { ionEllipse } from '@quasar/extras/ionicons-v5'
 import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
-import { QIcon } from 'quasar'
-
-interface FormattedAreaData {
-  id: number,
-  color: string,
-  completed_addresses: number,
-  name: string,
-  overall_addresses: number,
-
-  // These keys will be used for dynamic metric ids
-  [key: string]: any,
-}
-
-interface MetricWithName {
-  id: number,
-  name: string
-}
+import { QIcon, QTable, QTd} from 'quasar'
 
 export default defineComponent({
   name: 'EventDetailReport',
   components: {
-    Column,
-    DataTable,
-    QIcon
+    QIcon,
+    QTable,
+    QTd
   },
   mixins: [EventDetailStoreMixin],
   data() {
     return {
-      formattedDataPerArea: [] as FormattedAreaData[],
-      metricsWithName: [] as MetricWithName[],
-      ionEllipse
+      ionEllipse,
+      filter: '',
+      columns: [
+        {
+          name: 'areaName',
+          field: 'areaName',
+          label: 'Gebiet',
+          align: 'left',
+        }
+      ] as any[],
+      rows: [ ] as any,
     }
   },
   async created() {
     const {metrics} = await this.fetchMetricRecords()
-    this.metricsWithName = metrics
+    for (const {id: metricId, name } of metrics){
+      this.columns.push({
+        name: metricId,
+        field: metricId,
+        label: name,
+      })
+    }
+    this.columns.push(
+      {
+      name: 'completedAddresses',
+      field: 'completedAddresses',
+      label: 'Besuchte Adressen'
+     },{
+        name: 'overallAddresses',
+        field: 'overallAddresses',
+        label: 'Adressen im Gebiet'
+      }
+     )
+
+    const footerRow : any = {
+      areaName: 'Gesamt',
+      overallAddresses: 0,
+      completedAddresses: 0,
+    }
     for (const {id, color, name} of this.eventAreas) {
       if (id) {
         const {completed_addresses, overall_addresses, counts_per_metric} = await this.fetchAreaMetricsReports(id)
-        const areaData: FormattedAreaData = {
-          id,
-          color,
-          completed_addresses,
-          name,
-          overall_addresses
+        const row : any = {
+          areaName: name,
+          areaColor: color,
+          overallAddresses: overall_addresses,
+          completedAddresses:  completed_addresses
         }
-        for (const {id: metricId} of this.metricsWithName) {
-          areaData[metricId] = counts_per_metric.find(({metric}) => metric === metricId)?.count || 0
+        footerRow.overallAddresses += overall_addresses;
+        footerRow.completedAddresses += completed_addresses;
+        for (const {id: metricId} of metrics) {
+          const countOfMetric = counts_per_metric.find(({metric}) => metric === metricId)?.count || 0
+          row[metricId] = countOfMetric
+          footerRow[metricId] =  (footerRow[metricId] | 0 ) + countOfMetric
         }
-        this.formattedDataPerArea.push(areaData)
+        this.rows.push(row)
       }
     }
+    this.rows.push(footerRow)
   },
   methods: {
     async fetchAreaMetricsReports(areaId: number): Promise<EventMetricReportDto> {
@@ -116,9 +111,6 @@ export default defineComponent({
       const response = await this.$apiClient.eventMetricRecords.list({event: this.event.id}, ['metric'])
       return {records: response.payload.data, metrics: response.payload.embedded.metric}
     },
-    sumColumn(columnName: string): number {
-      return this.formattedDataPerArea.map((row) => row[columnName]).reduce((a: number, b: number) => a + b, 0)
-    }
   }
 })
 </script>
