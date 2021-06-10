@@ -1,10 +1,10 @@
 import { defineComponent, PropType } from 'vue'
-import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { PermissionHintsDto } from 'src/api/model/APIEnvelope'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { eventDetailStore } from 'src/store/EventDetailStore'
+import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 
 export default defineComponent({
   name: 'EventDetailStoreMixin',
@@ -21,6 +21,14 @@ export default defineComponent({
       },
       set(value: EventParticipationDto[]) {
         eventDetailStore.setParticipations(value)
+      }
+    },
+    personalParticipation: {
+      get(): EventParticipationDto | null {
+        return eventDetailStore.getState().personalParticipation
+      },
+      set(value: EventParticipationDto | null) {
+        eventDetailStore.setPersonalParticipation(value)
       }
     },
     event: {

@@ -118,12 +118,12 @@ export default defineComponent({
       return userStore.isManager()
     },
     isUserEventParticipant(): boolean {
-      return this.user !== null && this.participations.map((item) => item.user).includes(this.user.id)
+      return this.user !== null && this.personalParticipation?.is_pending_invitation === false
     },
     isUserEventAreaParticipant(): boolean {
       return (
         this.user !== null
-        && this.participations.find((participation) => participation.user === this.user!.id)?.assigned_event_areas.includes(this.eventArea.id!)
+        && this.personalParticipation?.assigned_event_areas.includes(this.eventArea.id!)
       ) ?? false
     },
     onlyMemberParticipants(): EventParticipationDto[] {
@@ -139,23 +139,18 @@ export default defineComponent({
     }
   },
   methods: {
-
     async joinArea() {
-      const userParticipation = this.participations.find(({user}) => user === this.user!.id)
-      if (userParticipation) {
-        const updatedParticipation = await this.$apiClient.eventParticipations.patch(userParticipation.id.toString(), {
-          assigned_event_areas: [...userParticipation.assigned_event_areas, this.eventArea.id!]
-        })
-        this.updateParticipations([updatedParticipation.payload.data])
+      if (this.personalParticipation) {
+        this.personalParticipation = (await this.$apiClient.eventParticipations.patch(this.personalParticipation.id.toString(), {
+          assigned_event_areas: [...this.personalParticipation.assigned_event_areas, this.eventArea.id!]
+        })).payload.data
       }
     },
     async leaveArea() {
-      const userParticipation = this.participations.find(({user}) => user === this.user!.id)
-      if (userParticipation) {
-        const updatedParticipation = await this.$apiClient.eventParticipations.patch(userParticipation.id.toString(), {
-          assigned_event_areas: userParticipation.assigned_event_areas.filter((id) => id !== this.eventArea.id)
-        })
-        this.updateParticipations([updatedParticipation.payload.data])
+      if (this.personalParticipation) {
+        this.personalParticipation = (await this.$apiClient.eventParticipations.patch(this.personalParticipation.id.toString(), {
+          assigned_event_areas: this.personalParticipation.assigned_event_areas.filter((id) => id !== this.eventArea.id)
+        })).payload.data
       }
     },
     updateParticipations(updatedParticipations: EventParticipationDto[]) {

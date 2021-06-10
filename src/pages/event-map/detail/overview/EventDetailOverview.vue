@@ -39,7 +39,7 @@
         class="participants"
         @click="openInviteModal"
       >
-          <i class="pi pi-user" /> {{ participations.length }}/{{ event.max_participants ?? '∞' }}
+          <i class="pi pi-user" /> {{ event.participants }}/{{ event.max_participants ?? '∞' }}
         </span>
         <p class="description">
           {{ event.description }}
@@ -237,11 +237,10 @@ export default defineComponent({
       return authService.isLoggedIn()
     },
     isMember(): boolean {
-      const participation = this.participations.find(({user}) => user === userStore.getState().user?.id)
-      return participation !== undefined && !participation.is_pending_invitation
+      return this.personalParticipation?.is_pending_invitation === false
     },
     isInvited(): boolean {
-      return this.participations.find(({user}) => user === userStore.getState().user?.id)?.is_pending_invitation ?? false
+      return this.personalParticipation?.is_pending_invitation === true
     },
     isCampaignAdmin(): boolean {
       return userStore.isManager()
@@ -293,47 +292,73 @@ export default defineComponent({
   },
   methods: {
     async join() {
-      this.joinLoading = true
-      await this.$apiClient.events.join(this.id)
-      await this.refreshParticipations()
-      this.joinLoading = false
+      const generalJoinError = 'Ein unerwarteter Fehler trat auf beim versuch der Aktion beizutreten'
+      try {
+        this.joinLoading = true
+        this.event = (await this.$apiClient.events.join(this.id)).payload.data
+        this.personalParticipation = (await this.$apiClient.eventParticipations.list({
+          event: this.id,
+          user: userStore.getState().user?.id
+        })).payload.data?.[0]
+        if (!this.personalParticipation) {
+          this.$q.notify({
+            color: 'negative',
+            message: generalJoinError
+          })
+        }
+      } catch (e) {
+        this.$q.notify({
+          color: 'negative',
+          message: generalJoinError
+        })
+      } finally {
+        this.joinLoading = false
+      }
     },
     async leave() {
-      this.joinLoading = true
+      const generalLeaveError = 'Ein unerwarteter Fehler trat auf beim versuch die Aktion zu verlassen'
       try {
-        await this.$apiClient.events.leave(this.id)
-        await this.refreshParticipations()
+        this.joinLoading = true
+        this.event = (await this.$apiClient.events.leave(this.id)).payload.data
+        this.personalParticipation = null
       } catch (e) {
-        // getting 404 means the event is vanished from queryable objects, lost access
-        if (e.response?.status === 404) {
-          this.$router.go(-1)
-        }
+        this.$q.notify({
+          color: 'negative',
+          message: generalLeaveError
+        })
       } finally {
         this.joinLoading = false
       }
     },
     async acceptInvite() {
-      this.joinLoading = true
-      const invite = this.participations.find(({user}) => user === userStore.getState().user?.id)
-      if (invite) {
-        await this.$apiClient.eventParticipations.accept(invite.id.toString())
+      try {
+        this.joinLoading = true
+        const response = await this.$apiClient.eventParticipations.accept(this.personalParticipation!.id.toString())
+        this.personalParticipation = response.payload.data
+      } catch (e) {
+        this.$q.notify({
+          color: 'negative',
+          message: 'Ein unerwarteter Fehler trat auf beim versuch der Aktion beizutreten'
+        })
+      } finally {
+        this.joinLoading = false
       }
-      await this.refreshParticipations()
-      this.joinLoading = false
     },
-    async refreshParticipations() {
-      this.participations = (await apiClient.eventParticipations.list({event: this.event.id})).payload.data
+    async refreshEvent() {
+      this.event = (await apiClient.events.get(this.id)).payload.data
     },
     openInviteModal() {
-      this.$q.dialog({
-        component: EventInvitePeopleModal,
-        componentProps: {
-          eventId: this.event.id
-        }
-      })
-        .onDismiss(() => {
-          void this.refreshParticipations()
+      if (this.eventPermissions?.invite.POST) {
+        this.$q.dialog({
+          component: EventInvitePeopleModal,
+          componentProps: {
+            eventId: this.event.id
+          }
         })
+          .onDismiss(() => {
+            void this.refreshEvent()
+          })
+      }
     }
   }
 })
