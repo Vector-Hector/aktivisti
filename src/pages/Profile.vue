@@ -212,13 +212,13 @@ export default defineComponent({
       if (initialEmailNotificationSettings) {
         // @ts-ignore
         vm.emailNotificationSettings = initialEmailNotificationSettings
-        // @ts-ignore
-        vm.permissions = userPermissions
-        // @ts-ignore
-        vm.personalMetrics = personalMetricsResponse.payload.data
-        // @ts-ignore
-        vm.eventMetrics = metricsResponse.payload.data
       }
+      // @ts-ignore
+      vm.permissions = userPermissions
+      // @ts-ignore
+      vm.personalMetrics = personalMetricsResponse.payload.data
+      // @ts-ignore
+      vm.eventMetrics = metricsResponse.payload.data
     })
   },
   computed: {
@@ -252,7 +252,7 @@ export default defineComponent({
       return [
         ...generalMetrics,
         {
-          name: 'Geöffnete Türen',
+          name: 'Besuchte Adressen',
           value: this.personalMetrics.completed_addresses ?? 0
         }
       ]
@@ -341,7 +341,7 @@ export default defineComponent({
       })
       try {
         let response
-        if (!this.emailNotificationSettings.id) {
+        if (!this.emailNotificationSettings?.id) {
           response = await this.$apiClient.emailNotificationSettings.create(this.emailNotificationSettings)
         } else {
           response = await this.$apiClient.emailNotificationSettings.update(
