@@ -28,4 +28,5 @@ export interface EventDto {
   description: string
   participants: number
   max_participants: number
+  visibility: VisibilityOptions
 }

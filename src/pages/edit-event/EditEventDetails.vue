@@ -8,6 +8,8 @@
         :options="eventTypes"
         option-label="label"
         option-value="key"
+        emit-value
+        map-options
         :error-message="errors.event_type?.[0]"
         :error="!!errors.event_type?.length"
       />
@@ -61,6 +63,16 @@
         label="Beschreibung"
         v-model="localEvent.description"
       />
+
+      <QSelect
+        label="Sichtbarkeit"
+        v-model="localEvent.visibility"
+        :options="Object.values(VisibilityOptions)"
+        :option-label="(item) => VisibilityLabels[item]"
+        :error-message="errors.visibility?.[0]"
+        :error="!!errors.visibility?.length"
+      />
+
       <QSelect
         label="Metriken"
         v-model="selectedMetrics"
@@ -71,15 +83,6 @@
         use-chips
         :error-message="errors.metrics?.[0]"
         :error="!!errors.metrics?.length"
-      />
-
-      <QSelect
-        label="Sichtbarkeit"
-        v-model="localEvent.visibility"
-        :options="Object.values(VisibilityOptions)"
-        :option-label="(item) => VisibilityLabels[item]"
-        :error-message="errors.visibility?.[0]"
-        :error="!!errors.visibility?.length"
       />
 
       <div
