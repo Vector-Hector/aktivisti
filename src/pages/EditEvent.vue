@@ -42,9 +42,12 @@ export default defineComponent({
     QPopupProxy
   },
   beforeRouteEnter: async (to, from, next) => {
-    const campaignRequest = await apiClient.campaigns.list()
+    const campaignRequestPromise = apiClient.campaigns.list()
     if (to.params.id) {
-      const eventRequest = await apiClient.events.get(to.params.id as string, ['eventmetricrecord_set'])
+      const [eventRequest, campaignRequest] = await Promise.all([
+        apiClient.events.get(to.params.id as string, ['eventmetricrecord_set']),
+        campaignRequestPromise
+      ])
       next((vm: any) => {
         uiStore.updateActiveElements({
           event: eventRequest.payload.data.name
@@ -54,6 +57,7 @@ export default defineComponent({
         vm.metricRecords = eventRequest.payload.embedded.eventmetricrecord_set
       })
     } else {
+      const campaignRequest = await campaignRequestPromise
       next((vm: any) => {
         vm.campaigns = campaignRequest.payload.data
       })
@@ -80,7 +84,7 @@ export default defineComponent({
         event_type: EventTypes.DOOR_TO_DOOR,
         metrics: [],
         targets: {},
-        visibility: VisibilityOptions.Public,
+        visibility: VisibilityOptions.Public
       } as Partial<EventDto>
     }
   },

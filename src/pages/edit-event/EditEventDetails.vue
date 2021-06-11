@@ -76,14 +76,22 @@
       <QSelect
         label="Metriken"
         v-model="selectedMetrics"
-        :options="metrics"
+        :options="availableMetricOptions"
         option-label="name"
         placeholder="Metriken auswählen"
         :multiple="true"
-        use-chips
         :error-message="errors.metrics?.[0]"
         :error="!!errors.metrics?.length"
-      />
+      >
+        <template v-slot:selected-item="scope">
+          <MetricSelectChip
+            :metric="scope.opt"
+            :scope="scope"
+            :tabindex="scope.tabindex"
+            :mandatory="scope.opt.mandatory_for_types.includes(event.event_type)"
+          />
+        </template>
+      </QSelect>
 
       <div
         v-for="metricRecord in eventMetricRecords"
@@ -130,6 +138,7 @@ import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { date, QBtn, QForm, QInput, QSelect } from 'quasar'
 import DateTimeInput from 'components/DateTimeInput.vue'
+import MetricSelectChip from 'components/MetricSelectChip.vue'
 
 /**
  * The details form of an event in this state the event can be either new (no id) or existing (has id)
@@ -138,6 +147,7 @@ import DateTimeInput from 'components/DateTimeInput.vue'
 export default defineComponent({
   name: 'EditEventDetails',
   components: {
+    MetricSelectChip,
     DateTimeInput,
     QBtn,
     QForm,
@@ -175,6 +185,13 @@ export default defineComponent({
         this.localEvent.start_date = value.toISOString()
       }
     },
+    availableMetricOptions(): EventMetricDto[] {
+      // do not offer mandatory metrics that already are selected in the select dialog, so they can't be delselected
+      return this.metrics.filter((item) =>
+        !item.mandatory_for_types.includes(this.event.event_type!)
+          || !this.selectedMetrics.map(({id}) => id).includes(item.id)
+      )
+    },
     selectedMetrics: {
       get(): EventMetricDto[] {
         const metricRecordMetricIds = this.eventMetricRecords.map(({metric}) => metric)
@@ -200,10 +217,18 @@ export default defineComponent({
     },
     endDate() {
       this.fixEndDateAfterStartDate()
+    },
+    'event.event_type': {
+      handler() {
+        this.selectMandatoryMetrics()
+      }
     }
   },
   async created() {
     await this.getMetrics()
+    if (!this.event.id) {
+      this.selectMandatoryMetrics()
+    }
     if (!this.localEvent.start_date) {
       const initialDate = new Date()
       initialDate.setHours(initialDate.getHours() + Math.round(initialDate.getMinutes() / 60))
@@ -222,6 +247,17 @@ export default defineComponent({
       if (this.endDate! < this.startDate) {
         this.endDate = date.addToDate(new Date(this.startDate), {hours: 1})
       }
+    },
+    selectMandatoryMetrics() {
+      const mandatoryMetrics = this.metrics
+        .filter(({mandatory_for_types}) => mandatory_for_types.includes(this.localEvent.event_type!))
+      this.$emit('update:eventMetricRecords', mandatoryMetrics.map((metric) => {
+        return {
+          metric: metric.id,
+          event: this.event.id,
+          target: 0
+        }
+      }))
     },
     async getMetrics() {
       const metricsRequest = await this.$apiClient.eventMetrics.list()
@@ -246,6 +282,7 @@ export default defineComponent({
     },
     async saveEvent(): Promise<boolean> {
       this.isSubmitting = true
+      this.errors = {}
       try {
         await this.save(this.localEvent)
         return true
