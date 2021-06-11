@@ -27,7 +27,7 @@
         <QItemSection side>
           <div class="text-grey-8 q-gutter-xs">
             <router-link
-              v-if="isManager"
+              v-if="isCampaignAdmin"
               class="text-grey-8"
               :to="{ name: 'edit-event-details', params: { id: item.id } }"
               @click="$event.stopPropagation()"
@@ -46,7 +46,7 @@
               <QIcon
                 flat
                 dense
-                v-if="isManager"
+                v-if="isCampaignAdmin"
                 class="delete-button"
                 size="24px"
                 :name="ionTrash"
@@ -114,7 +114,7 @@ export default defineComponent({
   },
   emits: ['update:events', 'update:pagination'],
   computed: {
-    isManager() {
+    isCampaignAdmin() {
       return userStore.isCampaignAdmin()
     },
     isDisabled(): boolean {
