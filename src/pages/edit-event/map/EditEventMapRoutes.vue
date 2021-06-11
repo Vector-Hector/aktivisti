@@ -96,7 +96,7 @@
               flat
               color="negative"
               :icon="ionTrash"
-              @click="deleteAreaById(props.row.id)"
+              @click="deleteAreaByFeatureId(props.row.feature_id)"
             />
           </QTd>
         </QTr>
@@ -199,7 +199,7 @@ export default defineComponent({
       routePlannerStyles: routePlannerStyles('#000000'),
       areas: [] as EventAreaDto[],
       updatingAreaFeatureIds: new Set<string>(),
-      deletingAreaIds: new Set<number>(),
+      deletingAreaIds: new Set<string>(),
       drawControls: {
         polygon: true,
         trash: true
@@ -275,16 +275,10 @@ export default defineComponent({
       }
     },
     handleDeletedFeatures(event: any) {
-      const deletedIds = event.features.map(({id}: { id: string }) => id)
-      this.areas.filter(({feature_id}) => {
-        return deletedIds.includes(feature_id)
-      }).map((item) => {
-        if (item.id) {
-          void this.deleteAreaById(item.id)
-        } else {
-          this.areas = this.areas.filter(({feature_id}) => feature_id != item.feature_id)
-        }
-      })
+      const deletedFeatureIds = event.features.map(({id}: { id: string }) => id)
+      for (const featureId of deletedFeatureIds) {
+        void this.deleteAreaByFeatureId(featureId)
+      }
     },
     async updateArea(area: Partial<EventAreaDto>) {
       this.updatingAreaFeatureIds.add(area.feature_id!)
@@ -303,14 +297,24 @@ export default defineComponent({
       })
       this.updatingAreaFeatureIds.delete(updatedArea.feature_id)
     },
-    async deleteAreaById(deleteId: number) {
-      const area = this.areas.find(({id}) => id === deleteId)
-      this.deletingAreaIds.add(deleteId)
+    async deleteAreaByFeatureId(deleteId: string) {
+      const area = this.areas.find(({feature_id}) => feature_id === deleteId)
       if (area?.id) {
-        await apiClient.eventAreas.delete(area.id.toString())
+        try {
+          this.deletingAreaIds.add(deleteId)
+          await apiClient.eventAreas.delete(area.id.toString())
+          this.areas = this.areas.filter(({id}) => area?.id !== id)
+        } catch (e) {
+          this.$q.notify({
+            message: 'Etwas ging schief beim löschen des Gebiets',
+            color: 'negative',
+            timeout: 3000
+          })
+        } finally {
+          this.deletingAreaIds.delete(deleteId)
+        }
       }
-      this.areas = this.areas.filter(({id}) => area?.id !== id)
-      this.deletingAreaIds.delete(deleteId)
+      this.areas = this.areas.filter(({feature_id}) => deleteId)
     },
     drawArea() {
       (this.$refs.draw as typeof DrawControl).changeMode('draw_polygon')
