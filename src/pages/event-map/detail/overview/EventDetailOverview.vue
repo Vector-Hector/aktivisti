@@ -248,7 +248,7 @@ export default defineComponent({
       return this.personalParticipation?.is_pending_invitation === true
     },
     isCampaignAdmin(): boolean {
-      return userStore.isManager()
+      return userStore.isCampaignAdmin()
     },
     twitterShareUrl(): string {
       return createTwitterShareUrl(

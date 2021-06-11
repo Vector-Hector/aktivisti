@@ -153,20 +153,20 @@ export default defineComponent({
       try {
         this.localEvent = (await this.$apiClient.events.update(this.localEvent.id!.toString(), this.localEvent as EventDto)).payload.data
       } catch (e) {
-        if (e.status === 400 && e.data['location']) {
-          this.$toast.add(
-            {severity: 'warn', summary: 'Ungültiger Ort', detail: e.data['location'][0], life: 3000, closable: true}
-          )
-        } else {
-          this.$toast.add(
+        if (e.response.status === 400 && e.response.data['location']) {
+          this.$q.notify(
             {
-              severity: 'error',
-              summary: 'Fehler',
-              detail: 'Ein unerwarteter Fehler ist aufgetreten',
-              life: 3000,
-              closable: true
+              color: 'warning',
+              message: e.response.data['location'][0],
+              timeout: 5000
             }
           )
+        } else {
+          this.$q.notify({
+            color: 'negative',
+            message: 'Ein unerwarteter Fehler ist aufgetreten',
+            timeout: 2000
+          })
         }
         return false
       } finally {

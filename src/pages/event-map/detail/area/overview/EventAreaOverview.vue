@@ -115,7 +115,7 @@ export default defineComponent({
   },
   computed: {
     isCampaignAdmin() {
-      return userStore.isManager()
+      return userStore.isCampaignAdmin()
     },
     isUserEventParticipant(): boolean {
       return this.user !== null && this.personalParticipation?.is_pending_invitation === false

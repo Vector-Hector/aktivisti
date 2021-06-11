@@ -115,7 +115,7 @@ export default defineComponent({
   emits: ['update:events', 'update:pagination'],
   computed: {
     isManager() {
-      return userStore.isManager()
+      return userStore.isCampaignAdmin()
     },
     isDisabled(): boolean {
       return this.pagination?.total === this.events.length

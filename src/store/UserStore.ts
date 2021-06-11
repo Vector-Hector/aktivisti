@@ -3,6 +3,7 @@ import { CAMPAIGN_ADMIN, UserDto } from 'src/api/model/UserDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { parseIfPossible } from 'src/utils/json'
+import { PermissionCodename, UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
 
 
 export enum SortOption {
@@ -21,6 +22,7 @@ interface UserState {
   homeAssociation: SubAssociationDto | null
   bbox: BBox2d | null
   filterPreferences: EventFilterPreferences
+  permissions: UserObjectPermissionDto[]
 }
 
 const KEY_BBOX = 'KEY_BBOX'
@@ -40,6 +42,7 @@ class UserStore extends Store<UserState> {
 
     return {
       user: null,
+      permissions: [],
       bbox,
       homeAssociation,
       filterPreferences: filterPreferences ?? {
@@ -88,8 +91,21 @@ class UserStore extends Store<UserState> {
     this.setBbox(null)
   }
 
-  public isManager(): boolean {
+  public isCampaignAdmin(): boolean {
     return this.state.user?.roles.includes(CAMPAIGN_ADMIN) ?? false
+  }
+
+  public setPermissions(permissions: UserObjectPermissionDto[]) {
+    this.state.permissions = permissions
+  }
+
+  public hasAtLeastOneManagePermission() {
+    if (this.state.user?.roles.includes(CAMPAIGN_ADMIN) == true || this.state.user?.is_superuser) {
+      return true
+    }
+    return this.state.permissions
+      .map(({permission_codename}) => permission_codename)
+      .includes(PermissionCodename.MANAGE_EVENTS)
   }
 
   public setUser(user: UserDto) {
