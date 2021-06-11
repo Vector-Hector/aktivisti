@@ -66,10 +66,17 @@
           </QItemSection>
 
           <QItemSection side>
-            <QIcon
-              class="chevron"
-              :name="ionChevronForward"
-            />
+            <div class="row">
+              <QIcon
+                v-if="streetCompleted(street)"
+                class="col finished-icon item-icon"
+                :name="ionCheckmarkCircle"
+              />
+              <QIcon
+                class="col item-icon"
+                :name="ionChevronForward"
+              />
+            </div>
           </QItemSection>
         </QItem>
       </QList>
@@ -84,7 +91,9 @@ import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { uiStore } from 'src/store/UiStore'
 import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { QBtn, QIcon, QItem, QItemLabel, QItemSection, QList, QSelect } from 'quasar'
-import { ionCheckmarkCircleOutline, ionChevronForward } from '@quasar/extras/ionicons-v5'
+import { ionCheckmarkCircle, ionCheckmarkCircleOutline, ionChevronForward } from '@quasar/extras/ionicons-v5'
+import { StreetDetails } from 'src/api/model/AreaDetailsDto'
+import { difference } from 'lodash-es'
 
 
 export default defineComponent({
@@ -110,7 +119,8 @@ export default defineComponent({
   data() {
     return {
       ionChevronForward,
-      ionCheckmarkCircleOutline
+      ionCheckmarkCircleOutline,
+      ionCheckmarkCircle
     }
   },
   computed: {
@@ -139,6 +149,9 @@ export default defineComponent({
     }
   },
   methods: {
+    streetCompleted(street: StreetDetails) {
+      return difference(street.addresses.map(({osm_id}) => osm_id), this.completedTargetIds).length === 0
+    },
     async joinArea() {
       if (this.personalParticipation) {
         this.personalParticipation = (await this.$apiClient.eventParticipations.patch(this.personalParticipation.id.toString(), {
@@ -223,7 +236,6 @@ export default defineComponent({
     }
   }
 })
-
 </script>
 
 <style lang="scss" scoped>
@@ -282,5 +294,14 @@ label {
 .complete-button {
   display: flex;
   align-items: center;
+}
+
+.finished-icon {
+  margin-right: 1rem;
+  color: $successButtonBg;
+}
+
+.item-icon {
+  height: 24px;
 }
 </style>

@@ -13,12 +13,13 @@ import FeatureLayer from 'src/mapbox/AreaFeatureLayer.vue'
 import { apiClient } from 'src/api/ApiClient'
 import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { eventDetailStore } from 'src/store/EventDetailStore'
+import Timeout = NodeJS.Timeout
 
 export default defineComponent({
   name: 'EventDetailArea',
   components: {
     FeatureLayer,
-    Map,
+    Map
   },
   mixins: [EventDetailMixin],
   async beforeRouteEnter(to, from, next) {
@@ -31,6 +32,28 @@ export default defineComponent({
     eventDetailStore.setEventAreaPermissions(response.payload.permissions)
 
     next()
+  },
+  data() {
+    return {
+      nextPoll: null as Timeout | null
+    }
+  },
+  async created() {
+    await this.pollForCompletionNotes()
+  },
+  unmounted() {
+    if (this.nextPoll !== null) {
+      clearTimeout(this.nextPoll)
+    }
+  },
+  methods: {
+    async pollForCompletionNotes() {
+      eventDetailStore.addCompletionNotes(
+        (await this.$apiClient.completionNotes.list({event_area: this.eventArea.id})).payload.data
+      )
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      this.nextPoll = setTimeout(() => this.pollForCompletionNotes(), 5000)
+    }
   }
 })
 

@@ -4,6 +4,7 @@ import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { PermissionHintsDto } from 'src/api/model/APIEnvelope'
+import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 
 interface EventDetailStoreState {
   event: EventDto | null
@@ -14,6 +15,7 @@ interface EventDetailStoreState {
   personalParticipation: EventParticipationDto | null
   campaigns: CampaignDto[]
   eventPermissions: PermissionHintsDto | null
+  completionNotes: CompletionNoteDto[]
 }
 
 class EventDetailStore extends Store<EventDetailStoreState> {
@@ -27,7 +29,8 @@ class EventDetailStore extends Store<EventDetailStoreState> {
       participations: [],
       personalParticipation: null,
       campaigns: [],
-      eventPermissions: null
+      eventPermissions: null,
+      completionNotes: [] as CompletionNoteDto[]
     }
   }
 
@@ -61,6 +64,15 @@ class EventDetailStore extends Store<EventDetailStoreState> {
 
   public setCampaigns(campaigns: CampaignDto[]) {
     this.state.campaigns = campaigns
+  }
+
+  public addCompletionNotes(completionNotes: CompletionNoteDto[]) {
+    const newIds = completionNotes.map(({target_id}) => target_id)
+    // discard any in the current set that are added with this new set
+    this.state.completionNotes = [
+      ...this.state.completionNotes.filter(({target_id}) => !newIds.includes(target_id)),
+      ...completionNotes
+    ]
   }
 }
 

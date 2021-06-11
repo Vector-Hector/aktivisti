@@ -14,7 +14,7 @@
       <QItemSection side>
         <div class="row">
           <QIcon
-            v-if="completionNotes.includes(address.osm_id)"
+            v-if="completedTargetIds.includes(address.osm_id)"
             class="col finished-icon item-icon"
             :name="ionCheckmarkCircle"
           />
@@ -59,7 +59,6 @@ export default defineComponent({
   data() {
     return {
       nextPoll: null as Timeout | null,
-      completionNotes: [] as string[],
       ionChevronForward,
       ionCheckmarkCircle
     }
@@ -75,23 +74,6 @@ export default defineComponent({
       } else {
         return []
       }
-    }
-  },
-  async created() {
-    await this.poll()
-  },
-  unmounted() {
-    if (this.nextPoll !== null) {
-      clearTimeout(this.nextPoll)
-    }
-  },
-  methods: {
-    async poll() {
-      this.completionNotes = (await this.$apiClient.completionNotes.list({event_area: this.eventArea.id})).payload.data
-        .filter(({completed}) => completed)
-        .map(({target_id}) => target_id)
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      this.nextPoll = setTimeout(() => this.poll(), 5000)
     }
   }
 })
@@ -124,14 +106,16 @@ label {
   font-size: 1rem;
 }
 
+.full-width {
+  width: 100%;
+}
+
 .finished-icon {
   margin-right: 1rem;
   color: $successButtonBg;
 }
 
-.full-width {
-  width: 100%;
-}
+
 
 .item-icon {
   height: 24px;

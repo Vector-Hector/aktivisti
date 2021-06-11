@@ -5,6 +5,7 @@ import { PermissionHintsDto } from 'src/api/model/APIEnvelope'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { eventDetailStore } from 'src/store/EventDetailStore'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
+import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 
 export default defineComponent({
   name: 'EventDetailStoreMixin',
@@ -30,6 +31,14 @@ export default defineComponent({
       set(value: EventParticipationDto | null) {
         eventDetailStore.setPersonalParticipation(value)
       }
+    },
+    completionNotes(): CompletionNoteDto[] {
+      return eventDetailStore.getState().completionNotes
+    },
+    completedTargetIds(): string[] {
+      return eventDetailStore.getState().completionNotes
+        .filter(({completed}) => completed)
+        .map(({target_id}) => target_id)
     },
     event: {
       get(): EventDto {
