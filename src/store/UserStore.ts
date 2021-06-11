@@ -84,13 +84,6 @@ class UserStore extends Store<UserState> {
     this.state.homeAssociation = null
   }
 
-
-  public clear() {
-    this.clearUser()
-    this.clearHomeAssociation()
-    this.setBbox(null)
-  }
-
   public isCampaignAdmin(): boolean {
     return this.state.user?.roles.includes(CAMPAIGN_ADMIN) ?? false
   }

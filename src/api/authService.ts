@@ -14,7 +14,7 @@ class AuthService {
 
   clear() {
     tokenStore.removeTokenDto()
-    userStore.clear()
+    userStore.reset()
     trackingSessionStore.clear()
   }
 
@@ -25,7 +25,11 @@ class AuthService {
       delete authRequest.payload.refresh_token
     }
     tokenStore.setTokenDto(authRequest.payload)
-    const profileRequest = await apiClient.user.get('me', ['sub_association'])
+    const [profileRequest, permissionsRequest] = await Promise.all([
+      apiClient.user.get('me', ['sub_association']),
+      apiClient.userPermissions.list()
+    ])
+    userStore.setPermissions(permissionsRequest.payload.data)
     userStore.setUser(profileRequest.payload.data)
     userStore.setHomeAssociation(profileRequest.payload.embedded.sub_association?.[0] ?? null)
   }
