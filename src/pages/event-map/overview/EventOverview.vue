@@ -78,7 +78,6 @@
 import { defineComponent } from 'vue'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { SortOption, userStore } from 'src/store/UserStore'
-import { Feature } from 'geojson'
 import { isEqual } from 'lodash-es'
 import { showCampaignLevel } from 'src/utils/showCampaignLevel'
 import CollapsibleFilters from 'src/components/CollapsibleFilters.vue'
@@ -113,11 +112,8 @@ export default defineComponent({
   },
   data() {
     return {
-      iconWidth: 25,
-      iconHeight: 40,
       eventsPagination: null as Pagination | null,
       campaigns: [] as CampaignDto[],
-      boundingBox: null as Feature | null,
       sortOptions: Object.values(SortOption),
       SortOptionLabels,
       subAssociations: [] as SubAssociationDto[],
@@ -184,10 +180,10 @@ export default defineComponent({
       return {
         sub_association: this.filteredSubAssociations?.length > 0 ? this.filteredSubAssociations : undefined,
         campaigns: this.filteredCampaign ? [this.filteredCampaign] : undefined,
-        within: this.boundingBoxJson ? JSON.stringify(this.boundingBoxJson) : undefined,
+        within: this.boundingBoxJson,
         order_by: this.selectedSortOption,
         limit: EVENT_MAP_MAX_EVENTS,
-        end_date_after: new Date().toISOString(),
+        end_date_after: new Date(),
         // TODO: jonatan@ctrl.alt.coop
         // atm it's well possible to not set an end date of an event making it indefinitely going, so we include them
         // in the query... Maybe we should rethink that (mandatory/default end date?)

@@ -111,7 +111,7 @@ export default defineComponent({
           if (newBox) {
             map.value?.fitBounds(newBox, {animate: props.animate})
           }
-        }, {immediate: true})
+        })
 
       })
       map.value.on('moveend', () => {
