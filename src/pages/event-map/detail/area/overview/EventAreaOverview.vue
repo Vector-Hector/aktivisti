@@ -92,8 +92,6 @@ import { uiStore } from 'src/store/UiStore'
 import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { QBtn, QIcon, QItem, QItemLabel, QItemSection, QList, QSelect } from 'quasar'
 import { ionCheckmarkCircle, ionCheckmarkCircleOutline, ionChevronForward } from '@quasar/extras/ionicons-v5'
-import Timeout = NodeJS.Timeout
-import { eventDetailStore } from 'src/store/EventDetailStore'
 import { StreetDetails } from 'src/api/model/AreaDetailsDto'
 import { difference } from 'lodash-es'
 
