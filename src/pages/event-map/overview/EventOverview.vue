@@ -78,7 +78,6 @@
 import { defineComponent } from 'vue'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { SortOption, userStore } from 'src/store/UserStore'
-import { Feature, Polygon } from 'geojson'
 import { isEqual } from 'lodash-es'
 import { showCampaignLevel } from 'src/utils/showCampaignLevel'
 import CollapsibleFilters from 'src/components/CollapsibleFilters.vue'
@@ -89,7 +88,6 @@ import { QSelect } from 'quasar'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import EventsOverviewMixin from 'pages/event-map/overview/EventsOverviewMixin'
 import { EVENT_MAP_MAX_EVENTS } from 'src/constants'
-import { area, difference } from '@turf/turf'
 
 
 const SortOptionLabels = {
