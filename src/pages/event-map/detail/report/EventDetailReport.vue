@@ -73,6 +73,10 @@ export default defineComponent({
         name: 'overallAddresses',
         field: 'overallAddresses',
         label: 'Adressen im Gebiet'
+      },{
+        name: 'createdLeads',
+        field: 'createdLeads',
+        label: 'Gewonnene Kontakte'
       }
      )
 
@@ -80,18 +84,21 @@ export default defineComponent({
       areaName: 'Gesamt',
       overallAddresses: 0,
       completedAddresses: 0,
+      createdLeads: 0
     }
     for (const {id, color, name} of this.eventAreas) {
       if (id) {
-        const {completed_addresses, overall_addresses, counts_per_metric} = await this.fetchAreaMetricsReports(id)
+        const {completed_addresses, overall_addresses, counts_per_metric, created_leads} = await this.fetchAreaMetricsReports(id)
         const row : any = {
           areaName: name,
           areaColor: color,
           overallAddresses: overall_addresses,
-          completedAddresses:  completed_addresses
+          completedAddresses:  completed_addresses,
+          createdLeads: created_leads
         }
         footerRow.overallAddresses += overall_addresses;
         footerRow.completedAddresses += completed_addresses;
+        footerRow.createdLeads += created_leads;
         for (const {id: metricId} of metrics) {
           const countOfMetric = counts_per_metric.find(({metric}) => metric === metricId)?.count || 0
           row[metricId] = countOfMetric
