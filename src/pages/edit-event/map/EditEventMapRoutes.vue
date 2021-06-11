@@ -145,7 +145,6 @@ import {
   QInput,
   QPopupEdit,
   QPopupProxy,
-  QScrollArea,
   QSpinnerPuff,
   QTable,
   QTd,
@@ -180,8 +179,7 @@ export default defineComponent({
     QColor,
     QSpinnerPuff,
     QInput,
-    QPopupProxy,
-    QScrollArea
+    QPopupProxy
   },
   mixins: [EditEventMixin],
   beforeRouteEnter: async (to, from, next) => {
