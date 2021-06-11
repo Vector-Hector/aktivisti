@@ -1,3 +1,13 @@
+function formatForQuery(value: any): string {
+  if (value instanceof Date) {
+    return value.toISOString()
+  } else if (typeof value === 'object') {
+    return JSON.stringify(value)
+  } else {
+    return value
+  }
+}
+
 /**
  * Helper function that will take an object and append the values as search parameters to a provided URL
  * @param url URL object that should get the query params
@@ -10,9 +20,9 @@ export function appendAsQueryParams(url: URL, object: any) {
     }
     if (Array.isArray(value)) {
       // if it's an array append each item for the particular key
-      value.forEach(item => url.searchParams.append(key, item))
+      value.forEach(item => url.searchParams.append(key, formatForQuery(item)))
     } else {
-      url.searchParams.append(key, value as string)
+      url.searchParams.append(key, formatForQuery(value))
     }
   }
 }
