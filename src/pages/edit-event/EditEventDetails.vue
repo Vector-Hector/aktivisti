@@ -189,7 +189,7 @@ export default defineComponent({
       // do not offer mandatory metrics that already are selected in the select dialog, so they can't be delselected
       return this.metrics.filter((item) =>
         !item.mandatory_for_types.includes(this.event.event_type!)
-          || !this.selectedMetrics.map(({id}) => id).includes(item.id)
+          || !this.selectedMetrics.find(({id}) => id === item.id)
       )
     },
     selectedMetrics: {
