@@ -1,5 +1,5 @@
 <template>
-  <QPage class="edit-event q-pa-sm">
+  <QPage class="edit-event">
     <Steps
       :model="steps"
       :readonly="false"

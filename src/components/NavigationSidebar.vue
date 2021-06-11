@@ -15,7 +15,7 @@
           </div>
           <div class="user-widget-details">
             <span v-if="userFullname.length>0" class="name">{{ userFullname }}</span>
-            <span class="username">@{{ userName }}</span>
+            <span class="username">{{ userName }}</span>
           </div>
         </div>
         <div class="menu-item">
@@ -76,7 +76,7 @@
           </MenuLink>
         </div>
         <div
-          v-if="isLoggedIn"
+          v-if="hasCreatePermission"
           class="menu-item"
         >
           <MenuLink
@@ -141,8 +141,8 @@ export default defineComponent({
     isLoggedIn() {
       return authService.isLoggedIn()
     },
-    isManager() {
-      return userStore.isManager()
+    hasCreatePermission() {
+      return userStore.hasAtLeastOneManagePermission()
     },
     userName() {
       return userStore.getState().user?.username

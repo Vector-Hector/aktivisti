@@ -7,9 +7,13 @@ export default boot(async () => {
 // hydrate profile on app start
   if (authService.isLoggedIn()) {
     try {
-      const profileRequest = await apiClient.user.get('me', ['sub_association'])
+      const [profileRequest, permissionRequest] = await Promise.all([
+        apiClient.user.get('me', ['sub_association']),
+        apiClient.userPermissions.list()
+      ])
       userStore.setUser(profileRequest.payload.data)
       userStore.setHomeAssociation(profileRequest.payload.embedded?.sub_association?.[0] ?? null)
+      userStore.setPermissions(permissionRequest.payload.data)
     } catch (error: any) {
       console.log(error)
       if (error.status === 403) {

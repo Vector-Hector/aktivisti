@@ -1,6 +1,5 @@
 <template>
   <Map
-    v-if="bbox"
     ref="map"
     :bounding-box="bbox"
   >
