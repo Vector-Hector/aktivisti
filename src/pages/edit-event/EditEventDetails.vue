@@ -110,18 +110,19 @@
           @click="$router.go(-1)"
         />
         <QBtn
+          type="submit"
           v-if="editMode"
           label="Speichern und zurück"
           color="primary"
           :disabled="isSubmitting"
-          @click="saveAndClose"
+          @click.prevent.stop="saveAndClose"
         />
         <QBtn
           type="submit"
           :disabled="isSubmitting"
           color="primary"
           label="Treffpunkt auswählen"
-          @click="saveAndProceed"
+          @click.prevent.stop="saveAndProceed"
         />
       </div>
     </QForm>
