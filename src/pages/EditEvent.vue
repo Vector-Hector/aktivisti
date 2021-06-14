@@ -1,10 +1,27 @@
 <template>
   <QPage class="edit-event">
-    <Steps
-      :model="steps"
-      :readonly="false"
-      class="steps"
-    />
+    <QStepper class="stepper"
+      alternative-labels
+      v-model="step"
+      color="primary"
+      animated
+    >
+      <QStep
+        :name="1"
+        title="Beschreibung"
+        prefix="1"
+       />
+      <QStep
+        :name="2"
+        title="Treffpunkt"
+        prefix="2"
+      />
+      <QStep
+        :name="3"
+        title="Gebiete"
+        prefix="3"
+      />
+    </QStepper >
     <router-view
       v-slot="{Component}"
       v-model:event="event"
@@ -23,13 +40,11 @@ import { defineComponent, PropType } from 'vue'
 
 import { EventTypes } from 'src/api/model/EventTypes'
 import { EventDto, VisibilityOptions } from 'src/api/model/EventDto'
-import Steps from 'primevue/steps'
-import { RouteParams } from 'vue-router'
 import { apiClient } from 'src/api/ApiClient'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { uiStore } from 'src/store/UiStore'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
-import { QPage, QPopupProxy } from 'quasar'
+import { QStep, QStepper, QPage, QPopupProxy } from 'quasar'
 
 /**
  * The parent component implementing the individual steps for creating an event
@@ -37,7 +52,8 @@ import { QPage, QPopupProxy } from 'quasar'
 export default defineComponent({
   name: 'EditEvent',
   components: {
-    Steps,
+    QStep,
+    QStepper,
     QPage,
     QPopupProxy
   },
@@ -76,6 +92,9 @@ export default defineComponent({
       default: null
     }
   },
+  created() {
+    this.setStep(this.$route.name)
+  },
   data() {
     return {
       campaigns: [] as CampaignDto[],
@@ -85,52 +104,26 @@ export default defineComponent({
         metrics: [],
         targets: {},
         visibility: VisibilityOptions.Public
-      } as Partial<EventDto>
+      } as Partial<EventDto>,
+      step: 1 as number
     }
   },
-  computed: {
-    steps(): any[] {
-      return [{
-        label: 'Beschreibung',
-        to: this.$router.resolve({
-          name: this.id !== null ? 'edit-event-details' : 'edit-event-details-new',
-          params: {
-            id: this.id?.toString() ?? ''
-          }
-        }).path
-      }, {
-        label: 'Treffpunkt',
-        to: this.resolveIfEventId({
-          name: 'edit-event-location'
-        }),
-        disabled: !this.event.id
-      }, {
-        label: 'Gebiete',
-        to: this.resolveIfEventId({
-          name: 'edit-event-routes'
-        }),
-        disabled: !this.event.location || !this.event.id
-      }]
+  watch: {
+    '$route' (to) {
+      this.setStep(to.name)
     }
   },
   methods: {
-    /**
-     * This function will resolve the edit event sub routes if an event id is available (meaning it has been created
-     * in the backend), otherwise the steps should be disabled and this function will return '' (undefined is not allowed
-     * as a routing target)
-     * @param location route parameters of the target route, (event-)id will be auto-filled by this function
-     */
-    resolveIfEventId(location: { name: string, params?: RouteParams }): string {
-      if (this.id) {
-        return this.$router.resolve({
-          ...location,
-          params: {
-            ...location.params,
-            id: this.id ?? undefined
-          }
-        })?.path
-      } else {
-        return ''
+    setStep(locationName: any): void {
+      switch(locationName){
+        case 'edit-event-location':
+          this.step = 2
+          break;
+        case 'edit-event-routes':
+          this.step = 3
+          break;
+        default:
+          this.step = 1
       }
     }
   }
@@ -145,6 +138,10 @@ export default defineComponent({
   height: 100%;
   overflow: auto;
   width: 100%;
+  // TODO(peter@ctrl.alt.coop): Don't show/render the html element instead of hiding it.
+  ::v-deep .q-stepper__step-inner{
+    display:none
+  }
 }
 
 </style>
