@@ -24,106 +24,108 @@
       Wähle nun mit dem Polygonwerkzeug auf der rechten Seite Gebiete aus um die verschiedenen Einsatzgebiete zu
       beschreiben
     </p>
-    <DataTable
+    <QTable
       :auto-layout="true"
+      flat
       :value="areas"
-      class="editable-cells-table p-datatable-sm"
+      :columns="columns"
+      :rows="areas"
+      virtual-scroll
+      hide-pagination
+      :rows-per-page-options="[0]"
+      class="editable-cells-table overflow-hidden q-my-sm"
       edit-mode="cell"
+      no-data-label="Noch keine Gebiete gezeichnet"
       @cell-edit-complete="updateArea($event.data)"
     >
-      <Column
-        header="Name"
-        field="name"
-        body-class="name-cell"
-      >
-        <template
-          #editor="slotProps"
-        >
-          <InputText
-            v-if="slotProps.data.id"
-            v-model="slotProps.data[slotProps.column.props.field]"
-            class="cell-input"
-          />
-        </template>
-      </Column>
-      <Column
-        field="addressCount"
-        header="Adressen"
-        header-class="address-cell"
-        body-class="address-cell"
-      >
-        <template #body="slotProps">
-          <ProgressSpinner
-            v-if="updatingAreaFeatureIds.has(slotProps.data.feature_id)"
-            class="progress-spinner"
-          />
-          <span v-else>
-            {{ slotProps.data.area_details?.streets?.reduce((acc, item) => acc + item.addresses.length, 0) ?? 0 }}
+      <template v-slot:body="props">
+        <QTr>
+          <QTd key="name" :props="props">
+            <div>
+              {{ props.row.name }}
+              <QPopupEdit
+                v-model="props.row.name"
+                @save="(value) => updateArea({ ...props.row, name: value })"
+                :auto-save="true"
+                v-slot="scope"
+              >
+                <QInput v-model="scope.value" @keyup.enter="scope.set" dense autofocus />
+              </QPopupEdit>
+            </div>
+          </QTd>
+          <QTd key="details" :props="props">
+            <QSpinnerPuff
+              v-if="updatingAreaFeatureIds.has(props.row.feature_id)"
+              class="progress-spinner"
+            />
+            <span v-else>
+            {{ props.row.area_details?.streets?.reduce((acc, item) => acc + item.addresses.length, 0) ?? 0 }}
           </span>
-        </template>
-      </Column>
-      <Column
-        header="Farbe"
-      >
-        <template #body="slotProps">
-          <ColorPicker
-            :model-value="slotProps.data.color.replace('#', '')"
-            @update:modelValue="slotProps.data.color = `#${$event}`; updateArea(slotProps.data)"
-          />
-        </template>
-      </Column>
-      <Column
-        header=""
-      >
-        <template #body="slotProps">
-          <ProgressSpinner
-            v-if="deletingAreaIds.has(slotProps.data.id)"
-            class="progress-spinner"
-          />
-          <Button
-            v-else
-            class="p-button-danger"
-            icon="pi pi-trash"
-            @click="deleteAreaById(slotProps.data.id)"
-          />
-        </template>
-      </Column>
-      <template #empty>
-        Noch keine Gebiete gezeichnet
+          </QTd>
+          <QTd key="color" :props="props">
+            <QBtn
+              unelevated
+              round
+              dense
+              size="sm"
+              :style="{
+              'background-color': props.row.color
+            }"
+              :color="props.row.color"
+            >
+              <QPopupProxy>
+                <QColor
+                  no-header
+                  no-footer
+                  default-view="palette"
+                  :model-value="props.row.color"
+                  @update:modelValue="props.row.color = `${$event}`; updateArea(props.row)"
+                />
+              </QPopupProxy>
+            </QBtn>
+          </QTd>
+          <QTd key="actions" :props="props">
+            <QSpinnerPuff
+              v-if="deletingAreaIds.has(props.row.id)"
+            />
+            <QBtn
+              v-else
+              dense
+              size="sm"
+              round
+              flat
+              color="negative"
+              :icon="ionTrash"
+              @click="deleteAreaByFeatureId(props.row.feature_id)"
+            />
+          </QTd>
+        </QTr>
       </template>
-      <template #footer>
-        <Button
-          class="add-area-button"
-          icon="pi pi-share-alt"
-          label="Gebiet zeichnen"
-          @click="drawArea()"
-        />
-      </template>
-    </DataTable>
+    </QTable>
+    <QBtn
+      color="primary"
+      class="add-area-button"
+      :icon="ionCreateOutline"
+      label="Gebiet zeichnen"
+      @click="drawArea()"
+    />
   </MapOverlay>
   <MapOverlay
     class="navigation-overlay"
     position="bottom-right"
   >
-    <Button
-      class="gray-button"
+    <QBtn
+      flat
+      color="primary"
       @click="$router.go(-1)"
     >
       Zurück
-    </Button>
-    <router-link
-      v-slot="{ href, navigate }"
-      custom
+    </QBtn>
+    <QBtn
+      color="primary"
       :to="{name: 'event-detail', params: { id: event.id }}"
-    >
-      <Button
-        class="submit-button"
-        @click="navigate"
-      >
-        <a :href="href">
-          Fertig</a>
-      </Button>
-    </router-link>
+      label="Fertig"
+    />
   </MapOverlay>
 </template>
 
@@ -133,16 +135,22 @@ import DrawControl from 'src/mapbox/DrawControl.vue'
 import Marker from 'src/mapbox/Marker.vue'
 import EditEventMixin from 'src/pages/edit-event/EditEventMixin'
 import MapOverlay from 'src/components/MapOverlay.vue'
-import Button from 'primevue/button'
 import { Feature } from 'geojson'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import ColorPicker from 'primevue/colorpicker'
-import ProgressSpinner from 'primevue/progressspinner'
 import { routePlannerStyles } from 'src/pages/edit-event/map/route-planner.styles'
-import InputText from 'primevue/inputtext'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { apiClient } from 'src/api/ApiClient'
+import {
+  QBtn,
+  QColor,
+  QInput,
+  QPopupEdit,
+  QPopupProxy,
+  QSpinnerPuff,
+  QTable,
+  QTd,
+  QTr
+} from 'quasar'
+import { ionCreateOutline, ionTrash } from '@quasar/extras/ionicons-v5'
 
 const defaultColors = [
   '#E22A3A',
@@ -160,15 +168,18 @@ const defaultColors = [
 export default defineComponent({
   name: 'EditEventMapRoutes',
   components: {
-    Button,
     Marker,
     DrawControl,
     MapOverlay,
-    DataTable,
-    Column,
-    ColorPicker,
-    ProgressSpinner,
-    InputText
+    QBtn,
+    QTable,
+    QTd,
+    QTr,
+    QPopupEdit,
+    QColor,
+    QSpinnerPuff,
+    QInput,
+    QPopupProxy
   },
   mixins: [EditEventMixin],
   beforeRouteEnter: async (to, from, next) => {
@@ -188,11 +199,33 @@ export default defineComponent({
       routePlannerStyles: routePlannerStyles('#000000'),
       areas: [] as EventAreaDto[],
       updatingAreaFeatureIds: new Set<string>(),
-      deletingAreaIds: new Set<number>(),
+      deletingAreaIds: new Set<string>(),
       drawControls: {
         polygon: true,
         trash: true
-      }
+      },
+      columns: [{
+        name: 'name',
+        label: 'Name',
+        field: 'name',
+        align: 'left'
+      }, {
+        name: 'details',
+        label: 'Adressen',
+        field: 'area_details'
+      }, {
+        name: 'color',
+        label: 'Farbe',
+        field: 'color',
+        required: true
+      }, {
+        name: 'actions',
+        label: 'Aktionen',
+        field: null,
+        required: true
+      }],
+      ionCreateOutline,
+      ionTrash
     }
   },
   computed: {
@@ -242,10 +275,10 @@ export default defineComponent({
       }
     },
     handleDeletedFeatures(event: any) {
-      const deletedIds = event.features.map(({id}: { id: string }) => id)
-      this.areas = this.areas.filter(({id}) => {
-        return !deletedIds.includes(id)
-      })
+      const deletedFeatureIds = event.features.map(({id}: { id: string }) => id)
+      for (const featureId of deletedFeatureIds) {
+        void this.deleteAreaByFeatureId(featureId)
+      }
     },
     async updateArea(area: Partial<EventAreaDto>) {
       this.updatingAreaFeatureIds.add(area.feature_id!)
@@ -264,14 +297,24 @@ export default defineComponent({
       })
       this.updatingAreaFeatureIds.delete(updatedArea.feature_id)
     },
-    async deleteAreaById(deleteId: number) {
-      const area = this.areas.find(({id}) => id === deleteId)
-      this.deletingAreaIds.add(deleteId)
+    async deleteAreaByFeatureId(deleteId: string) {
+      const area = this.areas.find(({feature_id}) => feature_id === deleteId)
       if (area?.id) {
-        await apiClient.eventAreas.delete(area.id.toString())
+        try {
+          this.deletingAreaIds.add(deleteId)
+          await apiClient.eventAreas.delete(area.id.toString())
+          this.areas = this.areas.filter(({id}) => area?.id !== id)
+        } catch (e) {
+          this.$q.notify({
+            message: 'Etwas ging schief beim löschen des Gebiets',
+            color: 'negative',
+            timeout: 3000
+          })
+        } finally {
+          this.deletingAreaIds.delete(deleteId)
+        }
       }
-      this.areas = this.areas.filter(({id}) => area?.id !== id)
-      this.deletingAreaIds.delete(deleteId)
+      this.areas = this.areas.filter(({feature_id}) => deleteId !== feature_id)
     },
     drawArea() {
       (this.$refs.draw as typeof DrawControl).changeMode('draw_polygon')
@@ -295,8 +338,10 @@ Button {
 }
 
 .edit-routes-overlay {
-  width: 35%;
+  width: 38%;
   max-width: 750px;
+  display: flex;
+  flex-direction: column;
 }
 
 .progress-spinner {
@@ -309,18 +354,6 @@ Button {
 }
 
 .add-area-button {
-  width: 100%;
-}
-
-:deep(.p-datatable-auto-layout > .p-datatable-wrapper) {
-  overflow: visible;
-}
-
-:deep(.address-cell) {
-  text-align: center !important;
-}
-
-:deep(.name-cell) {
   width: 100%;
 }
 
