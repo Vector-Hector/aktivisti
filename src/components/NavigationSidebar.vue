@@ -196,10 +196,6 @@ outside the html hierarchy of this component - if someone finds a better soltion
   height: 100%;
 }
 
-::v-global(.navigation-sidebar) {
-  padding: 0 !important;
-}
-
 .menu {
   display: flex;
   flex-direction: column;
