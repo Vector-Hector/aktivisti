@@ -19,6 +19,14 @@
           flat
           :icon="ionPencil"
         />
+        <QBtn
+          v-if="eventPermissions.self.DELETE"
+          @click="openDeleteModal"
+          size="sm"
+          color="primary"
+          flat
+          :icon="ionTrash"
+        />
       </div>
     </div>
     <div class="row q-col-gutter-y-sm">
@@ -184,7 +192,7 @@ import {
   ionLogoTwitter,
   ionLogoWhatsapp,
   ionMail,
-  ionPencil
+  ionPencil, ionTrash
 } from '@quasar/extras/ionicons-v5'
 import { QBtn, QList } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
@@ -224,7 +232,8 @@ export default defineComponent({
       ionLogoWhatsapp,
       ionMail,
       ionBarChart,
-      ionPencil
+      ionPencil,
+      ionTrash
     }
   },
   computed: {
@@ -364,6 +373,25 @@ export default defineComponent({
             void this.refreshEvent()
           })
       }
+    },
+    openDeleteModal() {
+      this.$q.dialog({
+        title: `${this.event.name} wirklich löschen?`,
+        message: `Das Event <b>"${this.event.name}"</b> wird gelöscht und kann nicht wiederhergestellt werden.`,
+        html: true,
+        cancel: true
+      }).onOk(async () => {
+        try {
+          await this.$apiClient.events.delete(this.event.id.toString())
+          await this.$router.push({ name: 'events' })
+        } catch (error) {
+          this.$q.notify({
+            color: 'negative',
+            message: 'Die Aktion konnte nicht gelöscht werden.'
+          })
+          return
+        }
+      })
     }
   }
 })

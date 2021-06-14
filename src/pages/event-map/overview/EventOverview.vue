@@ -5,63 +5,11 @@
       :activated-filter-count="activatedFilterCount"
     >
       <div class="filter-content">
-        <div class="select-wrapper">
-          <QSelect
-            :dropdownIcon="ionChevronDown"
-            :clearIcon="ionClose"
-            filled
-            label="Kampagnen"
-            v-model="filteredCampaign"
-            :options="campaignOptions"
-            emit-value
-            map-options
-            option-value="id"
-            option-label="name"
-          />
-        </div>
-        <div class="select-wrapper">
-          <QSelect
-            class="filter-dropdown"
-            label="Bezirks/Kreisverband"
-            :dropdownIcon="ionChevronDown"
-            :clearIcon="ionClose"
-            filled
-            multiple
-            v-model="filteredSubAssociations"
-            use-input
-            use-chips
-            emit-value
-            map-options
-            clearable
-            input-debounce="0"
-            :options="suggestedSubassociations"
-            @filter="filterSubAssociations"
-            option-value="id"
-            option-label="name"
-          >
-            <template v-slot:no-option>
-              <q-item>
-                <q-item-section class="text-grey">
-                  Kein Verband gefunden
-                </q-item-section>
-              </q-item>
-            </template>
-          </QSelect>
-        </div>
-        <div class="select-wrapper">
-          <QSelect
-            class="filter-dropdown"
-            :dropdownIcon="ionChevronDown"
-            :clearIcon="ionClose"
-            filled
-            v-model="selectedSortOption"
-            input-debounce="0"
-            label="Sortierung"
-            :options="sortOptions"
-            :option-label="(item) => SortOptionLabels[item]"
-            placeholder="Sortierung auswählen"
-          />
-        </div>
+        <EventFilter
+          v-model:filter-params="userFilterParams"
+          :campaigns="campaigns"
+          :sub-associations="subAssociations"
+        />
       </div>
     </CollapsibleFilters>
     <EventList
@@ -77,31 +25,26 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { CampaignDto } from 'src/api/model/CampaignDto'
-import { SortOption, userStore } from 'src/store/UserStore'
+import { userStore } from 'src/store/UserStore'
 import { isEqual } from 'lodash-es'
 import { showCampaignLevel } from 'src/utils/showCampaignLevel'
 import CollapsibleFilters from 'src/components/CollapsibleFilters.vue'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import EventList from 'src/components/EventList.vue'
 import { Pagination } from 'src/api/model/APIEnvelope'
-import { QSelect } from 'quasar'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import EventsOverviewMixin from 'pages/event-map/overview/EventsOverviewMixin'
 import { EVENT_MAP_MAX_EVENTS } from 'src/constants'
+import EventFilter, { UserEventFilterParams } from 'components/EventFilter.vue'
 
-
-const SortOptionLabels = {
-  [SortOption.START_DATE]: 'Datum (Beginn)',
-  [SortOption.NAME]: 'Aktionsname'
-}
 
 export default defineComponent({
   name: 'EventMap',
   mixins: [EventsOverviewMixin],
   components: {
+    EventFilter,
     EventList,
-    CollapsibleFilters,
-    QSelect
+    CollapsibleFilters
   },
   beforeRouteEnter(to, from, next) {
     if (userStore.getState().bbox === null) {
@@ -114,73 +57,47 @@ export default defineComponent({
     return {
       eventsPagination: null as Pagination | null,
       campaigns: [] as CampaignDto[],
-      sortOptions: Object.values(SortOption),
-      SortOptionLabels,
       subAssociations: [] as SubAssociationDto[],
-      suggestedSubassociations: [] as SubAssociationDto[],
       ionChevronDown,
       ionClose
     }
   },
   computed: {
-    selectedSortOption: {
-      get(): SortOption {
-        return userStore.getState().filterPreferences.sorting
+    userFilterParams: {
+      get(): UserEventFilterParams {
+        const selectedCampaign = userStore.getState().filterPreferences.campaign
+        return {
+          sub_association: userStore.getState().filterPreferences.subAssociations,
+          campaigns: selectedCampaign !== undefined ? [selectedCampaign] : undefined,
+          order_by: userStore.getState().filterPreferences.sorting
+        }
       },
-      set(value: SortOption) {
+      set(value: UserEventFilterParams) {
         userStore.setFilterPreferences({
           ...userStore.getState().filterPreferences,
-          sorting: value
-        })
-      }
-    },
-    filteredSubAssociations: {
-      get(): number[] {
-        return userStore.getState().filterPreferences.subAssociations
-      },
-      set(value: number[]) {
-        userStore.setFilterPreferences({
-          ...userStore.getState().filterPreferences,
-          subAssociations: value
-        })
-      }
-    },
-    filteredCampaign: {
-      get(): number | undefined {
-        return userStore.getState().filterPreferences.campaign
-      },
-      set(value: number) {
-        userStore.setFilterPreferences({
-          ...userStore.getState().filterPreferences,
-          campaign: value
+          ...{
+            subAssociations: value.sub_association ?? [],
+            campaign: value.campaigns?.[0],
+            sorting: value.order_by
+          }
         })
       }
     },
     activatedFilterCount(): number {
       let active = 0
-      if (this.filteredSubAssociations?.length > 0) {
+      if ((this.userFilterParams.sub_association?.length ?? 0) > 0) {
         active++
       }
-      if (this.filteredCampaign) {
+      if (this.userFilterParams.campaigns) {
         active++
       }
       return active
     },
-    campaignOptions(): Partial<CampaignDto>[] {
-      return [
-        {
-          id: 0,
-          name: 'Alle Kampagnen'
-        },
-        ...this.campaigns
-      ]
-    },
     filterParams(): { [key: string]: any } {
       return {
-        sub_association: this.filteredSubAssociations?.length > 0 ? this.filteredSubAssociations : undefined,
-        campaigns: this.filteredCampaign ? [this.filteredCampaign] : undefined,
+        ...this.userFilterParams,
         within: this.boundingBoxJson,
-        order_by: this.selectedSortOption,
+
         limit: EVENT_MAP_MAX_EVENTS,
         end_date_after: new Date(),
         // TODO: jonatan@ctrl.alt.coop
@@ -203,22 +120,9 @@ export default defineComponent({
   async created() {
     await this.getCampaigns()
     await this.getSubAssociations()
-    this.suggestedSubassociations = this.subAssociations
   },
   methods: {
     showCampaignLevel,
-    filterSubAssociations(value: string, update: any) {
-      if (!value) {
-        update(() => {
-          this.suggestedSubassociations = this.subAssociations
-        })
-        return
-      }
-      update(() => {
-        const lowercasedValue = value.toLowerCase()
-        this.suggestedSubassociations = this.subAssociations.filter(({name}) => name.toLowerCase().includes(lowercasedValue))
-      })
-    },
     async getSubAssociations() {
       this.subAssociations = (await this.$apiClient.subAssociations.list()).payload.data
     },
