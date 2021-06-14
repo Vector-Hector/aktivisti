@@ -31,10 +31,12 @@
         v-if="!isLoggedIn"
         class="menu-group highlighted"
       >
-        <Button
-          icon="pi pi-times"
-          class="p-button-text p-button-rounded close-sidebar-button"
+        <QBtn
+          :icon="ionClose"
           @click="sidebarExpanded = false"
+          class="close-sidebar-button"
+          flat
+          round
         />
         <div class="menu-item">
           <MenuLink
@@ -116,25 +118,25 @@
 import { defineComponent } from 'vue'
 import { uiStore } from 'src/store/UiStore'
 import { userStore } from 'src/store/UserStore'
-import Button from 'primevue/button'
 import { authService } from 'src/api/authService'
 import MenuLink from 'src/components/MenuLink.vue'
-import { ionCalendarClearOutline, ionCalendarOutline } from '@quasar/extras/ionicons-v5'
-import { QDrawer, QIcon } from 'quasar'
+import { ionCalendarClearOutline, ionCalendarOutline, ionClose } from '@quasar/extras/ionicons-v5'
+import { QBtn, QDrawer, QIcon } from 'quasar'
 
 
 export default defineComponent({
   name: 'NavigationSidebar',
   components: {
     MenuLink,
+    QBtn,
     QDrawer,
-    Button,
     QIcon
   },
   data() {
     return {
       ionCalendarOutline,
       ionCalendarClearOutline,
+      ionClose
     }
   },
   computed: {
@@ -255,10 +257,6 @@ hr {
   position: absolute;
   right: 0;
   color: $white !important;
-
-  &:focus {
-    box-shadow: none;
-  }
 }
 
 .menu-bottom {
