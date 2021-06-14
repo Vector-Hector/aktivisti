@@ -51,8 +51,7 @@ export default defineComponent({
         user: userStore.getState().user?.id
       }))
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [eventRequest, eventAreaRequest, personalParticipationRequest] = await Promise.all(initilizationRequests)
+    const [, eventAreaRequest, personalParticipationRequest] = await Promise.all(initilizationRequests)
 
 
     const eventAreas = eventAreaRequest.payload.data
