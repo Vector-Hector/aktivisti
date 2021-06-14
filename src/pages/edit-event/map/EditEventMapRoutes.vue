@@ -314,7 +314,7 @@ export default defineComponent({
           this.deletingAreaIds.delete(deleteId)
         }
       }
-      this.areas = this.areas.filter(({feature_id}) => deleteId === feature_id)
+      this.areas = this.areas.filter(({feature_id}) => deleteId ! == feature_id)
     },
     drawArea() {
       (this.$refs.draw as typeof DrawControl).changeMode('draw_polygon')
