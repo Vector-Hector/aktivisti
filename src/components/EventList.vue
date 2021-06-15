@@ -23,37 +23,6 @@
             {{ $utils.dateFormat(item.start_date) }}
           </QItemLabel>
         </QItemSection>
-
-        <QItemSection side>
-          <div class="text-grey-8 q-gutter-xs">
-            <router-link
-              v-if="isCampaignAdmin"
-              class="text-grey-8"
-              :to="{ name: 'edit-event-details', params: { id: item.id } }"
-              @click="$event.stopPropagation()"
-            >
-              <QIcon
-                flat
-                dense
-                class="edit-button"
-                size="24px"
-                :name="ionPencil"
-              />
-            </router-link>
-            <a
-              @click="$event.stopPropagation(); deleteEvent(item)"
-            >
-              <QIcon
-                flat
-                dense
-                v-if="isCampaignAdmin"
-                class="delete-button"
-                size="24px"
-                :name="ionTrash"
-              />
-            </a>
-          </div>
-        </QItemSection>
       </QItem>
     </QList>
     <template v-slot:loading>
@@ -75,11 +44,10 @@
 import { defineComponent, PropType } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { CampaignDto } from 'src/api/model/CampaignDto'
-import { userStore } from 'src/store/UserStore'
 import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
 import { Pagination } from 'src/api/model/APIEnvelope'
 import { distinctBy } from 'src/utils/array'
-import { QIcon, QInfiniteScroll, QItem, QItemLabel, QItemSection, QList, QSpinnerDots } from 'quasar'
+import { QInfiniteScroll, QItem, QItemLabel, QItemSection, QList, QSpinnerDots } from 'quasar'
 import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 
 
@@ -91,7 +59,6 @@ export default defineComponent({
     QItemSection,
     QInfiniteScroll,
     QSpinnerDots,
-    QIcon,
     QList
   },
   props: {
@@ -114,9 +81,6 @@ export default defineComponent({
   },
   emits: ['update:events', 'update:pagination'],
   computed: {
-    isCampaignAdmin() {
-      return userStore.isCampaignAdmin()
-    },
     isDisabled(): boolean {
       return this.pagination?.total === this.events.length
     }
@@ -136,28 +100,7 @@ export default defineComponent({
         }
       })
     },
-    deleteEvent(event: EventDto) {
-      this.$q.dialog({
-        title: `${event.name} wirklich löschen?`,
-        message: `Das Event <b>"${event.name}"</b> wird gelöscht und kann nicht wiederhergestellt werden.`,
-        html: true,
-        cancel: true,
-        persistent: true
-      }).onOk(async () => {
-        try {
-          await this.$apiClient.events.delete(event.id.toString())
-          this.$emit('update:events', this.events.filter(({id}) => id !== event.id))
-        } catch (error) {
-          this.$toast.add({
-            severity: 'error',
-            summary: `${error.statusText ? error.statusText : 'Dieser Eintrag konnte nicht gelöscht werden.'}`,
-            detail: `Fehlercode: ${error.status}`
-          })
-          return
-        }
-      })
-    },
-    async getEvents(pagination: Pagination) {
+    async getParticipatedEvents(pagination: Pagination) {
       const response = await this.$apiClient.events.list({
         ...this.filterParams,
         ...this.pagination,
@@ -178,7 +121,7 @@ export default defineComponent({
         limit: EVENT_LIST_CHUNK_SIZE,
         offset: (this.events?.length ?? 0)
       }
-      const moreEvents = await this.getEvents(pagination)
+      const moreEvents = await this.getParticipatedEvents(pagination)
       this.$emit('update:events', distinctBy(this.events.concat(moreEvents), (item: EventDto) => item.id))
       done()
     }
