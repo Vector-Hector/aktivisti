@@ -65,11 +65,11 @@ export default defineComponent({
   computed: {
     userFilterParams: {
       get(): UserEventFilterParams {
-        const selectedCampaign = userStore.getState().filterPreferences.campaign
+        const {campaign, subAssociations, sorting} = userStore.getState().filterPreferences
         return {
-          sub_association: userStore.getState().filterPreferences.subAssociations,
-          campaigns: selectedCampaign !== undefined ? [selectedCampaign] : undefined,
-          order_by: userStore.getState().filterPreferences.sorting
+          sub_association: subAssociations,
+          campaigns: campaign !== undefined ? [campaign] : undefined,
+          order_by: sorting
         }
       },
       set(value: UserEventFilterParams) {
