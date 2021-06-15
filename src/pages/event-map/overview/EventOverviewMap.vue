@@ -60,13 +60,13 @@ export default defineComponent({
     const updateBounds = () => {
       eventOverviewStore.setBbox(map.value?.getBounds().toArray().flat() as BBox2d)
     }
-
     map.value.on('zoomend', updateBounds)
     map.value.on('moveend', updateBounds)
     onUnmounted(() => {
       map.value.off('zoomend', updateBounds)
       map.value.off('moveend', updateBounds)
     })
+    updateBounds()
     return {
       map
     }

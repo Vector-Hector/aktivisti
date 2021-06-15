@@ -12,48 +12,58 @@ import { uiStore } from 'src/store/UiStore'
 import { eventDetailStore } from 'src/store/EventDetailStore'
 import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { userStore } from 'src/store/UserStore'
+import { authService } from 'src/api/authService'
 
 
 export default defineComponent({
   name: 'EventDetail',
   mixins: [EventDetailMixin],
   async beforeRouteEnter(to, from, next) {
-    const participation = (await apiClient.eventParticipations.list({
-      event: to.params.id,
-      user: userStore.getState().user?.id
-    })).payload.data?.[0]
-    const [eventRequest, eventAreaRequest] = await Promise.all([
+    const initilizationRequests: Promise<any>[] = [
       apiClient.events.get(to.params.id.toString(), ['campaigns'], {
         show_permissions: true
+      }).then((response) => {
+        const event = response.payload.data
+        const campaigns = response.payload.embedded.campaigns as CampaignDto[]
+        const eventPermissions = response.payload.permissions
+        eventDetailStore.setEvent(event)
+        eventDetailStore.setCampaigns(campaigns)
+        eventDetailStore.setEventPermissions(eventPermissions)
+
+        if (eventPermissions.invite.POST) {
+          return apiClient.eventParticipations.list({
+            event: to.params.id
+          })
+        }
+      }).then((response) => {
+        // If we have invite permissions we have access to the participant list
+        if (response) {
+          eventDetailStore.setParticipations(response.payload.data)
+        }
       }),
       apiClient.eventAreas.list({
         event: to.params.id
       })
-    ])
-    const event = eventRequest.payload.data
-    const campaigns = eventRequest.payload.embedded.campaigns as CampaignDto[]
-    const eventPermissions = eventRequest.payload.permissions
+    ]
+    if (authService.isLoggedIn()) {
+      initilizationRequests.push(apiClient.eventParticipations.list({
+        event: to.params.id,
+        user: userStore.getState().user?.id
+      }))
+    }
+    const [, eventAreaRequest, personalParticipationRequest] = await Promise.all(initilizationRequests)
+
+
     const eventAreas = eventAreaRequest.payload.data
 
-    // If we have invite permissions we have access to the participant list
-    if (eventPermissions.invite.POST) {
-      const participations = (await apiClient.eventParticipations.list({
-        event: to.params.id
-      })).payload.data
-      eventDetailStore.setParticipations(participations)
-    }
+    eventDetailStore.setPersonalParticipation(personalParticipationRequest ?? null)
 
-    eventDetailStore.setPersonalParticipation(participation ?? null)
-    eventDetailStore.setEvent(event)
-    eventDetailStore.setCampaigns(campaigns)
-    eventDetailStore.setEventPermissions(eventPermissions)
     eventDetailStore.setEventAreas(eventAreas)
 
     next(() => {
       uiStore.updateActiveElements({
-        //@ts-ignore
-        event: event.name,
-        campaigns: campaigns.map(({name}) => name).join(',')
+        event: eventDetailStore.getState().event!.name,
+        campaigns: eventDetailStore.getState().campaigns.map(({name}) => name).join(',')
       })
     })
   },

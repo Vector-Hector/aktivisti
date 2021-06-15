@@ -17,7 +17,9 @@ export default defineComponent({
       }
     },
     boundingBoxJson() {
-      return eventOverviewStore.getState().bbox ? bboxPolygon(eventOverviewStore.getState().bbox).geometry : null
+      return eventOverviewStore.getState().bbox !== null
+        ? bboxPolygon(eventOverviewStore.getState().bbox!).geometry
+        : null
     },
     events: {
       get() {

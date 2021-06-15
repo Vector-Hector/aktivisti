@@ -118,7 +118,6 @@ export default defineComponent({
       SortOptionLabels,
       subAssociations: [] as SubAssociationDto[],
       suggestedSubassociations: [] as SubAssociationDto[],
-      bbox: userStore.getState().bbox,
       ionChevronDown,
       ionClose
     }
@@ -224,14 +223,16 @@ export default defineComponent({
       this.subAssociations = (await this.$apiClient.subAssociations.list()).payload.data
     },
     async updateView() {
-      const clusterResponse = await this.$apiClient.eventClusters.list(this.filterParams)
-      if (!isEqual(this.clusters, clusterResponse.payload.data)) {
-        this.clusters = clusterResponse.payload.data
+      if (this.filterParams.within) {
+        const clusterResponse = await this.$apiClient.eventClusters.list(this.filterParams)
+        if (!isEqual(this.clusters, clusterResponse.payload.data)) {
+          this.clusters = clusterResponse.payload.data
+        }
+        const eventsResponse = await this.$apiClient.events.list(this.filterParams)
+        if (!isEqual(this.events, eventsResponse.payload.data))
+          this.events = eventsResponse.payload.data
+        this.eventsPagination = eventsResponse.payload.pagination!
       }
-      const eventsResponse = await this.$apiClient.events.list(this.filterParams)
-      if (!isEqual(this.events, eventsResponse.payload.data))
-        this.events = eventsResponse.payload.data
-      this.eventsPagination = eventsResponse.payload.pagination!
     },
     async getCampaigns() {
       const response = await this.$apiClient.campaigns.list()

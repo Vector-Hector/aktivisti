@@ -4,7 +4,7 @@ import { ClusterDto } from 'src/api/model/ClusterDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 
 interface EventMapStoreState {
-  bbox: BBox2d
+  bbox: BBox2d | null
   events: EventDto[]
   clusters: ClusterDto[]
 }
@@ -13,7 +13,7 @@ class EventOverviewStore extends Store<EventMapStoreState> {
 
   protected data(): EventMapStoreState {
     return {
-      bbox: [5.98865807458, 47.3024876979, 15.0169958839, 54.983104153] as BBox2d,
+      bbox: null,
       events: [],
       clusters: []
     }
