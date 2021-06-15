@@ -13,7 +13,7 @@
         <StandaloneGeocoder
           :access-token="accessToken"
           :standalone="true"
-          @result="handleResult($event.value)"
+          @result="handleResult($event)"
         />
       </div>
       <div

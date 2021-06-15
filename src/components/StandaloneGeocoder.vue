@@ -3,18 +3,31 @@
     <div class="p-fluid">
       <div class="p-field">
         <label for="queryValue">Ort suchen</label>
-        <AutoComplete
+        <QSelect
           id="queryValue"
-          v-model="queryValue"
-          class="query-field"
-          :suggestions="filteredPlaces"
-          @complete="filterPlaces($event)"
-          @item-select="emitResult($event)"
+          :model-value="selectedGeocode"
+          class="search-place"
+          hide-selected
+          hide-dropdown-icon
+          @filter="filterFn"
+          dense
+          outlined
+          :options="filteredPlaces"
+          option-label="place_name"
+          use-input
+          @update:model-value="emitResult($event)"
         >
-          <template #item="slotProps">
-            <GeocodingSuggestion :result="slotProps.item" />
+          <template v-slot:option="slotProps">
+            <QItem
+              v-bind="slotProps.itemProps"
+            >
+              <QItemSection>
+               <QItemLabel>{{slotProps.opt.place_name.split(',')[0]}}</QItemLabel>
+                <QItemLabel caption>{{slotProps.opt.place_name.split(',').slice(1).join(', ')}}</QItemLabel>
+              </QItemSection>
+            </QItem>
           </template>
-        </AutoComplete>
+          </QSelect>
       </div>
     </div>
   </div>
@@ -22,43 +35,51 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import AutoComplete from 'primevue/autocomplete'
 import { geocodingService } from 'src/utils/mapbox'
 import { GeocodeResult } from 'src/types/GeocodeResult'
-import GeocodingSuggestion from 'src/components/GeocodingSuggestion.vue'
-
+import { QItem, QItemSection, QItemLabel, QSelect } from 'quasar';
 
 export default defineComponent({
   name: 'StandaloneGeocoder',
   components: {
-    AutoComplete,
-    GeocodingSuggestion
+    QItem,
+    QItemLabel,
+    QItemSection,
+    QSelect
   },
   emits: ['result'],
   data() {
     return {
-      queryValue: '',
+      selectedGeocode: null as GeocodeResult | null,
       filteredPlaces: [] as GeocodeResult[]
     }
   },
   methods: {
-    async filterPlaces(event: any) {
-      this.filteredPlaces = (await geocodingService.forwardGeocode({
-        query: event.query as string,
-        mode: 'mapbox.places',
-        countries: ['DE']
-      }).send()).body.features
+    async filterFn(val: any, update: any, abort: any){
+      if (val.length < 2){
+        abort()
+        return
+      }
+      await update(async () => {
+        this.filteredPlaces = (await geocodingService.forwardGeocode({
+          query: val,
+          mode: 'mapbox.places',
+          countries: ['DE']
+        }).send()).body.features
+      })
     },
-
-    emitResult(event: GeocodeResult) {
-      this.$emit('result', event)
-      this.queryValue = ''
+    emitResult(selection: GeocodeResult) {
+      this.$emit('result', selection)
     }
   }
 })
 </script>
 
 <style lang="scss" scoped>
+
+.search-place {
+  width:100%;
+}
 
 .place-caption-first-line {
   font-weight: bold;
