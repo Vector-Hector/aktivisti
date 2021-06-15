@@ -9,20 +9,22 @@
         class="campaign"
       >
         {{ campaign.name }}
-        <Tag
-          :value="campaignTypes.find(x => x.id === campaign.campaign_type)?.name"
-          severity="info"
-        />
-
-        <Button
-          icon="pi pi-times"
-          class="p-button-text p-button-link"
+        <QBadge color="blue">
+          {{campaignTypes.find(x => x.id === campaign.campaign_type)?.name}}
+        </QBadge>
+        <QBtn
           @click="deleteCampaign(campaign.id)"
-        />
-        <Button
-          icon="pi pi-pencil"
-          class="p-button-text p-button-link"
+          :icon="ionClose"
+          flat
+          round
+          color="primary"
+          />
+        <QBtn
           @click="editCampaign(campaign.id)"
+          :icon="ionPencil"
+          flat
+          round
+          color="primary"
         />
       </li>
     </ul>
@@ -31,7 +33,7 @@
       to="/campaigns/new"
       class="new-campaign-button"
     >
-      <Button label="Kampagne hinzufügen" />
+      <QBtn color="primary" label="Kampagne hinzufügen" />
     </router-link>
   </div>
 </template>
@@ -39,21 +41,23 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Button from 'primevue/button'
-import Tag from 'primevue/tag'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { CampaignTypeDto } from 'src/api/model/CampaignTypeDto'
+import { ionClose, ionPencil} from '@quasar/extras/ionicons-v5'
+import { QBtn, QBadge } from 'quasar';
 
 export default defineComponent({
   name: 'Campaigns',
   components: {
-    Button,
-    Tag,
+    QBadge,
+    QBtn
   },
   data() {
     return {
       campaigns: [] as CampaignDto[],
-      campaignTypes: [] as CampaignTypeDto[]
+      campaignTypes: [] as CampaignTypeDto[],
+      ionClose,
+      ionPencil
     }
   },
   created() {
