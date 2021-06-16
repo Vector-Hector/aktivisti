@@ -9,13 +9,13 @@ import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 interface EventDetailStoreState {
   event: EventDto | null
   eventAreas: EventAreaDto[]
-  eventArea: EventAreaDto | null
   eventAreaPermissions: PermissionHintsDto | null
   participations: EventParticipationDto[]
   personalParticipation: EventParticipationDto | null
   campaigns: CampaignDto[]
   eventPermissions: PermissionHintsDto | null
   completionNotes: CompletionNoteDto[]
+  selectedEventAreaId: null | number
 }
 
 class EventDetailStore extends Store<EventDetailStoreState> {
@@ -24,7 +24,7 @@ class EventDetailStore extends Store<EventDetailStoreState> {
     return {
       event: null,
       eventAreas: [],
-      eventArea: null,
+      selectedEventAreaId: null,
       eventAreaPermissions: null,
       participations: [],
       personalParticipation: null,
@@ -38,8 +38,21 @@ class EventDetailStore extends Store<EventDetailStoreState> {
     this.state.event = event
   }
 
-  public setEventArea(eventArea: EventAreaDto | null) {
-    this.state.eventArea = eventArea
+  public getEventArea(): EventAreaDto | null {
+    return this.state.eventAreas.find(({id}) =>
+      id === this.state.selectedEventAreaId
+    ) ?? null
+  }
+
+  public setEventArea(value: EventAreaDto | null) {
+    this.state.eventAreas.map((item) => {
+      if (value?.id === item.id) {
+        return value
+      } else {
+        return item
+      }
+    })
+    this.state.selectedEventAreaId = value?.id ?? null
   }
 
   public setEventAreaPermissions(permissions: PermissionHintsDto | null) {

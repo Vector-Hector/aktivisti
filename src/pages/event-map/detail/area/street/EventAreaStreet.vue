@@ -66,7 +66,7 @@ export default defineComponent({
   computed: {
     sortedAddresses(): AddressDetails[] {
       const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'})
-      const streets = this.eventArea.area_details?.streets.find(({name}) => name === this.street)
+      const streets = this.eventArea?.area_details?.streets.find(({name}) => name === this.street)
       if (streets) {
         return [...streets.addresses].sort((a, b) => {
           return collator.compare(a.house_number, b.house_number)

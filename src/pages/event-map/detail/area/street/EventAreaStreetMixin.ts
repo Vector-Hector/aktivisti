@@ -19,7 +19,7 @@ export default defineComponent({
   },
   computed: {
     addresses(): AddressDetails[] | undefined {
-      return this.eventArea.area_details?.streets.find(({name}) => name === this.street)?.addresses
+      return this.eventArea?.area_details?.streets.find(({name}) => name === this.street)?.addresses
     },
     bbox(): BBox2d | undefined {
       if (!this.addresses) return

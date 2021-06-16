@@ -48,6 +48,14 @@ export default defineComponent({
         eventDetailStore.setEvent(value)
       }
     },
+    eventArea: {
+      get(): EventAreaDto {
+        return eventDetailStore.getEventArea()!
+      },
+      set(value: EventAreaDto) {
+        eventDetailStore.setEventArea(value)
+      }
+    },
     eventAreas: {
       get(): EventAreaDto[] {
         return eventDetailStore.getState().eventAreas
@@ -62,14 +70,6 @@ export default defineComponent({
       },
       set(value: PermissionHintsDto) {
         eventDetailStore.setEventPermissions(value)
-      }
-    },
-    eventArea: {
-      get(): EventAreaDto {
-        return eventDetailStore.getState().eventArea!
-      },
-      set(value: EventAreaDto) {
-        eventDetailStore.setEventArea(value)
       }
     },
     eventAreaPermissions: {
