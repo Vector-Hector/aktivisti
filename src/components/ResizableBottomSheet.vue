@@ -1,6 +1,7 @@
 <template>
   <div
     class="resizable-bottom-sheet"
+    ref="bottomSheet"
     :class="state"
   >
     <h3
@@ -60,11 +61,13 @@ export default defineComponent({
       default: undefined
     }
   },
+  emits: ['changedSize'],
   data() {
     return {
       BottomSheetState,
       ionChevronUp,
-      ionChevronDown
+      ionChevronDown,
+      transitionListener: null as EventListener | null
     }
   },
   computed: {
@@ -75,6 +78,26 @@ export default defineComponent({
       set(value: BottomSheetState) {
         uiStore.setBottomSheetState(value)
       }
+    },
+    bottomSheetRef(): HTMLElement | undefined {
+      return this.$refs.bottomSheet as HTMLElement | undefined
+    }
+  },
+  watch: {
+    state(newValue, oldValue) {
+      this.transitionListener = () => {
+        this.bottomSheetRef?.removeEventListener('transitionend', this.transitionListener!)
+        this.transitionListener = null
+        this.$emit('changedSize', newValue)
+      }
+      if (newValue !== oldValue) {
+        this.bottomSheetRef?.addEventListener('transitionend', this.transitionListener)
+      }
+    }
+  },
+  beforeUnmount() {
+    if (this.transitionListener) {
+      this.bottomSheetRef!.removeEventListener('transitionend', this.transitionListener)
     }
   },
   methods: {
