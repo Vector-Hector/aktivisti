@@ -1,5 +1,4 @@
 <template>
-  <ConfirmationPopupWithComponent />
   <MapOverlay
     position="top-left"
     class="location-overlay"
@@ -36,6 +35,24 @@
               type="text"
               @keydown="touched = true"
             />
+            <QPopupProxy
+              no-parent-event
+              ref="qPopupProxy"
+            >
+              <QCard>
+                <QCardSection>
+                  <span>
+                    Wollen sie die Beschreibung für diesen Ort übernehmen?
+                    <br>
+                    <b>{{ suggestedPlaceName}}</b>
+                  </span>
+                </QCardSection>
+                <QCardActions align="right">
+                  <QBtn v-close-popup flat color="primary" label="Nein" />
+                  <QBtn v-close-popup flat color="primary" label="Ja" @click="acceptSuggestedEvent" />
+                </QCardActions>
+              </QCard>
+            </QPopupProxy>
           </div>
         </div>
       </div>
@@ -75,7 +92,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, markRaw } from 'vue'
+import { defineComponent } from 'vue'
 import Marker from 'src/mapbox/Marker.vue'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { GeocodeResult } from 'src/types/GeocodeResult'
@@ -86,28 +103,32 @@ import { EventDto } from 'src/api/model/EventDto'
 import InputText from 'primevue/inputtext'
 import StandaloneGeocoder from 'src/components/StandaloneGeocoder.vue'
 import { geocodingService } from 'src/utils/mapbox'
-import ConfirmationPopupWithComponent from 'src/components/ConfirmationPopupWithComponent.vue'
-import ConfirmPlaceName from 'src/components/confirmations/ConfirmPlaceName.vue'
 import DraggableMarker from 'src/components/DraggableMarker.vue'
+import {QBtn, QCard, QCardActions, QCardSection, QPopupProxy} from 'quasar';
 
 
 export default defineComponent({
   name: 'EditEventMapLocation',
   components: {
     DraggableMarker,
-    ConfirmationPopupWithComponent,
     StandaloneGeocoder,
     MapOverlay,
     Marker,
     Button,
-    InputText
+    InputText,
+    QPopupProxy,
+    QBtn,
+    QCard,
+    QCardActions,
+    QCardSection,
   },
   mixins: [EditEventMixin],
   data() {
     return {
       loading: false,
       accessToken: process.env.APP_MAPBOX_TOKEN,
-      touched: !!this.event.location_description
+      touched: !!this.event.location_description,
+      suggestedPlaceName: '',
     }
   },
   methods: {
@@ -135,18 +156,12 @@ export default defineComponent({
       }
     },
     suggestPlaceName(placeName: string) {
-      this.$confirm.require({
-        icon: 'pi pi-info-circle',
-        message: `Bezeichnung dieses Ortes übernehmen?\n${placeName}`,
-        component: markRaw(ConfirmPlaceName),
-        componentProps: {
-          placeName
-        },
-        target: (this.$refs.descriptionInput as any).$el,
-        accept: () => {
-          this.event.location_description = placeName
-        }
-      })
+      this.suggestedPlaceName = placeName
+        // @ts-ignore
+        this.$refs.qPopupProxy.show()
+    },
+    acceptSuggestedEvent() {
+      this.event.location_description = this.suggestedPlaceName
     },
     async save() {
       this.loading = true
