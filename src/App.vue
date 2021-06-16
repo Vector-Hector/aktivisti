@@ -1,5 +1,4 @@
 <template>
-  <Toast position="top-right" />
   <QLayout view="hHr LpR ffr">
     <QHeader
       class="bg-primary text-white"
@@ -49,7 +48,6 @@
 import { defineComponent } from 'vue'
 import NavigationSidebar from 'src/components/NavigationSidebar.vue'
 import { uiStore } from 'src/store/UiStore'
-import Toast from 'primevue/toast'
 import AppTitle from 'src/components/AppTitle.vue'
 import { ErrorBus } from 'src/utils/errorBus'
 import { QToolbar, QBtn, QPageContainer, QLayout, QHeader, QToolbarTitle } from 'quasar'
@@ -61,7 +59,6 @@ export default defineComponent({
   components: {
     AppTitle,
     NavigationSidebar,
-    Toast,
     QToolbar,
     QBtn,
     QPageContainer,
@@ -121,9 +118,10 @@ export default defineComponent({
   },
   mounted() {
     ErrorBus.on('error', (message: string) => {
-      this.$toast.add({
-        severity: 'error',
-        summary: message
+      this.$q.notify({
+        position: 'top-right',
+        type: 'negative',
+        message: message,
       })
     })
   },
