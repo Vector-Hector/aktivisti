@@ -139,14 +139,4 @@ export default defineComponent({
 .full-width {
   width: 100%;
 }
-
-.metrics-table {
-  margin-bottom: $inlineSpacing;
-}
-
-.icon {
-  vertical-align: middle;
-  margin-right: $inlineSpacing;
-}
-
 </style>

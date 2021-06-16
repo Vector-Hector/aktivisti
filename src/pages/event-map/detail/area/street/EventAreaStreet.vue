@@ -112,7 +112,7 @@ label {
 
 .finished-icon {
   margin-right: 1rem;
-  color: $successButtonBg;
+  color: #4CAF50;
 }
 
 

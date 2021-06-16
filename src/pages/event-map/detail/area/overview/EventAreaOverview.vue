@@ -289,7 +289,7 @@ label {
 }
 
 .button-success {
-  color: $successButtonBg;
+  color: #4CAF50;
 }
 
 .complete-button {
@@ -299,7 +299,7 @@ label {
 
 .finished-icon {
   margin-right: 1rem;
-  color: $successButtonBg;
+  color: #4CAF50;
 }
 
 .item-icon {
