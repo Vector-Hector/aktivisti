@@ -56,7 +56,7 @@ export default defineComponent({
 
     const eventAreas = eventAreaRequest.payload.data
 
-    eventDetailStore.setPersonalParticipation(personalParticipationRequest ?? null)
+    eventDetailStore.setPersonalParticipation(personalParticipationRequest?.payload?.data?.[0] ?? null)
 
     eventDetailStore.setEventAreas(eventAreas)
 
