@@ -28,11 +28,14 @@
         <div class="p-fluid">
           <div class="p-field">
             <label for="locationDescription">Beschreibung</label>
-            <InputText
+            <QInput
               id="locationDescription"
+              class="location-description"
               ref="descriptionInput"
-              v-model="event.location_description"
+              :model-value="event.location_description"
               type="text"
+              dense
+              outlined
               @keydown="touched = true"
             />
             <QPopupProxy
@@ -68,26 +71,28 @@
     class="navigation-overlay"
     position="bottom-right"
   >
-    <Button
+    <QBtn
       class="gray-button"
       @click="$router.go(-1)"
-    >
+      >
       Zurück
-    </Button>
-    <Button
+    </QBtn>
+    <QBtn
       :disabled="!event.location || loading"
       class="submit-button"
       @click="saveAndClose"
+      color="primary"
     >
       Speichern und zurück
-    </Button>
-    <Button
+    </QBtn>
+    <QBtn
       :disabled="!event.location || loading"
       class="submit-button"
+      color="primary"
       @click="saveAndProceed"
     >
       Gebiete zeichnen
-    </Button>
+    </QBtn>
   </MapOverlay>
 </template>
 
@@ -97,14 +102,12 @@ import Marker from 'src/mapbox/Marker.vue'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { GeocodeResult } from 'src/types/GeocodeResult'
 import MapOverlay from 'src/components/MapOverlay.vue'
-import Button from 'primevue/button'
 import EditEventMixin from 'src/pages/edit-event/EditEventMixin'
 import { EventDto } from 'src/api/model/EventDto'
-import InputText from 'primevue/inputtext'
 import StandaloneGeocoder from 'src/components/StandaloneGeocoder.vue'
 import { geocodingService } from 'src/utils/mapbox'
 import DraggableMarker from 'src/components/DraggableMarker.vue'
-import {QBtn, QCard, QCardActions, QCardSection, QPopupProxy} from 'quasar';
+import {QBtn, QCard, QCardActions, QCardSection, QInput, QPopupProxy} from 'quasar';
 
 
 export default defineComponent({
@@ -114,13 +117,12 @@ export default defineComponent({
     StandaloneGeocoder,
     MapOverlay,
     Marker,
-    Button,
-    InputText,
     QPopupProxy,
     QBtn,
     QCard,
     QCardActions,
     QCardSection,
+    QInput
   },
   mixins: [EditEventMixin],
   data() {
@@ -219,12 +221,8 @@ export default defineComponent({
 @import "src/css/_map.scss";
 @import "src/css/_variables.scss";
 
-
-Button {
-  a {
-    color: $white;
-    text-decoration: none;
-  }
+.location-description {
+  width: 100%
 }
 
 .submit-button {
