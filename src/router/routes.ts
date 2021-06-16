@@ -97,7 +97,7 @@ const routes = [
             props: true,
             components: {
               default: EventDetailReport,
-              map: EventDetailMap
+              map: EventDetailOverviewMap
             },
             name: 'event-detail-report',
             meta: {
