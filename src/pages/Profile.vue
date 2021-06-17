@@ -118,7 +118,7 @@
         <span>Du bist globaler <b>Kampagnenkoordinator</b></span></QItem>
       <QItem v-for="permission in permissions" :key="permission.id">
         <span>
-          Du darfst <b>{{ permission.permission_name }}</b> in {{ permission.content_type_name }}
+          Du hast die Berechtigung <b>{{ permission.permission_name }}</b> in {{ permission.content_type_name }}
           <b>{{ permission.content_object_name }}</b>
         </span>
       </QItem>
