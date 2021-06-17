@@ -11,7 +11,7 @@
       >
         <div class="user-widget">
           <div class="user-widget-avatar">
-            <i class="pi pi-user avatar-placeholder" />
+            <QIcon :name="ionPersonCircleOutline" class="avatar-placeholder"/>
           </div>
           <div class="user-widget-details">
             <span v-if="userFullname.length>0" class="name">{{ userFullname }}</span>
@@ -22,7 +22,7 @@
           <MenuLink
             to="/profile"
           >
-            <i class="pi pi-user-edit" />
+            <QIcon :name="ionPersonOutline"/>
             <span class="menu-item-link-text">Mein Profil</span>
           </MenuLink>
         </div>
@@ -31,16 +31,18 @@
         v-if="!isLoggedIn"
         class="menu-group highlighted"
       >
-        <Button
-          icon="pi pi-times"
-          class="p-button-text p-button-rounded close-sidebar-button"
+        <QBtn
+          :icon="ionClose"
           @click="sidebarExpanded = false"
+          class="close-sidebar-button"
+          flat
+          round
         />
         <div class="menu-item">
           <MenuLink
             to="/login"
           >
-            <i class="pi pi-sign-in" />
+            <QIcon :name="ionLogIn" />
             <span class="menu-item-link-text">Anmelden</span>
           </MenuLink>
         </div>
@@ -49,7 +51,7 @@
           <MenuLink
             to="/register"
           >
-            <i class="pi pi-id-card" />
+            <QIcon :name="farIdCard" />
             <span class="menu-item-link-text">Registrieren</span>
           </MenuLink>
         </div>
@@ -82,7 +84,7 @@
           <MenuLink
             :to="{ name: 'edit-event-details-new' }"
           >
-            <i class="pi pi-calendar-plus" />
+            <QIcon :name="farCalendarPlus"/>
             <span class="menu-item-link-text">Aktion Erstellen</span>
           </MenuLink>
         </div>
@@ -103,7 +105,7 @@
             class="menu-item-link"
             @click="logout()"
           >
-            <i class="pi pi-sign-out" />
+            <QIcon :name="ionExitOutline"/>
             <span class="menu-item-link-text">Abmelden</span>
           </div>
         </div>
@@ -116,25 +118,40 @@
 import { defineComponent } from 'vue'
 import { uiStore } from 'src/store/UiStore'
 import { userStore } from 'src/store/UserStore'
-import Button from 'primevue/button'
 import { authService } from 'src/api/authService'
 import MenuLink from 'src/components/MenuLink.vue'
-import { ionCalendarClearOutline, ionCalendarOutline } from '@quasar/extras/ionicons-v5'
-import { QDrawer, QIcon } from 'quasar'
+import {
+  ionCalendarClearOutline,
+  ionCalendarOutline,
+  ionClose,
+  ionExitOutline,
+  ionLogIn,
+  ionPersonCircleOutline,
+  ionPersonOutline
+} from '@quasar/extras/ionicons-v5'
+import { QBtn, QDrawer, QIcon } from 'quasar'
+import {farCalendarPlus, farIdCard} from '@quasar/extras/fontawesome-v5'
 
 
 export default defineComponent({
   name: 'NavigationSidebar',
   components: {
     MenuLink,
+    QBtn,
     QDrawer,
-    Button,
     QIcon
   },
   data() {
     return {
+      farCalendarPlus,
+      farIdCard,
       ionCalendarOutline,
       ionCalendarClearOutline,
+      ionClose,
+      ionExitOutline,
+      ionLogIn,
+      ionPersonCircleOutline,
+      ionPersonOutline
     }
   },
   computed: {
@@ -194,10 +211,6 @@ outside the html hierarchy of this component - if someone finds a better soltion
   height: 100%;
 }
 
-::v-global(.navigation-sidebar) {
-  padding: 0 !important;
-}
-
 .menu {
   display: flex;
   flex-direction: column;
@@ -255,10 +268,6 @@ hr {
   position: absolute;
   right: 0;
   color: $white !important;
-
-  &:focus {
-    box-shadow: none;
-  }
 }
 
 .menu-bottom {

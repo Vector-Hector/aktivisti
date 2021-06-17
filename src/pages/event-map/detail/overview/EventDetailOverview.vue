@@ -47,7 +47,7 @@
         class="participants"
         @click="openInviteModal"
       >
-          <i class="pi pi-user" /> {{ event.participants }}/{{ event.max_participants ?? '∞' }}
+          <QIcon :name="ionPersonOutline"/> {{ event.participants }}/{{ event.max_participants ?? '∞' }}
         </span>
         <p class="description">
           {{ event.description }}
@@ -192,9 +192,9 @@ import {
   ionLogoTwitter,
   ionLogoWhatsapp,
   ionMail,
-  ionPencil, ionTrash
+  ionPencil, ionPersonOutline, ionTrash
 } from '@quasar/extras/ionicons-v5'
-import { QBtn, QList } from 'quasar'
+import {QBtn, QIcon, QList} from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 
 
@@ -204,6 +204,7 @@ export default defineComponent({
   components: {
     EventAreaItem,
     QBtn,
+    QIcon,
     QList
   },
   props: {
@@ -233,6 +234,7 @@ export default defineComponent({
       ionMail,
       ionBarChart,
       ionPencil,
+      ionPersonOutline,
       ionTrash
     }
   },

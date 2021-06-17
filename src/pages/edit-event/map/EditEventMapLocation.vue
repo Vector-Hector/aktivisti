@@ -1,5 +1,4 @@
 <template>
-  <ConfirmationPopupWithComponent />
   <MapOverlay
     position="top-left"
     class="location-overlay"
@@ -13,7 +12,7 @@
         <StandaloneGeocoder
           :access-token="accessToken"
           :standalone="true"
-          @result="handleResult($event.value)"
+          @result="handleResult($event)"
         />
       </div>
       <div
@@ -29,13 +28,34 @@
         <div class="p-fluid">
           <div class="p-field">
             <label for="locationDescription">Beschreibung</label>
-            <InputText
+            <QInput
               id="locationDescription"
+              class="location-description"
               ref="descriptionInput"
-              v-model="event.location_description"
+              :model-value="event.location_description"
               type="text"
+              dense
+              outlined
               @keydown="touched = true"
             />
+            <QPopupProxy
+              no-parent-event
+              ref="qPopupProxy"
+            >
+              <QCard>
+                <QCardSection>
+                  <span>
+                    Wollen sie die Beschreibung für diesen Ort übernehmen?
+                    <br>
+                    <b>{{ suggestedPlaceName}}</b>
+                  </span>
+                </QCardSection>
+                <QCardActions align="right">
+                  <QBtn v-close-popup flat color="primary" label="Nein" />
+                  <QBtn v-close-popup flat color="primary" label="Ja" @click="acceptSuggestedEvent" />
+                </QCardActions>
+              </QCard>
+            </QPopupProxy>
           </div>
         </div>
       </div>
@@ -51,63 +71,66 @@
     class="navigation-overlay"
     position="bottom-right"
   >
-    <Button
+    <QBtn
       class="gray-button"
       @click="$router.go(-1)"
-    >
+      >
       Zurück
-    </Button>
-    <Button
+    </QBtn>
+    <QBtn
       :disabled="!event.location || loading"
       class="submit-button"
       @click="saveAndClose"
+      color="primary"
     >
       Speichern und zurück
-    </Button>
-    <Button
+    </QBtn>
+    <QBtn
       :disabled="!event.location || loading"
       class="submit-button"
+      color="primary"
       @click="saveAndProceed"
     >
       Gebiete zeichnen
-    </Button>
+    </QBtn>
   </MapOverlay>
 </template>
 
 <script lang="ts">
-import { defineComponent, markRaw } from 'vue'
+import { defineComponent } from 'vue'
 import Marker from 'src/mapbox/Marker.vue'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { GeocodeResult } from 'src/types/GeocodeResult'
 import MapOverlay from 'src/components/MapOverlay.vue'
-import Button from 'primevue/button'
 import EditEventMixin from 'src/pages/edit-event/EditEventMixin'
 import { EventDto } from 'src/api/model/EventDto'
-import InputText from 'primevue/inputtext'
 import StandaloneGeocoder from 'src/components/StandaloneGeocoder.vue'
 import { geocodingService } from 'src/utils/mapbox'
-import ConfirmationPopupWithComponent from 'src/components/ConfirmationPopupWithComponent.vue'
-import ConfirmPlaceName from 'src/components/confirmations/ConfirmPlaceName.vue'
 import DraggableMarker from 'src/components/DraggableMarker.vue'
+import {QBtn, QCard, QCardActions, QCardSection, QInput, QPopupProxy} from 'quasar';
 
 
 export default defineComponent({
   name: 'EditEventMapLocation',
   components: {
     DraggableMarker,
-    ConfirmationPopupWithComponent,
     StandaloneGeocoder,
     MapOverlay,
     Marker,
-    Button,
-    InputText
+    QPopupProxy,
+    QBtn,
+    QCard,
+    QCardActions,
+    QCardSection,
+    QInput
   },
   mixins: [EditEventMixin],
   data() {
     return {
       loading: false,
       accessToken: process.env.APP_MAPBOX_TOKEN,
-      touched: !!this.event.location_description
+      touched: !!this.event.location_description,
+      suggestedPlaceName: '',
     }
   },
   methods: {
@@ -135,18 +158,12 @@ export default defineComponent({
       }
     },
     suggestPlaceName(placeName: string) {
-      this.$confirm.require({
-        icon: 'pi pi-info-circle',
-        message: `Bezeichnung dieses Ortes übernehmen?\n${placeName}`,
-        component: markRaw(ConfirmPlaceName),
-        componentProps: {
-          placeName
-        },
-        target: (this.$refs.descriptionInput as any).$el,
-        accept: () => {
-          this.event.location_description = placeName
-        }
-      })
+      this.suggestedPlaceName = placeName
+        // @ts-ignore
+        this.$refs.qPopupProxy.show()
+    },
+    acceptSuggestedEvent() {
+      this.event.location_description = this.suggestedPlaceName
     },
     async save() {
       this.loading = true
@@ -204,12 +221,8 @@ export default defineComponent({
 @import "src/css/_map.scss";
 @import "src/css/_variables.scss";
 
-
-Button {
-  a {
-    color: $white;
-    text-decoration: none;
-  }
+.location-description {
+  width: 100%
 }
 
 .submit-button {

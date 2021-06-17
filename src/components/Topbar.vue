@@ -5,7 +5,7 @@
       class="hamburger"
       @click="openSidebar"
     >
-      <i class="pi pi-bars" />
+      <QIcon :name="ionMenu" />
     </a>
     <img
       class="dielinke-logo"
@@ -19,6 +19,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { uiStore } from 'src/store/UiStore'
+import {QIcon} from 'quasar';
+import {ionMenu} from '@quasar/extras/ionicons-v5';
 
 export default defineComponent({
   name: 'Topbar',
@@ -28,8 +30,13 @@ export default defineComponent({
       default: true
     }
   },
+  components: {
+    QIcon
+  },
   data() {
-    return {}
+    return {
+     ionMenu
+    }
   },
   methods: {
     toggleSidebar() {

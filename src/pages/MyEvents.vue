@@ -299,10 +299,11 @@ export default defineComponent({
           await this.$apiClient.events.delete(event.id.toString())
           this.managedEvents = this.managedEvents.filter(({id}) => id !== event.id)
         } catch (error) {
-          this.$toast.add({
-            severity: 'error',
-            summary: `${error.statusText ? error.statusText : 'Dieser Eintrag konnte nicht gelöscht werden.'}`,
-            detail: `Fehlercode: ${error.status}`
+          this.$q.notify({
+            position: 'top-right',
+            type: 'negative',
+            message: `${error.statusText ? error.statusText : 'Dieser Eintrag konnte nicht gelöscht werden.'}`,
+            caption: `Fehlercode: ${error.status}`
           })
           return
         }

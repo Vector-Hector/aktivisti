@@ -8,9 +8,6 @@ This project is the frontend application for the "DIE LINKE. App". It's a respon
 This project is based on the [quasar framework (v2)](https://next.quasar.dev/), meaning it uses Vue3 and Typescript
 This project uses Vue3 with Typescript and VueCLI for bootstrapping, building and serving during development.
 
-As an additional UI component library [PrimeVue](https://www.primefaces.org/primevue/showcase/#/), is at our disposal, but should only be
-progressively used if there is no fitting component available in the quasar component set.
-
 Documentation resources for the used tools:
 
 * Quasar (and Quasar CLI): https://next.quasar.dev/

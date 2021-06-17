@@ -48,7 +48,6 @@ module.exports = configure(function (ctx) {
     boot: [
       'api',
       'hydrate',
-      'primevue',
       'validation-rules',
       'mapbox',
       'utils'
