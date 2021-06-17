@@ -68,15 +68,6 @@ export default defineComponent({
   },
   data() {
     return {
-      items: [{
-        label: 'Kampagnen',
-        icon: 'pi pi-plus',
-        to: '/campaigns'
-      }, {
-        label: 'Aktionen',
-        icon: 'pi pi-fw pi-calendar',
-        to: '/events'
-      }],
       transitionDirection: null as string | null,
       ionMenu,
       ionArrowBack
