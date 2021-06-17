@@ -94,6 +94,7 @@ import { QBtn, QIcon, QItem, QItemLabel, QItemSection, QList, QSelect } from 'qu
 import { ionCheckmarkCircle, ionCheckmarkCircleOutline, ionChevronForward } from '@quasar/extras/ionicons-v5'
 import { StreetDetails } from 'src/api/model/AreaDetailsDto'
 import { difference } from 'lodash-es'
+import { eventDetailStore } from 'src/store/EventDetailStore'
 
 
 export default defineComponent({
@@ -186,7 +187,7 @@ export default defineComponent({
           const response = await this.$apiClient.eventAreas.patch(this.eventArea.id!.toString(), {
             is_completed: !this.eventArea.is_completed
           })
-          this.eventArea = response.payload.data
+          eventDetailStore.updateEventArea(response.payload.data)
         } catch (error) {
           void this.$q.notify({
             position: 'bottom',
@@ -219,7 +220,7 @@ export default defineComponent({
           ) {
             changedParticipations.push(
               (await this.$apiClient.eventParticipations.patch(participation.id.toString(), {
-                assigned_event_areas: participation.assigned_event_areas.filter((id) => id !== this.eventArea.id)
+                assigned_event_areas: participation.assigned_event_areas.filter((id) => id !== this.eventArea?.id)
               })).payload.data
             )
           }
