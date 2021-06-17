@@ -62,6 +62,13 @@ export default defineComponent({
     QInput,
     QCheckbox
   },
+  beforeRouteEnter(to, from, next) {
+    if(authService.isLoggedIn()){
+      next({name: 'events'})
+    } else {
+      next()
+    }
+  },
   props: {
     next: {
       type: String as PropType<string>,
