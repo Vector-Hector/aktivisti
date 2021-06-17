@@ -4,7 +4,7 @@
       <div class="col-12">
 
         <QBtn
-          v-if="eventPermissions.self.PUT"
+          v-if="eventPermissions.self.PATCH"
           @click="openParticipantsModal"
           size="sm"
           color="primary"
@@ -52,6 +52,7 @@
       </div>
       <div class="col-12">
       <span
+        v-if="eventPermissions.self.PATCH"
         class="participants"
         @click="openParticipantsModal"
       >
