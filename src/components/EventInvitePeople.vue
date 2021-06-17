@@ -24,6 +24,7 @@
         </QSelect>
       </div>
     </div>
+    <QToolbarTitle>Bereits eingeladen:</QToolbarTitle>
     <div class="row">
       <div class="col">
         <QList v-if="participations.length > 0">
@@ -44,12 +45,6 @@
               <div
                 class="invitation-item-actions"
               >
-                <QIcon
-                  v-if="participation.is_pending_invitation"
-                  :name="ionMail"
-                  class="invited-button"
-                  aria-label="Nutzer hat Einladung erhalten"
-                />
                 <QIcon
                   fill="none"
                   @click="deleteParticipation(participation.id)"
@@ -131,16 +126,17 @@ export default defineComponent({
         .filter((item) => {
           return item.user != userStore.getState().user?.id
         }).sort((a, b) => {
-          if (a.is_pending_invitation && !b.is_pending_invitation) {
-            return -1
-          } else {
-            return a.user_username.localeCompare(b.user_username)
-          }
+          return a.user_username.localeCompare(b.user_username)
         })
     }
   },
   async created() {
-    this.participations = (await this.$apiClient.eventParticipations.list({event: this.eventId})).payload.data
+    this.participations = (await
+      this.$apiClient.eventParticipations.list(
+        {
+          event: this.eventId,
+          is_pending_invitation: true
+        })).payload.data
   },
   methods: {
     userLabel(item: UserSuggestionItem) {
