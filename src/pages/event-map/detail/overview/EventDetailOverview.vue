@@ -4,6 +4,14 @@
       <div class="col-12">
 
         <QBtn
+          v-if="eventPermissions.self.PUT"
+          @click="openParticipantsModal"
+          size="sm"
+          color="primary"
+          flat
+          :icon="ionPerson"
+        />
+        <QBtn
           v-if="eventPermissions.report.GET"
           :to="{ name: 'event-detail-report', params: { event: event.id }}"
           size="sm"
@@ -45,7 +53,7 @@
       <div class="col-12">
       <span
         class="participants"
-        @click="openInviteModal"
+        @click="openParticipantsModal"
       >
           <QIcon :name="ionPersonOutline" /> {{ event.participants }}/{{ event.max_participants ?? '∞' }}
         </span>
@@ -183,6 +191,7 @@ import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { authService } from 'src/api/authService'
 import { userStore } from 'src/store/UserStore'
 import EventInvitePeopleModal from 'src/components/modals/EventInvitePeopleModal.vue'
+import EventParticipantsModal from 'src/components/modals/EventParticipantsModal.vue'
 import { apiClient } from 'src/api/ApiClient'
 import {
   createFacebookShareUrl,
@@ -198,7 +207,10 @@ import {
   ionLogoTwitter,
   ionLogoWhatsapp,
   ionMail,
-  ionPencil, ionPersonOutline, ionTrash
+  ionPencil,
+  ionTrash,
+  ionPerson,
+  ionPersonOutline
 } from '@quasar/extras/ionicons-v5'
 import { QBtn, QIcon, QList } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
@@ -241,6 +253,7 @@ export default defineComponent({
       ionBarChart,
       ionPencil,
       ionPersonOutline,
+      ionPerson,
       ionTrash
     }
   },
@@ -373,6 +386,19 @@ export default defineComponent({
       if (this.eventPermissions?.invite.POST) {
         this.$q.dialog({
           component: EventInvitePeopleModal,
+          componentProps: {
+            eventId: this.event.id
+          }
+        })
+          .onDismiss(() => {
+            void this.refreshEvent()
+          })
+      }
+    },
+    openParticipantsModal() {
+      if (this.eventPermissions?.invite.POST) {
+        this.$q.dialog({
+          component: EventParticipantsModal,
           componentProps: {
             eventId: this.event.id
           }
