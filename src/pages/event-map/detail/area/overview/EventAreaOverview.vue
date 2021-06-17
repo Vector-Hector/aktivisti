@@ -94,7 +94,7 @@ import { QBtn, QIcon, QItem, QItemLabel, QItemSection, QList, QSelect } from 'qu
 import { ionCheckmarkCircle, ionCheckmarkCircleOutline, ionChevronForward } from '@quasar/extras/ionicons-v5'
 import { StreetDetails } from 'src/api/model/AreaDetailsDto'
 import { difference } from 'lodash-es'
-import { EventAreaDto } from 'src/api/model/EventAreaDto'
+import { eventDetailStore } from 'src/store/EventDetailStore'
 
 
 export default defineComponent({
@@ -173,15 +173,6 @@ export default defineComponent({
         return changedItem ?? item
       })
     },
-    updateArea(area: EventAreaDto) {
-      this.eventAreas = this.eventAreas.map((item) => {
-        if (item.id === area.id) {
-          return area
-        } else {
-          return item
-        }
-      })
-    },
     openCompletionModal() {
       this.$q.dialog({
         title: 'Aktionsgebiet erledigt',
@@ -196,7 +187,7 @@ export default defineComponent({
           const response = await this.$apiClient.eventAreas.patch(this.eventArea.id!.toString(), {
             is_completed: !this.eventArea.is_completed
           })
-          this.updateArea(response.payload.data)
+          eventDetailStore.updateEventArea(response.payload.data)
         } catch (error) {
           void this.$q.notify({
             position: 'bottom',

@@ -44,14 +44,15 @@ class EventDetailStore extends Store<EventDetailStoreState> {
     ) ?? null
   }
 
+  public updateEventArea(value: EventAreaDto) {
+    const indexToReplace = this.state.eventAreas.findIndex(({id}) => value.id === id)
+    this.state.eventAreas[indexToReplace] = value
+  }
+
   public setEventArea(value: EventAreaDto | null) {
-    this.state.eventAreas.map((item) => {
-      if (value?.id === item.id) {
-        return value
-      } else {
-        return item
-      }
-    })
+    if (value) {
+      this.updateEventArea(value)
+    }
     this.state.selectedEventAreaId = value?.id ?? null
   }
 
