@@ -3,7 +3,7 @@
     <div class="col">
       <QList v-if="participations.length > 0">
         <QItem
-          v-for="participation in displayedParticipations"
+          v-for="participation in participations"
           :key="participation.id"
         >
           <QItemSection>
@@ -88,13 +88,13 @@ export default defineComponent({
       ionCheckmark
     }
   },
-  computed: {
-    displayedParticipations(): EventParticipationDto[] {
-      return this.participations.filter((item) => !item.is_pending_invitation)
-    }
-  },
   async created() {
-    this.participations = (await this.$apiClient.eventParticipations.list({event: this.eventId, is_verified: true})).payload.data
+    this.participations = (await
+      this.$apiClient.eventParticipations.list(
+        {
+          event: this.eventId,
+          is_pending_invitation: false
+        })).payload.data
   },
   methods: {
     async deleteParticipation(deleteId: number) {
