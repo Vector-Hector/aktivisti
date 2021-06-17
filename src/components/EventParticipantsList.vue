@@ -41,15 +41,6 @@
           </QItemSection>
 
         </QItem>
-        <QItem
-          v-if="pendingUsersWithoutVisibleEmailAddresses > 0"
-        >
-          <QItemSection>
-            <QItemLabel>
-              {{ pendingUsersWithoutVisibleEmailAddresses }} weitere per Mail eingeladen
-            </QItemLabel>
-          </QItemSection>
-        </QItem>
       </QList>
       <p v-else>
         Keine Teilnehmer*innen. Nutze den "Leute einladen"-Button um welche einzuladen.
@@ -61,7 +52,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { userStore } from 'src/store/UserStore'
 import { ionClose, ionCheckmark } from '@quasar/extras/ionicons-v5'
 import { QIcon, QItem, QItemLabel, QItemSection, QList } from 'quasar'
 
