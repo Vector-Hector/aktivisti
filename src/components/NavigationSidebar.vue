@@ -11,7 +11,7 @@
       >
         <div class="user-widget">
           <div class="user-widget-avatar">
-            <i class="pi pi-user avatar-placeholder" />
+            <QIcon :name="ionPersonCircleOutline" class="avatar-placeholder"/>
           </div>
           <div class="user-widget-details">
             <span v-if="userFullname.length>0" class="name">{{ userFullname }}</span>
@@ -22,7 +22,7 @@
           <MenuLink
             to="/profile"
           >
-            <i class="pi pi-user-edit" />
+            <QIcon :name="ionPersonOutline"/>
             <span class="menu-item-link-text">Mein Profil</span>
           </MenuLink>
         </div>
@@ -42,7 +42,7 @@
           <MenuLink
             to="/login"
           >
-            <i class="pi pi-sign-in" />
+            <QIcon :name="ionLogIn" />
             <span class="menu-item-link-text">Anmelden</span>
           </MenuLink>
         </div>
@@ -51,7 +51,7 @@
           <MenuLink
             to="/register"
           >
-            <i class="pi pi-id-card" />
+            <QIcon :name="farIdCard" />
             <span class="menu-item-link-text">Registrieren</span>
           </MenuLink>
         </div>
@@ -84,7 +84,7 @@
           <MenuLink
             :to="{ name: 'edit-event-details-new' }"
           >
-            <i class="pi pi-calendar-plus" />
+            <QIcon :name="farCalendarPlus"/>
             <span class="menu-item-link-text">Aktion Erstellen</span>
           </MenuLink>
         </div>
@@ -105,7 +105,7 @@
             class="menu-item-link"
             @click="logout()"
           >
-            <i class="pi pi-sign-out" />
+            <QIcon :name="ionExitOutline"/>
             <span class="menu-item-link-text">Abmelden</span>
           </div>
         </div>
@@ -120,8 +120,17 @@ import { uiStore } from 'src/store/UiStore'
 import { userStore } from 'src/store/UserStore'
 import { authService } from 'src/api/authService'
 import MenuLink from 'src/components/MenuLink.vue'
-import { ionCalendarClearOutline, ionCalendarOutline, ionClose } from '@quasar/extras/ionicons-v5'
+import {
+  ionCalendarClearOutline,
+  ionCalendarOutline,
+  ionClose,
+  ionExitOutline,
+  ionLogIn,
+  ionPersonCircleOutline,
+  ionPersonOutline
+} from '@quasar/extras/ionicons-v5'
 import { QBtn, QDrawer, QIcon } from 'quasar'
+import {farCalendarPlus, farIdCard} from '@quasar/extras/fontawesome-v5'
 
 
 export default defineComponent({
@@ -134,9 +143,15 @@ export default defineComponent({
   },
   data() {
     return {
+      farCalendarPlus,
+      farIdCard,
       ionCalendarOutline,
       ionCalendarClearOutline,
-      ionClose
+      ionClose,
+      ionExitOutline,
+      ionLogIn,
+      ionPersonCircleOutline,
+      ionPersonOutline
     }
   },
   computed: {
