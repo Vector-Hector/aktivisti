@@ -34,6 +34,7 @@
     </div>
 
     <QScrollArea
+      ref="scrollArea"
       class="scrollable-content"
     >
       <slot />
@@ -42,7 +43,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, PropType, computed } from 'vue'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import { QIcon, QScrollArea } from 'quasar'
 import { ionChevronDown, ionChevronUp } from '@quasar/extras/ionicons-v5'
@@ -59,6 +60,11 @@ export default defineComponent({
       type: String as PropType<string>,
       required: false,
       default: undefined
+    }
+  },
+  provide() {
+    return {
+      scrollArea: computed(() => this.$refs.scrollArea)
     }
   },
   emits: ['changedSize'],

@@ -2,6 +2,7 @@
 export interface EventParticipationDto {
   id: number
   user: number
+  is_verified: boolean
   is_pending_invitation: boolean
   event: number
   inviting_users: number[]

@@ -31,4 +31,20 @@ export class EventParticipationRoute extends ApiRoute<EventParticipationDto> {
     return new JSONResponse<Record<string, unknown>>(response, data)
   }
 
+  /**
+   * Let the currently authenticated user verify event participations
+   * if they have management permissions for the event
+   * @param id the event participation id
+   */
+  async verifyParticipant(id: string) {
+    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}${id}/`, {
+      method: 'PATCH',
+      data: {
+        is_verified: true
+      }
+    })
+    const data = await response.data
+    return new JSONResponse<Record<string, unknown>>(response, data)
+  }
+
 }
