@@ -22,8 +22,10 @@ export abstract class Store<T extends Object> {
   }
 
   public reset() {
-    const data = this.data()
-    this.setup(data)
-    this.state = reactive(data) as T
+    const defaults = this.data()
+    for (const key of Object.keys(this.state)) {
+      // @ts-ignore
+      this.state[key] = defaults[key]
+    }
   }
 }

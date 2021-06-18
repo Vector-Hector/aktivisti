@@ -18,17 +18,15 @@
       <div
         class="item-buttons"
       >
-        <span
-          title="Ich nehme teil"
-          class="popup-text"
-        >
         <QIcon
-          v-if="participationsOfArea.map(participation => participation.user).includes(user?.id)"
+          v-if="
+            personalParticipation?.assigned_event_areas?.includes(area.id)
+          "
           class="area-indicator-icon"
           :name="ionPersonCircleOutline"
         />
-      </span>
         <QBadge
+          v-if="showParticipationCount"
           outline
           color="primary"
           class="participant-badge"
@@ -89,6 +87,14 @@ export default defineComponent({
     participations: {
       type: Object as PropType<EventParticipationDto[]>,
       required: true
+    },
+    personalParticipation: {
+      type: Object as PropType<EventParticipationDto | null>,
+      default: null
+    },
+    showParticipationCount: {
+      type: Boolean as PropType<boolean>,
+      default: false
     }
   },
   data() {

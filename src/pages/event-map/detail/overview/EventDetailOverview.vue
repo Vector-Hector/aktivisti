@@ -47,7 +47,7 @@
         class="participants"
         @click="openInviteModal"
       >
-          <QIcon :name="ionPersonOutline"/> {{ event.participants }}/{{ event.max_participants ?? '∞' }}
+          <QIcon :name="ionPersonOutline" /> {{ event.participants }}/{{ event.max_participants ?? '∞' }}
         </span>
         <p class="description">
           {{ event.description }}
@@ -67,6 +67,8 @@
             :key="area.id"
             :area="area"
             :participations="participations"
+            :show-participation-count="eventPermissions.invite.POST ?? false"
+            :personal-participation="personalParticipation"
           />
         </QList>
       </div>
@@ -194,7 +196,7 @@ import {
   ionMail,
   ionPencil, ionPersonOutline, ionTrash
 } from '@quasar/extras/ionicons-v5'
-import {QBtn, QIcon, QList} from 'quasar'
+import { QBtn, QIcon, QList } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 
 
@@ -385,7 +387,7 @@ export default defineComponent({
       }).onOk(async () => {
         try {
           await this.$apiClient.events.delete(this.event.id.toString())
-          await this.$router.push({ name: 'events' })
+          await this.$router.push({name: 'events'})
         } catch (error) {
           this.$q.notify({
             color: 'negative',
