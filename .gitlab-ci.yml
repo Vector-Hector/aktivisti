@@ -38,7 +38,7 @@ bundle-staging:
   stage: bundle
   script:
     - npm ci
-    - npm run build
+    - npm run build -- -m pwa
   cache:
     paths:
       - node_modules/
