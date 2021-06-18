@@ -64,7 +64,8 @@ export default defineComponent({
         this.filteredPlaces = (await geocodingService.forwardGeocode({
           query: val,
           mode: 'mapbox.places',
-          countries: ['DE']
+          countries: ['DE'],
+          language: ['de']
         }).send()).body.features
       })
     },
