@@ -1,9 +1,42 @@
 <template>
   <div class="row">
     <div class="col">
-      <QList v-if="participations.length > 0">
+      <QList v-if="verifiedParticipations.length > 0">
         <QItem
-          v-for="participation in participations"
+          v-for="participation in verifiedParticipations"
+          :key="participation.id"
+        >
+          <QItemSection>
+            <QItemLabel v-if="participation.user_is_member">
+              <b>{{ participation.user_username }}</b> {{ participation.user_email }}
+            </QItemLabel>
+            <QItemLabel v-else>
+              {{ participation.user_email }}
+            </QItemLabel>
+          </QItemSection>
+
+          <QItemSection side>
+            <div
+              class="invitation-item-actions"
+            >
+              <QIcon
+                fill="none"
+                @click="deleteParticipation(participation.id)"
+              >
+                <QIcon
+                  :name="ionClose"
+                  aria-label="Nutzer von der Aktion entfernen"
+                />
+              </QIcon>
+            </div>
+          </QItemSection>
+
+        </QItem>
+      </QList>
+      <QList v-if="notVerifiedParticipations.length > 0">
+        <QToolbarTitle>Interessent*innen bestättigen:</QToolbarTitle>
+        <QItem
+          v-for="participation in notVerifiedParticipations"
           :key="participation.id"
         >
           <QItemSection>
@@ -76,6 +109,14 @@ export default defineComponent({
       participations: [] as EventParticipationDto[],
       ionClose,
       ionCheckmark
+    }
+  },
+  computed: {
+    verifiedParticipations(): EventParticipationDto[] {
+      return this.participations.filter((item) => item.is_verified)
+    },
+    notVerifiedParticipations(): EventParticipationDto[] {
+      return this.participations.filter((item) => !item.is_verified)
     }
   },
   async created() {
