@@ -7,8 +7,8 @@
       Treffpunkt auswählen
     </h2>
     <p>Ziehe entweder das Markersymbol auf die Karte oder suche nach einem Ort über das Textfeld</p>
-    <div class="p-grid">
-      <div class="p-col">
+    <div class="row">
+      <div class="col">
         <StandaloneGeocoder
           :access-token="accessToken"
           :standalone="true"
@@ -17,47 +17,45 @@
       </div>
       <div
         v-if="event.location === null"
-        class="p-col marker-column"
+        class="col-auto marker-column"
       >
         <DraggableMarker
           class="draggable-marker"
           @dropped="markerDropped"
         />
       </div>
-      <div class="p-col-12">
-        <div class="p-fluid">
-          <div class="p-field">
-            <label for="locationDescription">Beschreibung</label>
-            <QInput
-              id="locationDescription"
-              class="location-description"
-              ref="descriptionInput"
-              :model-value="event.location_description"
-              type="text"
-              dense
-              outlined
-              @keydown="touched = true"
-            />
-            <QPopupProxy
-              no-parent-event
-              ref="qPopupProxy"
-            >
-              <QCard>
-                <QCardSection>
+    </div>
+    <div class="row">
+      <div class="col">
+        <label for="locationDescription">Beschreibung</label>
+        <QInput
+          id="locationDescription"
+          class="location-description"
+          ref="descriptionInput"
+          v-model="event.location_description"
+          type="text"
+          dense
+          outlined
+          @keydown="touched = true"
+        />
+        <QPopupProxy
+          no-parent-event
+          ref="qPopupProxy"
+        >
+          <QCard>
+            <QCardSection>
                   <span>
                     Wollen sie die Beschreibung für diesen Ort übernehmen?
                     <br>
-                    <b>{{ suggestedPlaceName}}</b>
+                    <b>{{ suggestedPlaceName }}</b>
                   </span>
-                </QCardSection>
-                <QCardActions align="right">
-                  <QBtn v-close-popup flat color="primary" label="Nein" />
-                  <QBtn v-close-popup flat color="primary" label="Ja" @click="acceptSuggestedEvent" />
-                </QCardActions>
-              </QCard>
-            </QPopupProxy>
-          </div>
-        </div>
+            </QCardSection>
+            <QCardActions align="right">
+              <QBtn v-close-popup flat color="primary" label="Nein" />
+              <QBtn v-close-popup flat color="primary" label="Ja" @click="acceptSuggestedEvent" />
+            </QCardActions>
+          </QCard>
+        </QPopupProxy>
       </div>
     </div>
   </MapOverlay>
@@ -74,7 +72,7 @@
     <QBtn
       class="gray-button"
       @click="$router.go(-1)"
-      >
+    >
       Zurück
     </QBtn>
     <QBtn
@@ -107,7 +105,7 @@ import { EventDto } from 'src/api/model/EventDto'
 import StandaloneGeocoder from 'src/components/StandaloneGeocoder.vue'
 import { geocodingService } from 'src/utils/mapbox'
 import DraggableMarker from 'src/components/DraggableMarker.vue'
-import {QBtn, QCard, QCardActions, QCardSection, QInput, QPopupProxy} from 'quasar';
+import { QBtn, QCard, QCardActions, QCardSection, QInput, QPopupProxy } from 'quasar'
 
 
 export default defineComponent({
@@ -130,7 +128,7 @@ export default defineComponent({
       loading: false,
       accessToken: process.env.APP_MAPBOX_TOKEN,
       touched: !!this.event.location_description,
-      suggestedPlaceName: '',
+      suggestedPlaceName: ''
     }
   },
   methods: {
@@ -148,7 +146,8 @@ export default defineComponent({
     async updateDescription(location: LocationDto) {
       const placeName = (await geocodingService.reverseGeocode({
         query: [location.lng, location.lat],
-        mode: 'mapbox.places'
+        mode: 'mapbox.places',
+        language: ['de']
       }).send()).body.features[0]?.place_name
 
       if (this.touched) {
@@ -159,8 +158,8 @@ export default defineComponent({
     },
     suggestPlaceName(placeName: string) {
       this.suggestedPlaceName = placeName
-        // @ts-ignore
-        this.$refs.qPopupProxy.show()
+      // @ts-ignore
+      this.$refs.qPopupProxy.show()
     },
     acceptSuggestedEvent() {
       this.event.location_description = this.suggestedPlaceName
@@ -241,8 +240,9 @@ export default defineComponent({
 }
 
 .marker-column {
-  flex: 0;
-  align-self: center;
+  display: flex;
+  padding: 0 0.5rem 0.5rem 0.5rem;
+  align-items: flex-end;
 }
 
 .location-overlay {
