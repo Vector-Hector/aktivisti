@@ -71,8 +71,9 @@
         </QList>
       </div>
     </div>
-    <div class="social-buttons row q-gutter-xs" v-if="event">
+    <div class="social-buttons row q-gutter-md" v-if="event">
       <QBtn
+        dense
         type="a"
         target="_blank"
         :href="twitterShareUrl"
@@ -82,6 +83,7 @@
         :icon="ionLogoTwitter"
       />
       <QBtn
+        dense
         type="a"
         target="_blank"
         :href="facebookShareUrl"
@@ -91,6 +93,7 @@
         :icon="ionLogoFacebook"
       />
       <QBtn
+        dense
         type="a"
         target="_blank"
         :href="whatsappShareUrl"
@@ -100,6 +103,7 @@
         :icon="ionLogoWhatsapp"
       />
       <QBtn
+        dense
         type="a"
         target="_blank"
         :href="mailShareUrl"
