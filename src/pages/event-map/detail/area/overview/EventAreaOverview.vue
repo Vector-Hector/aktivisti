@@ -203,6 +203,20 @@ export default defineComponent({
     async updateAreaParticipations(participations: EventParticipationDto[]) {
       const participants = participations.map(({user}) => user)
       const changedParticipations: EventParticipationDto[] = []
+
+      if (this.personalParticipation) {
+        if (participants.includes(this.user?.id ?? 0)) {
+          this.personalParticipation = {
+            ...this.personalParticipation,
+            assigned_event_areas: [...this.personalParticipation.assigned_event_areas, this.eventArea.id!]
+          }
+        } else {
+          this.personalParticipation = {
+            ...this.personalParticipation,
+            assigned_event_areas: this.personalParticipation.assigned_event_areas.filter((id) => id !== this.eventArea?.id)
+          }
+        }
+      }
       try {
         for (const participation of this.participations) {
           if (
