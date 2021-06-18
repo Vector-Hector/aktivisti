@@ -19,22 +19,24 @@
             <div
               class="invitation-item-actions"
             >
-              <QIcon
+              <QBtn
                 fill="none"
+                size="md"
+                :icon="ionClose"
+                dense
+                flat
+                round
                 @click="deleteParticipation(participation.id)"
-              >
-                <QIcon
-                  :name="ionClose"
-                  aria-label="Nutzer von der Aktion entfernen"
-                />
-              </QIcon>
+
+                aria-label="Nutzer von der Aktion entfernen"
+              />
             </div>
           </QItemSection>
 
         </QItem>
       </QList>
       <QList v-if="notVerifiedParticipations.length > 0">
-        <QToolbarTitle>Interessent*innen bestättigen:</QToolbarTitle>
+        <QToolbarTitle>Teilnehmer*innen bestätigen</QToolbarTitle>
         <QItem
           v-for="participation in notVerifiedParticipations"
           :key="participation.id"
@@ -52,24 +54,27 @@
             <div
               class="invitation-item-actions"
             >
-              <QIcon
+              <QBtn
                 fill="none"
-                @click="verifyParticipation(participation.id)"
-              >
-                <QIcon
-                  :name="ionCheckmark"
-                  aria-label="Nutzer bestättigen"
-                />
-              </QIcon>
-              <QIcon
-                fill="none"
+                size="md"
+                dense
+                flat
+                round
+                aria-label="Nutzer von der Aktion entfernen"
+                :icon="ionClose"
                 @click="deleteParticipation(participation.id)"
-              >
-                <QIcon
-                  :name="ionClose"
-                  aria-label="Nutzer von der Aktion entfernen"
-                />
-              </QIcon>
+              />
+              <QBtn
+                fill="none"
+                size="md"
+                color="positive"
+                :icon="ionCheckmark"
+                dense
+                flat
+                round
+                @click="verifyParticipation(participation.id)"
+              />
+
             </div>
           </QItemSection>
 
@@ -86,8 +91,7 @@
 import { defineComponent, PropType } from 'vue'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { ionClose, ionCheckmark } from '@quasar/extras/ionicons-v5'
-import { QIcon, QItem, QItemLabel, QItemSection, QList } from 'quasar'
-
+import { QBtn, QItem, QItemLabel, QItemSection, QList, QToolbarTitle } from 'quasar'
 
 export default defineComponent({
   name: 'EventParticipantsList',
@@ -96,7 +100,8 @@ export default defineComponent({
     QItem,
     QItemLabel,
     QItemSection,
-    QIcon
+    QBtn,
+    QToolbarTitle
   },
   props: {
     eventId: {
@@ -134,7 +139,11 @@ export default defineComponent({
     },
 
     async verifyParticipation(participationId: number) {
-      await this.$apiClient.eventParticipations.verifyParticipant(participationId.toString())
+      const participationIndex = this.participations.findIndex(({id}) => participationId === id)
+      const participationRequest = await this.$apiClient.eventParticipations.patch(participationId.toString(), {
+        is_verified: true
+      })
+      this.participations[participationIndex] = participationRequest.payload.data
     }
 
   }

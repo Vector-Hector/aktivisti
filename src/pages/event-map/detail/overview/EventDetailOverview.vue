@@ -1,8 +1,7 @@
 <template>
-  <div class="q-pt-sm q-gutter-y-md">
+  <div class="q-gutter-y-md">
     <div class="row">
       <div class="col-12">
-
         <QBtn
           v-if="eventPermissions.self.PATCH"
           @click="openParticipantsModal"
@@ -58,17 +57,17 @@
       >
           <QIcon :name="ionPersonOutline" /> {{ event.participants }}/{{ event.max_participants ?? '∞' }}
         </span>
-        <p class="description">
+        <span class="description">
           {{ event.description }}
-        </p>
+        </span>
       </div>
     </div>
     <div
       class="areas row q-col-gutter-y-md"
+      v-if="isMember"
     >
       <div class="col-12">
         <QList
-          v-if="isMember"
           class="area-list"
         >
           <EventAreaItem
@@ -82,7 +81,7 @@
         </QList>
       </div>
     </div>
-    <div class="social-buttons row q-gutter-md" v-if="event">
+    <div class="social-buttons row q-gutter-x-md" v-if="event">
       <QBtn
         dense
         type="a"
@@ -123,6 +122,16 @@
         label="teilen"
         :icon="ionMail"
       />
+    </div>
+    <div
+      v-if="personalParticipation?.is_verified === false"
+      class="row"
+    >
+      <div class="col-12">
+        Super, dass du mitmachen möchtest. Du hast dich für diese Aktion gemeldet. Der nächste Schritt ist zur
+        angegebenen
+        Zeit am vereinbarten Treffpunkt zu erscheinen. Ein Teamcaptain wird dich dann für diese Aktion freischalten.
+      </div>
     </div>
     <div
       class="row"
@@ -236,6 +245,7 @@ export default defineComponent({
     uiStore.setBottomSheetStateAtLeast(BottomSheetState.HALF)
     next()
   },
+  inject: ['scrollArea'],
   data() {
     return {
       loading: true,
@@ -350,6 +360,10 @@ export default defineComponent({
       } finally {
         this.joinLoading = false
       }
+      setTimeout(() => {
+        // @ts-ignore
+        this.scrollArea?.value?.setScrollPercentage('vertical', 1, 300)
+      }, 300)
     },
     async leave() {
       const generalLeaveError = 'Ein unerwarteter Fehler trat auf beim versuch die Aktion zu verlassen'
@@ -357,6 +371,7 @@ export default defineComponent({
         this.joinLoading = true
         this.event = (await this.$apiClient.events.leave(this.id)).payload.data
         this.personalParticipation = null
+        this.eventAreas = []
       } catch (e) {
         this.$q.notify({
           color: 'negative',
@@ -397,17 +412,16 @@ export default defineComponent({
       }
     },
     openParticipantsModal() {
-      if (this.eventPermissions?.invite.POST) {
-        this.$q.dialog({
-          component: EventParticipantsModal,
-          componentProps: {
-            eventId: this.event.id
-          }
+      this.$q.dialog({
+        component: EventParticipantsModal,
+        maximized: true,
+        componentProps: {
+          eventId: this.event.id
+        }
+      })
+        .onDismiss(() => {
+          void this.refreshEvent()
         })
-          .onDismiss(() => {
-            void this.refreshEvent()
-          })
-      }
     },
     openDeleteModal() {
       this.$q.dialog({
