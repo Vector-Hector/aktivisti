@@ -422,7 +422,7 @@ export default defineComponent({
       })
         .onOk(async () => {
           try {
-            await this.$apiClient.user.delete(this.user!.id.toString())
+            await this.$apiClient.user.delete('me')
             this.$q.notify({
               message: 'Dein Account wurde gelöscht',
               color: 'positive'
