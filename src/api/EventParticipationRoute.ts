@@ -37,7 +37,7 @@ export class EventParticipationRoute extends ApiRoute<EventParticipationDto> {
    * @param id the event participation id
    */
   async verifyParticipant(id: string) {
-    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}${id}`, {
+    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}${id}/`, {
       method: 'PATCH',
       data: {
         is_verified: true
