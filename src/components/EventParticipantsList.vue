@@ -75,7 +75,7 @@
 
         </QItem>
       </QList>
-      <p v-else>
+      <p v-if="verifiedParticipations.length === 0 && notVerifiedParticipations.length === 0">
         Keine Teilnehmer*innen. Nutze den "Leute einladen"-Button um welche einzuladen.
       </p>
     </div>

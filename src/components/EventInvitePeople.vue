@@ -24,10 +24,10 @@
         </QSelect>
       </div>
     </div>
-    <QToolbarTitle>Bereits eingeladen:</QToolbarTitle>
     <div class="row">
       <div class="col">
         <QList v-if="participations.length > 0">
+          <p>Bereits eingeladen:</p>
           <QItem
             v-for="participation in displayedParticipations"
             :key="participation.id"
@@ -69,7 +69,7 @@
           </QItem>
         </QList>
         <p v-else>
-          Keine Teilnehmer*innen, nutze das Eingabefeld um welche einzuladen
+          Keine offenen Einladungen. Nutze das Eingabefeld um neue Teilnehmende einzuladen
         </p>
       </div>
     </div>
