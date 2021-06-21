@@ -106,6 +106,8 @@ import StandaloneGeocoder from 'src/components/StandaloneGeocoder.vue'
 import { geocodingService } from 'src/utils/mapbox'
 import DraggableMarker from 'src/components/DraggableMarker.vue'
 import { QBtn, QCard, QCardActions, QCardSection, QInput, QPopupProxy } from 'quasar'
+import { MapInject } from 'src/mapbox/Map.vue'
+import { bbox, buffer, point } from '@turf/turf';
 
 
 export default defineComponent({
@@ -131,6 +133,7 @@ export default defineComponent({
       suggestedPlaceName: ''
     }
   },
+  inject: { map: MapInject } as any,
   methods: {
     handleResult(geocoderResult: GeocodeResult) {
       if (this.touched) {
@@ -138,10 +141,11 @@ export default defineComponent({
       } else {
         this.event.location_description = geocoderResult.place_name
       }
-      this.event.location = {
-        lat: geocoderResult.center[1],
-        lng: geocoderResult.center[0]
-      }
+      const [ lng, lat ] = geocoderResult.center
+      this.event.location = { lat , lng }
+      const boundingBox = bbox(buffer(point([lng, lat]), 3, {units: 'kilometers'}))
+      // @ts-ignore
+      this.map?.value?.fitBounds(boundingBox)
     },
     async updateDescription(location: LocationDto) {
       const placeName = (await geocodingService.reverseGeocode({

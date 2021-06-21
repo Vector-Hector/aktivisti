@@ -24,13 +24,17 @@ export default defineComponent({
     Map
   },
   mixins: [EditEventMixin],
-  computed: {
-    bbox(): BBox | undefined {
-      return this.event.location
-        ? bbox(buffer(point([this.event.location?.lng, this.event.location?.lat]), 3, {units: 'kilometers'}))
-        : (userStore.getState().bbox ?? undefined)
-      }
-  }
+  data() {
+    return {
+      bbox: userStore.getState().bbox ?? undefined as BBox | undefined
+    }
+  },
+  created() {
+    if (this.event.location){
+      const { lng, lat } = this.event.location
+      this.bbox = bbox(buffer(point([lng, lat]), 3, {units: 'kilometers'}))
+    }
+  },
 })
 </script>
 
