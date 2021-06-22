@@ -57,9 +57,9 @@
       >
           <QIcon :name="ionPersonOutline" /> {{ event.participants }}/{{ event.max_participants ?? '∞' }}
         </span>
-        <span class="description">
+      </div>
+      <div class="col-12">
           {{ event.description }}
-        </span>
       </div>
     </div>
     <div
