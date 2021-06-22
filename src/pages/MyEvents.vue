@@ -73,71 +73,6 @@
             </QItemSection>
           </QItem>
         </QList>
-        <div
-          v-if="hasAtLeastOneManagePermission"
-          class="manage-events-section"
-        >
-          <h3 class="my-events-section-heading">Aktionen verwalten</h3>
-          <QSeparator class="profile-section-divider" />
-          <CollapsibleFilters>
-            <div class="filter-container">
-              <EventFilter
-                v-model:filter-params="userFilterParams"
-                :campaigns="campaigns"
-                :sub-associations="subAssociations"
-              />
-            </div>
-          </CollapsibleFilters>
-          <QList>
-            <QItem
-              v-for="event in managedEvents"
-              :key="event.id"
-              :clickable="true"
-              :to="{ name: 'event-detail', params: { id: event.id } }"
-            >
-              <QItemSection>
-                <QItemLabel>
-                  <b>{{ event.name }}</b>
-                </QItemLabel>
-                <QItemLabel>
-                  {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
-                </QItemLabel>
-                <QItemLabel>
-                  {{ $utils.dateFormat(event.start_date) }}
-                </QItemLabel>
-              </QItemSection>
-              <QItemSection side>
-                <div class="q-gutter-xs">
-                  <router-link
-                    :to="{ name: 'edit-event-details', params: { id: event.id } }"
-                    @click.prevent.stop="$event.stopPropagation()"
-                  >
-                    <QIcon
-                      flat
-                      dense
-                      color="grey-8"
-                      class="edit-button"
-                      size="sm"
-                      :name="ionPencil"
-                    />
-                  </router-link>
-                  <a
-                    @click.prevent.stop="deleteEvent(event)"
-                  >
-                    <QIcon
-                      flat
-                      dense
-                      class="delete-button"
-                      size="sm"
-                      color="negative"
-                      :name="ionTrash"
-                    />
-                  </a>
-                </div>
-              </QItemSection>
-            </QItem>
-          </QList>
-        </div>
       </div>
     </div>
   </QPage>
@@ -148,20 +83,18 @@ import { defineComponent } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { UserDto } from 'src/api/model/UserDto'
-import { QBtn, QIcon, QItem, QItemLabel, QItemSection, QList, QPage, QSeparator } from 'quasar'
+import { QBtn, QItem, QItemLabel, QItemSection, QList, QPage, QSeparator } from 'quasar'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { ionCheckmark, ionClose, ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
-import EventFilter, { UserEventFilterParams } from 'components/EventFilter.vue'
+import { UserEventFilterParams } from 'components/EventFilter.vue'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
-import CollapsibleFilters from 'components/CollapsibleFilters.vue'
 import { myEventsStore } from 'src/store/MyEventsStore'
 import { userStore } from 'src/store/UserStore'
 
 export default defineComponent({
   name: 'MyEvents',
   components: {
-    CollapsibleFilters,
     PageLoadingSpinner,
     QList,
     QItem,
@@ -169,9 +102,7 @@ export default defineComponent({
     QItemSection,
     QBtn,
     QPage,
-    QIcon,
     QSeparator,
-    EventFilter
   },
   data() {
     return {
