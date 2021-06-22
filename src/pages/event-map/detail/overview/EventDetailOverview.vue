@@ -346,6 +346,11 @@ export default defineComponent({
           event: this.id,
           user: userStore.getState().user?.id
         })).payload.data?.[0]
+        if (this.personalParticipation?.is_verified) {
+          this.eventAreas = (await this.$apiClient.eventAreas.list({event: this.event.id})).payload.data
+        } else {
+          this.eventAreas = []
+        }
         if (!this.personalParticipation) {
           this.$q.notify({
             color: 'negative',
@@ -371,7 +376,6 @@ export default defineComponent({
         this.joinLoading = true
         this.event = (await this.$apiClient.events.leave(this.id)).payload.data
         this.personalParticipation = null
-        this.eventAreas = []
       } catch (e) {
         this.$q.notify({
           color: 'negative',
