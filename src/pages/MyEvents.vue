@@ -6,24 +6,13 @@
         v-else
         class="my-events-content"
       >
-        <h3 class="my-events-section-heading">Meine Teilnahmen</h3>
+        <h3 class="my-events-section-heading">Offene Einladungen</h3>
         <QSeparator class="profile-section-divider" />
 
         <QList
         >
-          <div
-            v-if="eventParticipations.length <= 0"
-            class="placeholder"
-          >
-            <p>Du nimmst an keinen Aktion teil - suche jetzt welche!</p>
-            <QBtn
-              label="Jetzt nach Aktionen suchen"
-              :to="{ name: 'events' }"
-              color="primary"
-            />
-          </div>
           <QItem
-            v-for="{participation, event} in eventsByParticipation"
+            v-for="{participation, event} in pendingEvents"
             :key="participation.id"
             :clickable="true"
             :to="{ name: 'event-detail', params: { id: participation.event } }"
@@ -39,7 +28,7 @@
                 {{ $utils.dateFormat(event.start_date) }}
               </QItemLabel>
               <QItemLabel>
-                <i v-if="participation.is_pending_invitation">
+                <i>
                   {{
                     findInvitingUsers(participation.inviting_users).map(({username}) => username).join(',') ?? 'Unbekannt '
                   }}
@@ -51,7 +40,6 @@
             </QItemSection>
             <QItemSection side>
               <div
-                v-if="participation.is_pending_invitation"
                 class="action-buttons"
               >
                 <QBtn
@@ -70,6 +58,42 @@
                   :icon="ionCheckmark"
                 />
               </div>
+            </QItemSection>
+          </QItem>
+        </QList>
+
+        <h3 class="my-events-section-heading">Meine Aktionen</h3>
+        <QSeparator class="profile-section-divider" />
+
+        <QList
+        >
+          <div
+            v-if="eventParticipations.length <= 0"
+            class="placeholder"
+          >
+            <p>Du nimmst an keinen Aktion teil - suche jetzt welche!</p>
+            <QBtn
+              label="Jetzt nach Aktionen suchen"
+              :to="{ name: 'events' }"
+              color="primary"
+            />
+          </div>
+          <QItem
+            v-for="{participation, event} in acceptedEvents"
+            :key="participation.id"
+            :clickable="true"
+            :to="{ name: 'event-detail', params: { id: participation.event } }"
+          >
+            <QItemSection>
+              <QItemLabel>
+                <b>{{ event.name }}</b>
+              </QItemLabel>
+              <QItemLabel>
+                {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
+              </QItemLabel>
+              <QItemLabel>
+                {{ $utils.dateFormat(event.start_date) }}
+              </QItemLabel>
             </QItemSection>
           </QItem>
         </QList>
@@ -143,13 +167,31 @@ export default defineComponent({
         })
       }
     },
-    eventsByParticipation(): { participation: EventParticipationDto, event?: EventDto }[] {
-      return this.eventParticipations.map((participation) => {
-        return {
-          participation,
-          event: this.eventForParticipation(participation)
-        }
+    acceptedEvents(): { participation: EventParticipationDto, event?: EventDto }[] {
+      return this.eventParticipations
+        .filter((item) => !item.is_pending_invitation)
+        .map((participation) => {
+          return {
+            participation,
+            event: this.eventForParticipation(participation)
+         }
       }).sort((a, b) => {
+        if (a.event && b.event) {
+          return a.event?.start_date > b.event.start_date ? 1 : -1
+        } else {
+          return 0
+        }
+      })
+    },
+    pendingEvents(): { participation: EventParticipationDto, event?: EventDto }[] {
+      return this.eventParticipations
+        .filter((item) => item.is_pending_invitation)
+        .map((participation) => {
+          return {
+            participation,
+            event: this.eventForParticipation(participation)
+          }
+        }).sort((a, b) => {
         if (a.event && b.event) {
           return a.event?.start_date > b.event.start_date ? 1 : -1
         } else {
