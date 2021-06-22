@@ -81,7 +81,7 @@ export default defineComponent({
       }
      )
 
-    const footerRow : any = {
+    const summarizedCountsRow : any = {
       areaName: 'Gesamt',
       overallAddresses: 0,
       completedAddresses: 0,
@@ -97,18 +97,18 @@ export default defineComponent({
           completedAddresses:  completed_addresses,
           createdLeads: created_leads
         }
-        footerRow.overallAddresses += overall_addresses;
-        footerRow.completedAddresses += completed_addresses;
-        footerRow.createdLeads += created_leads;
+        summarizedCountsRow.overallAddresses += overall_addresses;
+        summarizedCountsRow.completedAddresses += completed_addresses;
+        summarizedCountsRow.createdLeads += created_leads;
         for (const {id: metricId} of metrics) {
           const countOfMetric = counts_per_metric.find(({metric}) => metric === metricId)?.count || 0
           row[metricId] = countOfMetric
-          footerRow[metricId] =  (footerRow[metricId] | 0 ) + countOfMetric
+          summarizedCountsRow[metricId] =  (summarizedCountsRow[metricId] | 0 ) + countOfMetric
         }
         this.rows.push(row)
       }
     }
-    this.rows.push(footerRow)
+    this.rows.push(summarizedCountsRow)
   },
   methods: {
     async fetchAreaMetricsReports(areaId: number): Promise<EventMetricReportDto> {
