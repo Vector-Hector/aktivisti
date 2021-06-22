@@ -43,20 +43,22 @@
                 class="action-buttons"
               >
                 <QBtn
-                  round
                   dense
                   flat
                   @click.prevent.stop="reject(participation)"
                   :icon="ionClose"
-                />
+                  >
+                  Ablehnen
+                </QBtn>
                 <QBtn
-                  round
                   dense
                   flat
                   color="primary"
                   @click.prevent.stop="accept(participation)"
                   :icon="ionCheckmark"
-                />
+                  >
+                  Annehmen
+                </QBtn>
               </div>
             </QItemSection>
           </QItem>
@@ -303,6 +305,11 @@ export default defineComponent({
 
 .filter-container {
   padding: 0 1em 1em 1em;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
 }
 
 </style>
