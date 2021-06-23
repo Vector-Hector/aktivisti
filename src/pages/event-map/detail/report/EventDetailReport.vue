@@ -57,7 +57,7 @@ export default defineComponent({
     }
   },
   async created() {
-    const {metrics} = await this.fetchMetricRecords()
+    const {metrics, records} = await this.fetchMetricRecords()
     for (const {id: metricId, name } of metrics){
       this.columns.push({
         name: metricId,
@@ -87,6 +87,8 @@ export default defineComponent({
       completedAddresses: 0,
       createdLeads: 0
     }
+    const targetValueOfMetricsRow = records.reduce((row, record) => ({...row, [record.metric]: record.target}), { areaName: 'Zielvorgabe' })
+
     for (const {id, color, name} of this.eventAreas) {
       if (id) {
         const {completed_addresses, overall_addresses, counts_per_metric, created_leads} = await this.fetchAreaMetricsReports(id)
@@ -109,6 +111,7 @@ export default defineComponent({
       }
     }
     this.rows.push(summarizedCountsRow)
+    this.rows.push(targetValueOfMetricsRow)
   },
   methods: {
     async fetchAreaMetricsReports(areaId: number): Promise<EventMetricReportDto> {
