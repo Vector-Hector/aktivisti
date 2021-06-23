@@ -6,6 +6,7 @@
       :grid=$q.screen.lt.md
       :rows="rows"
       hide-pagination
+      :pagination="{rowsPerPage:0}"
       row-key="name"
     >
       <template v-slot:body-cell-areaName="props">
