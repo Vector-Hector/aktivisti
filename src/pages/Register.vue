@@ -112,6 +112,7 @@ import { defineComponent } from 'vue'
 import { UserRegistrationDto } from 'src/api/model/UserRegistrationDto'
 import { QBtn, QForm, QInput } from 'quasar'
 import FormError from 'components/FormError.vue'
+import { configStore } from 'src/store/ConfigStore'
 
 export default defineComponent({
   name: 'Register',
@@ -119,7 +120,7 @@ export default defineComponent({
     FormError,
     QInput,
     QBtn,
-    QForm,
+    QForm
   },
   data() {
     return {
@@ -129,12 +130,14 @@ export default defineComponent({
     }
   },
   created() {
-    this.$q.dialog({
-      title: 'Geschlossene Beta',
-      message: 'Schön, dass du dich für die LINKE Wahlkampf-App interessierst. Derzeit befinden wir uns in einer ' +
-        'geschlossenen Beta-Phase. Registrierungen sind erst ab der nächsten Phase möglich. ' +
-        'Um jetzt schon mitzumachen, muss eine Genoss*in dich einladen.'
-    })
+    if (configStore.getState().service_config.registration_disabled) {
+      this.$q.dialog({
+        title: 'Geschlossene Beta',
+        message: 'Schön, dass du dich für die LINKE Wahlkampf-App interessierst. Derzeit befinden wir uns in einer ' +
+          'geschlossenen Beta-Phase. Registrierungen sind erst ab der nächsten Phase möglich. ' +
+          'Um jetzt schon mitzumachen, muss eine Genoss*in dich einladen.'
+      })
+    }
   },
   methods: {
     async register() {

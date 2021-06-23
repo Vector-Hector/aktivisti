@@ -21,6 +21,7 @@ import { EmailNotificationSettingsDto } from 'src/api/model/EmailNotificationSet
 import { UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
 import { PersonalMetricsRoute } from 'src/api/PersonalMetricsRoute'
 import { TokenRoute } from 'src/api/TokenRoute'
+import { ConfigRoute } from 'src/api/ConfigRoute'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -57,6 +58,7 @@ export class ApiClient {
   subAssociations = new ApiRoute<SubAssociationDto>(this.baseURL, 'sub-associations/', this.axiosInstance)
   account = new AccountRoute(this.baseURL, 'account/', this.axiosInstance)
   emailNotificationSettings = new ApiRoute<EmailNotificationSettingsDto>(this.baseURL, 'email-notification-settings/', this.axiosInstance)
+  config = new ConfigRoute(this.baseURL, 'config/', this.axiosInstance)
 }
 
 export const apiClient = new ApiClient()
