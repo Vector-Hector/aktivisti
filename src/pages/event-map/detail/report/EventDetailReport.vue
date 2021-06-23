@@ -6,6 +6,7 @@
       :grid=$q.screen.lt.md
       :rows="rows"
       hide-pagination
+      :pagination="{rowsPerPage:0}"
       row-key="name"
     >
       <template v-slot:body-cell-areaName="props">
@@ -57,7 +58,7 @@ export default defineComponent({
     }
   },
   async created() {
-    const {metrics} = await this.fetchMetricRecords()
+    const {metrics, records} = await this.fetchMetricRecords()
     for (const {id: metricId, name } of metrics){
       this.columns.push({
         name: metricId,
@@ -81,12 +82,14 @@ export default defineComponent({
       }
      )
 
-    const footerRow : any = {
+    const summarizedCountsRow : any = {
       areaName: 'Gesamt',
       overallAddresses: 0,
       completedAddresses: 0,
       createdLeads: 0
     }
+    const targetValueOfMetricsRow = records.reduce((row, record) => ({...row, [record.metric]: record.target}), { areaName: 'Zielvorgabe' })
+
     for (const {id, color, name} of this.eventAreas) {
       if (id) {
         const {completed_addresses, overall_addresses, counts_per_metric, created_leads} = await this.fetchAreaMetricsReports(id)
@@ -97,18 +100,19 @@ export default defineComponent({
           completedAddresses:  completed_addresses,
           createdLeads: created_leads
         }
-        footerRow.overallAddresses += overall_addresses;
-        footerRow.completedAddresses += completed_addresses;
-        footerRow.createdLeads += created_leads;
+        summarizedCountsRow.overallAddresses += overall_addresses;
+        summarizedCountsRow.completedAddresses += completed_addresses;
+        summarizedCountsRow.createdLeads += created_leads;
         for (const {id: metricId} of metrics) {
           const countOfMetric = counts_per_metric.find(({metric}) => metric === metricId)?.count || 0
           row[metricId] = countOfMetric
-          footerRow[metricId] =  (footerRow[metricId] | 0 ) + countOfMetric
+          summarizedCountsRow[metricId] =  (summarizedCountsRow[metricId] | 0 ) + countOfMetric
         }
         this.rows.push(row)
       }
     }
-    this.rows.push(footerRow)
+    this.rows.push(summarizedCountsRow)
+    this.rows.push(targetValueOfMetricsRow)
   },
   methods: {
     async fetchAreaMetricsReports(areaId: number): Promise<EventMetricReportDto> {
