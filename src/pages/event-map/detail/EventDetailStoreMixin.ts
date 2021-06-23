@@ -32,6 +32,9 @@ export default defineComponent({
         eventDetailStore.setPersonalParticipation(value)
       }
     },
+    personalParticipationPermissions(): PermissionHintsDto | null {
+      return eventDetailStore.getState().personalParticipationPermissions
+    },
     completionNotes(): CompletionNoteDto[] {
       return eventDetailStore.getState().completionNotes
     },
