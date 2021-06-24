@@ -8,7 +8,7 @@ variables:
 include:
   - template: Jobs/Build.gitlab-ci.yml
   - template: Jobs/Deploy.gitlab-ci.yml
-  - template: Jobs/Helm-2to3.gitlab-ci.yml
+  - remote: https://gitlab.com/gitlab-org/gitlab/-/raw/master/lib/gitlab/ci/templates/Jobs/Helm-2to3.gitlab-ci.yml
 
 stages:
   - test
