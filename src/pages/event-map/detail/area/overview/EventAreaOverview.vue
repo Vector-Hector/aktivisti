@@ -13,7 +13,7 @@
           :display-value="eventAreaParticipants.map(({user_username}) => user_username).join(',')"
         />
         <div
-          v-else-if="isUserEventParticipant"
+          v-else-if="personalParticipationPermissions?.assign_event_area?.POST"
           class="join-buttons"
         >
           <QBtn
@@ -128,9 +128,6 @@ export default defineComponent({
     isCampaignAdmin() {
       return userStore.isCampaignAdmin()
     },
-    isUserEventParticipant(): boolean {
-      return this.user !== null && this.personalParticipation?.is_pending_invitation === false
-    },
     isUserEventAreaParticipant(): boolean {
       return (
         this.user !== null
@@ -155,16 +152,18 @@ export default defineComponent({
     },
     async joinArea() {
       if (this.personalParticipation) {
-        this.personalParticipation = (await this.$apiClient.eventParticipations.patch(this.personalParticipation.id.toString(), {
-          assigned_event_areas: [...this.personalParticipation.assigned_event_areas, this.eventArea.id!]
-        })).payload.data
+        this.personalParticipation = (await this.$apiClient.eventParticipations.assignEventArea(
+          this.personalParticipation.id.toString(),
+          this.eventArea.id!
+        )).payload.data
       }
     },
     async leaveArea() {
       if (this.personalParticipation) {
-        this.personalParticipation = (await this.$apiClient.eventParticipations.patch(this.personalParticipation.id.toString(), {
-          assigned_event_areas: this.personalParticipation.assigned_event_areas.filter((id) => id !== this.eventArea.id)
-        })).payload.data
+        this.personalParticipation = (await this.$apiClient.eventParticipations.unassignEventArea(
+          this.personalParticipation.id.toString(),
+          this.eventArea.id!
+        )).payload.data
       }
     },
     updateParticipations(updatedParticipations: EventParticipationDto[]) {

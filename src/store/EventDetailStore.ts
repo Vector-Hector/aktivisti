@@ -12,6 +12,7 @@ interface EventDetailStoreState {
   eventAreaPermissions: PermissionHintsDto | null
   participations: EventParticipationDto[]
   personalParticipation: EventParticipationDto | null
+  personalParticipationPermissions: PermissionHintsDto | null
   campaigns: CampaignDto[]
   eventPermissions: PermissionHintsDto | null
   completionNotes: CompletionNoteDto[]
@@ -28,6 +29,7 @@ class EventDetailStore extends Store<EventDetailStoreState> {
       eventAreaPermissions: null,
       participations: [],
       personalParticipation: null,
+      personalParticipationPermissions: null,
       campaigns: [],
       eventPermissions: null,
       completionNotes: [] as CompletionNoteDto[]
@@ -66,6 +68,10 @@ class EventDetailStore extends Store<EventDetailStoreState> {
 
   public setPersonalParticipation(participation: EventParticipationDto | null) {
     this.state.personalParticipation = participation
+  }
+
+  public setPersonalParticipationPermissions(permissions: PermissionHintsDto | null) {
+    this.state.personalParticipationPermissions = permissions
   }
 
   public setEventAreas(eventAreas: EventAreaDto[]) {

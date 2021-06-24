@@ -40,9 +40,11 @@ export default defineComponent({
     if (authService.isLoggedIn()) {
       permissionRequests.push(apiClient.eventParticipations.list({
         event: to.params.id,
-        user: userStore.getState().user?.id
+        user: userStore.getState().user?.id,
+        show_permissions: true
       }).then((response) => {
         eventDetailStore.setPersonalParticipation(response.payload.data?.[0] ?? null)
+        eventDetailStore.setPersonalParticipationPermissions(response.payload.permissions)
       }))
     }
     await Promise.all(permissionRequests)
