@@ -6,7 +6,6 @@ import { tokenStore } from 'src/store/TokenStore'
 import { ErrorBus, NOT_AUTHORIZED, SESSION_INVALID } from 'src/utils/errorBus'
 import { ApiClient } from 'src/api'
 import { ErrorCode } from 'src/api/ErrorCode'
-import { userStore } from 'src/store/UserStore'
 import { authService } from 'src/api/authService'
 
 declare module '@vue/runtime-core' {
