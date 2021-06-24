@@ -1,12 +1,14 @@
 variables:
   POSTGRES_ENABLED: "false"
   ROLLOUT_RESOURCE_TYPE: deployment
+  MIGRATE_HELM_2TO3: "true"
+  AUTO_DEVOPS_FORCE_DEPLOY_V2: 1
 
 
 include:
   - template: Jobs/Build.gitlab-ci.yml
   - template: Jobs/Deploy.gitlab-ci.yml
-
+  - template: Jobs/Helm-2to3.gitlab-ci.yml
 
 stages:
   - test
