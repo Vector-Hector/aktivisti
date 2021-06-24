@@ -180,7 +180,7 @@ export default defineComponent({
   },
   methods: {
     logout() {
-      authService.logout()
+      void authService.logout()
       void this.$router.push('/')
     }
   }

@@ -19,7 +19,7 @@
       <div class="control-buttons">
 
         <QCheckbox
-          v-model="saveRefreshToken"
+          v-model="longSession"
           label="Angemeldet bleiben"
           class="checkbox-margin-right"
         />
@@ -82,7 +82,7 @@ export default defineComponent({
       username: '',
       password: '',
       generalError: null as string | null,
-      saveRefreshToken: true
+      longSession: true
     }
   },
   methods: {
@@ -90,7 +90,7 @@ export default defineComponent({
       this.submitting = true
       this.generalError = null
       try {
-        await authService.login(this.username, this.password, this.saveRefreshToken)
+        await authService.login(this.username, this.password, this.longSession)
         await this.$router.push(this.next)
       } catch (error) {
         if (error.response?.status == 400) {

@@ -49,9 +49,10 @@ import { defineComponent } from 'vue'
 import NavigationSidebar from 'src/components/NavigationSidebar.vue'
 import { uiStore } from 'src/store/UiStore'
 import AppTitle from 'src/components/AppTitle.vue'
-import { ErrorBus } from 'src/utils/errorBus'
+import { ErrorBus, NOT_AUTHORIZED, SESSION_INVALID } from 'src/utils/errorBus'
 import { QToolbar, QBtn, QPageContainer, QLayout, QHeader, QToolbarTitle } from 'quasar'
 import { ionArrowBack, ionMenu } from '@quasar/extras/ionicons-v5'
+import { IntervalDebouncer } from 'src/utils/debounce'
 
 
 export default defineComponent({
@@ -108,11 +109,20 @@ export default defineComponent({
     }
   },
   mounted() {
-    ErrorBus.on('error', (message: string) => {
+    const debouncer = new IntervalDebouncer()
+    ErrorBus.on(SESSION_INVALID, (message: string) => {
+      debouncer.executeDebounced(() => {
+        this.$q.notify({
+          type: 'warning',
+          message: message
+        })
+        void this.$router.push({name: 'login'})
+      })
+    })
+    ErrorBus.on(NOT_AUTHORIZED, (message: string) => {
       this.$q.notify({
-        position: 'top-right',
         type: 'negative',
-        message: message,
+        message: message
       })
     })
   },

@@ -2,6 +2,7 @@ import { APIEnvelope } from 'src/api/model/APIEnvelope'
 import { JSONResponse } from 'src/api/JSONResponse'
 import { AxiosInstance, Method } from 'axios'
 import { appendAsQueryParams } from 'src/utils/url'
+import { Cookies } from 'quasar'
 
 interface RequestConfig {
   path: string,
@@ -24,9 +25,15 @@ export class BaseApiRoute {
     if (config.query) {
       appendAsQueryParams(url, config.query)
     }
+    const headers: Record<string, string> = {}
+    if (['POST', 'PATCH', 'PUT', 'DELETE'].includes(config.method)) {
+      headers['x-csrftoken'] = Cookies.get('csrftoken');
+    }
     return this.axiosInstance(url.toString(), {
       method: config.method,
-      data: config.data ? JSON.stringify(config.data) : undefined
+      data: config.data ? JSON.stringify(config.data) : undefined,
+      withCredentials: true,
+      headers
     })
   }
 }

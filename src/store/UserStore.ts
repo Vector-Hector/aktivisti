@@ -18,6 +18,7 @@ export interface EventFilterPreferences {
 }
 
 interface UserState {
+  loggedIn: boolean
   user: UserDto | null
   homeAssociation: SubAssociationDto | null
   bbox: BBox2d | null
@@ -28,29 +29,39 @@ interface UserState {
 const KEY_BBOX = 'KEY_BBOX'
 const KEY_FILTERPREFERENCES = 'KEY_FILTERPREFERENCES'
 const KEY_HOMEASSOCIATION = 'KEY_HOMEASSOCIATION'
+const KEY_LOGGED_IN = 'KEY_LOGGED_IN'
 
 class UserStore extends Store<UserState> {
   protected data(): UserState {
-    const bboxString = localStorage.getItem(KEY_BBOX)
-    const bbox = bboxString ? JSON.parse(bboxString) : null
-
-    const filterPreferencesString = localStorage.getItem(KEY_FILTERPREFERENCES)
-    const filterPreferences = parseIfPossible(filterPreferencesString) as EventFilterPreferences | null
-
-    const homeAssociationString = localStorage.getItem(KEY_HOMEASSOCIATION)
-    const homeAssociation = parseIfPossible(homeAssociationString) as SubAssociationDto | null
-
     return {
+      loggedIn: false,
       user: null,
       permissions: [],
-      bbox,
-      homeAssociation,
-      filterPreferences: filterPreferences ?? {
+      bbox: null,
+      homeAssociation: null,
+      filterPreferences: {
         subAssociations: [],
         campaign: undefined,
         sorting: SortOption.START_DATE
       }
     }
+  }
+
+  protected setup(data: UserState) {
+    super.setup(data)
+
+    const bboxString = localStorage.getItem(KEY_BBOX)
+    data.bbox = bboxString ? JSON.parse(bboxString) : null
+
+    const filterPreferencesString = localStorage.getItem(KEY_FILTERPREFERENCES)
+    const filterPreferences = parseIfPossible(filterPreferencesString) as EventFilterPreferences | null
+    data.filterPreferences = filterPreferences ?? data.filterPreferences
+
+    const homeAssociationString = localStorage.getItem(KEY_HOMEASSOCIATION)
+    data.homeAssociation = parseIfPossible(homeAssociationString) as SubAssociationDto | null
+
+    const loggedIn = localStorage.getItem(KEY_LOGGED_IN)
+    data.loggedIn = !!loggedIn
   }
 
   public setBbox(bbox: BBox2d | null) {
@@ -73,6 +84,15 @@ class UserStore extends Store<UserState> {
       localStorage.setItem(KEY_HOMEASSOCIATION, JSON.stringify(this.state.homeAssociation))
     } else {
       localStorage.removeItem(KEY_HOMEASSOCIATION)
+    }
+  }
+
+  public setLoggedIn(value: boolean) {
+    this.state.loggedIn = value
+    if (value) {
+      localStorage.setItem(KEY_LOGGED_IN, value.toString())
+    } else {
+      localStorage.removeItem(KEY_LOGGED_IN)
     }
   }
 
