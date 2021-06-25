@@ -23,6 +23,7 @@ import { PersonalMetricsRoute } from 'src/api/PersonalMetricsRoute'
 import { TokenRoute } from 'src/api/TokenRoute'
 import { ConfigRoute } from 'src/api/ConfigRoute'
 import { SessionRoute } from 'src/api/SessionRoute'
+import { ForgotPasswordDto } from 'src/api/model/ForgotPasswordDto'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -55,6 +56,7 @@ export class ApiClient {
   leads = new ApiRoute<LeadDto>(this.baseURL, 'leads/', this.axiosInstance)
   eventParticipations = new EventParticipationRoute(this.baseURL, 'event-participations/', this.axiosInstance)
   userRegistration = new ApiRoute<UserRegistrationDto>(this.baseURL, 'account/register/', this.axiosInstance)
+  forgotPassword = new ApiRoute<ForgotPasswordDto>(this.baseURL, 'account/forgot-password/', this.axiosInstance)
   eventClusters = new ApiRoute<ClusterDto>(this.baseURL, 'event-clusters/', this.axiosInstance)
   subAssociations = new ApiRoute<SubAssociationDto>(this.baseURL, 'sub-associations/', this.axiosInstance)
   account = new AccountRoute(this.baseURL, 'account/', this.axiosInstance)
