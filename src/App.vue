@@ -1,13 +1,7 @@
 <template>
-  <div
-    v-if="initialized"
-    class="loading-spinner-wrapper"
-  >
-    <QSpinnerPuff
-      class="loading-spinner"
-      color="primary"
-    />
-  </div>
+  <PageLoadingSpinner
+    v-if="!initialized"
+  />
   <QLayout
     v-else
     view="hHr LpR ffr"
@@ -69,11 +63,13 @@ import { apiClient } from 'src/api/ApiClient'
 import { configStore } from 'src/store/ConfigStore'
 import { authService } from 'src/api/authService'
 import { userStore } from 'src/store/UserStore'
+import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 
 
 export default defineComponent({
   name: 'App',
   components: {
+    PageLoadingSpinner,
     AppTitle,
     NavigationSidebar,
     QToolbar,
@@ -139,6 +135,7 @@ export default defineComponent({
         }
       }
     }
+    this.initialized = true
   },
   mounted() {
     const debouncer = new IntervalDebouncer()
