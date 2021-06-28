@@ -128,7 +128,7 @@ export default defineComponent({
         userStore.setPermissions(permissionRequest.payload.data)
       } catch (error: any) {
         console.log(error)
-        if (error.status === 403) {
+        if (error.response?.status === 403) {
           authService.clear()
         } else {
           ErrorBus.emit(NO_INTERNET)
@@ -155,10 +155,13 @@ export default defineComponent({
       })
     })
     ErrorBus.on(NO_INTERNET, () => {
-      this.$q.notify({
-        type: 'negative',
-        timeout: 5000,
-        message: message
+      debouncer.executeDebounced(() => {
+        this.$q.notify({
+          type: 'negative',
+          timeout: 5000,
+          message: 'Die Internetverbindung steht derzeit nicht zur Verfügung oder der ' +
+            'App-Dienst konnte nicht erreicht werden, versuche es später noch einmal'
+        })
       })
     })
   },
