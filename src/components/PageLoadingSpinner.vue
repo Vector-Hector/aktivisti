@@ -19,7 +19,7 @@ export default defineComponent({
   }
 })
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .loading-spinner-wrapper {
   align-items: center;
   justify-content: center;

@@ -1,5 +1,11 @@
 <template>
-  <QLayout view="hHr LpR ffr">
+  <PageLoadingSpinner
+    v-if="!initialized"
+  />
+  <QLayout
+    v-else
+    view="hHr LpR ffr"
+  >
     <QHeader
       class="bg-primary text-white"
       elevated
@@ -49,15 +55,21 @@ import { defineComponent } from 'vue'
 import NavigationSidebar from 'src/components/NavigationSidebar.vue'
 import { uiStore } from 'src/store/UiStore'
 import AppTitle from 'src/components/AppTitle.vue'
-import { ErrorBus, NOT_AUTHORIZED, SESSION_INVALID } from 'src/utils/errorBus'
+import { ErrorBus, NOT_AUTHORIZED, SESSION_INVALID, NO_INTERNET } from 'src/utils/errorBus'
 import { QToolbar, QBtn, QPageContainer, QLayout, QHeader, QToolbarTitle } from 'quasar'
 import { ionArrowBack, ionMenu } from '@quasar/extras/ionicons-v5'
 import { IntervalDebouncer } from 'src/utils/debounce'
+import { apiClient } from 'src/api/ApiClient'
+import { configStore } from 'src/store/ConfigStore'
+import { authService } from 'src/api/authService'
+import { userStore } from 'src/store/UserStore'
+import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 
 
 export default defineComponent({
   name: 'App',
   components: {
+    PageLoadingSpinner,
     AppTitle,
     NavigationSidebar,
     QToolbar,
@@ -69,6 +81,7 @@ export default defineComponent({
   },
   data() {
     return {
+      initialized: false,
       transitionDirection: null as string | null,
       ionMenu,
       ionArrowBack
@@ -80,20 +93,6 @@ export default defineComponent({
     },
     showNavigation() {
       return uiStore.getState().showNavigation
-    },
-    pageTransition(): string {
-      if (this.transitionDirection === null) {
-        return 'fade'
-      } else {
-        return `slide-${this.transitionDirection}`
-      }
-    },
-    titleTransition(): string {
-      if (this.transitionDirection === null) {
-        return 'fade'
-      } else {
-        return `fade-${this.transitionDirection}`
-      }
     }
   },
   watch: {
@@ -107,6 +106,36 @@ export default defineComponent({
         this.transitionDirection = toDepth < fromDepth ? 'right' : 'left'
       }
     }
+  },
+  async created() {
+    // Retrieve config
+    try {
+      const configRequest = await apiClient.config.get()
+      configStore.setServiceConfig(configRequest.payload.data)
+    } catch (e) {
+      ErrorBus.emit(NO_INTERNET)
+    }
+    // hydrate profile on app start
+    if (authService.isLoggedIn()) {
+      try {
+        const [profileRequest, permissionRequest] = await Promise.all([
+          apiClient.user.get('me', ['sub_association']),
+          apiClient.userPermissions.list(),
+          apiClient.config.get()
+        ])
+        userStore.setUser(profileRequest.payload.data)
+        userStore.setHomeAssociation(profileRequest.payload.embedded?.sub_association?.[0] ?? null)
+        userStore.setPermissions(permissionRequest.payload.data)
+      } catch (error: any) {
+        console.log(error)
+        if (error.response?.status === 403) {
+          authService.clear()
+        } else {
+          ErrorBus.emit(NO_INTERNET)
+        }
+      }
+    }
+    this.initialized = true
   },
   mounted() {
     const debouncer = new IntervalDebouncer()
@@ -123,6 +152,16 @@ export default defineComponent({
       this.$q.notify({
         type: 'negative',
         message: message
+      })
+    })
+    ErrorBus.on(NO_INTERNET, () => {
+      debouncer.executeDebounced(() => {
+        this.$q.notify({
+          type: 'negative',
+          timeout: 5000,
+          message: 'Die Internetverbindung steht derzeit nicht zur Verfügung oder der ' +
+            'App-Dienst konnte nicht erreicht werden, versuche es später noch einmal'
+        })
       })
     })
   },
