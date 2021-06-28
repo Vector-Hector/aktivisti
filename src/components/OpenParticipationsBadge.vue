@@ -6,7 +6,7 @@
 import { defineComponent } from 'vue'
 import { QBadge } from 'quasar'
 import { myEventsStore } from 'src/store/MyEventsStore'
-import {userStore} from "src/store/UserStore";
+import { userStore } from 'src/store/UserStore'
 import Timeout = NodeJS.Timeout;
 
 

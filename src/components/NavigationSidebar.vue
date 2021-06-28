@@ -132,7 +132,7 @@ import {
   ionPersonCircleOutline,
   ionPersonOutline
 } from '@quasar/extras/ionicons-v5'
-import { QBtn, QDrawer, QIcon, QBadge } from 'quasar'
+import { QBtn, QDrawer, QIcon } from 'quasar'
 import {farCalendarPlus, farIdCard} from '@quasar/extras/fontawesome-v5'
 import {EventParticipationDto} from 'src/api/model/EventParticipationDto'
 
@@ -144,8 +144,7 @@ export default defineComponent({
     MenuLink,
     QBtn,
     QDrawer,
-    QIcon,
-    QBadge
+    QIcon
   },
   data() {
     return {
