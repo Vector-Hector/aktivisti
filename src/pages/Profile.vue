@@ -148,19 +148,6 @@
           />
         </QItemSection>
       </QItem>
-      <QItem>
-        <QItemSection>
-          Alle Anmelde-Sessions beenden
-        </QItemSection>
-        <QItemSection side>
-          <QBtn
-            flat
-            @click="deleteAllSessionsButton"
-            color="negative"
-            label="Sessions beenden"
-          />
-        </QItemSection>
-      </QItem>
     </QList>
   </div>
 </template>
@@ -177,11 +164,11 @@ import { cloneDeep, isEqual } from 'lodash-es'
 import ChangeEmailDialog from 'components/modals/ChangeEmailDialog.vue'
 import ChangePasswordDialog from 'components/modals/ChangePasswordDialog.vue'
 import { EmailNotificationSettingsDto } from 'src/api/model/EmailNotificationSettingsDto'
-import { Debouncer } from 'src/utils/Debouncer'
 import { UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
 import { PersonalMetricsDto } from 'src/api/model/PersonalMetricsDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { authService } from 'src/api/authService'
+import { SettleDebouncer } from 'src/utils/debounce'
 
 
 export default defineComponent({
@@ -280,8 +267,8 @@ export default defineComponent({
   data() {
     return {
       ionPersonCircleOutline,
-      profileSaveDebouncer: new Debouncer(),
-      emailNotificationSettingsSaveDebouncer: new Debouncer(),
+      profileSaveDebouncer: new SettleDebouncer(),
+      emailNotificationSettingsSaveDebouncer: new SettleDebouncer(),
       localUser: cloneDeep(userStore.getState().user),
       ionPencil,
       errors: {},
@@ -428,34 +415,10 @@ export default defineComponent({
               color: 'positive'
             })
             await this.$router.push({name: 'splash'})
-            authService.logout()
+            await authService.logout()
           } catch (e) {
             this.$q.notify({
               message: 'Beim löschen deines Accounts trat ein Fehler auf',
-              color: 'negative'
-            })
-          }
-        })
-    },
-    deleteAllSessionsButton() {
-      this.$q.dialog({
-        title: 'Sessions beenden',
-        message: 'Möchtest du alle Sessions beenden? Damit werden alle Geräte mit denen du dich angemeldet hast ausgeloggt (auch dieses).',
-        ok: 'Sessions beenden',
-        cancel: 'Abbrechen'
-      })
-        .onOk(async () => {
-          try {
-            await this.$apiClient.tokens.revokeAll()
-            this.$q.notify({
-              message: 'Alle Anmelde-Sessions wurden beendet',
-              color: 'positive'
-            })
-            await this.$router.push({name: 'splash'})
-            authService.logout()
-          } catch (e) {
-            this.$q.notify({
-              message: 'Beim beenden aller Anmelde-Sessions trat ein fehler auf',
               color: 'negative'
             })
           }

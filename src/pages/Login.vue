@@ -15,15 +15,24 @@
         :rules="[$validationRules.isRequired]"
         type="password"
       />
+      <div class="forgot-password-link">
+        Passwort
+        <a
+          @click="openResetPasswordModal"
+          class="primary-link"
+        >
+          zurücksetzen
+        </a>
+      </div>
 
       <div class="control-buttons">
 
         <QCheckbox
-          v-model="saveRefreshToken"
+          v-model="longSession"
           label="Angemeldet bleiben"
           class="checkbox-margin-right"
         />
-        <FormError :error="generalError" />
+        <FormError :error="nonFieldError" />
         <QBtn
           color="primary"
           class="submit-button"
@@ -34,7 +43,6 @@
         </QBtn>
       </div>
     </QForm>
-
     <div class="sign-in-link">
       Noch kein Konto?
       <router-link
@@ -63,7 +71,7 @@ export default defineComponent({
     QCheckbox
   },
   beforeRouteEnter(to, from, next) {
-    if(authService.isLoggedIn()){
+    if (authService.isLoggedIn()) {
       next({name: 'events'})
     } else {
       next()
@@ -81,23 +89,52 @@ export default defineComponent({
       submitting: false,
       username: '',
       password: '',
-      generalError: null as string | null,
-      saveRefreshToken: true
+      nonFieldError: null as string | null,
+      longSession: true
     }
   },
   methods: {
     async login() {
       this.submitting = true
-      this.generalError = null
+      this.nonFieldError = null
       try {
-        await authService.login(this.username, this.password, this.saveRefreshToken)
+        await authService.login(this.username, this.password, this.longSession)
         await this.$router.push(this.next)
       } catch (error) {
         if (error.response?.status == 400) {
-          this.generalError = error.response?.data?.error_description
+          this.nonFieldError = error.response?.data?.non_field_errors?.[0]
         }
       }
       this.submitting = false
+    },
+    openResetPasswordModal() {
+      this.$q.dialog({
+        title: 'Passwort zurücksetzen',
+        message: 'Gib hier deine E-Mail Adresse ein. Wir schicken dir eine E-Mail mit Anweisungen, wie du dein Passwort zurücksetzen kannst.',
+        prompt: {
+          model: '',
+          isValid: (val: string) => this.$validationRules.email(val),
+          type: 'email'
+        },
+        cancel: true,
+        persistent: true
+      }).onOk(async (value: string) => {
+        try {
+          await this.$apiClient.forgotPassword.create({
+            email: value
+          })
+          this.$q.notify({
+            color: 'positive',
+            message: 'Bitte sieh nun in deinem Postfach nach. Wir haben dir eine E-Mail mit weiteren Anweisungen geschickt.'
+          })
+        } catch (e) {
+          const error = e.response?.data?.email ?? 'Beim versuch dein Passwort zurückzusetzen trat ein Fehler auf'
+          this.$q.notify({
+            color: 'negative',
+            message: error
+          })
+        }
+      })
     }
   }
 })
@@ -124,6 +161,12 @@ export default defineComponent({
 
 .submit-button {
   margin: 1rem 0 3rem 0;
+}
+
+.forgot-password-link {
+  a {
+    text-decoration: underline;
+  }
 }
 
 .sign-in-link {

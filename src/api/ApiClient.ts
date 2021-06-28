@@ -11,7 +11,7 @@ import { TrackingSessionDto } from 'src/api/model/TrackingSessionDto'
 import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 import { LeadDto } from 'src/api/model/LeadDto'
 import { EventDto } from 'src/api/model/EventDto'
-import { EventAreaRoute } from 'src/api/EventAreaRoute';
+import { EventAreaRoute } from 'src/api/EventAreaRoute'
 import { EventParticipationRoute } from 'src/api/EventParticipationRoute'
 import { UserRegistrationDto } from 'src/api/model/UserRegistrationDto'
 import { ClusterDto } from 'src/api/model/ClusterDto'
@@ -22,6 +22,8 @@ import { UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
 import { PersonalMetricsRoute } from 'src/api/PersonalMetricsRoute'
 import { TokenRoute } from 'src/api/TokenRoute'
 import { ConfigRoute } from 'src/api/ConfigRoute'
+import { SessionRoute } from 'src/api/SessionRoute'
+import { ForgotPasswordDto } from 'src/api/model/ForgotPasswordDto'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -54,10 +56,12 @@ export class ApiClient {
   leads = new ApiRoute<LeadDto>(this.baseURL, 'leads/', this.axiosInstance)
   eventParticipations = new EventParticipationRoute(this.baseURL, 'event-participations/', this.axiosInstance)
   userRegistration = new ApiRoute<UserRegistrationDto>(this.baseURL, 'account/register/', this.axiosInstance)
+  forgotPassword = new ApiRoute<ForgotPasswordDto>(this.baseURL, 'account/forgot-password/', this.axiosInstance)
   eventClusters = new ApiRoute<ClusterDto>(this.baseURL, 'event-clusters/', this.axiosInstance)
   subAssociations = new ApiRoute<SubAssociationDto>(this.baseURL, 'sub-associations/', this.axiosInstance)
   account = new AccountRoute(this.baseURL, 'account/', this.axiosInstance)
   emailNotificationSettings = new ApiRoute<EmailNotificationSettingsDto>(this.baseURL, 'email-notification-settings/', this.axiosInstance)
+  session = new SessionRoute(this.baseURL, 'session/', this.axiosInstance)
   config = new ConfigRoute(this.baseURL, 'config/', this.axiosInstance)
 }
 

@@ -3,9 +3,10 @@ import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { apiClient } from 'src/api/ApiClient'
 import { OAuth2Client, oAuth2Client } from 'src/api/OAuth2Client'
 import { tokenStore } from 'src/store/TokenStore'
-import { authService } from 'src/api/authService'
-import { ErrorBus } from 'src/utils/errorBus'
+import { ErrorBus, NOT_AUTHORIZED, SESSION_INVALID } from 'src/utils/errorBus'
 import { ApiClient } from 'src/api'
+import { ErrorCode } from 'src/api/ErrorCode'
+import { authService } from 'src/api/authService'
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -21,27 +22,18 @@ export default boot(({app}) => {
   apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
     return response
   }, async (error: any) => {
-    const originalRequest = error.config
-    if ((error.response?.status === 403 || error.response?.status === 401) && tokenStore.expiryDate && (new Date() > tokenStore.expiryDate)) {
-      try {
-        await authService.renewLogin()
-      } catch (e) {
-        return Promise.reject(error.response)
+    if (error.response?.status === 403) {
+      if (error.response?.data?.code === ErrorCode.NOT_AUTHENTICATED) {
+        // If the request is not authenticated our session expired
+        authService.clear()
+        ErrorBus.emit(SESSION_INVALID, 'Ihre Sitzung ist abgelaufen, bitte loggen Sie sich erneut ein')
+      } else {
+        // Emit the permission problem on a global error bus
+        ErrorBus.emit(NOT_AUTHORIZED, 'Sie haben nicht genügend Rechte, um die angefragte Seite zu lesen.')
       }
-      // redo initial request
-      return apiClient.axiosInstance(originalRequest)
-    } else if (error.response?.status === 403 && tokenStore.expiryDate && (new Date() <= tokenStore.expiryDate)) {
-      // if logged in user still has a valid token but tries to fetch a resource they don't have permissions for
-      // redirect to home
-      //router.push('/')
-
-      // emited error is displayed in a toast alert
-      ErrorBus.emit('error', 'Sie haben nicht genügend Rechte, um die angefragte Seite zu lesen.')
-      return Promise.reject(error.response)
-    } else {
-      // all other request just fail regulary
-      return Promise.reject(error)
     }
+    // Ultimately reject the error
+    return Promise.reject(error)
   })
 
   apiClient.axiosInstance.interceptors.request.use((request: AxiosRequestConfig) => {
