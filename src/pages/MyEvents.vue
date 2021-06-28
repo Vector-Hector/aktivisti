@@ -132,7 +132,6 @@ export default defineComponent({
   },
   data() {
     return {
-      eventParticipations: [] as EventParticipationDto[],
       participatedEvents: [] as EventDto[],
       managedEvents: [] as EventDto[],
       invitingUsers: [] as UserDto[],
@@ -167,6 +166,14 @@ export default defineComponent({
             sorting: value.order_by
           }
         })
+      }
+    },
+    eventParticipations: {
+      get(): EventParticipationDto[] {
+        return myEventsStore.getState().eventParticipations
+      },
+      set(value: EventParticipationDto[]){
+        myEventsStore.setEventParticipations(value)
       }
     },
     acceptedEvents(): { participation: EventParticipationDto, event?: EventDto }[] {
@@ -218,6 +225,12 @@ export default defineComponent({
         void this.getManagedEvents()
       },
       immediate: true
+    },
+    eventParticipations: {
+      handler() {
+        void this.getParticipatedEvents()
+      },
+      immediate: true
     }
   },
   methods: {
@@ -235,7 +248,7 @@ export default defineComponent({
       )).payload
       this.participatedEvents = responseData.embedded.event
       this.invitingUsers = responseData.embedded.inviting_users
-      this.eventParticipations = responseData.data
+      myEventsStore.setEventParticipations(responseData.data)
     },
     async getManagedEvents() {
       this.managedEvents = (await this.$apiClient.events.list(
