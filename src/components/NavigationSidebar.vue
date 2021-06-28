@@ -75,6 +75,7 @@
           >
             <QIcon :name="ionCalendarOutline" />
             <span class="menu-item-link-text">Meine Aktionen</span>
+            <OpenInvitationsBadge v-if="openInvitations.length > 0" :open-invitations-count="openInvitations.length"/>
           </MenuLink>
         </div>
         <div
@@ -119,7 +120,9 @@ import { defineComponent } from 'vue'
 import { uiStore } from 'src/store/UiStore'
 import { userStore } from 'src/store/UserStore'
 import { authStore } from 'src/store/AuthStore'
+import { myEventsStore } from 'src/store/MyEventsStore'
 import MenuLink from 'src/components/MenuLink.vue'
+import OpenInvitationsBadge from 'src/components/OpenParticipationsBadge.vue'
 import {
   ionCalendarClearOutline,
   ionCalendarOutline,
@@ -129,17 +132,20 @@ import {
   ionPersonCircleOutline,
   ionPersonOutline
 } from '@quasar/extras/ionicons-v5'
-import { QBtn, QDrawer, QIcon } from 'quasar'
+import { QBtn, QDrawer, QIcon, QBadge } from 'quasar'
 import {farCalendarPlus, farIdCard} from '@quasar/extras/fontawesome-v5'
+import {EventParticipationDto} from 'src/api/model/EventParticipationDto'
 
 
 export default defineComponent({
   name: 'NavigationSidebar',
   components: {
+    OpenInvitationsBadge,
     MenuLink,
     QBtn,
     QDrawer,
-    QIcon
+    QIcon,
+    QBadge
   },
   data() {
     return {
@@ -175,6 +181,17 @@ export default defineComponent({
       },
       set(value: boolean) {
         uiStore.toggleSidebar(value)
+      }
+    },
+    openInvitations() {
+      console.log('**** using openIntivations ***********')
+      if (this.isLoggedIn) {
+        const openInvitations = myEventsStore.getState().eventParticipations.filter((item) => item.is_pending_invitation)
+        console.log('OpenInvitations:', openInvitations)
+        return openInvitations
+      }
+      else {
+        return [] as EventParticipationDto[]
       }
     }
   },
@@ -257,6 +274,7 @@ outside the html hierarchy of this component - if someone finds a better soltion
 
   .menu-item-link-text {
     margin-left: 10px;
+    margin-right: 10px;
   }
 }
 
