@@ -5,7 +5,7 @@ import { JSONResponse } from 'src/api/JSONResponse'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { BulkInviteDto } from 'src/api/model/BulkInviteDto'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { EventMetricReportDto } from 'src/api/model/EventMetricReportDto';
+import { EventMetricReportDto } from 'src/api/model/EventMetricReportDto'
 
 /**
  * A class extending {@link ApiRoute} to implement some extra non-standard operations (join / leave)
@@ -16,7 +16,8 @@ export class EventRoute extends ApiRoute<EventDto> {
    * @param id the event id
    */
   async join(id: string) {
-    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}${id}/join/`, {
+    const response = await this.request({
+      path: `${this.path}${id}/join/`,
       method: 'POST'
     })
     const data = await response.data
@@ -28,7 +29,8 @@ export class EventRoute extends ApiRoute<EventDto> {
    * @param id the event id
    */
   async leave(id: string) {
-    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}${id}/leave/`, {
+    const response = await this.request({
+      path: `${this.path}${id}/leave/`,
       method: 'POST'
     })
     const data = await response.data
@@ -56,8 +58,8 @@ export class EventRoute extends ApiRoute<EventDto> {
   }
 
   async report(id: string) {
-    const response = await  this.request({
-      path: `${id}/report/`,
+    const response = await this.request({
+      path: `${this.path}${id}/report/`,
       method: 'GET'
     })
     const data = response.data

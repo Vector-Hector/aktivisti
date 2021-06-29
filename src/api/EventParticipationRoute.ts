@@ -12,7 +12,8 @@ export class EventParticipationRoute extends ApiRoute<EventParticipationDto> {
    * @param id the event id
    */
   async accept(id: string) {
-    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}${id}/accept/`, {
+    const response = await this.request({
+      path: `${this.path}${id}/accept/`,
       method: 'POST'
     })
     const data = await response.data
@@ -24,7 +25,8 @@ export class EventParticipationRoute extends ApiRoute<EventParticipationDto> {
    * @param id the event id
    */
   async reject(id: string) {
-    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}${id}/reject/`, {
+    const response = await this.request({
+      path: `${this.path}${id}/reject/`,
       method: 'POST'
     })
     const data = await response.data
@@ -37,7 +39,8 @@ export class EventParticipationRoute extends ApiRoute<EventParticipationDto> {
    * @param eventAreaId the event area id
    */
   async assignEventArea(id: string, eventAreaId: number) {
-    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}${id}/assign-event-area/`, {
+    const response = await this.request({
+      path: `${this.path}${id}/assign-event-area/`,
       method: 'POST',
       data: {
         event_area: eventAreaId
@@ -53,7 +56,8 @@ export class EventParticipationRoute extends ApiRoute<EventParticipationDto> {
    * @param eventAreaId the event area id
    */
   async unassignEventArea(id: string, eventAreaId: number) {
-    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}${id}/unassign-event-area/`, {
+    const response = await this.request({
+      path: `${this.path}${id}/unassign-event-area/`,
       method: 'POST',
       data: {
         event_area: eventAreaId
@@ -69,7 +73,8 @@ export class EventParticipationRoute extends ApiRoute<EventParticipationDto> {
    * @param id the event participation id
    */
   async verifyParticipant(id: string) {
-    const response = await this.axiosInstance(`${this.baseUrl}/${this.path}${id}/`, {
+    const response = await this.request({
+      path: `${this.path}${id}/`,
       method: 'PATCH',
       data: {
         is_verified: true
