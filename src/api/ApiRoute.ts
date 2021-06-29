@@ -10,6 +10,7 @@ interface RequestConfig {
   embed?: string[],
   query?: { [key: string]: string[] | string | number | number[] }
   data?: any
+  omitCsrf?: boolean
 }
 /**
  * Shared definitions across api endpoint classes
@@ -25,9 +26,12 @@ export class BaseApiRoute {
     if (config.query) {
       appendAsQueryParams(url, config.query)
     }
+
     const headers: Record<string, string> = {}
     if (['POST', 'PATCH', 'PUT', 'DELETE'].includes(config.method)) {
-      headers['x-csrftoken'] = Cookies.get('csrftoken');
+      if (!config.omitCsrf) {
+        headers['x-csrftoken'] = Cookies.get('csrftoken');
+      }
     }
     return this.axiosInstance(url.toString(), {
       method: config.method,

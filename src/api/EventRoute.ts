@@ -56,7 +56,8 @@ export class EventRoute extends ApiRoute<EventDto> {
   }
 
   async report(id: string) {
-    const response = await  this.axiosInstance(`${this.baseUrl}/${this.path}${id}/report/`, {
+    const response = await  this.request({
+      path: `${id}/report/`,
       method: 'GET'
     })
     const data = response.data

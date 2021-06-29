@@ -167,7 +167,7 @@ import { EmailNotificationSettingsDto } from 'src/api/model/EmailNotificationSet
 import { UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
 import { PersonalMetricsDto } from 'src/api/model/PersonalMetricsDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
-import { authService } from 'src/api/authService'
+import { authStore } from 'src/api/authStore'
 import { SettleDebouncer } from 'src/utils/debounce'
 
 
@@ -415,7 +415,7 @@ export default defineComponent({
               color: 'positive'
             })
             await this.$router.push({name: 'splash'})
-            await authService.logout()
+            await authStore.logout()
           } catch (e) {
             this.$q.notify({
               message: 'Beim löschen deines Accounts trat ein Fehler auf',

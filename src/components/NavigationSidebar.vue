@@ -118,7 +118,7 @@
 import { defineComponent } from 'vue'
 import { uiStore } from 'src/store/UiStore'
 import { userStore } from 'src/store/UserStore'
-import { authService } from 'src/api/authService'
+import { authStore } from 'src/api/authStore'
 import MenuLink from 'src/components/MenuLink.vue'
 import {
   ionCalendarClearOutline,
@@ -156,7 +156,7 @@ export default defineComponent({
   },
   computed: {
     isLoggedIn() {
-      return authService.isLoggedIn()
+      return authStore.isLoggedIn()
     },
     hasCreatePermission() {
       return userStore.hasAtLeastOneManagePermission()
@@ -180,7 +180,7 @@ export default defineComponent({
   },
   methods: {
     logout() {
-      void authService.logout()
+      void authStore.logout()
       void this.$router.push('/')
     }
   }

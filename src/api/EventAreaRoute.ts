@@ -10,7 +10,8 @@ import { EventAreaDto } from 'src/api/model/EventAreaDto';
 export class EventAreaRoute extends ApiRoute<EventAreaDto> {
 
   async report(id: number) {
-    const response = await  this.axiosInstance(`${this.baseUrl}/${this.path}${id.toString()}/report/`, {
+    const response = await  this.request({
+      path: `${this.path}${id.toString()}/report/`,
       method: 'GET'
     })
     const data = response.data

@@ -61,7 +61,7 @@ import { ionArrowBack, ionMenu } from '@quasar/extras/ionicons-v5'
 import { IntervalDebouncer } from 'src/utils/debounce'
 import { apiClient } from 'src/api/ApiClient'
 import { configStore } from 'src/store/ConfigStore'
-import { authService } from 'src/api/authService'
+import { authStore } from 'src/api/authStore'
 import { userStore } from 'src/store/UserStore'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 
@@ -116,7 +116,7 @@ export default defineComponent({
       ErrorBus.emit(NO_INTERNET)
     }
     // hydrate profile on app start
-    if (authService.isLoggedIn()) {
+    if (authStore.isLoggedIn()) {
       try {
         const [profileRequest, permissionRequest] = await Promise.all([
           apiClient.user.get('me', ['sub_association']),
@@ -129,7 +129,7 @@ export default defineComponent({
       } catch (error: any) {
         console.log(error)
         if (error.response?.status === 403) {
-          authService.clear()
+          authStore.clear()
         } else {
           ErrorBus.emit(NO_INTERNET)
         }
