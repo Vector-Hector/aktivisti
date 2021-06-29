@@ -6,7 +6,7 @@ import { tokenStore } from 'src/store/TokenStore'
 import { ErrorBus, NOT_AUTHORIZED, SESSION_INVALID } from 'src/utils/errorBus'
 import { ApiClient } from 'src/api'
 import { ErrorCode } from 'src/api/ErrorCode'
-import { authStore } from 'src/api/authStore'
+import { authStore } from 'src/store/AuthStore'
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {

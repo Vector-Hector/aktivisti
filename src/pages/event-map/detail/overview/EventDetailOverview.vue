@@ -198,7 +198,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
-import { authStore } from 'src/api/authStore'
+import { authStore } from 'src/store/AuthStore'
 import { userStore } from 'src/store/UserStore'
 import EventInvitePeopleModal from 'src/components/modals/EventInvitePeopleModal.vue'
 import EventParticipantsModal from 'src/components/modals/EventParticipantsModal.vue'

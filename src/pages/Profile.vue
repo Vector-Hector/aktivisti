@@ -167,7 +167,7 @@ import { EmailNotificationSettingsDto } from 'src/api/model/EmailNotificationSet
 import { UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
 import { PersonalMetricsDto } from 'src/api/model/PersonalMetricsDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
-import { authStore } from 'src/api/authStore'
+import { authStore } from 'src/store/AuthStore'
 import { SettleDebouncer } from 'src/utils/debounce'
 
 

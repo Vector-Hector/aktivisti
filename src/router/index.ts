@@ -6,7 +6,7 @@ import {
   createWebHistory
 } from 'vue-router'
 import routes from './routes'
-import { authStore } from 'src/api/authStore'
+import { authStore } from 'src/store/AuthStore'
 
 /*
  * If not building with SSR mode, you can

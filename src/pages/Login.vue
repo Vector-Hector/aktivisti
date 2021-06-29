@@ -57,7 +57,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { authStore } from 'src/api/authStore'
+import { authStore } from 'src/store/AuthStore'
 import { QBtn, QCheckbox, QForm, QInput } from 'quasar'
 import FormError from 'components/FormError.vue'
 

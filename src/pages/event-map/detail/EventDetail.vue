@@ -12,7 +12,7 @@ import { uiStore } from 'src/store/UiStore'
 import { eventDetailStore } from 'src/store/EventDetailStore'
 import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { userStore } from 'src/store/UserStore'
-import { authStore } from 'src/api/authStore'
+import { authStore } from 'src/store/AuthStore'
 
 
 export default defineComponent({

@@ -118,7 +118,7 @@
 import { defineComponent } from 'vue'
 import { uiStore } from 'src/store/UiStore'
 import { userStore } from 'src/store/UserStore'
-import { authStore } from 'src/api/authStore'
+import { authStore } from 'src/store/AuthStore'
 import MenuLink from 'src/components/MenuLink.vue'
 import {
   ionCalendarClearOutline,
