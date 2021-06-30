@@ -122,7 +122,7 @@ import { userStore } from 'src/store/UserStore'
 import { authStore } from 'src/store/AuthStore'
 import { myEventsStore } from 'src/store/MyEventsStore'
 import MenuLink from 'src/components/MenuLink.vue'
-import OpenInvitationsBadge from 'src/components/OpenParticipationsBadge.vue'
+import OpenInvitationsBadge from 'components/OpenInvitationsBadge.vue'
 import {
   ionCalendarClearOutline,
   ionCalendarOutline,
