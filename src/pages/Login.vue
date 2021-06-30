@@ -57,7 +57,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { authService } from 'src/api/authService'
+import { authStore } from 'src/store/AuthStore'
 import { QBtn, QCheckbox, QForm, QInput } from 'quasar'
 import FormError from 'components/FormError.vue'
 
@@ -71,7 +71,7 @@ export default defineComponent({
     QCheckbox
   },
   beforeRouteEnter(to, from, next) {
-    if (authService.isLoggedIn()) {
+    if (authStore.isLoggedIn()) {
       next({name: 'events'})
     } else {
       next()
@@ -98,7 +98,7 @@ export default defineComponent({
       this.submitting = true
       this.nonFieldError = null
       try {
-        await authService.login(this.username, this.password, this.longSession)
+        await authStore.login(this.username, this.password, this.longSession)
         await this.$router.push(this.next)
       } catch (error) {
         if (error.response?.status == 400) {

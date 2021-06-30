@@ -6,7 +6,7 @@ import {
   createWebHistory
 } from 'vue-router'
 import routes from './routes'
-import { authService } from 'src/api/authService'
+import { authStore } from 'src/store/AuthStore'
 
 /*
  * If not building with SSR mode, you can
@@ -36,7 +36,7 @@ export default route(function (/* { store, ssrContext } */) {
 
 
   Router.beforeEach((to, from, next) => {
-    if (!authService.isLoggedIn() && to.matched.some(record => record.meta.requiresAuth)) {
+    if (!authStore.isLoggedIn() && to.matched.some(record => record.meta.requiresAuth)) {
       next({
         name: 'login',
         params: {

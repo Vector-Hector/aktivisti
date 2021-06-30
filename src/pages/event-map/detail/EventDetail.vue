@@ -12,7 +12,7 @@ import { uiStore } from 'src/store/UiStore'
 import { eventDetailStore } from 'src/store/EventDetailStore'
 import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { userStore } from 'src/store/UserStore'
-import { authService } from 'src/api/authService'
+import { authStore } from 'src/store/AuthStore'
 
 
 export default defineComponent({
@@ -37,7 +37,7 @@ export default defineComponent({
         eventDetailStore.setParticipations(response.payload.data)
       }))
     }
-    if (authService.isLoggedIn()) {
+    if (authStore.isLoggedIn()) {
       permissionRequests.push(apiClient.eventParticipations.list({
         event: to.params.id,
         user: userStore.getState().user?.id,

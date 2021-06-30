@@ -4,9 +4,20 @@ import { trackingSessionStore } from 'src/store/TrackingSessionStore'
 import { bbox, circle } from '@turf/turf'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { LoginDto } from 'src/api/model/LoginDto'
+import { Store } from 'src/store/Store'
+
+interface AuthStoreState {
+  loggedIn: boolean
+}
 
 
-class AuthService {
+class AuthStore extends Store<AuthStoreState>{
+
+  protected data(): AuthStoreState {
+    return {
+      loggedIn: false
+    }
+  }
 
   async logout() {
     await apiClient.session.logout()
@@ -15,13 +26,13 @@ class AuthService {
   }
 
   clear() {
-    userStore.reset()
+    this.reset()
   }
 
   async auth(params: LoginDto) {
     await apiClient.session.login(params)
     // no error means authentication happened, cookie is set
-    userStore.setLoggedIn(true)
+    this.state.loggedIn = true
     const [profileRequest, permissionsRequest] = await Promise.all([
       apiClient.user.get('me', ['sub_association']),
       apiClient.userPermissions.list()
@@ -35,7 +46,7 @@ class AuthService {
     await this.auth({
       identifier: username,
       password,
-      long_session: longSession
+      long_session: longSession,
     })
 
     const center = userStore.getState().homeAssociation?.center
@@ -45,10 +56,14 @@ class AuthService {
     }
   }
 
+  setLoggedIn(value: boolean) {
+    this.state.loggedIn = value
+  }
+
   isLoggedIn() {
-    return userStore.getState().loggedIn
+    return this.state.loggedIn
   }
 
 }
 
-export const authService = new AuthService()
+export const authStore = new AuthStore()

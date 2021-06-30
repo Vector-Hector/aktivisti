@@ -18,7 +18,6 @@ export interface EventFilterPreferences {
 }
 
 interface UserState {
-  loggedIn: boolean
   user: UserDto | null
   homeAssociation: SubAssociationDto | null
   bbox: BBox2d | null
@@ -29,12 +28,10 @@ interface UserState {
 const KEY_BBOX = 'KEY_BBOX'
 const KEY_FILTERPREFERENCES = 'KEY_FILTERPREFERENCES'
 const KEY_HOMEASSOCIATION = 'KEY_HOMEASSOCIATION'
-const KEY_LOGGED_IN = 'KEY_LOGGED_IN'
 
 class UserStore extends Store<UserState> {
   protected data(): UserState {
     return {
-      loggedIn: false,
       user: null,
       permissions: [],
       bbox: null,
@@ -59,9 +56,6 @@ class UserStore extends Store<UserState> {
 
     const homeAssociationString = localStorage.getItem(KEY_HOMEASSOCIATION)
     data.homeAssociation = parseIfPossible(homeAssociationString) as SubAssociationDto | null
-
-    const loggedIn = localStorage.getItem(KEY_LOGGED_IN)
-    data.loggedIn = !!loggedIn
   }
 
   public setBbox(bbox: BBox2d | null) {
@@ -84,15 +78,6 @@ class UserStore extends Store<UserState> {
       localStorage.setItem(KEY_HOMEASSOCIATION, JSON.stringify(this.state.homeAssociation))
     } else {
       localStorage.removeItem(KEY_HOMEASSOCIATION)
-    }
-  }
-
-  public setLoggedIn(value: boolean) {
-    this.state.loggedIn = value
-    if (value) {
-      localStorage.setItem(KEY_LOGGED_IN, value.toString())
-    } else {
-      localStorage.removeItem(KEY_LOGGED_IN)
     }
   }
 

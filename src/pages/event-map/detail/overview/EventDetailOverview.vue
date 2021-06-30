@@ -198,7 +198,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
-import { authService } from 'src/api/authService'
+import { authStore } from 'src/store/AuthStore'
 import { userStore } from 'src/store/UserStore'
 import EventInvitePeopleModal from 'src/components/modals/EventInvitePeopleModal.vue'
 import EventParticipantsModal from 'src/components/modals/EventParticipantsModal.vue'
@@ -280,7 +280,7 @@ export default defineComponent({
       })
     },
     isLoggedIn(): boolean {
-      return authService.isLoggedIn()
+      return authStore.isLoggedIn()
     },
     isMember(): boolean {
       return this.personalParticipation?.is_pending_invitation === false
