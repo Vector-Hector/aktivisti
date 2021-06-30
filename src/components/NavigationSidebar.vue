@@ -75,7 +75,7 @@
           >
             <QIcon :name="ionCalendarOutline" />
             <span class="menu-item-link-text">Meine Aktionen</span>
-            <OpenInvitationsBadge v-if="openInvitations.length > 0" :open-invitations-count="openInvitations.length"/>
+            <OpenInvitationsBadge />
           </MenuLink>
         </div>
         <div
@@ -134,7 +134,6 @@ import {
 } from '@quasar/extras/ionicons-v5'
 import { QBtn, QDrawer, QIcon } from 'quasar'
 import {farCalendarPlus, farIdCard} from '@quasar/extras/fontawesome-v5'
-import {EventParticipationDto} from 'src/api/model/EventParticipationDto'
 
 
 export default defineComponent({
@@ -180,17 +179,6 @@ export default defineComponent({
       },
       set(value: boolean) {
         uiStore.toggleSidebar(value)
-      }
-    },
-    openInvitations() {
-      console.log('**** using openIntivations ***********')
-      if (this.isLoggedIn) {
-        const openInvitations = myEventsStore.getState().eventParticipations.filter((item) => item.is_pending_invitation)
-        console.log('OpenInvitations:', openInvitations)
-        return openInvitations
-      }
-      else {
-        return [] as EventParticipationDto[]
       }
     }
   },

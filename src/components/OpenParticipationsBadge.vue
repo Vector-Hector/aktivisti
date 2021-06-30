@@ -1,5 +1,7 @@
 <template>
-  <QBadge :color="primary" :text-color="white" :label="openInvitationsCount"/>
+  <div v-if="openInvitations.length > 0">
+    <QBadge :color="primary" :text-color="white" :label="openInvitations.length"/>
+  </div>
 </template>
 
 <script lang="ts">
@@ -8,6 +10,9 @@ import { QBadge } from 'quasar'
 import { myEventsStore } from 'src/store/MyEventsStore'
 import { userStore } from 'src/store/UserStore'
 import Timeout = NodeJS.Timeout;
+import { apiClient } from 'src/api/ApiClient'
+import { authService } from 'src/api/authService'
+import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 
 
 export default defineComponent({
@@ -15,19 +20,39 @@ export default defineComponent({
   components: {
     QBadge
   },
-  props: ['openInvitationsCount'],
   data() {
    return {
       nextPoll: null as Timeout | null
     }
   },
   async created() {
+    const myEventsRequest = await apiClient.eventParticipations.list(
+      {user: userStore.getState().user?.id}
+    )
+
+    myEventsStore.setEventParticipations(myEventsRequest.payload.data)
     await this.pollForParticipations()
   },
   unmounted() {
     if (this.nextPoll !== null) {
       clearTimeout(this.nextPoll)
     }
+  },
+  computed :{
+    isLoggedIn() {
+      return authService.isLoggedIn()
+    },
+    openInvitations() {
+      if (this.isLoggedIn) {
+        const openInvitations = myEventsStore.getState().eventParticipations.filter((item) => item.is_pending_invitation)
+        console.log('OpenInvitations:', openInvitations)
+        return openInvitations
+      }
+      else {
+        return [] as EventParticipationDto[]
+      }
+    }
+
   },
   methods: {
     async pollForParticipations() {
