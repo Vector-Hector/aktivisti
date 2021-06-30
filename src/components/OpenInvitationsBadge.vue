@@ -12,8 +12,8 @@ import { userStore } from 'src/store/UserStore'
 import Timeout = NodeJS.Timeout;
 import { apiClient } from 'src/api/ApiClient'
 import { POLL_INVITATIONS_MS } from 'src/constants'
-import { authService } from 'src/api/authService'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
+import { authStore } from 'src/store/AuthStore'
 
 
 export default defineComponent({
@@ -41,7 +41,7 @@ export default defineComponent({
   },
   computed :{
     isLoggedIn() {
-      return authService.isLoggedIn()
+      return authStore.isLoggedIn()
     },
     openInvitations() {
       if (this.isLoggedIn) {
