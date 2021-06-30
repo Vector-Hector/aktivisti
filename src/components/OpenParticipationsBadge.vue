@@ -11,6 +11,7 @@ import { myEventsStore } from 'src/store/MyEventsStore'
 import { userStore } from 'src/store/UserStore'
 import Timeout = NodeJS.Timeout;
 import { apiClient } from 'src/api/ApiClient'
+import { POLL_INVITATIONS_MS } from 'src/constants'
 import { authService } from 'src/api/authService'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 
@@ -61,7 +62,7 @@ export default defineComponent({
       )
 
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      this.nextPoll = setTimeout(() => this.pollForParticipations(), 5000)
+      this.nextPoll = setTimeout(() => this.pollForParticipations(), POLL_INVITATIONS_MS)
     }
   }
 })
