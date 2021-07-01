@@ -29,6 +29,9 @@ console.dir(env)
 
 module.exports = configure(function (ctx) {
   return {
+    sourceFiles: {
+      rootComponent: 'src/Entry.vue',
+    },
     // https://v2.quasar.dev/quasar-cli/supporting-ts
     supportTS: {
       tsCheckerConfig: {

@@ -177,7 +177,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import 'src/css/_globals.scss';
+@import 'src/css/variables.scss';
 
 .title {
   font-size: 1.1rem;

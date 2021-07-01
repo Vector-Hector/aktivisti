@@ -28,242 +28,263 @@ import EventAreaMetrics from 'pages/event-map/detail/area/metrics/EventAreaMetri
 import EventAreaMetricsMap from 'pages/event-map/detail/area/metrics/EventAreaMetricsMap'
 import CreateLead from 'pages/event-map/detail/area/lead/CreateLead.vue'
 import Profile from 'pages/Profile.vue'
+import PrintEvent from 'pages/PrintEvent.vue'
+import App from 'src/App.vue'
+import Print from 'src/Print.vue'
 
 
 const routes = [
   {
-    path: '/',
-    component: Splash,
-    name: 'splash'
-  },
-  {
-    path: '/profile',
-    component: Profile,
-    name: 'profile',
-    meta: {
-      title: () => 'Mein Profil'
-    }
-  },
-  {
-    path: '/my-events',
-    component: MyEvents,
-    name: 'my-events',
-    meta: {
-      title: () => 'Meine Aktionen'
-    }
-  },
-  {
-    path: '/events',
-    redirect: {name: 'map-events-overview'},
-    component: EventMap,
-    name: 'events',
-    meta: {
-      title: () => 'Alle Aktionen'
-    },
+    path: '',
+    component: App,
+    name: 'app',
+    redirect: {name: 'splash'},
     children: [
       {
-        path: '',
-        name: 'map-events-overview',
-        components: {
-          default: EventOverview,
-          map: EventOverviewMap
+        path: '/',
+        component: Splash,
+        name: 'splash'
+      },
+      {
+        path: '/profile',
+        component: Profile,
+        name: 'profile',
+        meta: {
+          title: () => 'Mein Profil'
         }
       },
       {
-        path: ':id',
-        name: 'event-detail',
-        props: true,
-        components: {
-          default: EventDetail,
-          map: EventDetailMap
-        },
-        redirect: {name: 'event-detail-overview'},
+        path: '/my-events',
+        component: MyEvents,
+        name: 'my-events',
         meta: {
-          title: () => uiStore.getState().activeTitleElements.event,
-          subtitle: () => uiStore.getState().activeTitleElements.campaigns
+          title: () => 'Meine Aktionen'
+        }
+      },
+      {
+        path: '/events',
+        redirect: {name: 'map-events-overview'},
+        component: EventMap,
+        name: 'events',
+        meta: {
+          title: () => 'Alle Aktionen'
         },
         children: [
           {
-            path: 'overview',
-            props: true,
+            path: '',
+            name: 'map-events-overview',
             components: {
-              default: EventDetailOverview,
-              map: EventDetailOverviewMap
-            },
-            name: 'event-detail-overview'
-          },
-          {
-            path: 'report',
-            props: true,
-            components: {
-              default: EventDetailReport,
-              map: EventDetailOverviewMap
-            },
-            name: 'event-detail-report',
-            meta: {
-              title: () => 'Ergebnisse',
-              subtitle: () => uiStore.getState().activeTitleElements.event,
-              requiresAuth: true
+              default: EventOverview,
+              map: EventOverviewMap
             }
           },
           {
-            path: 'area/:areaId',
-            name: 'event-detail-area',
-            redirect: {name: 'event-detail-area-overview'},
-            components: {
-              default: EventDetailArea,
-              map: EventDetailAreaMap
-            },
+            path: ':id',
+            name: 'event-detail',
             props: true,
+            components: {
+              default: EventDetail,
+              map: EventDetailMap
+            },
+            redirect: {name: 'event-detail-overview'},
             meta: {
-              title: () => 'Aktionsgebiete',
-              subtitle: () => uiStore.getState().activeTitleElements.event
+              title: () => uiStore.getState().activeTitleElements.event,
+              subtitle: () => uiStore.getState().activeTitleElements.campaigns
             },
             children: [
               {
-                path: '',
-                name: 'event-detail-area-overview',
-                components: {
-                  default: EventAreaOverview,
-                  map: EventAreaOverviewMap
-                },
-                props: true
-              },
-              {
-                path: 'street/:street',
-                components: {
-                  default: EventAreaStreet,
-                  map: EventAreaStreetMap
-                },
-                meta: {
-                  title: () => 'Adressen',
-                  subtitle: () => uiStore.getState().activeTitleElements.street
-                },
+                path: 'overview',
                 props: true,
-                name: 'event-detail-area-street'
+                components: {
+                  default: EventDetailOverview,
+                  map: EventDetailOverviewMap
+                },
+                name: 'event-detail-overview'
               },
               {
-                path: 'metrics/:street/:houseNumber',
+                path: 'report',
+                props: true,
                 components: {
-                  default: EventAreaMetrics,
-                  map: EventAreaMetricsMap
+                  default: EventDetailReport,
+                  map: EventDetailOverviewMap
                 },
+                name: 'event-detail-report',
                 meta: {
-                  title: () => 'Metriken aufnehmen',
-                  subtitle: () => uiStore.getState().activeTitleElements.houseNumber,
+                  title: () => 'Ergebnisse',
+                  subtitle: () => uiStore.getState().activeTitleElements.event,
                   requiresAuth: true
-                },
-                props: true,
-                name: 'event-detail-area-metrics'
+                }
               },
               {
-                path: 'create-lead',
-                name: 'create-lead',
-                component: CreateLead,
+                path: 'area/:areaId',
+                name: 'event-detail-area',
+                redirect: {name: 'event-detail-area-overview'},
+                components: {
+                  default: EventDetailArea,
+                  map: EventDetailAreaMap
+                },
                 props: true,
                 meta: {
-                  title: () => 'Bei Linksaktiv anmelden',
-                  requiresAuth: true
+                  title: () => 'Aktionsgebiete',
+                  subtitle: () => uiStore.getState().activeTitleElements.event
+                },
+                children: [
+                  {
+                    path: '',
+                    name: 'event-detail-area-overview',
+                    components: {
+                      default: EventAreaOverview,
+                      map: EventAreaOverviewMap
+                    },
+                    props: true
+                  },
+                  {
+                    path: 'street/:street',
+                    components: {
+                      default: EventAreaStreet,
+                      map: EventAreaStreetMap
+                    },
+                    meta: {
+                      title: () => 'Adressen',
+                      subtitle: () => uiStore.getState().activeTitleElements.street
+                    },
+                    props: true,
+                    name: 'event-detail-area-street'
+                  },
+                  {
+                    path: 'metrics/:street/:houseNumber',
+                    components: {
+                      default: EventAreaMetrics,
+                      map: EventAreaMetricsMap
+                    },
+                    meta: {
+                      title: () => 'Metriken aufnehmen',
+                      subtitle: () => uiStore.getState().activeTitleElements.houseNumber,
+                      requiresAuth: true
+                    },
+                    props: true,
+                    name: 'event-detail-area-metrics'
+                  },
+                  {
+                    path: 'create-lead',
+                    name: 'create-lead',
+                    component: CreateLead,
+                    props: true,
+                    meta: {
+                      title: () => 'Bei Linksaktiv anmelden',
+                      requiresAuth: true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        path: '/events/edit/new',
+        component: EditEvent,
+        redirect: {name: 'edit-event-details-new'},
+        props: true,
+        meta: {
+          title: () => 'Aktion erstellen',
+          requiresAuth: true
+        },
+        children: [
+          {
+            path: 'details',
+            component: EditEventDetails,
+            name: 'edit-event-details-new'
+          }
+        ]
+      },
+      {
+        path: '/events/edit/:id',
+        component: EditEvent,
+        redirect: {name: 'edit-event-details'},
+        props: true,
+        meta: {
+          subtitle: () => uiStore.getState().activeTitleElements.event,
+          title: () => 'Aktion bearbeiten',
+          requiresAuth: true
+        },
+        children: [
+          {
+            path: 'details',
+            component: EditEventDetails,
+            props: true,
+            name: 'edit-event-details'
+          },
+          {
+            path: 'map',
+            component: EditEventMap,
+            children: [
+              {
+                path: 'location',
+                component: EditEventMapLocation,
+                name: 'edit-event-location',
+                meta: {
+                  subtitle: () => uiStore.getState().activeTitleElements.event,
+                  title: () => 'Treffpunkt festlegen'
+                }
+              },
+              {
+                path: 'route-planner',
+                component: EditEventMapRoutes,
+                name: 'edit-event-routes',
+                meta: {
+                  subtitle: () => uiStore.getState().activeTitleElements.event,
+                  title: () => 'Aktionsgebiete zeichnen'
                 }
               }
             ]
           }
         ]
-      }
-    ]
-  },
-  {
-    path: '/events/edit/new',
-    component: EditEvent,
-    redirect: {name: 'edit-event-details-new'},
-    props: true,
-    meta: {
-      title: () => 'Aktion erstellen',
-      requiresAuth: true
-    },
-    children: [
-      {
-        path: 'details',
-        component: EditEventDetails,
-        name: 'edit-event-details-new'
-      }
-    ]
-  },
-  {
-    path: '/events/edit/:id',
-    component: EditEvent,
-    redirect: {name: 'edit-event-details'},
-    props: true,
-    meta: {
-      subtitle: () => uiStore.getState().activeTitleElements.event,
-      title: () => 'Aktion bearbeiten',
-      requiresAuth: true
-    },
-    children: [
-      {
-        path: 'details',
-        component: EditEventDetails,
-        props: true,
-        name: 'edit-event-details'
       },
       {
-        path: 'map',
-        component: EditEventMap,
-        children: [
-          {
-            path: 'location',
-            component: EditEventMapLocation,
-            name: 'edit-event-location',
-            meta: {
-              subtitle: () => uiStore.getState().activeTitleElements.event,
-              title: () => 'Treffpunkt festlegen'
-            }
-          },
-          {
-            path: 'route-planner',
-            component: EditEventMapRoutes,
-            name: 'edit-event-routes',
-            meta: {
-              subtitle: () => uiStore.getState().activeTitleElements.event,
-              title: () => 'Aktionsgebiete zeichnen'
-            }
-          }
-        ]
+        path: '/login',
+        component: Login,
+        name: 'login',
+        props: (route: any) => ({
+          next: route.query.next
+        }),
+        meta: {
+          title: () => 'Anmelden'
+        }
+      },
+      {
+        path: '/register',
+        component: Register,
+        meta: {
+          title: () => 'Registrieren'
+        }
+      },
+      {
+        path: '/registration-success',
+        component: RegistrationSucess,
+        name: 'register-success',
+        meta: {
+          title: () => 'Registrierung erfolgreich'
+        }
+      },
+      {
+        path: '/imprint',
+        component: Imprint,
+        meta: {
+          title: () => 'Impressum'
+        }
       }
     ]
   },
   {
-    path: '/login',
-    component: Login,
-    name: 'login',
-    props: (route: any) => ({
-      next: route.query.next
-    }),
-    meta: {
-      title: () => 'Anmelden'
-    }
-  },
-  {
-    path: '/register',
-    component: Register,
-    meta: {
-      title: () => 'Registrieren'
-    }
-  },
-  {
-    path: '/registration-success',
-    component: RegistrationSucess,
-    name: 'register-success',
-    meta: {
-      title: () => 'Registrierung erfolgreich'
-    }
-  },
-  {
-    path: '/imprint',
-    component: Imprint,
-    meta: {
-      title: () => 'Impressum'
-    }
+    path: '/print',
+    component: Print,
+    children: [{
+
+      path: 'event/:eventId',
+      component: PrintEvent,
+      name: 'print-event'
+    }]
   }
 ]
 
