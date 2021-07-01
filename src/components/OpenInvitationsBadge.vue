@@ -45,9 +45,7 @@ export default defineComponent({
     },
     openInvitations(): EventParticipationDto[] {
       if (this.isLoggedIn) {
-        const openInvitations = myEventsStore.getState().eventParticipations.filter((item) => item.is_pending_invitation)
-        console.log('OpenInvitations:', openInvitations)
-        return openInvitations
+        return  myEventsStore.getState().eventParticipations.filter((item) => item.is_pending_invitation)
       }
       else {
         return []
