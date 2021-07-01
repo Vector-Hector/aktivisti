@@ -6,7 +6,65 @@
         v-else
         class="my-events-content"
       >
-        <h3 class="my-events-section-heading">Meine Teilnahmen</h3>
+        <h3 class="my-events-section-heading">Offene Einladungen</h3>
+        <QSeparator class="profile-section-divider" />
+
+        <QList
+        >
+          <QItem
+            v-for="{participation, event} in pendingEvents"
+            :key="participation.id"
+            :clickable="true"
+            :to="{ name: 'event-detail', params: { id: participation.event } }"
+          >
+            <QItemSection>
+              <QItemLabel>
+                <b>{{ event.name }}</b>
+              </QItemLabel>
+              <QItemLabel>
+                {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
+              </QItemLabel>
+              <QItemLabel>
+                {{ $utils.dateFormat(event.start_date) }}
+              </QItemLabel>
+              <QItemLabel>
+                <i>
+                  {{
+                    findInvitingUsers(participation.inviting_users).map(({username}) => username).join(',') ?? 'Unbekannt '
+                  }}
+                  <span v-if="participation.inviting_users.length > 1">haben</span><span v-else>hat</span> dich
+                  eingeladen
+                </i>
+              </QItemLabel>
+
+            </QItemSection>
+            <QItemSection side>
+              <div
+                class="action-buttons"
+              >
+                <QBtn
+                  dense
+                  flat
+                  @click.prevent.stop="reject(participation)"
+                  :icon="ionClose"
+                  >
+                  Ablehnen
+                </QBtn>
+                <QBtn
+                  dense
+                  flat
+                  color="primary"
+                  @click.prevent.stop="accept(participation)"
+                  :icon="ionCheckmark"
+                  >
+                  Annehmen
+                </QBtn>
+              </div>
+            </QItemSection>
+          </QItem>
+        </QList>
+
+        <h3 class="my-events-section-heading">Meine Aktionen</h3>
         <QSeparator class="profile-section-divider" />
 
         <QList
@@ -23,7 +81,7 @@
             />
           </div>
           <QItem
-            v-for="{participation, event} in eventsByParticipation"
+            v-for="{participation, event} in acceptedEvents"
             :key="participation.id"
             :clickable="true"
             :to="{ name: 'event-detail', params: { id: participation.event } }"
@@ -38,106 +96,9 @@
               <QItemLabel>
                 {{ $utils.dateFormat(event.start_date) }}
               </QItemLabel>
-              <QItemLabel>
-                <i v-if="participation.is_pending_invitation">
-                  {{
-                    findInvitingUsers(participation.inviting_users).map(({username}) => username).join(',') ?? 'Unbekannt '
-                  }}
-                  <span v-if="participation.inviting_users.length > 1">haben</span><span v-else>hat</span> dich
-                  eingeladen
-                </i>
-              </QItemLabel>
-
-            </QItemSection>
-            <QItemSection side>
-              <div
-                v-if="participation.is_pending_invitation"
-                class="action-buttons"
-              >
-                <QBtn
-                  round
-                  dense
-                  flat
-                  @click.prevent.stop="reject(participation)"
-                  :icon="ionClose"
-                />
-                <QBtn
-                  round
-                  dense
-                  flat
-                  color="primary"
-                  @click.prevent.stop="accept(participation)"
-                  :icon="ionCheckmark"
-                />
-              </div>
             </QItemSection>
           </QItem>
         </QList>
-        <div
-          v-if="hasAtLeastOneManagePermission"
-          class="manage-events-section"
-        >
-          <h3 class="my-events-section-heading">Aktionen verwalten</h3>
-          <QSeparator class="profile-section-divider" />
-          <CollapsibleFilters>
-            <div class="filter-container">
-              <EventFilter
-                v-model:filter-params="userFilterParams"
-                :campaigns="campaigns"
-                :sub-associations="subAssociations"
-              />
-            </div>
-          </CollapsibleFilters>
-          <QList>
-            <QItem
-              v-for="event in managedEvents"
-              :key="event.id"
-              :clickable="true"
-              :to="{ name: 'event-detail', params: { id: event.id } }"
-            >
-              <QItemSection>
-                <QItemLabel>
-                  <b>{{ event.name }}</b>
-                </QItemLabel>
-                <QItemLabel>
-                  {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
-                </QItemLabel>
-                <QItemLabel>
-                  {{ $utils.dateFormat(event.start_date) }}
-                </QItemLabel>
-              </QItemSection>
-              <QItemSection side>
-                <div class="q-gutter-xs">
-                  <router-link
-                    :to="{ name: 'edit-event-details', params: { id: event.id } }"
-                    @click.prevent.stop="$event.stopPropagation()"
-                  >
-                    <QIcon
-                      flat
-                      dense
-                      color="grey-8"
-                      class="edit-button"
-                      size="sm"
-                      :name="ionPencil"
-                    />
-                  </router-link>
-                  <a
-                    @click.prevent.stop="deleteEvent(event)"
-                  >
-                    <QIcon
-                      flat
-                      dense
-                      class="delete-button"
-                      size="sm"
-                      color="negative"
-                      :name="ionTrash"
-                    />
-                  </a>
-                </div>
-              </QItemSection>
-            </QItem>
-          </QList>
-        </div>
       </div>
     </div>
   </QPage>
@@ -148,20 +109,17 @@ import { defineComponent } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { UserDto } from 'src/api/model/UserDto'
-import { QBtn, QIcon, QItem, QItemLabel, QItemSection, QList, QPage, QSeparator } from 'quasar'
+import { QBtn, QItem, QItemLabel, QItemSection, QList, QPage, QSeparator } from 'quasar'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { ionCheckmark, ionClose, ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
-import EventFilter, { UserEventFilterParams } from 'components/EventFilter.vue'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
-import CollapsibleFilters from 'components/CollapsibleFilters.vue'
 import { myEventsStore } from 'src/store/MyEventsStore'
 import { userStore } from 'src/store/UserStore'
 
 export default defineComponent({
   name: 'MyEvents',
   components: {
-    CollapsibleFilters,
     PageLoadingSpinner,
     QList,
     QItem,
@@ -169,15 +127,11 @@ export default defineComponent({
     QItemSection,
     QBtn,
     QPage,
-    QIcon,
     QSeparator,
-    EventFilter
   },
   data() {
     return {
-      eventParticipations: [] as EventParticipationDto[],
       participatedEvents: [] as EventDto[],
-      managedEvents: [] as EventDto[],
       invitingUsers: [] as UserDto[],
       campaigns: [] as CampaignDto[],
       subAssociations: [] as SubAssociationDto[],
@@ -189,36 +143,39 @@ export default defineComponent({
     }
   },
   computed: {
-    hasAtLeastOneManagePermission() {
-      return userStore.hasAtLeastOneManagePermission()
-    },
-    userFilterParams: {
-      get(): UserEventFilterParams {
-        const selectedCampaign = myEventsStore.getState().filterPreferences.campaign
-        return {
-          sub_association: myEventsStore.getState().filterPreferences.subAssociations,
-          campaigns: selectedCampaign !== undefined ? [selectedCampaign] : undefined,
-          order_by: myEventsStore.getState().filterPreferences.sorting
-        }
+    eventParticipations: {
+      get(): EventParticipationDto[] {
+        return myEventsStore.getState().eventParticipations
       },
-      set(value: UserEventFilterParams) {
-        myEventsStore.setFilterPreferences({
-          ...myEventsStore.getState().filterPreferences,
-          ...{
-            subAssociations: value.sub_association ?? [],
-            campaign: value.campaigns?.[0],
-            sorting: value.order_by
-          }
-        })
+      set(value: EventParticipationDto[]){
+        myEventsStore.setEventParticipations(value)
       }
     },
-    eventsByParticipation(): { participation: EventParticipationDto, event?: EventDto }[] {
-      return this.eventParticipations.map((participation) => {
-        return {
-          participation,
-          event: this.eventForParticipation(participation)
-        }
+    acceptedEvents(): { participation: EventParticipationDto, event?: EventDto }[] {
+      return this.eventParticipations
+        .filter((item) => !item.is_pending_invitation)
+        .map((participation) => {
+          return {
+            participation,
+            event: this.eventForParticipation(participation)
+         }
       }).sort((a, b) => {
+        if (a.event && b.event) {
+          return a.event?.start_date > b.event.start_date ? 1 : -1
+        } else {
+          return 0
+        }
+      })
+    },
+    pendingEvents(): { participation: EventParticipationDto, event?: EventDto }[] {
+      return this.eventParticipations
+        .filter((item) => item.is_pending_invitation)
+        .map((participation) => {
+          return {
+            participation,
+            event: this.eventForParticipation(participation)
+          }
+        }).sort((a, b) => {
         if (a.event && b.event) {
           return a.event?.start_date > b.event.start_date ? 1 : -1
         } else {
@@ -232,15 +189,14 @@ export default defineComponent({
       this.getParticipatedEvents(),
       this.getCampaigns(),
       this.getSubAssociations(),
-      this.getManagedEvents()
     ])
 
     this.loading = false
   },
   watch: {
-    userFilterParams: {
+    eventParticipations: {
       handler() {
-        void this.getManagedEvents()
+        void this.getParticipatedEvents()
       },
       immediate: true
     }
@@ -260,15 +216,7 @@ export default defineComponent({
       )).payload
       this.participatedEvents = responseData.embedded.event
       this.invitingUsers = responseData.embedded.inviting_users
-      this.eventParticipations = responseData.data
-    },
-    async getManagedEvents() {
-      this.managedEvents = (await this.$apiClient.events.list(
-        {
-          ...this.userFilterParams,
-          management_permission: true
-        }
-      )).payload.data
+      myEventsStore.setEventParticipations(responseData.data)
     },
     accept(eventParticipation: EventParticipationDto) {
       eventParticipation.is_pending_invitation = false
@@ -297,7 +245,6 @@ export default defineComponent({
       }).onOk(async () => {
         try {
           await this.$apiClient.events.delete(event.id.toString())
-          this.managedEvents = this.managedEvents.filter(({id}) => id !== event.id)
         } catch (error) {
           this.$q.notify({
             position: 'top-right',
@@ -330,6 +277,11 @@ export default defineComponent({
 
 .filter-container {
   padding: 0 1em 1em 1em;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
 }
 
 </style>

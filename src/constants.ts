@@ -5,3 +5,4 @@ export const WHATSAPP_SHARE_URL = 'https://wa.me/'
 export const MAIL_SHARE_URL = 'mailto:'
 export const EVENT_LIST_CHUNK_SIZE = 25
 export const EVENT_MAP_MAX_EVENTS = 50
+export const POLL_INVITATIONS_MS = 20000

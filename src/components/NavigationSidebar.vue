@@ -75,6 +75,7 @@
           >
             <QIcon :name="ionCalendarOutline" />
             <span class="menu-item-link-text">Meine Aktionen</span>
+            <OpenInvitationsBadge />
           </MenuLink>
         </div>
         <div
@@ -120,6 +121,7 @@ import { uiStore } from 'src/store/UiStore'
 import { userStore } from 'src/store/UserStore'
 import { authStore } from 'src/store/AuthStore'
 import MenuLink from 'src/components/MenuLink.vue'
+import OpenInvitationsBadge from 'components/OpenInvitationsBadge.vue'
 import {
   ionCalendarClearOutline,
   ionCalendarOutline,
@@ -136,6 +138,7 @@ import {farCalendarPlus, farIdCard} from '@quasar/extras/fontawesome-v5'
 export default defineComponent({
   name: 'NavigationSidebar',
   components: {
+    OpenInvitationsBadge,
     MenuLink,
     QBtn,
     QDrawer,
@@ -257,6 +260,7 @@ outside the html hierarchy of this component - if someone finds a better soltion
 
   .menu-item-link-text {
     margin-left: 10px;
+    margin-right: 10px;
   }
 }
 
