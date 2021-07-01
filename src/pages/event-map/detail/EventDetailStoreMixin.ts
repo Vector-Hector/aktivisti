@@ -41,7 +41,7 @@ export default defineComponent({
         if (value === null && existingParticipationIndex > -1) {
           eventDetailStore.setParticipations(this.participations.filter(({id}) => oldParticipation?.id !== id))
         } else if (value !== null && existingParticipationIndex > -1) {
-          const newParticipations = [...eventDetailStore.getState().participations]
+          const newParticipations = [...this.participations]
           newParticipations[existingParticipationIndex] = value
           eventDetailStore.setParticipations(newParticipations)
         } else if (value !== null && existingParticipationIndex === -1) {
