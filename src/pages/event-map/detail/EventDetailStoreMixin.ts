@@ -45,7 +45,7 @@ export default defineComponent({
           newParticipations[existingParticipationIndex] = value
           eventDetailStore.setParticipations(newParticipations)
         } else if (value !== null && existingParticipationIndex === -1) {
-          eventDetailStore.setParticipations([...eventDetailStore.getState().participations, value])
+          eventDetailStore.setParticipations([...this.participations, value])
         }
         eventDetailStore.setPersonalParticipation(value)
       }
