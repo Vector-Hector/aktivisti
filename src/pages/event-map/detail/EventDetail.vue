@@ -20,61 +20,68 @@ export default defineComponent({
   name: 'EventDetail',
   mixins: [EventDetailMixin],
   async beforeRouteEnter(to, from, next) {
-    const [eventRequest, eventPermissionsRequest] = await Promise.all([
-      apiClient.events.get(to.params.id.toString(), ['campaigns']),
-      apiClient.eventPermissions.get({event: to.params.id.toString()})
-    ])
-    const event = eventRequest.payload.data
-    const campaigns = eventRequest.payload.embedded.campaigns as CampaignDto[]
-    const eventPermissions = eventPermissionsRequest.payload.data
-    eventDetailStore.setEvent(event)
-    eventDetailStore.setCampaigns(campaigns)
-    eventDetailStore.setEventPermissions(eventPermissions)
+    try {
+      const [eventRequest, eventPermissionsRequest] = await Promise.all([
+       apiClient.events.get(to.params.id.toString(), ['campaigns']),
+        apiClient.eventPermissions.get({event: to.params.id.toString()})
+      ])
+      const event = eventRequest.payload.data
+      const campaigns = eventRequest.payload.embedded.campaigns as CampaignDto[]
+      const eventPermissions = eventPermissionsRequest.payload.data
+      eventDetailStore.setEvent(event)
+      eventDetailStore.setCampaigns(campaigns)
+      eventDetailStore.setEventPermissions(eventPermissions)
 
-    const permissionRequests = []
-    if (includesOneOf(
-      eventPermissions.permissions,
-      [ObjectPermissions.TeamCaptain, ObjectPermissions.Coordinator])
-    ) {
-      permissionRequests.push(apiClient.eventParticipations.list({
-        event: to.params.id
-      }).then((response) => {
-        eventDetailStore.setParticipations(response.payload.data)
-      }))
-    }
-    if (authStore.isLoggedIn()) {
-      permissionRequests.push(apiClient.eventParticipations.list({
-        event: to.params.id,
-        user: authStore.getState().userId,
-        show_permissions: true
-      }).then((response) => {
-        eventDetailStore.setPersonalParticipation(
-          response.payload.data?.find(({user}) => user === authStore.getState().userId) ?? null
-        )
-        eventDetailStore.setPersonalParticipationPermissions(response.payload.permissions)
-      }))
-    }
-    await Promise.all(permissionRequests)
-
-    // verfied users can see event areas as well as users with write permission
-    if (
-      eventDetailStore.getState().personalParticipation?.is_verified ||
-      includesOneOf(
+      const permissionRequests = []
+      if (includesOneOf(
         eventPermissions.permissions,
-        [ObjectPermissions.TeamCaptain, ObjectPermissions.Coordinator]
-      )
-    ) {
-      const eventAreaRequest = await apiClient.eventAreas.list({event: to.params.id})
-      eventDetailStore.setEventAreas(eventAreaRequest.payload.data)
-    }
+        [ObjectPermissions.TeamCaptain, ObjectPermissions.Coordinator])
+      ) {
+        permissionRequests.push(apiClient.eventParticipations.list({
+          event: to.params.id
+        }).then((response) => {
+          eventDetailStore.setParticipations(response.payload.data)
+        }))
+      }
+      if (authStore.isLoggedIn()) {
+        permissionRequests.push(apiClient.eventParticipations.list({
+          event: to.params.id,
+          user: authStore.getState().userId,
+          show_permissions: true
+        }).then((response) => {
+          eventDetailStore.setPersonalParticipation(
+            response.payload.data?.find(({user}) => user === authStore.getState().userId) ?? null
+          )
+          eventDetailStore.setPersonalParticipationPermissions(response.payload.permissions)
+        }))
+      }
+      await Promise.all(permissionRequests)
+
+      // verfied users can see event areas as well as users with write permission
+      if (
+        eventDetailStore.getState().personalParticipation?.is_verified ||
+        includesOneOf(
+          eventPermissions.permissions,
+          [ObjectPermissions.TeamCaptain, ObjectPermissions.Coordinator]
+        )
+      ) {
+        const eventAreaRequest = await apiClient.eventAreas.list({event: to.params.id})
+        eventDetailStore.setEventAreas(eventAreaRequest.payload.data)
+      }
 
 
-    next(() => {
-      uiStore.updateActiveElements({
-        event: eventDetailStore.getState().event!.name,
-        campaigns: eventDetailStore.getState().campaigns.map(({name}) => name).join(',')
+      next(() => {
+        uiStore.updateActiveElements({
+          event: eventDetailStore.getState().event!.name,
+          campaigns: eventDetailStore.getState().campaigns.map(({name}) => name).join(',')
+        })
       })
-    })
+    } catch(e) {
+      const {status} = e?.response
+      if (status === 404){
+        next({name: 'login'})
+      }
+    }
   },
   beforeRouteLeave() {
     eventDetailStore.reset()
