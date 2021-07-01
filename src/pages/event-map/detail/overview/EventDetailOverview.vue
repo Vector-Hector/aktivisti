@@ -51,7 +51,7 @@
       </div>
       <div class="col-12">
       <span
-        v-if="isTeamCaptain"
+        v-if="isTeamCaptainOrCoordinator"
         class="participants"
         @click="openParticipantsModal"
       >
@@ -75,7 +75,7 @@
             :key="area.id"
             :area="area"
             :participations="participations"
-            :show-participation-count="isTeamCaptain ?? false"
+            :show-participation-count="isTeamCaptainOrCoordinator"
             :personal-participation="personalParticipation"
           />
         </QList>
@@ -153,7 +153,7 @@
     >
       <div class="col-6">
         <QBtn
-          v-if="isTeamCaptain"
+          v-if="isTeamCaptainOrCoordinator"
           class="full-width"
           @click="openInviteModal"
           flat
