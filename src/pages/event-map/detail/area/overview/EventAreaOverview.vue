@@ -3,7 +3,7 @@
     <div class="row q-col-gutter-x-md">
       <div class="col">
         <QSelect
-          v-if="eventAreaPermissions?.self?.PATCH"
+          v-if="isTeamCaptainOrCoordinator"
           :model-value="eventAreaParticipants"
           @update:model-value="updateAreaParticipations($event)"
           :multiple="true"
@@ -147,6 +147,12 @@ export default defineComponent({
     }
   },
   methods: {
+    updateParticipations(updatedParticipations: EventParticipationDto[]) {
+      this.participations = this.participations.map((item) => {
+        const changedItem = updatedParticipations.find(({id}) => item.id === id)
+        return changedItem ?? item
+      })
+    },
     streetCompleted(street: StreetDetails) {
       return difference(street.addresses.map(({osm_id}) => osm_id), this.completedTargetIds).length === 0
     },
@@ -166,12 +172,7 @@ export default defineComponent({
         )).payload.data
       }
     },
-    updateParticipations(updatedParticipations: EventParticipationDto[]) {
-      this.participations = this.participations.map((item) => {
-        const changedItem = updatedParticipations.find(({id}) => item.id === id)
-        return changedItem ?? item
-      })
-    },
+
     openCompletionModal() {
       this.$q.dialog({
         title: 'Aktionsgebiet erledigt',
@@ -203,19 +204,6 @@ export default defineComponent({
       const participants = participations.map(({user}) => user)
       const changedParticipations: EventParticipationDto[] = []
 
-      if (this.personalParticipation) {
-        if (participants.includes(this.user?.id ?? 0)) {
-          this.personalParticipation = {
-            ...this.personalParticipation,
-            assigned_event_areas: [...this.personalParticipation.assigned_event_areas, this.eventArea.id!]
-          }
-        } else {
-          this.personalParticipation = {
-            ...this.personalParticipation,
-            assigned_event_areas: this.personalParticipation.assigned_event_areas.filter((id) => id !== this.eventArea?.id)
-          }
-        }
-      }
       try {
         for (const participation of this.participations) {
           if (

@@ -24,6 +24,7 @@ import { TokenRoute } from 'src/api/TokenRoute'
 import { ConfigRoute } from 'src/api/ConfigRoute'
 import { SessionRoute } from 'src/api/SessionRoute'
 import { ForgotPasswordDto } from 'src/api/model/ForgotPasswordDto'
+import { ObjectPermissionsRoute } from 'src/api/ObjectPermissionsRoute'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -63,6 +64,7 @@ export class ApiClient {
   emailNotificationSettings = new ApiRoute<EmailNotificationSettingsDto>(this.baseURL, 'email-notification-settings/', this.axiosInstance)
   session = new SessionRoute(this.baseURL, 'session/', this.axiosInstance)
   config = new ConfigRoute(this.baseURL, 'config/', this.axiosInstance)
+  eventPermissions = new ObjectPermissionsRoute(this.baseURL, 'event-permissions/', this.axiosInstance)
 }
 
 export const apiClient = new ApiClient()

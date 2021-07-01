@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-12">
         <QBtn
-          v-if="eventPermissions.self.PATCH"
+          v-if="isTeamCaptainOrCoordinator"
           @click="openParticipantsModal"
           size="sm"
           color="primary"
@@ -11,7 +11,7 @@
           :icon="ionPerson"
         />
         <QBtn
-          v-if="eventPermissions.report.GET"
+          v-if="isCoordinator"
           :to="{ name: 'event-detail-report', params: { event: event.id }}"
           size="sm"
           color="primary"
@@ -19,7 +19,7 @@
           :icon="ionBarChart"
         />
         <QBtn
-          v-if="eventPermissions.self.PUT"
+          v-if="isCoordinator"
           :to="{name: 'edit-event-details', params: { event: event.id }}"
           size="sm"
           color="primary"
@@ -27,7 +27,7 @@
           :icon="ionPencil"
         />
         <QBtn
-          v-if="eventPermissions.self.DELETE"
+          v-if="isCoordinator"
           @click="openDeleteModal"
           size="sm"
           color="primary"
@@ -51,7 +51,7 @@
       </div>
       <div class="col-12">
       <span
-        v-if="eventPermissions.self.PATCH"
+        v-if="isTeamCaptainOrCoordinator"
         class="participants"
         @click="openParticipantsModal"
       >
@@ -75,7 +75,7 @@
             :key="area.id"
             :area="area"
             :participations="participations"
-            :show-participation-count="eventPermissions.invite.POST ?? false"
+            :show-participation-count="isTeamCaptainOrCoordinator"
             :personal-participation="personalParticipation"
           />
         </QList>
@@ -153,7 +153,7 @@
     >
       <div class="col-6">
         <QBtn
-          v-if="eventPermissions.invite.POST"
+          v-if="isTeamCaptainOrCoordinator"
           class="full-width"
           @click="openInviteModal"
           flat
@@ -403,7 +403,7 @@ export default defineComponent({
       this.event = (await apiClient.events.get(this.id)).payload.data
     },
     openInviteModal() {
-      if (this.eventPermissions?.invite.POST) {
+      if (this.isTeamCaptainOrCoordinator) {
         this.$q.dialog({
           component: EventInvitePeopleModal,
           componentProps: {

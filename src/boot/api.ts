@@ -19,7 +19,7 @@ export default boot(async ({app}) => {
   app.config.globalProperties.$apiClient = apiClient
   try {
     const sessionRequest = await apiClient.session.session()
-    authStore.setLoggedIn(sessionRequest.payload.data.is_authenticated)
+    authStore.setUserId(sessionRequest.payload.data.user_id)
   } catch (e) {
     console.warn('Request to session failed, probably offline')
   }
@@ -27,9 +27,9 @@ export default boot(async ({app}) => {
     return response
   }, async (error: any) => {
     if (error.response?.status === 403) {
-      if (error.response?.data?.code === ErrorCode.NOT_AUTHENTICATED) {
+      if (error.response?.data?.code === ErrorCode.NOT_AUTHENTICATED && authStore.isLoggedIn()) {
         // If the request is not authenticated our session expired
-        authStore.setLoggedIn(false)
+        authStore.setUserId(null)
         ErrorBus.emit(SESSION_INVALID, 'Ihre Sitzung ist abgelaufen, bitte loggen Sie sich erneut ein')
       } else {
         // Emit the permission problem on a global error bus

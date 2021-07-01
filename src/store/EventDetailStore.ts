@@ -5,6 +5,7 @@ import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { PermissionHintsDto } from 'src/api/model/APIEnvelope'
 import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
+import { ObjectPermissionDto } from 'src/api/model/ObjectPermissionDto'
 
 interface EventDetailStoreState {
   event: EventDto | null
@@ -14,7 +15,7 @@ interface EventDetailStoreState {
   personalParticipation: EventParticipationDto | null
   personalParticipationPermissions: PermissionHintsDto | null
   campaigns: CampaignDto[]
-  eventPermissions: PermissionHintsDto | null
+  eventPermissions: ObjectPermissionDto | null
   completionNotes: CompletionNoteDto[]
   selectedEventAreaId: null | number
 }
@@ -78,7 +79,7 @@ class EventDetailStore extends Store<EventDetailStoreState> {
     this.state.eventAreas = eventAreas
   }
 
-  public setEventPermissions(permissions: PermissionHintsDto | null) {
+  public setEventPermissions(permissions: ObjectPermissionDto | null) {
     this.state.eventPermissions = permissions
   }
 

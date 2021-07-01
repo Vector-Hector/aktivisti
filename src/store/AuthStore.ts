@@ -7,7 +7,7 @@ import { LoginDto } from 'src/api/model/LoginDto'
 import { Store } from 'src/store/Store'
 
 interface AuthStoreState {
-  loggedIn: boolean
+  userId: number | null
 }
 
 
@@ -15,7 +15,7 @@ class AuthStore extends Store<AuthStoreState>{
 
   protected data(): AuthStoreState {
     return {
-      loggedIn: false
+      userId: null
     }
   }
 
@@ -32,7 +32,8 @@ class AuthStore extends Store<AuthStoreState>{
   async auth(params: LoginDto) {
     await apiClient.session.login(params)
     // no error means authentication happened, cookie is set
-    this.state.loggedIn = true
+    const sessionRequest = await apiClient.session.session()
+    this.state.userId = sessionRequest.payload.data.user_id
     const [profileRequest, permissionsRequest] = await Promise.all([
       apiClient.user.get('me', ['sub_association']),
       apiClient.userPermissions.list()
@@ -56,12 +57,12 @@ class AuthStore extends Store<AuthStoreState>{
     }
   }
 
-  setLoggedIn(value: boolean) {
-    this.state.loggedIn = value
+  setUserId(value: number | null) {
+    this.state.userId = value
   }
 
   isLoggedIn() {
-    return this.state.loggedIn
+    return this.state.userId !== null
   }
 
 }

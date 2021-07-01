@@ -8,3 +8,12 @@ export function distinctBy<T>(array: T[], fn: (item: T) => any) {
   }
   return distinct
 }
+
+export function includesOneOf<T>(array: T[], items: T[]) {
+  for (const item of items) {
+    if (array.includes(item)) {
+      return true
+    }
+  }
+  return false
+}
