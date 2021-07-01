@@ -113,7 +113,6 @@ import { QBtn, QItem, QItemLabel, QItemSection, QList, QPage, QSeparator } from 
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { ionCheckmark, ionClose, ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
-import { UserEventFilterParams } from 'components/EventFilter.vue'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { myEventsStore } from 'src/store/MyEventsStore'
 import { userStore } from 'src/store/UserStore'
@@ -133,7 +132,6 @@ export default defineComponent({
   data() {
     return {
       participatedEvents: [] as EventDto[],
-      managedEvents: [] as EventDto[],
       invitingUsers: [] as UserDto[],
       campaigns: [] as CampaignDto[],
       subAssociations: [] as SubAssociationDto[],
@@ -145,29 +143,6 @@ export default defineComponent({
     }
   },
   computed: {
-    hasAtLeastOneManagePermission() {
-      return userStore.hasAtLeastOneManagePermission()
-    },
-    userFilterParams: {
-      get(): UserEventFilterParams {
-        const selectedCampaign = myEventsStore.getState().filterPreferences.campaign
-        return {
-          sub_association: myEventsStore.getState().filterPreferences.subAssociations,
-          campaigns: selectedCampaign !== undefined ? [selectedCampaign] : undefined,
-          order_by: myEventsStore.getState().filterPreferences.sorting
-        }
-      },
-      set(value: UserEventFilterParams) {
-        myEventsStore.setFilterPreferences({
-          ...myEventsStore.getState().filterPreferences,
-          ...{
-            subAssociations: value.sub_association ?? [],
-            campaign: value.campaigns?.[0],
-            sorting: value.order_by
-          }
-        })
-      }
-    },
     eventParticipations: {
       get(): EventParticipationDto[] {
         return myEventsStore.getState().eventParticipations
@@ -214,18 +189,11 @@ export default defineComponent({
       this.getParticipatedEvents(),
       this.getCampaigns(),
       this.getSubAssociations(),
-      this.getManagedEvents()
     ])
 
     this.loading = false
   },
   watch: {
-    userFilterParams: {
-      handler() {
-        void this.getManagedEvents()
-      },
-      immediate: true
-    },
     eventParticipations: {
       handler() {
         void this.getParticipatedEvents()
@@ -249,14 +217,6 @@ export default defineComponent({
       this.participatedEvents = responseData.embedded.event
       this.invitingUsers = responseData.embedded.inviting_users
       myEventsStore.setEventParticipations(responseData.data)
-    },
-    async getManagedEvents() {
-      this.managedEvents = (await this.$apiClient.events.list(
-        {
-          ...this.userFilterParams,
-          management_permission: true
-        }
-      )).payload.data
     },
     accept(eventParticipation: EventParticipationDto) {
       eventParticipation.is_pending_invitation = false
@@ -285,7 +245,6 @@ export default defineComponent({
       }).onOk(async () => {
         try {
           await this.$apiClient.events.delete(event.id.toString())
-          this.managedEvents = this.managedEvents.filter(({id}) => id !== event.id)
         } catch (error) {
           this.$q.notify({
             position: 'top-right',
