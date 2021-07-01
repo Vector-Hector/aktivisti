@@ -43,14 +43,14 @@ export default defineComponent({
     isLoggedIn() {
       return authStore.isLoggedIn()
     },
-    openInvitations() {
+    openInvitations(): EventParticipationDto[] {
       if (this.isLoggedIn) {
         const openInvitations = myEventsStore.getState().eventParticipations.filter((item) => item.is_pending_invitation)
         console.log('OpenInvitations:', openInvitations)
         return openInvitations
       }
       else {
-        return [] as EventParticipationDto[]
+        return []
       }
     }
 
@@ -61,8 +61,7 @@ export default defineComponent({
         (await this.$apiClient.eventParticipations.list({user: userStore.getState().user?.id})).payload.data
       )
 
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      this.nextPoll = setTimeout(() => this.pollForParticipations(), POLL_INVITATIONS_MS)
+      this.nextPoll = setTimeout(() => void this.pollForParticipations(), POLL_INVITATIONS_MS)
     }
   }
 })
