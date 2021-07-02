@@ -167,7 +167,6 @@
           :disabled="joinLoading"
           color="primary"
           @click="leave"
-          flat
           class="full-width"
         >
           Doch nicht dabei
