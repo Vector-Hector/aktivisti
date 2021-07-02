@@ -10,7 +10,9 @@
       class="bg-primary text-white"
       elevated
     >
-      <QToolbar>
+      <QToolbar
+        class="toolbar"
+      >
         <QBtn
           v-if="currentDepth > 2"
           @click="backButton"
@@ -29,13 +31,7 @@
         </QToolbarTitle>
         <QToolbarTitle class="subtitle">
         </QToolbarTitle>
-        <QBtn
-          :icon="ionMenu"
-          @click="toggleSidebar"
-          dense
-          flat
-          round
-        />
+
       </QToolbar>
 
     </QHeader>
@@ -57,7 +53,7 @@ import { uiStore } from 'src/store/UiStore'
 import AppTitle from 'src/components/AppTitle.vue'
 import { ErrorBus, NOT_AUTHORIZED, SESSION_INVALID, NO_INTERNET } from 'src/utils/errorBus'
 import { QToolbar, QBtn, QPageContainer, QLayout, QHeader, QToolbarTitle } from 'quasar'
-import { ionArrowBack, ionMenu } from '@quasar/extras/ionicons-v5'
+import { ionArrowBack, ionClose, ionMenu } from '@quasar/extras/ionicons-v5'
 import { IntervalDebouncer } from 'src/utils/debounce'
 import { apiClient } from 'src/api/ApiClient'
 import { configStore } from 'src/store/ConfigStore'
@@ -83,7 +79,6 @@ export default defineComponent({
     return {
       initialized: false,
       transitionDirection: null as string | null,
-      ionMenu,
       ionArrowBack
     }
   },
@@ -91,8 +86,8 @@ export default defineComponent({
     currentDepth(): number {
       return this.$route.path.split('/').filter(item => !!item).length
     },
-    showNavigation() {
-      return uiStore.getState().showNavigation
+    sidebarExpanded() {
+      return uiStore.getState().sidebarExpanded
     }
   },
   watch: {
@@ -182,14 +177,24 @@ export default defineComponent({
 .title {
   font-size: 1.1rem;
   font-weight: 500;
-  display: flex;
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+  white-space:nowrap;
+  width: calc(100%);
+  overflow: hidden;
 }
 
 .subtitle {
   color: $gray-100;
   font-size: 0.7rem;
   font-weight: 400;
-  display: flex;
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+  white-space:nowrap;
+  width: calc(100%);
+  overflow: hidden;
 }
 
 .title-wrapper {
@@ -197,5 +202,8 @@ export default defineComponent({
   flex-direction: column;
 }
 
+.toolbar {
+  height: 58px;
+}
 
 </style>

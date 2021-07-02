@@ -1,9 +1,19 @@
 <template>
   <QDrawer
     side="right"
-    class="navigation-sidebar"
+    class="navigation-sidebar overlay-shadow"
+    overlay
     v-model="sidebarExpanded"
   >
+    <QBtn
+      :icon="sidebarIcon"
+      @click="sidebarExpanded = !sidebarExpanded"
+      class="menu-button"
+      :class="{
+      'navbar-expanded': sidebarExpanded
+    }"
+      round
+    />
     <div class="menu">
       <div
         v-if="isLoggedIn"
@@ -11,7 +21,7 @@
       >
         <div class="user-widget">
           <div class="user-widget-avatar">
-            <QIcon :name="ionPersonCircleOutline" class="avatar-placeholder"/>
+            <QIcon :name="ionPersonCircleOutline" class="avatar-placeholder" />
           </div>
           <div class="user-widget-details">
             <span v-if="userFullname.length>0" class="name">{{ userFullname }}</span>
@@ -22,7 +32,7 @@
           <MenuLink
             to="/profile"
           >
-            <QIcon :name="ionPersonOutline"/>
+            <QIcon :name="ionPersonOutline" />
             <span class="menu-item-link-text">Mein Profil</span>
           </MenuLink>
         </div>
@@ -62,7 +72,8 @@
             to="/events"
           >
             <QIcon
-              :name="ionCalendarClearOutline" />
+              :name="ionCalendarClearOutline"
+            />
             <span class="menu-item-link-text">Alle Aktionen</span>
           </MenuLink>
         </div>
@@ -85,7 +96,7 @@
           <MenuLink
             :to="{ name: 'edit-event-details-new' }"
           >
-            <QIcon :name="farCalendarPlus"/>
+            <QIcon :name="farCalendarPlus" />
             <span class="menu-item-link-text">Aktion Erstellen</span>
           </MenuLink>
         </div>
@@ -106,7 +117,7 @@
             class="menu-item-link"
             @click="logout()"
           >
-            <QIcon :name="ionExitOutline"/>
+            <QIcon :name="ionExitOutline" />
             <span class="menu-item-link-text">Abmelden</span>
           </div>
         </div>
@@ -128,11 +139,12 @@ import {
   ionClose,
   ionExitOutline,
   ionLogIn,
+  ionMenu,
   ionPersonCircleOutline,
   ionPersonOutline
 } from '@quasar/extras/ionicons-v5'
 import { QBtn, QDrawer, QIcon } from 'quasar'
-import {farCalendarPlus, farIdCard} from '@quasar/extras/fontawesome-v5'
+import { farCalendarPlus, farIdCard } from '@quasar/extras/fontawesome-v5'
 
 
 export default defineComponent({
@@ -158,6 +170,9 @@ export default defineComponent({
     }
   },
   computed: {
+    sidebarIcon(): boolean {
+      return this.sidebarExpanded ? ionClose : ionMenu
+    },
     isLoggedIn() {
       return authStore.isLoggedIn()
     },
@@ -195,23 +210,29 @@ export default defineComponent({
 
 .navigation-sidebar {
   padding: 0;
+  position: relative;
+
+  .menu-button {
+    visibility: visible !important;
+    color: $gray-600;
+    background: $white;
+    margin: 0.5rem 0;
+    transform: none;
+    transition: all 100ms linear;
+    position: absolute;
+    z-index: 9000;
+    top: 0;
+    left: -3.5rem;
+
+    &.navbar-expanded {
+      left: -1.3rem;
+    }
+  }
 }
 
 .dielinke-logo {
   max-width: 240px;
   cursor: pointer;
-}
-
-.p-sidebar {
-  padding: 0;
-}
-
-/*
-In this case the sidebar content is not reachable with ::v-slotted or ::v-deep as the opened sidebar is rendered
-outside the html hierarchy of this component - if someone finds a better soltion, much appreciated
-*/
-::v-global(.p-sidebar-content) {
-  height: 100%;
 }
 
 .menu {

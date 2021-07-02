@@ -21,7 +21,6 @@ const BottomSheetStateOrder: { [key in BottomSheetState]: number } = {
 
 interface UiState {
   sidebarExpanded: boolean
-  showNavigation: boolean
   activeTitleElements: TitleElements
   bottomSheetState: BottomSheetState
 }
@@ -30,14 +29,9 @@ class UiStore extends Store<UiState> {
   protected data(): UiState {
     return {
       sidebarExpanded: false,
-      showNavigation: true,
       activeTitleElements: {},
       bottomSheetState: BottomSheetState.COLLAPSED
     }
-  }
-
-  public toggleNavigation(enabled = true) {
-    this.state.showNavigation = enabled
   }
 
   public toggleSidebar(expanded = true) {
