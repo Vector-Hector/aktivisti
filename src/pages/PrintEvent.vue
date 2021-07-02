@@ -8,7 +8,7 @@
   />
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { apiClient } from 'src/api/ApiClient'
 import EventPrintout from 'components/print/EventPrintout.vue'
