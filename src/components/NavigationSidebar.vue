@@ -170,7 +170,7 @@ export default defineComponent({
     }
   },
   computed: {
-    sidebarIcon(): boolean {
+    sidebarIcon(): string {
       return this.sidebarExpanded ? ionClose : ionMenu
     },
     isLoggedIn() {
