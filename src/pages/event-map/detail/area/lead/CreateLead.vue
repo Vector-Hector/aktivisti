@@ -235,7 +235,6 @@ export default defineComponent({
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  margin: 0.7rem 0;
 }
 
 .qr-link-caption {

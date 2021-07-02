@@ -2,7 +2,6 @@
   <QDrawer
     side="right"
     class="navigation-sidebar overlay-shadow"
-    overlay
     v-model="sidebarExpanded"
   >
     <QBtn

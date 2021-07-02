@@ -2,11 +2,14 @@
   <div
     class="resizable-bottom-sheet"
     ref="bottomSheet"
-    :class="state"
+    :class="{
+      [state]: true,
+      'absolute-sheet': state === BottomSheetState.EXPANDED
+    }"
   >
     <h3
       v-if="title"
-      class="title"
+      class="overlay-title"
     >
       {{ title }}
     </h3>
@@ -140,18 +143,10 @@ export default defineComponent({
   background: white;
   position: relative;
   bottom: 0;
+  order: 2;
   width: 100%;
   transition: height 200ms ease-out;
   z-index: 200;
-
-  .title {
-    background: $gray-100;
-    border-bottom: 1px solid $red;
-    margin: 0;
-    padding: 0.5rem 1rem;
-    font-size: 1.5rem;
-    line-height: 1.5rem;
-  }
 
   &.collapsed {
     height: 7%;
@@ -241,5 +236,7 @@ export default defineComponent({
   flex: 1;
 }
 
-
+.absolute-sheet {
+  position: absolute;
+}
 </style>

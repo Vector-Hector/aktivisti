@@ -18,6 +18,7 @@
       v-model:pagination="eventsPagination"
       :filter-params="filterParams"
       :campaigns="campaigns"
+      class="event-list"
     />
   </div>
 </template>
@@ -155,5 +156,9 @@ export default defineComponent({
   &:not(:last-of-type) {
     margin: 0 0 1rem 0;
   }
+}
+
+.event-list {
+  margin: 1rem 0;
 }
 </style>
