@@ -11,6 +11,14 @@
           :icon="ionPerson"
         />
         <QBtn
+          v-if="personalParticipation?.is_verified || isTeamCaptainOrCoordinator"
+          size="sm"
+          color="primary"
+          flat
+          :icon="ionPrint"
+          :to="{ name: 'print-event', params: {eventId: event.id}}"
+        />
+        <QBtn
           v-if="isCoordinator"
           :to="{ name: 'event-detail-report', params: { event: event.id }}"
           size="sm"
@@ -59,7 +67,7 @@
         </span>
       </div>
       <div class="col-12">
-          {{ event.description }}
+        {{ event.description }}
       </div>
     </div>
     <div
@@ -219,7 +227,7 @@ import {
   ionPencil,
   ionTrash,
   ionPerson,
-  ionPersonOutline
+  ionPersonOutline, ionPrint
 } from '@quasar/extras/ionicons-v5'
 import { QBtn, QIcon, QList } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
@@ -256,6 +264,7 @@ export default defineComponent({
         hour: '2-digit',
         minute: '2-digit'
       },
+      ionPrint,
       ionLogoFacebook,
       ionLogoTwitter,
       ionLogoWhatsapp,

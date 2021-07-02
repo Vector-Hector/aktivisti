@@ -1,25 +1,39 @@
 <template>
-  <EventPrintout v-if="event" :event="event" />
+  <EventPrintout
+    v-if="event"
+    :event="event"
+    :event-areas="eventAreas"
+    :metric-records="metricRecords"
+    :metrics="metrics"
+  />
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { apiClient } from 'src/api/ApiClient'
 import EventPrintout from 'components/print/EventPrintout.vue'
+import { EventAreaDto } from 'src/api/model/EventAreaDto'
+import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
+import { EventMetricDto } from 'src/api/model/EventMetricDto'
 
 export default defineComponent({
   name: 'PrintEvent',
-  props: {
-    eventId: {
-      type: String as PropType<string>,
-      required: true
-    }
-  },
   async beforeRouteEnter(to, from, next) {
-    const eventRequest = await apiClient.events.get(to.params.eventId.toString())
+    const [eventRequest, eventAreasRequest, metricsRequest] = await Promise.all([
+      apiClient.events.get(to.params.eventId.toString()),
+      apiClient.eventAreas.list({event: to.params.eventId.toString()}),
+      apiClient.eventMetricRecords.list({event: to.params.eventId.toString()}, ['metric'])
+    ])
+
     next((vm) => {
-      // @ts-ignore
+      //@ts-ignore
       vm.event = eventRequest.payload.data
+      //@ts-ignore
+      vm.eventAreas = eventAreasRequest.payload.data
+      //@ts-ignore
+      vm.metricRecords = metricsRequest.payload.data
+      //@ts-ignore
+      vm.metrics = metricsRequest.payload.embedded.metric
     })
   },
   components: {
@@ -27,7 +41,10 @@ export default defineComponent({
   },
   data() {
     return {
-      event: null as EventDto | null
+      event: null as EventDto | null,
+      eventAreas: [] as EventAreaDto[],
+      metricRecords: [] as EventMetricRecordDto[],
+      metrics: [] as EventMetricDto[]
     }
   }
 })

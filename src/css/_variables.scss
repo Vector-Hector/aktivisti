@@ -20,41 +20,9 @@ $text-primary: $black;
 $text-inverted: invert($black);
 
 $primary: $red;
-
-
 $warning: $orange;
 $error: $dark-red;
-
-$breakpoint-xs: 100%;
-$breakpoint-sm: 576px;
-$breakpoint-md: 768px;
-$breakpoint-lg: 992px;
-$breakpoint-xl: 1200px;
 
 $font-stack: 'Roboto', Arial, Helvetica, Geneva, sans-serif;
 $map-overlay-shadow: 0 0 10px 2px rgba(0,0,0,.1);
 
-
-// Theme Specific Variables
-$primaryColor: $red;
-$primaryDarkColor: darken($primaryColor, 5%);
-$primaryDarkerColor: darken($primaryColor, 10%);
-$primaryTextColor: $white;
-$focusOutlineColor: #fdb8b8;
-$borderRadius: 0px;
-$fontFamily:"Roboto","Helvetica Neue",sans-serif;
-$panelContentPadding: 1rem;
-
-:root {
-  --surface-a:#ffffff;
-  --surface-b:#f8f9fa;
-  --surface-c:#e9ecef;
-  --surface-d:#dee2e6;
-  --surface-e:#ffffff;
-  --surface-f:#ffffff;
-  --text-color:#495057;
-  --text-color-secondary:#6c757d;
-  --primary-color:$primaryColor;
-  --primary-color-text:#ffffff;
-  --font-family:$fontFamily;
-}

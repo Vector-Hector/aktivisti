@@ -124,7 +124,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
 .chevron {
   margin-left: 1rem;

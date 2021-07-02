@@ -1,4 +1,3 @@
-<script lang="ts">
 import { defineComponent, inject, onMounted, PropType, onUnmounted, h } from 'vue'
 import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
@@ -67,17 +66,3 @@ export default defineComponent({
     return h('span')
   }
 })
-
-</script>
-<style lang="scss" scoped>
-@import "src/css/_variables.scss";
-
-.marker-icon {
-  background-image: url("src/assets/marker.png");
-  background-size: cover;
-  display: block;
-  width: 32px;
-  height: 32px;
-  cursor: pointer;
-}
-</style>

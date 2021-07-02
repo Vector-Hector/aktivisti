@@ -1,4 +1,4 @@
-<template>
+7<template>
   <Marker
     v-if="event"
     :location="event.location"
@@ -12,7 +12,7 @@
 
 import { defineComponent } from 'vue'
 import { Feature } from 'geojson'
-import FeatureLayer from 'src/mapbox/AreaFeatureLayer.vue'
+import FeatureLayer from 'src/mapbox/AreaFeatureLayer'
 import Marker from 'src/mapbox/Marker.vue'
 import { bbox, circle } from '@turf/turf'
 import { BBox2d, BBox } from '@turf/helpers/dist/js/lib/geojson'

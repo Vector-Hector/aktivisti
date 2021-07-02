@@ -1,5 +1,5 @@
 import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
-import { Geometry } from 'geojson'
+import { Feature, Geometry } from 'geojson'
 
 
 export interface EventAreaDto {
@@ -11,4 +11,15 @@ export interface EventAreaDto {
   geometry: Geometry
   is_completed: boolean
   area_details?: AreaDetailsDto
+}
+
+export function eventAreaToFeature(eventArea: EventAreaDto): Feature {
+  return {
+    type: 'Feature',
+    id: eventArea.feature_id,
+    geometry: eventArea.geometry,
+    properties: {
+      color: eventArea.color
+    }
+  }
 }

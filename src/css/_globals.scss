@@ -1,12 +1,9 @@
 @import "variables";
-@import "button";
 @import "layout";
-@import "ionic";
 @import "page-transitions";
 @import "custom-icons";
 @import "utils";
-
-@import "ionic-widgets/select";
+@import "print";
 
 html, body {
   font-family: $font-stack;
