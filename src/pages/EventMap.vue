@@ -7,6 +7,7 @@
         map-style="mapbox://styles/mapbox/streets-v11"
         @update:boundingBox="setBbox($event)"
       >
+        <GeolocationControl />
         <router-view
           v-slot="{ Component }"
           name="map"
@@ -36,11 +37,13 @@ import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { userStore } from 'src/store/UserStore'
 import { QPage } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
+import GeolocationControl from 'src/mapbox/GeolocationControl.vue'
 import MapContainer from 'components/MapContainer.vue'
 
 export default defineComponent({
   name: 'EventMap',
   components: {
+    GeolocationControl,
     MapContainer,
     Map,
     MapOverlayProxy,

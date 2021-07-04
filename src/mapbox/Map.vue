@@ -15,7 +15,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, InjectionKey, onMounted, PropType, provide, Ref, ref, watch } from 'vue'
-import mapboxgl, { Point } from 'mapbox-gl'
+import mapboxgl, { LngLat, Point } from 'mapbox-gl'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { TinyEmitter } from 'tiny-emitter'
@@ -25,6 +25,9 @@ import { uuidv4 } from 'src/utils/uuid'
 
 export const MapInject: InjectionKey<Ref<mapboxgl.Map>> = Symbol()
 export const MapEventBus = new TinyEmitter()
+
+export const MAP_PAN_TO = 'MAP_PAN_TO'
+export const MAP_GEOLOCATE_STOP_TRACKING = 'MAP_GEOLOCATE_STOP_TRACKING'
 
 export default defineComponent({
   name: 'Map',
@@ -111,6 +114,10 @@ export default defineComponent({
           if (newBox) {
             map.value?.fitBounds(newBox, {animate: props.animate})
           }
+        })
+
+        MapEventBus.on(MAP_PAN_TO, (location: LngLat) => {
+          map.value?.panTo(location)
         })
 
       })
