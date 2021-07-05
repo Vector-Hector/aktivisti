@@ -1,6 +1,6 @@
 <template>
   <QPage class="event-map">
-    <div class="map-container">
+    <MapContainer>
       <Map
         :bounding-box="bbox"
         ref="map"
@@ -16,33 +16,34 @@
           />
         </router-view>
       </Map>
-    </div>
-    <ResizableBottomSheet
-      :title="$route.meta.title?.()"
-      @changed-size="resizeMap"
-      :class="{
-        'absolute-sheet': bottomSheetState === BottomSheetState.EXPANDED
-      }"
-    >
-      <router-view />
-    </ResizableBottomSheet>
+      <MapOverlayProxy
+        :title="$route.meta.title?.()"
+        @changed-size="resizeMap"
+      >
+        <div class="overlay-content">
+          <router-view />
+        </div>
+      </MapOverlayProxy>
+    </MapContainer>
   </QPage>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import ResizableBottomSheet from 'components/ResizableBottomSheet.vue'
+import MapOverlayProxy from 'components/MapOverlayProxy.vue'
 import Map from 'src/mapbox/Map.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { userStore } from 'src/store/UserStore'
 import { QPage } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
+import MapContainer from 'components/MapContainer.vue'
 
 export default defineComponent({
   name: 'EventMap',
   components: {
+    MapContainer,
     Map,
-    ResizableBottomSheet,
+    MapOverlayProxy,
     QPage
   },
   data() {
@@ -73,12 +74,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.map-container {
-  width: 100%;
-  position: relative;
-  flex: 1;
-  flex-direction: column;
-  display: flex;
+
+.overlay-content {
+  padding: 1rem 0;
 }
 
 .event-map {
@@ -89,7 +87,4 @@ export default defineComponent({
   overflow: hidden;
 }
 
-.absolute-sheet {
-  position: absolute;
-}
 </style>

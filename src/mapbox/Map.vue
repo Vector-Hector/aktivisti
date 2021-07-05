@@ -156,6 +156,7 @@ export default defineComponent({
 
 .drop-container {
   flex: 1;
+  order: 1;
   display: flex;
   height: 100%;
 }

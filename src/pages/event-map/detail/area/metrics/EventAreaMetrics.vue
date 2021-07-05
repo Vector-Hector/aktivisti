@@ -148,7 +148,6 @@ label {
 .create-lead {
   display: flex;
   justify-content: center;
-  margin: 0.5rem 0;
 }
 
 </style>
