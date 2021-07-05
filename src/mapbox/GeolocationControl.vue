@@ -122,6 +122,7 @@ export default defineComponent({
       if (this.position !== null) {
         this.map.panTo(this.position)
       }
+      }
     },
     async startWatch() {
       if (!this.locationWatcher) {
@@ -136,6 +137,7 @@ export default defineComponent({
     updatePosition(position: Position | null, error: any) {
       if (error) {
         this.locatorState = GeolocateState.UNAVAILABLE
+        return
       }
       if (position?.coords === undefined) {
         return
