@@ -39,8 +39,8 @@ export default route(function (/* { store, ssrContext } */) {
     if (!authStore.isLoggedIn() && to.matched.some(record => record.meta.requiresAuth)) {
       next({
         name: 'login',
-        params: {
-          nextUrl: to.fullPath
+        query: {
+          next: to.fullPath
         }
       })
     } else {
