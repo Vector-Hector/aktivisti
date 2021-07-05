@@ -122,7 +122,6 @@ export default defineComponent({
       if (this.position !== null) {
         this.map.panTo(this.position)
       }
-      }
     },
     async startWatch() {
       if (!this.locationWatcher) {
