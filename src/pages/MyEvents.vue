@@ -193,14 +193,6 @@ export default defineComponent({
 
     this.loading = false
   },
-  watch: {
-    eventParticipations: {
-      handler() {
-        void this.getParticipatedEvents()
-      },
-      immediate: true
-    }
-  },
   methods: {
     async getCampaigns() {
       const response = (await this.$apiClient.campaigns.list())
