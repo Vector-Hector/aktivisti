@@ -65,8 +65,6 @@ export default defineComponent({
     }
   },
   beforeRouteLeave(to, from, next) {
-    // TODO: toggling global ui state seems to be kinda shitty, that should probably resolved by route hierarchy
-    uiStore.toggleNavigation(true)
     next()
   },
   data() {
@@ -86,9 +84,6 @@ export default defineComponent({
     isLoggedIn() {
       return userStore.getState().user
     }
-  },
-  created() {
-    uiStore.toggleNavigation(false)
   },
   methods: {
     async locate(result: GeocodeResult) {
