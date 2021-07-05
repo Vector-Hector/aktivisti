@@ -1,6 +1,7 @@
 <template>
   <QDrawer
     side="right"
+    overlay
     class="navigation-sidebar overlay-shadow"
     v-model="sidebarExpanded"
   >
