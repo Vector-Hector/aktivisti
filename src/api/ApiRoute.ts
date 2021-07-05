@@ -27,7 +27,10 @@ export class BaseApiRoute {
       appendAsQueryParams(url, config.query)
     }
 
-    const headers: Record<string, string> = {}
+    const headers: Record<string, string> = {
+      // TODO: For now we will fix the accept language header to german, as the frontend is localized to german
+      'Accept-Language': 'de'
+    }
     if (['POST', 'PATCH', 'PUT', 'DELETE'].includes(config.method)) {
       if (!config.omitCsrf) {
         headers['x-csrftoken'] = Cookies.get('csrftoken');
