@@ -288,7 +288,6 @@ export default defineComponent({
         await this.save(this.localEvent)
         return true
       } catch (e) {
-        console.dir(e)
         if (e.response?.status === 400) {
           this.errors = e.response.data
         } else {

@@ -1,6 +1,6 @@
 <template>
   <div v-if="openInvitations.length > 0">
-    <QBadge :color="primary" :text-color="white" :label="openInvitations.length"/>
+    <QBadge color="primary" text-color="white" :label="openInvitations.length"/>
   </div>
 </template>
 
@@ -45,7 +45,7 @@ export default defineComponent({
     },
     openInvitations(): EventParticipationDto[] {
       if (this.isLoggedIn) {
-        return  myEventsStore.getState().eventParticipations.filter((item) => item.is_pending_invitation)
+        return myEventsStore.getState().eventParticipations.filter((item) => item.is_pending_invitation)
       }
       else {
         return []

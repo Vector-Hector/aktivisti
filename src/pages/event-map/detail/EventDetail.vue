@@ -83,7 +83,7 @@ export default defineComponent({
       }
     }
   },
-  beforeRouteLeave() {
+  unmounted() {
     eventDetailStore.reset()
   }
 })

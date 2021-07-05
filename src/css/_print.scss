@@ -1,0 +1,35 @@
+@import "variables";
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  html, body {
+    width: 210mm !important;
+    height: 297mm !important;
+  }
+}
+
+.print-page {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 1cm;
+  width: 210mm !important;
+  height: 297mm !important;
+  border: initial;
+  border-radius: initial;
+  min-height: initial;
+  box-shadow: initial;
+  background: initial;
+  page-break-after: auto;
+}
+
+
+@media screen {
+  .print-page {
+    border: 1px dotted $gray-700;
+  }
+}

@@ -9,7 +9,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Map from 'src/mapbox/Map.vue'
-import FeatureLayer from 'src/mapbox/AreaFeatureLayer.vue'
+import FeatureLayer from 'src/mapbox/AreaFeatureLayer'
 import { apiClient } from 'src/api/ApiClient'
 import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { eventDetailStore } from 'src/store/EventDetailStore'

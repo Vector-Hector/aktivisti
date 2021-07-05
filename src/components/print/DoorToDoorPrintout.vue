@@ -1,0 +1,346 @@
+<template>
+  <div class="d2d-event-printout">
+    <QBtn
+      class="back-button"
+      :icon="ionArrowBack"
+      @click="$router.go(-1)"
+      style="background: white;"
+      round
+    />
+    <QBtn
+      class="print-button"
+      :icon="ionPrint"
+      @click="print()"
+      color="primary"
+      round
+    />
+    <div class="print-page">
+      <h1 class="headline">{{ event.name }}</h1>
+      <p class="facts">
+        Einsatztyp: {{ eventTypeOptions.find(({key}) => key === event.event_type)?.label }}<br>
+        Datum: {{ $utils.dateFormat(event.start_date) }}
+      </p>
+      <p>{{ event.description }}</p>
+      <img class="linke-logo" src="../../assets/logo_dielinke.png">
+      <Map
+        class="map"
+        :bounding-box="zoomBox"
+      >
+        <Marker
+          v-if="event"
+          :location="event.location"
+        />
+        <FeatureLayer
+          :features="areaFeatures"
+        />
+      </Map>
+      <h3>Gebiete</h3>
+      <div class="row q-col-gutter-md">
+        <div
+          class="area-item col-4"
+          v-for="area in eventAreas"
+          :key="area.id"
+        >
+          <QIcon
+            class="area-icon"
+            :style="{
+            color: area.color
+          }"
+            :name="ionEllipse"
+          />
+          <div class="area-label">
+            <div>{{ area.name }}</div>
+            <div>{{ countAddresses(area.area_details) }} Adressen</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="print-page" v-for="area in eventAreas" :key="area.id">
+      <img class="linke-logo" src="../../assets/logo_dielinke.png">
+      <h1 class="headline">Erfassungsbogen für Gebiet: {{ area.name }}</h1>
+      <div class="row q-col-gutter-x-sm">
+        <div class="col-8">
+          <p class="facts">
+            Einsatztyp: {{ eventTypeOptions.find(({key}) => key === event.event_type)?.label }}<br>
+            Einsatzname: {{ event.name }}<br>
+            Datum: {{ $utils.dateFormat(event.start_date) }}<br>
+            Anzahl Adressen: {{ countAddresses(area.area_details) }}
+          </p>
+          <Map
+            class="area-map"
+            :bounding-box="boundingBoxOfArea(area)"
+          >
+            <FeatureLayer
+              :features="[eventAreaToFeature(area)]"
+            />
+          </Map>
+        </div>
+        <div class="col-4">
+          <h4 class="address-headline">Straßen</h4>
+          <span class="street" v-for="street in area.area_details.streets" :key="street.name">
+            <p class="street-name">{{ street.name }}</p>
+          </span>
+          <span v-if="area.area_details.streets.length === 0">Keine Adressen im OSM Datensatz</span>
+        </div>
+      </div>
+
+      <div class="metrics-entry-table">
+        <div
+          class="tableheader row"
+        >
+          <div class="col-3">Metrik</div>
+          <div class="col-6">Strichliste</div>
+          <div class="col-2">Gesamt</div>
+        </div>
+        <div
+          v-for="metric in metricRecordsWithMetric"
+          :key="metric.name"
+          class="metric-item row"
+        >
+          <div class="col-3 metric-item-cell"><span>{{ metric.name }}</span></div>
+          <div class="col-6 metric-item-cell"></div>
+          <div class="col-3 metric-item-cell"><span class="target-hint">Zielvorgabe: {{ metric.target }}</span></div>
+        </div>
+        <div
+          class="metric-item row"
+        >
+          <div class="col-3 metric-item-cell"><span>Aufgenommene Kontaktdaten</span></div>
+          <div class="col-6 metric-item-cell"></div>
+          <div class="col-3 metric-item-cell"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, PropType } from 'vue'
+import { EventDto } from 'src/api/model/EventDto'
+import Map from 'src/mapbox/Map.vue'
+import { Feature } from 'geojson'
+import { EventAreaDto, eventAreaToFeature } from 'src/api/model/EventAreaDto'
+import FeatureLayer from 'src/mapbox/AreaFeatureLayer'
+import Marker from 'src/mapbox/Marker.vue'
+import { BBox } from '@turf/helpers/dist/js/lib/geojson'
+import { bbox, circle } from '@turf/turf'
+import { QBtn, QIcon } from 'quasar'
+import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { ionArrowBack, ionEllipse, ionPrint } from '@quasar/extras/ionicons-v5'
+import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
+import { EventMetricDto } from 'src/api/model/EventMetricDto'
+import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
+
+
+
+export default defineComponent({
+  name: 'DoorToDoorPrintout',
+  components: {
+    Map,
+    Marker,
+    FeatureLayer,
+    QIcon,
+    QBtn
+  },
+  props: {
+    event: {
+      type: Object as PropType<EventDto>,
+      required: true
+    },
+    eventAreas: {
+      type: Array as PropType<EventAreaDto[]>,
+      required: true
+    },
+    metrics: {
+      type: Array as PropType<EventMetricDto[]>,
+      required: true
+    },
+    metricRecords: {
+      type: Array as PropType<EventMetricRecordDto[]>,
+      required: true
+    }
+  },
+  data() {
+    return {
+      eventTypeOptions,
+      ionEllipse,
+      ionArrowBack,
+      ionPrint
+    }
+  },
+  computed: {
+    areaFeatures(): Feature[] {
+      return this.eventAreas.map(eventAreaToFeature)
+    },
+    zoomBox(): BBox {
+      const meetingPoint = circle([this.event.location.lng, this.event.location.lat], 0.2)
+      return this.areaFeatures.length > 0 ? bbox({
+        type: 'FeatureCollection',
+        features: [...this.areaFeatures, meetingPoint]
+      }) : bbox(meetingPoint)
+    },
+    metricRecordsWithMetric(): { name?: string, target: number }[] {
+      return this.metricRecords.map((metricRecord) => {
+        const metric = this.metrics.find(({id}) => id === metricRecord.metric)
+        return {
+          name: metric?.name,
+          target: metricRecord.target
+        }
+      })
+    }
+  },
+  methods: {
+    countAddresses(areaDetails: AreaDetailsDto) {
+      return areaDetails.streets.reduce((acc, street) => {
+        return acc + street.addresses.length
+      }, 0)
+    },
+    eventAreaToFeature(area: EventAreaDto) {
+      return eventAreaToFeature(area)
+    },
+    boundingBoxOfArea(area: EventAreaDto) {
+      return bbox({
+        type: 'FeatureCollection',
+        features: [eventAreaToFeature(area)]
+      })
+    },
+    print() {
+      window.print()
+    }
+  }
+})
+</script>
+
+<style lang="scss" scoped>
+.d2d-event-printout {
+  h1 {
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    line-height: 1.2;
+
+  }
+}
+
+.date {
+  font-weight: bold;
+}
+
+.map {
+  height: 13cm;
+  flex: none;
+}
+
+.linke-logo {
+  position: absolute;
+  top: 0.5cm;
+  right: 0.5cm;
+  width: 5cm;
+}
+
+.print-page {
+  position: relative;
+}
+
+.facts {
+  font-weight: bold;
+}
+
+.area-item {
+  display: flex;
+  flex-direction: row;
+}
+
+.headline {
+  margin: 2.2rem 0
+}
+
+.area-icon {
+  font-size: 1.2rem;
+  padding: 0 1rem;
+  align-self: center;
+}
+
+.area-map {
+  height: 8cm;
+  flex: none;
+}
+
+.metrics-entry-table {
+  margin: 0.5cm 0 0;
+
+  .tableheader {
+    font-weight: bold;
+    font-size: 1.2rem;
+    line-height: 1.3;
+  }
+
+  .metric-item {
+    height: 2.5cm;
+    border-top: 1px dotted $gray-600;
+    display: flex;
+    align-items: center;
+
+    &:last-of-type {
+      border-bottom: 1px dotted $gray-600;
+    }
+  }
+
+  .metric-item-cell {
+    border-left: 1px dotted $gray-600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+
+    &:last-of-type {
+      border-right: 1px dotted $gray-600;
+    }
+  }
+
+  .target-hint {
+    align-self: flex-start;
+    font-size: 0.8rem;
+    color: $gray-700;
+  }
+}
+
+.address-headline {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.street-name {
+  margin: 0;
+  font-weight: bold;
+}
+
+.back-button, .print-button {
+  position: fixed;
+  top: 1rem;
+  z-index: 10;
+}
+
+@media print {
+  .back-button, .print-button {
+    display: none;
+  }
+}
+
+.back-button {
+  left: 1rem;
+}
+
+.print-button {
+  right: 1rem;
+}
+
+
+
+</style>

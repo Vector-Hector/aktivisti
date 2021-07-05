@@ -127,7 +127,6 @@ export default defineComponent({
         userStore.setHomeAssociation(profileRequest.payload.embedded?.sub_association?.[0] ?? null)
         userStore.setPermissions(permissionRequest.payload.data)
       } catch (error: any) {
-        console.log(error)
         if (error.response?.status === 403) {
           authStore.clear()
         } else {
@@ -177,7 +176,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import 'src/css/_globals.scss';
+@import 'src/css/variables.scss';
 
 .title {
   font-size: 1.1rem;
