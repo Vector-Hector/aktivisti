@@ -58,6 +58,7 @@ const routes = [
         component: MyEvents,
         name: 'my-events',
         meta: {
+          requiresAuth: true,
           title: () => 'Meine Aktionen'
         }
       },
