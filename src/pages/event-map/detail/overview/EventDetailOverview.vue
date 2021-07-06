@@ -475,8 +475,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "src/css/_globals.scss";
-@import "src/css/_utils.scss";
+@import "src/css/utils.scss";
 
 label {
   text-align: left;
@@ -538,7 +537,7 @@ label {
 }
 
 .social-button {
-  background-color: $gray-200;
+  background-color: $grey-1;
 }
 
 

@@ -89,7 +89,7 @@ export default defineComponent({
 
 </script>
 <style lang="scss" scoped>
-@import "src/css/_variables.scss";
+@import "src/css/variables.scss";
 
 .marker-icon {
   background-image: url("src/assets/marker.png");

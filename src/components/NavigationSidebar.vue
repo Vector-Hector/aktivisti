@@ -10,8 +10,8 @@
       @click="sidebarExpanded = !sidebarExpanded"
       class="menu-button"
       :class="{
-      'navbar-expanded': sidebarExpanded
-    }"
+        'navbar-expanded': sidebarExpanded
+      }"
       round
     />
     <div class="menu">
@@ -94,7 +94,7 @@
           class="menu-item"
         >
           <MenuLink
-            :to="{ name: 'edit-event-details-new' }"
+            :to="{ name: 'create-event' }"
           >
             <QIcon :name="farCalendarPlus" />
             <span class="menu-item-link-text">Aktion Erstellen</span>
@@ -206,15 +206,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import 'src/css/_globals.scss';
-
 .navigation-sidebar {
   padding: 0;
   position: relative;
 
   .menu-button {
     visibility: visible !important;
-    color: $gray-600;
+    color: $grey-8;
     background: $white;
     margin: 0.5rem 0;
     transform: none;
@@ -245,7 +243,7 @@ export default defineComponent({
   background: $white;
 
   .menu-divider {
-    color: $gray-500;
+    color: $grey-4;
     opacity: 0.5;
     margin: 0;
   }

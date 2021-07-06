@@ -219,7 +219,7 @@ export default defineComponent({
   justify-content: center;
 
   .icon {
-    color: $gray-600;
+    color: $grey-8;
   }
 
   &.expand {

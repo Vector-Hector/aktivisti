@@ -185,7 +185,7 @@ export default defineComponent({
 }
 
 .subtitle {
-  color: $gray-100;
+  color: $grey-1;
   font-size: 0.7rem;
   font-weight: 400;
   display: inline-block;

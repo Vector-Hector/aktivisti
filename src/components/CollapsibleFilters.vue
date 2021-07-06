@@ -33,27 +33,29 @@
         />
       </span>
     </div>
-    <div
-      ref="content"
-      class="content"
-      :style="contentStyle"
-    >
-      <slot />
-    </div>
+    <QSlideTransition>
+      <div
+        class="content"
+        v-show="!collapsed"
+      >
+        <slot />
+      </div>
+    </QSlideTransition>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { ionChevronDown, ionFunnel } from '@quasar/extras/ionicons-v5'
-import { QBadge, QIcon } from 'quasar'
+import { QBadge, QIcon, QSlideTransition } from 'quasar'
 
 
 export default defineComponent({
   name: 'CollapsibleFilters',
   components: {
     QIcon,
-    QBadge
+    QBadge,
+    QSlideTransition
   },
   props: {
     activatedFilterCount: {
@@ -66,20 +68,7 @@ export default defineComponent({
     return {
       collapsed: true,
       ionFunnel,
-      ionChevronDown,
-    }
-  },
-  computed: {
-    contentStyle(): { [key: string]: string } {
-      if (this.collapsed || !this.$refs.content) {
-        return {
-          height: '0px'
-        }
-      } else {
-        return {
-          height: `${(this.$refs.content as HTMLElement)!.scrollHeight}px`
-        }
-      }
+      ionChevronDown
     }
   },
   methods: {
@@ -95,7 +84,7 @@ export default defineComponent({
 @import "src/css/_variables.scss";
 
 .collapsible-filters {
-  background: $gray-100;
+  background: $grey-2;
 }
 
 .headline {
@@ -107,6 +96,7 @@ export default defineComponent({
       display: inline-block;
       margin: 0 1rem 0 0;
     }
+
     flex: 1;
     display: flex;
     flex-direction: row;
@@ -117,7 +107,7 @@ export default defineComponent({
     font-size: 1.2rem;
     font-weight: bold;
     margin: 0;
-    color: $gray-700;
+    color: $grey-8;
   }
 
   .filter-icon, .chevron-icon {
@@ -138,12 +128,6 @@ export default defineComponent({
       transform: rotate(180deg);
     }
   }
-}
-
-.content {
-  transition: height 250ms ease-out;
-  height: 0;
-  overflow: hidden;
 }
 
 </style>

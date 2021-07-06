@@ -1,10 +1,6 @@
 import EditEvent from 'src/pages/EditEvent.vue'
 import Login from 'src/pages/Login.vue'
 import Register from 'src/pages/Register.vue'
-import EditEventDetails from 'src/pages/edit-event/EditEventDetails.vue'
-import EditEventMapRoutes from 'src/pages/edit-event/map/EditEventMapRoutes.vue'
-import EditEventMap from 'src/pages/edit-event/EditEventMap.vue'
-import EditEventMapLocation from 'src/pages/edit-event/map/EditEventMapLocation.vue'
 import { uiStore } from 'src/store/UiStore'
 import RegistrationSucess from 'src/pages/RegistrationSucess.vue'
 import EventMap from 'src/pages/EventMap.vue'
@@ -28,6 +24,10 @@ import EventAreaMetrics from 'pages/event-map/detail/area/metrics/EventAreaMetri
 import EventAreaMetricsMap from 'pages/event-map/detail/area/metrics/EventAreaMetricsMap'
 import CreateLead from 'pages/event-map/detail/area/lead/CreateLead.vue'
 import Profile from 'pages/Profile.vue'
+import EditEventGeometry from 'pages/edit-event/geometry/EditEventGeometry.vue'
+import EditEventGeometryMap from 'pages/edit-event/geometry/EditEventGeometryMap.vue'
+import EditEventDetails from 'pages/edit-event/details/EditEventDetails.vue'
+import CreateEvent from 'pages/CreateEvent.vue'
 import PrintEvent from 'pages/PrintEvent.vue'
 import App from 'src/App.vue'
 import Print from 'src/Print.vue'
@@ -183,27 +183,19 @@ const routes = [
         ]
       },
       {
-        path: '/events/edit/new',
-        component: EditEvent,
-        redirect: {name: 'edit-event-details-new'},
-        props: true,
+        path: '/events/create',
+        component: CreateEvent,
+        name: 'create-event',
         meta: {
           title: () => 'Aktion erstellen',
           requiresAuth: true
+
         },
-        children: [
-          {
-            path: 'details',
-            component: EditEventDetails,
-            name: 'edit-event-details-new'
-          }
-        ]
       },
       {
         path: '/events/edit/:id',
-        component: EditEvent,
+        component: EditEvent,name: 'edit-event',
         redirect: {name: 'edit-event-details'},
-        props: true,
         meta: {
           subtitle: () => uiStore.getState().activeTitleElements.event,
           title: () => 'Aktion bearbeiten',
@@ -213,32 +205,15 @@ const routes = [
           {
             path: 'details',
             component: EditEventDetails,
-            props: true,
             name: 'edit-event-details'
           },
           {
-            path: 'map',
-            component: EditEventMap,
-            children: [
-              {
-                path: 'location',
-                component: EditEventMapLocation,
-                name: 'edit-event-location',
-                meta: {
-                  subtitle: () => uiStore.getState().activeTitleElements.event,
-                  title: () => 'Treffpunkt festlegen'
-                }
-              },
-              {
-                path: 'route-planner',
-                component: EditEventMapRoutes,
-                name: 'edit-event-routes',
-                meta: {
-                  subtitle: () => uiStore.getState().activeTitleElements.event,
-                  title: () => 'Aktionsgebiete zeichnen'
-                }
-              }
-            ]
+            path: 'geometry',
+                components: {
+              default: EditEventGeometry,
+              map: EditEventGeometryMap
+                },
+                name: 'edit-event-geometry',
           }
         ]
       },

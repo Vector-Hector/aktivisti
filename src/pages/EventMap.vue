@@ -4,7 +4,6 @@
       <Map
         :bounding-box="bbox"
         ref="map"
-        map-style="mapbox://styles/mapbox/streets-v11"
         @update:boundingBox="setBbox($event)"
       >
         <GeolocationControl />

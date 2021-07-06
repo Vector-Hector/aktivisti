@@ -204,7 +204,7 @@ export default defineComponent({
 }
 
 .invited-button {
-  color: $gray-500;
+  color: $grey-4;
   justify-self: center;
   align-self: center;
 }

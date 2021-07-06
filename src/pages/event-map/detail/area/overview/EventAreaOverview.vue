@@ -241,8 +241,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "src/css/_globals.scss";
-
 label {
   text-align: left;
 }

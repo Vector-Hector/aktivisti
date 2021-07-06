@@ -88,7 +88,7 @@ export default defineComponent({
 
 </script>
 <style lang="scss" scoped>
-@import "src/css/_variables.scss";
+@import "src/css/variables.scss";
 
 .popup {
   padding: 6px 3px 0 3px;

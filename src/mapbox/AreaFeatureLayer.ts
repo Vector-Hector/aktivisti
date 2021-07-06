@@ -2,7 +2,7 @@ import { defineComponent, inject, onMounted, PropType, onUnmounted, h } from 'vu
 import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { Feature } from 'geojson'
-import { getColorFromPropertiesWithDefault } from 'src/pages/edit-event/map/route-planner.styles'
+import { getColorFromPropertiesWithDefault } from 'pages/edit-event/geometry/route-planner.styles'
 
 
 export default defineComponent({
@@ -16,7 +16,7 @@ export default defineComponent({
   emits: ['update:location'],
   setup(props) {
     const uuid = uuidv4()
-    const map = inject(MapInject)
+    const map = inject(MapInject)!
 
     const layers: string[] = []
     onMounted(() => {

@@ -22,8 +22,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "src/css/_globals.scss";
-
 label {
   text-align: left;
 }
@@ -33,12 +31,6 @@ label {
   flex: 1;
   flex-direction: column;
   height: 100%;
-}
-
-Button {
-  margin: 10px;
-  background: $red;
-  border: 1px solid $red;
 }
 
 .campaign {

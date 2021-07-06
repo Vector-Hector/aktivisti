@@ -156,7 +156,7 @@ export default defineComponent({
   margin-top: 1em;
   flex-direction: column;
   align-items: flex-end;
-  border-bottom: 1px solid $gray-400;
+  border-bottom: 1px solid $grey-3;
 }
 
 .submit-button {

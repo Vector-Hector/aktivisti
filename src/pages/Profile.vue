@@ -437,7 +437,7 @@ export default defineComponent({
 }
 
 .username {
-  color: $gray-700;
+  color: $grey-5;
 
   &.onlyname {
     color: $text-primary;

@@ -37,14 +37,14 @@ export class EventRoute extends ApiRoute<EventDto> {
     return new JSONResponse<APIEnvelope<EventDto>>(response, data)
   }
 
-  async batchUpdateMetricRecords(id: string, body: Partial<EventMetricRecordDto>[]) {
+  async batchSetMetricRecords(id: string, body: Partial<EventMetricRecordDto>[]) {
     const response = await this.request({
-      path: `${this.path}${id}/batch-update-metric-records/`,
+      path: `${this.path}${id}/batch-set-metric-records/`,
       data: body,
       method: 'POST'
     })
     const data = response.data
-    return new JSONResponse<APIEnvelope<EventDto>>(response, data)
+    return new JSONResponse<APIEnvelope<EventMetricRecordDto[]>>(response, data)
   }
 
   async invite(id: string, body: BulkInviteDto) {
