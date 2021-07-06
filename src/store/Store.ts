@@ -18,7 +18,7 @@ export abstract class Store<T extends Object> {
   }
 
   public getState(): T {
-    return readonly(this.state) as T
+    return this.state
   }
 
   public reset() {
