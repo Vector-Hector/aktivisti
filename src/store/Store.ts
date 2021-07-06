@@ -1,4 +1,4 @@
-import { reactive, readonly } from 'vue'
+import { reactive } from 'vue'
 
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -18,7 +18,7 @@ export abstract class Store<T extends Object> {
   }
 
   public getState(): T {
-    return readonly(this.state) as T
+    return this.state
   }
 
   public reset() {
