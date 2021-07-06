@@ -59,12 +59,18 @@ export default defineComponent({
   },
   async created() {
     const {metrics, records} = await this.fetchMetricRecords()
-    for (const {id: metricId, name } of metrics){
-      this.columns.push({
-        name: metricId,
-        field: metricId,
-        label: name,
-      })
+    for (const {metric} of records) {
+      for (const {id: metricId, name } of metrics) {
+        //Only create report columns for metrics available for the event
+        if (metric == metricId) {
+          this.columns.push({
+            name: metricId,
+            field: metricId,
+            label: name,
+          })
+        }
+      }
+
     }
     this.columns.push(
       {
