@@ -6,99 +6,103 @@
         v-else
         class="my-events-content"
       >
-        <h3 class="my-events-section-heading">Offene Einladungen</h3>
-        <QSeparator class="profile-section-divider" />
+        <div v-show="pendingEvents.length > 0" >
+          <h3 class="my-events-section-heading">Offene Einladungen</h3>
+          <QSeparator class="profile-section-divider" />
 
-        <QList
-        >
-          <QItem
-            v-for="{participation, event} in pendingEvents"
-            :key="participation.id"
-            :clickable="true"
-            :to="{ name: 'event-detail', params: { id: participation.event } }"
+          <QList
           >
-            <QItemSection>
-              <QItemLabel>
-                <b>{{ event.name }}</b>
-              </QItemLabel>
-              <QItemLabel>
-                {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
-              </QItemLabel>
-              <QItemLabel>
-                {{ $utils.dateFormat(event.start_date) }}
-              </QItemLabel>
-              <QItemLabel>
-                <i>
-                  {{
-                    findInvitingUsers(participation.inviting_users).map(({username}) => username).join(',') ?? 'Unbekannt '
-                  }}
-                  <span v-if="participation.inviting_users.length > 1">haben</span><span v-else>hat</span> dich
-                  eingeladen
-                </i>
-              </QItemLabel>
+            <QItem
+              v-for="{participation, event} in pendingEvents"
+              :key="participation.id"
+              :clickable="true"
+              :to="{ name: 'event-detail', params: { id: participation.event } }"
+            >
+              <QItemSection>
+                <QItemLabel>
+                  <b>{{ event.name }}</b>
+                </QItemLabel>
+                <QItemLabel>
+                  {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
+                </QItemLabel>
+                <QItemLabel>
+                  {{ $utils.dateFormat(event.start_date) }}
+                </QItemLabel>
+                <QItemLabel>
+                  <i>
+                    {{
+                      findInvitingUsers(participation.inviting_users).map(({username}) => username).join(',') ?? 'Unbekannt '
+                    }}
+                    <span v-if="participation.inviting_users.length > 1">haben</span><span v-else>hat</span> dich
+                    eingeladen
+                  </i>
+                </QItemLabel>
 
-            </QItemSection>
-            <QItemSection side>
-              <div
-                class="action-buttons"
-              >
-                <QBtn
-                  dense
-                  flat
-                  @click.prevent.stop="reject(participation)"
-                  :icon="ionClose"
+              </QItemSection>
+              <QItemSection side>
+                <div
+                  class="action-buttons"
+                >
+                  <QBtn
+                    dense
+                    flat
+                    @click.prevent.stop="reject(participation)"
+                    :icon="ionClose"
                   >
-                  Ablehnen
-                </QBtn>
-                <QBtn
-                  dense
-                  flat
-                  color="primary"
-                  @click.prevent.stop="accept(participation)"
-                  :icon="ionCheckmark"
+                    Ablehnen
+                  </QBtn>
+                  <QBtn
+                    dense
+                    flat
+                    color="primary"
+                    @click.prevent.stop="accept(participation)"
+                    :icon="ionCheckmark"
                   >
-                  Annehmen
-                </QBtn>
-              </div>
-            </QItemSection>
-          </QItem>
-        </QList>
+                    Annehmen
+                  </QBtn>
+                </div>
+              </QItemSection>
+            </QItem>
+          </QList>
+        </div>
 
-        <h3 class="my-events-section-heading">Meine Aktionen</h3>
-        <QSeparator class="profile-section-divider" />
+        <div v-show="acceptedEvents.length > 0">
+          <h3 class="my-events-section-heading">Meine Aktionen</h3>
+          <QSeparator class="profile-section-divider" />
 
-        <QList
+          <QList
+          >
+            <QItem
+              v-for="{participation, event} in acceptedEvents"
+              :key="participation.id"
+              :clickable="true"
+              :to="{ name: 'event-detail', params: { id: participation.event } }"
+            >
+              <QItemSection>
+                <QItemLabel>
+                  <b>{{ event.name }}</b>
+                </QItemLabel>
+                <QItemLabel>
+                  {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
+                </QItemLabel>
+                <QItemLabel>
+                  {{ $utils.dateFormat(event.start_date) }}
+                </QItemLabel>
+              </QItemSection>
+            </QItem>
+          </QList>
+        </div>
+        <div
+          v-if="eventParticipations.length <= 0"
+          class="placeholder"
         >
-          <div
-            v-if="eventParticipations.length <= 0"
-            class="placeholder"
-          >
-            <p>Du nimmst an keinen Aktion teil - suche jetzt welche!</p>
-            <QBtn
-              label="Jetzt nach Aktionen suchen"
-              :to="{ name: 'events' }"
-              color="primary"
-            />
-          </div>
-          <QItem
-            v-for="{participation, event} in acceptedEvents"
-            :key="participation.id"
-            :clickable="true"
-            :to="{ name: 'event-detail', params: { id: participation.event } }"
-          >
-            <QItemSection>
-              <QItemLabel>
-                <b>{{ event.name }}</b>
-              </QItemLabel>
-              <QItemLabel>
-                {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
-              </QItemLabel>
-              <QItemLabel>
-                {{ $utils.dateFormat(event.start_date) }}
-              </QItemLabel>
-            </QItemSection>
-          </QItem>
-        </QList>
+          <p>Du nimmst an keinen Aktion teil - suche jetzt welche!</p>
+          <QBtn
+            label="Jetzt nach Aktionen suchen"
+            :to="{ name: 'events' }"
+            color="primary"
+          />
+        </div>
       </div>
     </div>
   </QPage>
@@ -273,6 +277,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 1rem 0 0 0;
 }
 
 .filter-container {
