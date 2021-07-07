@@ -151,7 +151,7 @@
             <QCard>
               <QCardSection>
                   <span>
-                    Wollen sie die Beschreibung für diesen Ort übernehmen?
+                    Willst du die Beschreibung für diesen Ort übernehmen?
                     <br>
                     <b>{{ placeSuggestion.suggestion }}</b>
                   </span>

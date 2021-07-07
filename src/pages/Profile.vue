@@ -415,7 +415,7 @@ export default defineComponent({
               color: 'positive'
             })
             await this.$router.push({name: 'splash'})
-            await authStore.logout()
+            authStore.deleteSessionData()
           } catch (e) {
             this.$q.notify({
               message: 'Beim löschen deines Accounts trat ein Fehler auf',
