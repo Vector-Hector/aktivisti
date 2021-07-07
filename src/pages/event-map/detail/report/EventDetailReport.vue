@@ -1,28 +1,28 @@
 <template>
-    <QTable
-      :columns="columns"
-      dense
-      :flat=!$q.screen.lt.md
-      :grid=$q.screen.lt.md
-      :rows="rows"
-      hide-pagination
-      :pagination="{rowsPerPage:0}"
-      row-key="name"
-    >
-      <template v-slot:body-cell-areaName="props">
-        <QTd :props="props">
-          <div>
-            <QIcon
-              v-if="props.row.areaColor"
-              class="area-indicator-icon"
-              :name="ionEllipse"
-              :style="{ color: props.row.areaColor }"
-            />
-            {{props.value}}
-          </div>
-        </QTd>
-      </template>
-    </QTable>
+  <QTable
+    :columns="columns"
+    dense
+    :flat=!$q.screen.lt.md
+    :grid=$q.screen.lt.md
+    :rows="rows"
+    hide-pagination
+    :pagination="{rowsPerPage:0}"
+    row-key="name"
+  >
+    <template v-slot:body-cell-areaName="props">
+      <QTd :props="props">
+        <div>
+          <QIcon
+            v-if="props.row.areaColor"
+            class="area-indicator-icon"
+            :name="ionEllipse"
+            :style="{ color: props.row.areaColor }"
+          />
+          {{ props.value }}
+        </div>
+      </QTd>
+    </template>
+  </QTable>
 </template>
 
 <script lang="ts">
@@ -32,7 +32,7 @@ import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { ionEllipse } from '@quasar/extras/ionicons-v5'
 import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
-import { QIcon, QTable, QTd} from 'quasar'
+import { QIcon, QTable, QTd } from 'quasar'
 
 export default defineComponent({
   name: 'EventDetailReport',
@@ -54,12 +54,14 @@ export default defineComponent({
           align: 'left',
         }
       ] as any[],
-      rows: [ ] as any,
+      rows: [] as any,
     }
   },
   async created() {
     const {metrics, records} = await this.fetchMetricRecords()
-    for (const {id: metricId, name } of metrics){
+    //Only create report columns for metrics available for the event
+    const eventMetricIds = records.map(({metric}) => metric)
+    for (const {id: metricId, name} of metrics.filter(({id}) => eventMetricIds.includes(id))) {
       this.columns.push({
         name: metricId,
         field: metricId,
@@ -68,36 +70,44 @@ export default defineComponent({
     }
     this.columns.push(
       {
-      name: 'completedAddresses',
-      field: 'completedAddresses',
-      label: 'Besuchte Adressen'
-     },{
+        name: 'completedAddresses',
+        field: 'completedAddresses',
+        label: 'Besuchte Adressen'
+      }, {
         name: 'overallAddresses',
         field: 'overallAddresses',
         label: 'Adressen im Gebiet'
-      },{
+      }, {
         name: 'createdLeads',
         field: 'createdLeads',
         label: 'Gewonnene Kontakte'
       }
-     )
+    )
 
-    const summarizedCountsRow : any = {
+    const summarizedCountsRow: any = {
       areaName: 'Gesamt',
       overallAddresses: 0,
       completedAddresses: 0,
       createdLeads: 0
     }
-    const targetValueOfMetricsRow = records.reduce((row, record) => ({...row, [record.metric]: record.target}), { areaName: 'Zielvorgabe' })
+    const targetValueOfMetricsRow = records.reduce((row, record) => ({
+      ...row,
+      [record.metric]: record.target
+    }), {areaName: 'Zielvorgabe'})
 
     for (const {id, color, name} of this.eventAreas) {
       if (id) {
-        const {completed_addresses, overall_addresses, counts_per_metric, created_leads} = await this.fetchAreaMetricsReports(id)
-        const row : any = {
+        const {
+          completed_addresses,
+          overall_addresses,
+          counts_per_metric,
+          created_leads
+        } = await this.fetchAreaMetricsReports(id)
+        const row: any = {
           areaName: name,
           areaColor: color,
           overallAddresses: overall_addresses,
-          completedAddresses:  completed_addresses,
+          completedAddresses: completed_addresses,
           createdLeads: created_leads
         }
         summarizedCountsRow.overallAddresses += overall_addresses;
@@ -106,7 +116,7 @@ export default defineComponent({
         for (const {id: metricId} of metrics) {
           const countOfMetric = counts_per_metric.find(({metric}) => metric === metricId)?.count || 0
           row[metricId] = countOfMetric
-          summarizedCountsRow[metricId] =  (summarizedCountsRow[metricId] | 0 ) + countOfMetric
+          summarizedCountsRow[metricId] = (summarizedCountsRow[metricId] | 0) + countOfMetric
         }
         this.rows.push(row)
       }
