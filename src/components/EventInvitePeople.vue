@@ -86,7 +86,7 @@ import { QIcon, QItem, QItemLabel, QItemSection, QList, QSelect } from 'quasar'
 interface UserSuggestionItem {
   id: number
   username: string
-  email: string
+  email?: string
   isInvitePlaceholder?: boolean
 }
 
@@ -153,7 +153,7 @@ export default defineComponent({
     async searchUsers(query: string, update: any) {
       let suggestions: UserSuggestionItem[]
       if (query) {
-        suggestions = (await this.$apiClient.user.list({query: query})).payload.data
+        suggestions = (await this.$apiClient.publicProfiles.list({query: query})).payload.data
         // Show the invite user option in autocomplete if the email is not yet part of our suggestions
         if (query.includes('@') && !suggestions.map(({email}) => email).includes(query)) {
           suggestions.push(this.getInvitePlaceholder(query))
@@ -168,7 +168,7 @@ export default defineComponent({
     async inviteUser(user: UserSuggestionItem) {
       this.query = ''
 
-      const inviteRequestBody = user.isInvitePlaceholder ? {
+      const inviteRequestBody = user.isInvitePlaceholder && user.email ? {
         users: [],
         email_addresses: [user.email]
       } : {
