@@ -112,13 +112,14 @@ export default defineComponent({
     }
   },
   created() {
+    const features = [...this.areaFeatures]
     if (this.event?.location) {
-      const meetingPoint = circle([this.event.location.lng, this.event.location.lat], 0.2)
-      this.bbox = (this.areaFeatures.length > 0 ? bbox({
-        type: 'FeatureCollection',
-        features: [...this.areaFeatures, meetingPoint]
-      }) : bbox(meetingPoint)) as BBox2d
+      features.push(circle([this.event.location.lng, this.event.location.lat], 0.2))
     }
+    this.bbox = features.length > 0 ? bbox({
+      type: 'FeatureCollection',
+      features: features
+    }) as BBox2d : null
   }
 })
 </script>

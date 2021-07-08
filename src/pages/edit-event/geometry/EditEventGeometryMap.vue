@@ -10,6 +10,12 @@
     @draw:update="handleCreatedFeatures"
     @draw:delete="handleDeletedFeatures"
   />
+  <AddressMarker
+    v-for="address in addresses"
+    :key="address.house_number"
+    :location="center(address.geometry)"
+    :text="address.house_number"
+  />
   <Marker
     v-if="event.location"
     :location="event.location"
@@ -24,14 +30,17 @@ import Marker from 'src/mapbox/Marker.vue'
 import DrawControl from 'src/mapbox/DrawControl.vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { routePlannerStyles } from './route-planner.styles'
-import { Feature } from 'geojson'
+import { Feature, Geometry } from 'geojson'
 import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
-import { bbox, booleanPointInPolygon, circle, polygon } from '@turf/turf'
+import { bbox, booleanPointInPolygon, center as turfCenter, circle, polygon } from '@turf/turf'
 import InjectMapMixin from 'pages/event-detail/InjectMapMixin'
 import { MapInject } from 'src/mapbox/Map.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { EditEventBus, START_DRAW_AREA } from 'src/store/EditEventStore'
 import { noop } from 'lodash-es'
+import { AddressDetails } from 'src/api/model/AreaDetailsDto'
+import { LocationDto } from 'src/api/model/LocationDto'
+import AddressMarker from 'src/mapbox/AddressMarker.vue'
 
 const defaultColors = [
   '#E22A3A',
@@ -50,7 +59,8 @@ export default defineComponent({
   name: 'EditEventGeometryMap',
   components: {
     DrawControl,
-    Marker
+    Marker,
+    AddressMarker
   },
   setup() {
     const map = inject(MapInject)
@@ -82,6 +92,13 @@ export default defineComponent({
           }
         }
       })
+    },
+    addresses(): AddressDetails[] | undefined {
+      return this.eventAreas
+        .map(({area_details}) => area_details?.streets ?? [])
+        .flat()
+        .map(({addresses}) => addresses)
+        .flat()
     }
   },
   mounted() {
@@ -117,6 +134,14 @@ export default defineComponent({
     }
   },
   methods: {
+    center(geometry: Geometry): LocationDto {
+      //@ts-ignore
+      const point = turfCenter(geometry)
+      return {
+        lat: point.geometry.coordinates[1],
+        lng: point.geometry.coordinates[0]
+      }
+    },
     async handleCreatedFeatures(event: any) {
       for (const feature of event.features) {
         const existingArea = this.eventAreas.find((area) => area.feature_id === feature.id)
