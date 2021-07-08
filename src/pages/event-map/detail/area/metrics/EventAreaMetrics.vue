@@ -12,7 +12,7 @@
 
   <div
     v-if="metricRecords.length"
-    class="q-pt-md q-gutter-md"
+    class="q-gutter-x-md"
   >
     <MetricsRow
       v-for="metricRecord in metricRecords"
@@ -146,6 +146,7 @@ label {
 .create-lead {
   display: flex;
   justify-content: center;
+  margin-top: -.5rem;
 }
 
 </style>

@@ -119,8 +119,9 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
     const metricsToUpdate: { metricRecordId: string, value: number }[] = []
     // set a flag indicating that before this update no metrics were recorded
     let fromIncompleteState = true
-    try {
-      const oldMetrics = this.state.sessions[this.state.trackingSessionId!].eventAreas[eventArea][address.osm_id]
+
+    const oldMetrics = this.state.sessions[this.state.trackingSessionId!]?.eventAreas[eventArea]?.[address.osm_id]
+    if (oldMetrics) {
       for (const [metricId, value] of Object.entries(oldMetrics)) {
         if (value > 0) {
           // if any value before this update was >0 this address was indicated as completed already
@@ -130,7 +131,8 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
           metricsToUpdate.push({metricRecordId: metricId, value: metricValueMap[metricId]})
         }
       }
-    } catch (e) { // ignore type error and assume no metrics were recorded yet, so all metrics will be reported
+    } else {
+      // No metrics are recorded yet, assume a fresh submission
       metricsToUpdate.push(...Object.entries(metricValueMap).map(([metricRecordId, value]) => {
         return {
           metricRecordId,
@@ -143,27 +145,29 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
     }
     this.state.sessions[this.state.trackingSessionId!].eventAreas[eventArea][address.osm_id] = metricValueMap
     this.storeAddressInLocalStorage(eventArea, address.osm_id, metricValueMap)
+    const updatePromises: Promise<any>[] = []
     for (const metric of metricsToUpdate) {
       const metricId = parseInt(metric.metricRecordId)
       const aggregatedMetricValue = this.aggregateForMetricRecordAndEventArea(eventArea, metricId)
-      await apiClient.eventMetricRecordSubmissions.create({
+      updatePromises.push(apiClient.eventMetricRecordSubmissions.create({
         metric_record: parseInt(metric.metricRecordId),
         event_area: eventArea,
         value: aggregatedMetricValue,
         tracking_session: this.state.trackingSessionId!
-      })
+      }))
     }
     // If we updated this address to only record zeroes that means we mark this address as incomplete
     const toIncompleteState = metricsToUpdate.reduce((acc, item) => item.value + acc, 0) == 0
     if (fromIncompleteState || toIncompleteState) {
       // If there is any metric recorded for this address indicate completion to the backend, if not indicate incompletion
       const completed = metricsToUpdate.some(({value}) => value > 0)
-      await apiClient.completionNotes.create({
+      updatePromises.push(apiClient.completionNotes.create({
         target_id: address.osm_id,
         completed: completed,
         event_area: eventArea
-      })
+      }))
     }
+    await Promise.all(updatePromises)
 
   }
 }
