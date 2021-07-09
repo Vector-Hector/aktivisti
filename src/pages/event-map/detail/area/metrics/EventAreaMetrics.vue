@@ -26,7 +26,7 @@
   <p
     v-else
   >
-    Für diese Aktion wurden keine Metriken definiert
+    Für diese Aktion wurden keine Ergebnisse definiert
   </p>
 </template>
 

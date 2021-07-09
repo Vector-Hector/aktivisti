@@ -83,7 +83,7 @@
         :error="!!errors.visibility?.length"
       />
 
-      <h3 class="metrics-headline">Metriken</h3>
+      <h3 class="metrics-headline">Zielvorgaben</h3>
       <div class="metrics-input-wrapper">
         <MetricInput
           v-for="metric in metrics"
@@ -241,12 +241,12 @@ export default defineComponent({
         this.metricRecords = cloneDeep(metricRecordsRequest.payload.data)
         this.$q.notify({
           color: 'positive',
-          message: 'Metriken gespeichert'
+          message: 'Ergebnisse gespeichert'
         })
       } catch (e) {
         this.$q.notify({
           color: 'negative',
-          message: 'Die Metriken konnten nicht gespeichert werden'
+          message: 'Die Ergebnisse konnten nicht gespeichert werden'
         })
       }
     },
