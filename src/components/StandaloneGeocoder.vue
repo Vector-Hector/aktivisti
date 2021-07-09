@@ -11,23 +11,28 @@
           hide-dropdown-icon
           @filter="filterFn"
           dense
-          outlined
+          filled
           :options="filteredPlaces"
           option-label="place_name"
           use-input
           @update:model-value="emitResult($event)"
         >
+          <template v-slot:append>
+            <QIcon
+              :name="ionSearch"
+            />
+          </template>
           <template v-slot:option="slotProps">
             <QItem
               v-bind="slotProps.itemProps"
             >
               <QItemSection>
-               <QItemLabel>{{slotProps.opt.place_name.split(',')[0]}}</QItemLabel>
-                <QItemLabel caption>{{slotProps.opt.place_name.split(',').slice(1).join(', ')}}</QItemLabel>
+                <QItemLabel>{{ slotProps.opt.place_name.split(',')[0] }}</QItemLabel>
+                <QItemLabel caption>{{ slotProps.opt.place_name.split(',').slice(1).join(', ') }}</QItemLabel>
               </QItemSection>
             </QItem>
           </template>
-          </QSelect>
+        </QSelect>
       </div>
     </div>
   </div>
@@ -37,7 +42,8 @@
 import { defineComponent } from 'vue'
 import { geocodingService } from 'src/utils/mapbox'
 import { GeocodeResult } from 'src/types/GeocodeResult'
-import { QItem, QItemSection, QItemLabel, QSelect } from 'quasar';
+import { QItem, QItemSection, QItemLabel, QSelect, QIcon } from 'quasar'
+import { ionSearch } from '@quasar/extras/ionicons-v5'
 
 export default defineComponent({
   name: 'StandaloneGeocoder',
@@ -45,18 +51,20 @@ export default defineComponent({
     QItem,
     QItemLabel,
     QItemSection,
-    QSelect
+    QSelect,
+    QIcon
   },
   emits: ['result'],
   data() {
     return {
       selectedGeocode: null as GeocodeResult | null,
-      filteredPlaces: [] as GeocodeResult[]
+      filteredPlaces: [] as GeocodeResult[],
+      ionSearch
     }
   },
   methods: {
-    async filterFn(val: any, update: any, abort: any){
-      if (val.length < 2){
+    async filterFn(val: any, update: any, abort: any) {
+      if (val.length < 2) {
         abort()
         return
       }
@@ -79,7 +87,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 
 .search-place {
-  width:100%;
+  width: 100%;
 }
 
 .place-caption-first-line {

@@ -150,7 +150,8 @@ export default defineComponent({
       onDrop,
       initialized,
       mapContainer,
-      fitBounds
+      fitBounds,
+      getBoundingBox
     }
   }
 })
@@ -165,6 +166,5 @@ export default defineComponent({
   flex: 1;
   order: 1;
   display: flex;
-  height: 100%;
 }
 </style>

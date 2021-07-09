@@ -1,44 +1,52 @@
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
-import { CampaignDto } from 'src/api/model/CampaignDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
+import { EventAreaDto } from 'src/api/model/EventAreaDto'
+import { editEventStore } from 'src/store/EditEventStore'
 
-/**
- * A mixin for working with an event to avoid repetition
- * It serves two purposes:
- *
- * 1. Expose mandatory props which are the event
- * it's working on and campaigns that are shared during the edit/creation process to avoid
- * repeated API calls
- *
- * 2. Introduce a computed property that will propagate changes to the event
- */
 export default defineComponent({
-  props: {
-    event: {
-      type: Object as PropType<Partial<EventDto>>,
-      required: true
-    },
-    eventMetricRecords: {
-      type: Array as PropType<EventMetricRecordDto[]>,
-      default: () => []
-    },
-    campaigns: {
-      type: Array as PropType<CampaignDto[]>,
-      required: true
-    }
-  },
-  emits: ['update:event', 'update:eventMetricRecords'],
   computed: {
-    editMode(): boolean {
-      return !!(this.event.id && this.event.location)
-    },
-    localEvent: {
-      get(): Partial<EventDto> {
-        return this.event
+    event: {
+      get(): EventDto {
+        return editEventStore.getState().event!
       },
-      set(value: Partial<EventDto>) {
-        this.$emit('update:event', value)
+      set(value: EventDto) {
+        editEventStore.setEvent(value)
+      }
+    },
+    eventAreas: {
+      get(): EventAreaDto[] {
+        return editEventStore.getState().eventAreas
+      },
+      set(areas: EventAreaDto[]) {
+        editEventStore.setEventAreas(areas)
+      }
+    },
+    metricRecords: {
+      get(): EventMetricRecordDto[] {
+        return editEventStore.getState().metricRecords
+      },
+      set(records: EventMetricRecordDto[]) {
+        editEventStore.setMetricRecords(records)
+      }
+    },
+    campaigns() {
+      return editEventStore.getState().campaigns
+    },
+    updatingAreaFeatureIds: {
+      get(): Set<string> {
+        return editEventStore.getState().updatingAreaFeatureIds
+      },
+      set(featureIds: string[] | Set<string>) {
+        editEventStore.setUpdatingAreaFeatureIds(featureIds)
+      }
+    },
+    deletingAreaIds: {
+      get(): Set<string> {
+        return editEventStore.getState().deletingAreaIds
+      },
+      set(ids: string[] | Set<string>) {
+        editEventStore.setDeletingAreaIds(ids)
       }
     }
   }

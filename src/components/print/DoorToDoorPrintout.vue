@@ -280,17 +280,17 @@ export default defineComponent({
 
   .metric-item {
     height: 2.5cm;
-    border-top: 1px dotted $gray-600;
+    border-top: 1px dotted $grey-4;
     display: flex;
     align-items: center;
 
     &:last-of-type {
-      border-bottom: 1px dotted $gray-600;
+      border-bottom: 1px dotted $grey-4;
     }
   }
 
   .metric-item-cell {
-    border-left: 1px dotted $gray-600;
+    border-left: 1px dotted $grey-4;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -298,14 +298,14 @@ export default defineComponent({
     height: 100%;
 
     &:last-of-type {
-      border-right: 1px dotted $gray-600;
+      border-right: 1px dotted $grey-4;
     }
   }
 
   .target-hint {
     align-self: flex-start;
     font-size: 0.8rem;
-    color: $gray-700;
+    color: $grey-5;
   }
 }
 

@@ -1,6 +1,5 @@
 <template>
   <div
-    class="map-container"
     :class="containerClasses"
   >
     <slot />
@@ -15,8 +14,8 @@ export default defineComponent({
     containerClasses() {
       return {
         'map-container': true,
-        'bottom': this.$q.screen.lt.lg,
-        'side': !this.$q.screen.lt.lg
+        'bottom': this.$q.screen.lt.md,
+        'side': !this.$q.screen.lt.md
       }
     }
   }

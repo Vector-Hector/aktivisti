@@ -25,7 +25,7 @@ export default defineComponent({
   },
   computed: {
     overlayComponent(): Component {
-      return this.$q.screen.lt.lg ? ResizableBottomSheet : MapSidebar
+      return this.$q.screen.lt.md ? ResizableBottomSheet : MapSidebar
     }
   }
 })
@@ -33,7 +33,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 ::v-deep(.overlay-title) {
-  background: $gray-100;
+  background: $grey-1;
   border-bottom: 1px solid $red;
   margin: 0;
   padding: 0.5rem 1rem;

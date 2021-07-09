@@ -1,131 +1,125 @@
 <template>
   <QPage class="edit-event">
-    <QStepper class="stepper"
-      alternative-labels
-      v-model="step"
-      color="primary"
-      animated
-    >
-      <QStep
-        :name="1"
-        title="Beschreibung"
-        prefix="1"
-       />
-      <QStep
-        :name="2"
-        title="Treffpunkt"
-        prefix="2"
-      />
-      <QStep
-        :name="3"
-        title="Gebiete"
-        prefix="3"
-      />
-    </QStepper >
-    <router-view
-      v-slot="{Component}"
-      v-model:event="event"
-      v-model:event-metric-records="metricRecords"
-      :campaigns="campaigns"
-    >
-      <keep-alive>
-        <component :is="Component" />
-      </keep-alive>
-    </router-view>
+    <RouteStepper
+      :steps="DoorToDoorEventSteps"
+      v-model="activeStep"
+    />
+
+    <MapContainer>
+      <Map
+        :bounding-box="bbox"
+      >
+        <router-view
+          name="map"
+        />
+      </Map>
+      <MapOverlayProxy
+        :title="activeStep?.label"
+      >
+        <router-view />
+      </MapOverlayProxy>
+    </MapContainer>
   </QPage>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 
 import { EventTypes } from 'src/api/model/EventTypes'
-import { EventDto, VisibilityOptions } from 'src/api/model/EventDto'
 import { apiClient } from 'src/api/ApiClient'
-import { CampaignDto } from 'src/api/model/CampaignDto'
 import { uiStore } from 'src/store/UiStore'
-import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
-import { QStep, QStepper, QPage, QPopupProxy } from 'quasar'
+import { QPage } from 'quasar'
+import MapOverlayProxy from 'components/MapOverlayProxy.vue'
+import { editEventStore } from 'src/store/EditEventStore'
+import Map from 'src/mapbox/Map.vue'
+import MapContainer from 'components/MapContainer.vue'
+import RouteStepper, { Step } from 'components/stepper/RouteStepper.vue'
+import { bbox, circle } from '@turf/turf'
+import { Feature } from 'geojson'
+import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 
-/**
- * The parent component implementing the individual steps for creating an event
- */
+const DoorToDoorEventSteps = [{
+  label: 'Einstellungen',
+  routeName: 'edit-event-details'
+}, {
+  label: 'Treffpunkt/Gebiete',
+  routeName: 'edit-event-geometry'
+}]
+
 export default defineComponent({
   name: 'EditEvent',
   components: {
-    QStep,
-    QStepper,
+    RouteStepper,
+    MapContainer,
     QPage,
-    QPopupProxy
+    MapOverlayProxy,
+    Map
   },
   beforeRouteEnter: async (to, from, next) => {
-    const campaignRequestPromise = apiClient.campaigns.list()
-    if (to.params.id) {
-      const [eventRequest, campaignRequest] = await Promise.all([
-        apiClient.events.get(to.params.id as string, ['eventmetricrecord_set']),
-        campaignRequestPromise
-      ])
-      next((vm: any) => {
-        uiStore.updateActiveElements({
-          event: eventRequest.payload.data.name
-        })
-        vm.event = eventRequest.payload.data
-        vm.campaigns = campaignRequest.payload.data
-        vm.metricRecords = eventRequest.payload.embedded.eventmetricrecord_set
+    const [eventRequest, campaignRequest, eventAreasRequest] = await Promise.all([
+      apiClient.events.get(to.params.id as string, ['eventmetricrecord_set']),
+      apiClient.campaigns.list(),
+      apiClient.eventAreas.list({event: to.params.id})
+    ])
+    editEventStore.setEvent(eventRequest.payload.data)
+    editEventStore.setCampaigns(campaignRequest.payload.data)
+    editEventStore.setMetricRecords(eventRequest.payload.embedded.eventmetricrecord_set)
+    editEventStore.setEventAreas(eventAreasRequest.payload.data)
+    next(() => {
+      uiStore.updateActiveElements({
+        event: eventRequest.payload.data.name
       })
-    } else {
-      const campaignRequest = await campaignRequestPromise
-      next((vm: any) => {
-        vm.campaigns = campaignRequest.payload.data
-      })
-    }
+    })
   },
   beforeRouteUpdate() {
     uiStore.updateActiveElements({
-      event: this.event.name
+      event: editEventStore.getState().event?.name
     })
   },
-  props: {
-    // event id
-    id: {
-      type: String as PropType<string | null>,
-      required: false,
-      default: null
-    }
+  unmounted() {
+    editEventStore.reset()
   },
-  created() {
-    this.setStep(this.$route.name)
+  computed: {
+    event() {
+      return editEventStore.getState().event
+    },
+    steps(): Step[] {
+      switch (this.event?.event_type) {
+      case EventTypes.DOOR_TO_DOOR:
+      default:
+        return DoorToDoorEventSteps
+      }
+    },
+    areaFeatures(): Feature[] {
+      return editEventStore.getState().eventAreas.map((area) => {
+        return {
+          type: 'Feature',
+          id: area.feature_id,
+          geometry: area.geometry,
+          properties: {
+            color: area.color
+          }
+        }
+      })
+    }
   },
   data() {
     return {
-      campaigns: [] as CampaignDto[],
-      metricRecords: [] as EventMetricRecordDto[],
-      event: {
-        event_type: EventTypes.DOOR_TO_DOOR,
-        metrics: [],
-        targets: {},
-        visibility: VisibilityOptions.Public
-      } as Partial<EventDto>,
-      step: 1 as number
+      EventTypes,
+      DoorToDoorEventSteps,
+      activeStep: {},
+      bbox: null as BBox2d | null
     }
   },
-  watch: {
-    '$route' (to) {
-      this.setStep(to.name)
+  created() {
+    const features = [...this.areaFeatures]
+    if (this.event?.location) {
+      features.push(circle([this.event.location.lng, this.event.location.lat], 0.2))
     }
-  },
-  methods: {
-    setStep(locationName: any): void {
-      switch(locationName){
-        case 'edit-event-location':
-          this.step = 2
-          break;
-        case 'edit-event-routes':
-          this.step = 3
-          break;
-        default:
-          this.step = 1
-      }
-    }
+    this.bbox = features.length > 0 ? bbox({
+      type: 'FeatureCollection',
+      features: features
+    }) as BBox2d : null
   }
 })
 </script>
@@ -135,12 +129,12 @@ export default defineComponent({
 .edit-event {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: auto;
-  width: 100%;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
   // TODO(peter@ctrl.alt.coop): Don't show/render the html element instead of hiding it.
-  ::v-deep .q-stepper__step-inner{
-    display:none
+  ::v-deep .q-stepper__step-inner {
+    display: none
   }
 }
 

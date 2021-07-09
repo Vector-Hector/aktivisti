@@ -1,6 +1,6 @@
 7<template>
   <Marker
-    v-if="event"
+    v-if="event.location"
     :location="event.location"
   />
   <FeatureLayer

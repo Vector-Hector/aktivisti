@@ -28,6 +28,7 @@ export default defineComponent({
   mounted() {
     this.map?.fitBounds(this.bbox as BBox2d)
   },
+
   methods: {
     center(geometry: Geometry): LocationDto {
       //@ts-ignore
