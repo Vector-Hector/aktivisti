@@ -25,6 +25,7 @@ import { ConfigRoute } from 'src/api/ConfigRoute'
 import { SessionRoute } from 'src/api/SessionRoute'
 import { ForgotPasswordDto } from 'src/api/model/ForgotPasswordDto'
 import { ObjectPermissionsRoute } from 'src/api/ObjectPermissionsRoute'
+import { PublicProfileDto } from 'src/api/model/PublicProfileDto'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -49,6 +50,7 @@ export class ApiClient {
   eventMetricRecordSubmissions = new ApiRoute<EventMetricRecordSubmissionDto>(this.baseURL, 'event-metric-record-submissions/', this.axiosInstance)
   campaigns = new ApiRoute<CampaignDto>(this.baseURL, 'campaigns/', this.axiosInstance)
   user = new ApiRoute<UserDto>(this.baseURL, 'users/', this.axiosInstance)
+  publicProfiles = new ApiRoute<PublicProfileDto>(this.baseURL, 'public-profiles/', this.axiosInstance)
   tokens = new TokenRoute(this.baseURL, 'tokens/', this.axiosInstance)
   personalMetrics = new PersonalMetricsRoute(this.baseURL, 'personal-metrics/', this.axiosInstance)
   userPermissions = new ApiRoute<UserObjectPermissionDto>(this.baseURL, 'user-permissions/', this.axiosInstance)
