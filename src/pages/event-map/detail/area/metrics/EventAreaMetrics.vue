@@ -12,7 +12,6 @@
 
   <div
     v-if="metricRecords.length"
-    class="q-gutter-x-md"
   >
     <MetricsRow
       v-for="metricRecord in metricRecords"
@@ -147,6 +146,10 @@ label {
   display: flex;
   justify-content: center;
   margin-top: -.5rem;
+}
+
+.metrics-input {
+  margin: .7rem 0 0;
 }
 
 </style>
