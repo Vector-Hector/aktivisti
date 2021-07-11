@@ -21,6 +21,11 @@ class AuthStore extends Store<AuthStoreState>{
 
   async logout() {
     await apiClient.session.logout()
+    this.deleteSessionData()
+  }
+
+  deleteSessionData() {
+    // remove all local tracking data
     trackingSessionStore.clear()
     this.clear()
   }
