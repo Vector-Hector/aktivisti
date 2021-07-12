@@ -123,7 +123,7 @@
         </span>
       </QItem>
     </QList>
-    <h3 class="profile-section-heading">Persönliche Metriken</h3>
+    <h3 class="profile-section-heading">Persönliche Ergebnisse</h3>
     <QSeparator class="profile-section-divider" />
     <QTable
       flat
@@ -284,7 +284,7 @@ export default defineComponent({
         {
           field: 'name',
           name: 'name',
-          label: 'Metrik',
+          label: 'Ergebniss',
           align: 'left'
         }, {
           field: 'value',

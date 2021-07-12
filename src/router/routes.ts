@@ -159,8 +159,8 @@ const routes = [
                       map: EventAreaMetricsMap
                     },
                     meta: {
-                      title: () => 'Metriken aufnehmen',
-                      subtitle: () => uiStore.getState().activeTitleElements.houseNumber,
+                      title: () => uiStore.getState().activeTitleElements.houseNumber,
+                      subtitle: () => 'Ergebnisse aufnehmen',
                       requiresAuth: true
                     },
                     props: true,
