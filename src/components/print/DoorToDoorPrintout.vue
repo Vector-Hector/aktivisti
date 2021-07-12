@@ -89,7 +89,7 @@
         <div
           class="tableheader row"
         >
-          <div class="col-3">Metrik</div>
+          <div class="col-3">Ergebnisse</div>
           <div class="col-6">Strichliste</div>
           <div class="col-2">Gesamt</div>
         </div>
