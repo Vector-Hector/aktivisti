@@ -8,12 +8,17 @@
       :disabled="modelValue <= 0"
       @click="$emit('update:modelValue', modelValue - 1)"
     />
-    <input
+    <QInput
       class="counter-input-field"
-      :value="modelValue"
+      square
+      dense
+      outlined
+      :counter="false"
+      :model-value="modelValue"
+      min="0"
       type="number"
-      @change="updateValue($event.target.value)"
-    >
+      @update:model-value="updateValue($event)"
+    />
     <QBtn
       fab-mini
       :icon="ionAdd"
@@ -28,13 +33,14 @@
 import { defineComponent, PropType } from 'vue'
 import { uiStore } from 'src/store/UiStore'
 import { ionAdd, ionRemove } from '@quasar/extras/ionicons-v5'
-import { QBtn } from 'quasar'
+import { QBtn, QInput } from 'quasar'
 
 
 export default defineComponent({
   name: 'CounterInput',
   components: {
     QBtn,
+    QInput
   },
   props: {
     modelValue: {
@@ -59,7 +65,7 @@ export default defineComponent({
     },
     updateValue(value: any) {
       const parsedValue = parseInt(value)
-      if (parsedValue) {
+      if (!isNaN(parsedValue) && parsedValue >= 0) {
         this.$emit('update:modelValue', parsedValue)
       }
     }
@@ -77,13 +83,14 @@ export default defineComponent({
 }
 
 .counter-input-field {
-  width: 3rem;
+  width: 4rem;
   margin: 0 1rem;
-  font-size: 1rem;
-  border: 1px solid;
-  font-weight: bold;
-  text-align: center;
-  padding: 0.5rem;
+  :deep(input) {
+    padding: 0;
+    font-size: 1.3rem;
+    text-align: center;
+    font-weight: bold;
+  }
 }
 
 .counter-button {
@@ -91,14 +98,14 @@ export default defineComponent({
   height: 2rem;
 }
 
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
+:deep(input::-webkit-outer-spin-button),
+:deep(input::-webkit-inner-spin-button) {
   /* display: none; <- Crashes Chrome on hover */
   -webkit-appearance: none;
   margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
-input[type=number] {
+:deep(input[type=number]) {
   -moz-appearance: textfield; /* Firefox */
 }
 
