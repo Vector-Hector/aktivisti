@@ -87,7 +87,6 @@ interface UserSuggestionItem {
   id: number
   username: string
   email?: string
-  isInvitePlaceholder?: boolean
 }
 
 export default defineComponent({
@@ -142,22 +141,10 @@ export default defineComponent({
     userLabel(item: UserSuggestionItem) {
       return `${item.username} ${item.email ?? ''}`
     },
-    getInvitePlaceholder(emailString: string): UserSuggestionItem {
-      return {
-        id: -1,
-        username: 'Nutzer einladen:',
-        email: emailString,
-        isInvitePlaceholder: true
-      }
-    },
     async searchUsers(query: string, update: any) {
       let suggestions: UserSuggestionItem[]
       if (query) {
         suggestions = (await this.$apiClient.publicProfiles.list({query: query})).payload.data
-        // Show the invite user option in autocomplete if the email is not yet part of our suggestions
-        if (query.includes('@') && !suggestions.map(({email}) => email).includes(query)) {
-          suggestions.push(this.getInvitePlaceholder(query))
-        }
       } else {
         suggestions = []
       }
@@ -168,11 +155,7 @@ export default defineComponent({
     async inviteUser(user: UserSuggestionItem) {
       this.query = ''
 
-      const inviteRequestBody = user.isInvitePlaceholder && user.email ? {
-        users: [],
-        email_addresses: [user.email]
-      } : {
-        email_addresses: [],
+      const inviteRequestBody = {
         users: [user.id]
       }
       const response = await this.$apiClient.events.invite(this.eventId.toString(), inviteRequestBody)
