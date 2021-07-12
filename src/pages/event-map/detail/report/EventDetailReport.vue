@@ -90,11 +90,6 @@ export default defineComponent({
       completedAddresses: 0,
       createdLeads: 0
     }
-    const targetValueOfMetricsRow = records.reduce((row, record) => ({
-      ...row,
-      [record.metric]: record.target
-    }), {areaName: 'Zielvorgabe'})
-
     for (const {id, color, name} of this.eventAreas) {
       if (id) {
         const {
@@ -122,7 +117,18 @@ export default defineComponent({
       }
     }
     this.rows.push(summarizedCountsRow)
-    this.rows.push(targetValueOfMetricsRow)
+
+    let targetValueOfMetricsRow = {areaName: 'Zielvorgabe'} as any
+    let isTargetValueRowShown = false
+    for (const {metric, target} of records) {
+      targetValueOfMetricsRow[metric] = target
+      if (target > 0) {
+        isTargetValueRowShown = true
+      }
+    }
+    if (isTargetValueRowShown) {
+      this.rows.push(targetValueOfMetricsRow)
+    }
   },
   methods: {
     async fetchAreaMetricsReports(areaId: number): Promise<EventMetricReportDto> {
