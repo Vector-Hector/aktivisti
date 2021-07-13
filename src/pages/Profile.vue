@@ -192,6 +192,11 @@ export default defineComponent({
     ])
     userStore.setUser(userResponse.payload.data)
     userStore.setHomeAssociation(userResponse.payload.embedded.sub_association?.[0])
+
+    const userPermissionResponse = await apiClient.userPermissions.list({
+      user: userResponse.payload.data.id
+    })
+    const userPermissions = userPermissionResponse.payload.data
     const initialEmailNotificationSettings = userResponse.payload.embedded.email_notification_settings?.[0]
     next((vm) => {
       if (initialEmailNotificationSettings) {
@@ -199,16 +204,12 @@ export default defineComponent({
         vm.emailNotificationSettings = initialEmailNotificationSettings
       }
       // @ts-ignore
+      vm.permissions = userPermissions
+      // @ts-ignore
       vm.personalMetrics = personalMetricsResponse.payload.data
       // @ts-ignore
       vm.eventMetrics = metricsResponse.payload.data
     })
-  },
-  async created() {
-    const userPermissionResponse = await apiClient.userPermissions.list({
-      user: this.user?.id
-    })
-    this.permissions = userPermissionResponse.payload.data
   },
   computed: {
     realName(): string | null {
