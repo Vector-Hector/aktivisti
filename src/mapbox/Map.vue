@@ -26,19 +26,13 @@ import {
 } from 'vue'
 import mapboxgl, { LngLat, Point } from 'mapbox-gl'
 import { LocationDto } from 'src/api/model/LocationDto'
-import { BBox2d, Feature, Polygon } from '@turf/helpers/dist/js/lib/geojson'
+import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { TinyEmitter } from 'tiny-emitter'
 import { isEqual } from 'lodash-es'
 import { uuidv4 } from 'src/utils/uuid'
 
-export interface MapComponentApi {
-  zoomLevel: Ref<number | null>,
-  bounds: Ref<Feature<Polygon> | null>
-}
-
 
 export const MapInject: InjectionKey<Ref<mapboxgl.Map>> = Symbol()
-export const MapApiInject: InjectionKey<MapComponentApi> = Symbol()
 export const MapEventBus = new TinyEmitter()
 
 export const MAP_PAN_TO = 'MAP_PAN_TO'
