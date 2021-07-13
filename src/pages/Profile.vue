@@ -185,28 +185,30 @@ export default defineComponent({
     QItemSection
   },
   async beforeRouteEnter(from, to, next) {
-    const [userResponse, userPermissionResponse, personalMetricsResponse, metricsResponse] = await Promise.all([
+    const [userResponse, personalMetricsResponse, metricsResponse] = await Promise.all([
       apiClient.user.get('me', ['sub_association', 'email_notification_settings']),
-      apiClient.userPermissions.list(),
       apiClient.personalMetrics.list(),
       apiClient.eventMetrics.list()
     ])
     userStore.setUser(userResponse.payload.data)
     userStore.setHomeAssociation(userResponse.payload.embedded.sub_association?.[0])
     const initialEmailNotificationSettings = userResponse.payload.embedded.email_notification_settings?.[0]
-    const userPermissions = userPermissionResponse.payload.data
     next((vm) => {
       if (initialEmailNotificationSettings) {
         // @ts-ignore
         vm.emailNotificationSettings = initialEmailNotificationSettings
       }
       // @ts-ignore
-      vm.permissions = userPermissions
-      // @ts-ignore
       vm.personalMetrics = personalMetricsResponse.payload.data
       // @ts-ignore
       vm.eventMetrics = metricsResponse.payload.data
     })
+  },
+  async created() {
+    const userPermissionResponse = await apiClient.userPermissions.list({
+      user: this.user?.id
+    })
+    this.permissions = userPermissionResponse.payload.data
   },
   computed: {
     realName(): string | null {
