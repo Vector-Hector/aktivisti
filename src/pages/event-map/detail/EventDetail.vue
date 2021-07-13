@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="event">
     <router-view />
   </div>
 </template>
@@ -83,9 +83,10 @@ export default defineComponent({
       }
     }
   },
-  unmounted() {
+  beforeRouteLeave() {
     eventDetailStore.reset()
-  }
+  },
+
 })
 
 </script>

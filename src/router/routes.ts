@@ -31,6 +31,7 @@ import CreateEvent from 'pages/CreateEvent.vue'
 import PrintEvent from 'pages/PrintEvent.vue'
 import App from 'src/App.vue'
 import Print from 'src/Print.vue'
+import EditEventDetailsMap from 'pages/edit-event/details/EditEventDetailsMap.vue'
 
 
 const routes = [
@@ -190,11 +191,12 @@ const routes = [
           title: () => 'Aktion erstellen',
           requiresAuth: true
 
-        },
+        }
       },
       {
         path: '/events/edit/:id',
-        component: EditEvent,name: 'edit-event',
+        component: EditEvent,
+        name: 'edit-event',
         redirect: {name: 'edit-event-details'},
         meta: {
           subtitle: () => uiStore.getState().activeTitleElements.event,
@@ -204,16 +206,19 @@ const routes = [
         children: [
           {
             path: 'details',
-            component: EditEventDetails,
+            components: {
+              default: EditEventDetails,
+              map: EditEventDetailsMap
+            },
             name: 'edit-event-details'
           },
           {
             path: 'geometry',
-                components: {
+            components: {
               default: EditEventGeometry,
               map: EditEventGeometryMap
-                },
-                name: 'edit-event-geometry',
+            },
+            name: 'edit-event-geometry'
           }
         ]
       },
