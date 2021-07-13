@@ -1,4 +1,3 @@
-7
 <template>
   <Marker
     v-if="event?.location"
