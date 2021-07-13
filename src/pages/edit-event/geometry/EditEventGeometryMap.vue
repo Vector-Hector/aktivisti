@@ -10,12 +10,15 @@
     @draw:update="handleCreatedFeatures"
     @draw:delete="handleDeletedFeatures"
   />
-  <AddressMarker
-    v-for="address in addresses"
-    :key="address.house_number"
-    :location="center(address.geometry)"
-    :text="address.house_number"
-  />
+  <template
+    v-if="zoomLevel > 16">
+    <AddressMarker
+      v-for="(address, index) in addresses"
+      :key="index"
+      :location="center(address.geometry)"
+      :text="address.house_number"
+    />
+  </template>
   <Marker
     v-if="event.location"
     :location="event.location"
@@ -33,14 +36,15 @@ import { routePlannerStyles } from './route-planner.styles'
 import { Feature, Geometry } from 'geojson'
 import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import { bbox, booleanPointInPolygon, center as turfCenter, circle, polygon } from '@turf/turf'
-import InjectMapMixin from 'pages/event-detail/InjectMapMixin'
+
 import { MapInject } from 'src/mapbox/Map.vue'
-import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { EditEventBus, START_DRAW_AREA } from 'src/store/EditEventStore'
 import { noop } from 'lodash-es'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { LocationDto } from 'src/api/model/LocationDto'
 import AddressMarker from 'src/mapbox/AddressMarker.vue'
+import InjectMapMixin from 'pages/event-detail/InjectMapMixin'
+import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 
 const defaultColors = [
   '#E22A3A',
@@ -76,6 +80,8 @@ export default defineComponent({
         polygon: true,
         trash: true
       },
+      zoomLevel: 0,
+      zoomListener: noop,
       startDrawListener: noop
     }
   },
@@ -101,13 +107,21 @@ export default defineComponent({
         .flat()
     }
   },
+  created() {
+    this.zoomLevel = this.map?.getZoom() ?? 0
+  },
   mounted() {
     this.startDrawListener = () => {
       (this.$refs.draw as typeof DrawControl).changeMode('draw_polygon')
     }
     EditEventBus.on(START_DRAW_AREA, this.startDrawListener)
+    this.zoomListener = () => {
+      this.zoomLevel = this.map?.getZoom() ?? Infinity
+    }
+    this.map?.on('zoomend', this.zoomListener)
   },
   unmounted() {
+    this.map?.off('zoomend', this.zoomListener)
     EditEventBus.off(START_DRAW_AREA, this.startDrawListener)
   },
   watch: {

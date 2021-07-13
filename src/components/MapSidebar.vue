@@ -7,19 +7,33 @@
       {{ title }}
     </h3>
     <div class="map-sidebar-content">
-      <slot />
+      <QScrollArea
+        ref="scrollArea"
+        class="scrollable-content"
+      >
+        <slot />
+      </QScrollArea>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { computed, defineComponent, PropType } from 'vue'
+import { QScrollArea } from 'quasar'
 
 export default defineComponent({
   name: 'MapSidebar',
+  components: {
+    QScrollArea
+  },
   props: {
     title: {
       type: String as PropType<string>,
       required: false
+    }
+  },
+  provide() {
+    return {
+      scrollArea: computed(() => this.$refs.scrollArea)
     }
   }
 })
@@ -32,9 +46,21 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
 }
+
 .map-sidebar-content {
   display: flex;
   flex: 1;
+  flex-direction: column;
+}
+
+.scrollable-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+:deep(.q-scrollarea__content) {
+  display: flex;
   flex-direction: column;
 }
 </style>
