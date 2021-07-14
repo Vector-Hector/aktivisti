@@ -26,7 +26,7 @@ lint:
     paths:
       - node_modules/
 
-bundle:
+.bundle:
   image: node:16-alpine
   stage: bundle
   script:
@@ -35,9 +35,33 @@ bundle:
   cache:
     paths:
       - node_modules/
+  environment:
+    name: staging
   artifacts:
     paths:
       - dist/
+
+bundle-staging:
+  extends: .bundle
+  environment:
+    name: staging
+  only:
+    - main
+
+bundle-deploy:
+  extends: .bundle
+  environment:
+    name: development
+  only:
+    - develop
+
+bundle-review:
+  extends: .bundle
+  environment:
+    name: review/$CI_COMMIT_REF_SLUG
+  except:
+    - main
+    - develop
 
 staging:
   extends: .deploy-template
