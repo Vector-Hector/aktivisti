@@ -48,7 +48,7 @@ bundle-staging:
   only:
     - main
 
-bundle-deploy:
+bundle-development:
   extends: .bundle
   environment:
     name: development
