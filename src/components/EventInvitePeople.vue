@@ -76,7 +76,7 @@
     <div class="row">
       <QBtn
         class="full-width"
-        @click="inviteTeamCaptains"
+        @click="handleInviteAllTeamCaptains"
       >
         Alle Teamcaptains einladen
       </QBtn>
@@ -180,6 +180,14 @@ export default defineComponent({
           this.participations.push(item)
         }
       }
+    },
+    handleInviteAllTeamCaptains() {
+      this.$q.dialog({
+        title: 'Alle Teamcaptains einladen',
+        message: 'Möchtest du alle Teamcaptains des Kreisverbandes einladen?',
+        cancel: true
+      }).onOk(() => this.inviteTeamCaptains())
+
     },
     async inviteTeamCaptains() {
       const response = await this.$apiClient.events.inviteTeamCaptains(this.eventId.toString())
