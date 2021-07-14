@@ -45,7 +45,6 @@ staging:
   script:
     - cd kustomize/staging
     - kustomize edit set namespace $KUBE_NAMESPACE
-    - ../hydrate_variables.sh
     - kustomize build | kubectl apply -f -
   only:
     - main
@@ -59,7 +58,6 @@ development:
   script:
     - cd kustomize/development
     - kustomize edit set namespace $KUBE_NAMESPACE
-    - ../hydrate_variables.sh
     - kustomize build | kubectl apply -f -
   only:
     - develop
@@ -71,14 +69,9 @@ review:
   extends: .deploy-template
   stage: deploy
   script:
-    - export DB_NAME=$CI_ENVIRONMENT_SLUG
-    - export DB_USER=$CI_ENVIRONMENT_SLUG
-    - export DB_HOST=postgres
-    - export DB_PORT=5432
     - cd kustomize/review
     - export INGRESS_HOST=$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     - envsubst < ingress-override.template.yaml > ingress-override.yaml
-    - ../hydrate_variables.sh
     - kustomize edit set namespace $KUBE_NAMESPACE
     - kustomize build # print to stdout to debug
     - kustomize build > out.yaml
