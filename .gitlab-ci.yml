@@ -1,26 +1,20 @@
-variables:
-  POSTGRES_ENABLED: "false"
-  ROLLOUT_RESOURCE_TYPE: deployment
-
-
-include:
-  - template: Jobs/Build.gitlab-ci.yml
-  - template: Jobs/Deploy.gitlab-ci.yml
-
 stages:
   - test
   - bundle
   - build
-  - review
-  - staging
-  - canary
   - deploy
-  - incremental rollout 10%
-  - incremental rollout 25%
-  - incremental rollout 50%
-  - incremental rollout 100%
-  - production
   - cleanup
+
+include:
+  - template: Jobs/Build.gitlab-ci.yml
+
+.deploy-template:
+  image: registry.gitlab.alt.coop/ctrlaltcoop/deployment-toolchain:0-0-3
+  before_script:
+    - kubectl create secret docker-registry gitlab-registry --docker-server="$CI_REGISTRY" --docker-username="$CI_DEPLOY_USER" --docker-password="$CI_DEPLOY_PASSWORD" --docker-email="$GITLAB_USER_EMAIL" -o yaml --dry-run=client | kubectl apply -f -
+    - cd kustomize/base
+    - envsubst < add-gitlab-annotations.template.yaml > add-gitlab-annotations.yaml
+    - cd ../../
 
 lint:
   image: node:16-alpine
@@ -32,7 +26,7 @@ lint:
     paths:
       - node_modules/
 
-bundle-staging:
+bundle:
   image: node:16-alpine
   stage: bundle
   script:
@@ -44,3 +38,75 @@ bundle-staging:
   artifacts:
     paths:
       - dist/
+
+staging:
+  extends: .deploy-template
+  stage: deploy
+  script:
+    - cd kustomize/staging
+    - kustomize edit set namespace $KUBE_NAMESPACE
+    - ../hydrate_variables.sh
+    - kustomize build | kubectl apply -f -
+  only:
+    - main
+  environment:
+    name: staging
+    url: https://staging.wk-frontend.haze.alt.coop
+
+development:
+  extends: .deploy-template
+  stage: deploy
+  script:
+    - cd kustomize/development
+    - kustomize edit set namespace $KUBE_NAMESPACE
+    - ../hydrate_variables.sh
+    - kustomize build | kubectl apply -f -
+  only:
+    - develop
+  environment:
+    name: development
+    url: https://development.wk-frontend.haze.alt.coop
+
+review:
+  extends: .deploy-template
+  stage: deploy
+  script:
+    - export DB_NAME=$CI_ENVIRONMENT_SLUG
+    - export DB_USER=$CI_ENVIRONMENT_SLUG
+    - export DB_HOST=postgres
+    - export DB_PORT=5432
+    - cd kustomize/review
+    - export INGRESS_HOST=$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    - envsubst < ingress-override.template.yaml > ingress-override.yaml
+    - ../hydrate_variables.sh
+    - kustomize edit set namespace $KUBE_NAMESPACE
+    - kustomize build # print to stdout to debug
+    - kustomize build > out.yaml
+    - kubectl apply -f out.yaml
+  except:
+    - main
+    - develop
+    - tags
+  environment:
+    name: review/$CI_COMMIT_REF_SLUG
+    url: https://$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
+    on_stop: stop_review
+  artifacts:
+    paths: [ kustomize/review/out.yaml ]
+
+stop_review:
+  stage: cleanup
+  extends: .deploy-template
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - kubectl delete -f ./kustomize/review/out.yaml
+  when: manual
+  except:
+    - main
+    - develop
+    - tags
+  environment:
+    name: review/$CI_COMMIT_REF_SLUG
+    action: stop
+

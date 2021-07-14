@@ -1,0 +1,15 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wkapp
+  annotations:
+    app.gitlab.com/app: "${CI_PROJECT_PATH_SLUG}"
+    app.gitlab.com/env: "${CI_ENVIRONMENT_SLUG}"
+spec:
+
+  template:
+    metadata:
+      annotations:
+        app.gitlab.com/app: "${CI_PROJECT_PATH_SLUG}"
+        app.gitlab.com/env: "${CI_ENVIRONMENT_SLUG}"

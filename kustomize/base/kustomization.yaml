@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- deployment.yaml
+- ingress.yaml
+- service.yaml
+
+
+namespace: default
+
+patchesStrategicMerge:
+  - ./add-gitlab-annotations.yaml
+
+images:
+- name: registry.gitlab.alt.coop/wahlkampf-app/wk-frontend
+  newName: registry.gitlab.alt.coop/wahlkampf-app/wk-frontend
+  newTag: main
