@@ -7,4 +7,4 @@ spec:
     app: wkapp
   ports:
     - protocol: TCP
-      port: 8000
+      port: 5000
