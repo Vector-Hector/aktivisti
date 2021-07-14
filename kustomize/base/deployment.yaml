@@ -1,0 +1,24 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wkapp
+  labels:
+    app: wkapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wkapp
+  template:
+    metadata:
+      labels:
+        app: wkapp
+    spec:
+      imagePullSecrets:
+        - name: gitlab-registry
+      containers:
+        - name: wkapp
+          image: registry.gitlab.alt.coop/wahlkampf-app/wk-frontend
+          ports:
+            - containerPort: 5000
