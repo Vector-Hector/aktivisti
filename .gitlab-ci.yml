@@ -44,6 +44,7 @@ staging:
   stage: deploy
   script:
     - cd kustomize/staging
+    - kustomize edit set image $CI_REGISTRY_IMAGE=$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
     - kustomize edit set namespace $KUBE_NAMESPACE
     - kustomize build | kubectl apply -f -
   only:
@@ -57,6 +58,7 @@ development:
   stage: deploy
   script:
     - cd kustomize/development
+    - kustomize edit set image $CI_REGISTRY_IMAGE=$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
     - kustomize edit set namespace $KUBE_NAMESPACE
     - kustomize build | kubectl apply -f -
   only:
@@ -72,6 +74,7 @@ review:
     - cd kustomize/review
     - export INGRESS_HOST=$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
     - envsubst < ingress-override.template.yaml > ingress-override.yaml
+    - kustomize edit set image $CI_REGISTRY_IMAGE=$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
     - kustomize edit set namespace $KUBE_NAMESPACE
     - kustomize build # print to stdout to debug
     - kustomize build > out.yaml
