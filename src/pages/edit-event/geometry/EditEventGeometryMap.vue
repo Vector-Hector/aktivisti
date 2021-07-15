@@ -12,11 +12,8 @@
   />
   <template
     v-if="zoomLevel > 16">
-    <AddressMarker
-      v-for="(address, index) in addresses"
-      :key="index"
-      :location="center(address.geometry)"
-      :text="address.house_number"
+    <AddressMarkerLayer
+      :addresses="addresses"
     />
   </template>
   <Marker
@@ -42,9 +39,9 @@ import { EditEventBus, START_DRAW_AREA } from 'src/store/EditEventStore'
 import { noop } from 'lodash-es'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { LocationDto } from 'src/api/model/LocationDto'
-import AddressMarker from 'src/mapbox/AddressMarker.vue'
 import InjectMapMixin from 'pages/event-detail/InjectMapMixin'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import AddressMarkerLayer from 'src/mapbox/AddressMarkerLayer'
 
 const defaultColors = [
   '#E22A3A',
@@ -62,9 +59,9 @@ const defaultColors = [
 export default defineComponent({
   name: 'EditEventGeometryMap',
   components: {
+    AddressMarkerLayer,
     DrawControl,
-    Marker,
-    AddressMarker
+    Marker
   },
   setup() {
     const map = inject(MapInject)
