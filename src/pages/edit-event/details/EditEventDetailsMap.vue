@@ -2,11 +2,8 @@
   <FeatureLayer
     :features="features"
   />
-  <AddressMarker
-    v-for="address in addresses"
-    :key="address.house_number"
-    :location="center(address.geometry)"
-    :text="address.house_number"
+  <AddressMarkerLayer
+    :addresses="addresses"
   />
   <Marker
     v-if="event.location"
@@ -24,15 +21,15 @@ import InjectMapMixin from 'pages/event-detail/InjectMapMixin'
 import { MapInject } from 'src/mapbox/Map.vue'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { LocationDto } from 'src/api/model/LocationDto'
-import AddressMarker from 'src/mapbox/AddressMarker.vue'
 import FeatureLayer from 'src/mapbox/AreaFeatureLayer'
+import AddressMarkerLayer from 'src/mapbox/AddressMarkerLayer'
 
 
 export default defineComponent({
   name: 'EditEventDetailsMap',
   components: {
+    AddressMarkerLayer,
     Marker,
-    AddressMarker,
     FeatureLayer
   },
   setup() {
