@@ -444,7 +444,8 @@ export default defineComponent({
         component: EventParticipantsModal,
         maximized: true,
         componentProps: {
-          eventId: this.event.id
+          eventId: this.event.id,
+          eventSubAssociation: this.event.sub_association,
         }
       })
         .onDismiss(() => {

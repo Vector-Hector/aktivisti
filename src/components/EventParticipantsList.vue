@@ -107,6 +107,10 @@ export default defineComponent({
     eventId: {
       type: Number as PropType<number>,
       required: true
+    },
+    eventSubAssociation: {
+      type: Number as PropType<number>,
+      required: false
     }
   },
   data() {
