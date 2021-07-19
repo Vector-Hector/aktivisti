@@ -28,7 +28,7 @@
                 dense
                 flat
                 round
-                aria-label="Nutzer von der Aktion entfernen"
+                aria-label="Nutzer:in von der Aktion entfernen"
                 :icon="ionClose"
                 @click="deleteParticipation(participation.id)"
               />
@@ -77,7 +77,7 @@
                 flat
                 round
                 @click="deleteParticipation(participation.id)"
-                aria-label="Nutzer von der Aktion entfernen"
+                aria-label="Nutzer:in von der Aktion entfernen"
               />
               <QBtn
                 fill="none"
@@ -87,7 +87,7 @@
                 flat
                 round
                 @click="handleInviteToTeamCaptain(participation.user, participation.user_username)"
-                aria-label="Nutzer zu einem Teamcaptain machen"
+                aria-label="Nutzer:in zu Teamcaptain machen"
               />
             </div>
           </QItemSection>
@@ -123,7 +123,7 @@
                 round
                 @click="deleteParticipation(participation.id)"
 
-                aria-label="Nutzer von der Aktion entfernen"
+                aria-label="Nutzer:in von der Aktion entfernen"
               />
             </div>
           </QItemSection>
@@ -232,8 +232,8 @@ export default defineComponent({
     },
     handleInviteToTeamCaptain(userId: number, username: string) {
       this.$q.dialog({
-        title: 'Benutzer zu einem Teamcaptain hochstufen',
-        message: `Möchtest du den Nutzer <b>${username}</b> zu einem Teamcaptain hochstufen?`,
+        title: 'Benutzer*innen zu Teamcaptain hochstufen',
+        message: `Möchtest du die*den Nutzer*in <b>${username}</b> zur*zum Teamcaptain hochstufen?`,
         html: true,
         cancel: true
       }).onOk(() => this.elevateToTeamCaptain(userId))
