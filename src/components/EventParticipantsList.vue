@@ -226,9 +226,23 @@ export default defineComponent({
       this.participations[participationIndex] = participationRequest.payload.data
     },
     async elevateToTeamCaptain(userId: number) {
-      await apiClient.user.elevateToTeamCaptain(userId.toString(), this.eventSubAssociation)
-      const participation = this.participations.find(({user}) => user === userId)
-      participation!['is_team_captain'] = true
+      try {
+        await apiClient.user.elevateToTeamCaptain(userId.toString(), this.eventSubAssociation)
+        const participation = this.participations.find(({user}) => user === userId)
+        participation!['is_team_captain'] = true
+      } catch (e) {
+        if (e.response?.status === 400 && e.response?.data?.sub_association){
+          this.$q.notify({
+            color: 'negative',
+            message: 'Diesem Event ist kein gültiger Landkreis zugeordnet. Die Ernennung einer*eines Teamcaptains ' +
+              'ist an einen Landkreis gebunden.'
+          })
+        }
+        this.$q.notify({
+          color: 'negative',
+          message: 'Ein unerwarteter Fehler ist aufgetreten'
+        })
+      }
     },
     handleInviteToTeamCaptain(userId: number, username: string) {
       this.$q.dialog({
