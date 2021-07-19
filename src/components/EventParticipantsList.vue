@@ -1,11 +1,11 @@
 <template>
   <div class="row">
     <div class="col">
-      <QList v-if="notVerifiedParticipations.length > 0">
-        <QToolbarTitle>Teilnehmer*innen bestätigen</QToolbarTitle>
+      <QList v-if="areTeamCaptainsParticipations.length > 0">
+        <QToolbarTitle>Team Captains</QToolbarTitle>
         <QSeparator spced/>
         <QItem
-          v-for="participation in notVerifiedParticipations"
+          v-for="participation in areTeamCaptainsParticipations"
           :key="participation.id"
         >
           <QItemSection>
@@ -17,7 +17,6 @@
               {{ participation.user_email }}
             </QItemLabel>
           </QItemSection>
-
           <QItemSection side>
             <div
               class="invitation-item-actions"
@@ -25,27 +24,16 @@
               <QBtn
                 fill="none"
                 size="md"
-                dense
-                flat
-                round
-                aria-label="Nutzer:in von der Aktion entfernen"
                 :icon="ionClose"
-                @click="deleteParticipation(participation.id)"
-              />
-              <QBtn
-                fill="none"
-                size="md"
-                color="positive"
-                :icon="ionCheckmark"
                 dense
                 flat
                 round
-                @click="verifyParticipation(participation.id)"
-              />
+                @click="deleteParticipation(participation.id)"
 
+                aria-label="Nutzer:in von der Aktion entfernen"
+              />
             </div>
           </QItemSection>
-
         </QItem>
       </QList>
       <QList v-if="verifiedParticipations.length > 0">
@@ -94,11 +82,11 @@
 
         </QItem>
       </QList>
-      <QList v-if="areTeamCaptainsParticipations.length > 0">
-        <QToolbarTitle>Team Captains</QToolbarTitle>
+      <QList v-if="notVerifiedParticipations.length > 0">
+        <QToolbarTitle>Teilnehmer*innen bestätigen</QToolbarTitle>
         <QSeparator spced/>
         <QItem
-          v-for="participation in areTeamCaptainsParticipations"
+          v-for="participation in notVerifiedParticipations"
           :key="participation.id"
         >
           <QItemSection>
@@ -110,6 +98,7 @@
               {{ participation.user_email }}
             </QItemLabel>
           </QItemSection>
+
           <QItemSection side>
             <div
               class="invitation-item-actions"
@@ -117,16 +106,27 @@
               <QBtn
                 fill="none"
                 size="md"
-                :icon="ionClose"
                 dense
                 flat
                 round
-                @click="deleteParticipation(participation.id)"
-
                 aria-label="Nutzer:in von der Aktion entfernen"
+                :icon="ionClose"
+                @click="deleteParticipation(participation.id)"
               />
+              <QBtn
+                fill="none"
+                size="md"
+                color="positive"
+                :icon="ionCheckmark"
+                dense
+                flat
+                round
+                @click="verifyParticipation(participation.id)"
+              />
+
             </div>
           </QItemSection>
+
         </QItem>
       </QList>
       <p v-if="verifiedParticipations.length === 0 && notVerifiedParticipations.length === 0">
