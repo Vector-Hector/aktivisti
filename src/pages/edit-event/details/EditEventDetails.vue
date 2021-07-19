@@ -42,9 +42,8 @@
           filled
           :input-props="{ label: 'Startdatum' }"
           :time-props="{ minuteOptions: [0, 15, 30, 45] }"
-          v-model="event.start_date"
-          :model-value="new Date(event.start_date)"
-          @update:model-value="event.start_date = $event.toISOString()"
+          v-model="startDate"
+          :mask="mask"
           :error-message="errors.start_date?.[0]"
           :error="!!errors.start_date?.length"
         />
@@ -53,8 +52,8 @@
           filled
           :input-props="{ label: 'Enddatum' }"
           :time-props="{ minuteOptions: [0, 15, 30, 45] }"
-          :model-value="new Date(event.end_date)"
-          @update:model-value="event.end_date = $event.toISOString()"
+          v-model="endDate"
+          :mask="mask"
           :error-message="errors.end_date?.[0]"
           :error="!!errors.end_date?.length"
           :rules="[$validationRules.isRequired]"
@@ -121,6 +120,7 @@ import { editEventStore } from 'src/store/EditEventStore'
 import { SettleDebouncer } from 'src/utils/debounce'
 import { cloneDeep, isEqual } from 'lodash-es'
 import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
+import { dateMaskMatches } from 'src/utils/date'
 
 export default defineComponent({
   name: 'EditEventDetails',
@@ -140,30 +140,17 @@ export default defineComponent({
       VisibilityLabels,
       VisibilityOptions,
       metrics: [] as EventMetricDto[],
-      errors: {},
+      errors: {} as Record<string, string[]>,
       isSubmitting: false,
-      lastSavedMetricRecords: null as EventMetricRecordDto[] | null
+      lastSavedMetricRecords: null as EventMetricRecordDto[] | null,
+      startDate: '',
+      endDate: '',
+      mask: 'DD.MM.YYYY HH:mm'
     }
   },
   computed: {
     eventTypes() {
       return eventTypeOptions
-    },
-    endDate: {
-      get(): Date | undefined {
-        return new Date(this.event.end_date)
-      },
-      set(value: Date) {
-        this.event.end_date = value.toISOString()
-      }
-    },
-    startDate: {
-      get(): Date {
-        return new Date(this.event.start_date)
-      },
-      set(value: Date) {
-        this.event.start_date = value.toISOString()
-      }
     },
     availableMetricOptions(): EventMetricDto[] {
       // do not offer mandatory metrics that already are selected in the select dialog, so they can't be delselected
@@ -198,11 +185,61 @@ export default defineComponent({
     }
   },
   watch: {
-    startDate() {
-      this.fixEndDateAfterStartDate()
+    'event.start_date': {
+      handler(newValue) {
+        if (!newValue) {
+          const initialDate = new Date()
+          initialDate.setHours(initialDate.getHours() + Math.round(initialDate.getMinutes() / 60))
+          initialDate.setMinutes(0, 0, 0)
+          this.startDate = date.formatDate(new Date(initialDate), this.mask)
+        }
+        this.startDate = date.formatDate(new Date(newValue), this.mask)
+        if (new Date(this.event.start_date) > new Date(this.event.end_date)) {
+          const startDate = new Date(date.extractDate(this.startDate, this.mask))
+          const newEndDate = date.addToDate(startDate, {hours: 1})
+          this.endDate = date.formatDate(newEndDate, this.mask)
+        }
+      },
+      immediate: true
     },
-    endDate() {
-      this.fixEndDateAfterStartDate()
+    'event.end_date': {
+      handler(newValue) {
+        if (!this.event.end_date) {
+          const initialDate = this.event.start_date ? new Date(this.event.start_date) : new Date()
+          initialDate.setHours(initialDate.getHours() + Math.round(initialDate.getMinutes() / 60) + 1)
+          initialDate.setMinutes(0, 0, 0)
+          this.event.end_date = initialDate.toISOString()
+        }
+        this.endDate = date.formatDate(new Date(newValue), this.mask)
+        if (new Date(this.event.start_date) > new Date(this.event.end_date)) {
+          const endDate = new Date(date.extractDate(this.endDate, this.mask))
+          const newStartDate = date.subtractFromDate(endDate, {hours: 1})
+          this.startDate = date.formatDate(newStartDate, this.mask)
+        }
+      },
+      immediate: true
+    },
+    startDate(newValue) {
+      if (dateMaskMatches(newValue, this.mask)) {
+        const extractedDate = date.extractDate(newValue, this.mask)
+        const extractedIsoDate = extractedDate.toISOString()
+        if (extractedIsoDate !== this.event.start_date) {
+          this.event.start_date = extractedIsoDate
+        }
+      } else {
+        this.errors.start_date = ['Ungültiges Datum']
+      }
+    },
+    endDate(newValue) {
+      if (dateMaskMatches(newValue, this.mask)) {
+        const extractedDate = date.extractDate(newValue, this.mask)
+        const extractedIsoDate = extractedDate.toISOString()
+        if (extractedIsoDate !== this.event.end_date) {
+          this.event.end_date = extractedIsoDate
+        }
+      } else {
+        this.errors.end_date = ['Ungültiges Datum']
+      }
     },
     metricRecords: {
       handler(newValue) {
@@ -218,18 +255,6 @@ export default defineComponent({
   async created() {
     await this.getMetrics()
     this.lastSavedMetricRecords = cloneDeep(this.metricRecords)
-    if (!this.event.start_date) {
-      const initialDate = new Date()
-      initialDate.setHours(initialDate.getHours() + Math.round(initialDate.getMinutes() / 60))
-      initialDate.setMinutes(0, 0, 0)
-      this.event.start_date = initialDate.toISOString()
-    }
-
-    if (!this.event.end_date) {
-      const initialDate = new Date(this.event.start_date)
-      initialDate.setHours(initialDate.getHours() + 1)
-      this.event.end_date = initialDate.toISOString()
-    }
   },
   methods: {
     async updateMetrics() {
@@ -248,11 +273,6 @@ export default defineComponent({
           color: 'negative',
           message: 'Die Ergebnisse konnten nicht gespeichert werden'
         })
-      }
-    },
-    fixEndDateAfterStartDate() {
-      if (this.endDate! < this.startDate) {
-        this.endDate = date.addToDate(new Date(this.startDate), {hours: 1})
       }
     },
     toggleMetric(enable: boolean, metric: EventMetricDto) {
