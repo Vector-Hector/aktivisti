@@ -142,7 +142,7 @@
       v-if="personalParticipation?.is_verified === false"
       class="row"
     >
-      <div class="col-12">
+      <div v-if="!isTeamCaptainOrCoordinator" class="col-12">
         Super, dass du mitmachen möchtest. Du hast dich für diese Aktion gemeldet. Der nächste Schritt ist zur
         angegebenen
         Zeit am vereinbarten Treffpunkt zu erscheinen. Ein Teamcaptain wird dich dann für diese Aktion freischalten.
