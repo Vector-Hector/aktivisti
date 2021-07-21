@@ -90,7 +90,7 @@
           </MenuLink>
         </div>
         <div
-          v-if="hasCreatePermission"
+          v-if="hasManagePermission"
           class="menu-item"
         >
           <MenuLink
@@ -176,7 +176,7 @@ export default defineComponent({
     isLoggedIn() {
       return authStore.isLoggedIn()
     },
-    hasCreatePermission() {
+    hasManagePermission() {
       return userStore.hasAtLeastOneManagePermission()
     },
     userName() {
