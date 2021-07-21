@@ -88,15 +88,3 @@ export default defineComponent({
 })
 
 </script>
-<style lang="scss" scoped>
-@import "src/css/variables.scss";
-
-.marker-icon {
-  background-image: url("src/assets/marker.png");
-  background-size: cover;
-  display: block;
-  width: 32px;
-  height: 32px;
-  cursor: pointer;
-}
-</style>

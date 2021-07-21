@@ -5,7 +5,8 @@
         filled
         v-model="event.event_type"
         label="Aktionstyp"
-        :disabled="true"
+        disable
+        :option-disable="() => true"
         :options="eventTypes"
         option-label="label"
         option-value="key"
@@ -62,6 +63,7 @@
         />
       </div>
       <QInput
+        filled
         v-model.number="event.max_participants"
         label="Maximale Teilnehmer*innenzahl"
         type="number"
@@ -70,12 +72,16 @@
         :error="!!errors.max_participants?.length"
       />
       <QInput
+        filled
         type="textarea"
         label="Beschreibung"
         v-model="event.description"
+        :error-message="errors.description?.[0]"
+        :error="!!errors.description?.length"
       />
 
       <QSelect
+        filled
         label="Sichtbarkeit"
         v-model="event.visibility"
         :options="Object.values(VisibilityOptions)"
@@ -100,14 +106,15 @@
   </div>
   <SidebarBottomNavigation
     class="navigation"
-    @close="close"
-    @forward="forward"
+    @close="abort"
+    @forward="next"
     @back="back"
+    :last="stepControls.isLastStep.value"
   />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, inject } from 'vue'
 
 import { eventTypeOptions } from 'src/api/model/EventTypes'
 import EditEventMixin from 'src/pages/edit-event/EditEventMixin'
@@ -123,6 +130,7 @@ import { SettleDebouncer } from 'src/utils/debounce'
 import { cloneDeep, isEqual } from 'lodash-es'
 import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
 import { dateMaskMatches } from 'src/utils/date'
+import { StepControls } from 'pages/EditEvent.vue'
 
 export default defineComponent({
   name: 'EditEventDetails',
@@ -259,6 +267,11 @@ export default defineComponent({
       deep: true
     }
   },
+  setup() {
+    return {
+      stepControls: inject('stepControls') as StepControls
+    }
+  },
   async created() {
     await this.getMetrics()
     this.lastSavedMetricRecords = cloneDeep(this.metricRecords)
@@ -295,21 +308,15 @@ export default defineComponent({
     },
     async back() {
       await this.saveDebouncer.waitForSettle()
-      this.$router.go(-1)
+      this.stepControls.previous()
     },
-    async forward() {
+    async next() {
       await this.saveDebouncer.waitForSettle()
-      await this.$router.push({
-        name: 'edit-event-geometry'
-      })
+      this.stepControls.next()
     },
-    async close() {
-      await this.$router.push({
-        name: 'event-detail',
-        params: {
-          id: this.event.id.toString()
-        }
-      })
+    async abort() {
+      await this.saveDebouncer.waitForSettle()
+      this.stepControls.abort()
     },
     metricForMetricRecord(record: EventMetricRecordDto): EventMetricDto | undefined {
       return this.metrics.find(({id}) => record.metric === id)

@@ -12,7 +12,7 @@ export default defineComponent({
   name: 'EventDetailMap',
   mixins: [EventDetailMixin],
   props: {
-    id: {
+    eventId: {
       type: String as PropType<string>,
       required: true
     }

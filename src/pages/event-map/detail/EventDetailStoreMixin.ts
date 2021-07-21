@@ -11,7 +11,7 @@ import { ObjectPermissionDto, ObjectPermissions } from 'src/api/model/ObjectPerm
 export default defineComponent({
   name: 'EventDetailStoreMixin',
   props: {
-    id: {
+    eventId: {
       type: String as PropType<string>,
       required: true
     }

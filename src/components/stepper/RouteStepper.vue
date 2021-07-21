@@ -4,7 +4,7 @@
       <div
         :class="{
         'step': true,
-        'active': $router.currentRoute.value.name === step.routeName,
+        'active': isActiveRoute(step.routeName),
         'done': activeIndex > index
       }"
         v-for="(step, index) in steps"
@@ -39,24 +39,29 @@ export default defineComponent({
       default: () => []
     },
     modelValue: {
-      type: Object as PropType<Step>,
+      type: Number as PropType<number>,
       required: true
     }
   },
   emits: ['update:modelValue'],
   computed: {
     activeIndex(): number | undefined {
-      return this.steps.findIndex(({routeName}) => routeName === this.$route.name)
+      return this.steps.findIndex(({routeName}) => this.isActiveRoute(routeName))
     }
   },
   watch: {
     activeIndex: {
       handler(newValue, oldValue) {
         if (newValue !== oldValue) {
-          this.$emit('update:modelValue', this.steps[newValue])
+          this.$emit('update:modelValue', newValue)
         }
       },
       immediate: true
+    }
+  },
+  methods: {
+    isActiveRoute(routeName: string): boolean {
+      return this.$route.matched.some(({name}) => name === routeName)
     }
   }
 })

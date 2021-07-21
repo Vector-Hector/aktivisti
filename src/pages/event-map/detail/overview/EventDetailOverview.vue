@@ -27,7 +27,7 @@
         />
         <QBtn
           v-if="isCoordinator"
-          :to="{ name: 'event-detail-report', params: { event: event.id }}"
+          :to="{ name: 'event-detail-report', params: { eventId: event.id }}"
           size="sm"
           color="primary"
           flat
@@ -35,7 +35,7 @@
         />
         <QBtn
           v-if="isCoordinator"
-          :to="{name: 'edit-event-details', params: { event: event.id }}"
+          :to="{name: 'edit-event-details', params: { eventId: event.id }}"
           size="sm"
           color="primary"
           flat
@@ -253,7 +253,7 @@ export default defineComponent({
     QList
   },
   props: {
-    id: {
+    eventId: {
       type: String as PropType<string>,
       required: true
     }
@@ -315,7 +315,7 @@ export default defineComponent({
         `${window.location.origin}${this.$router.resolve({
           name: 'event-detail',
           params: {
-            id: this.event.id
+            eventId: this.event.id
           }
         }).path}`,
         [],
@@ -327,7 +327,7 @@ export default defineComponent({
         window.location.origin + this.$router.resolve({
           name: 'event-detail',
           params: {
-            id: this.event.id
+            eventId: this.event.id
           }
         }).path
       )
@@ -337,7 +337,7 @@ export default defineComponent({
         window.location.origin + this.$router.resolve({
           name: 'event-detail',
           params: {
-            id: this.event.id
+            eventId: this.event.id
           }
         }).path,
         this.event
@@ -348,7 +348,7 @@ export default defineComponent({
         window.location.origin + this.$router.resolve({
           name: 'event-detail',
           params: {
-            id: this.event.id
+            eventId: this.event.id
           }
         }).path,
         this.event
@@ -360,9 +360,9 @@ export default defineComponent({
       const generalJoinError = 'Ein unerwarteter Fehler trat auf beim versuch der Aktion beizutreten'
       try {
         this.joinLoading = true
-        this.event = (await this.$apiClient.events.join(this.id)).payload.data
+        this.event = (await this.$apiClient.events.join(this.eventId)).payload.data
         this.personalParticipation = (await this.$apiClient.eventParticipations.list({
-          event: this.id,
+          event: this.eventId,
           user: userStore.getState().user?.id
         })).payload.data?.[0]
         if (this.personalParticipation?.is_verified) {
@@ -393,7 +393,7 @@ export default defineComponent({
       const generalLeaveError = 'Ein unerwarteter Fehler trat auf beim versuch die Aktion zu verlassen'
       try {
         this.joinLoading = true
-        this.event = (await this.$apiClient.events.leave(this.id)).payload.data
+        this.event = (await this.$apiClient.events.leave(this.eventId)).payload.data
         this.personalParticipation = null
       } catch (e) {
         this.$q.notify({
@@ -419,7 +419,7 @@ export default defineComponent({
       }
     },
     async refreshEvent() {
-      this.event = (await apiClient.events.get(this.id)).payload.data
+      this.event = (await apiClient.events.get(this.eventId)).payload.data
     },
     async refreshParticipants() {
       this.participations = (await apiClient.eventParticipations.list({

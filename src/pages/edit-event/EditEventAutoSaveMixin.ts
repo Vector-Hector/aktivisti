@@ -53,7 +53,6 @@ export default defineComponent({
         const event = (await this.$apiClient.events.update(this.event.id.toString(), {
           ...this.event
         })).payload.data
-        this.event = event
         this.lastSavedEvent = this.normalizedEventCopy(event)
         this.$q.notify({
           color: 'positive',
