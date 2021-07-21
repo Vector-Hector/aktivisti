@@ -143,6 +143,8 @@
             dense
             filled
             @keydown="touched = true"
+            :error-message="errors.location?.[0]"
+            :error="!!errors.location?.length"
           />
           <QPopupProxy
             no-parent-event
@@ -282,7 +284,7 @@ export default defineComponent({
     },
     handleDropped(value: any) {
       this.event.location = value.coordinates
-      this.placeSuggestion = { location: value.coordinates }
+      this.placeSuggestion = {location: value.coordinates}
     },
     async getSuggestion(location: LocationDto) {
       return (await geocodingService.reverseGeocode({

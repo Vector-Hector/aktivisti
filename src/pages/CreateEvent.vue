@@ -70,6 +70,8 @@ import { QBtn, QInput, QPage, QSelect } from 'quasar'
 import { EventDto } from 'src/api/model/EventDto'
 import FormError from 'components/FormError.vue'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
+import { userStore } from 'src/store/UserStore'
+import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 
 export default defineComponent({
   name: 'CreateEvent',
@@ -81,17 +83,21 @@ export default defineComponent({
     QBtn
   },
   async beforeRouteEnter(to, from, next) {
-    const [campaignRequest, metricsRequest] = await Promise.all([
-      apiClient.campaigns.list(),
-      apiClient.eventMetrics.list()
-    ])
-
-    next((vm) => {
-      // @ts-ignore
-      vm.metrics = metricsRequest.payload.data
-      // @ts-ignore
-      vm.campaigns = campaignRequest.payload.data
-    })
+    if (!userStore.hasAtLeastOneManagePermission()) {
+      ErrorBus.emit(NOT_AUTHORIZED, 'Um eine Aktion zu erstellen benötigst du eine Koordinator*innenberechtigung')
+      next({name: 'login'})
+    } else {
+      const [campaignRequest, metricsRequest] = await Promise.all([
+        apiClient.campaigns.list(),
+        apiClient.eventMetrics.list()
+      ])
+      next((vm) => {
+        // @ts-ignore
+        vm.metrics = metricsRequest.payload.data
+        // @ts-ignore
+        vm.campaigns = campaignRequest.payload.data
+      })
+    }
   },
   data() {
     return {
