@@ -118,9 +118,8 @@ import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { UserDto } from 'src/api/model/UserDto'
 import { QBtn, QItem, QItemLabel, QItemSection, QList, QPage, QScrollArea, QSeparator } from 'quasar'
 import { CampaignDto } from 'src/api/model/CampaignDto'
-import { ionCheckmark, ionClose, ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
+import { ionCheckmark, ionClose } from '@quasar/extras/ionicons-v5'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
-import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { myEventsStore } from 'src/store/MyEventsStore'
 import { userStore } from 'src/store/UserStore'
 
@@ -142,11 +141,8 @@ export default defineComponent({
       participatedEvents: [] as EventDto[],
       invitingUsers: [] as UserDto[],
       campaigns: [] as CampaignDto[],
-      subAssociations: [] as SubAssociationDto[],
       ionCheckmark,
       ionClose,
-      ionPencil,
-      ionTrash,
       loading: true
     }
   },
@@ -196,7 +192,6 @@ export default defineComponent({
     await Promise.all([
       this.getParticipatedEvents(),
       this.getCampaigns(),
-      this.getSubAssociations()
     ])
 
     this.loading = false
@@ -205,10 +200,6 @@ export default defineComponent({
     async getCampaigns() {
       const response = (await this.$apiClient.campaigns.list())
       this.campaigns = response.payload.data
-    },
-    async getSubAssociations() {
-      const response = (await this.$apiClient.subAssociations.list())
-      this.subAssociations = response.payload.data
     },
     async getParticipatedEvents() {
       const responseData = (await this.$apiClient.eventParticipations.list(
@@ -234,27 +225,6 @@ export default defineComponent({
     },
     findInvitingUsers(findIds: number[]): UserDto[] {
       return this.invitingUsers.filter(({id}) => findIds.includes(id))
-    },
-    deleteEvent(event: EventDto) {
-      this.$q.dialog({
-        title: `${event.name} wirklich löschen?`,
-        message: `Das Event <b>"${event.name}"</b> wird gelöscht und kann nicht wiederhergestellt werden.`,
-        html: true,
-        cancel: true,
-        persistent: true
-      }).onOk(async () => {
-        try {
-          await this.$apiClient.events.delete(event.id.toString())
-        } catch (error) {
-          this.$q.notify({
-            position: 'top-right',
-            type: 'negative',
-            message: `${error.statusText ? error.statusText : 'Dieser Eintrag konnte nicht gelöscht werden.'}`,
-            caption: `Fehlercode: ${error.status}`
-          })
-          return
-        }
-      })
     }
   }
 })
