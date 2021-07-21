@@ -12,7 +12,7 @@ import EventDetailOverview from 'pages/event-map/detail/overview/EventDetailOver
 import EventDetailOverviewMap from 'pages/event-map/detail/overview/EventDetailOverviewMap.vue'
 import EventDetail from 'pages/event-map/detail/EventDetail.vue'
 import EventDetailMap from 'pages/event-map/detail/EventDetailMap.vue'
-import MyEvents from 'pages/MyEvents.vue'
+import MyParticipations from 'pages/MyParticipations.vue'
 import EventDetailReport from 'pages/event-map/detail/report/EventDetailReport.vue'
 import EventDetailArea from 'pages/event-map/detail/area/EventDetailArea.vue'
 import EventDetailAreaMap from 'pages/event-map/detail/area/EventDetailAreaMap.vue'
@@ -67,12 +67,12 @@ const routes = [
         }
       },
       {
-        path: '/my-events',
-        component: MyEvents,
-        name: 'my-events',
+        path: '/my-participations',
+        component: MyParticipations,
+        name: 'my-participations',
         meta: {
           requiresAuth: true,
-          title: () => 'Meine Aktionen'
+          title: () => 'Meine Teilnahmen'
         }
       },
       {

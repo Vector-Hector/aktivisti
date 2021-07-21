@@ -82,10 +82,10 @@
           class="menu-item"
         >
           <MenuLink
-            :to="{ name: 'my-events' }"
+            :to="{ name: 'my-participations' }"
           >
             <QIcon :name="ionCalendarOutline" />
-            <span class="menu-item-link-text">Meine Aktionen</span>
+            <span class="menu-item-link-text">Meine Teilnahmen</span>
             <OpenInvitationsBadge />
           </MenuLink>
         </div>

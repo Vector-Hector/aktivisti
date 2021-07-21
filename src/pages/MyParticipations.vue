@@ -6,10 +6,10 @@
         <PageLoadingSpinner v-if="loading" />
         <div
           v-else
-          class="my-events-content"
+          class="my-participations-content"
         >
           <div v-show="pendingEvents.length > 0">
-            <h3 class="my-events-section-heading">Offene Einladungen</h3>
+            <h3 class="my-participations-section-heading">Offene Einladungen</h3>
             <QSeparator class="profile-section-divider" />
 
             <QList
@@ -69,7 +69,7 @@
           </div>
 
           <div v-show="acceptedEvents.length > 0">
-            <h3 class="my-events-section-heading">Meine Aktionen</h3>
+            <h3 class="my-participations-section-heading">Meine Aktionen</h3>
             <QSeparator class="profile-section-divider" />
 
             <QList
@@ -120,11 +120,11 @@ import { QBtn, QItem, QItemLabel, QItemSection, QList, QPage, QScrollArea, QSepa
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { ionCheckmark, ionClose } from '@quasar/extras/ionicons-v5'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
-import { myEventsStore } from 'src/store/MyEventsStore'
+import { myParticipationsStore } from 'src/store/MyParticipationsStore'
 import { userStore } from 'src/store/UserStore'
 
 export default defineComponent({
-  name: 'MyEvents',
+  name: 'MyParticipations',
   components: {
     PageLoadingSpinner,
     QList,
@@ -149,10 +149,10 @@ export default defineComponent({
   computed: {
     eventParticipations: {
       get(): EventParticipationDto[] {
-        return myEventsStore.getState().eventParticipations
+        return myParticipationsStore.getState().eventParticipations
       },
       set(value: EventParticipationDto[]) {
-        myEventsStore.setEventParticipations(value)
+        myParticipationsStore.setEventParticipations(value)
       }
     },
     acceptedEvents(): { participation: EventParticipationDto, event?: EventDto }[] {
@@ -207,7 +207,7 @@ export default defineComponent({
       )).payload
       this.participatedEvents = responseData.embedded.event
       this.invitingUsers = responseData.embedded.inviting_users
-      myEventsStore.setEventParticipations(responseData.data)
+      myParticipationsStore.setEventParticipations(responseData.data)
     },
     accept(eventParticipation: EventParticipationDto) {
       eventParticipation.is_pending_invitation = false
@@ -233,7 +233,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 @import "src/css/variables.scss";
 
-.my-events-section-heading {
+.my-participations-section-heading {
   font-size: 1.3rem;
   margin: 1rem 0 0 0;
   line-height: 1.7rem;
