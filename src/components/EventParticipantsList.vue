@@ -3,14 +3,14 @@
     <div class="col">
       <QList v-if="areTeamCaptainsParticipations.length > 0">
         <QToolbarTitle>Team Captains</QToolbarTitle>
-        <QSeparator spced/>
+        <QSeparator spaced />
         <QItem
           v-for="participation in areTeamCaptainsParticipations"
           :key="participation.id"
         >
           <QItemSection>
             <QItemLabel v-if="participation.user_is_member">
-              <q-item-label lines="1"><b>{{ participation.user_username}} </b></q-item-label>
+              <q-item-label lines="1"><b>{{ participation.user_username }} </b></q-item-label>
               <q-item-label caption>{{ participation.user_email }}</q-item-label>
             </QItemLabel>
             <QItemLabel v-else>
@@ -38,14 +38,14 @@
       </QList>
       <QList v-if="verifiedParticipations.length > 0">
         <QToolbarTitle>Bestätigte Teilnehmer*innen</QToolbarTitle>
-        <QSeparator spced/>
+        <QSeparator spaced />
         <QItem
           v-for="participation in verifiedParticipations"
           :key="participation.id"
         >
           <QItemSection>
             <QItemLabel v-if="participation.user_is_member">
-              <q-item-label lines="1"><b>{{ participation.user_username}} </b></q-item-label>
+              <q-item-label lines="1"><b>{{ participation.user_username }} </b></q-item-label>
               <q-item-label caption>{{ participation.user_email }}</q-item-label>
             </QItemLabel>
             <QItemLabel v-else>
@@ -84,14 +84,14 @@
       </QList>
       <QList v-if="notVerifiedParticipations.length > 0">
         <QToolbarTitle>Teilnehmer*innen bestätigen</QToolbarTitle>
-        <QSeparator spced/>
+        <QSeparator spaced />
         <QItem
           v-for="participation in notVerifiedParticipations"
           :key="participation.id"
         >
           <QItemSection>
             <QItemLabel v-if="participation.user_is_member">
-              <q-item-label lines="1"><b>{{ participation.user_username}} </b></q-item-label>
+              <q-item-label lines="1"><b>{{ participation.user_username }} </b></q-item-label>
               <q-item-label caption>{{ participation.user_email }}</q-item-label>
             </QItemLabel>
             <QItemLabel v-else>
@@ -142,14 +142,8 @@ import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { ionClose, ionCheckmark, ionTrash } from '@quasar/extras/ionicons-v5'
 import { matArrowCircleUp } from '@quasar/extras/material-icons'
 import { QBtn, QItem, QItemLabel, QItemSection, QList, QSeparator, QToolbarTitle } from 'quasar'
-import { apiClient } from 'src/api/ApiClient';
-import { userStore } from 'src/store/UserStore';
-import { ObjectPermissions } from 'src/api/model/ObjectPermissionDto';
-import { ContentType } from 'src/api/model/UserObjectPermissionDto';
+import { apiClient } from 'src/api/ApiClient'
 
-interface EventParticipationNTeamCaptain extends EventParticipationDto {
-  is_team_captain?: boolean
-}
 
 export default defineComponent({
   name: 'EventParticipantsList',
@@ -160,7 +154,7 @@ export default defineComponent({
     QItemSection,
     QBtn,
     QToolbarTitle,
-    QSeparator,
+    QSeparator
   },
   props: {
     eventId: {
@@ -174,7 +168,7 @@ export default defineComponent({
   },
   data() {
     return {
-      participations: [] as EventParticipationNTeamCaptain[],
+      participations: [] as EventParticipationDto[],
       ionClose,
       ionCheckmark,
       ionTrash,
@@ -182,35 +176,23 @@ export default defineComponent({
     }
   },
   computed: {
-    verifiedParticipations(): EventParticipationNTeamCaptain[] {
+    verifiedParticipations(): EventParticipationDto[] {
       return this.participations.filter(({is_verified, is_team_captain}) => !is_team_captain && is_verified)
     },
-    notVerifiedParticipations(): EventParticipationNTeamCaptain[] {
+    notVerifiedParticipations(): EventParticipationDto[] {
       return this.participations.filter(({is_verified, is_team_captain}) => !is_team_captain && !is_verified)
     },
-    areTeamCaptainsParticipations(): EventParticipationNTeamCaptain[] {
+    areTeamCaptainsParticipations(): EventParticipationDto[] {
       return this.participations.filter(({is_team_captain}) => is_team_captain)
     }
   },
   async created() {
-    const responseUserPermissions = await apiClient.userPermissions.list()
-    const permissions = responseUserPermissions.payload.data
-    userStore.setPermissions(permissions)
     this.participations = (await
       this.$apiClient.eventParticipations.list(
         {
           event: this.eventId,
           is_pending_invitation: false
-        })).payload.data as EventParticipationNTeamCaptain[]
-    this.participations.map((participation) => {
-      const isTeamcaptain = permissions.some(({user, permission_codename, content_type_name, object_pk}) => {
-        return participation.user === user &&
-          permission_codename === ObjectPermissions.TeamCaptain &&
-          content_type_name === ContentType.SUB_ASSOCIATION &&
-          object_pk === this.eventSubAssociation?.toString()
-      })
-      participation['is_team_captain'] = isTeamcaptain
-    })
+        })).payload.data
   },
   methods: {
     async deleteParticipation(deleteId: number) {
@@ -231,17 +213,18 @@ export default defineComponent({
         const participation = this.participations.find(({user}) => user === userId)
         participation!['is_team_captain'] = true
       } catch (e) {
-        if (e.response?.status === 400 && e.response?.data?.sub_association){
+        if (e.response?.status === 400 && e.response?.data?.sub_association) {
           this.$q.notify({
             color: 'negative',
             message: 'Diesem Event ist kein gültiger Landkreis zugeordnet. Die Ernennung einer*eines Teamcaptains ' +
               'ist an einen Landkreis gebunden.'
           })
+        } else {
+          this.$q.notify({
+            color: 'negative',
+            message: 'Ein unerwarteter Fehler ist aufgetreten'
+          })
         }
-        this.$q.notify({
-          color: 'negative',
-          message: 'Ein unerwarteter Fehler ist aufgetreten'
-        })
       }
     },
     handleInviteToTeamCaptain(userId: number, username: string) {
