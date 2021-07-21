@@ -68,9 +68,9 @@
             </QList>
           </div>
 
-          <div v-show="acceptedEvents.length > 0">
-            <h3 class="my-participations-section-heading">Meine Aktionen</h3>
-            <QSeparator class="profile-section-divider" />
+        <div v-show="acceptedEvents.length > 0">
+          <h3 class="my-participations-section-heading">Aktive Teilnahmen</h3>
+          <QSeparator class="profile-section-divider" />
 
             <QList
             >
