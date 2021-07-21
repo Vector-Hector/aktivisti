@@ -113,11 +113,8 @@ export default defineComponent({
     // hydrate profile on app start
     if (authStore.isLoggedIn()) {
       try {
-        const [profileRequest, permissionRequest] = await Promise.all([
-          apiClient.user.get('me', ['sub_association']),
-          apiClient.userPermissions.list(),
-          apiClient.config.get()
-        ])
+        const profileRequest = await apiClient.user.get('me', ['sub_association'])
+        const permissionRequest = await apiClient.userPermissions.list({user: profileRequest.payload.data.id})
         userStore.setUser(profileRequest.payload.data)
         userStore.setHomeAssociation(profileRequest.payload.embedded?.sub_association?.[0] ?? null)
         userStore.setPermissions(permissionRequest.payload.data)
@@ -179,7 +176,7 @@ export default defineComponent({
   display: inline-block;
   text-overflow: ellipsis;
   overflow-wrap: anywhere;
-  white-space:nowrap;
+  white-space: nowrap;
   width: calc(100%);
   overflow: hidden;
 }
@@ -191,7 +188,7 @@ export default defineComponent({
   display: inline-block;
   text-overflow: ellipsis;
   overflow-wrap: anywhere;
-  white-space:nowrap;
+  white-space: nowrap;
   width: calc(100%);
   overflow: hidden;
 }
