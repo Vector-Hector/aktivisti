@@ -11,7 +11,7 @@ interface AuthStoreState {
 }
 
 
-class AuthStore extends Store<AuthStoreState>{
+class AuthStore extends Store<AuthStoreState> {
 
   protected data(): AuthStoreState {
     return {
@@ -39,10 +39,8 @@ class AuthStore extends Store<AuthStoreState>{
     // no error means authentication happened, cookie is set
     const sessionRequest = await apiClient.session.session()
     this.state.userId = sessionRequest.payload.data.user_id
-    const [profileRequest, permissionsRequest] = await Promise.all([
-      apiClient.user.get('me', ['sub_association']),
-      apiClient.userPermissions.list()
-    ])
+    const profileRequest = await apiClient.user.get('me', ['sub_association'])
+    const permissionsRequest = await apiClient.userPermissions.list({user: profileRequest.payload.data.id})
     userStore.setPermissions(permissionsRequest.payload.data)
     userStore.setUser(profileRequest.payload.data)
     userStore.setHomeAssociation(profileRequest.payload.embedded.sub_association?.[0] ?? null)
@@ -52,7 +50,7 @@ class AuthStore extends Store<AuthStoreState>{
     await this.auth({
       identifier: username,
       password,
-      long_session: longSession,
+      long_session: longSession
     })
 
     const center = userStore.getState().homeAssociation?.center
