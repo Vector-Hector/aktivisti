@@ -421,6 +421,11 @@ export default defineComponent({
     async refreshEvent() {
       this.event = (await apiClient.events.get(this.id)).payload.data
     },
+    async refreshParticipants() {
+      this.participations = (await apiClient.eventParticipations.list({
+        event: this.event.id
+      })).payload.data
+    },
     openInviteModal() {
       if (this.isTeamCaptainOrCoordinator) {
         this.$q.dialog({
@@ -444,6 +449,7 @@ export default defineComponent({
       })
         .onDismiss(() => {
           void this.refreshEvent()
+          void this.refreshParticipants()
         })
     },
     locateEvent() {
