@@ -42,6 +42,7 @@
           filled
           :input-props="{ label: 'Startdatum' }"
           :time-props="{ minuteOptions: [0, 15, 30, 45] }"
+          :date-props="{ navigationMinYearMonth: currentYearMonth }"
           v-model="startDate"
           :mask="mask"
           :error-message="errors.start_date?.[0]"
@@ -52,6 +53,7 @@
           filled
           :input-props="{ label: 'Enddatum' }"
           :time-props="{ minuteOptions: [0, 15, 30, 45] }"
+          :date-props="{ navigationMinYearMonth: currentYearMonth }"
           v-model="endDate"
           :mask="mask"
           :error-message="errors.end_date?.[0]"
@@ -149,6 +151,9 @@ export default defineComponent({
     }
   },
   computed: {
+    currentYearMonth() {
+      return date.formatDate(new Date(), 'YYYY/MM')
+    },
     eventTypes() {
       return eventTypeOptions
     },
