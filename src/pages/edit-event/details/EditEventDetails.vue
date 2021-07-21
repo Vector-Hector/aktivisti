@@ -197,8 +197,9 @@ export default defineComponent({
           initialDate.setHours(initialDate.getHours() + Math.round(initialDate.getMinutes() / 60))
           initialDate.setMinutes(0, 0, 0)
           this.startDate = date.formatDate(new Date(initialDate), this.mask)
+        } else {
+          this.startDate = date.formatDate(new Date(newValue), this.mask)
         }
-        this.startDate = date.formatDate(new Date(newValue), this.mask)
         if (new Date(this.event.start_date) > new Date(this.event.end_date)) {
           const startDate = new Date(date.extractDate(this.startDate, this.mask))
           const newEndDate = date.addToDate(startDate, {hours: 1})
@@ -209,13 +210,14 @@ export default defineComponent({
     },
     'event.end_date': {
       handler(newValue) {
-        if (!this.event.end_date) {
+        if (!newValue) {
           const initialDate = this.event.start_date ? new Date(this.event.start_date) : new Date()
           initialDate.setHours(initialDate.getHours() + Math.round(initialDate.getMinutes() / 60) + 1)
           initialDate.setMinutes(0, 0, 0)
-          this.event.end_date = initialDate.toISOString()
+          this.endDate = date.formatDate(new Date(initialDate), this.mask)
+        } else {
+          this.endDate = date.formatDate(new Date(newValue), this.mask)
         }
-        this.endDate = date.formatDate(new Date(newValue), this.mask)
         if (new Date(this.event.start_date) > new Date(this.event.end_date)) {
           const endDate = new Date(date.extractDate(this.endDate, this.mask))
           const newStartDate = date.subtractFromDate(endDate, {hours: 1})
