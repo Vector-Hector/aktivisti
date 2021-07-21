@@ -94,6 +94,17 @@
           class="menu-item"
         >
           <MenuLink
+            :to="{ name: 'my-managed-events' }"
+          >
+            <QIcon :name="ionCreateOutline" />
+            <span class="menu-item-link-text">Aktion verwalten</span>
+          </MenuLink>
+        </div>
+        <div
+          v-if="hasManagePermission"
+          class="menu-item"
+        >
+          <MenuLink
             :to="{ name: 'create-event' }"
           >
             <QIcon :name="farCalendarPlus" />
@@ -137,6 +148,7 @@ import {
   ionCalendarClearOutline,
   ionCalendarOutline,
   ionClose,
+  ionCreateOutline,
   ionExitOutline,
   ionLogIn,
   ionMenu,
@@ -163,6 +175,7 @@ export default defineComponent({
       ionCalendarOutline,
       ionCalendarClearOutline,
       ionClose,
+      ionCreateOutline,
       ionExitOutline,
       ionLogIn,
       ionPersonCircleOutline,
