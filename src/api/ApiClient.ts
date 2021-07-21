@@ -9,7 +9,6 @@ import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { TrackingSessionDto } from 'src/api/model/TrackingSessionDto'
 import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 import { LeadDto } from 'src/api/model/LeadDto'
-import { EventDto } from 'src/api/model/EventDto'
 import { EventAreaRoute } from 'src/api/EventAreaRoute'
 import { EventParticipationRoute } from 'src/api/EventParticipationRoute'
 import { UserRegistrationDto } from 'src/api/model/UserRegistrationDto'
@@ -42,7 +41,6 @@ export class ApiClient {
     }
   })
 
-  myEvents = new ApiRoute<EventDto>(this.baseURL, 'my-events/', this.axiosInstance)
   events = new EventRoute(this.baseURL, 'events/', this.axiosInstance)
   eventAreas = new EventAreaRoute(this.baseURL, 'event-areas/', this.axiosInstance)
   eventMetrics = new ApiRoute<EventMetricDto>(this.baseURL, 'event-metrics/', this.axiosInstance)
