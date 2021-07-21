@@ -72,6 +72,7 @@ input[type=number] {
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
 }
 
 .label {
