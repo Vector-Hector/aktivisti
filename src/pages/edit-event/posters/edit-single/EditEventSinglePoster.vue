@@ -153,7 +153,7 @@ export default defineComponent({
         title: 'Poster löschen',
         message: 'Möchtest dieses Poster wirklich löschen?',
         cancel: true
-      }).onOk(async (data: any) => {
+      }).onOk(async () => {
         const poster = this.poster
         await this.$router.push({name: 'edit-event-posters-list'})
         await this.deletePoster(poster as PosterDto)
