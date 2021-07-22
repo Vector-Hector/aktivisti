@@ -115,7 +115,7 @@ export default defineComponent({
         name: 'poster_id',
         label: '#',
         field: 'poster_id',
-        align: 'left',
+        align: 'right',
         required: true
       }, {
         name: 'location_description',
