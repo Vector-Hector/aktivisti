@@ -16,6 +16,7 @@
     emit-value
     option-label="label"
     option-value="key"
+    label="Zustand"
     :error-message="errors.status?.[0]"
     :error="!!errors.status?.length"
   />
@@ -28,6 +29,7 @@
     emit-value
     option-label="label"
     option-value="key"
+    label="Position"
     :error-message="errors.mounted_on?.[0]"
     :error="!!errors.mounted_on?.length"
   />
