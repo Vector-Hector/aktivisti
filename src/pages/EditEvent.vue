@@ -37,6 +37,8 @@ import RouteStepper, { Step } from 'components/stepper/RouteStepper.vue'
 import { bbox, circle } from '@turf/turf'
 import { Feature } from 'geojson'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import { userStore } from 'src/store/UserStore'
+import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 
 const DoorToDoorEventSteps = [{
   label: 'Einstellungen',
@@ -56,20 +58,25 @@ export default defineComponent({
     Map
   },
   beforeRouteEnter: async (to, from, next) => {
-    const [eventRequest, campaignRequest, eventAreasRequest] = await Promise.all([
-      apiClient.events.get(to.params.id as string, ['eventmetricrecord_set']),
-      apiClient.campaigns.list(),
-      apiClient.eventAreas.list({event: to.params.id})
-    ])
-    editEventStore.setEvent(eventRequest.payload.data)
-    editEventStore.setCampaigns(campaignRequest.payload.data)
-    editEventStore.setMetricRecords(eventRequest.payload.embedded.eventmetricrecord_set)
-    editEventStore.setEventAreas(eventAreasRequest.payload.data)
-    next(() => {
-      uiStore.updateActiveElements({
-        event: eventRequest.payload.data.name
+    if (!userStore.hasAtLeastOneManagePermission()) {
+      ErrorBus.emit(NOT_AUTHORIZED, 'Um eine Aktion zu erstellen benötigst du eine Koordinator*innenberechtigung')
+      next({name: 'login'})
+    } else {
+      const [eventRequest, campaignRequest, eventAreasRequest] = await Promise.all([
+        apiClient.events.get(to.params.id as string, ['eventmetricrecord_set']),
+        apiClient.campaigns.list(),
+        apiClient.eventAreas.list({event: to.params.id})
+      ])
+      editEventStore.setEvent(eventRequest.payload.data)
+      editEventStore.setCampaigns(campaignRequest.payload.data)
+      editEventStore.setMetricRecords(eventRequest.payload.embedded.eventmetricrecord_set)
+      editEventStore.setEventAreas(eventAreasRequest.payload.data)
+      next(() => {
+        uiStore.updateActiveElements({
+          event: eventRequest.payload.data.name
+        })
       })
-    })
+    }
   },
   beforeRouteUpdate() {
     uiStore.updateActiveElements({
