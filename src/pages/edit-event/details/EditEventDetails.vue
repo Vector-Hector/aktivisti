@@ -89,18 +89,19 @@
         :error-message="errors.visibility?.[0]"
         :error="!!errors.visibility?.length"
       />
-
-      <h3 class="metrics-headline">Zielvorgaben</h3>
-      <div class="metrics-input-wrapper">
-        <MetricInput
-          v-for="metric in metrics"
-          :key="metric.id"
-          :name="metric.name"
-          :checked="selectedMetricsIds.includes(metric.id)"
-          @update:checked="toggleMetric($event, metric)"
-          :target="metricRecordForMetricId(metric.id)?.target ?? 0"
-          @update:target="metricRecordForMetricId(metric.id).target = $event"
-        />
+      <div class="metric-section" v-if="event.event_type !== EventTypes.POSTERS">
+        <h3 class="metrics-headline">Zielvorgaben</h3>
+        <div class="metrics-input-wrapper">
+          <MetricInput
+            v-for="metric in metrics"
+            :key="metric.id"
+            :name="metric.name"
+            :checked="selectedMetricsIds.includes(metric.id)"
+            @update:checked="toggleMetric($event, metric)"
+            :target="metricRecordForMetricId(metric.id)?.target ?? 0"
+            @update:target="metricRecordForMetricId(metric.id).target = $event"
+          />
+        </div>
       </div>
     </QForm>
   </div>
@@ -116,7 +117,7 @@
 <script lang="ts">
 import { defineComponent, inject } from 'vue'
 
-import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 import EditEventMixin from 'src/pages/edit-event/EditEventMixin'
 import { VisibilityLabels, VisibilityOptions } from 'src/api/model/EventDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
@@ -146,6 +147,7 @@ export default defineComponent({
   emits: ['update:eventMetricRecords'],
   data() {
     return {
+      EventTypes,
       metricsSaveDebouncer: new SettleDebouncer(),
       VisibilityLabels,
       VisibilityOptions,
