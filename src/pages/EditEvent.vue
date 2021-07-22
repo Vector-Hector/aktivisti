@@ -39,8 +39,6 @@ import RouteStepper, { Step } from 'components/stepper/RouteStepper.vue'
 import { bbox, circle } from '@turf/turf'
 import { Feature } from 'geojson'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
-import { userStore } from 'src/store/UserStore'
-import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 
 const DoorToDoorEventSteps = [{
   label: 'Einstellungen',

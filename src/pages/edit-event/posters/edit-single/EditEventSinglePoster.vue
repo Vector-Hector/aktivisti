@@ -89,13 +89,14 @@ export default defineComponent({
   mixins: [EditEventGeometryMixin, EditSinglePosterMixin, EditPosterListMixin],
   async beforeRouteEnter(to, from, next) {
     let initialPoster: Partial<PosterDto>
-    if (to.params.posterId) {
-      initialPoster = (await apiClient.posters.get(to.params.posterId.toString())).payload.data
+    const { posterId, eventId } = to.params
+    if (posterId) {
+      initialPoster = (await apiClient.posters.get(posterId.toString())).payload.data
       editPosterListStore.state.activePosterIndex = editPosterListStore.state.posters.findIndex((({id}) => initialPoster.id === id))
     } else {
       initialPoster = {
         ...cloneDeep(defaultPoster),
-        event: parseInt(to.params.eventId as string)
+        event: parseInt(eventId as string)
       }
       editPosterListStore.state.activePosterIndex = editPosterListStore.state.posters.push(initialPoster) - 1
     }

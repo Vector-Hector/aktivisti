@@ -1,7 +1,7 @@
 import { defineComponent, inject, watch, onMounted, PropType, onUnmounted, h } from 'vue'
 import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
-import { GeoJSONSource, GeoJSONSourceRaw } from 'mapbox-gl'
+import { GeoJSONSource, GeoJSONSourceRaw, SymbolLayout } from 'mapbox-gl'
 import { PosterDto, PosterStatus } from 'src/api/model/PosterDto'
 import { loadImageIfNonExistent } from 'src/utils/mapbox'
 import { FeatureCollection, Point } from 'geojson'
@@ -34,6 +34,17 @@ export default defineComponent({
     const activePosterLayerId = `${uuid}-active-poster`
 
     const layers: string[] = []
+
+    const iconLayout: SymbolLayout = {
+      'icon-size': .4,
+      'icon-image': ['case',
+        ['==', ['get', 'status'], PosterStatus.ABSENT], 'absent-icon',
+        ['==', ['get', 'status'], PosterStatus.DAMAGED], 'negative-icon',
+        ['==', ['get', 'status'], PosterStatus.MOUNTED], 'positive-icon',
+        'absent-icon'
+      ],
+      'icon-allow-overlap': true
+    }
 
 
     const canvas = map.value.getCanvas()
@@ -183,16 +194,7 @@ export default defineComponent({
           id: posterLayerId,
           type: 'symbol',
           source: posterSourceId,
-          layout: {
-            'icon-size': .4,
-            'icon-image': ['case',
-              ['==', ['get', 'status'], PosterStatus.ABSENT], 'absent-icon',
-              ['==', ['get', 'status'], PosterStatus.DAMAGED], 'negative-icon',
-              ['==', ['get', 'status'], PosterStatus.MOUNTED], 'positive-icon',
-              'absent-icon'
-            ],
-            'icon-allow-overlap': true
-          },
+          layout: iconLayout,
           paint: {
             'icon-opacity': ['get', 'opacity']
           }
@@ -204,16 +206,7 @@ export default defineComponent({
           id: activePosterLayerId,
           type: 'symbol',
           source: activePosterSourceId,
-          layout: {
-            'icon-size': .4,
-            'icon-image': ['case',
-              ['==', ['get', 'status'], PosterStatus.ABSENT], 'absent-icon',
-              ['==', ['get', 'status'], PosterStatus.DAMAGED], 'negative-icon',
-              ['==', ['get', 'status'], PosterStatus.MOUNTED], 'positive-icon',
-              'absent-icon'
-            ],
-            'icon-allow-overlap': true
-          },
+          layout: iconLayout,
           paint: {
             'icon-opacity': 1
           }
