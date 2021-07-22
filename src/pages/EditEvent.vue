@@ -119,25 +119,20 @@ export default defineComponent({
     }
   },
   beforeRouteEnter: async (to, from, next) => {
-    if (!userStore.hasAtLeastOneManagePermission()) {
-      ErrorBus.emit(NOT_AUTHORIZED, 'Um eine Aktion zu erstellen benötigst du eine Koordinator*innenberechtigung')
-      next({name: 'login'})
-    } else {
-      const [eventRequest, campaignRequest, eventAreasRequest] = await Promise.all([
-        apiClient.events.get(to.params.eventId as string, ['eventmetricrecord_set']),
-        apiClient.campaigns.list(),
-        apiClient.eventAreas.list({event: to.params.eventId})
-      ])
-      editEventStore.setEvent(eventRequest.payload.data)
-      editEventStore.setCampaigns(campaignRequest.payload.data)
-      editEventStore.setMetricRecords(eventRequest.payload.embedded.eventmetricrecord_set)
-      editEventStore.setEventAreas(eventAreasRequest.payload.data)
-      next(() => {
-        uiStore.updateActiveElements({
-          event: eventRequest.payload.data.name
-        })
+    const [eventRequest, campaignRequest, eventAreasRequest] = await Promise.all([
+      apiClient.events.get(to.params.eventId as string, ['eventmetricrecord_set']),
+      apiClient.campaigns.list(),
+      apiClient.eventAreas.list({event: to.params.eventId})
+    ])
+    editEventStore.setEvent(eventRequest.payload.data)
+    editEventStore.setCampaigns(campaignRequest.payload.data)
+    editEventStore.setMetricRecords(eventRequest.payload.embedded.eventmetricrecord_set)
+    editEventStore.setEventAreas(eventAreasRequest.payload.data)
+    next(() => {
+      uiStore.updateActiveElements({
+        event: eventRequest.payload.data.name
       })
-    }
+    })
   },
   beforeRouteUpdate() {
     uiStore.updateActiveElements({

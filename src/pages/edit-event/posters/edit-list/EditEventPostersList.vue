@@ -12,7 +12,7 @@
     </div>
     <QTable
       :auto-layout="true"
-      @row-click="(event, row, index) => editPoster(row.id)"
+      @row-click="(event, row, _) => editPoster(row.id)"
       flat
       dense
       :columns="posterColumns"
@@ -37,6 +37,11 @@
             {{ col.label }}
           </QTh>
         </QTr>
+      </template>
+      <template v-slot:body-cell-status="props">
+        <QTd key="status" :props="props">
+          <StatusRow :status="props.row.status" />
+        </QTd>
       </template>
       <template v-slot:body-cell-actions="props">
         <QTd key="actions" :props="props">
@@ -73,14 +78,16 @@ import { ionLocationSharp, ionPencil, ionTrash } from '@quasar/extras/ionicons-v
 import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import SidebarBottomNavigation from 'components/SidebarBottomNavigation.vue'
 import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
-import { PosterDto, PosterStatus, posterStatusOptions } from 'src/api/model/PosterDto'
+import { PosterDto, posterStatusOptions } from 'src/api/model/PosterDto'
 import { StepControls } from 'pages/EditEvent.vue'
 import EditPosterListMixin from 'pages/edit-event/posters/EditPosterListMixin'
 import { ellipsis } from 'src/utils/string'
+import StatusRow from 'components/StatusRow.vue'
 
 export default defineComponent({
   name: 'EditEventPostersList',
   components: {
+    StatusRow,
     SidebarBottomNavigation,
     QBtn,
     QTable,
@@ -121,8 +128,7 @@ export default defineComponent({
         name: 'status',
         label: 'Status',
         field: 'status',
-        align: 'left',
-        format: (value: PosterStatus) => posterStatusOptions.find(({key}) => key === value)?.label
+        align: 'left'
       }, {
         name: 'actions',
         label: '',
