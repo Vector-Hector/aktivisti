@@ -11,8 +11,8 @@
     <div class="col-grow">
       <StandaloneGeocoder
         :result="currentGeocodeResult"
-        @update:result="handleForwardResultEdit"
-        @new-result="handleForwardResult"
+        @update:result="handleTextInput"
+        @new-result="handleLocationSelect"
         :custom-place-name="true"
         :error="error"
       />
@@ -109,7 +109,7 @@ export default defineComponent({
       const sameLocation = newValue?.lng === this.currentGeocodeResult?.center?.[0] &&
         newValue?.lat === this.currentGeocodeResult?.center?.[1]
       if (!sameLocation) {
-        this.handleReverseResult(await this.reverseLocation(newValue))
+        this.handleLocationChange(await this.reverseLocation(newValue))
       }
     }
   },
@@ -121,13 +121,13 @@ export default defineComponent({
       this.currentGeocodeResult = geocoderResult
       void nextTick(() => this.$forceUpdate())
     },
-    handleForwardResult(geocoderResult: GeocodeResult) {
+    handleLocationSelect(geocoderResult: GeocodeResult) {
       this.setLastOriginalPlaceName(geocoderResult.place_name)
       this.setGeocodeResult(geocoderResult)
       this.$emit('update:location', {lng: geocoderResult.center[0], lat: geocoderResult.center[1]})
       this.$emit('update:locationDescription', geocoderResult.place_name)
     },
-    handleReverseResult(geocoderResult: GeocodeResult) {
+    handleLocationChange(geocoderResult: GeocodeResult) {
       this.setLastOriginalPlaceName(geocoderResult.place_name)
       // when retrieving reversed result preserve the location until the user confirms it
       this.setGeocodeResult({
@@ -137,7 +137,7 @@ export default defineComponent({
       this.suggestion = geocoderResult?.place_name ?? ''
       this.suggestPlace()
     },
-    handleForwardResultEdit(geocoderResult: Partial<GeocodeResult>) {
+    handleTextInput(geocoderResult: Partial<GeocodeResult>) {
       this.touched = geocoderResult?.place_name !== this.lastOriginalPlaceName
       if (this.locationDescription !== geocoderResult.place_name) {
         // if the result id doesn't change the geocoder widget had some custom input we immediately propagate
