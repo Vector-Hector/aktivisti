@@ -13,7 +13,6 @@
     class="editable-cells-table overflow-hidden q-my-sm poster-table"
     edit-mode="cell"
     no-data-label="Noch keine Poster erstellt"
-
   >
     <template v-slot:header="props">
       <QTr :props="props">
@@ -66,7 +65,7 @@ export default defineComponent({
   },
   props: {
     posters: {
-      type: Array as PropType<PosterDto>,
+      type: Array as PropType<PosterDto[]>,
       required: true
     },
     showActions: {
@@ -74,10 +73,10 @@ export default defineComponent({
       default: false
     }
   },
-  emits: ['rowClick'],
+  emits: ['rowClick', 'rowDeleted'],
   computed: {
-    posterColumns() {
-      return [{
+    posterColumns(): any[] {
+      const columns: any[] = [{
         name: 'poster_id',
         label: '#',
         field: 'poster_id',
@@ -95,18 +94,22 @@ export default defineComponent({
         label: 'Status',
         field: 'status',
         align: 'left'
-      }, {
-        name: 'actions',
-        label: '',
-        field: null,
-        required: true
       }]
+      if (this.showActions) {
+        columns.push({
+          name: 'actions',
+          label: '',
+          field: null,
+          required: true
+        })
+      }
+      return columns
     }
   },
   data() {
     return {
-      ionTrash
-
+      ionTrash,
+      confirmDelete: true
     }
   },
   methods: {
@@ -127,10 +130,10 @@ export default defineComponent({
           if (data.includes('skipConfirm')) {
             this.confirmDelete = false
           }
-          void this.deletePoster(poster)
+          this.$emit('rowDeleted', poster)
         })
       } else {
-        await this.deletePoster(poster)
+        this.$emit('rowDeleted', poster)
       }
     }
   }

@@ -1,10 +1,9 @@
 import { defineComponent } from 'vue'
-import { posterListStore } from 'src/store/PosterListStore'
 import { PosterDto } from 'src/api/model/PosterDto'
-
+import { posterListStore } from 'src/store/PosterListStore'
 
 export default defineComponent({
-  name: 'EditPosterListMixin',
+  name: 'EventDetailPosterMixin',
   computed: {
     posters: {
       get() {
@@ -24,16 +23,13 @@ export default defineComponent({
     }
   },
   methods: {
-    async deletePoster(poster: PosterDto) {
-      try {
-        await this.$apiClient.posters.delete(poster.id.toString())
-        this.posters = this.posters.filter(({id}) => id !== poster.id)
-      } catch (e) {
-        this.$q.notify({
-          color: 'negative',
-          message: 'Beim löschen des Posters ist ein Fehler aufgetreten'
-        })
-      }
+    selectPoster(posterId: number) {
+      void this.$router.push({
+        name: 'event-detail-poster-detail',
+        params: {
+          posterId: posterId
+        }
+      })
     }
   }
 })

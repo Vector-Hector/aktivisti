@@ -5,7 +5,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { apiClient } from 'src/api/ApiClient'
-import { editPosterListStore } from 'src/store/EditPosterListStore'
+import { posterListStore } from 'src/store/PosterListStore'
 import EditPosterListMixin from 'pages/edit-event/posters/EditPosterListMixin'
 
 export default defineComponent({
@@ -13,11 +13,11 @@ export default defineComponent({
   mixins: [EditPosterListMixin],
   async beforeRouteEnter(to, from, next) {
     const posters = await apiClient.posters.list({event: to.params.eventId})
-    editPosterListStore.state.posters = posters.payload.data
+    posterListStore.state.posters = posters.payload.data
     next()
   },
   beforeRouteLeave() {
-    editPosterListStore.reset()
+    posterListStore.reset()
   }
 })
 </script>

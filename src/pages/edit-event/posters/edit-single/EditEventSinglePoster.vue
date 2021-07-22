@@ -66,7 +66,7 @@ import { apiClient } from 'src/api/ApiClient'
 import { QBtn } from 'quasar'
 import { ionClose, ionLocationSharp, ionSave, ionTrash } from '@quasar/extras/ionicons-v5'
 import EditSinglePosterMixin from 'pages/edit-event/posters/edit-single/EditSinglePosterMixin'
-import { editPosterListStore } from 'src/store/EditPosterListStore'
+import { posterListStore } from 'src/store/PosterListStore'
 import EditPosterListMixin from 'pages/edit-event/posters/EditPosterListMixin'
 
 const defaultPoster: Partial<PosterDto> = {
@@ -92,24 +92,24 @@ export default defineComponent({
     const { posterId, eventId } = to.params
     if (posterId) {
       initialPoster = (await apiClient.posters.get(posterId.toString())).payload.data
-      editPosterListStore.state.activePosterIndex = editPosterListStore.state.posters.findIndex((({id}) => initialPoster.id === id))
+      posterListStore.state.activePosterIndex = posterListStore.state.posters.findIndex((({id}) => initialPoster.id === id))
     } else {
       initialPoster = {
         ...cloneDeep(defaultPoster),
         event: parseInt(eventId as string)
       }
-      editPosterListStore.state.activePosterIndex = editPosterListStore.state.posters.push(initialPoster) - 1
+      posterListStore.state.activePosterIndex = posterListStore.state.posters.push(initialPoster) - 1
     }
     next()
   },
   beforeRouteLeave() {
     if (!this.poster.id) {
       // poster wasn't save so remove it from the list
-      editPosterListStore.state.posters = editPosterListStore.state.posters.filter(
-        (_, index) => index !== editPosterListStore.state.activePosterIndex
+      posterListStore.state.posters = posterListStore.state.posters.filter(
+        (_, index) => index !== posterListStore.state.activePosterIndex
       )
     }
-    editPosterListStore.state.activePosterIndex = null
+    posterListStore.state.activePosterIndex = null
   },
   setup() {
     return {

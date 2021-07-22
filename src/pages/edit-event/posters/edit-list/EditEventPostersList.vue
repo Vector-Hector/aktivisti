@@ -14,6 +14,7 @@
       :show-actions="true"
       :posters="posters"
       @row-click="editPoster($event.id)"
+      @row-deleted="deletePoster"
     />
   </div>
   <SidebarBottomNavigation

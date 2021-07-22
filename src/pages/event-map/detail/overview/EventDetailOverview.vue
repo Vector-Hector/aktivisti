@@ -92,6 +92,7 @@
             :participations="participations"
             :show-participation-count="isTeamCaptainOrCoordinator"
             :personal-participation="personalParticipation"
+            :event-type="event.event_type"
           />
         </QList>
       </div>

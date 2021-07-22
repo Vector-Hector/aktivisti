@@ -37,18 +37,6 @@ export default defineComponent({
         type: 'FeatureCollection',
         features: [...this.areaFeatures, ...locationFeatures]
       }) as BBox2d : userStore.getState().bbox
-    },
-    areaFeatures(): Feature[] {
-      return this.eventAreas.map((area) => {
-        return {
-          type: 'Feature',
-          id: area.feature_id,
-          geometry: area.geometry,
-          properties: {
-            color: area.color
-          }
-        }
-      })
     }
   },
   mounted() {

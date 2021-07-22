@@ -7,6 +7,7 @@ import { eventDetailStore } from 'src/store/EventDetailStore'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 import { ObjectPermissionDto, ObjectPermissions } from 'src/api/model/ObjectPermissionDto'
+import { Feature } from 'geojson'
 
 export default defineComponent({
   name: 'EventDetailStoreMixin',
@@ -17,6 +18,18 @@ export default defineComponent({
     }
   },
   computed: {
+    areaFeatures(): Feature[] {
+      return this.eventAreas.map((area) => {
+        return {
+          type: 'Feature',
+          id: area.feature_id,
+          geometry: area.geometry,
+          properties: {
+            color: area.color
+          }
+        }
+      })
+    },
     participations: {
       get(): EventParticipationDto[] {
         return eventDetailStore.getState().participations

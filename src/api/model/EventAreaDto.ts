@@ -11,6 +11,7 @@ export interface EventAreaDto {
   geometry: Geometry
   is_completed: boolean
   area_details?: AreaDetailsDto
+  poster_count: number
 }
 
 export function eventAreaToFeature(eventArea: EventAreaDto): Feature {

@@ -2,6 +2,7 @@
   <PosterMarkerLayer
     v-model:posters="posters"
     :active-poster-index="activePosterIndex"
+    :editable="true"
     :opacity="posterOpacity"
     @posterClick="goToPoster"
   />

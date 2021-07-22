@@ -38,6 +38,12 @@ import EditEventPosters from 'pages/edit-event/posters/EditEventPosters.vue'
 import EditEventPostersMap from 'pages/edit-event/posters/EditEventPostersMap.vue'
 import EditEventSinglePosterMap from 'pages/edit-event/posters/edit-single/EditEventSinglePosterMap.vue'
 import EditEventPostersListMap from 'pages/edit-event/posters/edit-list/EditEventPostersListMap.vue'
+import EventDetailPosters from 'pages/event-map/detail/area/posters/EventDetailPosters.vue'
+import EventDetailPostersMap from 'pages/event-map/detail/area/posters/EventDetailPostersMap.vue'
+import EventDetailPosterDetail from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetail.vue'
+import EventDetailPosterDetailMap from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetailMap.vue'
+import EventDetailPosterList from 'pages/event-map/detail/area/posters/list/EventDetailPosterList.vue'
+import EventDetailPosterListMap from 'pages/event-map/detail/area/posters/list/EventDetailPosterListMap.vue'
 
 
 const routes = [
@@ -182,6 +188,34 @@ const routes = [
                       title: () => 'Bei Linksaktiv anmelden',
                       requiresAuth: true
                     }
+                  },
+                  {
+                    path: 'posters',
+                    name: 'event-detail-poster',
+                    redirect: {name: 'event-detail-poster-list'},
+                    props: true,
+                    components: {
+                      default: EventDetailPosters,
+                      map: EventDetailPostersMap
+                    },
+                    children: [
+                      {
+                        path: '',
+                        name: 'event-detail-poster-list',
+                        components: {
+                          default: EventDetailPosterList,
+                          map: EventDetailPosterListMap
+                        }
+                      },
+                      {
+                        path: ':posterId',
+                        name: 'event-detail-poster-detail',
+                        components: {
+                          default: EventDetailPosterDetail,
+                          map: EventDetailPosterDetailMap
+                        }
+                      }
+                    ]
                   }
                 ]
               }

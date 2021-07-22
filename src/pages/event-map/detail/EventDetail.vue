@@ -22,7 +22,7 @@ export default defineComponent({
   async beforeRouteEnter(to, from, next) {
     try {
       const [eventRequest, eventPermissionsRequest] = await Promise.all([
-       apiClient.events.get(to.params.eventId.toString(), ['campaigns']),
+        apiClient.events.get(to.params.eventId.toString(), ['campaigns']),
         apiClient.eventPermissions.get({event: to.params.eventId.toString()})
       ])
       const event = eventRequest.payload.data
@@ -76,16 +76,16 @@ export default defineComponent({
           campaigns: eventDetailStore.getState().campaigns.map(({name}) => name).join(',')
         })
       })
-    } catch(e) {
+    } catch (e) {
       const {status} = e?.response
-      if (status === 404){
+      if (status === 404) {
         next({name: 'login'})
       }
     }
   },
   beforeRouteLeave() {
     eventDetailStore.reset()
-  },
+  }
 
 })
 
