@@ -22,8 +22,8 @@ export default defineComponent({
   async beforeRouteEnter(to, from, next) {
     try {
       const [eventRequest, eventPermissionsRequest] = await Promise.all([
-       apiClient.events.get(to.params.id.toString(), ['campaigns']),
-        apiClient.eventPermissions.get({event: to.params.id.toString()})
+       apiClient.events.get(to.params.eventId.toString(), ['campaigns']),
+        apiClient.eventPermissions.get({event: to.params.eventId.toString()})
       ])
       const event = eventRequest.payload.data
       const campaigns = eventRequest.payload.embedded.campaigns as CampaignDto[]
@@ -38,14 +38,14 @@ export default defineComponent({
         [ObjectPermissions.TeamCaptain, ObjectPermissions.Coordinator])
       ) {
         permissionRequests.push(apiClient.eventParticipations.list({
-          event: to.params.id
+          event: to.params.eventId
         }).then((response) => {
           eventDetailStore.setParticipations(response.payload.data)
         }))
       }
       if (authStore.isLoggedIn()) {
         permissionRequests.push(apiClient.eventParticipations.list({
-          event: to.params.id,
+          event: to.params.eventId,
           user: authStore.getState().userId,
           show_permissions: true
         }).then((response) => {
@@ -65,7 +65,7 @@ export default defineComponent({
           [ObjectPermissions.TeamCaptain, ObjectPermissions.Coordinator]
         )
       ) {
-        const eventAreaRequest = await apiClient.eventAreas.list({event: to.params.id})
+        const eventAreaRequest = await apiClient.eventAreas.list({event: to.params.eventId})
         eventDetailStore.setEventAreas(eventAreaRequest.payload.data)
       }
 

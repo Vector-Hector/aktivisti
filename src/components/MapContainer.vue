@@ -25,7 +25,7 @@ export default defineComponent({
 .map-container {
   position: relative;
   display: flex;
-  flex: 1;
+  height: 100%;
 
   &.side {
     flex-direction: row;

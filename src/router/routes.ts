@@ -32,6 +32,12 @@ import PrintEvent from 'pages/PrintEvent.vue'
 import App from 'src/App.vue'
 import Print from 'src/Print.vue'
 import EditEventDetailsMap from 'pages/edit-event/details/EditEventDetailsMap.vue'
+import EditEventSinglePoster from 'pages/edit-event/posters/edit-single/EditEventSinglePoster.vue'
+import EditEventPostersList from 'pages/edit-event/posters/edit-list/EditEventPostersList.vue'
+import EditEventPosters from 'pages/edit-event/posters/EditEventPosters.vue'
+import EditEventPostersMap from 'pages/edit-event/posters/EditEventPostersMap.vue'
+import EditEventSinglePosterMap from 'pages/edit-event/posters/edit-single/EditEventSinglePosterMap.vue'
+import EditEventPostersListMap from 'pages/edit-event/posters/edit-list/EditEventPostersListMap.vue'
 
 
 const routes = [
@@ -81,7 +87,7 @@ const routes = [
             }
           },
           {
-            path: ':id',
+            path: ':eventId',
             name: 'event-detail',
             props: true,
             components: {
@@ -194,7 +200,7 @@ const routes = [
         }
       },
       {
-        path: '/events/edit/:id',
+        path: '/events/edit/:eventId',
         component: EditEvent,
         name: 'edit-event',
         redirect: {name: 'edit-event-details'},
@@ -219,6 +225,43 @@ const routes = [
               map: EditEventGeometryMap
             },
             name: 'edit-event-geometry'
+          },
+          {
+            name: 'edit-event-posters',
+            path: 'posters',
+            redirect: {name: 'edit-event-posters-list'},
+            components: {
+              default: EditEventPosters,
+              map: EditEventPostersMap
+            },
+            meta: {
+              title: () => 'Poster bearbeiten'
+            },
+            children: [
+              {
+                name: 'edit-event-posters-list',
+                path: '',
+                components: {
+                  default: EditEventPostersList,
+                  map: EditEventPostersListMap
+                }
+              },
+              {
+                name: 'edit-event-single-poster-edit',
+                path: ':posterId',
+                props: true,
+                components: {
+                  default: EditEventSinglePoster,
+                  map: EditEventSinglePosterMap
+                }
+              }, {
+                name: 'edit-event-single-poster-new',
+                path: 'new',
+                components: {
+                  default: EditEventSinglePoster,
+                  map: EditEventSinglePosterMap
+                }
+              }]
           }
         ]
       },

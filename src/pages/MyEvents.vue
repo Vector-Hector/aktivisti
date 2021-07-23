@@ -16,7 +16,7 @@
               v-for="{participation, event} in pendingEvents"
               :key="participation.id"
               :clickable="true"
-              :to="{ name: 'event-detail', params: { id: participation.event } }"
+              :to="{ name: 'event-detail', params: { eventId: participation.event } }"
             >
               <QItemSection>
                 <QItemLabel>
@@ -76,7 +76,7 @@
               v-for="{participation, event} in acceptedEvents"
               :key="participation.id"
               :clickable="true"
-              :to="{ name: 'event-detail', params: { id: participation.event } }"
+              :to="{ name: 'event-detail', params: { eventId: participation.event } }"
             >
               <QItemSection>
                 <QItemLabel>

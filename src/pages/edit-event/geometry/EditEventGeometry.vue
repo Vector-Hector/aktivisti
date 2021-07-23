@@ -112,82 +112,24 @@
       <h2 class="headline">
         Treffpunkt
       </h2>
-      <p>Bitte geben Sie entweder eine Adresse in das Suchfeld ein oder klicken Sie auf die Schaltfläche mit dem Pin und
-        anschließend auf den gewünschten Ort auf der Karte, um einen Treffpunkt festzulegen.</p>
-      <div class="row">
-        <div class="col">
-          <StandaloneGeocoder
-            :standalone="true"
-            @result="handleResult($event)"
-          />
-        </div>
-        <div
-          v-if="event.location === null"
-          class="col-auto marker-column"
-        >
-          <DraggableMarker
-            class="draggable-marker"
-            @dropped="handleDropped"
-          />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <label for="locationDescription">Beschreibung</label>
-          <QInput
-            id="locationDescription"
-            class="location-description"
-            ref="descriptionInput"
-            v-model="event.location_description"
-            type="text"
-            dense
-            filled
-            @keydown="touched = true"
-            :error-message="errors.location?.[0]"
-            :error="!!errors.location?.length"
-          />
-          <QPopupProxy
-            no-parent-event
-            ref="qPopupProxy"
-          >
-            <QCard>
-              <QCardSection>
-                  <span>
-                    Willst du die Beschreibung für diesen Ort übernehmen?
-                    <br>
-                    <b>{{ placeSuggestion.suggestion }}</b>
-                  </span>
-              </QCardSection>
-              <QCardActions align="right">
-                <QBtn v-close-popup flat color="primary" label="Nein" />
-                <QBtn v-close-popup flat color="primary" label="Ja" @click="acceptSuggestedPlaceName" />
-              </QCardActions>
-            </QCard>
-          </QPopupProxy>
-        </div>
-      </div>
+      <LocationSelect
+        v-model:location="event.location"
+        v-model:location-description="event.location_description"
+      />
     </div>
   </div>
   <SidebarBottomNavigation
-    @close="close"
-    @forward="close"
+    @close="abort"
+    @forward="next"
     @back="back"
-    :last="true"
+    :last="stepControls.isLastStep.value"
   />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { LocationDto } from 'src/api/model/LocationDto'
-import { GeocodeResult } from 'src/types/GeocodeResult'
-import StandaloneGeocoder from 'src/components/StandaloneGeocoder.vue'
-import { geocodingService } from 'src/utils/mapbox'
-import DraggableMarker from 'src/components/DraggableMarker.vue'
+import { defineComponent, inject } from 'vue'
 import {
   QBtn,
-  QCard,
-  QCardActions,
-  QCardSection,
   QColor,
   QInput,
   QPopupEdit,
@@ -201,21 +143,19 @@ import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryM
 import SidebarBottomNavigation from 'components/SidebarBottomNavigation.vue'
 import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
 import { EditEventBus, START_DRAW_AREA } from 'src/store/EditEventStore'
+import { StepControls } from 'pages/EditEvent.vue'
+import LocationSelect from 'components/LocationSelect.vue'
 
 export default defineComponent({
   name: 'EditEventGeometry',
   components: {
-    DraggableMarker,
-    StandaloneGeocoder,
+    LocationSelect,
     SidebarBottomNavigation,
     QPopupEdit,
     QColor,
     QSpinnerPuff,
     QPopupProxy,
     QBtn,
-    QCard,
-    QCardActions,
-    QCardSection,
     QInput,
     QTable,
     QTd,
@@ -223,10 +163,14 @@ export default defineComponent({
     QTh
   },
   mixins: [EditEventGeometryMixin, EditEventAutoSaveMixin],
+  setup() {
+    return {
+      stepControls: inject('stepControls') as StepControls
+    }
+  },
   data() {
     return {
       loading: false,
-      touched: false,
       columns: [{
         name: 'color',
         label: 'Farbe',
@@ -253,71 +197,22 @@ export default defineComponent({
       ionPencil
     }
   },
-  created() {
-    if (this.event.location_description) {
-      this.touched = true
-    }
-  },
-  watch: {
-    placeSuggestion: {
-      async handler(newValue) {
-        if (!newValue) return
-        this.event.location = newValue.location
-        if (!newValue?.suggestion) {
-          newValue.suggestion = await this.getSuggestion(newValue?.location)
-        }
-        this.suggestPlaceName()
-      },
-      deep: true
-    }
-  },
   methods: {
     startDrawArea() {
       EditEventBus.emit(START_DRAW_AREA)
     },
-    handleResult(geocoderResult: GeocodeResult) {
-      const [lng, lat] = geocoderResult.center
-      this.placeSuggestion = {
-        suggestion: geocoderResult.place_name,
-        location: {lat, lng}
-      }
-    },
-    handleDropped(value: any) {
-      this.event.location = value.coordinates
-      this.placeSuggestion = {location: value.coordinates}
-    },
-    async getSuggestion(location: LocationDto) {
-      return (await geocodingService.reverseGeocode({
-        query: [location.lng, location.lat],
-        mode: 'mapbox.places',
-        language: ['de']
-      }).send()).body.features[0]?.place_name
-    },
-    suggestPlaceName() {
-      if (this.touched) {
-        //@ts-ignore
-        this.$refs.qPopupProxy.show()
-      } else {
-        this.acceptSuggestedPlaceName()
-      }
-    },
-    acceptSuggestedPlaceName() {
-      this.event.location_description = this.placeSuggestion?.suggestion ?? ''
-    },
     async back() {
       await this.saveDebouncer.waitForSettle()
-      this.$router.go(-1)
+      this.stepControls.previous()
     },
-    async close() {
+    async next() {
       await this.saveDebouncer.waitForSettle()
-      await this.$router.push({
-        name: 'event-detail',
-        params: {
-          id: this.event.id.toString()
-        }
-      })
+      this.stepControls.next()
+    },
+    async abort() {
+      await this.saveDebouncer.waitForSettle()
+      this.stepControls.abort()
     }
-
   }
 })
 </script>
@@ -327,6 +222,8 @@ export default defineComponent({
 
 .edit-event-geometry {
   flex: 1;
+  padding: 0.5rem;
+  overflow: hidden;
 }
 
 .location-description {
@@ -334,20 +231,10 @@ export default defineComponent({
 }
 
 .headline {
-  margin: 0.5rem 0;
+  margin: 0.5rem 0 0 0;
   font-size: 1.5rem;
   line-height: 2rem;
   font-weight: bold;
-}
-
-.marker-column {
-  display: flex;
-  padding: 0 0.5rem 0.5rem 0.5rem;
-  align-items: flex-end;
-}
-
-.edit-event-geometry {
-  padding: 0.5rem;
 }
 
 .location-select {

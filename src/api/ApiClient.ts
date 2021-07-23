@@ -25,7 +25,8 @@ import { SessionRoute } from 'src/api/SessionRoute'
 import { ForgotPasswordDto } from 'src/api/model/ForgotPasswordDto'
 import { ObjectPermissionsRoute } from 'src/api/ObjectPermissionsRoute'
 import { PublicProfileDto } from 'src/api/model/PublicProfileDto'
-import { UserRoute } from 'src/api/UserRoute';
+import { UserRoute } from 'src/api/UserRoute'
+import { PosterDto } from 'src/api/model/PosterDto'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -67,6 +68,7 @@ export class ApiClient {
   session = new SessionRoute(this.baseURL, 'session/', this.axiosInstance)
   config = new ConfigRoute(this.baseURL, 'config/', this.axiosInstance)
   eventPermissions = new ObjectPermissionsRoute(this.baseURL, 'event-permissions/', this.axiosInstance)
+  posters = new ApiRoute<PosterDto>(this.baseURL, 'posters/', this.axiosInstance)
 }
 
 export const apiClient = new ApiClient()

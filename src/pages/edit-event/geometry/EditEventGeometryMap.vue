@@ -18,8 +18,7 @@
   </template>
   <Marker
     v-if="event.location"
-    :location="event.location"
-    @update:location="placeSuggestion = { location: $event }"
+    v-model:location="event.location"
     :draggable="true"
   />
 </template>

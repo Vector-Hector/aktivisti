@@ -1,11 +1,13 @@
 <template>
   <QPage class="edit-event">
     <RouteStepper
-      :steps="DoorToDoorEventSteps"
+      :steps="steps"
       v-model="activeStep"
     />
 
-    <MapContainer>
+    <MapContainer
+      class="map-container"
+    >
       <Map
         :bounding-box="bbox"
       >
@@ -23,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent, ComputedRef } from 'vue'
 
 import { EventTypes } from 'src/api/model/EventTypes'
 import { apiClient } from 'src/api/ApiClient'
@@ -37,8 +39,6 @@ import RouteStepper, { Step } from 'components/stepper/RouteStepper.vue'
 import { bbox, circle } from '@turf/turf'
 import { Feature } from 'geojson'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
-import { userStore } from 'src/store/UserStore'
-import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 
 const DoorToDoorEventSteps = [{
   label: 'Einstellungen',
@@ -47,6 +47,25 @@ const DoorToDoorEventSteps = [{
   label: 'Treffpunkt/Gebiete',
   routeName: 'edit-event-geometry'
 }]
+
+const PosterEventSteps = [{
+  label: 'Einstellungen',
+  routeName: 'edit-event-details'
+}, {
+  label: 'Treffpunkt/Gebiete',
+  routeName: 'edit-event-geometry'
+}, {
+  label: 'Standorte',
+  routeName: 'edit-event-posters'
+}]
+
+export interface StepControls {
+  isLastStep: ComputedRef<boolean>,
+  abort: () => void
+  next: () => void
+  previous: () => void
+}
+
 
 export default defineComponent({
   name: 'EditEvent',
@@ -57,26 +76,61 @@ export default defineComponent({
     MapOverlayProxy,
     Map
   },
-  beforeRouteEnter: async (to, from, next) => {
-    if (!userStore.hasAtLeastOneManagePermission()) {
-      ErrorBus.emit(NOT_AUTHORIZED, 'Um eine Aktion zu erstellen benötigst du eine Koordinator*innenberechtigung')
-      next({name: 'login'})
-    } else {
-      const [eventRequest, campaignRequest, eventAreasRequest] = await Promise.all([
-        apiClient.events.get(to.params.id as string, ['eventmetricrecord_set']),
-        apiClient.campaigns.list(),
-        apiClient.eventAreas.list({event: to.params.id})
-      ])
-      editEventStore.setEvent(eventRequest.payload.data)
-      editEventStore.setCampaigns(campaignRequest.payload.data)
-      editEventStore.setMetricRecords(eventRequest.payload.embedded.eventmetricrecord_set)
-      editEventStore.setEventAreas(eventAreasRequest.payload.data)
-      next(() => {
-        uiStore.updateActiveElements({
-          event: eventRequest.payload.data.name
-        })
-      })
+  provide() {
+    return {
+      stepControls: {
+        isLastStep: computed(() => this.activeStep >= this.steps.length - 1),
+        abort: () => {
+          void this.$router.push({
+            name: 'event-detail',
+            params: {
+              eventId: this.event!.id
+            }
+          })
+        },
+        next: () => {
+          const nextRouteName = this.steps[this.activeStep + 1]?.routeName
+          if (nextRouteName) {
+            void this.$router.push({
+              name: nextRouteName
+            })
+          } else {
+            void this.$router.push({
+              name: 'event-detail',
+              params: {
+                eventId: this.event!.id
+              }
+            })
+          }
+        },
+        previous: () => {
+          const previousRouteName = this.steps[this.activeStep - 1]?.routeName
+          if (previousRouteName) {
+            void this.$router.push({
+              name: previousRouteName
+            })
+          } else {
+            this.$router.go(-1)
+          }
+        }
+      } as StepControls
     }
+  },
+  beforeRouteEnter: async (to, from, next) => {
+    const [eventRequest, campaignRequest, eventAreasRequest] = await Promise.all([
+      apiClient.events.get(to.params.eventId as string, ['eventmetricrecord_set']),
+      apiClient.campaigns.list(),
+      apiClient.eventAreas.list({event: to.params.eventId})
+    ])
+    editEventStore.setEvent(eventRequest.payload.data)
+    editEventStore.setCampaigns(campaignRequest.payload.data)
+    editEventStore.setMetricRecords(eventRequest.payload.embedded.eventmetricrecord_set)
+    editEventStore.setEventAreas(eventAreasRequest.payload.data)
+    next(() => {
+      uiStore.updateActiveElements({
+        event: eventRequest.payload.data.name
+      })
+    })
   },
   beforeRouteUpdate() {
     uiStore.updateActiveElements({
@@ -92,6 +146,8 @@ export default defineComponent({
     },
     steps(): Step[] {
       switch (this.event?.event_type) {
+      case EventTypes.POSTERS:
+        return PosterEventSteps
       case EventTypes.DOOR_TO_DOOR:
       default:
         return DoorToDoorEventSteps
@@ -114,7 +170,7 @@ export default defineComponent({
     return {
       EventTypes,
       DoorToDoorEventSteps,
-      activeStep: {},
+      activeStep: 0,
       bbox: null as BBox2d | null
     }
   },
@@ -142,6 +198,10 @@ export default defineComponent({
   // TODO(peter@ctrl.alt.coop): Don't show/render the html element instead of hiding it.
   ::v-deep .q-stepper__step-inner {
     display: none
+  }
+
+  .map-container {
+    overflow: hidden;
   }
 }
 

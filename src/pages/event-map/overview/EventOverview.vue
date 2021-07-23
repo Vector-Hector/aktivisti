@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container event-overview">
     <CollapsibleFilters
       class="collapsible-filters"
       :activated-filter-count="activatedFilterCount"
@@ -146,7 +146,13 @@ export default defineComponent({
   }
 })
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+
+.event-overview {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
 .filter-content {
   padding: 1rem;
@@ -160,5 +166,7 @@ export default defineComponent({
 
 .event-list {
   margin: 1rem 0;
+  height: 100%;
+  overflow: hidden;
 }
 </style>

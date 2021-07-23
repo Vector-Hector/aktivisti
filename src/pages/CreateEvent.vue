@@ -20,7 +20,6 @@
           class="create-event-input"
           v-model="event.event_type"
           label="Aktionstyp"
-          :disabled="true"
           :options="eventTypeOptions"
           option-label="label"
           option-value="key"
@@ -135,7 +134,7 @@ export default defineComponent({
         await this.$router.push({
           name: 'edit-event-details',
           params: {
-            id: this.event.id!
+            eventId: this.event.id!
           }
         })
       } catch (e) {

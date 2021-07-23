@@ -37,7 +37,7 @@
     </QHeader>
     <NavigationSidebar />
     <QPageContainer
-      class="d-flex"
+      class="d-flex page-container"
     >
       <router-view v-slot="{ Component }">
         <component :is="Component" />
@@ -200,6 +200,11 @@ export default defineComponent({
 
 .toolbar {
   height: 58px;
+}
+
+.page-container {
+  height: 100%;
+  overflow: hidden;
 }
 
 </style>

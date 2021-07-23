@@ -2,19 +2,23 @@
   <div class="counter-input">
     <div class="p-fluid">
       <div class="p-field">
-        <label for="queryValue">Ort suchen</label>
         <QSelect
           id="queryValue"
-          :model-value="selectedGeocode"
+          :model-value="result"
           class="search-place"
-          hide-selected
           hide-dropdown-icon
           @filter="filterFn"
           dense
           filled
-          :options="filteredPlaces"
-          option-label="place_name"
+          label="Adresse eingeben"
+          :fill-input="customPlaceName"
           use-input
+          hide-selected
+          @input-value="updatePlaceName"
+          option-label="place_name"
+          :options="filteredPlaces"
+          :error-message="error"
+          :error="!!error"
           @update:model-value="emitResult($event)"
         >
           <template v-slot:append>
@@ -39,7 +43,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { geocodingService } from 'src/utils/mapbox'
 import { GeocodeResult } from 'src/types/GeocodeResult'
 import { QItem, QItemSection, QItemLabel, QSelect, QIcon } from 'quasar'
@@ -47,6 +51,21 @@ import { ionSearch } from '@quasar/extras/ionicons-v5'
 
 export default defineComponent({
   name: 'StandaloneGeocoder',
+  props: {
+    result: {
+      type: Object as PropType<Partial<GeocodeResult>>,
+      required: false
+    },
+    customPlaceName: {
+      type: Boolean as PropType<boolean>,
+      default: false
+    },
+    error: {
+      type: String as PropType<string>,
+      default: ''
+    }
+  },
+  emit: ['update:description', 'update:result', 'newResult'],
   components: {
     QItem,
     QItemLabel,
@@ -54,7 +73,6 @@ export default defineComponent({
     QSelect,
     QIcon
   },
-  emits: ['result'],
   data() {
     return {
       selectedGeocode: null as GeocodeResult | null,
@@ -77,13 +95,20 @@ export default defineComponent({
         }).send()).body.features
       })
     },
+    updatePlaceName(value: string) {
+      if (!this.customPlaceName) return
+      this.$emit('update:result', {
+        ...this.result,
+        place_name: value
+      })
+    },
     emitResult(selection: GeocodeResult) {
-      this.$emit('result', selection)
+      this.$emit('update:result', selection)
+      this.$emit('newResult', selection)
     }
   }
 })
 </script>
-
 <style lang="scss" scoped>
 
 .search-place {

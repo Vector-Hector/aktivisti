@@ -1,43 +1,45 @@
 <template>
-  <QInfiniteScroll
-    v-if="events.length > 0"
-    @load="loadData"
-    :disable="events.length === pagination.total"
-  >
-    <QList>
-      <QItem
-        v-for="item in events"
-        :key="item.id"
-        clickable
-        v-ripple
-        @click="goToEvent(item)"
-      >
-        <QItemSection>
-          <QItemLabel>
-            <b>{{ item.name }}</b>
-          </QItemLabel>
-          <QItemLabel>
-            {{ campaignsByIds(item.campaigns).map(({name}) => name).join(',') }}
-          </QItemLabel>
-          <QItemLabel>
-            {{ $utils.dateFormat(item.start_date) }}
-          </QItemLabel>
-        </QItemSection>
-      </QItem>
-    </QList>
-    <template v-slot:loading>
-      <div class="row justify-center q-my-md">
-        <QSpinnerDots color="primary" size="40px" />
-      </div>
-    </template>
-  </QInfiniteScroll>
-  <div
-    v-else
-    class="empty-list-placeholder"
-  >
+  <QScrollArea>
+    <QInfiniteScroll
+      v-if="events.length > 0"
+      @load="loadData"
+      :disable="events.length === pagination.total"
+    >
+      <QList>
+        <QItem
+          v-for="item in events"
+          :key="item.id"
+          clickable
+          v-ripple
+          @click="goToEvent(item)"
+        >
+          <QItemSection>
+            <QItemLabel>
+              <b>{{ item.name }}</b>
+            </QItemLabel>
+            <QItemLabel>
+              {{ campaignsByIds(item.campaigns).map(({name}) => name).join(',') }}
+            </QItemLabel>
+            <QItemLabel>
+              {{ $utils.dateFormat(item.start_date) }}
+            </QItemLabel>
+          </QItemSection>
+        </QItem>
+      </QList>
+      <template v-slot:loading>
+        <div class="row justify-center q-my-md">
+          <QSpinnerDots color="primary" size="40px" />
+        </div>
+      </template>
+    </QInfiniteScroll>
+    <div
+      v-else
+      class="empty-list-placeholder"
+    >
 
-    Keine Aktionen gefunden
-  </div>
+      Keine Aktionen gefunden
+    </div>
+  </QScrollArea>
 </template>
 
 <script lang="ts">
@@ -47,7 +49,7 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
 import { Pagination } from 'src/api/model/APIEnvelope'
 import { distinctBy } from 'src/utils/array'
-import { QInfiniteScroll, QItem, QItemLabel, QItemSection, QList, QSpinnerDots } from 'quasar'
+import { QInfiniteScroll, QItem, QItemLabel, QItemSection, QList, QScrollArea, QSpinnerDots } from 'quasar'
 import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 
 
@@ -59,7 +61,8 @@ export default defineComponent({
     QItemSection,
     QInfiniteScroll,
     QSpinnerDots,
-    QList
+    QList,
+    QScrollArea
   },
   props: {
     filterParams: {
@@ -96,7 +99,7 @@ export default defineComponent({
       void this.$router.push({
         name: 'event-detail',
         params: {
-          id: event.id
+          eventId: event.id
         }
       })
     },
