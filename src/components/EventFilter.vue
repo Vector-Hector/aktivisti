@@ -80,6 +80,7 @@ export interface UserEventFilterParams {
 }
 
 export default defineComponent({
+  name: 'EventFilter',
   components: {
     QSelect
   },
