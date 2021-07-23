@@ -118,6 +118,7 @@
       <LocationSelect
         v-model:location="event.location"
         v-model:location-description="event.location_description"
+        :error="errors.location?.[0]"
       />
     </div>
   </div>
