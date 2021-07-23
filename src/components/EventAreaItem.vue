@@ -73,7 +73,6 @@ import {
   ionPersonCircleOutline
 } from '@quasar/extras/ionicons-v5'
 import { EventTypes } from 'src/api/model/EventTypes'
-import { area } from '@turf/turf'
 
 
 export default defineComponent({

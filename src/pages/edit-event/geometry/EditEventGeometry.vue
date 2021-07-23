@@ -77,9 +77,12 @@
               v-if="updatingAreaFeatureIds.has(props.row.feature_id)"
               class="progress-spinner"
             />
+            <span v-else-if="event.event_type === EventTypes.POSTERS">
+              {{ props.row.poster_count }}
+            </span>
             <span v-else>
-            {{ props.row.area_details?.streets?.reduce((acc, item) => acc + item.addresses.length, 0) ?? 0 }}
-          </span>
+              {{ props.row.area_details?.streets?.reduce((acc, item) => acc + item.addresses.length, 0) ?? 0}}
+            </span>
           </QTd>
 
           <QTd key="actions" :props="props">
@@ -145,6 +148,7 @@ import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
 import { EditEventBus, START_DRAW_AREA } from 'src/store/EditEventStore'
 import { StepControls } from 'pages/EditEvent.vue'
 import LocationSelect from 'components/LocationSelect.vue'
+import { EventTypes } from 'src/api/model/EventTypes'
 
 export default defineComponent({
   name: 'EditEventGeometry',
@@ -171,7 +175,27 @@ export default defineComponent({
   data() {
     return {
       loading: false,
-      columns: [{
+      ionShareSocial,
+      ionTrash,
+      ionPencil,
+      EventTypes
+    }
+  },
+  computed: {
+    columns() {
+      let detailsColumns
+      if (this.event.event_type === EventTypes.POSTERS) {
+        detailsColumns = {
+          name: 'details',
+          label: 'Poster',
+        }
+      } else {
+        detailsColumns = {
+          name: 'details',
+          label: 'Adressen',
+        }
+      }
+      return [{
         name: 'color',
         label: 'Farbe',
         field: 'color',
@@ -182,19 +206,12 @@ export default defineComponent({
         label: 'Name',
         field: 'name',
         align: 'left'
-      }, {
-        name: 'details',
-        label: 'Adressen',
-        field: 'area_details'
-      }, {
+      }, detailsColumns, {
         name: 'actions',
         label: '',
         field: null,
         required: true
-      }],
-      ionShareSocial,
-      ionTrash,
-      ionPencil
+      }]
     }
   },
   methods: {

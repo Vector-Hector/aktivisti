@@ -16,6 +16,11 @@
       :addresses="addresses"
     />
   </template>
+  <PosterMarkerLayer
+    :posters="posters"
+    :editable="false"
+    :opacity="0.5"
+  />
   <Marker
     v-if="event.location"
     v-model:location="event.location"
@@ -41,6 +46,7 @@ import { LocationDto } from 'src/api/model/LocationDto'
 import InjectMapMixin from 'pages/event-detail/InjectMapMixin'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import AddressMarkerLayer from 'src/mapbox/AddressMarkerLayer'
+import PosterMarkerLayer from 'src/mapbox/PosterMarkerLayer'
 
 const defaultColors = [
   '#E22A3A',
@@ -60,6 +66,7 @@ export default defineComponent({
   components: {
     AddressMarkerLayer,
     DrawControl,
+    PosterMarkerLayer,
     Marker
   },
   setup() {

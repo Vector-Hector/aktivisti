@@ -5,6 +5,11 @@
   <AddressMarkerLayer
     :addresses="addresses"
   />
+  <PosterMarkerLayer
+    :posters="posters"
+    :editable="false"
+    :opacity="0.5"
+  />
   <Marker
     v-if="event.location"
     :location="event.location"
@@ -23,11 +28,13 @@ import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { LocationDto } from 'src/api/model/LocationDto'
 import AreaFeatureLayer from 'src/mapbox/AreaFeatureLayer'
 import AddressMarkerLayer from 'src/mapbox/AddressMarkerLayer'
+import PosterMarkerLayer from 'src/mapbox/PosterMarkerLayer'
 
 
 export default defineComponent({
   name: 'EditEventDetailsMap',
   components: {
+    PosterMarkerLayer,
     AddressMarkerLayer,
     Marker,
     AreaFeatureLayer

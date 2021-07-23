@@ -39,6 +39,7 @@ import RouteStepper, { Step } from 'components/stepper/RouteStepper.vue'
 import { bbox, circle } from '@turf/turf'
 import { Feature } from 'geojson'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import { posterListStore } from 'src/store/PosterListStore'
 
 const DoorToDoorEventSteps = [{
   label: 'Einstellungen',
@@ -117,11 +118,16 @@ export default defineComponent({
     }
   },
   beforeRouteEnter: async (to, from, next) => {
+
     const [eventRequest, campaignRequest, eventAreasRequest] = await Promise.all([
       apiClient.events.get(to.params.eventId as string, ['eventmetricrecord_set']),
       apiClient.campaigns.list(),
       apiClient.eventAreas.list({event: to.params.eventId})
     ])
+    if (eventRequest.payload.data.event_type === EventTypes.POSTERS) {
+      const posters = await apiClient.posters.list({event: to.params.eventId})
+      posterListStore.state.posters = posters.payload.data
+    }
     editEventStore.setEvent(eventRequest.payload.data)
     editEventStore.setCampaigns(campaignRequest.payload.data)
     editEventStore.setMetricRecords(eventRequest.payload.embedded.eventmetricrecord_set)
@@ -139,6 +145,7 @@ export default defineComponent({
   },
   unmounted() {
     editEventStore.reset()
+    posterListStore.reset()
   },
   computed: {
     event() {

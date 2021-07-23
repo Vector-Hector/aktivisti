@@ -113,7 +113,7 @@ export default defineComponent({
     }
   },
   methods: {
-    async onDeleteClicked(poster: PosterDto) {
+    onDeleteClicked(poster: PosterDto) {
       if (this.confirmDelete) {
         this.$q.dialog({
           title: 'Poster löschen',

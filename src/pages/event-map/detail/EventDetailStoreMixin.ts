@@ -1,4 +1,4 @@
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { PermissionHintsDto } from 'src/api/model/APIEnvelope'
@@ -8,15 +8,10 @@ import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 import { ObjectPermissionDto, ObjectPermissions } from 'src/api/model/ObjectPermissionDto'
 import { Feature } from 'geojson'
+import { PosterDto } from 'src/api/model/PosterDto'
 
 export default defineComponent({
   name: 'EventDetailStoreMixin',
-  props: {
-    eventId: {
-      type: String as PropType<string>,
-      required: true
-    }
-  },
   computed: {
     areaFeatures(): Feature[] {
       return this.eventAreas.map((area) => {
@@ -29,6 +24,38 @@ export default defineComponent({
           }
         }
       })
+    },
+    activePosterIndex: {
+      get() {
+        return eventDetailStore.state.activePosterIndex
+      },
+      set(index: number) {
+        eventDetailStore.state.activePosterIndex = index
+      }
+    },
+    posters: {
+      get(): PosterDto[] {
+        return eventDetailStore.state.posters
+      },
+      set(posters: PosterDto[]) {
+        eventDetailStore.state.posters = posters
+      }
+    },
+    postersInArea: {
+      get(): PosterDto[] {
+        return eventDetailStore.state.posters.filter(({area}) => area === (this.eventArea?.id ?? null))
+      },
+      set(posters: PosterDto[]) {
+        this.mergePosters(posters)
+      }
+    },
+    postersWithoutArea: {
+      get(): PosterDto[] {
+        return eventDetailStore.state.posters.filter(({area}) => area === null)
+      },
+      set(posters: PosterDto[]) {
+        this.mergePosters(posters)
+      }
     },
     participations: {
       get(): EventParticipationDto[] {
@@ -132,4 +159,16 @@ export default defineComponent({
       return this.isTeamCaptain || this.isCoordinator
     }
   },
+  methods: {
+    mergePosters(posters: PosterDto[]) {
+      for (const poster of posters) {
+        const originalIndex = this.posters.findIndex(({id}) => id === poster.id)
+        if (originalIndex > -1) {
+          Object.assign(this.posters[originalIndex], poster)
+        } else {
+          this.posters.push(poster)
+        }
+      }
+    }
+  }
 })

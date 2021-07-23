@@ -5,6 +5,7 @@
       v-if="poster"
       v-model:poster="poster"
       :errors="errors"
+      :edit-location="true"
     />
     <div class="buttons">
       <div

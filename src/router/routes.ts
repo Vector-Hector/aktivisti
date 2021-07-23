@@ -95,7 +95,6 @@ const routes = [
           {
             path: ':eventId',
             name: 'event-detail',
-            props: true,
             components: {
               default: EventDetail,
               map: EventDetailMap
@@ -108,7 +107,6 @@ const routes = [
             children: [
               {
                 path: 'overview',
-                props: true,
                 components: {
                   default: EventDetailOverview,
                   map: EventDetailOverviewMap
@@ -137,7 +135,6 @@ const routes = [
                   default: EventDetailArea,
                   map: EventDetailAreaMap
                 },
-                props: true,
                 meta: {
                   title: () => 'Aktionsgebiete',
                   subtitle: () => uiStore.getState().activeTitleElements.event
@@ -193,7 +190,7 @@ const routes = [
                     path: 'posters',
                     name: 'event-detail-poster',
                     redirect: {name: 'event-detail-poster-list'},
-                    props: true,
+                    props: false,
                     components: {
                       default: EventDetailPosters,
                       map: EventDetailPostersMap

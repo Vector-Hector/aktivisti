@@ -12,6 +12,7 @@ export interface EventAreaDto {
   is_completed: boolean
   area_details?: AreaDetailsDto
   poster_count: number
+  poster_creation_allowed: boolean
 }
 
 export function eventAreaToFeature(eventArea: EventAreaDto): Feature {

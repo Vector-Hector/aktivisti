@@ -3,10 +3,10 @@
     :features="areaFeatures"
   />
   <PosterMarkerLayer
-    :posters="posters"
+    :posters="postersInArea"
     :editable="false"
     :active-poster-index="activePosterIndex"
-    @poster-click="selectPoster"
+    @poster-click="selectPoster($event, true)"
   />
   <router-view name="map" />
 </template>
@@ -15,11 +15,11 @@ import { defineComponent } from 'vue'
 import PosterMarkerLayer from 'src/mapbox/PosterMarkerLayer'
 import EventDetailPosterMixin from 'pages/event-map/detail/area/posters/EventDetailPosterMixin'
 import AreaFeatureLayer from 'src/mapbox/AreaFeatureLayer'
-import EventOverviewAreaMixin from 'pages/event-map/detail/area/overview/EventOverviewAreaMixin'
 import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
+
 export default defineComponent({
   name: 'EventDetailPostersMap',
   components: {AreaFeatureLayer, PosterMarkerLayer},
-  mixins: [EventDetailPosterMixin, EventOverviewAreaMixin, EventDetailMixin]
+  mixins: [EventDetailPosterMixin, EventDetailMixin]
 })
 </script>

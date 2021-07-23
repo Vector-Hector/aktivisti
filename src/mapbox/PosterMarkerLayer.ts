@@ -24,6 +24,10 @@ export default defineComponent({
     editable: {
       type: Boolean as PropType<boolean>,
       default: false
+    },
+    opacity: {
+      type: Number as PropType<number>,
+      required: false
     }
   },
   emits: ['update:posters', 'posterClick'],
@@ -39,6 +43,7 @@ export default defineComponent({
 
     let postersClickable = false
 
+    const sources: string[] = []
     const layers: string[] = []
 
     const iconLayout: SymbolLayout = {
@@ -64,7 +69,7 @@ export default defineComponent({
               type: 'Feature',
               properties: {
                 status: poster.status,
-                opacity: (active) ? 1 : 0.5,
+                opacity: props.opacity ?? ((active) ? 1 : 0.5),
                 id: poster.id
               },
               geometry: {
@@ -166,7 +171,10 @@ export default defineComponent({
             features: []
           }
         }
+
+        sources.push(posterSourceId)
         map?.value.addSource(posterSourceId, emptySource)
+        sources.push(activePosterSourceId)
         map?.value.addSource(activePosterSourceId, emptySource)
 
         const refreshSource = () => {
@@ -220,7 +228,7 @@ export default defineComponent({
           source: activePosterSourceId,
           layout: iconLayout,
           paint: {
-            'icon-opacity': 1
+            'icon-opacity': props.opacity ?? 1
           }
         })
         if (props.editable) {
@@ -244,8 +252,9 @@ export default defineComponent({
       layers.forEach((layerId) => {
         map?.value?.removeLayer(layerId)
       })
-      map?.value?.removeSource(posterSourceId)
-      map?.value?.removeSource(activePosterSourceId)
+      sources.forEach((sourceId) => {
+        map?.value?.removeSource(sourceId)
+      })
     })
   },
   render() {

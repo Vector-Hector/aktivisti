@@ -3,7 +3,6 @@
     v-model:posters="posters"
     :active-poster-index="activePosterIndex"
     :editable="true"
-    :opacity="posterOpacity"
     @posterClick="goToPoster"
   />
   <AreaFeatureLayer
@@ -25,17 +24,6 @@ export default defineComponent({
   components: {
     PosterMarkerLayer,
     AreaFeatureLayer
-  },
-  computed: {
-    posterOpacity(): number {
-      if (['edit-event-single-poster-edit', 'edit-event-single-poster-new'].includes(
-        this.$route.name?.toString() ?? '')
-      ) {
-        return 0.5
-      } else {
-        return 1
-      }
-    }
   },
   methods: {
     goToPoster(posterId: number) {

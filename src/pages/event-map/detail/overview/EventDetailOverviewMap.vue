@@ -11,7 +11,6 @@
 <script lang="ts">
 
 import { defineComponent } from 'vue'
-import { Feature } from 'geojson'
 import FeatureLayer from 'src/mapbox/AreaFeatureLayer'
 import Marker from 'src/mapbox/Marker.vue'
 import { bbox, circle } from '@turf/turf'
