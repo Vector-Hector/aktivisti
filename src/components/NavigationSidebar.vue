@@ -108,7 +108,18 @@
             :to="{ name: 'create-event' }"
           >
             <QIcon :name="farCalendarPlus" />
-            <span class="menu-item-link-text">Aktion Erstellen</span>
+            <span class="menu-item-link-text">Aktion erstellen</span>
+          </MenuLink>
+        </div>
+        <div
+          v-if="isTeamCaptainOrLocalCoordinator"
+          class="menu-item"
+        >
+          <MenuLink
+            :to="{ name: 'manage-sub-associations'}"
+          >
+            <QIcon />
+            <span class="menu-item-link-text">Kreisverbände verwalten</span>
           </MenuLink>
         </div>
       </div>
@@ -200,6 +211,9 @@ export default defineComponent({
     },
     hasManagePermission() {
       return userStore.hasAtLeastOneManagePermission()
+    },
+    isTeamCaptainOrLocalCoordinator() {
+      return userStore.isTeamCaptainOrLocalCoordinator()
     },
     userName() {
       return userStore.getState().user?.username

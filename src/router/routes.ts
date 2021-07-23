@@ -44,7 +44,8 @@ import EventDetailPosterDetail from 'pages/event-map/detail/area/posters/detail/
 import EventDetailPosterDetailMap from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetailMap.vue'
 import EventDetailPosterList from 'pages/event-map/detail/area/posters/list/EventDetailPosterList.vue'
 import EventDetailPosterListMap from 'pages/event-map/detail/area/posters/list/EventDetailPosterListMap.vue'
-import MyManagedEvents from 'pages/MyManagedEvents.vue';
+import MyManagedEvents from 'pages/MyManagedEvents.vue'
+import ManageSubAssociations from 'pages/ManageSubAssociations.vue'
 
 
 const routes = [
@@ -352,6 +353,14 @@ const routes = [
       component: PrintEvent,
       name: 'print-event'
     }]
+  },
+  {
+    path: '/manage-sub-associations',
+    name: 'manage-sub-associations',
+    component: ManageSubAssociations,
+    meta: {
+      title: () => 'Kreisverbände verwalten'
+    }
   }
 ]
 

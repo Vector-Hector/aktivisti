@@ -81,7 +81,7 @@ class UserStore extends Store<UserState> {
       localStorage.setItem(KEY_HOMEASSOCIATION, JSON.stringify(this.state.homeAssociation))
     } else {
       localStorage.removeItem(KEY_HOMEASSOCIATION)
-    }
+      }
   }
 
   public clearUser() {
@@ -94,6 +94,23 @@ class UserStore extends Store<UserState> {
 
   public isCampaignAdmin(): boolean {
     return this.state.user?.roles.includes(CAMPAIGN_ADMIN) ?? false
+  }
+
+  public isTeamCaptainOrLocalCoordinator(): boolean {
+    return this.getMyTeamCaptainOrCoordinatorPermissions().length !== 0
+  }
+
+  public getMyPermissions() {
+    return this.state.permissions.filter(
+      (permission) => permission.user == this.state.user?.id
+    )
+  }
+
+  public getMyTeamCaptainOrCoordinatorPermissions() {
+    return this.getMyPermissions().filter(
+      (permission) => permission.permission_codename == 'team_captain'
+        || permission.permission_codename == 'manages_events'
+    )
   }
 
   public setPermissions(permissions: UserObjectPermissionDto[]) {
