@@ -223,7 +223,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { authStore } from 'src/store/AuthStore'
 import { userStore } from 'src/store/UserStore'
@@ -255,9 +255,6 @@ import { QBtn, QIcon, QList } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import { MAP_PAN_TO, MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/mapbox/Map.vue'
 import { EventTypes } from 'src/api/model/EventTypes'
-import { Geometry } from 'geojson'
-import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
-
 
 export default defineComponent({
   name: 'EventDetailOverview',
