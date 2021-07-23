@@ -28,7 +28,7 @@
       Die Partei DIE LINKE nimmt den Schutz Ihrer persönlichen Daten sehr ernst und hält sich strikt an die Regeln
       der Datenschutzgesetze.
       <a
-        href="https://www.die-linke.de/seitenfuss/datenschutz/"
+        href="https://www.die-linke.de/seitenfuss/datenschutz/#accordion-heading-17445-2912"
         target="_blank"
         class="text-link"
       >
