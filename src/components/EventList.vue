@@ -54,7 +54,7 @@ import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 
 
 export default defineComponent({
-  name: 'Events',
+  name: 'EventList',
   components: {
     QItem,
     QItemLabel,
