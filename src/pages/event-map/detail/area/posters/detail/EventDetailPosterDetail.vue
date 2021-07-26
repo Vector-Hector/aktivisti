@@ -14,30 +14,24 @@ import { cloneDeep, isEqual } from 'lodash-es'
 import { SettleDebouncer } from 'src/utils/debounce'
 import { eventDetailStore } from 'src/store/EventDetailStore'
 import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
+import { RouteLocation, NavigationGuardNext } from 'vue-router'
+
+function updateRoute(to: RouteLocation, from: RouteLocation, next: NavigationGuardNext) {
+  const {posterId, areaId} = to.params
+  const parsedAreaId = areaId !== 'undefined' ? parseInt(areaId.toString()) : null
+  const postersInArea = eventDetailStore.state.posters.filter(({area}) => area === parsedAreaId)
+  eventDetailStore.state.activePosterIndex = postersInArea.findIndex(
+    (({id}) => parseInt(posterId as string) === id)
+  )
+  next()
+}
 
 export default defineComponent({
   name: 'EventDetailPosterDetail',
   components: {EditPoster},
   mixins: [EventDetailPosterMixin, EventDetailStoreMixin],
-  beforeRouteEnter(to, from, next) {
-    const {posterId, areaId} = to.params
-    const parsedAreaId = areaId !== 'undefined' ? parseInt(areaId.toString()) : null
-    const postersInArea = eventDetailStore.state.posters.filter(({area}) => area === parsedAreaId)
-    eventDetailStore.state.activePosterIndex = postersInArea.findIndex(
-      (({id}) => parseInt(posterId as string) === id)
-    )
-
-    next()
-  },
-  beforeRouteUpdate(to, from, next) {
-    const {posterId, areaId} = to.params
-    const parsedAreaId = areaId !== 'undefined' ? parseInt(areaId.toString()) : null
-    const postersInArea = eventDetailStore.state.posters.filter(({area}) => area === parsedAreaId)
-    eventDetailStore.state.activePosterIndex = postersInArea.findIndex(
-      (({id}) => parseInt(posterId as string) === id)
-    )
-    next()
-  },
+  beforeRouteEnter: updateRoute,
+  beforeRouteUpdate: updateRoute,
   beforeRouteLeave() {
     eventDetailStore.state.activePosterIndex = null
   },
