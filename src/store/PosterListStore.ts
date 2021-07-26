@@ -6,7 +6,7 @@ interface EditPosterListStoreState {
   activePosterIndex: number | null
 }
 
-class EditPosterListStore extends Store<EditPosterListStoreState> {
+class PosterListStore extends Store<EditPosterListStoreState> {
   data() {
     return {
       posters: [],
@@ -15,4 +15,4 @@ class EditPosterListStore extends Store<EditPosterListStoreState> {
   }
 }
 
-export const editPosterListStore = new EditPosterListStore()
+export const posterListStore = new PosterListStore()

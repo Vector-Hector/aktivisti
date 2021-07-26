@@ -42,4 +42,5 @@ export interface PosterDto {
   mounted_on: PosterMount
   event: number
   poster_id: number
+  area: number
 }

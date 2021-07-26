@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import { editPosterListStore } from 'src/store/EditPosterListStore'
+import { posterListStore } from 'src/store/PosterListStore'
 import { PosterDto } from 'src/api/model/PosterDto'
 
 
@@ -8,18 +8,18 @@ export default defineComponent({
   computed: {
     posters: {
       get() {
-        return editPosterListStore.state.posters
+        return posterListStore.state.posters
       },
       set(posters: PosterDto[]) {
-        editPosterListStore.state.posters = posters
+        posterListStore.state.posters = posters
       }
     },
     activePosterIndex: {
       get() {
-        return editPosterListStore.state.activePosterIndex
+        return posterListStore.state.activePosterIndex
       },
       set(index: number) {
-        editPosterListStore.state.activePosterIndex = index
+        posterListStore.state.activePosterIndex = index
       }
     }
   },

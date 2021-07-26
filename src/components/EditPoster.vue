@@ -1,11 +1,22 @@
 <template>
 
   <LocationSelect
+    v-if="editLocation"
     :location="poster.location"
     @update:location="updatePoster({location: $event})"
     :location-description="poster.location_description"
     @update:location-description="updatePoster({location_description: $event})"
     :error="errors.location?.[0]"
+  />
+  <QInput
+    v-else
+    :model-value="poster.location_description"
+    readonly
+    disable
+    filled
+    label="Adresse"
+    :error-message="errors.location_description?.[0]"
+    :error="!!errors.location_description?.length"
   />
   <QSelect
     filled
@@ -38,7 +49,7 @@
 
 import { defineComponent, PropType } from 'vue'
 import { PosterDto, posterMountOptions, posterStatusOptions } from 'src/api/model/PosterDto'
-import { QSelect } from 'quasar'
+import { QInput, QSelect } from 'quasar'
 import { GeocodeResult } from 'src/types/GeocodeResult'
 import { cloneDeep } from 'lodash-es'
 import LocationSelect from 'components/LocationSelect.vue'
@@ -47,7 +58,8 @@ export default defineComponent({
   name: 'EditPoster',
   components: {
     LocationSelect,
-    QSelect
+    QSelect,
+    QInput
   },
   props: {
     poster: {
@@ -63,6 +75,10 @@ export default defineComponent({
       default: () => {
         return {}
       }
+    },
+    editLocation: {
+      type: Boolean as PropType<boolean>,
+      default: false
     }
   },
   emits: ['update:poster'],

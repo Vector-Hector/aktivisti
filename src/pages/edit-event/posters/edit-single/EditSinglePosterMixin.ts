@@ -1,15 +1,15 @@
 import { PosterDto } from 'src/api/model/PosterDto'
 import { defineComponent } from 'vue'
-import { editPosterListStore } from 'src/store/EditPosterListStore'
+import { posterListStore } from 'src/store/PosterListStore'
 
 export default defineComponent({
   computed: {
     poster: {
       set(poster: Partial<PosterDto>) {
-        editPosterListStore.state.posters[editPosterListStore.state.activePosterIndex!] = poster
+        posterListStore.state.posters[posterListStore.state.activePosterIndex!] = poster
       },
       get() {
-        return editPosterListStore.state.posters[editPosterListStore.state.activePosterIndex!]
+        return posterListStore.state.posters[posterListStore.state.activePosterIndex!]
       }
     }
   }

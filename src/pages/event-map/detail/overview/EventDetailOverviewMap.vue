@@ -11,7 +11,6 @@
 <script lang="ts">
 
 import { defineComponent } from 'vue'
-import { Feature } from 'geojson'
 import FeatureLayer from 'src/mapbox/AreaFeatureLayer'
 import Marker from 'src/mapbox/Marker.vue'
 import { bbox, circle } from '@turf/turf'
@@ -37,18 +36,6 @@ export default defineComponent({
         type: 'FeatureCollection',
         features: [...this.areaFeatures, ...locationFeatures]
       }) as BBox2d : userStore.getState().bbox
-    },
-    areaFeatures(): Feature[] {
-      return this.eventAreas.map((area) => {
-        return {
-          type: 'Feature',
-          id: area.feature_id,
-          geometry: area.geometry,
-          properties: {
-            color: area.color
-          }
-        }
-      })
     }
   },
   mounted() {

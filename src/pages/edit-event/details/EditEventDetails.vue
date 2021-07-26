@@ -103,6 +103,12 @@
           />
         </div>
       </div>
+      <div v-else-if="event.event_type === EventTypes.POSTERS">
+        <QCheckbox
+          v-model="event.poster_creation_allowed"
+          label="Teilnehmer*innen können Poster anlegen"
+        />
+      </div>
     </QForm>
   </div>
   <SidebarBottomNavigation
@@ -122,7 +128,7 @@ import EditEventMixin from 'src/pages/edit-event/EditEventMixin'
 import { VisibilityLabels, VisibilityOptions } from 'src/api/model/EventDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
-import { date, QForm, QInput, QSelect } from 'quasar'
+import { date, QCheckbox, QForm, QInput, QSelect } from 'quasar'
 import DateTimeInput from 'components/DateTimeInput.vue'
 import SidebarBottomNavigation from 'components/SidebarBottomNavigation.vue'
 import MetricInput from 'components/MetricInput.vue'
@@ -141,7 +147,8 @@ export default defineComponent({
     DateTimeInput,
     QForm,
     QSelect,
-    QInput
+    QInput,
+    QCheckbox
   },
   mixins: [EditEventMixin, EditEventAutoSaveMixin],
   emits: ['update:eventMetricRecords'],

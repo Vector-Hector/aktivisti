@@ -20,6 +20,14 @@ export default defineComponent({
     },
     activePosterIndex: {
       type: Number as PropType<number>
+    },
+    editable: {
+      type: Boolean as PropType<boolean>,
+      default: false
+    },
+    opacity: {
+      type: Number as PropType<number>,
+      required: false
     }
   },
   emits: ['update:posters', 'posterClick'],
@@ -33,6 +41,9 @@ export default defineComponent({
     const posterLayerId = `${uuid}-posters`
     const activePosterLayerId = `${uuid}-active-poster`
 
+    let postersClickable = false
+
+    const sources: string[] = []
     const layers: string[] = []
 
     const iconLayout: SymbolLayout = {
@@ -58,7 +69,7 @@ export default defineComponent({
               type: 'Feature',
               properties: {
                 status: poster.status,
-                opacity: (active) ? 1 : 0.5,
+                opacity: props.opacity ?? ((active) ? 1 : 0.5),
                 id: poster.id
               },
               geometry: {
@@ -131,12 +142,17 @@ export default defineComponent({
     }
 
     const activateClickablePosters = () => {
-      map.value.on('mouseenter', posterLayerId, onEnterPoster)
-      map.value.on('mouseleave', posterLayerId, onLeavePoster)
-      map.value.on('click', posterLayerId, onClickPoster)
+      if (!postersClickable) {
+        postersClickable = true
+        map.value.on('mouseenter', posterLayerId, onEnterPoster)
+        map.value.on('mouseleave', posterLayerId, onLeavePoster)
+        map.value.on('click', posterLayerId, onClickPoster)
+      }
     }
 
     const deactivateClickablePosters = () => {
+      postersClickable = false
+      canvas.style.cursor = ''
       map.value.off('mouseenter', posterLayerId, onEnterPoster)
       map.value.off('mouseleave', posterLayerId, onLeavePoster)
       map.value.off('click', posterLayerId, onClickPoster)
@@ -155,7 +171,10 @@ export default defineComponent({
             features: []
           }
         }
+
+        sources.push(posterSourceId)
         map?.value.addSource(posterSourceId, emptySource)
+        sources.push(activePosterSourceId)
         map?.value.addSource(activePosterSourceId, emptySource)
 
         const refreshSource = () => {
@@ -179,7 +198,8 @@ export default defineComponent({
         watch(() => props.activePosterIndex, () => {
           refreshSource()
           const active = (typeof (props.activePosterIndex as any)) === 'number'
-          if (!active) {
+          // If poster layer is not editable markers can stay clickable as it doesn't conflict with moving the poster
+          if (!active || !props.editable) {
             activateClickablePosters()
           } else {
             deactivateClickablePosters()
@@ -208,16 +228,17 @@ export default defineComponent({
           source: activePosterSourceId,
           layout: iconLayout,
           paint: {
-            'icon-opacity': 1
+            'icon-opacity': props.opacity ?? 1
           }
         })
-
-        map.value.on('mouseenter', activePosterLayerId, onEnterActivePoster)
-        map.value.on('mousedown', activePosterLayerId, onMouseDownActivePoster)
-        map.value.on('mouseleave', activePosterLayerId, onLeaveActivePoster)
-        map.value.on('touchstart', activePosterLayerId, onTouchStartActivePoster)
-        map.value.on('touchmove', onMoveActivePoster)
-        map.value.on('touchend', onUpActivePoster)
+        if (props.editable) {
+          map.value.on('mouseenter', activePosterLayerId, onEnterActivePoster)
+          map.value.on('mousedown', activePosterLayerId, onMouseDownActivePoster)
+          map.value.on('mouseleave', activePosterLayerId, onLeaveActivePoster)
+          map.value.on('touchstart', activePosterLayerId, onTouchStartActivePoster)
+          map.value.on('touchmove', onMoveActivePoster)
+          map.value.on('touchend', onUpActivePoster)
+        }
       }
     )
 
@@ -231,8 +252,9 @@ export default defineComponent({
       layers.forEach((layerId) => {
         map?.value?.removeLayer(layerId)
       })
-      map?.value?.removeSource(posterSourceId)
-      map?.value?.removeSource(activePosterSourceId)
+      sources.forEach((sourceId) => {
+        map?.value?.removeSource(sourceId)
+      })
     })
   },
   render() {

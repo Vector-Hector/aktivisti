@@ -18,7 +18,10 @@
           :icon="ionPerson"
         />
         <QBtn
-          v-if="personalParticipation?.is_verified || isTeamCaptainOrCoordinator"
+          v-if="
+            event.event_type === EventTypes.DOOR_TO_DOOR &&
+            (personalParticipation?.is_verified || isTeamCaptainOrCoordinator)
+          "
           size="sm"
           color="primary"
           flat
@@ -26,7 +29,10 @@
           :to="{ name: 'print-event', params: {eventId: event.id}}"
         />
         <QBtn
-          v-if="isCoordinator"
+          v-if="
+            event.event_type === EventTypes.DOOR_TO_DOOR &&
+            isCoordinator
+          "
           :to="{ name: 'event-detail-report', params: { eventId: event.id }}"
           size="sm"
           color="primary"
@@ -92,6 +98,13 @@
             :participations="participations"
             :show-participation-count="isTeamCaptainOrCoordinator"
             :personal-participation="personalParticipation"
+            :event-type="event.event_type"
+          />
+          <EventAreaItem
+            v-if="event.event_type === EventTypes.POSTERS && postersWithoutArea.length > 0"
+            :area="noAreaPosters"
+            :participations="[]"
+            :event-type="event.event_type"
           />
         </QList>
       </div>
@@ -210,7 +223,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { authStore } from 'src/store/AuthStore'
 import { userStore } from 'src/store/UserStore'
@@ -241,7 +254,7 @@ import {
 import { QBtn, QIcon, QList } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import { MAP_PAN_TO, MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/mapbox/Map.vue'
-
+import { EventTypes } from 'src/api/model/EventTypes'
 
 export default defineComponent({
   name: 'EventDetailOverview',
@@ -251,12 +264,6 @@ export default defineComponent({
     QBtn,
     QIcon,
     QList
-  },
-  props: {
-    eventId: {
-      type: String as PropType<string>,
-      required: true
-    }
   },
   beforeRouteEnter(from, to, next) {
     uiStore.setBottomSheetStateAtLeast(BottomSheetState.HALF)
@@ -274,6 +281,7 @@ export default defineComponent({
         hour: '2-digit',
         minute: '2-digit'
       },
+      EventTypes,
       ionPrint,
       ionLogoFacebook,
       ionLogoTwitter,
@@ -288,6 +296,19 @@ export default defineComponent({
     }
   },
   computed: {
+    eventId(): string {
+      return this.event.id.toString()
+    },
+    noAreaPosters(): Partial<EventAreaDto> {
+      return {
+        id: undefined,
+        name: 'Ohne Gebiet',
+        color: '#FFFFFF',
+        event: parseInt(this.eventId),
+        is_completed: false,
+        poster_count: this.postersWithoutArea.length
+      } as Partial<EventAreaDto>
+    },
     eventAreasSorted(): EventAreaDto[] {
       const collator = new Intl.Collator('de', {caseFirst: 'upper'})
       return [...this.eventAreas].sort((a, b) => {
@@ -445,7 +466,7 @@ export default defineComponent({
         maximized: true,
         componentProps: {
           eventId: this.event.id,
-          eventSubAssociation: this.event.sub_association,
+          eventSubAssociation: this.event.sub_association
         }
       })
         .onDismiss(() => {
