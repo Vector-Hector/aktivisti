@@ -129,7 +129,7 @@ export default defineComponent({
   },
   watch: {
     'event.location': {
-      handler() {
+      handler(newLocation, oldLocation) {
         const bounds = this.map?.getBounds()
         if (bounds) {
           const boundsGeometry = polygon([
@@ -141,8 +141,8 @@ export default defineComponent({
               [bounds.getNorthWest().lng, bounds.getNorthWest().lat]
             ]
           ])
-          const {lat, lng} = this.event.location
-          if (!booleanPointInPolygon([lng, lat], boundsGeometry)) {
+          const {lat, lng} = newLocation
+          if (oldLocation === null || !booleanPointInPolygon([lng, lat], boundsGeometry)) {
             this.map?.fitBounds(bbox(circle([lng, lat], 2)) as BBox2d)
           }
         }
