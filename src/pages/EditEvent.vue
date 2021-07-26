@@ -16,7 +16,7 @@
         />
       </Map>
       <MapOverlayProxy
-        :title="activeStep?.label"
+        :title="title"
       >
         <router-view />
       </MapOverlayProxy>
@@ -154,6 +154,9 @@ export default defineComponent({
     posterListStore.reset()
   },
   computed: {
+    title(): string | undefined {
+      return this.steps[this.activeStep]?.label
+    },
     event() {
       return editEventStore.getState().event
     },

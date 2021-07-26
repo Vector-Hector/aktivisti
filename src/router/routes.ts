@@ -136,7 +136,7 @@ const routes = [
                   map: EventDetailAreaMap
                 },
                 meta: {
-                  title: () => 'Aktionsgebiete',
+                  title: () => uiStore.getState().activeTitleElements.eventArea,
                   subtitle: () => uiStore.getState().activeTitleElements.event
                 },
                 children: [
@@ -194,6 +194,10 @@ const routes = [
                     components: {
                       default: EventDetailPosters,
                       map: EventDetailPostersMap
+                    },
+                    meta: {
+                      title: () => uiStore.state.activeTitleElements.poster,
+                      subtitle: () => uiStore.state.activeTitleElements.event
                     },
                     children: [
                       {

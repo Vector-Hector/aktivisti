@@ -48,6 +48,7 @@ export default defineComponent({
 
     const iconLayout: SymbolLayout = {
       'icon-size': .4,
+      'icon-anchor': 'bottom',
       'icon-image': ['case',
         ['==', ['get', 'status'], PosterStatus.ABSENT], 'absent-icon',
         ['==', ['get', 'status'], PosterStatus.DAMAGED], 'negative-icon',

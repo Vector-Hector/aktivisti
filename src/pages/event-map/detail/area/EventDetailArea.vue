@@ -15,6 +15,33 @@ import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { eventDetailStore } from 'src/store/EventDetailStore'
 import Timeout = NodeJS.Timeout
 import { EventTypes } from 'src/api/model/EventTypes'
+import { NavigationGuardNext, RouteLocation } from 'vue-router'
+import { uiStore } from 'src/store/UiStore'
+
+async function updateRoute(to: RouteLocation, from: RouteLocation, next: NavigationGuardNext) {
+  const {areaId} = to.params
+  if (areaId === 'undefined') {
+    // the special undefined route is for posters that are not assigned to an area
+    eventDetailStore.setEventArea(null)
+    eventDetailStore.setEventAreaPermissions(null)
+    uiStore.updateActiveElements({
+      eventArea: 'Undefiniertes Gebiet'
+    })
+    next()
+  } else {
+    const response = await apiClient.eventAreas.get(
+      to.params.areaId as string,
+      [],
+      {show_permissions: true}
+    )
+    eventDetailStore.setEventArea(response.payload.data)
+    eventDetailStore.setEventAreaPermissions(response.payload.permissions)
+    uiStore.updateActiveElements({
+      eventArea: `Aktionsgebiet ${response.payload.data.name}`
+    })
+    next()
+  }
+}
 
 export default defineComponent({
   name: 'EventDetailArea',
@@ -23,22 +50,8 @@ export default defineComponent({
     Map
   },
   mixins: [EventDetailMixin],
-  async beforeRouteEnter(to, from, next) {
-    const {areaId} = to.params
-    if (areaId === 'undefined') {
-      // the special undefined route is for posters that are not assigned to an area
-      next()
-    } else {
-      const response = await apiClient.eventAreas.get(
-        to.params.areaId as string,
-        [],
-        {show_permissions: true}
-      )
-      eventDetailStore.setEventArea(response.payload.data)
-      eventDetailStore.setEventAreaPermissions(response.payload.permissions)
-      next()
-    }
-  },
+  beforeRouteEnter: updateRoute,
+  beforeRouteUpdate: updateRoute,
   data() {
     return {
       nextPoll: null as Timeout | null
