@@ -93,7 +93,7 @@ export default defineComponent({
         name: 'status',
         label: 'Status',
         field: 'status',
-        align: 'left'
+        align: 'right'
       }]
       if (this.showActions) {
         columns.push({
