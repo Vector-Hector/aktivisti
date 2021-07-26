@@ -60,7 +60,7 @@ export default defineComponent({
       campaigns: [] as CampaignDto[],
       filterParams: {
         is_owner: true
-      } as { [key: string]: number | string | boolean },
+      } as Record<string, number | string | boolean>,
       ionChevronDown,
       ionClose,
       ownershipOptions: [
