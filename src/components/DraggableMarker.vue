@@ -1,6 +1,5 @@
 <template>
   <QIcon
-    locationSelect
     :class="{
       'is-dragging': dragging
     }"
@@ -16,6 +15,7 @@ import { MapEventBus } from 'src/mapbox/Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { QIcon } from 'quasar'
+
 
 export default defineComponent({
   name: 'DraggableMarker',
