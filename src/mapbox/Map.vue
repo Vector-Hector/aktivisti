@@ -65,6 +65,10 @@ export default defineComponent({
     boundingBox: {
       type: Array as unknown as PropType<BBox2d>,
       default: () => [5.98865807458, 47.3024876979, 15.0169958839, 54.983104153] // bbox germany
+    },
+    interactive: {
+      type: Boolean as PropType<boolean>,
+      default: true
     }
   },
   emits: ['update:zoom', 'update:center', 'update:zoom', 'drop', 'update:boundingBox'],
@@ -95,7 +99,8 @@ export default defineComponent({
         style: process.env.APP_MAPBOX_STYLE,
         zoom: props.zoom,
         center: props.center,
-        bounds: props.boundingBox
+        bounds: props.boundingBox,
+        interactive: props.interactive
       })
       map.value.on('load', () => {
         map.value?.resize()
