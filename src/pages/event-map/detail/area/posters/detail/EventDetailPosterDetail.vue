@@ -107,7 +107,6 @@ export default defineComponent({
           await this.$router.replace({name: 'event-detail-poster-list'})
           this.deletePostersByIds([posterId])
         } catch (e) {
-          debugger
           this.$q.notify({
             color: 'negative',
             message: 'Beim Löschen des Posters trat ein Fehler auf'
