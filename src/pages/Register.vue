@@ -73,7 +73,7 @@
           beim
           Bundesvorstand der Partei weiterzuleiten und dem Betroffenen die Kontaktdaten bzw. den Link zu den
           <a
-            href="https://www.die-linke.de/seitenfuss/datenschutz"
+            href="https://www.die-linke.de/seitenfuss/datenschutz/#accordion-heading-17445-2912"
             target="_blank"
             class="primary-link"
           >
