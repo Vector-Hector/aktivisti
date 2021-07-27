@@ -303,6 +303,8 @@ export default defineComponent({
       handler(newValue) {
         if (newValue === false) {
           void this.pollForVerification()
+        } else if (newValue === true && this.verficationPollTimeout !== null) {
+          clearTimeout(this.verficationPollTimeout)
         }
       },
       immediate: true
@@ -522,6 +524,11 @@ export default defineComponent({
           return
         }
       })
+    }
+  },
+  beforeUnmount() {
+    if (this.verficationPollTimeout !== null) {
+      clearTimeout(this.verficationPollTimeout)
     }
   }
 })
