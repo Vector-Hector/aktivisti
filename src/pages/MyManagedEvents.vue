@@ -105,11 +105,11 @@ export default defineComponent({
     },
     setOwnershipFilter(owner = ownership.ALL) {
       if (owner === ownership.ME) {
-        this.filterParams['is_owner'] = true
+        this.filterParams.is_owner = true
       } else if (owner === ownership.OTHER) {
-        this.filterParams['is_owner'] = false
+        this.filterParams.is_owner = false
       } else {
-        delete this.filterParams['is_owner']
+        delete this.filterParams.is_owner
       }
     },
   }
