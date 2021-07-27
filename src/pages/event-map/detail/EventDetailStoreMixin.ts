@@ -9,6 +9,7 @@ import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 import { ObjectPermissionDto, ObjectPermissions } from 'src/api/model/ObjectPermissionDto'
 import { Feature } from 'geojson'
 import { PosterDto } from 'src/api/model/PosterDto'
+import { apiClient } from 'src/api/ApiClient'
 
 export default defineComponent({
   name: 'EventDetailStoreMixin',
@@ -169,6 +170,11 @@ export default defineComponent({
           this.posters.push(poster)
         }
       }
+    },
+    async refreshParticipants() {
+      this.participations = (await apiClient.eventParticipations.list({
+        event: this.event.id
+      })).payload.data
     }
   }
 })

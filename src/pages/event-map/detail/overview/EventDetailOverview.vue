@@ -260,6 +260,8 @@ import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import { MAP_PAN_TO, MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/mapbox/Map.vue'
 import { EventTypes } from 'src/api/model/EventTypes'
 
+const pollIntervalMs = 5000
+
 export default defineComponent({
   name: 'EventDetailOverview',
   mixins: [EventDetailMixin],
@@ -286,6 +288,7 @@ export default defineComponent({
         hour: '2-digit',
         minute: '2-digit'
       },
+      verficationPollTimeout: null as null | NodeJS.Timeout,
       EventTypes,
       ionPrint,
       ionLogoFacebook,
@@ -298,6 +301,18 @@ export default defineComponent({
       ionPerson,
       ionTrash,
       ionLocate
+    }
+  },
+  watch: {
+    'personalParticipation.is_verified': {
+      handler(newValue) {
+        if (newValue === false) {
+          void this.pollForVerification()
+        } else if (newValue === true && this.verficationPollTimeout !== null) {
+          clearTimeout(this.verficationPollTimeout)
+        }
+      },
+      immediate: true
     }
   },
   computed: {
@@ -387,15 +402,7 @@ export default defineComponent({
       try {
         this.joinLoading = true
         this.event = (await this.$apiClient.events.join(this.eventId)).payload.data
-        this.personalParticipation = (await this.$apiClient.eventParticipations.list({
-          event: this.eventId,
-          user: userStore.getState().user?.id
-        })).payload.data?.[0]
-        if (this.personalParticipation?.is_verified) {
-          this.eventAreas = (await this.$apiClient.eventAreas.list({event: this.event.id})).payload.data
-        } else {
-          this.eventAreas = []
-        }
+        await this.updateParticipationAndLoadAreas()
         if (!this.personalParticipation) {
           this.$q.notify({
             color: 'negative',
@@ -414,6 +421,17 @@ export default defineComponent({
         // @ts-ignore
         this.scrollArea?.value?.setScrollPercentage('vertical', 1, 300)
       }, 300)
+    },
+    async updateParticipationAndLoadAreas() {
+              this.personalParticipation = (await this.$apiClient.eventParticipations.list({
+          event: this.eventId,
+          user: userStore.getState().user?.id
+        })).payload.data?.[0]
+        if (this.personalParticipation?.is_verified) {
+          this.eventAreas = (await this.$apiClient.eventAreas.list({event: this.event.id})).payload.data
+        } else {
+          this.eventAreas = []
+        }
     },
     async leave() {
       const generalLeaveError = 'Ein unerwarteter Fehler trat auf beim versuch die Aktion zu verlassen'
@@ -447,11 +465,6 @@ export default defineComponent({
     async refreshEvent() {
       this.event = (await apiClient.events.get(this.eventId)).payload.data
     },
-    async refreshParticipants() {
-      this.participations = (await apiClient.eventParticipations.list({
-        event: this.event.id
-      })).payload.data
-    },
     openInviteModal() {
       if (this.isTeamCaptainOrCoordinator) {
         this.$q.dialog({
@@ -464,6 +477,21 @@ export default defineComponent({
             void this.refreshEvent()
           })
       }
+    },
+    async pollForVerification() {
+      if (this.verficationPollTimeout !== null || !this.personalParticipation) {
+        // polling already started
+        return
+      }
+      if (this.personalParticipation?.is_verified) {
+        // if we are finally verified we can stop polling
+        return
+      }
+      await this.updateParticipationAndLoadAreas()
+      this.verficationPollTimeout = setTimeout(() => {
+        this.verficationPollTimeout = null
+        void this.pollForVerification()
+      }, pollIntervalMs)
     },
     openParticipantsModal() {
       this.$q.dialog({
@@ -501,6 +529,11 @@ export default defineComponent({
           return
         }
       })
+    }
+  },
+  beforeUnmount() {
+    if (this.verficationPollTimeout !== null) {
+      clearTimeout(this.verficationPollTimeout)
     }
   }
 })

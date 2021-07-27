@@ -195,10 +195,8 @@ export default defineComponent({
         } catch (error) {
           void this.$q.notify({
             position: 'bottom',
-            multiLine: true,
-            message: '<h5>Fehlercode: ${e.response?.status}</h5>Das Aktionsgebiet konnte nicht aktualisiert werden',
-            color: 'danger',
-            html: true,
+            message: 'Das Aktionsgebiet konnte nicht aktualisiert werden',
+            color: 'negative',
             timeout: 2000
           })
         }
@@ -231,12 +229,20 @@ export default defineComponent({
           }
         }
       } catch (e) {
-        this.$q.notify({
-          message: `<h5>Fehlercode: ${e.status}<h5>Die Teilnehmer konnten nicht aktualisiert werden`,
-          html: true,
-          timeout: 2000,
-          color: 'danger'
-        })
+        if (e.response?.status === 404) {
+          this.$q.notify({
+            message: 'Die gewählte Person ist nicht mehr Teil der Aktion',
+            timeout: 2000,
+            color: 'negative'
+          })
+          await this.refreshParticipants()
+        } else {
+          this.$q.notify({
+            message: 'Unbekannter fehler beim Aktualisieren der Teilnehmer*innen',
+            timeout: 2000,
+            color: 'negative'
+          })
+        }
       }
       this.updateParticipations(changedParticipations)
     }
