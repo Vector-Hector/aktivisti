@@ -1,20 +1,22 @@
 <template>
-  <div class="row">
-    <div class="col-grow buttons">
-      <QBtn
-        v-if="event.poster_creation_allowed"
-        color="primary"
-        label="Erstellen"
-        :icon="ionLocationSharp"
-        @click="openCreatePosterDialog"
-      />
+  <div class="container q-py-sm">
+    <div class="row">
+      <div class="col-grow buttons">
+        <QBtn
+          v-if="event.poster_creation_allowed"
+          color="primary"
+          label="Erstellen"
+          :icon="ionLocationSharp"
+          @click="openCreatePosterDialog"
+        />
+      </div>
     </div>
+    <PosterTable
+      :posters="postersInArea"
+      :show-actions="false"
+      @row-click="selectPoster($event.id)"
+    />
   </div>
-  <PosterTable
-    :posters="postersInArea"
-    :show-actions="false"
-    @row-click="selectPoster($event.id)"
-  />
 </template>
 <script lang="ts">
 import PosterTable from 'components/PosterTable.vue'

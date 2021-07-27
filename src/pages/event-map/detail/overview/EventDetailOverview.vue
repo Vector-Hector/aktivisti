@@ -2,7 +2,7 @@
   <QScrollArea
     class="d-flex flex-fill"
   >
-    <div class="q-gutter-y-md q-py-sm">
+    <div class="container q-gutter-y-md q-py-sm">
       <div class="row">
         <div class="col-12">
           <QBtn

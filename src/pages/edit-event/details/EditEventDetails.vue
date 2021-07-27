@@ -115,7 +115,7 @@
       </QForm>
     </QScrollArea>
   </div>
-  <SidebarBottomNavigation
+  <SidebarBottomStepNavigation
     class="navigation"
     @close="abort"
     @forward="next"
@@ -134,7 +134,7 @@ import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { date, QCheckbox, QForm, QInput, QScrollArea, QSelect } from 'quasar'
 import DateTimeInput from 'components/DateTimeInput.vue'
-import SidebarBottomNavigation from 'components/SidebarBottomNavigation.vue'
+import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
 import MetricInput from 'components/MetricInput.vue'
 import { editEventStore } from 'src/store/EditEventStore'
 import { SettleDebouncer } from 'src/utils/debounce'
@@ -147,7 +147,7 @@ export default defineComponent({
   name: 'EditEventDetails',
   components: {
     MetricInput,
-    SidebarBottomNavigation,
+    SidebarBottomStepNavigation,
     DateTimeInput,
     QForm,
     QSelect,

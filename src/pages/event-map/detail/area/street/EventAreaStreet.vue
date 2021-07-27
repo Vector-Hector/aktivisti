@@ -1,33 +1,35 @@
 <template>
   <QScrollArea
     class="d-flex flex-fill">
-    <QList>
-      <QItem
-        v-for="address in sortedAddresses"
-        :key="address.house_number"
-        :clickable="true"
-        :to="{ name: 'event-detail-area-metrics', params: { houseNumber: address.house_number, street: street } }"
-      >
-        <QItemSection>
-          <QItemLabel>
-            {{ street }} {{ address.house_number }}
-          </QItemLabel>
-        </QItemSection>
-        <QItemSection side>
-          <div class="row">
-            <QIcon
-              v-if="completedTargetIds.includes(address.osm_id)"
-              class="col finished-icon item-icon"
-              :name="ionCheckmarkCircle"
-            />
-            <QIcon
-              class="col item-icon"
-              :name="ionChevronForward"
-            />
-          </div>
-        </QItemSection>
-      </QItem>
-    </QList>
+    <div class="container">
+      <QList>
+        <QItem
+          v-for="address in sortedAddresses"
+          :key="address.house_number"
+          :clickable="true"
+          :to="{ name: 'event-detail-area-metrics', params: { houseNumber: address.house_number, street: street } }"
+        >
+          <QItemSection>
+            <QItemLabel>
+              {{ street }} {{ address.house_number }}
+            </QItemLabel>
+          </QItemSection>
+          <QItemSection side>
+            <div class="row">
+              <QIcon
+                v-if="completedTargetIds.includes(address.osm_id)"
+                class="col finished-icon item-icon"
+                :name="ionCheckmarkCircle"
+              />
+              <QIcon
+                class="col item-icon"
+                :name="ionChevronForward"
+              />
+            </div>
+          </QItemSection>
+        </QItem>
+      </QList>
+    </div>
   </QScrollArea>
 </template>
 

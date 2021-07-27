@@ -1,21 +1,28 @@
 <template>
-  <EditPoster
-    :key="poster.id"
-    v-if="poster"
-    v-model:poster="poster"
-  />
-  <div class="row">
-    <div class="col-grow d-flex justify-center">
-      <QBtn
-        v-if="event.poster_creation_allowed"
-        class="delete-button"
-        flat
-        :icon="ionTrash"
-        label="Löschen"
-        color="primary"
-        @click="onDeleteClicked"
+  <div class="flex column full-width">
+    <div class="container q-py-sm col-grow full-width">
+      <EditPoster
+        :key="poster.id"
+        v-if="poster"
+        v-model:poster="poster"
       />
+      <div class="row">
+        <div class="col-grow d-flex justify-center">
+          <QBtn
+            v-if="event.poster_creation_allowed"
+            class="delete-button"
+            flat
+            :icon="ionTrash"
+            label="Löschen"
+            color="primary"
+            @click="onDeleteClicked"
+          />
+        </div>
+      </div>
     </div>
+    <SidebarBottomBackNavigation
+      @back="$router.go(-1)"
+    />
   </div>
 </template>
 <script lang="ts">
@@ -30,6 +37,7 @@ import { RouteLocation, NavigationGuardNext } from 'vue-router'
 import { ionTrash } from '@quasar/extras/ionicons-v5'
 import { QBtn } from 'quasar'
 import { uiStore } from 'src/store/UiStore'
+import SidebarBottomBackNavigation from 'components/SidebarBottomBackNavigation.vue'
 
 function updateRoute(to: RouteLocation, from: RouteLocation, next: NavigationGuardNext) {
   const {posterId, areaId} = to.params
@@ -60,7 +68,7 @@ function updateRoute(to: RouteLocation, from: RouteLocation, next: NavigationGua
 
 export default defineComponent({
   name: 'EventDetailPosterDetail',
-  components: {EditPoster, QBtn},
+  components: {SidebarBottomBackNavigation, EditPoster, QBtn},
   mixins: [EventDetailPosterMixin],
   beforeRouteEnter: updateRoute,
   beforeRouteUpdate: updateRoute,
@@ -138,6 +146,6 @@ export default defineComponent({
   }
 })
 </script>
-<style>
+<style lang="scss" scoped>
 
 </style>
