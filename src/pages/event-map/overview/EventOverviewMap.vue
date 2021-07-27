@@ -17,7 +17,11 @@
         <Popup>
           <div class="popup-contents">
             <span class="popup-title">{{ event.name }}</span>
+            <span class="popup-type">
+              {{ getEventTypeLabel(event.event_type) }}
+            </span>
             <span class="popup-campaign">{{ event.campaigns?.map(({name}) => name).join(',') }}</span>
+
             <span class="popup-date">
               {{ new Date(event.start_date).toLocaleString() }}
             </span>
@@ -44,6 +48,7 @@ import EventsOverviewMixin from 'pages/event-map/overview/EventsOverviewMixin'
 import { eventOverviewStore } from 'src/store/EventOverviewStore'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { QBtn } from 'quasar'
+import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 
 export default defineComponent({
   name: 'EventOverviewMap',
@@ -92,6 +97,11 @@ export default defineComponent({
         })
       }
     }
+  },
+  methods: {
+    getEventTypeLabel(eventType: EventTypes): string {
+      return eventTypeOptions.find(({key}) => key === eventType)?.label
+    }
   }
 })
 </script>
@@ -100,6 +110,11 @@ export default defineComponent({
   font-weight: bold;
   display: block;
   font-size: 1rem;
+}
+
+.popup-type {
+  display: block;
+  font-size: 0.9rem;
 }
 
 .popup-campaign {
