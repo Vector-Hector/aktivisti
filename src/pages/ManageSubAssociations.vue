@@ -1,45 +1,55 @@
 <template>
-  <h3 class="subassociations-section-heading">Kreisverbände</h3>
-  <div class="select-wrapper">
-    <QSelect
-      class="filter-dropdown"
-      label="Kreisverband"
-      :dropdownIcon="ionChevronDown"
-      filled
-      :model-value="selectedSubAssociation"
-      @update:model-value="selectedSubAssociation=$event"
-      use-input
-      map-options
-      input-debounce="0"
-      :options="suggestedSubAssociations"
-      @filter="filterSubAssociations"
-      option-value="id"
-      option-label="name"
-    >
-      <template v-slot:no-option>
-        <q-item>
-          <q-item-section class="text-grey">
-            Kein Verband gefunden
-          </q-item-section>
-        </q-item>
-      </template>
-    </QSelect>
-  </div>
+  <QPage class="flex-fill">
+    <div class="container">
+      <PageLoadingSpinner v-if="loading" />
+      <div v-else class="manage-sub-associations-content">
+        <h3 class="subassociations-section-heading">Kreisverbände</h3>
+        <div class="select-wrapper">
+          <QSelect
+            class="filter-dropdown"
+            label="Kreisverband"
+            :dropdownIcon="ionChevronDown"
+            filled
+            :model-value="selectedSubAssociation"
+            @update:model-value="selectedSubAssociation=$event"
+            use-input
+            map-options
+            input-debounce="0"
+            :options="suggestedSubAssociations"
+            @filter="filterSubAssociations"
+            option-value="id"
+            option-label="name"
+          >
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  Kein Verband gefunden
+                </q-item-section>
+              </q-item>
+            </template>
+          </QSelect>
+        </div>
+      </div>
+    </div>
+  </QPage>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { QSelect } from 'quasar'
+import { QSelect, QPage } from 'quasar'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { userStore} from 'src/store/UserStore'
 import { UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
+import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 
 
 export default defineComponent({
   name: 'ManageSubAssociations',
   components: {
-    QSelect
+    PageLoadingSpinner,
+    QSelect,
+    QPage
   },
   data() {
     return {
@@ -48,12 +58,14 @@ export default defineComponent({
       allSubAssociations: [] as SubAssociationDto[],
       mySubAssociations: [] as SubAssociationDto[],
       suggestedSubAssociations: [] as SubAssociationDto[],
-      selectedSubAssociation: ''
+      selectedSubAssociation: '',
+      loading: true
     }
   },
   async created() {
     await this.getSubAssociations()
     this.computeMySubAssociations()
+    this.loading = false
   },
   computed: {
     //TODO check for global campaign:admin (or are there other global permission types)

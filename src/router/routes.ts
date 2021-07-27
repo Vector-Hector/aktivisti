@@ -341,6 +341,14 @@ const routes = [
         meta: {
           title: () => 'Impressum'
         }
+      },
+      {
+        path: '/manage-sub-associations',
+        name: 'manage-sub-associations',
+        component: ManageSubAssociations,
+        meta: {
+          title: () => 'Kreisverbände verwalten'
+        }
       }
     ]
   },
@@ -354,14 +362,6 @@ const routes = [
       name: 'print-event'
     }]
   },
-  {
-    path: '/manage-sub-associations',
-    name: 'manage-sub-associations',
-    component: ManageSubAssociations,
-    meta: {
-      title: () => 'Kreisverbände verwalten'
-    }
-  }
 ]
 
 
