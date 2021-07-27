@@ -66,11 +66,12 @@ export default defineComponent({
   computed: {
     userFilterParams: {
       get(): UserEventFilterParams {
-        const {campaign, subAssociations, sorting} = userStore.getState().filterPreferences
+        const {campaign, subAssociations, sorting, eventType} = userStore.getState().filterPreferences
         return {
           sub_association: subAssociations,
           campaigns: campaign !== undefined ? [campaign] : undefined,
-          order_by: sorting
+          order_by: sorting,
+          event_type: eventType
         }
       },
       set(value: UserEventFilterParams) {
@@ -79,7 +80,8 @@ export default defineComponent({
           ...{
             subAssociations: value.sub_association ?? [],
             campaign: value.campaigns?.[0],
-            sorting: value.order_by
+            sorting: value.order_by,
+            eventType: value.event_type ?? undefined
           }
         })
       }

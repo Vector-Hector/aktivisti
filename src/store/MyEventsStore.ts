@@ -14,7 +14,8 @@ class MyEventsStore extends Store<MyEventsStoreState> {
       filterPreferences: {
         subAssociations: [],
         campaign: undefined,
-        sorting: SortOption.START_DATE
+        sorting: SortOption.START_DATE,
+        eventType: undefined
       },
       eventParticipations: [] as EventParticipationDto[]
 
