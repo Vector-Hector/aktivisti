@@ -1,76 +1,79 @@
 <template>
-  <div class="q-gutter-y-md">
-    <div class="row">
-      <div class="col-12">
-        <QBtn
-          @click="locateEvent"
-          size="sm"
-          color="primary"
-          flat
-          :icon="ionLocate"
-        />
-        <QBtn
-          v-if="isTeamCaptainOrCoordinator"
-          @click="openParticipantsModal"
-          size="sm"
-          color="primary"
-          flat
-          :icon="ionPerson"
-        />
-        <QBtn
-          v-if="
+  <QScrollArea
+    class="d-flex flex-fill"
+  >
+    <div class="q-gutter-y-md q-py-sm">
+      <div class="row">
+        <div class="col-12">
+          <QBtn
+            @click="locateEvent"
+            size="sm"
+            color="primary"
+            flat
+            :icon="ionLocate"
+          />
+          <QBtn
+            v-if="isTeamCaptainOrCoordinator"
+            @click="openParticipantsModal"
+            size="sm"
+            color="primary"
+            flat
+            :icon="ionPerson"
+          />
+          <QBtn
+            v-if="
             event.event_type === EventTypes.DOOR_TO_DOOR &&
             (personalParticipation?.is_verified || isTeamCaptainOrCoordinator)
           "
-          size="sm"
-          color="primary"
-          flat
-          :icon="ionPrint"
-          :to="{ name: 'print-event', params: {eventId: event.id}}"
-        />
-        <QBtn
-          v-if="
+            size="sm"
+            color="primary"
+            flat
+            :icon="ionPrint"
+            :to="{ name: 'print-event', params: {eventId: event.id}}"
+          />
+          <QBtn
+            v-if="
             event.event_type === EventTypes.DOOR_TO_DOOR &&
             isCoordinator
           "
-          :to="{ name: 'event-detail-report', params: { eventId: event.id }}"
-          size="sm"
-          color="primary"
-          flat
-          :icon="ionBarChart"
-        />
-        <QBtn
-          v-if="isCoordinator"
-          :to="{name: 'edit-event-details', params: { eventId: event.id }}"
-          size="sm"
-          color="primary"
-          flat
-          :icon="ionPencil"
-        />
-        <QBtn
-          v-if="isCoordinator"
-          @click="openDeleteModal"
-          size="sm"
-          color="primary"
-          flat
-          :icon="ionTrash"
-        />
+            :to="{ name: 'event-detail-report', params: { eventId: event.id }}"
+            size="sm"
+            color="primary"
+            flat
+            :icon="ionBarChart"
+          />
+          <QBtn
+            v-if="isCoordinator"
+            :to="{name: 'edit-event-details', params: { eventId: event.id }}"
+            size="sm"
+            color="primary"
+            flat
+            :icon="ionPencil"
+          />
+          <QBtn
+            v-if="isCoordinator"
+            @click="openDeleteModal"
+            size="sm"
+            color="primary"
+            flat
+            :icon="ionTrash"
+          />
+        </div>
       </div>
-    </div>
-    <div class="row q-col-gutter-y-sm">
-      <div class="col-2">
-        Start:
-      </div>
-      <div class="col-10">
-        {{ new Date(event.start_date).toLocaleString([], dateOptions) }}
-      </div>
-      <div class="col-2">
-        Ende:
-      </div>
-      <div class="col-10">
-        {{ event.end_date ? new Date(event.end_date).toLocaleString([], dateOptions) : 'Nicht definiert' }}
-      </div>
-      <div class="col-12">
+      <div class="row q-col-gutter-y-sm">
+        <div class="col-2">
+          Start:
+        </div>
+        <div class="col-10">
+          {{ new Date(event.start_date).toLocaleString([], dateOptions) }}
+        </div>
+        <div class="col-2">
+          Ende:
+        </div>
+        <div class="col-10">
+          {{ event.end_date ? new Date(event.end_date).toLocaleString([], dateOptions) : 'Nicht definiert' }}
+        </div>
+        <div class="col-12">
       <span
         v-if="isTeamCaptainOrCoordinator"
         class="participants"
@@ -78,148 +81,149 @@
       >
           <QIcon :name="ionPersonOutline" /> {{ event.participants }}/{{ event.max_participants ?? '∞' }}
         </span>
+        </div>
+        <div class="col-12">
+          {{ event.description }}
+        </div>
       </div>
-      <div class="col-12">
-        {{ event.description }}
+      <div
+        class="areas row q-col-gutter-y-md"
+        v-if="isMember"
+      >
+        <div class="col-12">
+          <QList
+            class="area-list"
+          >
+            <EventAreaItem
+              v-for="area in eventAreasSorted"
+              :key="area.id"
+              :area="area"
+              :participations="participations"
+              :show-participation-count="isTeamCaptainOrCoordinator"
+              :personal-participation="personalParticipation"
+              :event-type="event.event_type"
+            />
+            <EventAreaItem
+              v-if="event.event_type === EventTypes.POSTERS && postersWithoutArea.length > 0"
+              :area="noAreaPosters"
+              :participations="[]"
+              :event-type="event.event_type"
+            />
+          </QList>
+        </div>
       </div>
-    </div>
-    <div
-      class="areas row q-col-gutter-y-md"
-      v-if="isMember"
-    >
-      <div class="col-12">
-        <QList
-          class="area-list"
-        >
-          <EventAreaItem
-            v-for="area in eventAreasSorted"
-            :key="area.id"
-            :area="area"
-            :participations="participations"
-            :show-participation-count="isTeamCaptainOrCoordinator"
-            :personal-participation="personalParticipation"
-            :event-type="event.event_type"
-          />
-          <EventAreaItem
-            v-if="event.event_type === EventTypes.POSTERS && postersWithoutArea.length > 0"
-            :area="noAreaPosters"
-            :participations="[]"
-            :event-type="event.event_type"
-          />
-        </QList>
-      </div>
-    </div>
-    <div class="social-buttons row q-gutter-x-md" v-if="event">
-      <QBtn
-        dense
-        type="a"
-        target="_blank"
-        :href="twitterShareUrl"
-        size="sm"
-        class="social-button"
-        label="teilen"
-        :icon="ionLogoTwitter"
-      />
-      <QBtn
-        dense
-        type="a"
-        target="_blank"
-        :href="facebookShareUrl"
-        size="sm"
-        class="social-button"
-        label="teilen"
-        :icon="ionLogoFacebook"
-      />
-      <QBtn
-        dense
-        type="a"
-        target="_blank"
-        :href="whatsappShareUrl"
-        size="sm"
-        class="social-button"
-        label="teilen"
-        :icon="ionLogoWhatsapp"
-      />
-      <QBtn
-        dense
-        type="a"
-        target="_blank"
-        :href="mailShareUrl"
-        size="sm"
-        class="social-button"
-        label="teilen"
-        :icon="ionMail"
-      />
-    </div>
-    <div
-      v-if="personalParticipation?.is_verified === false"
-      class="row"
-    >
-      <div v-if="!isTeamCaptainOrCoordinator" class="col-12">
-        Super, dass du mitmachen möchtest. Du hast dich für diese Aktion gemeldet. Der nächste Schritt ist zur
-        angegebenen
-        Zeit am vereinbarten Treffpunkt zu erscheinen. Ein Teamcaptain wird dich dann für diese Aktion freischalten.
-      </div>
-    </div>
-    <div
-      class="row"
-      v-if="!isLoggedIn"
-    >
-      <div class="col-12">
+      <div class="social-buttons row q-gutter-x-md" v-if="event">
         <QBtn
-          :to="{ name: 'login', query: {next: $router.resolve($route).path } }"
-          color="primary"
-          class="full-width"
-        >
-          Anmelden um mitzumachen
-        </QBtn>
+          dense
+          type="a"
+          target="_blank"
+          :href="twitterShareUrl"
+          size="sm"
+          class="social-button"
+          label="teilen"
+          :icon="ionLogoTwitter"
+        />
+        <QBtn
+          dense
+          type="a"
+          target="_blank"
+          :href="facebookShareUrl"
+          size="sm"
+          class="social-button"
+          label="teilen"
+          :icon="ionLogoFacebook"
+        />
+        <QBtn
+          dense
+          type="a"
+          target="_blank"
+          :href="whatsappShareUrl"
+          size="sm"
+          class="social-button"
+          label="teilen"
+          :icon="ionLogoWhatsapp"
+        />
+        <QBtn
+          dense
+          type="a"
+          target="_blank"
+          :href="mailShareUrl"
+          size="sm"
+          class="social-button"
+          label="teilen"
+          :icon="ionMail"
+        />
+      </div>
+      <div
+        v-if="personalParticipation?.is_verified === false"
+        class="row"
+      >
+        <div v-if="!isTeamCaptainOrCoordinator" class="col-12">
+          Super, dass du mitmachen möchtest. Du hast dich für diese Aktion gemeldet. Der nächste Schritt ist zur
+          angegebenen
+          Zeit am vereinbarten Treffpunkt zu erscheinen. Ein Teamcaptain wird dich dann für diese Aktion freischalten.
+        </div>
+      </div>
+      <div
+        class="row"
+        v-if="!isLoggedIn"
+      >
+        <div class="col-12">
+          <QBtn
+            :to="{ name: 'login', query: {next: $router.resolve($route).path } }"
+            color="primary"
+            class="full-width"
+          >
+            Anmelden um mitzumachen
+          </QBtn>
+        </div>
+      </div>
+      <div
+        class="row q-col-gutter-x-md"
+        v-else
+      >
+        <div class="col-6">
+          <QBtn
+            v-if="isTeamCaptainOrCoordinator"
+            class="full-width"
+            @click="openInviteModal"
+            flat
+          >
+            Leute einladen
+          </QBtn>
+        </div>
+        <div class="col-6">
+          <QBtn
+            v-if="isMember"
+            :disabled="joinLoading"
+            color="primary"
+            @click="leave"
+            class="full-width"
+          >
+            Doch nicht dabei
+          </QBtn>
+          <QBtn
+            v-else-if="isInvited"
+            :disabled="joinLoading"
+            @click="acceptInvite"
+            color="primary"
+            class="full-width"
+          >
+            Einladung annehmen
+          </QBtn>
+          <QBtn
+            v-else-if="!isMember"
+            class="full-width"
+            :disabled="joinLoading"
+            @click="join"
+            color="primary"
+          >
+            Ich bin dabei
+          </QBtn>
+        </div>
       </div>
     </div>
-    <div
-      class="row q-col-gutter-x-md"
-      v-else
-    >
-      <div class="col-6">
-        <QBtn
-          v-if="isTeamCaptainOrCoordinator"
-          class="full-width"
-          @click="openInviteModal"
-          flat
-        >
-          Leute einladen
-        </QBtn>
-      </div>
-      <div class="col-6">
-        <QBtn
-          v-if="isMember"
-          :disabled="joinLoading"
-          color="primary"
-          @click="leave"
-          class="full-width"
-        >
-          Doch nicht dabei
-        </QBtn>
-        <QBtn
-          v-else-if="isInvited"
-          :disabled="joinLoading"
-          @click="acceptInvite"
-          color="primary"
-          class="full-width"
-        >
-          Einladung annehmen
-        </QBtn>
-        <QBtn
-          v-else-if="!isMember"
-          class="full-width"
-          :disabled="joinLoading"
-          @click="join"
-          color="primary"
-        >
-          Ich bin dabei
-        </QBtn>
-      </div>
-    </div>
-  </div>
+  </QScrollArea>
 </template>
 
 <script lang="ts">
@@ -251,7 +255,7 @@ import {
   ionLocate,
   ionPrint
 } from '@quasar/extras/ionicons-v5'
-import { QBtn, QIcon, QList } from 'quasar'
+import { QBtn, QIcon, QList, QScrollArea } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import { MAP_PAN_TO, MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/mapbox/Map.vue'
 import { EventTypes } from 'src/api/model/EventTypes'
@@ -261,6 +265,7 @@ export default defineComponent({
   mixins: [EventDetailMixin],
   components: {
     EventAreaItem,
+    QScrollArea,
     QBtn,
     QIcon,
     QList
