@@ -39,6 +39,7 @@ import RouteStepper, { Step } from 'components/stepper/RouteStepper.vue'
 import { bbox, circle } from '@turf/turf'
 import { Feature } from 'geojson'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import { userStore } from 'src/store/UserStore'
 import { posterListStore } from 'src/store/PosterListStore'
 
 const DoorToDoorEventSteps = [{
@@ -189,7 +190,7 @@ export default defineComponent({
     this.bbox = features.length > 0 ? bbox({
       type: 'FeatureCollection',
       features: features
-    }) as BBox2d : null
+    }) as BBox2d : userStore.state.bbox
   }
 })
 </script>
