@@ -95,14 +95,21 @@ export default defineComponent({
       this.campaigns = (await this.$apiClient.campaigns.list()).payload.data
     },
     async updateShownEvents() {
-      const {data: events, pagination} = (await this.$apiClient.events.list(
-        {
-          ...this.pagination,
-          ...this.filterParams
-        }
-      )).payload
-      this.pagination = pagination!
-      this.shownEvents = events
+      try {
+        const {data: events, pagination} = (await this.$apiClient.events.list(
+          {
+            ...this.pagination,
+            ...this.filterParams
+          }
+        )).payload
+        this.pagination = pagination!
+        this.shownEvents = events
+      } catch {
+        this.$q.notify({
+          message: 'Etwas ging schief beim Abrufen der Aktionen',
+          color: 'negative'
+        })
+      }
     },
     setOwnershipFilter(owner = ownership.ALL) {
       if (owner === ownership.ME) {
