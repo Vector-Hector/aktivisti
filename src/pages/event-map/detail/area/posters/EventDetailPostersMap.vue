@@ -1,6 +1,6 @@
 <template>
   <AreaFeatureLayer
-    :features="areaFeatures"
+    :features="[currentAreaFeature]"
   />
   <PosterMarkerLayer
     :posters="postersInArea"

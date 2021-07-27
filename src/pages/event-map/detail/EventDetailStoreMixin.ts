@@ -26,6 +26,16 @@ export default defineComponent({
         }
       })
     },
+    currentAreaFeature(): Feature | undefined {
+      if (!this.eventArea) return
+      return {
+        type: 'Feature',
+        geometry: this.eventArea.geometry,
+        properties: {
+          color: this.eventArea.color
+        }
+      }
+    },
     activePosterIndex: {
       get() {
         return eventDetailStore.state.activePosterIndex
