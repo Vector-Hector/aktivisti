@@ -1,110 +1,113 @@
 <template>
-  <QPage class="flex-fill">
-    <div class="container">
-      <PageLoadingSpinner v-if="loading" />
-      <div
-        v-else
-        class="my-events-content"
-      >
-        <div v-show="pendingEvents.length > 0" >
-          <h3 class="my-events-section-heading">Offene Einladungen</h3>
-          <QSeparator class="profile-section-divider" />
-
-          <QList
-          >
-            <QItem
-              v-for="{participation, event} in pendingEvents"
-              :key="participation.id"
-              :clickable="true"
-              :to="{ name: 'event-detail', params: { eventId: participation.event } }"
-            >
-              <QItemSection>
-                <QItemLabel>
-                  <b>{{ event.name }}</b>
-                </QItemLabel>
-                <QItemLabel>
-                  {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
-                </QItemLabel>
-                <QItemLabel>
-                  {{ $utils.dateFormat(event.start_date) }}
-                </QItemLabel>
-                <QItemLabel>
-                  <i>
-                    {{
-                      findInvitingUsers(participation.inviting_users).map(({username}) => username).join(',') ?? 'Unbekannt '
-                    }}
-                    <span v-if="participation.inviting_users.length > 1">haben</span><span v-else>hat</span> dich
-                    eingeladen
-                  </i>
-                </QItemLabel>
-
-              </QItemSection>
-              <QItemSection side>
-                <div
-                  class="action-buttons"
-                >
-                  <QBtn
-                    dense
-                    flat
-                    @click.prevent.stop="reject(participation)"
-                    :icon="ionClose"
-                  >
-                    Ablehnen
-                  </QBtn>
-                  <QBtn
-                    dense
-                    flat
-                    color="primary"
-                    @click.prevent.stop="accept(participation)"
-                    :icon="ionCheckmark"
-                  >
-                    Annehmen
-                  </QBtn>
-                </div>
-              </QItemSection>
-            </QItem>
-          </QList>
-        </div>
-
-        <div v-show="acceptedEvents.length > 0">
-          <h3 class="my-events-section-heading">Meine Aktionen</h3>
-          <QSeparator class="profile-section-divider" />
-
-          <QList
-          >
-            <QItem
-              v-for="{participation, event} in acceptedEvents"
-              :key="participation.id"
-              :clickable="true"
-              :to="{ name: 'event-detail', params: { eventId: participation.event } }"
-            >
-              <QItemSection>
-                <QItemLabel>
-                  <b>{{ event.name }}</b>
-                </QItemLabel>
-                <QItemLabel>
-                  {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
-                </QItemLabel>
-                <QItemLabel>
-                  {{ $utils.dateFormat(event.start_date) }}
-                </QItemLabel>
-              </QItemSection>
-            </QItem>
-          </QList>
-        </div>
+  <QPage class="flex column col-grow">
+    <QScrollArea
+      class="flex col-grow">
+      <div class="container col-grow">
+        <PageLoadingSpinner v-if="loading" />
         <div
-          v-if="eventParticipations.length <= 0"
-          class="placeholder"
+          v-else
+          class="my-events-content"
         >
-          <p>Du nimmst an keinen Aktion teil - suche jetzt welche!</p>
-          <QBtn
-            label="Jetzt nach Aktionen suchen"
-            :to="{ name: 'events' }"
-            color="primary"
-          />
+          <div v-show="pendingEvents.length > 0">
+            <h3 class="my-events-section-heading">Offene Einladungen</h3>
+            <QSeparator class="profile-section-divider" />
+
+            <QList
+            >
+              <QItem
+                v-for="{participation, event} in pendingEvents"
+                :key="participation.id"
+                :clickable="true"
+                :to="{ name: 'event-detail', params: { eventId: participation.event } }"
+              >
+                <QItemSection>
+                  <QItemLabel>
+                    <b>{{ event.name }}</b>
+                  </QItemLabel>
+                  <QItemLabel>
+                    {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
+                  </QItemLabel>
+                  <QItemLabel>
+                    {{ $utils.dateFormat(event.start_date) }}
+                  </QItemLabel>
+                  <QItemLabel>
+                    <i>
+                      {{
+                        findInvitingUsers(participation.inviting_users).map(({username}) => username).join(',') ?? 'Unbekannt '
+                      }}
+                      <span v-if="participation.inviting_users.length > 1">haben</span><span v-else>hat</span> dich
+                      eingeladen
+                    </i>
+                  </QItemLabel>
+
+                </QItemSection>
+                <QItemSection side>
+                  <div
+                    class="action-buttons"
+                  >
+                    <QBtn
+                      dense
+                      flat
+                      @click.prevent.stop="reject(participation)"
+                      :icon="ionClose"
+                    >
+                      Ablehnen
+                    </QBtn>
+                    <QBtn
+                      dense
+                      flat
+                      color="primary"
+                      @click.prevent.stop="accept(participation)"
+                      :icon="ionCheckmark"
+                    >
+                      Annehmen
+                    </QBtn>
+                  </div>
+                </QItemSection>
+              </QItem>
+            </QList>
+          </div>
+
+          <div v-show="acceptedEvents.length > 0">
+            <h3 class="my-events-section-heading">Meine Aktionen</h3>
+            <QSeparator class="profile-section-divider" />
+
+            <QList
+            >
+              <QItem
+                v-for="{participation, event} in acceptedEvents"
+                :key="participation.id"
+                :clickable="true"
+                :to="{ name: 'event-detail', params: { eventId: participation.event } }"
+              >
+                <QItemSection>
+                  <QItemLabel>
+                    <b>{{ event.name }}</b>
+                  </QItemLabel>
+                  <QItemLabel>
+                    {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
+                  </QItemLabel>
+                  <QItemLabel>
+                    {{ $utils.dateFormat(event.start_date) }}
+                  </QItemLabel>
+                </QItemSection>
+              </QItem>
+            </QList>
+          </div>
+          <div
+            v-if="eventParticipations.length <= 0"
+            class="placeholder"
+          >
+            <p>Du nimmst an keinen Aktion teil - suche jetzt welche!</p>
+            <QBtn
+              label="Jetzt nach Aktionen suchen"
+              :to="{ name: 'events' }"
+              color="primary"
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </QScrollArea>
   </QPage>
 </template>
 
@@ -113,7 +116,7 @@ import { defineComponent } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { UserDto } from 'src/api/model/UserDto'
-import { QBtn, QItem, QItemLabel, QItemSection, QList, QPage, QSeparator } from 'quasar'
+import { QBtn, QItem, QItemLabel, QItemSection, QList, QPage, QScrollArea, QSeparator } from 'quasar'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { ionCheckmark, ionClose, ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
@@ -132,6 +135,7 @@ export default defineComponent({
     QBtn,
     QPage,
     QSeparator,
+    QScrollArea
   },
   data() {
     return {
@@ -151,7 +155,7 @@ export default defineComponent({
       get(): EventParticipationDto[] {
         return myEventsStore.getState().eventParticipations
       },
-      set(value: EventParticipationDto[]){
+      set(value: EventParticipationDto[]) {
         myEventsStore.setEventParticipations(value)
       }
     },
@@ -162,14 +166,14 @@ export default defineComponent({
           return {
             participation,
             event: this.eventForParticipation(participation)
-         }
-      }).sort((a, b) => {
-        if (a.event && b.event) {
-          return a.event?.start_date > b.event.start_date ? 1 : -1
-        } else {
-          return 0
-        }
-      })
+          }
+        }).sort((a, b) => {
+          if (a.event && b.event) {
+            return a.event?.start_date > b.event.start_date ? 1 : -1
+          } else {
+            return 0
+          }
+        })
     },
     pendingEvents(): { participation: EventParticipationDto, event?: EventDto }[] {
       return this.eventParticipations
@@ -180,19 +184,19 @@ export default defineComponent({
             event: this.eventForParticipation(participation)
           }
         }).sort((a, b) => {
-        if (a.event && b.event) {
-          return a.event?.start_date > b.event.start_date ? 1 : -1
-        } else {
-          return 0
-        }
-      })
+          if (a.event && b.event) {
+            return a.event?.start_date > b.event.start_date ? 1 : -1
+          } else {
+            return 0
+          }
+        })
     }
   },
   async created() {
     await Promise.all([
       this.getParticipatedEvents(),
       this.getCampaigns(),
-      this.getSubAssociations(),
+      this.getSubAssociations()
     ])
 
     this.loading = false
