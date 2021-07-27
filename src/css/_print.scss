@@ -10,6 +10,20 @@
     width: 210mm !important;
     height: 297mm !important;
   }
+
+
+  .mapboxgl-ctrl-logo {
+    display: none !important;
+  }
+  .mapboxgl-ctrl-attrib-button {
+    display: none !important;
+  }
+  .mapboxgl-ctrl-attrib-inner {
+
+    a:last-of-type {
+      display: none !important;
+    }
+  }
 }
 
 .print-page {
