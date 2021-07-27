@@ -59,7 +59,8 @@ export default defineComponent({
     return {
       campaigns: [] as CampaignDto[],
       filterParams: {
-        is_owner: true
+        is_owner: true,
+        management_permission: true
       } as Record<string, number | string | boolean>,
       ionChevronDown,
       ionClose,
