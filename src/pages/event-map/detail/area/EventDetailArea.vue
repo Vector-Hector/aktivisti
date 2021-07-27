@@ -4,8 +4,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Map from 'src/mapbox/Map.vue'
-import FeatureLayer from 'src/mapbox/AreaFeatureLayer'
 import { apiClient } from 'src/api/ApiClient'
 import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { eventDetailStore } from 'src/store/EventDetailStore'
@@ -41,10 +39,6 @@ async function updateRoute(to: RouteLocation, from: RouteLocation, next: Navigat
 
 export default defineComponent({
   name: 'EventDetailArea',
-  components: {
-    FeatureLayer,
-    Map
-  },
   mixins: [EventDetailMixin],
   beforeRouteEnter: updateRoute,
   beforeRouteUpdate: updateRoute,
