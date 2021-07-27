@@ -1,160 +1,179 @@
 <template>
-  <div class="container">
-    <div class="user-header row">
-      <div class="col-shrink col">
-        <QAvatar size="6em" font-size="4rem" :icon="ionPersonCircleOutline" />
-      </div>
-      <div class="col p-col-align-center ">
-        <div class="realname" v-if="realName">
-          {{ realName }}
+  <QScrollArea
+    class="d-flex flex-fill"
+  >
+    <QPage>
+      <div class="container">
+
+        <div class="user-header row">
+          <div class="col-shrink col">
+            <QAvatar size="6em" font-size="4rem" :icon="ionPersonCircleOutline" />
+          </div>
+          <div class="col justify-center d-flex column">
+            <div class="realname" v-if="realName">
+              {{ realName }}
+            </div>
+            <div class="username" :class="{ 'onlyname': realName }">@{{ user?.username }}</div>
+          </div>
         </div>
-        <div class="username" :class="{ 'onlyname': realName }">@{{ user?.username }}</div>
-      </div>
-    </div>
-    <QSeparator class="profile-section-divider" />
-    <QInput
-      stack-label
-      v-model="localUser.first_name"
-      label="Vorname"
-      @update:model-value="saveProfileDebounced"
-    />
-    <QInput
-      stack-label
-      v-model="localUser.last_name"
-      label="Nachname"
-      @update:model-value="saveProfileDebounced"
-      :error-message="errors.last_name?.[0]"
-      :error="!!errors.last_name?.length"
-    />
-    <QInput
-      stack-label
-      readonly
-      v-model="localUser.email"
-      label="E-Mail"
-      @update:model-value="saveProfileDebounced"
-    >
-      <template v-slot:after>
-        <QBtn
-          round
-          flat
-          :icon="ionPencil"
-          @click="openChangeEmailDialog"
+        <QSeparator class="profile-section-divider" />
+        <QInput
+          stack-label
+          v-model="localUser.first_name"
+          label="Vorname"
+          @update:model-value="saveProfileDebounced"
         />
-      </template>
-    </QInput>
-    <QInput
-      stack-label
-      readonly
-      type="password"
-      model-value="************"
-      label="Passwort"
-      @update:model-value="saveProfileDebounced"
-    >
-      <template v-slot:after>
-        <QBtn
-          round
-          flat
-          :icon="ionPencil"
-          @click="openChangePasswordDialog"
+        <QInput
+          stack-label
+          v-model="localUser.last_name"
+          label="Nachname"
+          @update:model-value="saveProfileDebounced"
+          :error-message="errors.last_name?.[0]"
+          :error="!!errors.last_name?.length"
         />
-      </template>
-    </QInput>
-    <QInput
-      stack-label
-      v-model="localUser.phone_number"
-      label="Telefon"
-      @change="saveProfileDebounced"
-      :error-message="errors.phone_number?.[0]"
-      :error="!!errors.phone_number?.length"
-    />
-    <QInput
-      stack-label
-      v-model="localUser.plz"
-      label="Postleitzahl"
-      @change="saveProfileDebounced"
-      :error-message="errors.plz?.[0]"
-      :error="!!errors.plz?.length"
-    />
-    <QInput
-      readonly
-      label="Bezirk/Kreisverband"
-      :model-value="homeAssociationName"
-    />
-    <h3 class="profile-section-heading">Benachrichtigungen</h3>
-    <QSeparator class="profile-section-divider" />
-    <QList>
-      <QItem>
-        <QItemSection>
-          E-Mailbenachrichtigung wenn ich zu einer Aktion eingeladen wurde
-        </QItemSection>
-        <QItemSection side>
-          <QToggle
-            @update:model-value="saveEmailNotificationSettingsDebounced"
+        <QInput
+          stack-label
+          readonly
+          v-model="localUser.email"
+          label="E-Mail"
+          @update:model-value="saveProfileDebounced"
+        >
+          <template v-slot:after>
+            <QBtn
+              round
+              flat
+              :icon="ionPencil"
+              @click="openChangeEmailDialog"
+            />
+          </template>
+        </QInput>
+        <QInput
+          stack-label
+          readonly
+          type="password"
+          model-value="************"
+          label="Passwort"
+          @update:model-value="saveProfileDebounced"
+        >
+          <template v-slot:after>
+            <QBtn
+              round
+              flat
+              :icon="ionPencil"
+              @click="openChangePasswordDialog"
+            />
+          </template>
+        </QInput>
+        <QInput
+          stack-label
+          v-model="localUser.phone_number"
+          label="Telefon"
+          @change="saveProfileDebounced"
+          :error-message="errors.phone_number?.[0]"
+          :error="!!errors.phone_number?.length"
+        />
+        <QInput
+          stack-label
+          v-model="localUser.plz"
+          label="Postleitzahl"
+          @change="saveProfileDebounced"
+          :error-message="errors.plz?.[0]"
+          :error="!!errors.plz?.length"
+        />
+        <QInput
+          readonly
+          label="Bezirk/Kreisverband"
+          :model-value="homeAssociationName"
+        />
+        <h3 class="profile-section-heading">Benachrichtigungen</h3>
+        <QSeparator class="profile-section-divider" />
+        <QList>
+          <QItem>
+            <QItemSection>
+              E-Mailbenachrichtigung wenn ich zu einer Aktion eingeladen wurde
+            </QItemSection>
+            <QItemSection side>
+              <QToggle
+                @update:model-value="saveEmailNotificationSettingsDebounced"
 
-            v-model="emailNotificationSettings.on_invitation"
-            class="toggle-full-width profile-toggle-item"
-          />
-        </QItemSection>
-      </QItem>
-      <QItem>
-        <QItemSection>
-          E-Mailbenachrichtigung wenn sich neue Freiwillige für meine Aktion gemeldet haben
-        </QItemSection>
-        <QItemSection side>
-          <QToggle
-            @update:model-value="saveEmailNotificationSettingsDebounced"
+                v-model="emailNotificationSettings.on_invitation"
+                class="toggle-full-width profile-toggle-item"
+              />
+            </QItemSection>
+          </QItem>
+          <QItem>
+            <QItemSection>
+              E-Mailbenachrichtigung wenn sich neue Freiwillige für meine Aktion gemeldet haben
+            </QItemSection>
+            <QItemSection side>
+              <QToggle
+                @update:model-value="saveEmailNotificationSettingsDebounced"
 
-            v-model="emailNotificationSettings.on_new_volunteers"
-            class="toggle-full-width profile-toggle-item"
-          />
-        </QItemSection>
-      </QItem>
-    </QList>
-    <h3 class="profile-section-heading">Berechtigungen</h3>
-    <QSeparator class="profile-section-divider" />
-    <QList>
-      <QItem v-if="user.is_superuser"><span>Du bist <b>Administrator</b></span></QItem>
-      <QItem v-if="user.roles.includes(CAMPAIGN_ADMIN)">
-        <span>Du bist globaler <b>Kampagnenkoordinator</b></span></QItem>
-      <QItem v-for="permission in permissions" :key="permission.id">
+                v-model="emailNotificationSettings.on_new_volunteers"
+                class="toggle-full-width profile-toggle-item"
+              />
+            </QItemSection>
+          </QItem>
+        </QList>
+        <h3 class="profile-section-heading">Berechtigungen</h3>
+        <QSeparator class="profile-section-divider" />
+        <QList>
+          <QItem v-if="user.is_superuser"><span>Du bist <b>Administrator</b></span></QItem>
+          <QItem v-if="user.roles.includes(CAMPAIGN_ADMIN)">
+            <span>Du bist globaler <b>Kampagnenkoordinator</b></span></QItem>
+          <QItem v-for="permission in permissions" :key="permission.id">
         <span>
           Du hast die Berechtigung <b>{{ permission.permission_name }}</b> in {{ permission.content_type_name }}
           <b>{{ permission.content_object_name }}</b>
         </span>
-      </QItem>
-    </QList>
-    <h3 class="profile-section-heading">Persönliche Ergebnisse</h3>
-    <QSeparator class="profile-section-divider" />
-    <QTable
-      flat
-      hide-pagination
-      :rows="personalMetricsRows"
-      :columns="personalMetricsColumns"
-      row-key="name"
-    />
-    <h3 class="profile-section-heading">Sicherheit / Daten</h3>
-    <QSeparator class="profile-section-divider" />
-    <QList>
-      <QItem>
-        <QItemSection>
-          Deinen Account löschen
-        </QItemSection>
-        <QItemSection side>
-          <QBtn
-            flat
-            @click="openDeleteAccountPrompt"
-            color="negative"
-            label="Account löschen"
-          />
-        </QItemSection>
-      </QItem>
-    </QList>
-  </div>
+          </QItem>
+        </QList>
+        <h3 class="profile-section-heading">Persönliche Ergebnisse</h3>
+        <QSeparator class="profile-section-divider" />
+        <QTable
+          flat
+          hide-pagination
+          :rows="personalMetricsRows"
+          :columns="personalMetricsColumns"
+          row-key="name"
+        />
+        <h3 class="profile-section-heading">Sicherheit / Daten</h3>
+        <QSeparator class="profile-section-divider" />
+        <QList>
+          <QItem>
+            <QItemSection>
+              Deinen Account löschen
+            </QItemSection>
+            <QItemSection side>
+              <QBtn
+                flat
+                @click="openDeleteAccountPrompt"
+                color="negative"
+                label="Account löschen"
+              />
+            </QItemSection>
+          </QItem>
+        </QList>
+      </div>
+    </QPage>
+  </QScrollArea>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { QAvatar, QBtn, QInput, QItem, QItemSection, QList, QSeparator, QTable, QToggle } from 'quasar'
+import {
+  QAvatar,
+  QBtn,
+  QInput,
+  QItem,
+  QItemSection,
+  QList,
+  QPage,
+  QScrollArea,
+  QSeparator,
+  QTable,
+  QToggle
+} from 'quasar'
 import { ionCheckmark, ionClose, ionPencil, ionPersonCircleOutline } from '@quasar/extras/ionicons-v5'
 import { userStore } from 'src/store/UserStore'
 import { CAMPAIGN_ADMIN, UserDto } from 'src/api/model/UserDto'
@@ -180,9 +199,11 @@ export default defineComponent({
     QSeparator,
     QToggle,
     QList,
+    QPage,
     QItem,
     QTable,
-    QItemSection
+    QItemSection,
+    QScrollArea
   },
   async beforeRouteEnter(from, to, next) {
     const [userResponse, personalMetricsResponse, metricsResponse] = await Promise.all([
@@ -230,9 +251,9 @@ export default defineComponent({
       let generalMetrics = [] as { name?: string, value: number }[]
       if (this.personalMetrics?.counts_per_metric !== undefined) {
         generalMetrics = this.personalMetrics.counts_per_metric.map(({
-          count,
-          metric
-        }: { count: number, metric: number }) => {
+                                                                       count,
+                                                                       metric
+                                                                     }: { count: number, metric: number }) => {
           return {
             name: this.eventMetrics.find(({id}) => id === metric)?.name,
             value: count

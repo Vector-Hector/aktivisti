@@ -78,8 +78,8 @@ export default defineComponent({
 <style lang="scss" scoped>
 
 .overlay-content {
-  padding: 1rem 0;
   height: 100%;
+  display: flex;
 }
 
 .event-map {

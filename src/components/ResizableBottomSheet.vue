@@ -35,13 +35,7 @@
         />
       </button>
     </div>
-
-    <QScrollArea
-      ref="scrollArea"
-      class="scrollable-content"
-    >
-      <slot />
-    </QScrollArea>
+    <slot />
   </div>
 </template>
 
@@ -55,8 +49,7 @@ import { ionChevronDown, ionChevronUp } from '@quasar/extras/ionicons-v5'
 export default defineComponent({
   name: 'ResizableBottomSheet',
   components: {
-    QIcon,
-    QScrollArea
+    QIcon
   },
   props: {
     title: {

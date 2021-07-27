@@ -1,31 +1,34 @@
 <template>
-  <QList>
-    <QItem
-      v-for="address in sortedAddresses"
-      :key="address.house_number"
-      :clickable="true"
-      :to="{ name: 'event-detail-area-metrics', params: { houseNumber: address.house_number, street: street } }"
-    >
-      <QItemSection>
-        <QItemLabel>
-          {{ street }} {{ address.house_number }}
-        </QItemLabel>
-      </QItemSection>
-      <QItemSection side>
-        <div class="row">
-          <QIcon
-            v-if="completedTargetIds.includes(address.osm_id)"
-            class="col finished-icon item-icon"
-            :name="ionCheckmarkCircle"
-          />
-          <QIcon
-            class="col item-icon"
-            :name="ionChevronForward"
-          />
-        </div>
-      </QItemSection>
-    </QItem>
-  </QList>
+  <QScrollArea
+    class="d-flex flex-fill">
+    <QList>
+      <QItem
+        v-for="address in sortedAddresses"
+        :key="address.house_number"
+        :clickable="true"
+        :to="{ name: 'event-detail-area-metrics', params: { houseNumber: address.house_number, street: street } }"
+      >
+        <QItemSection>
+          <QItemLabel>
+            {{ street }} {{ address.house_number }}
+          </QItemLabel>
+        </QItemSection>
+        <QItemSection side>
+          <div class="row">
+            <QIcon
+              v-if="completedTargetIds.includes(address.osm_id)"
+              class="col finished-icon item-icon"
+              :name="ionCheckmarkCircle"
+            />
+            <QIcon
+              class="col item-icon"
+              :name="ionChevronForward"
+            />
+          </div>
+        </QItemSection>
+      </QItem>
+    </QList>
+  </QScrollArea>
 </template>
 
 <script lang="ts">
@@ -35,7 +38,7 @@ import { uiStore } from 'src/store/UiStore'
 import Timeout = NodeJS.Timeout
 import EventAreaStreetMixin from 'pages/event-map/detail/area/street/EventAreaStreetMixin'
 import { ionCheckmarkCircle, ionChevronForward } from '@quasar/extras/ionicons-v5'
-import { QIcon, QItem, QItemLabel, QItemSection, QList } from 'quasar'
+import { QIcon, QItem, QItemLabel, QItemSection, QList, QScrollArea } from 'quasar'
 
 
 export default defineComponent({
@@ -45,7 +48,8 @@ export default defineComponent({
     QItemLabel,
     QItem,
     QItemSection,
-    QIcon
+    QIcon,
+    QScrollArea
   },
   mixins: [EventAreaStreetMixin],
   beforeRouteEnter(to, from, next) {
@@ -112,7 +116,6 @@ label {
   margin-right: 1rem;
   color: #4CAF50;
 }
-
 
 
 .item-icon {

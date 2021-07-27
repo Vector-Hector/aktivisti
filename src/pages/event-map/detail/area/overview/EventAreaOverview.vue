@@ -1,87 +1,90 @@
 <template>
-  <div class="container q-gutter-y-md">
-    <div class="row q-col-gutter-x-md">
-      <div class="col">
-        <QSelect
-          v-if="isTeamCaptainOrCoordinator"
-          :model-value="eventAreaParticipants"
-          @update:model-value="updateAreaParticipations($event)"
-          :multiple="true"
-          label="Teilnehmer*innen"
-          :options="onlyMemberParticipants"
-          option-label="user_username"
-          :display-value="eventAreaParticipants.map(({user_username}) => user_username).join(',')"
-        />
-        <div
-          v-else-if="personalParticipationPermissions?.assign_event_area?.POST"
-          class="join-buttons"
+  <QScrollArea
+    class="d-flex flex-fill">
+    <div class="container q-gutter-y-md">
+      <div class="row q-col-gutter-x-md">
+        <div class="col">
+          <QSelect
+            v-if="isTeamCaptainOrCoordinator"
+            :model-value="eventAreaParticipants"
+            @update:model-value="updateAreaParticipations($event)"
+            :multiple="true"
+            label="Teilnehmer*innen"
+            :options="onlyMemberParticipants"
+            option-label="user_username"
+            :display-value="eventAreaParticipants.map(({user_username}) => user_username).join(',')"
+          />
+          <div
+            v-else-if="personalParticipationPermissions?.assign_event_area?.POST"
+            class="join-buttons"
+          >
+            <QBtn
+              v-if="isUserEventAreaParticipant"
+              @click="leaveArea"
+              flat
+            >
+              Doch nicht hier mitmachen
+            </QBtn>
+            <QBtn
+              v-else
+              color="primary"
+              @click="joinArea"
+            >
+              In diesem Gebiet mitmachen
+            </QBtn>
+          </div>
+        </div>
+        <div class="col-grow complete-button"
+             v-if="eventAreaPermissions?.self?.PATCH"
         >
           <QBtn
-            v-if="isUserEventAreaParticipant"
-            @click="leaveArea"
+            outline
+            dense
+            round
             flat
-          >
-            Doch nicht hier mitmachen
-          </QBtn>
-          <QBtn
-            v-else
-            color="primary"
-            @click="joinArea"
-          >
-            In diesem Gebiet mitmachen
-          </QBtn>
-        </div>
-      </div>
-      <div class="col-grow complete-button"
-           v-if="eventAreaPermissions?.self?.PATCH"
-      >
-        <QBtn
-          outline
-          dense
-          round
-          flat
-          :class="{
+            :class="{
             'button-success': eventArea.is_completed
           }"
-          @click="openCompletionModal"
-          :icon="ionCheckmarkCircleOutline"
-        />
+            @click="openCompletionModal"
+            :icon="ionCheckmarkCircleOutline"
+          />
+        </div>
+      </div>
+      <div class="row">
+        <QList class="address-list">
+          <QItem
+            v-for="street in eventArea.area_details.streets"
+            :key="street.name"
+            :clickable="true"
+            :to="{ name: 'event-detail-area-street', params: { street: street.name } }"
+          >
+            <QItemSection>
+              <QItemLabel>
+                {{ street.name }}
+              </QItemLabel>
+              <QItemLabel>
+                {{ street.addresses.length }} Adressen
+              </QItemLabel>
+            </QItemSection>
+
+            <QItemSection side>
+              <div class="row">
+                <QIcon
+                  v-if="streetCompleted(street)"
+                  class="col finished-icon item-icon"
+                  :name="ionCheckmarkCircle"
+                />
+                <QIcon
+                  class="col item-icon"
+                  :name="ionChevronForward"
+                />
+              </div>
+            </QItemSection>
+          </QItem>
+        </QList>
       </div>
     </div>
-    <div class="row">
-      <QList class="address-list">
-        <QItem
-          v-for="street in eventArea.area_details.streets"
-          :key="street.name"
-          :clickable="true"
-          :to="{ name: 'event-detail-area-street', params: { street: street.name } }"
-        >
-          <QItemSection>
-            <QItemLabel>
-              {{ street.name }}
-            </QItemLabel>
-            <QItemLabel>
-              {{ street.addresses.length }} Adressen
-            </QItemLabel>
-          </QItemSection>
-
-          <QItemSection side>
-            <div class="row">
-              <QIcon
-                v-if="streetCompleted(street)"
-                class="col finished-icon item-icon"
-                :name="ionCheckmarkCircle"
-              />
-              <QIcon
-                class="col item-icon"
-                :name="ionChevronForward"
-              />
-            </div>
-          </QItemSection>
-        </QItem>
-      </QList>
-    </div>
-  </div>
+  </QScrollArea>
 </template>
 
 <script lang="ts">
@@ -90,7 +93,7 @@ import { userStore } from 'src/store/UserStore'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { uiStore } from 'src/store/UiStore'
 import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
-import { QBtn, QIcon, QItem, QItemLabel, QItemSection, QList, QSelect } from 'quasar'
+import { QBtn, QIcon, QItem, QItemLabel, QItemSection, QList, QScrollArea, QSelect } from 'quasar'
 import { ionCheckmarkCircle, ionCheckmarkCircleOutline, ionChevronForward } from '@quasar/extras/ionicons-v5'
 import { StreetDetails } from 'src/api/model/AreaDetailsDto'
 import { difference } from 'lodash-es'
@@ -106,7 +109,8 @@ export default defineComponent({
     QItemLabel,
     QIcon,
     QSelect,
-    QBtn
+    QBtn,
+    QScrollArea
   },
   mixins: [EventDetailStoreMixin],
   beforeRouteEnter(to, from, next) {

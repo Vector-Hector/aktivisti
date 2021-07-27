@@ -1,31 +1,36 @@
 <template>
-  <div class="create-lead">
-    <QBtn
-      :to="{ name: 'create-lead' }"
-      outline
-      color="primary"
-    >
-      Kontakt registrieren
-    </QBtn>
-  </div>
+  <QScrollArea
+    class="d-flex flex-fill column q-py-sm"
+  >
+    <div class="create-lead">
+      <QBtn
+        :to="{ name: 'create-lead' }"
+        outline
+        color="primary"
+      >
+        Kontakt registrieren
+      </QBtn>
+    </div>
 
-  <div
-    v-if="metricRecords.length"
-  >
-    <MetricsRow
-      v-for="metricRecord in metricRecords"
-      :key="metricRecord.metric"
-      :model-value="metricValues[metricRecord.id]"
-      :label="getMetricForId(metricRecord.metric).name"
-      class="metrics-input"
-      @update:modelValue="updateMetricValue(metricRecord.id, $event)"
-    />
-  </div>
-  <p
-    v-else
-  >
-    Für diese Aktion wurden keine Ergebnisse definiert
-  </p>
+    <div
+      v-if="metricRecords.length"
+    >
+      <MetricsRow
+        v-for="metricRecord in metricRecords"
+        :key="metricRecord.metric"
+        :model-value="metricValues[metricRecord.id]"
+        :label="getMetricForId(metricRecord.metric).name"
+        class="metrics-input"
+        @update:modelValue="updateMetricValue(metricRecord.id, $event)"
+      />
+    </div>
+    <p
+      v-else
+    >
+      Für diese Aktion wurden keine Ergebnisse definiert
+    </p>
+  </QScrollArea>
+
 </template>
 
 <script lang="ts">
@@ -36,14 +41,15 @@ import { MetricValueMap, trackingSessionStore } from 'src/store/TrackingSessionS
 import MetricsRow from 'src/components/MetricsRow.vue'
 import { uiStore } from 'src/store/UiStore'
 import EventAreaMetricsMixin from 'pages/event-map/detail/area/metrics/EventAreaMetricsMixin'
-import { QBtn } from 'quasar'
+import { QBtn, QScrollArea } from 'quasar'
 
 
 export default defineComponent({
   name: 'EventAreaMetrics',
   components: {
     MetricsRow,
-    QBtn
+    QBtn,
+    QScrollArea
   },
   mixins: [EventAreaMetricsMixin],
   data() {
@@ -144,7 +150,6 @@ label {
 .create-lead {
   display: flex;
   justify-content: center;
-  margin-top: -.5rem;
 }
 
 .metrics-input {
