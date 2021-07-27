@@ -99,7 +99,7 @@ export default defineComponent({
     }
   },
   methods: {
-    getEventTypeLabel(eventType: EventTypes): string {
+    getEventTypeLabel(eventType: EventTypes): string | undefined {
       return eventTypeOptions.find(({key}) => key === eventType)?.label
     }
   }
