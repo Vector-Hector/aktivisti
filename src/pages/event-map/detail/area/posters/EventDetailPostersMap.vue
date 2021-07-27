@@ -15,11 +15,10 @@ import { defineComponent } from 'vue'
 import PosterMarkerLayer from 'src/mapbox/PosterMarkerLayer'
 import EventDetailPosterMixin from 'pages/event-map/detail/area/posters/EventDetailPosterMixin'
 import AreaFeatureLayer from 'src/mapbox/AreaFeatureLayer'
-import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 
 export default defineComponent({
   name: 'EventDetailPostersMap',
   components: {AreaFeatureLayer, PosterMarkerLayer},
-  mixins: [EventDetailPosterMixin, EventDetailMixin]
+  mixins: [EventDetailPosterMixin]
 })
 </script>

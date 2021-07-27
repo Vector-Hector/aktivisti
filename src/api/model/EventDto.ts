@@ -27,7 +27,8 @@ export interface EventDto {
   description: string
   participants: number
   max_participants: number
-  visibility: VisibilityOptions,
-  owner: number,
+  visibility: VisibilityOptions
+  owner: number
   sub_association: number
+  poster_creation_allowed: boolean
 }

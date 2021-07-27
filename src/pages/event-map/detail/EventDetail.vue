@@ -1,7 +1,5 @@
 <template>
-  <div class="container" v-if="event">
-    <router-view />
-  </div>
+  <router-view v-if="event" />
 </template>
 
 <script lang="ts">

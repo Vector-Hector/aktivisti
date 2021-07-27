@@ -1,117 +1,121 @@
 <template>
   <div class="container">
-    <QForm>
-      <QSelect
-        filled
-        v-model="event.event_type"
-        label="Aktionstyp"
-        disable
-        :option-disable="() => true"
-        :options="eventTypes"
-        option-label="label"
-        option-value="key"
-        emit-value
-        map-options
-        :error-message="errors.event_type?.[0]"
-        :error="!!errors.event_type?.length"
-      />
-      <QInput
-        filled
-        v-model="event.name"
-        label="Name der Aktion"
-        :error-message="errors.name?.[0]"
-        :error="!!errors.name?.length"
-        :rules="[$validationRules.isRequired]"
-      />
-      <QSelect
-        filled
-        v-model="event.campaigns"
-        label="Kampagne"
-        placeholder="Wähle eine Kampagne aus"
-        :multiple="true"
-        :options="campaigns"
-        option-label="name"
-        option-value="id"
-        map-options
-        emit-value
-        :error-message="errors.campaigns?.[0]"
-        :error="!!errors.campaigns?.length"
-      />
-      <div class="row q-col-gutter-x-md">
-        <DateTimeInput
-          class="col"
+    <QScrollArea
+      class="d-flex flex-fill"
+    >
+      <QForm>
+        <QSelect
           filled
-          :input-props="{ label: 'Startdatum' }"
-          :time-props="{ minuteOptions: [0, 15, 30, 45] }"
-          :date-props="{ navigationMinYearMonth: currentYearMonth }"
-          v-model="startDate"
-          :mask="mask"
-          :error-message="errors.start_date?.[0]"
-          :error="!!errors.start_date?.length"
+          v-model="event.event_type"
+          label="Aktionstyp"
+          disable
+          :option-disable="() => true"
+          :options="eventTypes"
+          option-label="label"
+          option-value="key"
+          emit-value
+          map-options
+          :error-message="errors.event_type?.[0]"
+          :error="!!errors.event_type?.length"
         />
-        <DateTimeInput
-          class="col"
+        <QInput
           filled
-          :input-props="{ label: 'Enddatum' }"
-          :time-props="{ minuteOptions: [0, 15, 30, 45] }"
-          :date-props="{ navigationMinYearMonth: currentYearMonth }"
-          v-model="endDate"
-          :mask="mask"
-          :error-message="errors.end_date?.[0]"
-          :error="!!errors.end_date?.length"
+          v-model="event.name"
+          label="Name der Aktion"
+          :error-message="errors.name?.[0]"
+          :error="!!errors.name?.length"
           :rules="[$validationRules.isRequired]"
         />
-      </div>
-      <QInput
-        filled
-        v-model.number="event.max_participants"
-        label="Maximale Teilnehmer*innenzahl"
-        type="number"
-
-        :error-message="errors.max_participants?.[0]"
-        :error="!!errors.max_participants?.length"
-      />
-      <QInput
-        filled
-        type="textarea"
-        label="Beschreibung"
-        v-model="event.description"
-        :error-message="errors.description?.[0]"
-        :error="!!errors.description?.length"
-      />
-
-      <QSelect
-        filled
-        label="Sichtbarkeit"
-        v-model="event.visibility"
-        :options="Object.values(VisibilityOptions)"
-        :option-label="(item) => VisibilityLabels[item]"
-        :error-message="errors.visibility?.[0]"
-        :error="!!errors.visibility?.length"
-      />
-      <div class="metric-section" v-if="event.event_type !== EventTypes.POSTERS">
-        <h3 class="metrics-headline">Zielvorgaben</h3>
-        <div class="metrics-input-wrapper">
-          <MetricInput
-            v-for="metric in metrics"
-            :key="metric.id"
-            :name="metric.name"
-            :checked="selectedMetricsIds.includes(metric.id)"
-            @update:checked="toggleMetric($event, metric)"
-            :target="metricRecordForMetricId(metric.id)?.target ?? 0"
-            @update:target="metricRecordForMetricId(metric.id).target = $event"
+        <QSelect
+          filled
+          v-model="event.campaigns"
+          label="Kampagne"
+          placeholder="Wähle eine Kampagne aus"
+          :multiple="true"
+          :options="campaigns"
+          option-label="name"
+          option-value="id"
+          map-options
+          emit-value
+          :error-message="errors.campaigns?.[0]"
+          :error="!!errors.campaigns?.length"
+        />
+        <div class="row q-col-gutter-x-md">
+          <DateTimeInput
+            class="col"
+            filled
+            :input-props="{ label: 'Startdatum' }"
+            :time-props="{ minuteOptions: [0, 15, 30, 45] }"
+            :date-props="{ navigationMinYearMonth: currentYearMonth }"
+            v-model="startDate"
+            :mask="mask"
+            :error-message="errors.start_date?.[0]"
+            :error="!!errors.start_date?.length"
+          />
+          <DateTimeInput
+            class="col"
+            filled
+            :input-props="{ label: 'Enddatum' }"
+            :time-props="{ minuteOptions: [0, 15, 30, 45] }"
+            :date-props="{ navigationMinYearMonth: currentYearMonth }"
+            v-model="endDate"
+            :mask="mask"
+            :error-message="errors.end_date?.[0]"
+            :error="!!errors.end_date?.length"
+            :rules="[$validationRules.isRequired]"
           />
         </div>
-      </div>
-      <div v-else-if="event.event_type === EventTypes.POSTERS">
-        <QCheckbox
-          v-model="event.poster_creation_allowed"
-          label="Teilnehmer*innen können Plakate anlegen"
+        <QInput
+          filled
+          v-model.number="event.max_participants"
+          label="Maximale Teilnehmer*innenzahl"
+          type="number"
+
+          :error-message="errors.max_participants?.[0]"
+          :error="!!errors.max_participants?.length"
         />
-      </div>
-    </QForm>
+        <QInput
+          filled
+          type="textarea"
+          label="Beschreibung"
+          v-model="event.description"
+          :error-message="errors.description?.[0]"
+          :error="!!errors.description?.length"
+        />
+
+        <QSelect
+          filled
+          label="Sichtbarkeit"
+          v-model="event.visibility"
+          :options="Object.values(VisibilityOptions)"
+          :option-label="(item) => VisibilityLabels[item]"
+          :error-message="errors.visibility?.[0]"
+          :error="!!errors.visibility?.length"
+        />
+        <div class="metric-section" v-if="event.event_type !== EventTypes.POSTERS">
+          <h3 class="metrics-headline">Zielvorgaben</h3>
+          <div class="metrics-input-wrapper">
+            <MetricInput
+              v-for="metric in metrics"
+              :key="metric.id"
+              :name="metric.name"
+              :checked="selectedMetricsIds.includes(metric.id)"
+              @update:checked="toggleMetric($event, metric)"
+              :target="metricRecordForMetricId(metric.id)?.target ?? 0"
+              @update:target="metricRecordForMetricId(metric.id).target = $event"
+            />
+          </div>
+        </div>
+        <div v-else-if="event.event_type === EventTypes.POSTERS">
+          <QCheckbox
+            v-model="event.poster_creation_allowed"
+            label="Teilnehmer*innen können Plakate anlegen"
+          />
+        </div>
+      </QForm>
+    </QScrollArea>
   </div>
-  <SidebarBottomNavigation
+  <SidebarBottomStepNavigation
     class="navigation"
     @close="abort"
     @forward="next"
@@ -128,9 +132,9 @@ import EditEventMixin from 'src/pages/edit-event/EditEventMixin'
 import { VisibilityLabels, VisibilityOptions } from 'src/api/model/EventDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
-import { date, QCheckbox, QForm, QInput, QSelect } from 'quasar'
+import { date, QCheckbox, QForm, QInput, QScrollArea, QSelect } from 'quasar'
 import DateTimeInput from 'components/DateTimeInput.vue'
-import SidebarBottomNavigation from 'components/SidebarBottomNavigation.vue'
+import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
 import MetricInput from 'components/MetricInput.vue'
 import { editEventStore } from 'src/store/EditEventStore'
 import { SettleDebouncer } from 'src/utils/debounce'
@@ -143,12 +147,13 @@ export default defineComponent({
   name: 'EditEventDetails',
   components: {
     MetricInput,
-    SidebarBottomNavigation,
+    SidebarBottomStepNavigation,
     DateTimeInput,
     QForm,
     QSelect,
     QInput,
-    QCheckbox
+    QCheckbox,
+    QScrollArea
   },
   mixins: [EditEventMixin, EditEventAutoSaveMixin],
   emits: ['update:eventMetricRecords'],

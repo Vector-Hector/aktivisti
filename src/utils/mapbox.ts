@@ -27,7 +27,9 @@ export async function loadImageIfNonExistent(map: mapboxgl.Map, name: string, ur
   } else {
     return loadImage(map, url)
       .then((image) => {
-        map.addImage(name, image)
+        if (!map.hasImage(name)) {
+          map.addImage(name, image)
+        }
         return name
       })
   }

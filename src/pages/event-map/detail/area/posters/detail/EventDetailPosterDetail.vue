@@ -1,9 +1,29 @@
 <template>
-  <EditPoster
-    :key="poster.id"
-    v-if="poster"
-    v-model:poster="poster"
-  />
+  <div class="flex column full-width">
+    <div class="container q-py-sm col-grow full-width">
+      <EditPoster
+        :key="poster.id"
+        v-if="poster"
+        v-model:poster="poster"
+      />
+      <div class="row">
+        <div class="col-grow d-flex justify-center">
+          <QBtn
+            v-if="event.poster_creation_allowed"
+            class="delete-button"
+            flat
+            :icon="ionTrash"
+            label="Löschen"
+            color="primary"
+            @click="onDeleteClicked"
+          />
+        </div>
+      </div>
+    </div>
+    <SidebarBottomBackNavigation
+      @back="$router.go(-1)"
+    />
+  </div>
 </template>
 <script lang="ts">
 import EventDetailPosterMixin from 'pages/event-map/detail/area/posters/EventDetailPosterMixin'
@@ -13,23 +33,43 @@ import { PosterDto } from 'src/api/model/PosterDto'
 import { cloneDeep, isEqual } from 'lodash-es'
 import { SettleDebouncer } from 'src/utils/debounce'
 import { eventDetailStore } from 'src/store/EventDetailStore'
-import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { RouteLocation, NavigationGuardNext } from 'vue-router'
+import { ionTrash } from '@quasar/extras/ionicons-v5'
+import { QBtn } from 'quasar'
+import { uiStore } from 'src/store/UiStore'
+import SidebarBottomBackNavigation from 'components/SidebarBottomBackNavigation.vue'
 
 function updateRoute(to: RouteLocation, from: RouteLocation, next: NavigationGuardNext) {
   const {posterId, areaId} = to.params
   const parsedAreaId = areaId !== 'undefined' ? parseInt(areaId.toString()) : null
+
   const postersInArea = eventDetailStore.state.posters.filter(({area}) => area === parsedAreaId)
-  eventDetailStore.state.activePosterIndex = postersInArea.findIndex(
+  const posterIndex = postersInArea.findIndex(
     (({id}) => parseInt(posterId as string) === id)
   )
-  next()
+  if (posterIndex > -1) {
+    eventDetailStore.state.activePosterIndex = posterIndex
+    uiStore.updateActiveElements({
+      poster: `Plakat #${postersInArea[posterIndex]?.poster_id}`
+    })
+    next()
+  } else {
+    // poster not found
+    eventDetailStore.state.activePosterIndex = null
+    next({
+      name: 'event-detail-poster-list',
+      params: {
+        eventId: to.params.eventId,
+        areaId: to.params.areaId
+      }
+    })
+  }
 }
 
 export default defineComponent({
   name: 'EventDetailPosterDetail',
-  components: {EditPoster},
-  mixins: [EventDetailPosterMixin, EventDetailStoreMixin],
+  components: {SidebarBottomBackNavigation, EditPoster, QBtn},
+  mixins: [EventDetailPosterMixin],
   beforeRouteEnter: updateRoute,
   beforeRouteUpdate: updateRoute,
   beforeRouteLeave() {
@@ -37,19 +77,12 @@ export default defineComponent({
   },
   data() {
     return {
+      ionTrash,
       saveDebouncer: new SettleDebouncer()
     }
   },
   computed: {
-    poster: {
-      get(): PosterDto {
-        return this.postersInArea[eventDetailStore.state.activePosterIndex!]
-      },
-      set(poster: Partial<PosterDto>) {
-        this.mergePosters([poster as PosterDto])
-      }
-    },
-    posterCopy() {
+    posterCopy(): PosterDto {
       return cloneDeep(this.poster)
     }
   },
@@ -66,6 +99,30 @@ export default defineComponent({
     }
   },
   methods: {
+    onDeleteClicked() {
+      this.$q.dialog({
+        title: 'Poster löschen',
+        message: `Möchtest du das Poster #${this.poster.poster_id} wirklich löschen?`,
+        cancel: true
+      }).onOk(async () => {
+        try {
+          await this.$apiClient.posters.delete(this.poster.id.toString())
+          this.$q.notify({
+            color: 'neutral',
+            message: 'Poster wurde gelöscht'
+          })
+          const posterId = this.poster.id
+          await this.$router.replace({name: 'event-detail-poster-list'})
+          this.deletePostersByIds([posterId])
+        } catch (e) {
+          this.$q.notify({
+            color: 'negative',
+            message: 'Beim Löschen des Posters trat ein Fehler auf'
+          })
+        }
+      })
+
+    },
     async save() {
       const posterToSave = {...this.poster}
       await this.saveDebouncer.executeDebounced(async () => {
@@ -89,6 +146,6 @@ export default defineComponent({
   }
 })
 </script>
-<style>
+<style lang="scss" scoped>
 
 </style>

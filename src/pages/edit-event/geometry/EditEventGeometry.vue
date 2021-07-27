@@ -122,7 +122,7 @@
       />
     </div>
   </div>
-  <SidebarBottomNavigation
+  <SidebarBottomStepNavigation
     @close="abort"
     @forward="next"
     @back="back"
@@ -144,7 +144,7 @@ import {
 } from 'quasar'
 import { ionPencil, ionShareSocial, ionTrash } from '@quasar/extras/ionicons-v5'
 import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
-import SidebarBottomNavigation from 'components/SidebarBottomNavigation.vue'
+import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
 import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
 import { EditEventBus, START_DRAW_AREA } from 'src/store/EditEventStore'
 import { StepControls } from 'pages/EditEvent.vue'
@@ -155,7 +155,7 @@ export default defineComponent({
   name: 'EditEventGeometry',
   components: {
     LocationSelect,
-    SidebarBottomNavigation,
+    SidebarBottomStepNavigation,
     QPopupEdit,
     QColor,
     QSpinnerPuff,

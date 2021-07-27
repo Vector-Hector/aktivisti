@@ -1,6 +1,6 @@
 <template>
   <Marker
-    v-if="position"
+    v-if="showMarker && position"
     :location="position"
   >
     <template v-slot:marker>
@@ -16,11 +16,11 @@
       :icon="locatorIcon"
       flat
       round
+      :disable="disabled"
       style="background: white"
       :color="locatorColor"
       @click="onLocateClicked"
     />
-
   </div>
 </template>
 
@@ -60,11 +60,27 @@ export default defineComponent({
     QIcon
   },
   props: {
+    showMarker: {
+      type: Boolean as PropType<boolean>,
+      default: true
+    },
     options: {
       type: Object as PropType<GeolocateControlOptions>,
       default: function () {
         return {}
       }
+    },
+    locatorIconFixed: {
+      type: String as PropType<string>,
+      default: matGpsFixed
+    },
+    locatorIconNotFixed: {
+      type: String as PropType<string>,
+      default: matGpsNotFixed
+    },
+    locatorIconOff: {
+      type: String as PropType<string>,
+      default: matGpsOff
     }
   },
   emits: ['locate', 'position'],
@@ -86,17 +102,24 @@ export default defineComponent({
   },
 
   computed: {
+    disabled(): boolean {
+      return GeolocateState.UNAVAILABLE === this.locatorState
+    },
     locatorIcon(): string {
       switch (this.locatorState) {
       case GeolocateState.ENABLED:
-        return matGpsNotFixed
+        // @ts-ignore type inference broken
+        return this.locatorIconNotFixed
       case GeolocateState.DISABLED:
-        return matGpsNotFixed
+        // @ts-ignore type inference broken
+        return this.locatorIconNotFixed
       case GeolocateState.TRACKING:
-        return matGpsFixed
+        // @ts-ignore type inference broken
+        return this.locatorIconFixed
       case GeolocateState.UNAVAILABLE:
       default:
-        return matGpsOff
+        // @ts-ignore type inference broken
+        return this.locatorIconOff
       }
     },
     locatorColor(): string {
@@ -104,8 +127,9 @@ export default defineComponent({
       case GeolocateState.TRACKING:
       case GeolocateState.ENABLED:
         return 'primary'
-      case GeolocateState.DISABLED:
       case GeolocateState.UNAVAILABLE:
+        return 'grey-8'
+      case GeolocateState.DISABLED:
       default:
         return '#000000'
       }
@@ -122,6 +146,7 @@ export default defineComponent({
       if (this.position !== null) {
         this.map.panTo(this.position)
       }
+      this.$emit('locate', this.position)
     },
     async startWatch() {
       if (!this.locationWatcher) {
@@ -146,6 +171,7 @@ export default defineComponent({
       if (this.locatorState === GeolocateState.TRACKING) {
         this.map.panTo(this.position)
       }
+      this.$emit('position', this.position)
     }
   },
   mounted() {

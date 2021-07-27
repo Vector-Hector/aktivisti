@@ -10,10 +10,23 @@ import { ObjectPermissionDto, ObjectPermissions } from 'src/api/model/ObjectPerm
 import { Feature } from 'geojson'
 import { PosterDto } from 'src/api/model/PosterDto'
 import { apiClient } from 'src/api/ApiClient'
+import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import { bbox, circle } from '@turf/turf'
+import { userStore } from 'src/store/UserStore'
 
 export default defineComponent({
   name: 'EventDetailStoreMixin',
   computed: {
+    zoomBox(): BBox2d | null {
+      const locationFeatures = [...this.areaFeatures]
+      if (this?.event?.location) {
+        locationFeatures.push(circle([this.event.location.lng, this.event.location.lat], 0.2))
+      }
+      return locationFeatures.length > 0 ? bbox({
+        type: 'FeatureCollection',
+        features: [...this.areaFeatures, ...locationFeatures]
+      }) as BBox2d : userStore.getState().bbox
+    },
     areaFeatures(): Feature[] {
       return this.eventAreas.map((area) => {
         return {
@@ -161,6 +174,9 @@ export default defineComponent({
     }
   },
   methods: {
+    deletePostersByIds(posterIds: number[]) {
+      this.posters = this.posters.filter(({id}) => !posterIds.includes(id))
+    },
     mergePosters(posters: PosterDto[]) {
       for (const poster of posters) {
         const originalIndex = this.posters.findIndex(({id}) => id === poster.id)

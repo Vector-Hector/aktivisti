@@ -1,11 +1,5 @@
 <template>
   <div class="map-sidebar">
-    <h3
-      v-if="title"
-      class="overlay-title"
-    >
-      {{ title }}
-    </h3>
     <div class="map-sidebar-content">
       <slot />
     </div>

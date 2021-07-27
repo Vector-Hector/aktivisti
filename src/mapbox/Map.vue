@@ -1,8 +1,8 @@
 <template>
   <div
     class="drop-container"
-    @drop="onDrop"
-    @dragover.prevent
+    @drop.prevent.stop="onDrop"
+    @dragover.prevent.stop
   >
     <div
       :id="mapUuid"

@@ -1,57 +1,61 @@
 <template>
-  <div class="edit-event-single-poster container">
-    <EditPoster
-      :new="!!posterId"
-      v-if="poster"
-      v-model:poster="poster"
-      :errors="errors"
-      :edit-location="true"
-    />
-    <div class="buttons">
-      <div
-        v-if="posterId"
-        class="button delete-button"
-      >
-        <QBtn
-          dense
-          flat
-          label="Löschen"
-          :icon="ionTrash"
-          @click="onDeleteClicked"
-          color="primary"
+  <div class="edit-event-single-poster flex column flex-fill">
+    <QScrollArea class="col-grow full-width">
+      <div class="container">
+        <EditPoster
+          :new="!!posterId"
+          v-if="poster"
+          v-model:poster="poster"
+          :errors="errors"
+          :edit-location="true"
         />
-      </div>
+        <div class="buttons">
+          <div
+            v-if="posterId"
+            class="button delete-button"
+          >
+            <QBtn
+              dense
+              flat
+              label="Löschen"
+              :icon="ionTrash"
+              @click="onDeleteClicked"
+              color="primary"
+            />
+          </div>
 
-      <div class="button close-button">
-        <QBtn
-          dense
-          outline
-          label="Abbrechen"
-          :icon="ionClose"
-          @click="abort"
-          color="primary"
-        />
-      </div>
-      <div class="button save-button">
-        <QBtn
-          dense
-          v-if="posterId"
-          color="primary"
-          label="Speichern"
-          :icon="ionSave"
-          @click="save"
-        />
-        <QBtn
-          v-else
-          dense
-          color="primary"
-          label="Erstellen"
-          :icon="ionLocationSharp"
-          @click="save"
-        />
-      </div>
+          <div class="button close-button">
+            <QBtn
+              dense
+              outline
+              label="Abbrechen"
+              :icon="ionClose"
+              @click="abort"
+              color="primary"
+            />
+          </div>
+          <div class="button save-button">
+            <QBtn
+              dense
+              v-if="posterId"
+              color="primary"
+              label="Speichern"
+              :icon="ionSave"
+              @click="save"
+            />
+            <QBtn
+              v-else
+              dense
+              color="primary"
+              label="Erstellen"
+              :icon="ionLocationSharp"
+              @click="save"
+            />
+          </div>
 
-    </div>
+        </div>
+      </div>
+    </QScrollArea>
   </div>
 </template>
 
@@ -64,7 +68,7 @@ import { StepControls } from 'pages/EditEvent.vue'
 import EditPoster from 'components/EditPoster.vue'
 import { cloneDeep } from 'lodash-es'
 import { apiClient } from 'src/api/ApiClient'
-import { QBtn } from 'quasar'
+import { QBtn, QScrollArea } from 'quasar'
 import { ionClose, ionLocationSharp, ionSave, ionTrash } from '@quasar/extras/ionicons-v5'
 import EditSinglePosterMixin from 'pages/edit-event/posters/edit-single/EditSinglePosterMixin'
 import { posterListStore } from 'src/store/PosterListStore'
@@ -85,12 +89,13 @@ export default defineComponent({
   },
   components: {
     EditPoster,
+    QScrollArea,
     QBtn
   },
   mixins: [EditEventGeometryMixin, EditSinglePosterMixin, EditPosterListMixin],
   async beforeRouteEnter(to, from, next) {
     let initialPoster: Partial<PosterDto>
-    const { posterId, eventId } = to.params
+    const {posterId, eventId} = to.params
     if (posterId) {
       initialPoster = (await apiClient.posters.get(posterId.toString())).payload.data
       posterListStore.state.activePosterIndex = posterListStore.state.posters.findIndex((({id}) => initialPoster.id === id))
@@ -166,6 +171,10 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.edit-event-single-poster {
+  display: flex;
+  flex-direction: column;
+}
 .buttons {
   display: flex;
   flex-direction: row;
