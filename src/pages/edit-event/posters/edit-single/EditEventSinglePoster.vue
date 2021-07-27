@@ -152,7 +152,7 @@ export default defineComponent({
     onDeleteClicked() {
       if (!this.posterId) return
       this.$q.dialog({
-        title: 'Poster löschen',
+        title: 'Plakat löschen',
         message: 'Möchtest dieses Poster wirklich löschen?',
         cancel: true
       }).onOk(async () => {

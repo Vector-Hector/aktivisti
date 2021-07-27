@@ -188,7 +188,7 @@ export default defineComponent({
       if (this.event.event_type === EventTypes.POSTERS) {
         detailsColumns = {
           name: 'details',
-          label: 'Poster',
+          label: 'Plakate',
         }
       } else {
         detailsColumns = {

@@ -116,7 +116,7 @@ export default defineComponent({
     onDeleteClicked(poster: PosterDto) {
       if (this.confirmDelete) {
         this.$q.dialog({
-          title: 'Poster löschen',
+          title: 'Plakat löschen',
           message: `Möchtest du Poster #${poster.poster_id} wirklich löschen?`,
           options: {
             type: 'checkbox',

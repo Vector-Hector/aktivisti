@@ -266,7 +266,7 @@ const routes = [
               map: EditEventPostersMap
             },
             meta: {
-              title: () => 'Poster bearbeiten'
+              title: () => 'Plakat bearbeiten'
             },
             children: [
               {
