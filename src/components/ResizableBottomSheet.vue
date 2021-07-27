@@ -42,7 +42,7 @@
 <script lang="ts">
 import { defineComponent, PropType, computed } from 'vue'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
-import { QIcon, QScrollArea } from 'quasar'
+import { QIcon } from 'quasar'
 import { ionChevronDown, ionChevronUp } from '@quasar/extras/ionicons-v5'
 
 
