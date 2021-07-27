@@ -447,11 +447,6 @@ export default defineComponent({
         event: this.event.id
       })).payload.data
     },
-    async refreshParticipants() {
-      this.participations = (await apiClient.eventParticipations.list({
-        event: this.event.id
-      })).payload.data
-    },
     openInviteModal() {
       if (this.isTeamCaptainOrCoordinator) {
         this.$q.dialog({
