@@ -24,6 +24,7 @@
       <img class="linke-logo" src="../../assets/logo_dielinke.png">
       <Map
         class="map"
+        :interactive="false"
         :bounding-box="zoomBox"
       >
         <Marker
@@ -69,6 +70,7 @@
           </p>
           <Map
             class="area-map"
+            :interactive="false"
             :bounding-box="boundingBoxOfArea(area)"
           >
             <FeatureLayer
