@@ -62,6 +62,12 @@
       </div>
       <div class="row q-col-gutter-y-sm">
         <div class="col-2">
+          Treffpunkt:
+        </div>
+        <div class="col-10">
+          {{ event.location_description }}
+        </div>
+        <div class="col-2">
           Start:
         </div>
         <div class="col-10">
@@ -423,15 +429,15 @@ export default defineComponent({
       }, 300)
     },
     async updateParticipationAndLoadAreas() {
-              this.personalParticipation = (await this.$apiClient.eventParticipations.list({
-          event: this.eventId,
-          user: userStore.getState().user?.id
-        })).payload.data?.[0]
-        if (this.personalParticipation?.is_verified) {
-          this.eventAreas = (await this.$apiClient.eventAreas.list({event: this.event.id})).payload.data
-        } else {
-          this.eventAreas = []
-        }
+      this.personalParticipation = (await this.$apiClient.eventParticipations.list({
+        event: this.eventId,
+        user: userStore.getState().user?.id
+      })).payload.data?.[0]
+      if (this.personalParticipation?.is_verified) {
+        this.eventAreas = (await this.$apiClient.eventAreas.list({event: this.event.id})).payload.data
+      } else {
+        this.eventAreas = []
+      }
     },
     async leave() {
       const generalLeaveError = 'Ein unerwarteter Fehler trat auf beim versuch die Aktion zu verlassen'
