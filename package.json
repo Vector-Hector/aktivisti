@@ -1,9 +1,16 @@
 {
   "name": "wk-frontend",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.2.0",
+  "description": "The PWA / Hybrid DIE LINKE. App",
   "productName": "DIE LINKE. App",
-  "author": "Jonatan Zint <jonatan@ctrl.alt.coop>",
+  "author": "control.alt.coop eG <kontakt@ctrl.alt.coop>",
+  "license": "GPL-3.0-or-later",
+  "contributors": [
+    "Jonatan Zint (https://github.com/l0rn)",
+    "Jenny Gebske (https://github.com/jengeb)",
+    "Lyudmila Vaseva (https://github.com/lusy)",
+    "Peter Strümpel"
+  ],
   "private": true,
   "scripts": {
     "lint": "eslint './src/**/*.{ts,tsx,js,jsx,vue}' --max-warnings 0",
