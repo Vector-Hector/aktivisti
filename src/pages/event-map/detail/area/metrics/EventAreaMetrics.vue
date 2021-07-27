@@ -2,7 +2,6 @@
   <div class="create-lead">
     <QBtn
       :to="{ name: 'create-lead' }"
-      flat
       outline
       color="primary"
     >

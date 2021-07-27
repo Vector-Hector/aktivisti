@@ -2,15 +2,18 @@
   <QItem
     :clickable="true"
     :class="{ 'greyed-out': area.is_completed }"
-    :to="{ name: 'event-detail-area', params: { areaId: area.id }}"
+    :to="targetRoute"
   >
     <QItemSection>
       <QItemLabel>
         {{ area.name }}
       </QItemLabel>
 
-      <QItemLabel>
+      <QItemLabel v-if="eventType === EventTypes.DOOR_TO_DOOR">
         {{ countAddresses(area.area_details) }} Adressen
+      </QItemLabel>
+      <QItemLabel v-else-if="eventType === EventTypes.POSTERS">
+        {{ area.poster_count }} Poster
       </QItemLabel>
     </QItemSection>
 
@@ -56,6 +59,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
+import { RouteLocationRaw } from 'vue-router'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { UserDto } from 'src/api/model/UserDto'
@@ -68,6 +72,7 @@ import {
   ionEllipse,
   ionPersonCircleOutline
 } from '@quasar/extras/ionicons-v5'
+import { EventTypes } from 'src/api/model/EventTypes'
 
 
 export default defineComponent({
@@ -95,6 +100,10 @@ export default defineComponent({
     showParticipationCount: {
       type: Boolean as PropType<boolean>,
       default: false
+    },
+    eventType: {
+      type: String as PropType<EventTypes>,
+      default: EventTypes.DOOR_TO_DOOR
     }
   },
   data() {
@@ -102,10 +111,20 @@ export default defineComponent({
       ionPersonCircleOutline,
       ionCheckmarkCircleOutline,
       ionEllipse,
-      ionChevronForward
+      ionChevronForward,
+      EventTypes
     }
   },
   computed: {
+    targetRoute(): RouteLocationRaw {
+      switch (this.eventType) {
+      case EventTypes.POSTERS:
+        return { name: 'event-detail-poster', params: { areaId: this.area.id! }}
+      case EventTypes.DOOR_TO_DOOR:
+      default:
+        return { name: 'event-detail-area', params: { areaId: this.area.id! }}
+      }
+    },
     participationsOfArea(): EventParticipationDto[] {
       return this.participations
         .filter(({assigned_event_areas}) => assigned_event_areas.includes(this.area.id!))

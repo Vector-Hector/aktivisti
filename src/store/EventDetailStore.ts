@@ -6,6 +6,7 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import { PermissionHintsDto } from 'src/api/model/APIEnvelope'
 import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 import { ObjectPermissionDto } from 'src/api/model/ObjectPermissionDto'
+import { PosterDto } from 'src/api/model/PosterDto'
 
 interface EventDetailStoreState {
   event: EventDto | null
@@ -18,6 +19,8 @@ interface EventDetailStoreState {
   eventPermissions: ObjectPermissionDto | null
   completionNotes: CompletionNoteDto[]
   selectedEventAreaId: null | number
+  posters: PosterDto[]
+  activePosterIndex: number | null,
 }
 
 class EventDetailStore extends Store<EventDetailStoreState> {
@@ -29,11 +32,13 @@ class EventDetailStore extends Store<EventDetailStoreState> {
       selectedEventAreaId: null,
       eventAreaPermissions: null,
       participations: [],
+      activePosterIndex: null,
       personalParticipation: null,
       personalParticipationPermissions: null,
       campaigns: [],
       eventPermissions: null,
-      completionNotes: [] as CompletionNoteDto[]
+      completionNotes: [] as CompletionNoteDto[],
+      posters: []
     }
   }
 

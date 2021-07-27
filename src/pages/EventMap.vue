@@ -79,6 +79,7 @@ export default defineComponent({
 
 .overlay-content {
   padding: 1rem 0;
+  height: 100%;
 }
 
 .event-map {

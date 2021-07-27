@@ -3,7 +3,7 @@ import { reactive } from 'vue'
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export abstract class Store<T extends Object> {
-  protected state: T
+  public state: T
 
   constructor() {
     const data = this.data()

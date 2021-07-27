@@ -14,6 +14,7 @@ import { apiClient } from 'src/api/ApiClient'
 import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { eventDetailStore } from 'src/store/EventDetailStore'
 import Timeout = NodeJS.Timeout
+import { EventTypes } from 'src/api/model/EventTypes'
 
 export default defineComponent({
   name: 'EventDetailArea',
@@ -23,15 +24,20 @@ export default defineComponent({
   },
   mixins: [EventDetailMixin],
   async beforeRouteEnter(to, from, next) {
-    const response = await apiClient.eventAreas.get(
-      to.params.areaId as string,
-      [],
-      {show_permissions: true}
-    )
-    eventDetailStore.setEventArea(response.payload.data)
-    eventDetailStore.setEventAreaPermissions(response.payload.permissions)
-
-    next()
+    const {areaId} = to.params
+    if (areaId === 'undefined') {
+      // the special undefined route is for posters that are not assigned to an area
+      next()
+    } else {
+      const response = await apiClient.eventAreas.get(
+        to.params.areaId as string,
+        [],
+        {show_permissions: true}
+      )
+      eventDetailStore.setEventArea(response.payload.data)
+      eventDetailStore.setEventAreaPermissions(response.payload.permissions)
+      next()
+    }
   },
   data() {
     return {
@@ -39,7 +45,10 @@ export default defineComponent({
     }
   },
   async created() {
-    await this.pollForCompletionNotes()
+    // there are no completion notes in poster events
+    if (this.event.event_type !== EventTypes.POSTERS) {
+      await this.pollForCompletionNotes()
+    }
   },
   unmounted() {
     if (this.nextPoll !== null) {

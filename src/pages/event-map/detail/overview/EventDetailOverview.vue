@@ -18,7 +18,10 @@
           :icon="ionPerson"
         />
         <QBtn
-          v-if="personalParticipation?.is_verified || isTeamCaptainOrCoordinator"
+          v-if="
+            event.event_type === EventTypes.DOOR_TO_DOOR &&
+            (personalParticipation?.is_verified || isTeamCaptainOrCoordinator)
+          "
           size="sm"
           color="primary"
           flat
@@ -26,8 +29,11 @@
           :to="{ name: 'print-event', params: {eventId: event.id}}"
         />
         <QBtn
-          v-if="isCoordinator"
-          :to="{ name: 'event-detail-report', params: { event: event.id }}"
+          v-if="
+            event.event_type === EventTypes.DOOR_TO_DOOR &&
+            isCoordinator
+          "
+          :to="{ name: 'event-detail-report', params: { eventId: event.id }}"
           size="sm"
           color="primary"
           flat
@@ -35,7 +41,7 @@
         />
         <QBtn
           v-if="isCoordinator"
-          :to="{name: 'edit-event-details', params: { event: event.id }}"
+          :to="{name: 'edit-event-details', params: { eventId: event.id }}"
           size="sm"
           color="primary"
           flat
@@ -92,6 +98,13 @@
             :participations="participations"
             :show-participation-count="isTeamCaptainOrCoordinator"
             :personal-participation="personalParticipation"
+            :event-type="event.event_type"
+          />
+          <EventAreaItem
+            v-if="event.event_type === EventTypes.POSTERS && postersWithoutArea.length > 0"
+            :area="noAreaPosters"
+            :participations="[]"
+            :event-type="event.event_type"
           />
         </QList>
       </div>
@@ -142,7 +155,7 @@
       v-if="personalParticipation?.is_verified === false"
       class="row"
     >
-      <div class="col-12">
+      <div v-if="!isTeamCaptainOrCoordinator" class="col-12">
         Super, dass du mitmachen möchtest. Du hast dich für diese Aktion gemeldet. Der nächste Schritt ist zur
         angegebenen
         Zeit am vereinbarten Treffpunkt zu erscheinen. Ein Teamcaptain wird dich dann für diese Aktion freischalten.
@@ -210,7 +223,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { authStore } from 'src/store/AuthStore'
 import { userStore } from 'src/store/UserStore'
@@ -241,7 +254,7 @@ import {
 import { QBtn, QIcon, QList } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import { MAP_PAN_TO, MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/mapbox/Map.vue'
-
+import { EventTypes } from 'src/api/model/EventTypes'
 
 export default defineComponent({
   name: 'EventDetailOverview',
@@ -251,12 +264,6 @@ export default defineComponent({
     QBtn,
     QIcon,
     QList
-  },
-  props: {
-    id: {
-      type: String as PropType<string>,
-      required: true
-    }
   },
   beforeRouteEnter(from, to, next) {
     uiStore.setBottomSheetStateAtLeast(BottomSheetState.HALF)
@@ -274,6 +281,7 @@ export default defineComponent({
         hour: '2-digit',
         minute: '2-digit'
       },
+      EventTypes,
       ionPrint,
       ionLogoFacebook,
       ionLogoTwitter,
@@ -288,6 +296,19 @@ export default defineComponent({
     }
   },
   computed: {
+    eventId(): string {
+      return this.event.id.toString()
+    },
+    noAreaPosters(): Partial<EventAreaDto> {
+      return {
+        id: undefined,
+        name: 'Ohne Gebiet',
+        color: '#FFFFFF',
+        event: parseInt(this.eventId),
+        is_completed: false,
+        poster_count: this.postersWithoutArea.length
+      } as Partial<EventAreaDto>
+    },
     eventAreasSorted(): EventAreaDto[] {
       const collator = new Intl.Collator('de', {caseFirst: 'upper'})
       return [...this.eventAreas].sort((a, b) => {
@@ -315,7 +336,7 @@ export default defineComponent({
         `${window.location.origin}${this.$router.resolve({
           name: 'event-detail',
           params: {
-            id: this.event.id
+            eventId: this.event.id
           }
         }).path}`,
         [],
@@ -327,7 +348,7 @@ export default defineComponent({
         window.location.origin + this.$router.resolve({
           name: 'event-detail',
           params: {
-            id: this.event.id
+            eventId: this.event.id
           }
         }).path
       )
@@ -337,7 +358,7 @@ export default defineComponent({
         window.location.origin + this.$router.resolve({
           name: 'event-detail',
           params: {
-            id: this.event.id
+            eventId: this.event.id
           }
         }).path,
         this.event
@@ -348,7 +369,7 @@ export default defineComponent({
         window.location.origin + this.$router.resolve({
           name: 'event-detail',
           params: {
-            id: this.event.id
+            eventId: this.event.id
           }
         }).path,
         this.event
@@ -360,9 +381,9 @@ export default defineComponent({
       const generalJoinError = 'Ein unerwarteter Fehler trat auf beim versuch der Aktion beizutreten'
       try {
         this.joinLoading = true
-        this.event = (await this.$apiClient.events.join(this.id)).payload.data
+        this.event = (await this.$apiClient.events.join(this.eventId)).payload.data
         this.personalParticipation = (await this.$apiClient.eventParticipations.list({
-          event: this.id,
+          event: this.eventId,
           user: userStore.getState().user?.id
         })).payload.data?.[0]
         if (this.personalParticipation?.is_verified) {
@@ -393,7 +414,7 @@ export default defineComponent({
       const generalLeaveError = 'Ein unerwarteter Fehler trat auf beim versuch die Aktion zu verlassen'
       try {
         this.joinLoading = true
-        this.event = (await this.$apiClient.events.leave(this.id)).payload.data
+        this.event = (await this.$apiClient.events.leave(this.eventId)).payload.data
         this.personalParticipation = null
       } catch (e) {
         this.$q.notify({
@@ -419,7 +440,12 @@ export default defineComponent({
       }
     },
     async refreshEvent() {
-      this.event = (await apiClient.events.get(this.id)).payload.data
+      this.event = (await apiClient.events.get(this.eventId)).payload.data
+    },
+    async refreshParticipants() {
+      this.participations = (await apiClient.eventParticipations.list({
+        event: this.event.id
+      })).payload.data
     },
     async refreshParticipants() {
       this.participations = (await apiClient.eventParticipations.list({
@@ -444,7 +470,8 @@ export default defineComponent({
         component: EventParticipantsModal,
         maximized: true,
         componentProps: {
-          eventId: this.event.id
+          eventId: this.event.id,
+          eventSubAssociation: this.event.sub_association
         }
       })
         .onDismiss(() => {

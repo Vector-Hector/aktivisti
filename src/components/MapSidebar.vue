@@ -12,7 +12,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { computed, defineComponent, PropType } from 'vue'
 
 export default defineComponent({
   name: 'MapSidebar',
@@ -20,6 +20,11 @@ export default defineComponent({
     title: {
       type: String as PropType<string>,
       required: false
+    }
+  },
+  provide() {
+    return {
+      scrollArea: computed(() => this.$refs.scrollArea)
     }
   }
 })
@@ -31,10 +36,15 @@ export default defineComponent({
   order: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  height: 100%;
 }
+
 .map-sidebar-content {
   display: flex;
   flex: 1;
   flex-direction: column;
+  height: 100%;
+  overflow: hidden;
 }
 </style>

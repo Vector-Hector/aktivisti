@@ -44,7 +44,7 @@ export default defineComponent({
   name: 'DateTimeInput',
   props: {
     modelValue: {
-      type: Object as PropType<Date>,
+      type: String as PropType<string>,
       required: true
     },
     mask: {
@@ -71,12 +71,15 @@ export default defineComponent({
     QBtn
   },
   computed: {
+    dateValid(): boolean {
+      return date.isValid(this.modelValue)
+    },
     dateTime: {
       get(): string {
-        return  date.formatDate(this.modelValue, this.mask)
+        return this.modelValue
       },
       set(value: string) {
-        this.$emit('update:modelValue', date.extractDate(value, this.mask))
+        this.$emit('update:modelValue', value)
       }
     },
     passthroughProps(): any {
@@ -90,7 +93,7 @@ export default defineComponent({
   data() {
     return {
       ionCalendarOutline,
-      ionTimeOutline
+      ionTimeOutline,
     }
   }
 })

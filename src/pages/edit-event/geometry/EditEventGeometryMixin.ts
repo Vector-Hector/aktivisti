@@ -2,20 +2,25 @@ import EditEventMixin from 'pages/edit-event/EditEventMixin'
 import { defineComponent } from 'vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { apiClient } from 'src/api/ApiClient'
-import { editEventStore, PlaceSuggestion } from 'src/store/EditEventStore'
+import { Feature } from 'geojson'
 
 
 export default defineComponent({
   name: 'EditEventGeometryMixin',
   mixins: [EditEventMixin],
   computed: {
-    placeSuggestion: {
-      set(value: PlaceSuggestion | null) {
-        editEventStore.getState().placeSuggestion = value
-      },
-      get(): PlaceSuggestion | null {
-        return editEventStore.getState().placeSuggestion
-      }
+    features(): Feature[] {
+      return this.eventAreas.map((area) => {
+        return {
+          type: 'Feature',
+          geometry: area.geometry,
+          id: area.feature_id,
+          properties: {
+            // find the corresponding area and copy the color
+            color: area.color
+          }
+        }
+      })
     }
   },
   methods: {

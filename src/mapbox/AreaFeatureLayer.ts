@@ -6,7 +6,7 @@ import { getColorFromPropertiesWithDefault } from 'pages/edit-event/geometry/rou
 
 
 export default defineComponent({
-  name: 'FeatureLayer',
+  name: 'AreaFeatureLayer',
   props: {
     features: {
       type: Object as PropType<Feature[]>,

@@ -5,7 +5,8 @@
         filled
         v-model="event.event_type"
         label="Aktionstyp"
-        :disabled="true"
+        disable
+        :option-disable="() => true"
         :options="eventTypes"
         option-label="label"
         option-value="key"
@@ -42,9 +43,9 @@
           filled
           :input-props="{ label: 'Startdatum' }"
           :time-props="{ minuteOptions: [0, 15, 30, 45] }"
-          v-model="event.start_date"
-          :model-value="new Date(event.start_date)"
-          @update:model-value="event.start_date = $event.toISOString()"
+          :date-props="{ navigationMinYearMonth: currentYearMonth }"
+          v-model="startDate"
+          :mask="mask"
           :error-message="errors.start_date?.[0]"
           :error="!!errors.start_date?.length"
         />
@@ -53,14 +54,16 @@
           filled
           :input-props="{ label: 'Enddatum' }"
           :time-props="{ minuteOptions: [0, 15, 30, 45] }"
-          :model-value="new Date(event.end_date)"
-          @update:model-value="event.end_date = $event.toISOString()"
+          :date-props="{ navigationMinYearMonth: currentYearMonth }"
+          v-model="endDate"
+          :mask="mask"
           :error-message="errors.end_date?.[0]"
           :error="!!errors.end_date?.length"
           :rules="[$validationRules.isRequired]"
         />
       </div>
       <QInput
+        filled
         v-model.number="event.max_participants"
         label="Maximale Teilnehmer*innenzahl"
         type="number"
@@ -69,12 +72,16 @@
         :error="!!errors.max_participants?.length"
       />
       <QInput
+        filled
         type="textarea"
         label="Beschreibung"
         v-model="event.description"
+        :error-message="errors.description?.[0]"
+        :error="!!errors.description?.length"
       />
 
       <QSelect
+        filled
         label="Sichtbarkeit"
         v-model="event.visibility"
         :options="Object.values(VisibilityOptions)"
@@ -82,38 +89,46 @@
         :error-message="errors.visibility?.[0]"
         :error="!!errors.visibility?.length"
       />
-
-      <h3 class="metrics-headline">Zielvorgaben</h3>
-      <div class="metrics-input-wrapper">
-        <MetricInput
-          v-for="metric in metrics"
-          :key="metric.id"
-          :name="metric.name"
-          :checked="selectedMetricsIds.includes(metric.id)"
-          @update:checked="toggleMetric($event, metric)"
-          :target="metricRecordForMetricId(metric.id)?.target ?? 0"
-          @update:target="metricRecordForMetricId(metric.id).target = $event"
+      <div class="metric-section" v-if="event.event_type !== EventTypes.POSTERS">
+        <h3 class="metrics-headline">Zielvorgaben</h3>
+        <div class="metrics-input-wrapper">
+          <MetricInput
+            v-for="metric in metrics"
+            :key="metric.id"
+            :name="metric.name"
+            :checked="selectedMetricsIds.includes(metric.id)"
+            @update:checked="toggleMetric($event, metric)"
+            :target="metricRecordForMetricId(metric.id)?.target ?? 0"
+            @update:target="metricRecordForMetricId(metric.id).target = $event"
+          />
+        </div>
+      </div>
+      <div v-else-if="event.event_type === EventTypes.POSTERS">
+        <QCheckbox
+          v-model="event.poster_creation_allowed"
+          label="Teilnehmer*innen können Poster anlegen"
         />
       </div>
     </QForm>
   </div>
   <SidebarBottomNavigation
     class="navigation"
-    @close="close"
-    @forward="forward"
+    @close="abort"
+    @forward="next"
     @back="back"
+    :last="stepControls.isLastStep.value"
   />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, inject } from 'vue'
 
-import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 import EditEventMixin from 'src/pages/edit-event/EditEventMixin'
 import { VisibilityLabels, VisibilityOptions } from 'src/api/model/EventDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
-import { date, QForm, QInput, QSelect } from 'quasar'
+import { date, QCheckbox, QForm, QInput, QSelect } from 'quasar'
 import DateTimeInput from 'components/DateTimeInput.vue'
 import SidebarBottomNavigation from 'components/SidebarBottomNavigation.vue'
 import MetricInput from 'components/MetricInput.vue'
@@ -121,6 +136,8 @@ import { editEventStore } from 'src/store/EditEventStore'
 import { SettleDebouncer } from 'src/utils/debounce'
 import { cloneDeep, isEqual } from 'lodash-es'
 import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
+import { dateMaskMatches } from 'src/utils/date'
+import { StepControls } from 'pages/EditEvent.vue'
 
 export default defineComponent({
   name: 'EditEventDetails',
@@ -130,40 +147,32 @@ export default defineComponent({
     DateTimeInput,
     QForm,
     QSelect,
-    QInput
+    QInput,
+    QCheckbox
   },
   mixins: [EditEventMixin, EditEventAutoSaveMixin],
   emits: ['update:eventMetricRecords'],
   data() {
     return {
+      EventTypes,
       metricsSaveDebouncer: new SettleDebouncer(),
       VisibilityLabels,
       VisibilityOptions,
       metrics: [] as EventMetricDto[],
-      errors: {},
+      errors: {} as Record<string, string[]>,
       isSubmitting: false,
-      lastSavedMetricRecords: null as EventMetricRecordDto[] | null
+      lastSavedMetricRecords: null as EventMetricRecordDto[] | null,
+      startDate: '',
+      endDate: '',
+      mask: 'DD.MM.YYYY HH:mm'
     }
   },
   computed: {
+    currentYearMonth() {
+      return date.formatDate(new Date(), 'YYYY/MM')
+    },
     eventTypes() {
       return eventTypeOptions
-    },
-    endDate: {
-      get(): Date | undefined {
-        return new Date(this.event.end_date)
-      },
-      set(value: Date) {
-        this.event.end_date = value.toISOString()
-      }
-    },
-    startDate: {
-      get(): Date {
-        return new Date(this.event.start_date)
-      },
-      set(value: Date) {
-        this.event.start_date = value.toISOString()
-      }
     },
     availableMetricOptions(): EventMetricDto[] {
       // do not offer mandatory metrics that already are selected in the select dialog, so they can't be delselected
@@ -198,11 +207,63 @@ export default defineComponent({
     }
   },
   watch: {
-    startDate() {
-      this.fixEndDateAfterStartDate()
+    'event.start_date': {
+      handler(newValue) {
+        if (!newValue) {
+          const initialDate = new Date()
+          initialDate.setHours(initialDate.getHours() + Math.round(initialDate.getMinutes() / 60))
+          initialDate.setMinutes(0, 0, 0)
+          this.startDate = date.formatDate(new Date(initialDate), this.mask)
+        } else {
+          this.startDate = date.formatDate(new Date(newValue), this.mask)
+        }
+        if (new Date(this.event.start_date) > new Date(this.event.end_date)) {
+          const startDate = new Date(date.extractDate(this.startDate, this.mask))
+          const newEndDate = date.addToDate(startDate, {hours: 1})
+          this.endDate = date.formatDate(newEndDate, this.mask)
+        }
+      },
+      immediate: true
     },
-    endDate() {
-      this.fixEndDateAfterStartDate()
+    'event.end_date': {
+      handler(newValue) {
+        if (!newValue) {
+          const initialDate = this.event.start_date ? new Date(this.event.start_date) : new Date()
+          initialDate.setHours(initialDate.getHours() + Math.round(initialDate.getMinutes() / 60) + 1)
+          initialDate.setMinutes(0, 0, 0)
+          this.endDate = date.formatDate(new Date(initialDate), this.mask)
+        } else {
+          this.endDate = date.formatDate(new Date(newValue), this.mask)
+        }
+        if (new Date(this.event.start_date) > new Date(this.event.end_date)) {
+          const endDate = new Date(date.extractDate(this.endDate, this.mask))
+          const newStartDate = date.subtractFromDate(endDate, {hours: 1})
+          this.startDate = date.formatDate(newStartDate, this.mask)
+        }
+      },
+      immediate: true
+    },
+    startDate(newValue) {
+      if (dateMaskMatches(newValue, this.mask)) {
+        const extractedDate = date.extractDate(newValue, this.mask)
+        const extractedIsoDate = extractedDate.toISOString()
+        if (extractedIsoDate !== this.event.start_date) {
+          this.event.start_date = extractedIsoDate
+        }
+      } else {
+        this.errors.start_date = ['Ungültiges Datum']
+      }
+    },
+    endDate(newValue) {
+      if (dateMaskMatches(newValue, this.mask)) {
+        const extractedDate = date.extractDate(newValue, this.mask)
+        const extractedIsoDate = extractedDate.toISOString()
+        if (extractedIsoDate !== this.event.end_date) {
+          this.event.end_date = extractedIsoDate
+        }
+      } else {
+        this.errors.end_date = ['Ungültiges Datum']
+      }
     },
     metricRecords: {
       handler(newValue) {
@@ -215,21 +276,14 @@ export default defineComponent({
       deep: true
     }
   },
+  setup() {
+    return {
+      stepControls: inject('stepControls') as StepControls
+    }
+  },
   async created() {
     await this.getMetrics()
     this.lastSavedMetricRecords = cloneDeep(this.metricRecords)
-    if (!this.event.start_date) {
-      const initialDate = new Date()
-      initialDate.setHours(initialDate.getHours() + Math.round(initialDate.getMinutes() / 60))
-      initialDate.setMinutes(0, 0, 0)
-      this.event.start_date = initialDate.toISOString()
-    }
-
-    if (!this.event.end_date) {
-      const initialDate = new Date(this.event.start_date)
-      initialDate.setHours(initialDate.getHours() + 1)
-      this.event.end_date = initialDate.toISOString()
-    }
   },
   methods: {
     async updateMetrics() {
@@ -250,11 +304,6 @@ export default defineComponent({
         })
       }
     },
-    fixEndDateAfterStartDate() {
-      if (this.endDate! < this.startDate) {
-        this.endDate = date.addToDate(new Date(this.startDate), {hours: 1})
-      }
-    },
     toggleMetric(enable: boolean, metric: EventMetricDto) {
       if (enable && !this.selectedMetrics.find(({id}) => id === metric.id)) {
         this.selectedMetrics = [...this.selectedMetrics, metric]
@@ -268,21 +317,15 @@ export default defineComponent({
     },
     async back() {
       await this.saveDebouncer.waitForSettle()
-      this.$router.go(-1)
+      this.stepControls.previous()
     },
-    async forward() {
+    async next() {
       await this.saveDebouncer.waitForSettle()
-      await this.$router.push({
-        name: 'edit-event-geometry'
-      })
+      this.stepControls.next()
     },
-    async close() {
-      await this.$router.push({
-        name: 'event-detail',
-        params: {
-          id: this.event.id.toString()
-        }
-      })
+    async abort() {
+      await this.saveDebouncer.waitForSettle()
+      this.stepControls.abort()
     },
     metricForMetricRecord(record: EventMetricRecordDto): EventMetricDto | undefined {
       return this.metrics.find(({id}) => record.metric === id)

@@ -51,16 +51,3 @@ export default defineComponent({
 })
 
 </script>
-
-<style lang="scss" scoped>
-.marker-icon {
-  border-radius: 999px;
-  width: 16px;
-  height: 16px;
-  text-align: center;
-  line-height: 1.2;
-  display: block;
-  background: white;
-  border: 1px solid red;
-}
-</style>

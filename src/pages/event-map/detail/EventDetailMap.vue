@@ -5,18 +5,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 
 export default defineComponent({
   name: 'EventDetailMap',
-  mixins: [EventDetailMixin],
-  props: {
-    id: {
-      type: String as PropType<string>,
-      required: true
-    }
-  }
+  mixins: [EventDetailMixin]
 })
 
 </script>

@@ -3,10 +3,8 @@ import { EventDto } from 'src/api/model/EventDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
-import { LocationDto } from 'src/api/model/LocationDto'
 import { TinyEmitter } from 'tiny-emitter'
 
-export type PlaceSuggestion = { location: LocationDto, suggestion?: string }
 
 export const START_DRAW_AREA = 'START_DRAW_AREA'
 export const EditEventBus = new TinyEmitter()
@@ -18,7 +16,6 @@ interface EditEventState {
   metricRecords: EventMetricRecordDto[],
   updatingAreaFeatureIds: Set<string>
   deletingAreaIds: Set<string>
-  placeSuggestion: PlaceSuggestion | null,
 }
 
 class EditEventStore extends Store<EditEventState> {
@@ -29,8 +26,7 @@ class EditEventStore extends Store<EditEventState> {
       campaigns: [],
       metricRecords: [],
       updatingAreaFeatureIds: new Set<string>(),
-      deletingAreaIds: new Set<string>(),
-      placeSuggestion: null
+      deletingAreaIds: new Set<string>()
     }
   }
 
