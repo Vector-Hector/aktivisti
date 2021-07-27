@@ -53,21 +53,34 @@ export default defineComponent({
   },
   async created() {
     await this.getSubAssociations()
+    this.computeMySubAssociations()
+  },
+  computed: {
+    //TODO check for global campaign:admin (or are there other global permission types)
+    userManagementPermissions(): UserObjectPermissionDto[] {
+      return userStore.getMyTeamCaptainOrCoordinatorPermissions()
+    },
   },
   methods: {
     async getSubAssociations() {
       this.allSubAssociations = (await this.$apiClient.subAssociations.list()).payload.data
     },
+    computeMySubAssociations() {
+      const mySubAssociationsIds = this.userManagementPermissions.map((permission) => permission.object_pk)
+      this.mySubAssociations = this.allSubAssociations.filter(
+        ({id}) => mySubAssociationsIds.indexOf(id.toString()) >= 0
+      )
+    },
     filterSubAssociations(value: string, update: any) {
       if (!value) {
         update(() => {
-          this.suggestedSubAssociations = this.allSubAssociations
+          this.suggestedSubAssociations = this.mySubAssociations
         })
         return
       }
       update(() => {
         const lowercasedValue = value.toLowerCase()
-        this.suggestedSubAssociations = this.allSubAssociations.filter(({name}) => name.toLowerCase().includes(lowercasedValue))
+        this.suggestedSubAssociations = this.mySubAssociations.filter(({name}) => name.toLowerCase().includes(lowercasedValue))
       })
     },
   }
