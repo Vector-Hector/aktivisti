@@ -3,7 +3,7 @@
     <div class="container my-managed-events">
       <div class="filter-content">
         <QSelect
-          label="Ersteller*in"
+          label="Aktionen erstellt von"
           filled
           :dropdownIcon="ionChevronDown"
           :clearIcon="ionClose"
@@ -65,15 +65,15 @@ export default defineComponent({
       ionClose,
       ownershipOptions: [
         {
-          label: 'Ich',
+          label: 'Mir',
           key: ownership.ME,
         },
         {
-          label: 'Andere',
+          label: 'Anderen',
           key: ownership.OTHER,
         },
         {
-          label: 'Alle',
+          label: 'Allen',
           key: ownership.ALL,
         }
       ],
