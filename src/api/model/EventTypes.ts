@@ -8,6 +8,6 @@ export const eventTypeOptions: { key: string, label: string }[] = [{
   label: 'Haustürgespräch'
 }, {
   key: EventTypes.POSTERS,
-  label: 'Poster'
+  label: 'Plakate'
 }]
 

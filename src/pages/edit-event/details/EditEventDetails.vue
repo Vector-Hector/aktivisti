@@ -106,7 +106,7 @@
       <div v-else-if="event.event_type === EventTypes.POSTERS">
         <QCheckbox
           v-model="event.poster_creation_allowed"
-          label="Teilnehmer*innen können Poster anlegen"
+          label="Teilnehmer*innen können Plakate anlegen"
         />
       </div>
     </QForm>
