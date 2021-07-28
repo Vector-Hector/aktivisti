@@ -115,19 +115,21 @@
             </QItemSection>
           </QItem>
         </QList>
-        <h3 class="profile-section-heading">Berechtigungen</h3>
-        <QSeparator class="profile-section-divider" />
-        <QList>
-          <QItem v-if="user.is_superuser"><span>Du bist <b>Administrator</b></span></QItem>
-          <QItem v-if="user.roles.includes(CAMPAIGN_ADMIN)">
-            <span>Du bist globaler <b>Kampagnenkoordinator</b></span></QItem>
-          <QItem v-for="permission in permissions" :key="permission.id">
-        <span>
-          Du hast die Berechtigung <b>{{ permission.permission_name }}</b> in {{ permission.content_type_name }}
-          <b>{{ permission.content_object_name }}</b>
-        </span>
-          </QItem>
-        </QList>
+        <template v-if="hasAnyPermission">
+          <h3 class="profile-section-heading">Berechtigungen</h3>
+          <QSeparator class="profile-section-divider" />
+          <QList>
+            <QItem v-if="user.is_superuser"><span>Du bist <b>Administrator</b></span></QItem>
+            <QItem v-if="user.roles.includes(CAMPAIGN_ADMIN)">
+              <span>Du bist globaler <b>Kampagnenkoordinator</b></span></QItem>
+            <QItem v-for="permission in permissions" :key="permission.id">
+            <span>
+              Du hast die Berechtigung <b>{{ permission.permission_name }}</b> in {{ permission.content_type_name }}
+              <b>{{ permission.content_object_name }}</b>
+            </span>
+            </QItem>
+          </QList>
+        </template>
         <h3 class="profile-section-heading">Persönliche Ergebnisse</h3>
         <QSeparator class="profile-section-divider" />
         <QTable
@@ -233,6 +235,11 @@ export default defineComponent({
     })
   },
   computed: {
+    hasAnyPermission(): boolean {
+      return this.permissions.length > 0 ||
+        this.user?.is_superuser === true ||
+        this.user?.roles?.includes(CAMPAIGN_ADMIN) === true
+    },
     realName(): string | null {
       if (this.user === null) {
         return null
