@@ -28,6 +28,59 @@
               </q-item>
             </template>
           </QSelect>
+          <QSelect
+            class="w-100 d-flex flex-col"
+            placeholder="Benutzer:in suchen"
+            use-input
+            :model-value="selectedUsers"
+            :multiple="true"
+            :option-label="userLabel"
+            :options="suggestedUsers"
+            @filter="searchUsers"
+            @add="selectUser($event.value)"
+          >
+            <template #item="slotProps">
+              <div class="user-autocomplete-username">
+                {{ slotProps.item.username }}
+              </div>
+              <div class="user-autocomplete-email">
+                {{ slotProps.item.email }}
+              </div>
+            </template>
+          </QSelect>
+          <div class="row">
+            <div class="col">
+              <QList v-show="managedUsers.length > 0">
+                <QItem
+                  v-for="user in managedUsers"
+                  :key="user.id"
+                >
+                  <QItemSection>
+                    <QItemLabel>
+                      <b>{{ user.username}}</b> {{ user.email }}
+                    </QItemLabel>
+                  </QItemSection>
+
+                  <QItemSection side>
+                    <div
+                      class="invitation-item-actions"
+                    >
+                      <QIcon
+                        fill="none"
+                        @click="deleteParticipation(participation.id)"
+                      >
+                        <QIcon
+                          :name="ionClose"
+                          aria-label="Nutzer von der Aktion entfernen"
+                        />
+                      </QIcon>
+                    </div>
+                  </QItemSection>
+
+                </QItem>
+              </QList>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -36,7 +89,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { QSelect, QPage } from 'quasar'
+import { QSelect, QPage, QItem, QList, QItemSection, QItemLabel, QIcon } from 'quasar'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { userStore} from 'src/store/UserStore'
@@ -44,12 +97,23 @@ import { UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 
 
+interface UserSuggestionItem {
+  id: number
+  username: string
+  email?: string
+}
+
 export default defineComponent({
   name: 'ManageSubAssociations',
   components: {
     PageLoadingSpinner,
     QSelect,
-    QPage
+    QPage,
+    QItem,
+    QList,
+    QIcon,
+    QItemSection,
+    QItemLabel
   },
   data() {
     return {
@@ -59,6 +123,10 @@ export default defineComponent({
       mySubAssociations: [] as SubAssociationDto[],
       suggestedSubAssociations: [] as SubAssociationDto[],
       selectedSubAssociation: '',
+      //TODO check whether this needs to be a list
+      selectedUsers: [],
+      suggestedUsers: [] as UserSuggestionItem[],
+      managedUsers: [] as UserSuggestionItem[],
       loading: true
     }
   },
@@ -95,6 +163,27 @@ export default defineComponent({
         this.suggestedSubAssociations = this.mySubAssociations.filter(({name}) => name.toLowerCase().includes(lowercasedValue))
       })
     },
+    userLabel(item: UserSuggestionItem) {
+      return `${item.username} ${item.email ?? ''}`
+    },
+    async searchUsers(query: string, update: any) {
+      let suggestions: UserSuggestionItem[]
+      if (query) {
+        suggestions = (await this.$apiClient.publicProfiles.list({query: query})).payload.data
+      } else {
+        suggestions = []
+      }
+      update(() => {
+        this.suggestedUsers = suggestions
+      })
+    },
+    selectUser(user: UserSuggestionItem) {
+      console.log('selectUser triggered!')
+      if (!this.managedUsers.find( ({id}) => id === user.id )) {
+        this.managedUsers.push(user)
+      }
+      console.log('managedUsers: ', this.managedUsers)
+    }
   }
 })
 </script>
