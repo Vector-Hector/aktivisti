@@ -102,7 +102,9 @@
         >
           <div class="col-3 metric-item-cell"><span>{{ metric.name }}</span></div>
           <div class="col-6 metric-item-cell"></div>
-          <div class="col-3 metric-item-cell"><span class="target-hint">Zielvorgabe: {{ metric.target }}</span></div>
+          <div class="col-3 metric-item-cell">
+            <span class="target-hint" v-if="metric.target > 0">Zielvorgabe: {{ metric.target }}</span>
+          </div>
         </div>
         <div
           class="metric-item row"
