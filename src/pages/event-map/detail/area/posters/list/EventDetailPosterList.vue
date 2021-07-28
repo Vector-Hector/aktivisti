@@ -76,7 +76,7 @@ export default defineComponent({
           eventId: this.event.id,
           posters: this.posters,
           initialBBox: initialBoundingBox,
-          areaFeatures: this.areaFeatures
+          areaFeatures: [this.currentAreaFeature]
         }
       })
         .onOk((poster: PosterDto) => {
