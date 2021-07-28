@@ -2,10 +2,17 @@
   <QPage class="event-map">
     <MapContainer>
       <Map
+        class="map"
         :bounding-box="bbox"
         ref="map"
         @update:boundingBox="setBbox($event)"
       >
+        <Geocoder
+          :access-token="accessToken"
+          :collapsed="true"
+          position="top-left"
+          :countries="['de']"
+        />
         <GeolocationControl />
         <router-view
           v-slot="{ Component }"
@@ -38,10 +45,12 @@ import { QPage } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import GeolocationControl from 'src/mapbox/GeolocationControl.vue'
 import MapContainer from 'components/MapContainer.vue'
+import Geocoder from 'src/mapbox/Geocoder.vue'
 
 export default defineComponent({
   name: 'EventMap',
   components: {
+    Geocoder,
     GeolocationControl,
     MapContainer,
     Map,
@@ -55,6 +64,9 @@ export default defineComponent({
     }
   },
   computed: {
+    accessToken() {
+      return process.env.APP_MAPBOX_TOKEN
+    },
     mapRef(): InstanceType<typeof Map> | undefined {
       return this.$refs.map as InstanceType<typeof Map> | undefined
     },
@@ -88,6 +100,12 @@ export default defineComponent({
   flex: 1;
   position: relative;
   overflow: hidden;
+}
+
+.map {
+  :deep(.mapboxgl-ctrl-geocoder) {
+    max-width: 75%;
+  }
 }
 
 </style>
