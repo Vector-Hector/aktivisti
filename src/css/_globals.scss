@@ -28,9 +28,14 @@ a.text-link {
 #q-app {
   width: 100%;
   height: 100%;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+
+@media screen {
+  #q-app {
+    overflow: hidden;
+  }
 }
 
 .control-buttons {
