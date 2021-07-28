@@ -435,6 +435,9 @@ export default defineComponent({
       })).payload.data?.[0]
       if (this.personalParticipation?.is_verified) {
         this.eventAreas = (await this.$apiClient.eventAreas.list({event: this.event.id})).payload.data
+        if (this.event.event_type === EventTypes.POSTERS) {
+          this.posters = (await this.$apiClient.posters.list({event: this.event.id})).payload.data
+        }
       } else {
         this.eventAreas = []
       }

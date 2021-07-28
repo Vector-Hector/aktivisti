@@ -1,8 +1,9 @@
-import { defineComponent, inject, onMounted, PropType, onUnmounted, h } from 'vue'
+import { defineComponent, inject, onMounted, PropType, onUnmounted, h, watch } from 'vue'
 import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { Feature } from 'geojson'
 import { getColorFromPropertiesWithDefault } from 'pages/edit-event/geometry/route-planner.styles'
+import { GeoJSONSource } from 'mapbox-gl'
 
 
 export default defineComponent({
@@ -24,9 +25,16 @@ export default defineComponent({
         type: 'geojson',
         data: {
           type: 'FeatureCollection',
-          features: props.features
+          features: []
         }
       })
+
+      watch(() => props.features, (newValue) => {
+        (map.value?.getSource(uuid) as GeoJSONSource)?.setData({
+          type: 'FeatureCollection',
+          features: newValue
+        })
+      }, {immediate: true})
       const fillLayer = `${uuid}-fill`
       const outlineLayer = `${uuid}-outline`
 

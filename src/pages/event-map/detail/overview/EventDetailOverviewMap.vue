@@ -16,6 +16,7 @@ import Marker from 'src/mapbox/Marker.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import InjectMapMixin from 'src/pages/event-detail/InjectMapMixin'
 import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
+import { cloneDeep, isEqual } from 'lodash-es'
 
 export default defineComponent({
   name: 'EventDetailOverviewMap',
@@ -26,6 +27,21 @@ export default defineComponent({
   mixins: [InjectMapMixin, EventDetailMixin],
   mounted() {
     this.map?.fitBounds(this.zoomBox as BBox2d, {animate: false})
+  },
+  computed: {
+    zoomBoxCopy(): BBox2d | null {
+      return cloneDeep(this.zoomBox)
+    }
+  },
+  watch: {
+    zoomBoxCopy: {
+      handler(newValue, oldValue) {
+        if (newValue !== null && !isEqual(newValue, oldValue)) {
+          this.map?.fitBounds(newValue as BBox2d)
+        }
+      },
+      deep: true
+    }
   }
 })
 
