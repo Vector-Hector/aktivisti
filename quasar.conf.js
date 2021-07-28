@@ -9,18 +9,19 @@
 /* eslint-env node */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const {configure} = require('quasar/wrappers')
+const execSync = require('child_process').execSync;
 
 const filterAppEnvVariables = (envObject) => {
   return Object.fromEntries(Object
     .entries(envObject)
     .filter(([key]) => key.startsWith('APP'))
-  )
-}
+  )}
 
 // Read .env file and let process env ovewrite it if set
 const env = {
   ...filterAppEnvVariables(require('dotenv').config().parsed ?? {}),
-  ...filterAppEnvVariables(process.env)
+  ...filterAppEnvVariables(process.env),
+  APP_VERSION: execSync('git describe').toString().trim()
 }
 
 console.info('Build environment')

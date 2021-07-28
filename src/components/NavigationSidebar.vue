@@ -101,7 +101,12 @@
           </MenuLink>
         </div>
       </div>
+
       <div class="menu-group menu-bottom">
+
+        <div class="version">
+          Version: {{ version }}
+        </div>
         <hr class="menu-divider">
         <div class="menu-item">
           <MenuLink to="/imprint">
@@ -170,6 +175,9 @@ export default defineComponent({
     }
   },
   computed: {
+    version(): string {
+      return process.env.APP_VERSION!
+    },
     sidebarIcon(): string {
       return this.sidebarExpanded ? ionClose : ionMenu
     },
@@ -328,5 +336,9 @@ hr {
   font-size: 0.9rem;
 }
 
+.version {
+  align-self: flex-end;
+  color: $grey-6;
+}
 
 </style>
