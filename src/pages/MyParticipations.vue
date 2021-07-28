@@ -6,10 +6,10 @@
         <PageLoadingSpinner v-if="loading" />
         <div
           v-else
-          class="my-events-content"
+          class="my-participations-content"
         >
           <div v-show="pendingEvents.length > 0">
-            <h3 class="my-events-section-heading">Offene Einladungen</h3>
+            <h3 class="my-participations-section-heading">Offene Einladungen</h3>
             <QSeparator class="profile-section-divider" />
 
             <QList
@@ -68,9 +68,9 @@
             </QList>
           </div>
 
-          <div v-show="acceptedEvents.length > 0">
-            <h3 class="my-events-section-heading">Meine Aktionen</h3>
-            <QSeparator class="profile-section-divider" />
+        <div v-show="acceptedEvents.length > 0">
+          <h3 class="my-participations-section-heading">Aktive Teilnahmen</h3>
+          <QSeparator class="profile-section-divider" />
 
             <QList
             >
@@ -118,14 +118,13 @@ import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { UserDto } from 'src/api/model/UserDto'
 import { QBtn, QItem, QItemLabel, QItemSection, QList, QPage, QScrollArea, QSeparator } from 'quasar'
 import { CampaignDto } from 'src/api/model/CampaignDto'
-import { ionCheckmark, ionClose, ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
+import { ionCheckmark, ionClose } from '@quasar/extras/ionicons-v5'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
-import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
-import { myEventsStore } from 'src/store/MyEventsStore'
+import { myParticipationsStore } from 'src/store/MyParticipationsStore'
 import { userStore } from 'src/store/UserStore'
 
 export default defineComponent({
-  name: 'MyEvents',
+  name: 'MyParticipations',
   components: {
     PageLoadingSpinner,
     QList,
@@ -142,21 +141,18 @@ export default defineComponent({
       participatedEvents: [] as EventDto[],
       invitingUsers: [] as UserDto[],
       campaigns: [] as CampaignDto[],
-      subAssociations: [] as SubAssociationDto[],
       ionCheckmark,
       ionClose,
-      ionPencil,
-      ionTrash,
       loading: true
     }
   },
   computed: {
     eventParticipations: {
       get(): EventParticipationDto[] {
-        return myEventsStore.getState().eventParticipations
+        return myParticipationsStore.getState().eventParticipations
       },
       set(value: EventParticipationDto[]) {
-        myEventsStore.setEventParticipations(value)
+        myParticipationsStore.setEventParticipations(value)
       }
     },
     acceptedEvents(): { participation: EventParticipationDto, event?: EventDto }[] {
@@ -196,7 +192,6 @@ export default defineComponent({
     await Promise.all([
       this.getParticipatedEvents(),
       this.getCampaigns(),
-      this.getSubAssociations()
     ])
 
     this.loading = false
@@ -206,17 +201,13 @@ export default defineComponent({
       const response = (await this.$apiClient.campaigns.list())
       this.campaigns = response.payload.data
     },
-    async getSubAssociations() {
-      const response = (await this.$apiClient.subAssociations.list())
-      this.subAssociations = response.payload.data
-    },
     async getParticipatedEvents() {
       const responseData = (await this.$apiClient.eventParticipations.list(
         {user: userStore.getState().user?.id}, ['event', 'inviting_users']
       )).payload
       this.participatedEvents = responseData.embedded.event
       this.invitingUsers = responseData.embedded.inviting_users
-      myEventsStore.setEventParticipations(responseData.data)
+      myParticipationsStore.setEventParticipations(responseData.data)
     },
     accept(eventParticipation: EventParticipationDto) {
       eventParticipation.is_pending_invitation = false
@@ -234,27 +225,6 @@ export default defineComponent({
     },
     findInvitingUsers(findIds: number[]): UserDto[] {
       return this.invitingUsers.filter(({id}) => findIds.includes(id))
-    },
-    deleteEvent(event: EventDto) {
-      this.$q.dialog({
-        title: `${event.name} wirklich löschen?`,
-        message: `Das Event <b>"${event.name}"</b> wird gelöscht und kann nicht wiederhergestellt werden.`,
-        html: true,
-        cancel: true,
-        persistent: true
-      }).onOk(async () => {
-        try {
-          await this.$apiClient.events.delete(event.id.toString())
-        } catch (error) {
-          this.$q.notify({
-            position: 'top-right',
-            type: 'negative',
-            message: `${error.statusText ? error.statusText : 'Dieser Eintrag konnte nicht gelöscht werden.'}`,
-            caption: `Fehlercode: ${error.status}`
-          })
-          return
-        }
-      })
     }
   }
 })
@@ -263,7 +233,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 @import "src/css/variables.scss";
 
-.my-events-section-heading {
+.my-participations-section-heading {
   font-size: 1.3rem;
   margin: 1rem 0 0 0;
   line-height: 1.7rem;

@@ -7,7 +7,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { QBadge } from 'quasar'
-import { myEventsStore } from 'src/store/MyEventsStore'
+import { myParticipationsStore } from 'src/store/MyParticipationsStore'
 import { userStore } from 'src/store/UserStore'
 import Timeout = NodeJS.Timeout;
 import { apiClient } from 'src/api/ApiClient'
@@ -31,7 +31,7 @@ export default defineComponent({
       {user: userStore.getState().user?.id}
     )
 
-    myEventsStore.setEventParticipations(myEventsRequest.payload.data)
+    myParticipationsStore.setEventParticipations(myEventsRequest.payload.data)
     await this.pollForParticipations()
   },
   unmounted() {
@@ -45,7 +45,7 @@ export default defineComponent({
     },
     openInvitations(): EventParticipationDto[] {
       if (this.isLoggedIn) {
-        return myEventsStore.getState().eventParticipations.filter((item) => item.is_pending_invitation)
+        return myParticipationsStore.getState().eventParticipations.filter((item) => item.is_pending_invitation)
       }
       else {
         return []
@@ -55,7 +55,7 @@ export default defineComponent({
   },
   methods: {
     async pollForParticipations() {
-      myEventsStore.setEventParticipations(
+      myParticipationsStore.setEventParticipations(
         (await this.$apiClient.eventParticipations.list({user: userStore.getState().user?.id})).payload.data
       )
 

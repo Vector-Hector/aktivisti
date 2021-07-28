@@ -45,7 +45,7 @@ import EventListItem from 'components/EventListItem.vue'
 
 
 export default defineComponent({
-  name: 'Events',
+  name: 'EventList',
   components: {
     EventListItem,
     QInfiniteScroll,

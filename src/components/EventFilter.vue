@@ -95,6 +95,7 @@ const SortOptionLabels = {
 }
 
 export default defineComponent({
+  name: 'EventFilter',
   components: {
     QSelect
   },

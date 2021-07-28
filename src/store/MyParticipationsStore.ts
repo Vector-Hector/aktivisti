@@ -2,14 +2,14 @@ import { Store } from 'src/store/Store'
 import { EventFilterPreferences, SortOption } from 'src/store/UserStore'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 
-interface MyEventsStoreState {
+interface MyParticipationsStoreState {
   filterPreferences: EventFilterPreferences,
   eventParticipations: EventParticipationDto[]
 }
 
-class MyEventsStore extends Store<MyEventsStoreState> {
+class MyParticipationsStore extends Store<MyParticipationsStoreState> {
 
-  protected data(): MyEventsStoreState {
+  protected data(): MyParticipationsStoreState {
     return {
       filterPreferences: {
         subAssociations: [],
@@ -32,4 +32,4 @@ class MyEventsStore extends Store<MyEventsStoreState> {
   }
 }
 
-export const myEventsStore = new MyEventsStore()
+export const myParticipationsStore = new MyParticipationsStore()
