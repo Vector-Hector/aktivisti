@@ -184,7 +184,7 @@ export default defineComponent({
     selectUser(user: UserSuggestionItem) {
       console.log('selectUser triggered!')
       if (!this.managedUsers.find( ({id}) => id === user.id )) {
-        this.managedUsers.push(user)
+        this.managedUsers.unshift(user)
       }
       console.log('managedUsers: ', this.managedUsers)
     }
