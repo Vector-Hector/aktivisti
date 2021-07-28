@@ -1,6 +1,11 @@
 <template>
   <div class="container q-py-sm">
     <div class="row">
+      <div class="col">
+        <AssignAreaParticipants />
+      </div>
+    </div>
+    <div class="row">
       <div class="col-grow buttons">
         <QBtn
           v-if="event.poster_creation_allowed"
@@ -31,6 +36,7 @@ import { bbox, circle, point } from '@turf/turf'
 import { userStore } from 'src/store/UserStore'
 import { uiStore } from 'src/store/UiStore'
 import { NavigationGuardNext, RouteLocation } from 'vue-router'
+import AssignAreaParticipants from 'pages/event-map/detail/area/AssignAreaParticipants.vue'
 
 function updateRoute(to: RouteLocation, from: RouteLocation, next: NavigationGuardNext) {
   uiStore.updateActiveElements({
@@ -43,6 +49,7 @@ export default defineComponent({
   name: 'EventDetailPosterList',
   components: {
     PosterTable,
+    AssignAreaParticipants,
     QBtn
   },
   mixins: [EventDetailPosterMixin, EventDetailStoreMixin],
