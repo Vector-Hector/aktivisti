@@ -13,7 +13,7 @@
             :icon="ionLocate"
           />
           <QBtn
-            v-if="isTeamCaptainOrCoordinator"
+            v-if="isTeamCaptainOrCoordinator && event.event_type !== EventTypes.GENERIC"
             @click="openParticipantsModal"
             size="sm"
             color="primary"
@@ -85,9 +85,17 @@
         <div class="col-8 col-sm-10">
           {{ event.end_date ? new Date(event.end_date).toLocaleString([], dateOptions) : 'Nicht definiert' }}
         </div>
+        <template v-if="event.external_url">
+          <div class="col-4 col-sm-2">
+            Link:
+          </div>
+          <div class="col-8 col-sm-10">
+            <a target="_blank" class="primary-link" :href="event.external_url">{{ event.external_url }}</a>
+          </div>
+        </template>
         <div class="col-12">
           <span
-            v-if="isTeamCaptainOrCoordinator"
+            v-if="isTeamCaptainOrCoordinator && event.event_type !== EventTypes.GENERIC"
             class="participants"
             @click="openParticipantsModal"
           >
@@ -166,74 +174,76 @@
           :icon="ionMail"
         />
       </div>
-      <div
-        v-if="personalParticipation?.is_verified === false"
-        class="row"
-      >
-        <div v-if="!isTeamCaptainOrCoordinator" class="col-12">
-          Super, dass du mitmachen möchtest. Du hast dich für diese Aktion gemeldet. Der nächste Schritt ist zur
-          angegebenen
-          Zeit am vereinbarten Treffpunkt zu erscheinen. Ein Teamcaptain wird dich dann für diese Aktion freischalten.
+      <template v-if="event.event_type !== EventTypes.GENERIC">
+        <div
+          v-if="personalParticipation?.is_verified === false"
+          class="row"
+        >
+          <div v-if="!isTeamCaptainOrCoordinator" class="col-12">
+            Super, dass du mitmachen möchtest. Du hast dich für diese Aktion gemeldet. Der nächste Schritt ist zur
+            angegebenen
+            Zeit am vereinbarten Treffpunkt zu erscheinen. Ein Teamcaptain wird dich dann für diese Aktion freischalten.
+          </div>
         </div>
-      </div>
-      <div
-        class="row"
-        v-if="!isLoggedIn"
-      >
-        <div class="col-12">
-          <QBtn
-            :to="{ name: 'login', query: {next: $router.resolve($route).path } }"
-            color="primary"
-            class="full-width"
-          >
-            Anmelden um mitzumachen
-          </QBtn>
+        <div
+          class="row"
+          v-if="!isLoggedIn"
+        >
+          <div class="col-12">
+            <QBtn
+              :to="{ name: 'login', query: {next: $router.resolve($route).path } }"
+              color="primary"
+              class="full-width"
+            >
+              Anmelden um mitzumachen
+            </QBtn>
+          </div>
         </div>
-      </div>
-      <div
-        class="row q-col-gutter-x-md"
-        v-else
-      >
-        <div class="col-6">
-          <QBtn
-            v-if="isTeamCaptainOrCoordinator"
-            class="full-width"
-            @click="openInviteModal"
-            flat
-          >
-            Leute einladen
-          </QBtn>
+        <div
+          class="row q-col-gutter-x-md"
+          v-else
+        >
+          <div class="col-6">
+            <QBtn
+              v-if="isTeamCaptainOrCoordinator"
+              class="full-width"
+              @click="openInviteModal"
+              flat
+            >
+              Leute einladen
+            </QBtn>
+          </div>
+          <div class="col-6">
+            <QBtn
+              v-if="isMember"
+              :disabled="joinLoading"
+              color="primary"
+              @click="leave"
+              class="full-width"
+            >
+              Doch nicht dabei
+            </QBtn>
+            <QBtn
+              v-else-if="isInvited"
+              :disabled="joinLoading"
+              @click="acceptInvite"
+              color="primary"
+              class="full-width"
+            >
+              Einladung annehmen
+            </QBtn>
+            <QBtn
+              v-else-if="!isMember"
+              class="full-width"
+              :disabled="joinLoading"
+              @click="join"
+              color="primary"
+            >
+              Ich bin dabei
+            </QBtn>
+          </div>
         </div>
-        <div class="col-6">
-          <QBtn
-            v-if="isMember"
-            :disabled="joinLoading"
-            color="primary"
-            @click="leave"
-            class="full-width"
-          >
-            Doch nicht dabei
-          </QBtn>
-          <QBtn
-            v-else-if="isInvited"
-            :disabled="joinLoading"
-            @click="acceptInvite"
-            color="primary"
-            class="full-width"
-          >
-            Einladung annehmen
-          </QBtn>
-          <QBtn
-            v-else-if="!isMember"
-            class="full-width"
-            :disabled="joinLoading"
-            @click="join"
-            color="primary"
-          >
-            Ich bin dabei
-          </QBtn>
-        </div>
-      </div>
+      </template>
     </div>
   </QScrollArea>
 </template>

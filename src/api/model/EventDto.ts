@@ -31,4 +31,5 @@ export interface EventDto {
   owner: number
   sub_association: number
   poster_creation_allowed: boolean
+  external_url: string
 }
