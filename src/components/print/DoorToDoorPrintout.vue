@@ -17,6 +17,7 @@
     <div class="print-page">
       <h1 class="headline">{{ event.name }}</h1>
       <p class="facts">
+        Treffpunkt: {{ event.location_description }}<br>
         Einsatztyp: {{ eventTypeOptions.find(({key}) => key === event.event_type)?.label }}<br>
         Datum: {{ $utils.dateFormat(event.start_date) }}
       </p>
@@ -217,6 +218,8 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .d2d-event-printout {
+  overflow: auto;
+
   h1 {
     font-size: 2rem;
     line-height: 1;
@@ -334,6 +337,9 @@ export default defineComponent({
 @media print {
   .back-button, .print-button {
     display: none;
+  }
+  .d2d-event-printout {
+    overflow: initial;
   }
 }
 
