@@ -351,7 +351,7 @@ export default defineComponent({
         }
       })
     },
-    eventTypeLabel() {
+    eventTypeLabel(): string | undefined {
       return eventTypeOptions.find(({key}) => key === this.event.event_type)?.label
     },
     isLoggedIn(): boolean {
