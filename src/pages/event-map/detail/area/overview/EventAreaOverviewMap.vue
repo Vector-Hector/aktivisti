@@ -25,7 +25,8 @@ export default defineComponent({
       if (!this.currentAreaFeature) return
       return bbox(this.currentAreaFeature) as BBox2d
     }
-  }
+  },
+
 })
 
 </script>
