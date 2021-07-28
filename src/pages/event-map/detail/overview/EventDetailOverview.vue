@@ -61,7 +61,13 @@
         </div>
       </div>
       <div class="row q-col-gutter-y-sm">
-        <div class="col-2">
+        <div class="col-4 col-sm-2">
+          Aktionstyp:
+        </div>
+        <div class="col-8 col-sm-10">
+          {{ eventTypeLabel }}
+        </div>
+        <div class="col-4 col-sm-2">
           Treffpunkt:
         </div>
         <div class="col-10">
@@ -70,23 +76,23 @@
         <div class="col-2">
           Start:
         </div>
-        <div class="col-10">
+        <div class="col-8 col-sm-10">
           {{ new Date(event.start_date).toLocaleString([], dateOptions) }}
         </div>
-        <div class="col-2">
+        <div class="col-4 col-sm-2">
           Ende:
         </div>
-        <div class="col-10">
+        <div class="col-8 col-sm-10">
           {{ event.end_date ? new Date(event.end_date).toLocaleString([], dateOptions) : 'Nicht definiert' }}
         </div>
         <div class="col-12">
-      <span
-        v-if="isTeamCaptainOrCoordinator"
-        class="participants"
-        @click="openParticipantsModal"
-      >
-          <QIcon :name="ionPersonOutline" /> {{ event.participants }}/{{ event.max_participants ?? '∞' }}
-        </span>
+          <span
+            v-if="isTeamCaptainOrCoordinator"
+            class="participants"
+            @click="openParticipantsModal"
+          >
+            <QIcon :name="ionPersonOutline" /> {{ event.participants }}/{{ event.max_participants ?? '∞' }}
+          </span>
         </div>
         <div class="col-12">
           {{ event.description }}
@@ -264,7 +270,7 @@ import {
 import { QBtn, QIcon, QList, QScrollArea } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import { MAP_PAN_TO, MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/mapbox/Map.vue'
-import { EventTypes } from 'src/api/model/EventTypes'
+import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 
 const pollIntervalMs = 5000
 
@@ -344,6 +350,9 @@ export default defineComponent({
           return collator.compare(a.name, b.name)
         }
       })
+    },
+    eventTypeLabel(): string | undefined {
+      return eventTypeOptions.find(({key}) => key === this.event.event_type)?.label
     },
     isLoggedIn(): boolean {
       return authStore.isLoggedIn()
