@@ -2,6 +2,7 @@
   <QPage class="event-map">
     <MapContainer>
       <Map
+        class="map"
         :bounding-box="bbox"
         ref="map"
         @update:boundingBox="setBbox($event)"
@@ -88,6 +89,12 @@ export default defineComponent({
   flex: 1;
   position: relative;
   overflow: hidden;
+}
+
+.map {
+  :deep(.mapboxgl-ctrl-geocoder) {
+    max-width: 75%;
+  }
 }
 
 </style>

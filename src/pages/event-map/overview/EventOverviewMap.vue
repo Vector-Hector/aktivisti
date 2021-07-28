@@ -1,4 +1,10 @@
 <template>
+  <Geocoder
+    :access-token="accessToken"
+    :collapsed="true"
+    position="top-left"
+    :countries="['de']"
+  />
   <span v-if="clusterMode">
     <ClusterLayer
       :clusters="clusters"
@@ -49,11 +55,13 @@ import { eventOverviewStore } from 'src/store/EventOverviewStore'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { QBtn } from 'quasar'
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import Geocoder from 'src/mapbox/Geocoder.vue'
 
 export default defineComponent({
   name: 'EventOverviewMap',
   mixins: [EventsOverviewMixin],
   components: {
+    Geocoder,
     Popup,
     Marker,
     QBtn,
@@ -77,6 +85,9 @@ export default defineComponent({
     }
   },
   computed: {
+    accessToken() {
+      return process.env.APP_MAPBOX_TOKEN
+    },
     clusterTotal(): number {
       return this.clusters.reduce((acc: number, item: ClusterDto) => acc + item.count, 0)
     },
