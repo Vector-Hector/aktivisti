@@ -63,7 +63,8 @@ export default defineComponent({
     onMounted(() => {
       marker.value = new Marker({
         element: markerElement.value!,
-        draggable: props.draggable
+        draggable: props.draggable,
+        anchor: 'bottom'
       })
       marker.value
         .setLngLat([props.location.lng, props.location.lat])

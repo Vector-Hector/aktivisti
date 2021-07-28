@@ -17,8 +17,8 @@
       v-for="event in events"
       :key="event.id"
     >
-      <Marker
-        :location="event.location"
+      <EventMarker
+        :event="event"
       >
         <Popup>
           <div class="popup-contents">
@@ -38,14 +38,13 @@
             />
           </div>
         </Popup>
-      </Marker>
+      </EventMarker>
     </span>
   </span>
 </template>
 <script lang="ts">
 import { defineComponent, inject, onUnmounted } from 'vue'
 import Popup from 'src/mapbox/Popup.vue'
-import Marker from 'src/mapbox/Marker.vue'
 import { MapInject } from 'src/mapbox/Map.vue'
 import { ClusterDto } from 'src/api/model/ClusterDto'
 import { EVENT_MAP_MAX_EVENTS } from 'src/constants'
@@ -55,6 +54,7 @@ import { eventOverviewStore } from 'src/store/EventOverviewStore'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { QBtn } from 'quasar'
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import EventMarker from 'components/EventMarker.vue'
 import Geocoder from 'src/mapbox/Geocoder.vue'
 
 export default defineComponent({
@@ -62,8 +62,8 @@ export default defineComponent({
   mixins: [EventsOverviewMixin],
   components: {
     Geocoder,
+    EventMarker,
     Popup,
-    Marker,
     QBtn,
     ClusterLayer
   },

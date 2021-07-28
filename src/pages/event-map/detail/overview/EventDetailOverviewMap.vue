@@ -1,7 +1,7 @@
 <template>
-  <Marker
+  <EventMarker
     v-if="event?.location"
-    :location="event.location"
+    :event="event"
   />
   <FeatureLayer
     :features="areaFeatures"
@@ -12,17 +12,17 @@
 
 import { defineComponent } from 'vue'
 import FeatureLayer from 'src/mapbox/AreaFeatureLayer'
-import Marker from 'src/mapbox/Marker.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import InjectMapMixin from 'src/pages/event-detail/InjectMapMixin'
 import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
+import EventMarker from 'components/EventMarker.vue'
 import { cloneDeep, isEqual } from 'lodash-es'
 
 export default defineComponent({
   name: 'EventDetailOverviewMap',
   components: {
-    FeatureLayer,
-    Marker
+    EventMarker,
+    FeatureLayer
   },
   mixins: [InjectMapMixin, EventDetailMixin],
   mounted() {

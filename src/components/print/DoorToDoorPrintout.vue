@@ -28,9 +28,9 @@
         :interactive="false"
         :bounding-box="zoomBox"
       >
-        <Marker
-          v-if="event"
-          :location="event.location"
+        <EventMarker
+          v-if="event?.location"
+          :event="event"
         />
         <FeatureLayer
           :features="areaFeatures"
@@ -126,7 +126,6 @@ import Map from 'src/mapbox/Map.vue'
 import { Feature } from 'geojson'
 import { EventAreaDto, eventAreaToFeature } from 'src/api/model/EventAreaDto'
 import FeatureLayer from 'src/mapbox/AreaFeatureLayer'
-import Marker from 'src/mapbox/Marker.vue'
 import { BBox } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox, circle } from '@turf/turf'
 import { QBtn, QIcon } from 'quasar'
@@ -135,14 +134,15 @@ import { ionArrowBack, ionEllipse, ionPrint } from '@quasar/extras/ionicons-v5'
 import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
+import EventMarker from 'components/EventMarker.vue'
 
 
 
 export default defineComponent({
   name: 'DoorToDoorPrintout',
   components: {
+    EventMarker,
     Map,
-    Marker,
     FeatureLayer,
     QIcon,
     QBtn
