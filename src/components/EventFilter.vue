@@ -87,17 +87,11 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import { EventFilterParams } from 'src/api/params/EventFilterParams'
 
 const SortOptionLabels = {
   [SortOption.START_DATE]: 'Datum (Beginn)',
   [SortOption.NAME]: 'Aktionsname'
-}
-
-export interface UserEventFilterParams {
-  sub_association?: number[]
-  campaigns?: number[]
-  order_by: SortOption
-  event_type?: EventTypes
 }
 
 export default defineComponent({
@@ -106,7 +100,7 @@ export default defineComponent({
   },
   props: {
     filterParams: {
-      type: Object as PropType<UserEventFilterParams>,
+      type: Object as PropType<EventFilterParams>,
       required: true
     },
     campaigns: {
