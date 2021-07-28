@@ -10,15 +10,14 @@
     :editable="false"
     :opacity="0.5"
   />
-  <Marker
-    v-if="event.location"
-    :location="event.location"
+  <EventMarker
+    v-if="event?.location"
+    :event="event"
   />
 </template>
 
 <script lang="ts">
 import { defineComponent, inject } from 'vue'
-import Marker from 'src/mapbox/Marker.vue'
 import { Geometry } from 'geojson'
 import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import { center as turfCenter } from '@turf/turf'
@@ -29,14 +28,15 @@ import { LocationDto } from 'src/api/model/LocationDto'
 import AreaFeatureLayer from 'src/mapbox/AreaFeatureLayer'
 import AddressMarkerLayer from 'src/mapbox/AddressMarkerLayer'
 import PosterMarkerLayer from 'src/mapbox/PosterMarkerLayer'
+import EventMarker from 'components/EventMarker.vue'
 
 
 export default defineComponent({
   name: 'EditEventDetailsMap',
   components: {
+    EventMarker,
     PosterMarkerLayer,
     AddressMarkerLayer,
-    Marker,
     AreaFeatureLayer
   },
   setup() {
