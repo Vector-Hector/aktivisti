@@ -28,57 +28,61 @@
               </q-item>
             </template>
           </QSelect>
-          <QSelect
-            class="w-100 d-flex flex-col"
-            placeholder="Benutzer:in suchen"
-            use-input
-            :model-value="selectedUsers"
-            :multiple="true"
-            :option-label="userLabel"
-            :options="suggestedUsers"
-            @filter="searchUsers"
-            @add="selectUser($event.value)"
+          <div
+            class="user-management-section"
+            v-show="selectedSubAssociation"
           >
-            <template #item="slotProps">
-              <div class="user-autocomplete-username">
-                {{ slotProps.item.username }}
-              </div>
-              <div class="user-autocomplete-email">
-                {{ slotProps.item.email }}
-              </div>
-            </template>
-          </QSelect>
-          <div class="row">
-            <div class="col">
-              <QList v-show="managedUsers.length > 0">
-                <QItem
-                  v-for="user in managedUsers"
-                  :key="user.id"
-                >
-                  <QItemSection>
-                    <QItemLabel>
-                      <b>{{ user.username}}</b> {{ user.email }}
-                    </QItemLabel>
-                  </QItemSection>
+            <QSelect
+              class="w-100 d-flex flex-col"
+              placeholder="Benutzer:in suchen"
+              use-input
+              :model-value="selectedUsers"
+              :multiple="true"
+              :option-label="userLabel"
+              :options="suggestedUsers"
+              @filter="searchUsers"
+              @add="selectUser($event.value)"
+            >
+              <template #item="slotProps">
+                <div class="user-autocomplete-username">
+                  {{ slotProps.item.username }}
+                </div>
+                <div class="user-autocomplete-email">
+                  {{ slotProps.item.email }}
+                </div>
+              </template>
+            </QSelect>
+            <div class="row">
+              <div class="col">
+                <QList v-show="managedUsers.length > 0">
+                  <QItem
+                    v-for="user in managedUsers"
+                    :key="user.id"
+                  >
+                    <QItemSection>
+                      <QItemLabel>
+                        <b>{{ user.username}}</b> {{ user.email }}
+                      </QItemLabel>
+                    </QItemSection>
 
-                  <QItemSection side>
-                    <div
-                      class="invitation-item-actions"
-                    >
-                      <QIcon
-                        fill="none"
-                        @click="deleteParticipation(participation.id)"
+                    <QItemSection side>
+                      <div
+                        class="invitation-item-actions"
                       >
                         <QIcon
-                          :name="ionClose"
-                          aria-label="Nutzer von der Aktion entfernen"
-                        />
-                      </QIcon>
-                    </div>
-                  </QItemSection>
-
-                </QItem>
-              </QList>
+                          fill="none"
+                          @click="deleteParticipation(participation.id)"
+                        >
+                          <QIcon
+                            :name="ionClose"
+                            aria-label="Nutzer von der Aktion entfernen"
+                          />
+                        </QIcon>
+                      </div>
+                    </QItemSection>
+                  </QItem>
+                </QList>
+              </div>
             </div>
           </div>
         </div>
