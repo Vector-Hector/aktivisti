@@ -336,6 +336,9 @@ export default defineComponent({
   .back-button, .print-button {
     display: none;
   }
+  .d2d-event-printout {
+    overflow: initial;
+  }
 }
 
 .back-button {
