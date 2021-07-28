@@ -145,7 +145,7 @@ export default defineComponent({
           this.errors = e.response?.data
         } else {
           this.$q.notify({
-            message: 'Das Poster konnte nicht gespeichert werden',
+            message: 'Das Plakat konnte nicht gespeichert werden',
             color: 'negative'
           })
         }
@@ -158,7 +158,7 @@ export default defineComponent({
       if (!this.posterId) return
       this.$q.dialog({
         title: 'Plakat löschen',
-        message: 'Möchtest dieses Poster wirklich löschen?',
+        message: 'Möchtest dieses Plakat wirklich löschen?',
         cancel: true
       }).onOk(async () => {
         const poster = this.poster

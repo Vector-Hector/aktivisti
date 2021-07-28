@@ -50,7 +50,7 @@
               <QBtn
                 v-if="location"
                 class="accept-button"
-                label="Poster erstellen"
+                label="Plakat erstellen"
                 color="primary"
                 @click="createPoster"
               />
@@ -139,7 +139,7 @@ export default defineComponent({
       } catch (e) {
         this.$q.notify({
           color: 'negative',
-          message: 'Das Poster konnte nicht angelegt werden'
+          message: 'Das Plakat konnte nicht angelegt werden'
         })
       }
     },
