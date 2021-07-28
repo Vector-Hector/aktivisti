@@ -12,7 +12,7 @@
     :rows-per-page-options="[0]"
     class="editable-cells-table overflow-hidden q-my-sm poster-table"
     edit-mode="cell"
-    no-data-label="Noch keine Poster erstellt"
+    no-data-label="Noch keine Plakate erstellt"
   >
     <template v-slot:header="props">
       <QTr :props="props">
@@ -117,7 +117,7 @@ export default defineComponent({
       if (this.confirmDelete) {
         this.$q.dialog({
           title: 'Plakat löschen',
-          message: `Möchtest du Poster #${poster.poster_id} wirklich löschen?`,
+          message: `Möchtest du Plakat #${poster.poster_id} wirklich löschen?`,
           options: {
             type: 'checkbox',
             model: [],

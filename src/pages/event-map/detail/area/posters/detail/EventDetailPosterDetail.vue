@@ -101,15 +101,15 @@ export default defineComponent({
   methods: {
     onDeleteClicked() {
       this.$q.dialog({
-        title: 'Poster löschen',
-        message: `Möchtest du das Poster #${this.poster.poster_id} wirklich löschen?`,
+        title: 'Plakat löschen',
+        message: `Möchtest du das Plakat #${this.poster.poster_id} wirklich löschen?`,
         cancel: true
       }).onOk(async () => {
         try {
           await this.$apiClient.posters.delete(this.poster.id.toString())
           this.$q.notify({
             color: 'neutral',
-            message: 'Poster wurde gelöscht'
+            message: 'Plakat wurde gelöscht'
           })
           const posterId = this.poster.id
           await this.$router.replace({name: 'event-detail-poster-list'})
@@ -117,7 +117,7 @@ export default defineComponent({
         } catch (e) {
           this.$q.notify({
             color: 'negative',
-            message: 'Beim Löschen des Posters trat ein Fehler auf'
+            message: 'Beim Löschen des Plakats trat ein Fehler auf'
           })
         }
       })
@@ -133,7 +133,7 @@ export default defineComponent({
           })
           this.$q.notify({
             color: 'positive',
-            message: 'Das Poster wurde gespeichert'
+            message: 'Das Plakat wurde gespeichert'
           })
         } catch (e) {
           this.$q.notify({

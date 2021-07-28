@@ -84,7 +84,7 @@ export default defineComponent({
           if (poster.area !== this.eventArea.id) {
             this.$q.notify({
               color: 'warning',
-              message: 'Das neue Poster wurde nicht im derzeit ausgewählten Gebiet platziert!'
+              message: 'Das neue Plakat wurde nicht im derzeit ausgewählten Gebiet platziert!'
             })
           }
           void this.$router.push({

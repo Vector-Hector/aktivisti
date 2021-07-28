@@ -13,7 +13,7 @@
         {{ countAddresses(area.area_details) }} Adressen
       </QItemLabel>
       <QItemLabel v-else-if="eventType === EventTypes.POSTERS">
-        {{ area.poster_count }} Poster
+        {{ area.poster_count }} Plakate
       </QItemLabel>
     </QItemSection>
 
