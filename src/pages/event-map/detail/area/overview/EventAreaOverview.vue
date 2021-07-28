@@ -61,11 +61,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { userStore } from 'src/store/UserStore'
-import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { uiStore } from 'src/store/UiStore'
 import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
-import { QBtn, QIcon, QItem, QItemLabel, QItemSection, QList, QScrollArea, QSelect } from 'quasar'
+import { QBtn, QIcon, QItem, QItemLabel, QItemSection, QList, QScrollArea } from 'quasar'
 import { ionCheckmarkCircle, ionCheckmarkCircleOutline, ionChevronForward } from '@quasar/extras/ionicons-v5'
 import { StreetDetails } from 'src/api/model/AreaDetailsDto'
 import { difference } from 'lodash-es'
