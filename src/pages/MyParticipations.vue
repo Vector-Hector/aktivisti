@@ -25,6 +25,9 @@
                     <b>{{ event.name }}</b>
                   </QItemLabel>
                   <QItemLabel>
+                    {{ eventTypeLabel(event.event_type) }}
+                  </QItemLabel>
+                  <QItemLabel>
                     {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
                   </QItemLabel>
                   <QItemLabel>
@@ -85,6 +88,9 @@
                     <b>{{ event.name }}</b>
                   </QItemLabel>
                   <QItemLabel>
+                    {{ eventTypeLabel(event.event_type) }}
+                  </QItemLabel>
+                  <QItemLabel>
                     {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
                   </QItemLabel>
                   <QItemLabel>
@@ -115,6 +121,7 @@
 import { defineComponent } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
+import { eventTypeOptions } from 'src/api/model/EventTypes'
 import { UserDto } from 'src/api/model/UserDto'
 import { QBtn, QItem, QItemLabel, QItemSection, QList, QPage, QScrollArea, QSeparator } from 'quasar'
 import { CampaignDto } from 'src/api/model/CampaignDto'
@@ -219,6 +226,9 @@ export default defineComponent({
     },
     eventForParticipation(participation: EventParticipationDto) {
       return this.participatedEvents.find(({id}) => participation.event === id)
+    },
+    eventTypeLabel(event_type: string) {
+      return eventTypeOptions.find(({key}) => key === event_type)?.label
     },
     campaignsByIds(findIds: number[]): CampaignDto[] {
       return this.campaigns.filter(({id}) => findIds.includes(id))
