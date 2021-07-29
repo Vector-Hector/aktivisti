@@ -82,15 +82,26 @@
           class="menu-item"
         >
           <MenuLink
-            :to="{ name: 'my-events' }"
+            :to="{ name: 'my-participations' }"
           >
             <QIcon :name="ionCalendarOutline" />
-            <span class="menu-item-link-text">Meine Aktionen</span>
+            <span class="menu-item-link-text">Meine Teilnahmen</span>
             <OpenInvitationsBadge />
           </MenuLink>
         </div>
         <div
-          v-if="hasCreatePermission"
+          v-if="hasManagePermission"
+          class="menu-item"
+        >
+          <MenuLink
+            :to="{ name: 'my-managed-events' }"
+          >
+            <QIcon :name="ionCreateOutline" />
+            <span class="menu-item-link-text">Aktion verwalten</span>
+          </MenuLink>
+        </div>
+        <div
+          v-if="hasManagePermission"
           class="menu-item"
         >
           <MenuLink
@@ -101,7 +112,12 @@
           </MenuLink>
         </div>
       </div>
+
       <div class="menu-group menu-bottom">
+
+        <div class="version">
+          Version: {{ version }}
+        </div>
         <hr class="menu-divider">
         <div class="menu-item">
           <MenuLink to="/imprint">
@@ -137,6 +153,7 @@ import {
   ionCalendarClearOutline,
   ionCalendarOutline,
   ionClose,
+  ionCreateOutline,
   ionExitOutline,
   ionLogIn,
   ionMenu,
@@ -163,6 +180,7 @@ export default defineComponent({
       ionCalendarOutline,
       ionCalendarClearOutline,
       ionClose,
+      ionCreateOutline,
       ionExitOutline,
       ionLogIn,
       ionPersonCircleOutline,
@@ -170,13 +188,16 @@ export default defineComponent({
     }
   },
   computed: {
+    version(): string {
+      return process.env.APP_VERSION!
+    },
     sidebarIcon(): string {
       return this.sidebarExpanded ? ionClose : ionMenu
     },
     isLoggedIn() {
       return authStore.isLoggedIn()
     },
-    hasCreatePermission() {
+    hasManagePermission() {
       return userStore.hasAtLeastOneManagePermission()
     },
     userName() {
@@ -328,5 +349,9 @@ hr {
   font-size: 0.9rem;
 }
 
+.version {
+  align-self: flex-end;
+  color: $grey-6;
+}
 
 </style>

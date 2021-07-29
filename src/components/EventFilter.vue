@@ -59,6 +59,25 @@
       placeholder="Sortierung auswählen"
     />
   </div>
+    <div class="select-wrapper">
+    <QSelect
+      class="filter-dropdown"
+      :dropdownIcon="ionChevronDown"
+      :clearIcon="ionClose"
+      filled
+      :model-value="filterParams.event_type"
+      @update:model-value="updateEventType"
+      input-debounce="0"
+      label="Aktionstyp"
+      :options="eventTypeOptions"
+      emit-value
+      map-options
+      option-value="key"
+      option-label="label"
+      clearable
+
+    />
+  </div>
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
@@ -67,25 +86,22 @@ import { SortOption } from 'src/store/UserStore'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
+import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import { EventFilterParams } from 'src/api/params/EventFilterParams'
 
 const SortOptionLabels = {
   [SortOption.START_DATE]: 'Datum (Beginn)',
   [SortOption.NAME]: 'Aktionsname'
 }
 
-export interface UserEventFilterParams {
-  sub_association?: number[]
-  campaigns?: number[],
-  order_by: SortOption,
-}
-
 export default defineComponent({
+  name: 'EventFilter',
   components: {
     QSelect
   },
   props: {
     filterParams: {
-      type: Object as PropType<UserEventFilterParams>,
+      type: Object as PropType<EventFilterParams>,
       required: true
     },
     campaigns: {
@@ -114,6 +130,7 @@ export default defineComponent({
   },
   data() {
     return {
+      eventTypeOptions,
       SortOptionLabels,
       sortOptions: Object.values(SortOption),
       ionChevronDown,
@@ -127,6 +144,12 @@ export default defineComponent({
     }
   },
   methods: {
+    updateEventType(value: EventTypes) {
+      this.$emit('update:filterParams', {
+        ...this.filterParams,
+        event_type: value
+      })
+    },
     filterSubAssociations(value: string, update: any) {
       if (!value) {
         update(() => {
@@ -160,3 +183,8 @@ export default defineComponent({
   }
 })
 </script>
+<style lang="scss" scoped>
+.select-wrapper {
+  margin: 0 0 .5rem 0;
+}
+</style>

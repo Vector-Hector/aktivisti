@@ -12,7 +12,7 @@ import EventDetailOverview from 'pages/event-map/detail/overview/EventDetailOver
 import EventDetailOverviewMap from 'pages/event-map/detail/overview/EventDetailOverviewMap.vue'
 import EventDetail from 'pages/event-map/detail/EventDetail.vue'
 import EventDetailMap from 'pages/event-map/detail/EventDetailMap.vue'
-import MyEvents from 'pages/MyEvents.vue'
+import MyParticipations from 'pages/MyParticipations.vue'
 import EventDetailReport from 'pages/event-map/detail/report/EventDetailReport.vue'
 import EventDetailArea from 'pages/event-map/detail/area/EventDetailArea.vue'
 import EventDetailAreaMap from 'pages/event-map/detail/area/EventDetailAreaMap.vue'
@@ -31,6 +31,20 @@ import CreateEvent from 'pages/CreateEvent.vue'
 import PrintEvent from 'pages/PrintEvent.vue'
 import App from 'src/App.vue'
 import Print from 'src/Print.vue'
+import EditEventDetailsMap from 'pages/edit-event/details/EditEventDetailsMap.vue'
+import EditEventSinglePoster from 'pages/edit-event/posters/edit-single/EditEventSinglePoster.vue'
+import EditEventPostersList from 'pages/edit-event/posters/edit-list/EditEventPostersList.vue'
+import EditEventPosters from 'pages/edit-event/posters/EditEventPosters.vue'
+import EditEventPostersMap from 'pages/edit-event/posters/EditEventPostersMap.vue'
+import EditEventSinglePosterMap from 'pages/edit-event/posters/edit-single/EditEventSinglePosterMap.vue'
+import EditEventPostersListMap from 'pages/edit-event/posters/edit-list/EditEventPostersListMap.vue'
+import EventDetailPosters from 'pages/event-map/detail/area/posters/EventDetailPosters.vue'
+import EventDetailPostersMap from 'pages/event-map/detail/area/posters/EventDetailPostersMap.vue'
+import EventDetailPosterDetail from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetail.vue'
+import EventDetailPosterDetailMap from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetailMap.vue'
+import EventDetailPosterList from 'pages/event-map/detail/area/posters/list/EventDetailPosterList.vue'
+import EventDetailPosterListMap from 'pages/event-map/detail/area/posters/list/EventDetailPosterListMap.vue'
+import MyManagedEvents from 'pages/MyManagedEvents.vue';
 
 
 const routes = [
@@ -54,12 +68,21 @@ const routes = [
         }
       },
       {
-        path: '/my-events',
-        component: MyEvents,
-        name: 'my-events',
+        path: '/my-participations',
+        component: MyParticipations,
+        name: 'my-participations',
         meta: {
           requiresAuth: true,
-          title: () => 'Meine Aktionen'
+          title: () => 'Meine Teilnahmen'
+        }
+      },
+      {
+        path: '/my-managed-events',
+        component: MyManagedEvents,
+        name: 'my-managed-events',
+        meta: {
+          requiresAuth: true,
+          title: () => 'Aktionen verwalten'
         }
       },
       {
@@ -80,9 +103,8 @@ const routes = [
             }
           },
           {
-            path: ':id',
+            path: ':eventId',
             name: 'event-detail',
-            props: true,
             components: {
               default: EventDetail,
               map: EventDetailMap
@@ -95,7 +117,6 @@ const routes = [
             children: [
               {
                 path: 'overview',
-                props: true,
                 components: {
                   default: EventDetailOverview,
                   map: EventDetailOverviewMap
@@ -124,9 +145,8 @@ const routes = [
                   default: EventDetailArea,
                   map: EventDetailAreaMap
                 },
-                props: true,
                 meta: {
-                  title: () => 'Aktionsgebiete',
+                  title: () => uiStore.getState().activeTitleElements.eventArea,
                   subtitle: () => uiStore.getState().activeTitleElements.event
                 },
                 children: [
@@ -175,6 +195,38 @@ const routes = [
                       title: () => 'Bei Linksaktiv anmelden',
                       requiresAuth: true
                     }
+                  },
+                  {
+                    path: 'posters',
+                    name: 'event-detail-poster',
+                    redirect: {name: 'event-detail-poster-list'},
+                    props: false,
+                    components: {
+                      default: EventDetailPosters,
+                      map: EventDetailPostersMap
+                    },
+                    meta: {
+                      title: () => uiStore.state.activeTitleElements.poster,
+                      subtitle: () => uiStore.state.activeTitleElements.event
+                    },
+                    children: [
+                      {
+                        path: '',
+                        name: 'event-detail-poster-list',
+                        components: {
+                          default: EventDetailPosterList,
+                          map: EventDetailPosterListMap
+                        }
+                      },
+                      {
+                        path: ':posterId',
+                        name: 'event-detail-poster-detail',
+                        components: {
+                          default: EventDetailPosterDetail,
+                          map: EventDetailPosterDetailMap
+                        }
+                      }
+                    ]
                   }
                 ]
               }
@@ -190,11 +242,12 @@ const routes = [
           title: () => 'Aktion erstellen',
           requiresAuth: true
 
-        },
+        }
       },
       {
-        path: '/events/edit/:id',
-        component: EditEvent,name: 'edit-event',
+        path: '/events/edit/:eventId',
+        component: EditEvent,
+        name: 'edit-event',
         redirect: {name: 'edit-event-details'},
         meta: {
           subtitle: () => uiStore.getState().activeTitleElements.event,
@@ -204,16 +257,56 @@ const routes = [
         children: [
           {
             path: 'details',
-            component: EditEventDetails,
+            components: {
+              default: EditEventDetails,
+              map: EditEventDetailsMap
+            },
             name: 'edit-event-details'
           },
           {
             path: 'geometry',
-                components: {
+            components: {
               default: EditEventGeometry,
               map: EditEventGeometryMap
-                },
-                name: 'edit-event-geometry',
+            },
+            name: 'edit-event-geometry'
+          },
+          {
+            name: 'edit-event-posters',
+            path: 'posters',
+            redirect: {name: 'edit-event-posters-list'},
+            components: {
+              default: EditEventPosters,
+              map: EditEventPostersMap
+            },
+            meta: {
+              title: () => 'Plakat bearbeiten'
+            },
+            children: [
+              {
+                name: 'edit-event-posters-list',
+                path: '',
+                components: {
+                  default: EditEventPostersList,
+                  map: EditEventPostersListMap
+                }
+              },
+              {
+                name: 'edit-event-single-poster-edit',
+                path: ':posterId',
+                props: true,
+                components: {
+                  default: EditEventSinglePoster,
+                  map: EditEventSinglePosterMap
+                }
+              }, {
+                name: 'edit-event-single-poster-new',
+                path: 'new',
+                components: {
+                  default: EditEventSinglePoster,
+                  map: EditEventSinglePosterMap
+                }
+              }]
           }
         ]
       },

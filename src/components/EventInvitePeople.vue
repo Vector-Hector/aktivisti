@@ -73,6 +73,14 @@
         </p>
       </div>
     </div>
+    <div class="row">
+      <QBtn
+        class="full-width"
+        @click="handleInviteAllTeamCaptains"
+      >
+        Alle Teamcaptains einladen
+      </QBtn>
+    </div>
   </div>
 </template>
 
@@ -81,7 +89,7 @@ import { defineComponent, PropType } from 'vue'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { userStore } from 'src/store/UserStore'
 import { ionClose, ionMail } from '@quasar/extras/ionicons-v5'
-import { QIcon, QItem, QItemLabel, QItemSection, QList, QSelect } from 'quasar'
+import { QBtn, QIcon, QItem, QItemLabel, QItemSection, QList, QSelect } from 'quasar'
 
 interface UserSuggestionItem {
   id: number
@@ -92,6 +100,7 @@ interface UserSuggestionItem {
 export default defineComponent({
   name: 'EventInvitePeople',
   components: {
+    QBtn,
     QSelect,
     QList,
     QItem,
@@ -152,6 +161,13 @@ export default defineComponent({
         this.suggestedUsers = suggestions
       })
     },
+    appendParticipations(participations: EventParticipationDto[]) {
+      for (const participation of participations) {
+        if (!this.participations.find(({id}) => id === participation.id)) {
+          this.participations.push(participation)
+        }
+      }
+    },
     async inviteUser(user: UserSuggestionItem) {
       this.query = ''
 
@@ -163,6 +179,38 @@ export default defineComponent({
         if (!this.participations.find(({id}) => id === item.id)) {
           this.participations.push(item)
         }
+      }
+    },
+    handleInviteAllTeamCaptains() {
+      this.$q.dialog({
+        title: 'Alle Teamcaptains einladen',
+        message: 'Möchtest du alle Teamcaptains des Kreisverbandes einladen?',
+        cancel: true
+      }).onOk(() => this.inviteTeamCaptains())
+
+    },
+    async inviteTeamCaptains() {
+      const response = await this.$apiClient.events.inviteTeamCaptains(this.eventId.toString())
+      const newParticipations = response.payload.data
+      if (newParticipations.length > 0) {
+        let areTeamCaptainsAlreadyInvited = true
+        for (const participation of response.payload.data) {
+          if (!this.participations.find(({id}) => id === participation.id)) {
+            areTeamCaptainsAlreadyInvited = false
+            this.participations.push(participation)
+          }
+        }
+        if (areTeamCaptainsAlreadyInvited){
+          this.$q.notify({
+            color: 'warning',
+            message: 'Es wurden bereits alle Teamcaptains eingeladen.'
+          })
+        }
+      } else {
+        this.$q.notify({
+          color: 'info',
+          message: 'In diesem Eventgebiet gibt es keine Teamcaptains.'
+        })
       }
     },
     async deleteParticipation(deleteId: number) {

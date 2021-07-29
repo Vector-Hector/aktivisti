@@ -4,7 +4,10 @@
     class="marker"
   >
     <slot name="marker">
-      <i class="marker-icon" />
+      <QIcon
+        class="marker-icon"
+        :name="ionLocationSharp"
+      />
     </slot>
     <slot v-if="initialized" />
   </div>
@@ -25,6 +28,8 @@ import {
 import { Marker } from 'mapbox-gl'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { MapInject } from './Map.vue'
+import { ionLocationSharp } from '@quasar/extras/ionicons-v5'
+import { QIcon } from 'quasar'
 
 export const MarkerInject: InjectionKey<Ref<Marker>> = Symbol()
 
@@ -40,8 +45,11 @@ export default defineComponent({
       default: false
     }
   },
+  components: {
+    QIcon
+  },
   emits: ['update:location'],
-  setup(props, { emit }) {
+  setup(props, {emit}) {
     const map = inject(MapInject)
     const initialized = ref(false)
     const markerElement = ref<HTMLElement | null>(null)
@@ -55,7 +63,8 @@ export default defineComponent({
     onMounted(() => {
       marker.value = new Marker({
         element: markerElement.value!,
-        draggable: props.draggable
+        draggable: props.draggable,
+        anchor: 'bottom'
       })
       marker.value
         .setLngLat([props.location.lng, props.location.lat])
@@ -73,6 +82,7 @@ export default defineComponent({
     })
 
     return {
+      ionLocationSharp,
       marker,
       markerElement,
       initialized
@@ -81,3 +91,13 @@ export default defineComponent({
 })
 
 </script>
+<style lang="scss" scoped>
+.marker-icon {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  z-index: 99;
+  color: $primary;
+}
+
+</style>

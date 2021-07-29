@@ -24,9 +24,12 @@ export interface EventDto {
   end_date: string
   location: LocationDto
   location_description: string
-  published: boolean
   description: string
   participants: number
   max_participants: number
   visibility: VisibilityOptions
+  owner: number
+  sub_association: number
+  poster_creation_allowed: boolean
+  external_url: string
 }

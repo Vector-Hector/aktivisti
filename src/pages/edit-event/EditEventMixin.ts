@@ -3,6 +3,8 @@ import { EventDto } from 'src/api/model/EventDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { editEventStore } from 'src/store/EditEventStore'
+import { posterListStore } from 'src/store/PosterListStore'
+import { PosterDto } from 'src/api/model/PosterDto'
 
 export default defineComponent({
   computed: {
@@ -47,6 +49,14 @@ export default defineComponent({
       },
       set(ids: string[] | Set<string>) {
         editEventStore.setDeletingAreaIds(ids)
+      }
+    },
+    posters: {
+      get(): Partial<PosterDto>[] {
+        return posterListStore.state.posters
+      },
+      set(posters: PosterDto[]) {
+        posterListStore.state.posters = posters
       }
     }
   }

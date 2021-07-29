@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container event-overview">
     <CollapsibleFilters
       class="collapsible-filters"
       :activated-filter-count="activatedFilterCount"
@@ -36,7 +36,8 @@ import { Pagination } from 'src/api/model/APIEnvelope'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import EventsOverviewMixin from 'pages/event-map/overview/EventsOverviewMixin'
 import { EVENT_MAP_MAX_EVENTS } from 'src/constants'
-import EventFilter, { UserEventFilterParams } from 'components/EventFilter.vue'
+import EventFilter from 'components/EventFilter.vue'
+import { EventFilterParams } from 'src/api/params/EventFilterParams'
 
 
 export default defineComponent({
@@ -65,21 +66,23 @@ export default defineComponent({
   },
   computed: {
     userFilterParams: {
-      get(): UserEventFilterParams {
-        const {campaign, subAssociations, sorting} = userStore.getState().filterPreferences
+      get(): EventFilterParams {
+        const {campaign, subAssociations, sorting, eventType} = userStore.getState().filterPreferences
         return {
           sub_association: subAssociations,
           campaigns: campaign !== undefined ? [campaign] : undefined,
-          order_by: sorting
+          order_by: sorting,
+          event_type: eventType
         }
       },
-      set(value: UserEventFilterParams) {
+      set(value: EventFilterParams) {
         userStore.setFilterPreferences({
           ...userStore.getState().filterPreferences,
           ...{
             subAssociations: value.sub_association ?? [],
             campaign: value.campaigns?.[0],
-            sorting: value.order_by
+            sorting: value.order_by!,
+            eventType: value.event_type ?? undefined
           }
         })
       }
@@ -94,13 +97,13 @@ export default defineComponent({
       }
       return active
     },
-    filterParams(): { [key: string]: any } {
+    filterParams(): EventFilterParams {
       return {
         ...this.userFilterParams,
-        within: this.boundingBoxJson,
+        within: this.boundingBoxJson ?? undefined,
 
         limit: EVENT_MAP_MAX_EVENTS,
-        end_date_after: new Date(),
+        end_date_after: new Date().toISOString(),
         // TODO: jonatan@ctrl.alt.coop
         // atm it's well possible to not set an end date of an event making it indefinitely going, so we include them
         // in the query... Maybe we should rethink that (mandatory/default end date?)
@@ -146,7 +149,13 @@ export default defineComponent({
   }
 })
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+
+.event-overview {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
 .filter-content {
   padding: 1rem;
@@ -160,5 +169,7 @@ export default defineComponent({
 
 .event-list {
   margin: 1rem 0;
+  height: 100%;
+  overflow: hidden;
 }
 </style>

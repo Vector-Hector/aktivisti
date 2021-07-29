@@ -10,4 +10,5 @@ export interface EventParticipationDto {
   user_email: string | null
   user_username: string
   assigned_event_areas: number[]
+  is_team_captain: boolean
 }

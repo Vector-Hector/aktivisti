@@ -5,7 +5,7 @@
         <QToolbarTitle>Mitmachende</QToolbarTitle>
       </QToolbar>
       <QCardSection>
-        <EventParticipantsList :event-id="eventId" />
+        <EventParticipantsList :event-id="eventId" :event-sub-association="eventSubAssociation"/>
       </QCardSection>
     </QCard>
   </QDialog>
@@ -34,6 +34,10 @@ export default defineComponent({
     eventId: {
       type: Number as PropType<number>,
       required: true
+    },
+    eventSubAssociation: {
+      type: Number as PropType<number>,
+      required: false
     }
   },
   methods: {

@@ -1,9 +1,9 @@
 <template>
-  <i
-    class="marker-icon"
+  <QIcon
     :class="{
       'is-dragging': dragging
     }"
+    name="img:static/icons/location-select.svg"
     draggable="true"
     @dragstart="onDragStart"
   />
@@ -14,10 +14,15 @@ import { defineComponent } from 'vue'
 import { MapEventBus } from 'src/mapbox/Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { LocationDto } from 'src/api/model/LocationDto'
+import { QIcon } from 'quasar'
+
 
 export default defineComponent({
   name: 'DraggableMarker',
   emits: ['dropped'],
+  components: {
+    QIcon
+  },
   data() {
     return {
       id: uuidv4(),
@@ -40,7 +45,8 @@ export default defineComponent({
   }
 })
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+
 .dragging {
   position: fixed;
 }

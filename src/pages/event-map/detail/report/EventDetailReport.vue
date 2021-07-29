@@ -1,28 +1,30 @@
 <template>
-  <QTable
-    :columns="columns"
-    dense
-    :flat=!$q.screen.lt.md
-    :grid=$q.screen.lt.md
-    :rows="rows"
-    hide-pagination
-    :pagination="{rowsPerPage:0}"
-    row-key="name"
-  >
-    <template v-slot:body-cell-areaName="props">
-      <QTd :props="props">
-        <div>
-          <QIcon
-            v-if="props.row.areaColor"
-            class="area-indicator-icon"
-            :name="ionEllipse"
-            :style="{ color: props.row.areaColor }"
-          />
-          {{ props.value }}
-        </div>
-      </QTd>
-    </template>
-  </QTable>
+  <div class="container">
+    <QTable
+      :columns="columns"
+      dense
+      :flat=!$q.screen.lt.md
+      :grid=$q.screen.lt.md
+      :rows="rows"
+      hide-pagination
+      :pagination="{rowsPerPage:0}"
+      row-key="name"
+    >
+      <template v-slot:body-cell-areaName="props">
+        <QTd :props="props">
+          <div>
+            <QIcon
+              v-if="props.row.areaColor"
+              class="area-indicator-icon"
+              :name="ionEllipse"
+              :style="{ color: props.row.areaColor }"
+            />
+            {{ props.value }}
+          </div>
+        </QTd>
+      </template>
+    </QTable>
+  </div>
 </template>
 
 <script lang="ts">
@@ -51,10 +53,10 @@ export default defineComponent({
           name: 'areaName',
           field: 'areaName',
           label: 'Gebiet',
-          align: 'left',
+          align: 'left'
         }
       ] as any[],
-      rows: [] as any,
+      rows: [] as any
     }
   },
   async created() {
@@ -65,7 +67,7 @@ export default defineComponent({
       this.columns.push({
         name: metricId,
         field: metricId,
-        label: name,
+        label: name
       })
     }
     this.columns.push(
@@ -90,11 +92,6 @@ export default defineComponent({
       completedAddresses: 0,
       createdLeads: 0
     }
-    const targetValueOfMetricsRow = records.reduce((row, record) => ({
-      ...row,
-      [record.metric]: record.target
-    }), {areaName: 'Zielvorgabe'})
-
     for (const {id, color, name} of this.eventAreas) {
       if (id) {
         const {
@@ -110,9 +107,9 @@ export default defineComponent({
           completedAddresses: completed_addresses,
           createdLeads: created_leads
         }
-        summarizedCountsRow.overallAddresses += overall_addresses;
-        summarizedCountsRow.completedAddresses += completed_addresses;
-        summarizedCountsRow.createdLeads += created_leads;
+        summarizedCountsRow.overallAddresses += overall_addresses
+        summarizedCountsRow.completedAddresses += completed_addresses
+        summarizedCountsRow.createdLeads += created_leads
         for (const {id: metricId} of metrics) {
           const countOfMetric = counts_per_metric.find(({metric}) => metric === metricId)?.count || 0
           row[metricId] = countOfMetric
@@ -122,7 +119,18 @@ export default defineComponent({
       }
     }
     this.rows.push(summarizedCountsRow)
-    this.rows.push(targetValueOfMetricsRow)
+
+    let targetValueOfMetricsRow = {areaName: 'Zielvorgabe'} as any
+    let isTargetValueRowShown = false
+    for (const {metric, target} of records) {
+      targetValueOfMetricsRow[metric] = target
+      if (target > 0) {
+        isTargetValueRowShown = true
+      }
+    }
+    if (isTargetValueRowShown) {
+      this.rows.push(targetValueOfMetricsRow)
+    }
   },
   methods: {
     async fetchAreaMetricsReports(areaId: number): Promise<EventMetricReportDto> {
@@ -132,7 +140,7 @@ export default defineComponent({
     async fetchMetricRecords(): Promise<{ records: EventMetricRecordDto[], metrics: EventMetricDto[] }> {
       const response = await this.$apiClient.eventMetricRecords.list({event: this.event.id}, ['metric'])
       return {records: response.payload.data, metrics: response.payload.embedded.metric}
-    },
+    }
   }
 })
 </script>

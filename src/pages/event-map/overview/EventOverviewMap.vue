@@ -1,4 +1,10 @@
 <template>
+  <Geocoder
+    :access-token="accessToken"
+    :collapsed="true"
+    position="top-left"
+    :countries="['de']"
+  />
   <span v-if="clusterMode">
     <ClusterLayer
       :clusters="clusters"
@@ -11,13 +17,17 @@
       v-for="event in events"
       :key="event.id"
     >
-      <Marker
-        :location="event.location"
+      <EventMarker
+        :event="event"
       >
         <Popup>
           <div class="popup-contents">
             <span class="popup-title">{{ event.name }}</span>
+            <span class="popup-type">
+              {{ getEventTypeLabel(event.event_type) }}
+            </span>
             <span class="popup-campaign">{{ event.campaigns?.map(({name}) => name).join(',') }}</span>
+
             <span class="popup-date">
               {{ new Date(event.start_date).toLocaleString() }}
             </span>
@@ -28,14 +38,13 @@
             />
           </div>
         </Popup>
-      </Marker>
+      </EventMarker>
     </span>
   </span>
 </template>
 <script lang="ts">
 import { defineComponent, inject, onUnmounted } from 'vue'
 import Popup from 'src/mapbox/Popup.vue'
-import Marker from 'src/mapbox/Marker.vue'
 import { MapInject } from 'src/mapbox/Map.vue'
 import { ClusterDto } from 'src/api/model/ClusterDto'
 import { EVENT_MAP_MAX_EVENTS } from 'src/constants'
@@ -44,13 +53,17 @@ import EventsOverviewMixin from 'pages/event-map/overview/EventsOverviewMixin'
 import { eventOverviewStore } from 'src/store/EventOverviewStore'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { QBtn } from 'quasar'
+import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import EventMarker from 'components/EventMarker.vue'
+import Geocoder from 'src/mapbox/Geocoder.vue'
 
 export default defineComponent({
   name: 'EventOverviewMap',
   mixins: [EventsOverviewMixin],
   components: {
+    Geocoder,
+    EventMarker,
     Popup,
-    Marker,
     QBtn,
     ClusterLayer
   },
@@ -72,6 +85,9 @@ export default defineComponent({
     }
   },
   computed: {
+    accessToken() {
+      return process.env.APP_MAPBOX_TOKEN
+    },
     clusterTotal(): number {
       return this.clusters.reduce((acc: number, item: ClusterDto) => acc + item.count, 0)
     },
@@ -92,6 +108,11 @@ export default defineComponent({
         })
       }
     }
+  },
+  methods: {
+    getEventTypeLabel(eventType: EventTypes): string | undefined {
+      return eventTypeOptions.find(({key}) => key === eventType)?.label
+    }
   }
 })
 </script>
@@ -100,6 +121,11 @@ export default defineComponent({
   font-weight: bold;
   display: block;
   font-size: 1rem;
+}
+
+.popup-type {
+  display: block;
+  font-size: 0.9rem;
 }
 
 .popup-campaign {

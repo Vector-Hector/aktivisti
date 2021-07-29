@@ -1,55 +1,30 @@
 <template>
   <div class="sidebar-bottom-navigation row">
-    <div class="col left">
+    <div class="col right">
       <QBtn
         class="button"
         outline
         dense
         color="primary"
+        style="background: white !important;"
         label="Zurück"
         :icon="ionChevronBack"
         @click="$emit('back')"
       />
     </div>
-    <div class="col middle">
-      <QBtn
-        class="button"
-        flat
-        dense
-        color="primary"
-        label="Schließen"
-        @click="$emit('close')"
-      />
-    </div>
-    <div class="col right">
-      <QBtn
-        class="button"
-        dense
-        color="primary"
-        :label="last ? 'Fertig' : 'Weiter'"
-        :icon-right="last ? ionCheckmark : ionChevronForward"
-        @click="$emit('forward')"
-      />
-    </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import { ionCheckmark, ionChevronBack, ionChevronForward } from '@quasar/extras/ionicons-v5'
 import { QBtn } from 'quasar'
 
 export default defineComponent({
-  name: 'SidebarBottomNavigation',
+  name: 'SidebarBottomBackNavigation',
   components: {
     QBtn
   },
-  props: {
-    last: {
-      type: Boolean as PropType<boolean>,
-      default: false
-    }
-  },
-  emits: ['forward', 'back', 'close'],
+  emits: ['back'],
   data() {
     return {
       ionChevronBack,
@@ -68,12 +43,6 @@ export default defineComponent({
   .button {
     padding-right: 0.7rem;
   }
-}
-
-.middle {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
 }
 
 .right {

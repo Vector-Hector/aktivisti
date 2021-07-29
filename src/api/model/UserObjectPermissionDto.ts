@@ -2,6 +2,10 @@ export enum PermissionCodename {
   MANAGE_EVENTS = 'manages_events'
 }
 
+export enum ContentType {
+  SUB_ASSOCIATION = 'Sub association'
+}
+
 export interface UserObjectPermissionDto {
   id: number
   permission_name: string
@@ -11,4 +15,5 @@ export interface UserObjectPermissionDto {
   content_type: number
   content_object_name: string
   content_type_name: string
+  user: number
 }

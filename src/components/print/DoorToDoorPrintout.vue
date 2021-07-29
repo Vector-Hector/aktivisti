@@ -17,6 +17,7 @@
     <div class="print-page">
       <h1 class="headline">{{ event.name }}</h1>
       <p class="facts">
+        Treffpunkt: {{ event.location_description }}<br>
         Einsatztyp: {{ eventTypeOptions.find(({key}) => key === event.event_type)?.label }}<br>
         Datum: {{ $utils.dateFormat(event.start_date) }}
       </p>
@@ -24,11 +25,12 @@
       <img class="linke-logo" src="../../assets/logo_dielinke.png">
       <Map
         class="map"
+        :interactive="false"
         :bounding-box="zoomBox"
       >
-        <Marker
-          v-if="event"
-          :location="event.location"
+        <EventMarker
+          v-if="event?.location"
+          :event="event"
         />
         <FeatureLayer
           :features="areaFeatures"
@@ -69,6 +71,7 @@
           </p>
           <Map
             class="area-map"
+            :interactive="false"
             :bounding-box="boundingBoxOfArea(area)"
           >
             <FeatureLayer
@@ -100,7 +103,9 @@
         >
           <div class="col-3 metric-item-cell"><span>{{ metric.name }}</span></div>
           <div class="col-6 metric-item-cell"></div>
-          <div class="col-3 metric-item-cell"><span class="target-hint">Zielvorgabe: {{ metric.target }}</span></div>
+          <div class="col-3 metric-item-cell">
+            <span class="target-hint" v-if="metric.target > 0">Zielvorgabe: {{ metric.target }}</span>
+          </div>
         </div>
         <div
           class="metric-item row"
@@ -121,7 +126,6 @@ import Map from 'src/mapbox/Map.vue'
 import { Feature } from 'geojson'
 import { EventAreaDto, eventAreaToFeature } from 'src/api/model/EventAreaDto'
 import FeatureLayer from 'src/mapbox/AreaFeatureLayer'
-import Marker from 'src/mapbox/Marker.vue'
 import { BBox } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox, circle } from '@turf/turf'
 import { QBtn, QIcon } from 'quasar'
@@ -130,14 +134,15 @@ import { ionArrowBack, ionEllipse, ionPrint } from '@quasar/extras/ionicons-v5'
 import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
+import EventMarker from 'components/EventMarker.vue'
 
 
 
 export default defineComponent({
   name: 'DoorToDoorPrintout',
   components: {
+    EventMarker,
     Map,
-    Marker,
     FeatureLayer,
     QIcon,
     QBtn
@@ -213,6 +218,8 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .d2d-event-printout {
+  overflow: auto;
+
   h1 {
     font-size: 2rem;
     line-height: 1;
@@ -330,6 +337,9 @@ export default defineComponent({
 @media print {
   .back-button, .print-button {
     display: none;
+  }
+  .d2d-event-printout {
+    overflow: initial;
   }
 }
 

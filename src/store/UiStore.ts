@@ -2,6 +2,8 @@ import { Store } from 'src/store/Store'
 
 export interface TitleElements {
   event?: string
+  eventArea?: string
+  poster?: string,
   campaigns?: string
   street?: string
   houseNumber?: string

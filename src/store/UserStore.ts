@@ -4,6 +4,7 @@ import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { parseIfPossible } from 'src/utils/json'
 import { PermissionCodename, UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
+import { EventTypes } from 'src/api/model/EventTypes'
 
 
 export enum SortOption {
@@ -15,6 +16,7 @@ export interface EventFilterPreferences {
   subAssociations: number[],
   campaign: number | undefined,
   sorting: SortOption
+  eventType: EventTypes | undefined
 }
 
 interface UserState {
@@ -39,7 +41,8 @@ class UserStore extends Store<UserState> {
       filterPreferences: {
         subAssociations: [],
         campaign: undefined,
-        sorting: SortOption.START_DATE
+        sorting: SortOption.START_DATE,
+        eventType: undefined
       }
     }
   }

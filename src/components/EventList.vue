@@ -1,43 +1,35 @@
 <template>
-  <QInfiniteScroll
-    v-if="events.length > 0"
-    @load="loadData"
-    :disable="events.length === pagination.total"
-  >
-    <QList>
-      <QItem
-        v-for="item in events"
-        :key="item.id"
-        clickable
-        v-ripple
-        @click="goToEvent(item)"
-      >
-        <QItemSection>
-          <QItemLabel>
-            <b>{{ item.name }}</b>
-          </QItemLabel>
-          <QItemLabel>
-            {{ campaignsByIds(item.campaigns).map(({name}) => name).join(',') }}
-          </QItemLabel>
-          <QItemLabel>
-            {{ $utils.dateFormat(item.start_date) }}
-          </QItemLabel>
-        </QItemSection>
-      </QItem>
-    </QList>
-    <template v-slot:loading>
-      <div class="row justify-center q-my-md">
-        <QSpinnerDots color="primary" size="40px" />
-      </div>
-    </template>
-  </QInfiniteScroll>
-  <div
-    v-else
-    class="empty-list-placeholder"
-  >
+  <QScrollArea>
+    <QInfiniteScroll
+      v-if="events.length > 0"
+      @load="loadData"
+      :disable="events.length === pagination.total"
+    >
+      <QList>
+        <EventListItem
+          v-for="item in events"
+          :key="item.id"
+          clickable
+          v-ripple
+          @click="goToEvent(item)"
+          :event="item"
+          :campaigns="campaigns"
+        />
+      </QList>
+      <template v-slot:loading>
+        <div class="row justify-center q-my-md">
+          <QSpinnerDots color="primary" size="40px" />
+        </div>
+      </template>
+    </QInfiniteScroll>
+    <div
+      v-else
+      class="empty-list-placeholder"
+    >
 
-    Keine Aktionen gefunden
-  </div>
+      Keine Aktionen gefunden
+    </div>
+  </QScrollArea>
 </template>
 
 <script lang="ts">
@@ -47,19 +39,19 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
 import { Pagination } from 'src/api/model/APIEnvelope'
 import { distinctBy } from 'src/utils/array'
-import { QInfiniteScroll, QItem, QItemLabel, QItemSection, QList, QSpinnerDots } from 'quasar'
+import { QInfiniteScroll, QList, QScrollArea, QSpinnerDots } from 'quasar'
 import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
+import EventListItem from 'components/EventListItem.vue'
 
 
 export default defineComponent({
-  name: 'Events',
+  name: 'EventList',
   components: {
-    QItem,
-    QItemLabel,
-    QItemSection,
+    EventListItem,
     QInfiniteScroll,
     QSpinnerDots,
-    QList
+    QList,
+    QScrollArea
   },
   props: {
     filterParams: {
@@ -96,7 +88,7 @@ export default defineComponent({
       void this.$router.push({
         name: 'event-detail',
         params: {
-          id: event.id
+          eventId: event.id
         }
       })
     },
@@ -108,9 +100,6 @@ export default defineComponent({
       })
       this.$emit('update:pagination', response.payload.pagination)
       return response.payload.data
-    },
-    campaignsByIds(findIds: number[]): CampaignDto[] {
-      return this.campaigns.filter(({id}) => findIds.includes(id))
     },
     async loadData(index: number, done: () => void) {
       if (this.isDisabled) {

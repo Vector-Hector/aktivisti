@@ -1,7 +1,5 @@
 <template>
-  <div class="container">
-    <router-view />
-  </div>
+  <router-view v-if="event" />
 </template>
 
 <script lang="ts">
@@ -14,16 +12,18 @@ import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { authStore } from 'src/store/AuthStore'
 import { ObjectPermissions } from 'src/api/model/ObjectPermissionDto'
 import { includesOneOf } from 'src/utils/array'
+import { EventTypes } from 'src/api/model/EventTypes'
 
 
 export default defineComponent({
   name: 'EventDetail',
   mixins: [EventDetailMixin],
   async beforeRouteEnter(to, from, next) {
+    const { eventId } = to.params
     try {
       const [eventRequest, eventPermissionsRequest] = await Promise.all([
-       apiClient.events.get(to.params.id.toString(), ['campaigns']),
-        apiClient.eventPermissions.get({event: to.params.id.toString()})
+        apiClient.events.get(eventId.toString(), ['campaigns']),
+        apiClient.eventPermissions.get({event: eventId.toString()})
       ])
       const event = eventRequest.payload.data
       const campaigns = eventRequest.payload.embedded.campaigns as CampaignDto[]
@@ -38,14 +38,14 @@ export default defineComponent({
         [ObjectPermissions.TeamCaptain, ObjectPermissions.Coordinator])
       ) {
         permissionRequests.push(apiClient.eventParticipations.list({
-          event: to.params.id
+          event: eventId
         }).then((response) => {
           eventDetailStore.setParticipations(response.payload.data)
         }))
       }
       if (authStore.isLoggedIn()) {
         permissionRequests.push(apiClient.eventParticipations.list({
-          event: to.params.id,
+          event: eventId,
           user: authStore.getState().userId,
           show_permissions: true
         }).then((response) => {
@@ -65,8 +65,15 @@ export default defineComponent({
           [ObjectPermissions.TeamCaptain, ObjectPermissions.Coordinator]
         )
       ) {
-        const eventAreaRequest = await apiClient.eventAreas.list({event: to.params.id})
+        const promises: Promise<any>[] = [apiClient.eventAreas.list({event: eventId})]
+        if (eventRequest.payload.data.event_type === EventTypes.POSTERS) {
+          promises.push(apiClient.posters.list({event: eventId}))
+        }
+        const [eventAreaRequest, posterRequest] = await Promise.all(promises)
         eventDetailStore.setEventAreas(eventAreaRequest.payload.data)
+        if (posterRequest) {
+          eventDetailStore.state.posters = posterRequest.payload.data
+        }
       }
 
 
@@ -76,16 +83,17 @@ export default defineComponent({
           campaigns: eventDetailStore.getState().campaigns.map(({name}) => name).join(',')
         })
       })
-    } catch(e) {
+    } catch (e) {
       const {status} = e?.response
-      if (status === 404){
+      if (status === 404) {
         next({name: 'login'})
       }
     }
   },
-  unmounted() {
+  beforeRouteLeave() {
     eventDetailStore.reset()
   }
+
 })
 
 </script>

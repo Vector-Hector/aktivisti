@@ -1,8 +1,8 @@
 <template>
   <div
     class="drop-container"
-    @drop="onDrop"
-    @dragover.prevent
+    @drop.prevent.stop="onDrop"
+    @dragover.prevent.stop
   >
     <div
       :id="mapUuid"
@@ -14,7 +14,16 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, InjectionKey, onMounted, PropType, provide, Ref, ref, watch } from 'vue'
+import {
+  defineComponent,
+  InjectionKey,
+  onMounted,
+  PropType,
+  provide,
+  Ref,
+  ref,
+  watch
+} from 'vue'
 import mapboxgl, { LngLat, Point } from 'mapbox-gl'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
@@ -56,6 +65,10 @@ export default defineComponent({
     boundingBox: {
       type: Array as unknown as PropType<BBox2d>,
       default: () => [5.98865807458, 47.3024876979, 15.0169958839, 54.983104153] // bbox germany
+    },
+    interactive: {
+      type: Boolean as PropType<boolean>,
+      default: true
     }
   },
   emits: ['update:zoom', 'update:center', 'update:zoom', 'drop', 'update:boundingBox'],
@@ -86,7 +99,8 @@ export default defineComponent({
         style: process.env.APP_MAPBOX_STYLE,
         zoom: props.zoom,
         center: props.center,
-        bounds: props.boundingBox
+        bounds: props.boundingBox,
+        interactive: props.interactive
       })
       map.value.on('load', () => {
         map.value?.resize()

@@ -1,5 +1,4 @@
 import { CampaignDto } from 'src/api/model/CampaignDto'
-import { UserDto } from 'src/api/model/UserDto'
 import { CampaignTypeDto } from 'src/api/model/CampaignTypeDto'
 import { EventRoute } from 'src/api/EventRoute'
 import { ApiRoute } from 'src/api/ApiRoute'
@@ -10,7 +9,6 @@ import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { TrackingSessionDto } from 'src/api/model/TrackingSessionDto'
 import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 import { LeadDto } from 'src/api/model/LeadDto'
-import { EventDto } from 'src/api/model/EventDto'
 import { EventAreaRoute } from 'src/api/EventAreaRoute'
 import { EventParticipationRoute } from 'src/api/EventParticipationRoute'
 import { UserRegistrationDto } from 'src/api/model/UserRegistrationDto'
@@ -26,6 +24,8 @@ import { SessionRoute } from 'src/api/SessionRoute'
 import { ForgotPasswordDto } from 'src/api/model/ForgotPasswordDto'
 import { ObjectPermissionsRoute } from 'src/api/ObjectPermissionsRoute'
 import { PublicProfileDto } from 'src/api/model/PublicProfileDto'
+import { UserRoute } from 'src/api/UserRoute'
+import { PosterDto } from 'src/api/model/PosterDto'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -41,7 +41,6 @@ export class ApiClient {
     }
   })
 
-  myEvents = new ApiRoute<EventDto>(this.baseURL, 'my-events/', this.axiosInstance)
   events = new EventRoute(this.baseURL, 'events/', this.axiosInstance)
   eventAreas = new EventAreaRoute(this.baseURL, 'event-areas/', this.axiosInstance)
   eventMetrics = new ApiRoute<EventMetricDto>(this.baseURL, 'event-metrics/', this.axiosInstance)
@@ -49,7 +48,7 @@ export class ApiClient {
   eventMetricRecords = new ApiRoute<EventMetricRecordDto>(this.baseURL, 'event-metric-records/', this.axiosInstance)
   eventMetricRecordSubmissions = new ApiRoute<EventMetricRecordSubmissionDto>(this.baseURL, 'event-metric-record-submissions/', this.axiosInstance)
   campaigns = new ApiRoute<CampaignDto>(this.baseURL, 'campaigns/', this.axiosInstance)
-  user = new ApiRoute<UserDto>(this.baseURL, 'users/', this.axiosInstance)
+  user = new UserRoute(this.baseURL, 'users/', this.axiosInstance)
   publicProfiles = new ApiRoute<PublicProfileDto>(this.baseURL, 'public-profiles/', this.axiosInstance)
   tokens = new TokenRoute(this.baseURL, 'tokens/', this.axiosInstance)
   personalMetrics = new PersonalMetricsRoute(this.baseURL, 'personal-metrics/', this.axiosInstance)
@@ -67,6 +66,7 @@ export class ApiClient {
   session = new SessionRoute(this.baseURL, 'session/', this.axiosInstance)
   config = new ConfigRoute(this.baseURL, 'config/', this.axiosInstance)
   eventPermissions = new ObjectPermissionsRoute(this.baseURL, 'event-permissions/', this.axiosInstance)
+  posters = new ApiRoute<PosterDto>(this.baseURL, 'posters/', this.axiosInstance)
 }
 
 export const apiClient = new ApiClient()

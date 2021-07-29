@@ -39,6 +39,15 @@ export default defineComponent({
       type: Boolean as PropType<boolean>,
       required: false,
       default: false
+    },
+    collapsed: {
+      type: Boolean as PropType<boolean>,
+      required: false,
+      default: false
+    },
+    position: {
+      type: String as PropType<'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'>,
+      default: 'top-right'
     }
   },
   emits: {
@@ -53,7 +62,8 @@ export default defineComponent({
       accessToken: props.accessToken,
       countries: props.countries?.join(',') ?? undefined,
       marker: props.markerOptions,
-      reverseGeocode: props.reverseGeocode
+      reverseGeocode: props.reverseGeocode,
+      collapsed: props.collapsed
     })
     const geocodeWrapper = ref<HTMLElement | null>(null)
     geocodeControl.on('result', ({result}: { result: GeocodeResult }) => {
@@ -66,7 +76,7 @@ export default defineComponent({
         if (!map?.value) {
           throw Error('Either mount the Geocoder as a child of Map or set standalone=true')
         }
-        map?.value.addControl(geocodeControl)
+        map?.value.addControl(geocodeControl, props.position)
       } else {
         geocodeControl.addTo(geocodeWrapper.value)
       }

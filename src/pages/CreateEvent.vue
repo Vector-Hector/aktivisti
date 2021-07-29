@@ -1,72 +1,75 @@
 <template>
-  <QPage class="flex-fill">
-    <div class="container">
-      <div class="create-event">
-        <h3>Neue Aktion erstellen</h3>
-        <FormError
-          :error="errors.non_field_error"
-        />
-        <QInput
-          filled
-          class="create-event-input"
-          v-model="event.name"
-          label="Name der Aktion"
-          :error-message="errors.name?.[0]"
-          :error="!!errors.name?.length"
-          :rules="[$validationRules.isRequired]"
-        />
-        <QSelect
-          filled
-          class="create-event-input"
-          v-model="event.event_type"
-          label="Aktionstyp"
-          :disabled="true"
-          :options="eventTypeOptions"
-          option-label="label"
-          option-value="key"
-          emit-value
-          map-options
-          :error-message="errors.event_type?.[0]"
-          :error="!!errors.event_type?.length"
-        />
+  <QScrollArea
+    class="flex-fill d-flex"
+  >
+    <QPage>
+      <div class="container">
+        <div class="create-event">
+          <h3>Neue Aktion erstellen</h3>
+          <FormError
+            :error="errors.non_field_error"
+          />
+          <QInput
+            filled
+            class="create-event-input"
+            v-model="event.name"
+            label="Name der Aktion"
+            :error-message="errors.name?.[0]"
+            :error="!!errors.name?.length"
+            :rules="[$validationRules.isRequired]"
+          />
+          <QSelect
+            filled
+            class="create-event-input"
+            v-model="event.event_type"
+            label="Aktionstyp"
+            :options="eventTypeOptions"
+            option-label="label"
+            option-value="key"
+            emit-value
+            map-options
+            :error-message="errors.event_type?.[0]"
+            :error="!!errors.event_type?.length"
+          />
 
-        <QSelect
-          filled
-          class="create-event-input"
-          v-model="event.campaigns"
-          label="Kampagnen"
-          placeholder="Wähle eine Kampagne aus"
-          :multiple="true"
-          :options="campaigns"
-          option-label="name"
-          option-value="id"
-          map-options
-          emit-value
-          :error-message="errors.campaigns?.[0]"
-          :error="!!errors.campaigns?.length"
-        />
-        <div class="buttons">
-          <QBtn
-            outline
-            color="primary"
-            label="Abbrechen"
-            @click="$router.go(-1)"
+          <QSelect
+            filled
+            class="create-event-input"
+            v-model="event.campaigns"
+            label="Kampagnen"
+            placeholder="Wähle eine Kampagne aus"
+            :multiple="true"
+            :options="campaigns"
+            option-label="name"
+            option-value="id"
+            map-options
+            emit-value
+            :error-message="errors.campaigns?.[0]"
+            :error="!!errors.campaigns?.length"
           />
-          <QBtn
-            color="primary"
-            label="Erstellen"
-            @click="saveAndProceed()"
-          />
+          <div class="buttons">
+            <QBtn
+              outline
+              color="primary"
+              label="Abbrechen"
+              @click="$router.go(-1)"
+            />
+            <QBtn
+              color="primary"
+              label="Erstellen"
+              @click="saveAndProceed()"
+            />
+          </div>
         </div>
       </div>
-    </div>
-  </QPage>
+    </QPage>
+  </QScrollArea>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 import { apiClient } from 'src/api/ApiClient'
-import { QBtn, QInput, QPage, QSelect } from 'quasar'
+import { QBtn, QInput, QPage, QScrollArea, QSelect } from 'quasar'
 import { EventDto } from 'src/api/model/EventDto'
 import FormError from 'components/FormError.vue'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
@@ -79,8 +82,9 @@ export default defineComponent({
     FormError,
     QSelect,
     QInput,
-    QPage,
-    QBtn
+    QScrollArea,
+    QBtn,
+    QPage
   },
   async beforeRouteEnter(to, from, next) {
     if (!userStore.hasAtLeastOneManagePermission()) {
@@ -135,7 +139,7 @@ export default defineComponent({
         await this.$router.push({
           name: 'edit-event-details',
           params: {
-            id: this.event.id!
+            eventId: this.event.id!
           }
         })
       } catch (e) {
@@ -154,7 +158,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .create-event {
-  margin: 10vh auto;
+  margin: 0 auto;
   max-width: 500px;
   width: 100%;
 

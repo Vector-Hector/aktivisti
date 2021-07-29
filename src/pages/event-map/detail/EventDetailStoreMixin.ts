@@ -1,4 +1,4 @@
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { PermissionHintsDto } from 'src/api/model/APIEnvelope'
@@ -7,16 +7,80 @@ import { eventDetailStore } from 'src/store/EventDetailStore'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 import { ObjectPermissionDto, ObjectPermissions } from 'src/api/model/ObjectPermissionDto'
+import { Feature } from 'geojson'
+import { PosterDto } from 'src/api/model/PosterDto'
+import { apiClient } from 'src/api/ApiClient'
+import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import { bbox, circle } from '@turf/turf'
+import { userStore } from 'src/store/UserStore'
 
 export default defineComponent({
   name: 'EventDetailStoreMixin',
-  props: {
-    id: {
-      type: String as PropType<string>,
-      required: true
-    }
-  },
   computed: {
+    zoomBox(): BBox2d | null {
+      const locationFeatures = [...this.areaFeatures]
+      if (this?.event?.location) {
+        locationFeatures.push(circle([this.event.location.lng, this.event.location.lat], 0.2))
+      }
+      return locationFeatures.length > 0 ? bbox({
+        type: 'FeatureCollection',
+        features: [...this.areaFeatures, ...locationFeatures]
+      }) as BBox2d : userStore.getState().bbox
+    },
+    areaFeatures(): Feature[] {
+      return this.eventAreas.map((area) => {
+        return {
+          type: 'Feature',
+          id: area.feature_id,
+          geometry: area.geometry,
+          properties: {
+            color: area.color
+          }
+        }
+      })
+    },
+    currentAreaFeature(): Feature | undefined {
+      if (!this.eventArea) return
+      return {
+        type: 'Feature',
+        geometry: this.eventArea.geometry,
+        properties: {
+          color: this.eventArea.color
+        }
+      }
+    },
+    activePosterIndex: {
+      get() {
+        return eventDetailStore.state.activePosterIndex
+      },
+      set(index: number) {
+        eventDetailStore.state.activePosterIndex = index
+      }
+    },
+    posters: {
+      get(): PosterDto[] {
+        return eventDetailStore.state.posters
+      },
+      set(posters: PosterDto[]) {
+        eventDetailStore.state.posters = posters
+      }
+    },
+    postersInArea: {
+      get(): PosterDto[] {
+        return eventDetailStore.state.posters.filter(({area}) => area === (this.eventArea?.id ?? null))
+      },
+      set(posters: PosterDto[]) {
+        this.mergePosters(posters)
+      }
+    },
+    postersWithoutArea: {
+      get(): PosterDto[] {
+        return eventDetailStore.state.posters.filter(({area}) => area === null)
+      },
+      set(posters: PosterDto[]) {
+        this.mergePosters(posters)
+      }
+    },
     participations: {
       get(): EventParticipationDto[] {
         return eventDetailStore.getState().participations
@@ -119,4 +183,24 @@ export default defineComponent({
       return this.isTeamCaptain || this.isCoordinator
     }
   },
+  methods: {
+    deletePostersByIds(posterIds: number[]) {
+      this.posters = this.posters.filter(({id}) => !posterIds.includes(id))
+    },
+    mergePosters(posters: PosterDto[]) {
+      for (const poster of posters) {
+        const originalIndex = this.posters.findIndex(({id}) => id === poster.id)
+        if (originalIndex > -1) {
+          Object.assign(this.posters[originalIndex], poster)
+        } else {
+          this.posters.push(poster)
+        }
+      }
+    },
+    async refreshParticipants() {
+      this.participations = (await apiClient.eventParticipations.list({
+        event: this.event.id
+      })).payload.data
+    }
+  }
 })

@@ -1,216 +1,255 @@
 <template>
-  <div class="q-gutter-y-md">
-    <div class="row">
-      <div class="col-12">
-        <QBtn
-          @click="locateEvent"
-          size="sm"
-          color="primary"
-          flat
-          :icon="ionLocate"
-        />
-        <QBtn
-          v-if="isTeamCaptainOrCoordinator"
-          @click="openParticipantsModal"
-          size="sm"
-          color="primary"
-          flat
-          :icon="ionPerson"
-        />
-        <QBtn
-          v-if="personalParticipation?.is_verified || isTeamCaptainOrCoordinator"
-          size="sm"
-          color="primary"
-          flat
-          :icon="ionPrint"
-          :to="{ name: 'print-event', params: {eventId: event.id}}"
-        />
-        <QBtn
-          v-if="isCoordinator"
-          :to="{ name: 'event-detail-report', params: { event: event.id }}"
-          size="sm"
-          color="primary"
-          flat
-          :icon="ionBarChart"
-        />
-        <QBtn
-          v-if="isCoordinator"
-          :to="{name: 'edit-event-details', params: { event: event.id }}"
-          size="sm"
-          color="primary"
-          flat
-          :icon="ionPencil"
-        />
-        <QBtn
-          v-if="isCoordinator"
-          @click="openDeleteModal"
-          size="sm"
-          color="primary"
-          flat
-          :icon="ionTrash"
-        />
-      </div>
-    </div>
-    <div class="row q-col-gutter-y-sm">
-      <div class="col-2">
-        Start:
-      </div>
-      <div class="col-10">
-        {{ new Date(event.start_date).toLocaleString([], dateOptions) }}
-      </div>
-      <div class="col-2">
-        Ende:
-      </div>
-      <div class="col-10">
-        {{ event.end_date ? new Date(event.end_date).toLocaleString([], dateOptions) : 'Nicht definiert' }}
-      </div>
-      <div class="col-12">
-      <span
-        v-if="isTeamCaptainOrCoordinator"
-        class="participants"
-        @click="openParticipantsModal"
-      >
-          <QIcon :name="ionPersonOutline" /> {{ event.participants }}/{{ event.max_participants ?? '∞' }}
-        </span>
-      </div>
-      <div class="col-12">
-        {{ event.description }}
-      </div>
-    </div>
-    <div
-      class="areas row q-col-gutter-y-md"
-      v-if="isMember"
-    >
-      <div class="col-12">
-        <QList
-          class="area-list"
-        >
-          <EventAreaItem
-            v-for="area in eventAreasSorted"
-            :key="area.id"
-            :area="area"
-            :participations="participations"
-            :show-participation-count="isTeamCaptainOrCoordinator"
-            :personal-participation="personalParticipation"
+  <QScrollArea
+    class="d-flex flex-fill"
+  >
+    <div class="container q-gutter-y-md q-py-sm">
+      <div class="row">
+        <div class="col-12">
+          <QBtn
+            @click="locateEvent"
+            size="sm"
+            color="primary"
+            flat
+            :icon="ionLocate"
           />
-        </QList>
+          <QBtn
+            v-if="isTeamCaptainOrCoordinator && event.event_type !== EventTypes.GENERIC"
+            @click="openParticipantsModal"
+            size="sm"
+            color="primary"
+            flat
+            :icon="ionPerson"
+          />
+          <QBtn
+            v-if="
+            event.event_type === EventTypes.DOOR_TO_DOOR &&
+            (personalParticipation?.is_verified || isTeamCaptainOrCoordinator)
+          "
+            size="sm"
+            color="primary"
+            flat
+            :icon="ionPrint"
+            :to="{ name: 'print-event', params: {eventId: event.id}}"
+          />
+          <QBtn
+            v-if="
+            event.event_type === EventTypes.DOOR_TO_DOOR &&
+            isCoordinator
+          "
+            :to="{ name: 'event-detail-report', params: { eventId: event.id }}"
+            size="sm"
+            color="primary"
+            flat
+            :icon="ionBarChart"
+          />
+          <QBtn
+            v-if="isCoordinator"
+            :to="{name: 'edit-event-details', params: { eventId: event.id }}"
+            size="sm"
+            color="primary"
+            flat
+            :icon="ionPencil"
+          />
+          <QBtn
+            v-if="isCoordinator"
+            @click="openDeleteModal"
+            size="sm"
+            color="primary"
+            flat
+            :icon="ionTrash"
+          />
+        </div>
       </div>
-    </div>
-    <div class="social-buttons row q-gutter-x-md" v-if="event">
-      <QBtn
-        dense
-        type="a"
-        target="_blank"
-        :href="twitterShareUrl"
-        size="sm"
-        class="social-button"
-        label="teilen"
-        :icon="ionLogoTwitter"
-      />
-      <QBtn
-        dense
-        type="a"
-        target="_blank"
-        :href="facebookShareUrl"
-        size="sm"
-        class="social-button"
-        label="teilen"
-        :icon="ionLogoFacebook"
-      />
-      <QBtn
-        dense
-        type="a"
-        target="_blank"
-        :href="whatsappShareUrl"
-        size="sm"
-        class="social-button"
-        label="teilen"
-        :icon="ionLogoWhatsapp"
-      />
-      <QBtn
-        dense
-        type="a"
-        target="_blank"
-        :href="mailShareUrl"
-        size="sm"
-        class="social-button"
-        label="teilen"
-        :icon="ionMail"
-      />
-    </div>
-    <div
-      v-if="personalParticipation?.is_verified === false"
-      class="row"
-    >
-      <div class="col-12">
-        Super, dass du mitmachen möchtest. Du hast dich für diese Aktion gemeldet. Der nächste Schritt ist zur
-        angegebenen
-        Zeit am vereinbarten Treffpunkt zu erscheinen. Ein Teamcaptain wird dich dann für diese Aktion freischalten.
+      <div class="row q-col-gutter-y-sm">
+        <div class="col-4 col-sm-2">
+          Aktionstyp:
+        </div>
+        <div class="col-8 col-sm-10">
+          {{ eventTypeLabel }}
+        </div>
+        <div class="col-4 col-sm-2">
+          Treffpunkt:
+        </div>
+        <div class="col-10">
+          {{ event.location_description }}
+        </div>
+        <div class="col-2">
+          Start:
+        </div>
+        <div class="col-8 col-sm-10">
+          {{ new Date(event.start_date).toLocaleString([], dateOptions) }}
+        </div>
+        <div class="col-4 col-sm-2">
+          Ende:
+        </div>
+        <div class="col-8 col-sm-10">
+          {{ event.end_date ? new Date(event.end_date).toLocaleString([], dateOptions) : 'Nicht definiert' }}
+        </div>
+        <template v-if="event.external_url">
+          <div class="col-4 col-sm-2">
+            Link:
+          </div>
+          <div class="col-8 col-sm-10">
+            <a target="_blank" class="primary-link" :href="event.external_url">{{ event.external_url }}</a>
+          </div>
+        </template>
+        <div class="col-12">
+          <span
+            v-if="isTeamCaptainOrCoordinator && event.event_type !== EventTypes.GENERIC"
+            class="participants"
+            @click="openParticipantsModal"
+          >
+            <QIcon :name="ionPersonOutline" /> {{ event.participants }}/{{ event.max_participants ?? '∞' }}
+          </span>
+        </div>
+        <div class="col-12 event-description">
+          {{ event.description }}
+        </div>
       </div>
-    </div>
-    <div
-      class="row"
-      v-if="!isLoggedIn"
-    >
-      <div class="col-12">
-        <QBtn
-          :to="{ name: 'login', query: {next: $router.resolve($route).path } }"
-          color="primary"
-          class="full-width"
-        >
-          Anmelden um mitzumachen
-        </QBtn>
+      <div
+        class="areas row q-col-gutter-y-md"
+        v-if="isMember"
+      >
+        <div class="col-12">
+          <QList
+            class="area-list"
+          >
+            <EventAreaItem
+              v-for="area in eventAreasSorted"
+              :key="area.id"
+              :area="area"
+              :participations="participations"
+              :show-participation-count="isTeamCaptainOrCoordinator"
+              :personal-participation="personalParticipation"
+              :event-type="event.event_type"
+            />
+            <EventAreaItem
+              v-if="event.event_type === EventTypes.POSTERS && postersWithoutArea.length > 0"
+              :area="noAreaPosters"
+              :participations="[]"
+              :event-type="event.event_type"
+            />
+          </QList>
+        </div>
       </div>
-    </div>
-    <div
-      class="row q-col-gutter-x-md"
-      v-else
-    >
-      <div class="col-6">
+      <div class="social-buttons row q-gutter-x-md" v-if="event">
         <QBtn
-          v-if="isTeamCaptainOrCoordinator"
-          class="full-width"
-          @click="openInviteModal"
-          flat
-        >
-          Leute einladen
-        </QBtn>
+          dense
+          type="a"
+          target="_blank"
+          :href="twitterShareUrl"
+          size="sm"
+          class="social-button"
+          label="teilen"
+          :icon="ionLogoTwitter"
+        />
+        <QBtn
+          dense
+          type="a"
+          target="_blank"
+          :href="facebookShareUrl"
+          size="sm"
+          class="social-button"
+          label="teilen"
+          :icon="ionLogoFacebook"
+        />
+        <QBtn
+          dense
+          type="a"
+          target="_blank"
+          :href="whatsappShareUrl"
+          size="sm"
+          class="social-button"
+          label="teilen"
+          :icon="ionLogoWhatsapp"
+        />
+        <QBtn
+          dense
+          type="a"
+          target="_blank"
+          :href="mailShareUrl"
+          size="sm"
+          class="social-button"
+          label="teilen"
+          :icon="ionMail"
+        />
       </div>
-      <div class="col-6">
-        <QBtn
-          v-if="isMember"
-          :disabled="joinLoading"
-          color="primary"
-          @click="leave"
-          class="full-width"
+      <template v-if="event.event_type !== EventTypes.GENERIC">
+        <div
+          v-if="personalParticipation?.is_verified === false"
+          class="row"
         >
-          Doch nicht dabei
-        </QBtn>
-        <QBtn
-          v-else-if="isInvited"
-          :disabled="joinLoading"
-          @click="acceptInvite"
-          color="primary"
-          class="full-width"
+          <div v-if="!isTeamCaptainOrCoordinator" class="col-12">
+            Super, dass du mitmachen möchtest. Du hast dich für diese Aktion gemeldet. Der nächste Schritt ist zur
+            angegebenen
+            Zeit am vereinbarten Treffpunkt zu erscheinen. Ein Teamcaptain wird dich dann für diese Aktion freischalten.
+          </div>
+        </div>
+        <div
+          class="row"
+          v-if="!isLoggedIn"
         >
-          Einladung annehmen
-        </QBtn>
-        <QBtn
-          v-else-if="!isMember"
-          class="full-width"
-          :disabled="joinLoading"
-          @click="join"
-          color="primary"
+          <div class="col-12">
+            <QBtn
+              :to="{ name: 'login', query: {next: $router.resolve($route).path } }"
+              color="primary"
+              class="full-width"
+            >
+              Anmelden um mitzumachen
+            </QBtn>
+          </div>
+        </div>
+        <div
+          class="row q-col-gutter-x-md"
+          v-else
         >
-          Ich bin dabei
-        </QBtn>
-      </div>
+          <div class="col-6">
+            <QBtn
+              v-if="isTeamCaptainOrCoordinator"
+              class="full-width"
+              @click="openInviteModal"
+              flat
+            >
+              Leute einladen
+            </QBtn>
+          </div>
+          <div class="col-6">
+            <QBtn
+              v-if="isMember"
+              :disabled="joinLoading"
+              color="primary"
+              @click="leave"
+              class="full-width"
+            >
+              Doch nicht dabei
+            </QBtn>
+            <QBtn
+              v-else-if="isInvited"
+              :disabled="joinLoading"
+              @click="acceptInvite"
+              color="primary"
+              class="full-width"
+            >
+              Einladung annehmen
+            </QBtn>
+            <QBtn
+              v-else-if="!isMember"
+              class="full-width"
+              :disabled="joinLoading"
+              @click="join"
+              color="primary"
+            >
+              Ich bin dabei
+            </QBtn>
+          </div>
+        </div>
+      </template>
     </div>
-  </div>
+  </QScrollArea>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { authStore } from 'src/store/AuthStore'
 import { userStore } from 'src/store/UserStore'
@@ -238,25 +277,22 @@ import {
   ionLocate,
   ionPrint
 } from '@quasar/extras/ionicons-v5'
-import { QBtn, QIcon, QList } from 'quasar'
+import { QBtn, QIcon, QList, QScrollArea } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import { MAP_PAN_TO, MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/mapbox/Map.vue'
+import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 
+const pollIntervalMs = 5000
 
 export default defineComponent({
   name: 'EventDetailOverview',
   mixins: [EventDetailMixin],
   components: {
     EventAreaItem,
+    QScrollArea,
     QBtn,
     QIcon,
     QList
-  },
-  props: {
-    id: {
-      type: String as PropType<string>,
-      required: true
-    }
   },
   beforeRouteEnter(from, to, next) {
     uiStore.setBottomSheetStateAtLeast(BottomSheetState.HALF)
@@ -274,6 +310,8 @@ export default defineComponent({
         hour: '2-digit',
         minute: '2-digit'
       },
+      verficationPollTimeout: null as null | NodeJS.Timeout,
+      EventTypes,
       ionPrint,
       ionLogoFacebook,
       ionLogoTwitter,
@@ -287,7 +325,32 @@ export default defineComponent({
       ionLocate
     }
   },
+  watch: {
+    'personalParticipation.is_verified': {
+      handler(newValue) {
+        if (newValue === false) {
+          void this.pollForVerification()
+        } else if (newValue === true && this.verficationPollTimeout !== null) {
+          clearTimeout(this.verficationPollTimeout)
+        }
+      },
+      immediate: true
+    }
+  },
   computed: {
+    eventId(): string {
+      return this.event.id.toString()
+    },
+    noAreaPosters(): Partial<EventAreaDto> {
+      return {
+        id: undefined,
+        name: 'Ohne Gebiet',
+        color: '#FFFFFF',
+        event: parseInt(this.eventId),
+        is_completed: false,
+        poster_count: this.postersWithoutArea.length
+      } as Partial<EventAreaDto>
+    },
     eventAreasSorted(): EventAreaDto[] {
       const collator = new Intl.Collator('de', {caseFirst: 'upper'})
       return [...this.eventAreas].sort((a, b) => {
@@ -297,6 +360,9 @@ export default defineComponent({
           return collator.compare(a.name, b.name)
         }
       })
+    },
+    eventTypeLabel(): string | undefined {
+      return eventTypeOptions.find(({key}) => key === this.event.event_type)?.label
     },
     isLoggedIn(): boolean {
       return authStore.isLoggedIn()
@@ -315,7 +381,7 @@ export default defineComponent({
         `${window.location.origin}${this.$router.resolve({
           name: 'event-detail',
           params: {
-            id: this.event.id
+            eventId: this.event.id
           }
         }).path}`,
         [],
@@ -327,7 +393,7 @@ export default defineComponent({
         window.location.origin + this.$router.resolve({
           name: 'event-detail',
           params: {
-            id: this.event.id
+            eventId: this.event.id
           }
         }).path
       )
@@ -337,7 +403,7 @@ export default defineComponent({
         window.location.origin + this.$router.resolve({
           name: 'event-detail',
           params: {
-            id: this.event.id
+            eventId: this.event.id
           }
         }).path,
         this.event
@@ -348,7 +414,7 @@ export default defineComponent({
         window.location.origin + this.$router.resolve({
           name: 'event-detail',
           params: {
-            id: this.event.id
+            eventId: this.event.id
           }
         }).path,
         this.event
@@ -360,16 +426,8 @@ export default defineComponent({
       const generalJoinError = 'Ein unerwarteter Fehler trat auf beim versuch der Aktion beizutreten'
       try {
         this.joinLoading = true
-        this.event = (await this.$apiClient.events.join(this.id)).payload.data
-        this.personalParticipation = (await this.$apiClient.eventParticipations.list({
-          event: this.id,
-          user: userStore.getState().user?.id
-        })).payload.data?.[0]
-        if (this.personalParticipation?.is_verified) {
-          this.eventAreas = (await this.$apiClient.eventAreas.list({event: this.event.id})).payload.data
-        } else {
-          this.eventAreas = []
-        }
+        this.event = (await this.$apiClient.events.join(this.eventId)).payload.data
+        await this.updateParticipationAndLoadAreas()
         if (!this.personalParticipation) {
           this.$q.notify({
             color: 'negative',
@@ -389,11 +447,25 @@ export default defineComponent({
         this.scrollArea?.value?.setScrollPercentage('vertical', 1, 300)
       }, 300)
     },
+    async updateParticipationAndLoadAreas() {
+      this.personalParticipation = (await this.$apiClient.eventParticipations.list({
+        event: this.eventId,
+        user: userStore.getState().user?.id
+      })).payload.data?.[0]
+      if (this.personalParticipation?.is_verified) {
+        this.eventAreas = (await this.$apiClient.eventAreas.list({event: this.event.id})).payload.data
+        if (this.event.event_type === EventTypes.POSTERS) {
+          this.posters = (await this.$apiClient.posters.list({event: this.event.id})).payload.data
+        }
+      } else {
+        this.eventAreas = []
+      }
+    },
     async leave() {
       const generalLeaveError = 'Ein unerwarteter Fehler trat auf beim versuch die Aktion zu verlassen'
       try {
         this.joinLoading = true
-        this.event = (await this.$apiClient.events.leave(this.id)).payload.data
+        this.event = (await this.$apiClient.events.leave(this.eventId)).payload.data
         this.personalParticipation = null
       } catch (e) {
         this.$q.notify({
@@ -419,12 +491,7 @@ export default defineComponent({
       }
     },
     async refreshEvent() {
-      this.event = (await apiClient.events.get(this.id)).payload.data
-    },
-    async refreshParticipants() {
-      this.participations = (await apiClient.eventParticipations.list({
-        event: this.event.id
-      })).payload.data
+      this.event = (await apiClient.events.get(this.eventId)).payload.data
     },
     openInviteModal() {
       if (this.isTeamCaptainOrCoordinator) {
@@ -439,12 +506,28 @@ export default defineComponent({
           })
       }
     },
+    async pollForVerification() {
+      if (this.verficationPollTimeout !== null || !this.personalParticipation) {
+        // polling already started
+        return
+      }
+      if (this.personalParticipation?.is_verified) {
+        // if we are finally verified we can stop polling
+        return
+      }
+      await this.updateParticipationAndLoadAreas()
+      this.verficationPollTimeout = setTimeout(() => {
+        this.verficationPollTimeout = null
+        void this.pollForVerification()
+      }, pollIntervalMs)
+    },
     openParticipantsModal() {
       this.$q.dialog({
         component: EventParticipantsModal,
         maximized: true,
         componentProps: {
-          eventId: this.event.id
+          eventId: this.event.id,
+          eventSubAssociation: this.event.sub_association
         }
       })
         .onDismiss(() => {
@@ -474,6 +557,11 @@ export default defineComponent({
           return
         }
       })
+    }
+  },
+  beforeUnmount() {
+    if (this.verficationPollTimeout !== null) {
+      clearTimeout(this.verficationPollTimeout)
     }
   }
 })
@@ -508,6 +596,10 @@ label {
 
 .event-name {
   margin: 0 0 1rem 0;
+}
+
+.event-description {
+  white-space: pre-line;
 }
 
 .participants {
