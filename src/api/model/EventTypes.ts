@@ -1,6 +1,7 @@
 export enum EventTypes {
   DOOR_TO_DOOR = 'H',
-  POSTERS = 'P'
+  POSTERS = 'P',
+  GENERIC = 'G'
 }
 
 export const eventTypeOptions: { key: string, label: string }[] = [{
@@ -9,5 +10,8 @@ export const eventTypeOptions: { key: string, label: string }[] = [{
 }, {
   key: EventTypes.POSTERS,
   label: 'Plakate'
+}, {
+  key: EventTypes.GENERIC,
+  label: 'Veranstaltung'
 }]
 

@@ -23,7 +23,6 @@
     </MapContainer>
   </QPage>
 </template>
-
 <script lang="ts">
 import { computed, defineComponent, ComputedRef } from 'vue'
 
@@ -60,6 +59,14 @@ const PosterEventSteps = [{
 }, {
   label: 'Standorte',
   routeName: 'edit-event-posters'
+}]
+
+const GenericEventSteps = [{
+  label: 'Einstellungen',
+  routeName: 'edit-event-details'
+}, {
+  label: 'Veranstaltungsort',
+  routeName: 'edit-event-geometry'
 }]
 
 export interface StepControls {
@@ -128,10 +135,10 @@ export default defineComponent({
         apiClient.events.get(to.params.eventId as string, ['eventmetricrecord_set']),
         apiClient.campaigns.list(),
         apiClient.eventAreas.list({event: to.params.eventId})
-    ])
-    if (eventRequest.payload.data.event_type === EventTypes.POSTERS) {
-      const posters = await apiClient.posters.list({event: to.params.eventId})
-      posterListStore.state.posters = posters.payload.data
+      ])
+      if (eventRequest.payload.data.event_type === EventTypes.POSTERS) {
+        const posters = await apiClient.posters.list({event: to.params.eventId})
+        posterListStore.state.posters = posters.payload.data
       }
       editEventStore.setEvent(eventRequest.payload.data)
       editEventStore.setCampaigns(campaignRequest.payload.data)
@@ -165,8 +172,10 @@ export default defineComponent({
       case EventTypes.POSTERS:
         return PosterEventSteps
       case EventTypes.DOOR_TO_DOOR:
-      default:
         return DoorToDoorEventSteps
+      case EventTypes.GENERIC:
+      default:
+        return GenericEventSteps
       }
     },
     areaFeatures(): Feature[] {
