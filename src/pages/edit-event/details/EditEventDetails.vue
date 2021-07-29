@@ -71,7 +71,6 @@
           v-model.number="event.max_participants"
           label="Maximale Teilnehmer*innenzahl"
           type="number"
-
           :error-message="errors.max_participants?.[0]"
           :error="!!errors.max_participants?.length"
         />
@@ -94,6 +93,7 @@
 
         <QSelect
           filled
+          v-if="event.event_type !== EventTypes.GENERIC"
           label="Sichtbarkeit"
           v-model="event.visibility"
           :options="Object.values(VisibilityOptions)"
