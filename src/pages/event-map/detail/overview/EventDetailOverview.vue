@@ -102,7 +102,7 @@
             <QIcon :name="ionPersonOutline" /> {{ event.participants }}/{{ event.max_participants ?? '∞' }}
           </span>
         </div>
-        <div class="col-12">
+        <div class="col-12 event-description">
           {{ event.description }}
         </div>
       </div>
@@ -596,6 +596,10 @@ label {
 
 .event-name {
   margin: 0 0 1rem 0;
+}
+
+.event-description {
+  white-space: pre-line;
 }
 
 .participants {
