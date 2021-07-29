@@ -1,3 +1,8 @@
+## Your environment
+* Which app version? (look at the navigation sidebar)
+* Which OS?
+* Which browser and version?
+
 ## Summary
 (Summarize the bug encountered concisely. Describe your issue here)
 
@@ -14,8 +19,5 @@
 
 (Paste any relevant screenshots/clips)
 
-## Your environment
-* Which OS?
-* Which browser and version?
 
 /label ~Bug
