@@ -44,6 +44,10 @@ enum ownership {
   ALL
 }
 
+const _defaultPagination = {
+  limit: EVENT_MAP_MAX_EVENTS
+}
+
 export default defineComponent({
   name: 'MyManagedEvents',
   components: {
@@ -78,18 +82,20 @@ export default defineComponent({
           key: ownership.ALL,
         }
       ],
-      pagination: {
-        limit: EVENT_MAP_MAX_EVENTS
-      } as Pagination | null,
+      pagination: _defaultPagination as Pagination | null,
       selectedOwner: ownership.ME,
       shownEvents: [] as EventDto[],
     }
   },
   methods: {
     async handleOwnerSelect(selectedOwner: number) {
+      this.resetPagination()
       this.setOwnershipFilter(selectedOwner)
       await this.updateShownEvents()
       this.selectedOwner = selectedOwner
+    },
+    resetPagination() {
+      this.pagination = _defaultPagination as Pagination
     },
     async updateCampaigns() {
       this.campaigns = (await this.$apiClient.campaigns.list()).payload.data
