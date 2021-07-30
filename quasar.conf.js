@@ -32,7 +32,7 @@ console.dir(env)
 
 let localConfigure = {}
 if (fs.existsSync('./quasar.conf.local.js')) {
-  localConfigure = require('./quasar.conf.local.js')
+  localConfigure = require('./quasar.conf.local.js')()
 }
 
 
@@ -261,6 +261,6 @@ module.exports = configure(function (ctx) {
         // extendWebpackPreload also available besides this chainWebpackPreload
       }
     },
-    ...localConfigure(),
+    ...localConfigure,
   }
 })
