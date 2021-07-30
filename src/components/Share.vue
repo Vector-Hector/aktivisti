@@ -21,7 +21,6 @@
       >
         <QFabAction
           class="share-fab"
-          type="a"
           :icon="ionLogoTwitter"
           :href="twitterShareUrl"
           target="_blank"
