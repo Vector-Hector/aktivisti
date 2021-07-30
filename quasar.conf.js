@@ -33,7 +33,6 @@ console.dir(env)
 let localConfigure = {}
 if (fs.existsSync('./quasar.conf.local.js')) {
   localConfigure = require('./quasar.conf.local.js')
-  console.log(`local-config: ${JSON.stringify(localConfigure())}`)
 }
 
 
