@@ -9,13 +9,14 @@
 /* eslint-env node */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const {configure} = require('quasar/wrappers')
-const execSync = require('child_process').execSync;
+const execSync = require('child_process').execSync
 
 const filterAppEnvVariables = (envObject) => {
   return Object.fromEntries(Object
     .entries(envObject)
     .filter(([key]) => key.startsWith('APP'))
-  )}
+  )
+}
 
 // Read .env file and let process env ovewrite it if set
 const env = {
@@ -31,7 +32,7 @@ console.dir(env)
 module.exports = configure(function (ctx) {
   return {
     sourceFiles: {
-      rootComponent: 'src/Entry.vue',
+      rootComponent: 'src/Entry.vue'
     },
     // https://v2.quasar.dev/quasar-cli/supporting-ts
     supportTS: {
@@ -100,10 +101,17 @@ module.exports = configure(function (ctx) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
-      https: false,
-      port: 8080,
-      open: false // opens browser window automatically
+      https: true,
+      port: 8443,
+      open: false, // opens browser window automatically
+      proxy: {
+        '/api': {
+          target: 'http://okey:8000',
+          changeOrigin: true
+        }
+      }
     },
+
 
     // https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
     framework: {
