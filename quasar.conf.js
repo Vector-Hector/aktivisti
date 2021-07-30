@@ -8,6 +8,7 @@
 
 /* eslint-env node */
 /* eslint-disable @typescript-eslint/no-var-requires */
+const fs = require('fs')
 const {configure} = require('quasar/wrappers')
 const execSync = require('child_process').execSync
 
@@ -28,6 +29,13 @@ const env = {
 console.info('Build environment')
 console.info('=================')
 console.dir(env)
+
+let localConfigure = {}
+if (fs.existsSync('./quasar.conf.local.js')) {
+  localConfigure = require('./quasar.conf.local.js')
+  console.log(`local-config: ${JSON.stringify(localConfigure())}`)
+}
+
 
 module.exports = configure(function (ctx) {
   return {
@@ -101,15 +109,9 @@ module.exports = configure(function (ctx) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
-      https: true,
-      port: 8443,
+      https: false,
+      port: 8080,
       open: false, // opens browser window automatically
-      proxy: {
-        '/api': {
-          target: 'http://okey:8000',
-          changeOrigin: true
-        }
-      }
     },
 
 
@@ -259,6 +261,7 @@ module.exports = configure(function (ctx) {
         // do something with the Electron main process Webpack cfg
         // extendWebpackPreload also available besides this chainWebpackPreload
       }
-    }
+    },
+    ...localConfigure(),
   }
 })
