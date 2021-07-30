@@ -21,7 +21,7 @@ const filterAppEnvVariables = (envObject) => {
 const env = {
   ...filterAppEnvVariables(require('dotenv').config().parsed ?? {}),
   ...filterAppEnvVariables(process.env),
-  APP_VERSION: execSync('git describe').toString().trim()
+  APP_VERSION: execSync('git describe --tags').toString().trim()
 }
 
 console.info('Build environment')
