@@ -6,13 +6,6 @@
       <div class="row">
         <div class="col-12">
           <QBtn
-            @click="locateEvent"
-            size="sm"
-            color="primary"
-            flat
-            :icon="ionLocate"
-          />
-          <QBtn
             v-if="isTeamCaptainOrCoordinator && event.event_type !== EventTypes.GENERIC"
             @click="openParticipantsModal"
             size="sm"
@@ -274,12 +267,10 @@ import {
   ionTrash,
   ionPerson,
   ionPersonOutline,
-  ionLocate,
   ionPrint
 } from '@quasar/extras/ionicons-v5'
 import { QBtn, QIcon, QList, QScrollArea } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
-import { MAP_PAN_TO, MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/mapbox/Map.vue'
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 
 const pollIntervalMs = 5000
@@ -321,8 +312,7 @@ export default defineComponent({
       ionPencil,
       ionPersonOutline,
       ionPerson,
-      ionTrash,
-      ionLocate
+      ionTrash
     }
   },
   watch: {
@@ -534,10 +524,6 @@ export default defineComponent({
           void this.refreshEvent()
           void this.refreshParticipants()
         })
-    },
-    locateEvent() {
-      MapEventBus.emit(MAP_GEOLOCATE_STOP_TRACKING, this.event.location)
-      MapEventBus.emit(MAP_PAN_TO, this.event.location)
     },
     openDeleteModal() {
       this.$q.dialog({
