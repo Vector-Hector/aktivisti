@@ -70,10 +70,10 @@
         <div class="col-4 col-sm-2">
           Treffpunkt:
         </div>
-        <div class="col-10">
+        <div class="col-8 col-sm-10">
           {{ event.location_description }}
         </div>
-        <div class="col-2">
+        <div class="col-4 col-sm-2">
           Start:
         </div>
         <div class="col-8 col-sm-10">
