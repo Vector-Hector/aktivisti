@@ -50,9 +50,9 @@ export default defineComponent({
       'icon-size': .4,
       'icon-anchor': 'bottom',
       'icon-image': ['case',
-        ['==', ['get', 'status'], PosterStatus.ABSENT], 'absent-icon',
-        ['==', ['get', 'status'], PosterStatus.DAMAGED], 'negative-icon',
-        ['==', ['get', 'status'], PosterStatus.MOUNTED], 'positive-icon',
+        ['==', ['get', 'status'], PosterStatus.ABSENT], ABSENT_IMAGE_NAME,
+        ['==', ['get', 'status'], PosterStatus.DAMAGED], NEGATIVE_IMAGE_NAME,
+        ['==', ['get', 'status'], PosterStatus.MOUNTED], POSITIVE_IMAGE_NAME,
         'absent-icon'
       ],
       'icon-allow-overlap': true
