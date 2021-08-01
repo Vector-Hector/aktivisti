@@ -75,7 +75,90 @@
             <FeatureLayer
               :features="[eventAreaToFeature(area)]"
             />
+            <PosterMarkerLayer
+              :posters="posters.filter(poster =>  poster.area === area.id)"
+              :editable="false"
+              :opacity="1.0"
+              :is-print="true"
+            />
           </Map>
+        </div>
+      </div>
+      <div class="posters-entry-table">
+        <div class="tableheader row">
+          <div class="col-1 poster-item-cell">#</div>
+          <div class="col-5 poster-item-cell location">Ort</div>
+          <div class="col-2 poster-item-cell">Position</div>
+          <div class="col-2 poster-item-cell">letzter<br />Status</div>
+          <div class="col-2 poster-item-cell new-status">aktueller<br />Status</div>
+        </div>
+        <div class="poster-item row"
+             v-for="{ poster_id, location_description, status, mounted_on } in parsedPoster.filter((poster) => poster.area === area.id)"
+             :key="poster_id">
+          <div class="col-1 poster-item-cell">{{ poster_id }}</div>
+          <div class="col-5 poster-item-cell location">{{ location_description }}</div>
+          <div class="col-2 poster-item-cell">{{ mounted_on }}</div>
+          <div class="col-2 poster-item-cell">{{ status }}</div>
+          <div class="col-2 poster-item-cell new-status">
+            <div v-for="(posterStatus, index) in posterStates" :key="index">
+              <QIcon :name="ionSquareOutline" />
+              {{ posterStatus }}
+              <br />
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="print-page" v-if="arePostersOutsideArea">
+      <img class="linke-logo" src="../../assets/logo_dielinke.png">
+      <h1 class="headline">Erfassungsbogen für Plakate ohne Gebiet</h1>
+      <div class="row q-col-gutter-x-sm">
+        <div class="col-8">
+          <p class="facts">
+            Einsatztyp: {{ eventTypeOptions.find(({key}) => key === event.event_type)?.label }}<br>
+            Einsatzname: {{ event.name }}<br>
+            Datum: {{ $utils.dateFormat(event.start_date) }}<br>
+          </p>
+          <Map
+            class="area-map"
+            :interactive="false"
+            :bounding-box="zoomBox"
+          >
+            <FeatureLayer
+              :features="areaFeatures"
+            />
+            <PosterMarkerLayer
+              :posters="posters.filter(poster =>  poster.area === null)"
+              :editable="false"
+              :opacity="1.0"
+              :is-print="true"
+            />
+          </Map>
+        </div>
+      </div>
+      <div class="posters-entry-table">
+        <div class="tableheader row">
+          <div class="col-1 poster-item-cell">#</div>
+          <div class="col-5 poster-item-cell location">Ort</div>
+          <div class="col-2 poster-item-cell">Position</div>
+          <div class="col-2 poster-item-cell">letzter<br />Status</div>
+          <div class="col-2 poster-item-cell new-status">aktueller<br />Status</div>
+        </div>
+        <div class="poster-item row"
+             v-for="{ poster_id, location_description, status, mounted_on } in parsedPoster.filter((poster) => poster.area === null)"
+             :key="poster_id">
+          <div class="col-1 poster-item-cell">{{ poster_id }}</div>
+          <div class="col-5 poster-item-cell location">{{ location_description }}</div>
+          <div class="col-2 poster-item-cell">{{ mounted_on }}</div>
+          <div class="col-2 poster-item-cell">{{ status }}</div>
+          <div class="col-2 poster-item-cell new-status">
+            <div v-for="(posterStatus, index) in posterStates" :key="index">
+              <QIcon :name="ionSquareOutline" />
+              {{ posterStatus }}
+              <br />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -94,9 +177,10 @@ import { BBox } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox, circle } from '@turf/turf'
 import { QBtn, QIcon } from 'quasar'
 import { eventTypeOptions } from 'src/api/model/EventTypes'
-import { ionArrowBack, ionEllipse, ionPrint } from '@quasar/extras/ionicons-v5'
+import { ionArrowBack, ionEllipse, ionPrint, ionSquareOutline } from '@quasar/extras/ionicons-v5'
 import EventMarker from 'components/EventMarker.vue'
-import { PosterDto } from 'src/api/model/PosterDto';
+import { PosterDto, PosterMountUtil, PosterStatus, PosterStatusUtil } from 'src/api/model/PosterDto';
+import PosterMarkerLayer from 'src/mapbox/PosterMarkerLayer';
 
 
 export default defineComponent({
@@ -105,6 +189,7 @@ export default defineComponent({
     EventMarker,
     Map,
     FeatureLayer,
+    PosterMarkerLayer,
     QIcon,
     QBtn
   },
@@ -127,7 +212,8 @@ export default defineComponent({
       eventTypeOptions,
       ionEllipse,
       ionArrowBack,
-      ionPrint
+      ionPrint,
+      ionSquareOutline,
     }
   },
   computed: {
@@ -141,6 +227,22 @@ export default defineComponent({
         features: [...this.areaFeatures, meetingPoint]
       }) : bbox(meetingPoint)
     },
+    parsedPoster(): { poster_id: number, location_description: string, status: string, mounted_on: string, area: number }[] {
+      return this.posters.map(({poster_id, area, location_description, status, mounted_on}) => ({
+        poster_id: poster_id,
+        area: area,
+        location_description: location_description,
+        status: PosterStatusUtil.getLabel(status),
+        mounted_on: PosterMountUtil.getLabel(mounted_on)
+      })).sort((a, b) => (a.poster_id - b.poster_id))
+    },
+    posterStates(): string[] {
+      return Object.keys(PosterStatus).map((key) => PosterStatusUtil.getLabel(key as PosterStatus))
+
+    },
+    arePostersOutsideArea(): boolean {
+      return this.posters.some(({area}) => area === null)
+    }
   },
   methods: {
     eventAreaToFeature(area: EventAreaDto) {
@@ -217,6 +319,52 @@ export default defineComponent({
 .area-map {
   height: 8cm;
   flex: none;
+}
+
+.posters-entry-table {
+  page-break-inside: auto;
+  margin: 0.5cm 0 0;
+
+  .row {
+    page-break-inside: avoid;
+    page-break-after: auto
+  }
+
+  .tableheader {
+    font-weight: bold;
+    font-size: 1.2rem;
+    line-height: 1.3;
+    border-top: 1px dotted $grey-4;
+  }
+
+  .poster-item {
+    border-top: 1px dotted $grey-4;
+    display: flex;
+    page-break-after: auto;
+  }
+
+  &:last-of-type {
+    border-bottom: 1px dotted $grey-4;
+  }
+
+  .poster-item-cell {
+    border-left: 1px dotted $grey-4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.location {
+      justify-content: flex-start;
+    }
+
+    &.new-status {
+      display: block;
+    }
+  }
+
+  &:last-of-type {
+    border-right: 1px dotted $grey-4;
+  }
 }
 
 .back-button, .print-button {
