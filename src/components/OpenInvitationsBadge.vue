@@ -13,8 +13,9 @@ import Timeout = NodeJS.Timeout;
 import { apiClient } from 'src/api/ApiClient'
 import { POLL_INVITATIONS_MS } from 'src/constants'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { authStore } from 'src/store/AuthStore'
+import { getAuthStore } from 'src/store/AuthStore'
 
+const authStore = getAuthStore()
 
 export default defineComponent({
   name: 'OpenInvitationsBadge',

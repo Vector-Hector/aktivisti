@@ -57,10 +57,11 @@ import { ionArrowBack } from '@quasar/extras/ionicons-v5'
 import { IntervalDebouncer } from 'src/utils/debounce'
 import { apiClient } from 'src/api/ApiClient'
 import { configStore } from 'src/store/ConfigStore'
-import { authStore } from 'src/store/AuthStore'
+import { getAuthStore } from 'src/store/AuthStore'
 import { userStore } from 'src/store/UserStore'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 
+const authStore = getAuthStore()
 
 export default defineComponent({
   name: 'App',

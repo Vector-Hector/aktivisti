@@ -1,12 +1,14 @@
 import { boot } from 'quasar/wrappers'
-import { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { AxiosResponse } from 'axios'
 import { apiClient } from 'src/api/ApiClient'
 import { OAuth2Client } from 'src/api/OAuth2Client'
-import { tokenStore } from 'src/store/TokenStore'
 import { ErrorBus, NOT_AUTHORIZED, SESSION_INVALID } from 'src/utils/errorBus'
 import { ApiClient } from 'src/api'
 import { ErrorCode } from 'src/api/ErrorCode'
-import { authStore } from 'src/store/AuthStore'
+import { AuthType, getAuthStore, getAuthType } from 'src/store/AuthStore'
+import { TokenAuthStore } from 'src/store/TokenAuthStore'
+
+const authStore = getAuthStore()
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -15,14 +17,49 @@ declare module '@vue/runtime-core' {
   }
 }
 
-export default boot(async ({app}) => {
-  app.config.globalProperties.$apiClient = apiClient
-  try {
-    const sessionRequest = await apiClient.session.session()
-    authStore.setUserId(sessionRequest.payload.data.user_id)
-  } catch (e) {
-    console.warn('Request to session failed, probably offline')
+async function refreshOnErrorInterceptor(error: any) {
+  const authStore = getAuthStore() as TokenAuthStore
+  const originalRequest = error.config
+  const expiryDate = authStore.expiryDate()
+  if ((error.response?.status === 403 || error.response?.status === 401) && expiryDate && new Date() > expiryDate) {
+    try {
+      await authStore.renewLogin()
+    } catch (e) {
+      return Promise.reject(error.response)
+    }
+    // redo initial request
+    return apiClient.axiosInstance(originalRequest)
+  } else {
+
+    // all other request just fail regulary
+    return Promise.reject(error.response)
   }
+}
+
+export default boot(async ({app}) => {
+
+  app.config.globalProperties.$apiClient = apiClient
+  const authType = getAuthType()
+  if (authType === AuthType.TOKEN) {
+    await (authStore as TokenAuthStore).loadFromNativeStorage()
+    try {
+      const profileRequest = await apiClient.user.get('me')
+      authStore.setUserId(profileRequest.payload.data.id)
+    } catch (e) {
+      // hydrating profile failed, not logged in
+    }
+  } else if (authType === AuthType.SESSION) {
+    try {
+      const sessionRequest = await apiClient.session.session()
+      authStore.setUserId(sessionRequest.payload.data.user_id)
+    } catch (e) {
+      console.warn('Request to session failed, probably offline')
+    }
+  }
+  apiClient.axiosInstance.interceptors.response.use(
+    (response: AxiosResponse) => response,
+    (error: any) => refreshOnErrorInterceptor(error)
+  )
   apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
     return response
   }, async (error: any) => {
@@ -40,14 +77,5 @@ export default boot(async ({app}) => {
     return Promise.reject(error)
   })
 
-  apiClient.axiosInstance.interceptors.request.use((request: AxiosRequestConfig) => {
-    if (tokenStore.getTokenDto() !== null) {
-      request.headers = {
-        ...request.headers,
-        'Authorization': `Bearer ${tokenStore.getTokenDto()!.access_token}`
-      }
-    }
-    return request
-  })
 
 })

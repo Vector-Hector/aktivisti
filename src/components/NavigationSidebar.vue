@@ -146,7 +146,7 @@
 import { defineComponent } from 'vue'
 import { uiStore } from 'src/store/UiStore'
 import { userStore } from 'src/store/UserStore'
-import { authStore } from 'src/store/AuthStore'
+import { getAuthStore } from 'src/store/AuthStore'
 import MenuLink from 'src/components/MenuLink.vue'
 import OpenInvitationsBadge from 'components/OpenInvitationsBadge.vue'
 import {
@@ -163,6 +163,7 @@ import {
 import { QBtn, QDrawer, QIcon } from 'quasar'
 import { farCalendarPlus, farIdCard } from '@quasar/extras/fontawesome-v5'
 
+const authStore = getAuthStore()
 
 export default defineComponent({
   name: 'NavigationSidebar',
