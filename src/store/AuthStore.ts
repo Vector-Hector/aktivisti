@@ -19,7 +19,7 @@ export function getAuthStore() {
 
 export function getAuthType() {
   if (Capacitor.getPlatform() === 'web') {
-    return AuthType.TOKEN
+    return AuthType.SESSION
   } else {
     return AuthType.TOKEN
   }
