@@ -7,9 +7,14 @@
         ref="map"
         @update:boundingBox="setBbox($event)"
       >
-        <GeolocationControl
-          :poi-location="poiLocation"
-        />
+        <template v-slot:top-right>
+          <div class="flex column q-gutter-y-sm">
+            <GeolocationControl
+              :poi-location="poiLocation"
+            />
+            <ResetRotateControl />
+          </div>
+        </template>
         <router-view
           v-slot="{ Component }"
           name="map"
@@ -43,10 +48,12 @@ import GeolocationControl from 'src/mapbox/GeolocationControl.vue'
 import MapContainer from 'components/MapContainer.vue'
 import { eventDetailStore } from 'src/store/EventDetailStore'
 import { LocationDto } from 'src/api/model/LocationDto'
+import ResetRotateControl from 'src/mapbox/ResetRotateControl.vue'
 
 export default defineComponent({
   name: 'EventMap',
   components: {
+    ResetRotateControl,
     GeolocationControl,
     MapContainer,
     Map,

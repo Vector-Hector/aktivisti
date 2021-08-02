@@ -41,6 +41,8 @@ import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 import { userStore } from 'src/store/UserStore'
 import { posterListStore } from 'src/store/PosterListStore'
+import GeolocationControl from 'src/mapbox/GeolocationControl.vue'
+import ResetRotateControl from 'src/mapbox/ResetRotateControl.vue'
 
 const DoorToDoorEventSteps = [{
   label: 'Einstellungen',
