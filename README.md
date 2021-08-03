@@ -54,6 +54,15 @@ npm run dev
 npm run build
 ```
 
+### Build capacitor app
+
+This project also has a capacitor target. Following npm scripts alias capacitor builds:
+
+```
+npm run build:android # builds app for capacitor android target
+npm run dev:android # starts dev server for capacitor android target
+```
+
 ### Run linter and auto-fix
 
 ```

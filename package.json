@@ -15,7 +15,9 @@
   "scripts": {
     "lint": "eslint './src/**/*.{ts,tsx,js,jsx,vue}' --max-warnings 0",
     "dev": "quasar dev",
+    "dev:android": "quasar dev -m capacitor -T android",
     "build": "quasar build",
+    "build:android": "quasar build -m capacitor -T android",
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
