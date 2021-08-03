@@ -53,7 +53,7 @@
         <div class="col-auto column">
           <LabeledBtn
             v-if="
-              event.event_type === EventTypes.DOOR_TO_DOOR &&
+              isPrintableEvent &&
               (personalParticipation?.is_verified || isTeamCaptainOrCoordinator)
             "
             round
@@ -392,6 +392,10 @@ export default defineComponent({
     },
     isCampaignAdmin(): boolean {
       return userStore.isCampaignAdmin()
+    },
+    isPrintableEvent(): boolean {
+      const {event_type} = this.event
+      return [EventTypes.DOOR_TO_DOOR, EventTypes.POSTERS].includes(event_type)
     }
   },
   methods: {
