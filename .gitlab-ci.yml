@@ -65,6 +65,41 @@ bundle-review:
     - main
     - develop
 
+.android:
+  image: circleci/android:api-30-node
+  stage: bundle
+  script:
+    - npm ci
+    - npx quasar build -m capacitor -T android
+  cache:
+    paths:
+      - node_modules/
+  artifacts:
+    paths:
+      - src-capacitor/android/build/app/build/
+
+android-development:
+  extends: .android
+  environment:
+    name: development
+  only:
+    - develop
+
+android-staging:
+  extends: .android
+  environment:
+    name: staging
+  only:
+    - main
+
+android-production:
+  extends: .android
+  environment:
+    name: production
+  only:
+    - tags
+
+
 staging:
   extends: .deploy-template
   stage: deploy

@@ -19,9 +19,11 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
+    "@capacitor/app": "^1.0.2",
     "@capacitor/core": "^3.0.2",
     "@capacitor/geolocation": "^1.0.2",
     "@capacitor/share": "^1.0.3",
+    "@capacitor/splash-screen": "^1.1.0",
     "@mapbox/mapbox-gl-draw": "^1.3.0",
     "@mapbox/mapbox-gl-geocoder": "^4.7.1",
     "@mapbox/mapbox-sdk": "^0.13.0",

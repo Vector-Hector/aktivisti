@@ -1,0 +1,16 @@
+{
+  "name": "wk-frontend",
+  "version": "0.3.0-rc.1",
+  "description": "The PWA / Hybrid DIE LINKE. App",
+  "author": "control.alt.coop eG <kontakt@ctrl.alt.coop>",
+  "private": true,
+  "dependencies": {
+    "@capacitor/android": "^3.1.2",
+    "@capacitor/app": "^1.0.2",
+    "@capacitor/cli": "^3.1.2",
+    "@capacitor/core": "^3.0.2",
+    "@capacitor/geolocation": "^1.0.2",
+    "@capacitor/share": "^1.0.3",
+    "@capacitor/splash-screen": "^1.1.0"
+  }
+}
