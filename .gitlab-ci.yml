@@ -38,6 +38,7 @@ lint:
     paths:
       - node_modules/
   environment:
+    action: prepare
     name: staging
   artifacts:
     paths:
@@ -46,6 +47,7 @@ lint:
 bundle-staging:
   extends: .bundle
   environment:
+    action: prepare
     name: staging
   only:
     - main
@@ -53,6 +55,7 @@ bundle-staging:
 bundle-development:
   extends: .bundle
   environment:
+    action: prepare
     name: development
   only:
     - develop
@@ -60,6 +63,7 @@ bundle-development:
 bundle-review:
   extends: .bundle
   environment:
+    action: prepare
     name: review/$CI_COMMIT_REF_SLUG
   except:
     - main
@@ -81,6 +85,7 @@ bundle-review:
 android-development:
   extends: .android
   environment:
+    action: prepare
     name: development
   only:
     - branches
@@ -91,6 +96,7 @@ android-development:
 android-staging:
   extends: .android
   environment:
+    action: prepare
     name: staging
   only:
     - main
@@ -98,6 +104,7 @@ android-staging:
 android-production:
   extends: .android
   environment:
+    action: prepare
     name: production
   only:
     - tags
