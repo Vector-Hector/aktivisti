@@ -100,7 +100,12 @@ export default defineComponent({
         zoom: props.zoom,
         center: props.center,
         bounds: props.boundingBox,
-        interactive: props.interactive
+        interactive: props.interactive,
+        // for now we are disabling any rotating and pitching interaction
+        touchZoomRotate: false,
+        touchPitch: false,
+        dragRotate: false,
+        pitchWithRotate: false
       })
       map.value.on('load', () => {
         map.value?.resize()

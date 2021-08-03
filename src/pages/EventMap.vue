@@ -7,7 +7,9 @@
         ref="map"
         @update:boundingBox="setBbox($event)"
       >
-        <GeolocationControl />
+        <GeolocationControl
+          :poi-location="poiLocation"
+        />
         <router-view
           v-slot="{ Component }"
           name="map"
@@ -39,6 +41,8 @@ import { QPage } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import GeolocationControl from 'src/mapbox/GeolocationControl.vue'
 import MapContainer from 'components/MapContainer.vue'
+import { eventDetailStore } from 'src/store/EventDetailStore'
+import { LocationDto } from 'src/api/model/LocationDto'
 
 export default defineComponent({
   name: 'EventMap',
@@ -56,6 +60,9 @@ export default defineComponent({
     }
   },
   computed: {
+    poiLocation(): LocationDto | undefined {
+      return eventDetailStore.state.event?.location
+    },
     mapRef(): InstanceType<typeof Map> | undefined {
       return this.$refs.map as InstanceType<typeof Map> | undefined
     },

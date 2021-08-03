@@ -5,7 +5,7 @@
         <AssignAreaParticipants />
       </div>
     </div>
-    <div class="row">
+    <div class="row q-py-sm">
       <div class="col-grow buttons">
         <QBtn
           v-if="event.poster_creation_allowed"
