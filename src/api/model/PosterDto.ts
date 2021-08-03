@@ -29,7 +29,7 @@ export enum PosterMount {
   OTHER = 'OTHER',
 }
 
-enum _PosterMountString {
+enum PosterMountString {
   LAMPPOST = 'Straßenlaterne',
   TREE = 'Baum',
   OTHER = 'Sonstige',
@@ -37,7 +37,7 @@ enum _PosterMountString {
 
 export class PosterMountUtil {
   static getLabel(posterMount: PosterMount): string {
-    return _PosterMountString[posterMount]
+    return PosterMountString[posterMount]
   }
 }
 
