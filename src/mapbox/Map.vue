@@ -9,6 +9,9 @@
       ref="mapContainer"
       class="map"
     >
+      <div class="top-right-overlay">
+        <slot v-if="initialized" name="top-right" />
+      </div>
       <slot v-if="initialized" />
     </div>
   </div>
@@ -102,7 +105,6 @@ export default defineComponent({
         bounds: props.boundingBox,
         interactive: props.interactive,
         // for now we are disabling any rotating and pitching interaction
-        touchZoomRotate: false,
         touchPitch: false,
         dragRotate: false,
         pitchWithRotate: false
@@ -185,5 +187,12 @@ export default defineComponent({
   flex: 1;
   order: 1;
   display: flex;
+}
+
+.top-right-overlay {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
 }
 </style>

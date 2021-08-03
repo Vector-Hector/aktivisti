@@ -240,13 +240,6 @@ export default defineComponent({
 
 </script>
 <style lang="scss">
-.geolocation-control {
-  z-index: 10;
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-}
-
 .pulse {
   font-size: 24px;
   animation: pulse-animation 2s infinite;
