@@ -82,7 +82,7 @@ bundle-review:
       - node_modules/
   artifacts:
     paths:
-      - src-capacitor/android/build/app/build/
+      - src-capacitor/android/app/build/
 
 android-development:
   extends: .android
