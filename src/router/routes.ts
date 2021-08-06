@@ -126,10 +126,7 @@ const routes = [
               {
                 path: 'report',
                 props: true,
-                components: {
-                  default: EventDetailReport,
-                  map: EventDetailOverviewMap
-                },
+                component: EventDetailReport,
                 name: 'event-detail-report',
                 meta: {
                   title: () => 'Ergebnisse',

@@ -1,6 +1,6 @@
 <template>
   <QPage class="event-map">
-    <MapContainer>
+    <MapContainer v-if="isMapDefined">
       <Map
         class="map"
         :bounding-box="bbox"
@@ -33,6 +33,7 @@
         </div>
       </MapOverlayProxy>
     </MapContainer>
+    <router-view v-else />
   </QPage>
 </template>
 
@@ -63,8 +64,20 @@ export default defineComponent({
   data() {
     return {
       bbox: userStore.getState().bbox,
-      BottomSheetState
+      BottomSheetState,
+      isMapDefined: true,
     }
+  },
+  beforeRouteEnter(to, from, next) {
+    const isMapDefined = 'map' in to.matched[to.matched.length - 1].components
+    next((vm) => {
+      // @ts-ignore
+      vm.isMapDefined = isMapDefined
+    })
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.isMapDefined = 'map' in to.matched[to.matched.length - 1].components
+    next()
   },
   computed: {
     poiLocation(): LocationDto | undefined {
