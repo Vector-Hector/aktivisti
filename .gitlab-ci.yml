@@ -68,6 +68,8 @@ bundle-review:
 .android:
   image: circleci/android:api-30-node
   stage: bundle
+  before_script:
+    - sudo npm install -g npm@^7
   script:
     - npm ci
     - npx quasar build -m capacitor -T android
