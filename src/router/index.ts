@@ -42,6 +42,8 @@ export default route(function (/* { store, ssrContext } */) {
           next: to.fullPath
         }
       })
+    } else if (to.matched.length < 1) {
+      next({name: 'app'})
     } else {
       next()
     }
