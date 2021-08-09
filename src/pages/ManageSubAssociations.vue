@@ -77,7 +77,8 @@
                           :model-value="user.permission_name"
                           @update:model-value="(permission) => updateUserObjectPermissions(permission, user)"
                           :options="permissionTypeOptionsForMyPermissions"
-                          :option-disable="opt => Object(opt) === opt ? opt.inactive === true : true"
+                          :option-disable="opt =>
+                            Object(opt) === opt ? opt.inactive === true || user.permission_codename === PermissionCodename.MANAGE_EVENTS: true"
                           option-label="label"
                           option-value="key"
                         >
@@ -141,7 +142,8 @@ export default defineComponent({
       managedUsers: [] as UserSuggestionItem[],
       userList: [] as ManagedUser[],
       loading: true,
-      permissionTypeOptions
+      permissionTypeOptions,
+      PermissionCodename
     }
   },
   async created() {
@@ -249,26 +251,23 @@ export default defineComponent({
       const myPermissionsForSubassociation = this.userManagementPermissions.filter(
         (permission) => permission.object_pk === subassociation.id.toString()
       )
-      if (permissionType.key === PermissionCodename.NONE) {
-        return true
-      }
+      // If I have both teamcaptain and coordinator I am allowed to manage all kinds of permissions
       if (myPermissionsForSubassociation.length > 1) {
         return true
       }
-      else {
+      else if (myPermissionsForSubassociation[0].permission_codename === PermissionCodename.MANAGE_EVENTS) {
         console.log('userMgmtPermissions: ', this.userManagementPermissions)
         console.log('myPermissionsForSubAssociation: ', myPermissionsForSubassociation)
-        if (myPermissionsForSubassociation[0].permission_codename === PermissionCodename.MANAGE_EVENTS) {
-          return true
-        }
-        else if (myPermissionsForSubassociation[0].permission_codename === PermissionCodename.TEAM_CAPTAIN
-          && permissionType.key === PermissionCodename.TEAM_CAPTAIN) {
-          return true
-        }
-        else {
-          return false
-        }
+        return true
       }
+      else if (myPermissionsForSubassociation[0].permission_codename === PermissionCodename.TEAM_CAPTAIN
+        && (permissionType.key === PermissionCodename.TEAM_CAPTAIN || permissionType.key === PermissionCodename.NONE)) {
+        return true
+      }
+      else {
+        return false
+      }
+
 
     }
   }
