@@ -71,7 +71,7 @@ bundle-review:
   before_script:
     - sudo npm install -g npm@^7
   script:
-    - npm ci
+    - sudo npm ci
     - npx quasar build -m capacitor -T android
   cache:
     paths:
@@ -85,7 +85,10 @@ android-development:
   environment:
     name: development
   only:
-    - develop
+    - branches
+  except:
+    - tags
+    - main
 
 android-staging:
   extends: .android
