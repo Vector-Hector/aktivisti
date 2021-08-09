@@ -11,7 +11,7 @@
             :dropdownIcon="ionChevronDown"
             filled
             :model-value="selectedSubAssociation"
-            @update:model-value="selectedSubAssociation=$event"
+            @update:model-value="selectSubAssociation"
             use-input
             map-options
             input-debounce="0"
@@ -30,7 +30,7 @@
           </QSelect>
           <div
             class="user-management-section"
-            v-show="selectedSubAssociation"
+            v-show="selectedSubAssociation.name !== ''"
           >
             <QSelect
               class="w-100 d-flex flex-col"
@@ -54,10 +54,10 @@
             </QSelect>
             <div class="row">
               <div class="col">
-                <QList v-show="managedUsers.length > 0">
+                <QList v-show="userList.length > 0">
                   <QItem
-                    v-for="user in managedUsers"
-                    :key="user.id"
+                    v-for="user in userList"
+                    :key="user.user"
                   >
                     <QItemSection>
                       <QItemLabel>
@@ -69,15 +69,17 @@
                       <div
                         class="invitation-item-actions"
                       >
-                        <QIcon
-                          fill="none"
-                          @click="deleteParticipation(participation.id)"
+                        <QSelect
+                          class=""
+                          :model-value="user.permission_name"
+                          @update:model-value="(permission) => updateUserObjectPermissions(permission, user)"
+                          :options="permissionTypeOptionsForMyPermissions"
+                          :option-disable="opt => Object(opt) === opt ? opt.inactive === true : true"
+                          option-label="label"
+                          option-value="key"
                         >
-                          <QIcon
-                            :name="ionClose"
-                            aria-label="Nutzer von der Aktion entfernen"
-                          />
-                        </QIcon>
+
+                        </QSelect>
                       </div>
                     </QItemSection>
                   </QItem>
@@ -93,11 +95,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { QSelect, QPage, QItem, QList, QItemSection, QItemLabel, QIcon } from 'quasar'
+import { QSelect, QPage, QItem, QList, QItemSection, QItemLabel } from 'quasar'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { userStore} from 'src/store/UserStore'
-import { UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
+import {UserObjectPermissionDto, permissionTypeOptions, PermissionCodename} from 'src/api/model/UserObjectPermissionDto'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 
 
@@ -105,6 +107,10 @@ interface UserSuggestionItem {
   id: number
   username: string
   email?: string
+}
+
+interface ManagedUser extends UserObjectPermissionDto {
+  username: string
 }
 
 export default defineComponent({
@@ -115,7 +121,6 @@ export default defineComponent({
     QPage,
     QItem,
     QList,
-    QIcon,
     QItemSection,
     QItemLabel
   },
@@ -126,12 +131,14 @@ export default defineComponent({
       allSubAssociations: [] as SubAssociationDto[],
       mySubAssociations: [] as SubAssociationDto[],
       suggestedSubAssociations: [] as SubAssociationDto[],
-      selectedSubAssociation: '',
+      selectedSubAssociation: {id: 0, name: ''},
       //TODO check whether this needs to be a list
       selectedUsers: [],
       suggestedUsers: [] as UserSuggestionItem[],
       managedUsers: [] as UserSuggestionItem[],
-      loading: true
+      userList: [] as ManagedUser[],
+      loading: true,
+      permissionTypeOptions
     }
   },
   async created() {
@@ -144,6 +151,11 @@ export default defineComponent({
     userManagementPermissions(): UserObjectPermissionDto[] {
       return userStore.getMyTeamCaptainOrCoordinatorPermissions()
     },
+    permissionTypeOptionsForMyPermissions(): {key: string, label: string, inactive: boolean}[] {
+      return permissionTypeOptions.map(
+        (option) => Object.assign(option, {inactive: !this.allowedToManagePermissions(this.selectedSubAssociation, option)})
+      )
+    }
   },
   methods: {
     async getSubAssociations() {
@@ -187,6 +199,74 @@ export default defineComponent({
         this.managedUsers.unshift(user)
       }
       console.log('managedUsers: ', this.managedUsers)
+    },
+    async selectSubAssociation(subAssociation: {id: number, name: string}) {
+      console.log('@update triggered!')
+      console.log('model value: ', subAssociation)
+      this.selectedSubAssociation = subAssociation
+      await this.getUsersWithPermissionsForSubAssociation(subAssociation)
+    },
+    async getUsersWithPermissionsForSubAssociation(subAssociation: {id: number, name: string}) {
+      const userObjectPermissions: UserObjectPermissionDto[] = (await this.$apiClient.userPermissions.list({query: subAssociation.id.toString()})).payload.data
+      const userIds: number[] = userObjectPermissions.map((permission) => permission.user)
+      const userPublicProfiles: UserSuggestionItem[] = (await this.$apiClient.publicProfiles.list()).payload.data
+      const relevantUserPublicProfiles = userPublicProfiles.filter((profile) => userIds.indexOf(profile.id) >= 0)
+      this.userList = userObjectPermissions.map(
+        (permission) =>
+          Object.assign(
+            permission,
+            {username:
+              relevantUserPublicProfiles.filter(
+                (publicProfile) => publicProfile.id === permission.user
+              )[0].username}
+          )
+      )
+      console.log('userObjectPermissions: ', userObjectPermissions)
+      console.log('userIds: ', userIds)
+      console.log('userPublicProfiles: ', relevantUserPublicProfiles)
+      //TODO how do global permissions fall into all this?
+    },
+    //TODO How to deal with multiple permissions (teamcaptain AND coordinator?)
+    //In theory, I can do only one, if that's the desired behavior; we have PATCH and PUT
+    //TODO How to deal with demoting
+    updateUserObjectPermissions(permission: { key: string, label: string }, user: ManagedUser) {
+      console.log('newly selected permission is: ', permission)
+      //TODO get old permission(s) from userObjectPermissions and if demoting DELETE
+      console.log('user: ', user)
+      const newUserObjectPermissions = {
+        user: user.user,
+        object_pk : user.object_pk,
+        content_type : user.content_type,
+        permission_codename : permission.key
+      }
+      console.log('newUserObjectPermissions: ', newUserObjectPermissions)
+
+    },
+    allowedToManagePermissions(subassociation: {id: number, name: string}, permissionType: { key: string, label: string }) {
+      const myPermissionsForSubassociation = this.userManagementPermissions.filter(
+        (permission) => permission.object_pk === subassociation.id.toString()
+      )
+      if (permissionType.key === PermissionCodename.NONE) {
+        return true
+      }
+      if (myPermissionsForSubassociation.length > 1) {
+        return true
+      }
+      else {
+        console.log('userMgmtPermissions: ', this.userManagementPermissions)
+        console.log('myPermissionsForSubAssociation: ', myPermissionsForSubassociation)
+        if (myPermissionsForSubassociation[0].permission_codename === PermissionCodename.MANAGE_EVENTS) {
+          return true
+        }
+        else if (myPermissionsForSubassociation[0].permission_codename === PermissionCodename.TEAM_CAPTAIN
+          && permissionType.key === PermissionCodename.TEAM_CAPTAIN) {
+          return true
+        }
+        else {
+          return false
+        }
+      }
+
     }
   }
 })
