@@ -35,6 +35,7 @@
             <QSelect
               class="w-100 d-flex flex-col"
               placeholder="Benutzer:in suchen"
+              :dropdownIcon="ionChevronDown"
               use-input
               :model-value="selectedUsers"
               :multiple="true"
@@ -71,6 +72,8 @@
                       >
                         <QSelect
                           class=""
+                          :dropdownIcon="ionChevronDown"
+                          filled
                           :model-value="user.permission_name"
                           @update:model-value="(permission) => updateUserObjectPermissions(permission, user)"
                           :options="permissionTypeOptionsForMyPermissions"
