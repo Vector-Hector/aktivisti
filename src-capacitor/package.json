@@ -1,6 +1,5 @@
 {
   "name": "wk-frontend",
-  "version": "0.3.0-rc.1",
   "description": "The PWA / Hybrid DIE LINKE. App",
   "author": "control.alt.coop eG <kontakt@ctrl.alt.coop>",
   "private": true,

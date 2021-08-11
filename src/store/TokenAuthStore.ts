@@ -1,5 +1,3 @@
-import { userStore } from 'src/store/UserStore'
-import { apiClient } from 'src/api/ApiClient'
 import { LoginDto } from 'src/api/model/LoginDto'
 import { oAuth2Client } from 'src/api/OAuth2Client'
 import { TokenDto } from 'src/api/model/TokenDto'
@@ -27,7 +25,6 @@ export class TokenAuthStore extends BaseAuthStore<TokenAuthStoreState> {
     this.state.tokenSet = parseIfPossible((await Storage.get({key: KEY_TOKENSET})).value) as TokenDto | null
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   async logout() {
     await this.setTokenSet(null)
     this.deleteSessionData()
@@ -68,20 +65,6 @@ export class TokenAuthStore extends BaseAuthStore<TokenAuthStoreState> {
       client_id: process.env.APP_CLIENT_ID!
     })
     await this.setTokenSet(tokenResponse.payload)
-    const profileRequest = await apiClient.user.get('me', ['sub_association'])
-    const permissionsRequest = await apiClient.userPermissions.list({user: profileRequest.payload.data.id})
-    this.state.userId = profileRequest.payload.data.id
-    userStore.setPermissions(permissionsRequest.payload.data)
-    userStore.setUser(profileRequest.payload.data)
-    userStore.setHomeAssociation(profileRequest.payload.embedded.sub_association?.[0] ?? null)
-  }
-
-  setUserId(value: number | null) {
-    this.state.userId = value
-  }
-
-  isLoggedIn() {
-    return this.state.userId !== null
   }
 
   async renewLogin() {
