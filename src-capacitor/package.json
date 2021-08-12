@@ -1,6 +1,5 @@
 {
   "name": "wk-frontend",
-  "version": "0.3.0-rc.1",
   "description": "The PWA / Hybrid DIE LINKE. App",
   "author": "control.alt.coop eG <kontakt@ctrl.alt.coop>",
   "private": true,
@@ -11,6 +10,7 @@
     "@capacitor/core": "^3.0.2",
     "@capacitor/geolocation": "^1.0.2",
     "@capacitor/share": "^1.0.3",
-    "@capacitor/splash-screen": "^1.1.0"
+    "@capacitor/splash-screen": "^1.1.0",
+    "@capacitor/storage": "^1.0.3"
   }
 }

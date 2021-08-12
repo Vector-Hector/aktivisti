@@ -249,7 +249,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
-import { authStore } from 'src/store/AuthStore'
+import { getAuthStore } from 'src/store/AuthStore'
 import { userStore } from 'src/store/UserStore'
 import EventInvitePeopleModal from 'src/components/modals/EventInvitePeopleModal.vue'
 import EventParticipantsModal from 'src/components/modals/EventParticipantsModal.vue'
@@ -276,6 +276,7 @@ import Share from 'components/Share.vue'
 import LabeledBtn from 'components/LabeledBtn.vue'
 
 const pollIntervalMs = 5000
+const authStore = getAuthStore()
 
 export default defineComponent({
   name: 'EventDetailOverview',
