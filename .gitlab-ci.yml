@@ -113,6 +113,51 @@ android-production:
   only:
     - tags
 
+.ios:
+  stage: bundle
+  script:
+    - sudo npm ci
+    - npx quasar build -m capacitor -T ios
+  tags:
+    - macos
+  cache:
+    paths:
+      - node_modules/
+  artifacts:
+    paths:
+      - src-capacitor/ios/App/
+
+
+ios-development:
+  extends: .ios
+  environment:
+    action: prepare
+    name: development
+  only:
+    - branches
+  except:
+    - tags
+    - main
+
+ios-staging:
+  extends: .ios
+  environment:
+    action: prepare
+    name: staging
+  only:
+    - main
+
+ios-production:
+  extends: .ios
+  environment:
+    action: prepare
+    name: production
+  only:
+    - tags
+
+
+
+
 
 staging:
   extends: .deploy-template
