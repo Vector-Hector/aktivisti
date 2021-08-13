@@ -215,14 +215,23 @@ export default defineComponent({
       const userPublicProfiles: UserPermissionItem[] = (await this.$apiClient.publicProfiles.list()).payload.data
       const relevantUserPublicProfiles = userPublicProfiles.filter((profile) => userIds.indexOf(profile.id) >= 0)
       this.userList = userObjectPermissions.map(
-        (permission) =>
-          Object.assign(
-            permission,
-            {username:
-              relevantUserPublicProfiles.filter(
-                (publicProfile) => publicProfile.id === permission.user
-              )[0].username}
-          )
+        (permission) => {
+          return {
+            id: permission.user,
+            username: relevantUserPublicProfiles.filter(
+              (publicProfile) => publicProfile.id === permission.user
+            )[0].username,
+            permission_codename: permission.permission_codename,
+            permission_name: permission.permission_name
+          }
+        }
+          //Object.assign(
+          //  permission,
+          //  {username:
+          //    relevantUserPublicProfiles.filter(
+          //      (publicProfile) => publicProfile.id === permission.user
+          //    )[0].username}
+          //)
       )
       console.log('userObjectPermissions: ', userObjectPermissions)
       console.log('userIds: ', userIds)
@@ -237,9 +246,9 @@ export default defineComponent({
       //TODO get old permission(s) from userObjectPermissions and if demoting DELETE
       console.log('user: ', user)
       const newUserObjectPermissions = {
-        user: user.user,
-        object_pk : user.object_pk,
-        content_type : user.content_type,
+        user: user.id,
+        object_pk : this.selectedSubAssociation.id,
+        content_type : 13, //13 === subassociation
         permission_codename : permission.key
       }
       console.log('newUserObjectPermissions: ', newUserObjectPermissions)
