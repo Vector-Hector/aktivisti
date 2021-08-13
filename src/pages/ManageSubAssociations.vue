@@ -113,17 +113,6 @@ interface UserPermissionItem {
   permission_name?: string
 }
 
-
-interface UserSuggestionItem {
-  id: number
-  username: string
-  email?: string
-}
-
-interface ManagedUser extends UserObjectPermissionDto {
-  username: string
-}
-
 export default defineComponent({
   name: 'ManageSubAssociations',
   components: {
@@ -145,9 +134,8 @@ export default defineComponent({
       selectedSubAssociation: {id: 0, name: ''},
       myPermissionForSelectedSubAssociation: {},
       selectedUser: {} as UserPermissionItem,
-      suggestedUsers: [] as UserSuggestionItem[],
-      managedUsers: [] as UserSuggestionItem[],
-      userList: [] as ManagedUser[],
+      suggestedUsers: [] as UserPermissionItem[],
+      userList: [] as UserPermissionItem[],
       loading: true,
       permissionTypeOptions,
       PermissionCodename
@@ -195,7 +183,7 @@ export default defineComponent({
       return `${item.username} ${item.email ?? ''}`
     },
     async searchUsers(query: string, update: any) {
-      let suggestions: UserSuggestionItem[]
+      let suggestions: UserPermissionItem[]
       if (query) {
         suggestions = (await this.$apiClient.publicProfiles.list({query: query})).payload.data
       } else {
@@ -205,12 +193,15 @@ export default defineComponent({
         this.suggestedUsers = suggestions
       })
     },
-    selectUser(user: UserSuggestionItem) {
+    selectUser(user: UserPermissionItem) {
       console.log('selectUser triggered!')
-      if (!this.managedUsers.find( ({id}) => id === user.id )) {
-        this.managedUsers.unshift(user)
+      if (!this.userList.find( ({id}) => id === user.id )) {
+        user.permission_codename = PermissionCodename.NONE
+        user.permission_name = 'Mitglied'
+        this.userList.unshift(user)
       }
-      console.log('managedUsers: ', this.managedUsers)
+      console.log('managedUsers: ', this.userList)
+      this.selectedUser = user
     },
     async selectSubAssociation(subAssociation: {id: number, name: string}) {
       console.log('@update triggered!')
@@ -221,7 +212,7 @@ export default defineComponent({
     async getUsersWithPermissionsForSubAssociation(subAssociation: {id: number, name: string}) {
       const userObjectPermissions: UserObjectPermissionDto[] = (await this.$apiClient.userPermissions.list({query: subAssociation.id.toString()})).payload.data
       const userIds: number[] = userObjectPermissions.map((permission) => permission.user)
-      const userPublicProfiles: UserSuggestionItem[] = (await this.$apiClient.publicProfiles.list()).payload.data
+      const userPublicProfiles: UserPermissionItem[] = (await this.$apiClient.publicProfiles.list()).payload.data
       const relevantUserPublicProfiles = userPublicProfiles.filter((profile) => userIds.indexOf(profile.id) >= 0)
       this.userList = userObjectPermissions.map(
         (permission) =>
@@ -241,7 +232,7 @@ export default defineComponent({
     //TODO How to deal with multiple permissions (teamcaptain AND coordinator?)
     //In theory, I can do only one, if that's the desired behavior; we have PATCH and PUT
     //TODO How to deal with demoting
-    updateUserObjectPermissions(permission: { key: string, label: string }, user: ManagedUser) {
+    updateUserObjectPermissions(permission: { key: string, label: string }, user: UserPermissionItem) {
       console.log('newly selected permission is: ', permission)
       //TODO get old permission(s) from userObjectPermissions and if demoting DELETE
       console.log('user: ', user)
