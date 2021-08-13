@@ -37,12 +37,11 @@
               placeholder="Benutzer:in suchen"
               :dropdownIcon="ionChevronDown"
               use-input
-              :model-value="selectedUsers"
-              :multiple="true"
+              :model-value="selectedUser"
+              @update:model-value="selectUser"
               :option-label="userLabel"
               :options="suggestedUsers"
               @filter="searchUsers"
-              @add="selectUser($event.value)"
             >
               <template #item="slotProps">
                 <div class="user-autocomplete-username">
@@ -107,6 +106,14 @@ import {UserObjectPermissionDto, permissionTypeOptions, PermissionCodename} from
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 
 
+interface UserPermissionItem {
+  id: number
+  username: string
+  permission_codename?: string
+  permission_name?: string
+}
+
+
 interface UserSuggestionItem {
   id: number
   username: string
@@ -136,8 +143,8 @@ export default defineComponent({
       mySubAssociations: [] as SubAssociationDto[],
       suggestedSubAssociations: [] as SubAssociationDto[],
       selectedSubAssociation: {id: 0, name: ''},
-      //TODO check whether this needs to be a list
-      selectedUsers: [],
+      myPermissionForSelectedSubAssociation: {},
+      selectedUser: {} as UserPermissionItem,
       suggestedUsers: [] as UserSuggestionItem[],
       managedUsers: [] as UserSuggestionItem[],
       userList: [] as ManagedUser[],
