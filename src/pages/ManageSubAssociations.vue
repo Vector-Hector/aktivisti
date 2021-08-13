@@ -77,7 +77,10 @@
                           @update:model-value="(permission) => updateUserObjectPermissions(permission, user)"
                           :options="permissionTypeOptionsForMyPermissions"
                           :option-disable="opt =>
-                            Object(opt) === opt ? opt.inactive === true || user.permission_codename === PermissionCodename.MANAGE_EVENTS: true"
+                            Object(opt) === opt ? opt.inactive === true
+                            || (user.permission_codename === PermissionCodename.MANAGE_EVENTS &&
+                                myPermissionForSelectedSubAssociation.permission_codename === PermissionCodename.TEAM_CAPTAIN)
+                             : true"
                           option-label="label"
                           option-value="key"
                         >
@@ -214,6 +217,9 @@ export default defineComponent({
       const userIds: number[] = userObjectPermissions.map((permission) => permission.user)
       const userPublicProfiles: UserPermissionItem[] = (await this.$apiClient.publicProfiles.list()).payload.data
       const relevantUserPublicProfiles = userPublicProfiles.filter((profile) => userIds.indexOf(profile.id) >= 0)
+      this.myPermissionForSelectedSubAssociation = this.userManagementPermissions.filter(
+        (permission) => permission.object_pk === this.selectedSubAssociation.id.toString()
+      )[0]
       this.userList = userObjectPermissions.map(
         (permission) => {
           return {
