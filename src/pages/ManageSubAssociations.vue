@@ -179,8 +179,8 @@ export default defineComponent({
         this.suggestedSubAssociations = this.mySubAssociations.filter(({name}) => name.toLowerCase().includes(lowercasedValue))
       })
     },
-    userLabel(item: UserSuggestionItem) {
-      return `${item.username} ${item.email ?? ''}`
+    userLabel(item: UserPermissionItem) {
+      return `${item.username}`
     },
     async searchUsers(query: string, update: any) {
       let suggestions: UserPermissionItem[]
