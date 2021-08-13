@@ -116,7 +116,7 @@ android-production:
 .ios:
   stage: bundle
   script:
-    - sudo npm ci
+    - npm ci
     - npx quasar build -m capacitor -T ios
   tags:
     - macos
