@@ -1,0 +1,7 @@
+{
+	"appId": "app.dielinke.wahlkampf",
+	"appName": "DIE LINKE. App",
+	"bundledWebRuntime": false,
+	"npmClient": "npm",
+	"webDir": "www"
+}
