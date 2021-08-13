@@ -77,6 +77,8 @@ bundle-review:
   script:
     - sudo npm ci
     - npx quasar build -m capacitor -T android
+    - cd src-capacitor/android
+    - ./gradlew bundleRelease
   cache:
     paths:
       - node_modules/
