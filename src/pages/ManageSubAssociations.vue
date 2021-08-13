@@ -153,7 +153,7 @@ export default defineComponent({
     },
     permissionTypeOptionsForMyPermissions(): {key: string, label: string, inactive: boolean}[] {
       return permissionTypeOptions.map(
-        (option) => Object.assign(option, {inactive: !this.allowedToManagePermissions(this.selectedSubAssociation, option)})
+        (option) => Object.assign(option, {inactive: !this.allowedToManagePermissions(option)})
       )
     }
   },
@@ -245,9 +245,9 @@ export default defineComponent({
       console.log('newUserObjectPermissions: ', newUserObjectPermissions)
 
     },
-    allowedToManagePermissions(subassociation: {id: number, name: string}, permissionType: { key: string, label: string }) {
+    allowedToManagePermissions(permissionType: { key: string, label: string }) {
       const myPermissionsForSubassociation = this.userManagementPermissions.filter(
-        (permission) => permission.object_pk === subassociation.id.toString()
+        (permission) => permission.object_pk === this.selectedSubAssociation.id.toString()
       )
       // If I have both teamcaptain and coordinator I am allowed to manage all kinds of permissions
       if (myPermissionsForSubassociation.length > 1) {
