@@ -1,13 +1,20 @@
 <template>
   <QPage class="event-map">
-    <MapContainer>
+    <MapContainer v-if="isMapDefined">
       <Map
         class="map"
         :bounding-box="bbox"
         ref="map"
         @update:boundingBox="setBbox($event)"
       >
-        <GeolocationControl />
+        <template v-slot:top-right>
+          <div class="flex column q-gutter-y-sm">
+            <GeolocationControl
+              :poi-location="poiLocation"
+            />
+            <ResetRotateControl />
+          </div>
+        </template>
         <router-view
           v-slot="{ Component }"
           name="map"
@@ -26,6 +33,7 @@
         </div>
       </MapOverlayProxy>
     </MapContainer>
+    <router-view v-else />
   </QPage>
 </template>
 
@@ -39,10 +47,14 @@ import { QPage } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import GeolocationControl from 'src/mapbox/GeolocationControl.vue'
 import MapContainer from 'components/MapContainer.vue'
+import { eventDetailStore } from 'src/store/EventDetailStore'
+import { LocationDto } from 'src/api/model/LocationDto'
+import ResetRotateControl from 'src/mapbox/ResetRotateControl.vue'
 
 export default defineComponent({
   name: 'EventMap',
   components: {
+    ResetRotateControl,
     GeolocationControl,
     MapContainer,
     Map,
@@ -52,10 +64,25 @@ export default defineComponent({
   data() {
     return {
       bbox: userStore.getState().bbox,
-      BottomSheetState
+      BottomSheetState,
+      isMapDefined: true,
     }
   },
+  beforeRouteEnter(to, from, next) {
+    const isMapDefined = 'map' in to.matched[to.matched.length - 1].components
+    next((vm) => {
+      // @ts-ignore
+      vm.isMapDefined = isMapDefined
+    })
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.isMapDefined = 'map' in to.matched[to.matched.length - 1].components
+    next()
+  },
   computed: {
+    poiLocation(): LocationDto | undefined {
+      return eventDetailStore.state.event?.location
+    },
     mapRef(): InstanceType<typeof Map> | undefined {
       return this.$refs.map as InstanceType<typeof Map> | undefined
     },

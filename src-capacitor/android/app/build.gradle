@@ -1,0 +1,121 @@
+apply plugin: 'com.android.application'
+
+def versionNameToCode = { name ->
+    def majorDigits = 2
+    def minorDigits = 2
+    def patchDigits = 2
+    def preReleaseTypeDigits = 1
+    def preReleaseVersionDigits = 2
+    def versionParts = name.split('-')
+    def semverCore = versionParts[0]
+    def preReleaseIdentifier = null
+    if (versionParts.length >= 2) {
+        preReleaseIdentifier = versionParts[1]
+    }
+    def versionNumbers = []
+    semverCore.split("\\.").eachWithIndex { item, idx ->
+        versionNumbers.add(Integer.parseInt(item))
+    }
+    def (major, minor, patch) = versionNumbers
+    // 9 is reserved for releases without pre-release identifier
+    def preReleaseTypeNumber = 9
+    def preReleaseVersion = 0
+    if (preReleaseIdentifier != null) {
+        def (preReleaseType, preReleaseVersionParsed) = preReleaseIdentifier.split('\\.')
+        preReleaseVersionParsed = Integer.parseInt(preReleaseVersionParsed)
+        preReleaseVersion = preReleaseVersionParsed
+        switch (preReleaseType) {
+            case "alpha":
+                preReleaseTypeNumber = 1
+                break
+            case "beta":
+                preReleaseTypeNumber = 2
+                break
+            case "rc":
+                preReleaseTypeNumber = 3
+                break
+            default:
+                throw Exception("Pre Release type need to be one of each 'alpha', 'beta' or 'rc'")
+        }
+    }
+    return Integer.parseInt(
+            major.toString().padLeft(majorDigits, '0') +
+                    minor.toString().padLeft(minorDigits, '0') +
+                    patch.toString().padLeft(patchDigits, '0') +
+                    preReleaseTypeNumber.toString().padLeft(preReleaseTypeDigits, '0') +
+                    preReleaseVersion.toString().padLeft(preReleaseVersionDigits, '0')
+    )
+}
+
+def getVersionName = { ->
+    def proc = 'git describe --tags'.execute()
+    proc.waitFor()
+    def versionName = proc.text.trim()
+    println "This build has versionName: $versionName"
+    return versionName
+}
+
+def getVersionCode = { ->
+    try {
+        def code = versionNameToCode(getVersionName())
+        println "This build has versionCode: $code"
+        return code
+    } catch (e) {
+        logger.warn(
+                "Unable to determine versionCode from ${getVersionName()}, which is determined by the last git tag. " +
+                        "Refer to the README to learn about a proper version format")
+        e.printStackTrace()
+        return 1
+    }
+}
+
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "app.dielinke.wahlkampf"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode getVersionCode()
+        versionName getVersionName()
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation project(':capacitor-android')
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.warn("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}

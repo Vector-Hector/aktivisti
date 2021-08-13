@@ -20,5 +20,6 @@ spec:
       containers:
         - name: wkapp
           image: registry.gitlab.alt.coop/wahlkampf-app/wk-frontend
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000

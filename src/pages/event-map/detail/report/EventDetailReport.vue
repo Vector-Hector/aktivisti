@@ -2,7 +2,6 @@
   <div class="container">
     <QTable
       :columns="columns"
-      dense
       :flat=!$q.screen.lt.md
       :grid=$q.screen.lt.md
       :rows="rows"

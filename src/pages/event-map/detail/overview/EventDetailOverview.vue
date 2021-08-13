@@ -3,106 +3,146 @@
     class="d-flex flex-fill"
   >
     <div class="container q-gutter-y-md q-py-sm">
-      <div class="row">
-        <div class="col-12">
-          <QBtn
-            @click="locateEvent"
-            size="sm"
-            color="primary"
-            flat
-            :icon="ionLocate"
-          />
-          <QBtn
-            v-if="isTeamCaptainOrCoordinator && event.event_type !== EventTypes.GENERIC"
-            @click="openParticipantsModal"
-            size="sm"
-            color="primary"
-            flat
-            :icon="ionPerson"
-          />
-          <QBtn
+      <div class="row q-gutter-sm">
+        <div class="col">
+          <div class="row q-col-gutter-sm event-details">
+            <div class="col-4">
+              <b>Aktionstyp:</b>
+            </div>
+            <div class="col-8">
+              {{ eventTypeLabel }}
+            </div>
+            <div class="col-4">
+              <b>Treffpunkt:</b>
+            </div>
+            <div class="col-8">
+              {{ event.location_description }}
+            </div>
+            <div class="col-4">
+              <b>Start:</b>
+            </div>
+            <div class="col-8">
+              {{ new Date(event.start_date).toLocaleString([], dateOptions) }}
+            </div>
+            <div class="col-4">
+              <b>Ende:</b>
+            </div>
+            <div class="col-8">
+              {{ event.end_date ? new Date(event.end_date).toLocaleString([], dateOptions) : 'Nicht definiert' }}
+            </div>
+            <template v-if="event.external_url">
+              <div class="col-4">
+                Link:
+              </div>
+              <div class="col-8">
+                <a target="_blank" class="primary-link" :href="event.external_url">{{ event.external_url }}</a>
+              </div>
+            </template>
+            <template
+              v-if="isTeamCaptainOrCoordinator && event.event_type !== EventTypes.GENERIC"
+            >
+              <div class="col-4">
+                <b>Teilnahmen:</b>
+              </div>
+              <div class="col-8">
+                {{ event.participants }} von max. {{ event.max_participants ?? '∞' }}
+              </div>
+            </template>
+          </div>
+        </div>
+        <div class="col-auto column">
+          <LabeledBtn
             v-if="
-            isPrintableEvent &&
-            (personalParticipation?.is_verified || isTeamCaptainOrCoordinator)
-          "
-            size="sm"
-            color="primary"
-            flat
+              isPrintableEvent &&
+              (personalParticipation?.is_verified || isTeamCaptainOrCoordinator)
+            "
+            round
+            outline
             :icon="ionPrint"
             :to="{ name: 'print-event', params: {eventId: event.id}}"
+            external-label="Drucken"
           />
-          <QBtn
-            v-if="
-            event.event_type === EventTypes.DOOR_TO_DOOR &&
-            isCoordinator
-          "
-            :to="{ name: 'event-detail-report', params: { eventId: event.id }}"
-            size="sm"
-            color="primary"
-            flat
-            :icon="ionBarChart"
+          <Share
+            :title="shareTitle"
+            :text="shareText"
+            :url="shareUrl"
           />
-          <QBtn
-            v-if="isCoordinator"
-            :to="{name: 'edit-event-details', params: { eventId: event.id }}"
-            size="sm"
-            color="primary"
-            flat
-            :icon="ionPencil"
-          />
-          <QBtn
-            v-if="isCoordinator"
-            @click="openDeleteModal"
-            size="sm"
-            color="primary"
-            flat
-            :icon="ionTrash"
-          />
+          <LabeledBtn
+            v-if="isTeamCaptainOrCoordinator"
+            external-label="Admin"
+          >
+            <template v-slot:btn>
+              <QFab
+                :icon="ionSettingsSharp"
+                color="primary"
+                padding="sm"
+                direction="left"
+                outline
+                round
+              >
+                <QFabAction
+                  v-if="isCoordinator"
+                  @click="openDeleteModal"
+                  color="primary"
+                  :icon="ionTrash"
+                  class="bg-white admin-fab"
+                  stacked
+                  label="Löschen"
+                  outline
+                  label-class="bg-grey-2 text-primary"
+                  external-label
+                  label-position="bottom"
+                />
+                <QFabAction
+                  v-if="isCoordinator"
+                  :to="{name: 'edit-event-details', params: { eventId: event.id }}"
+                  color="primary"
+                  :icon="ionPencil"
+                  class="bg-white admin-fab"
+                  stacked
+                  label="Bearbeiten"
+                  outline
+                  label-class="bg-grey-2 text-primary"
+                  external-label
+                  label-position="bottom"
+                />
+                <QFabAction
+                  v-if="
+                    event.event_type === EventTypes.DOOR_TO_DOOR &&
+                    isCoordinator
+                  "
+                  :to="{ name: 'event-detail-report', params: { eventId: event.id }}"
+                  color="primary"
+                  :icon="ionBarChart"
+                  class="bg-white admin-fab"
+                  stacked
+                  label="Report"
+                  outline
+                  label-class="bg-grey-2 text-primary"
+                  external-label
+                  label-position="bottom"
+                />
+                <QFabAction
+                  v-if="isTeamCaptainOrCoordinator && event.event_type !== EventTypes.GENERIC"
+                  @click="openParticipantsModal"
+                  color="primary"
+                  :icon="ionPerson"
+                  class="bg-white admin-fab"
+                  stacked
+                  label="Teilnahmen"
+                  outline
+                  label-class="bg-grey-2 text-primary"
+                  external-label
+                  label-position="bottom"
+                />
+              </QFab>
+            </template>
+          </LabeledBtn>
         </div>
       </div>
-      <div class="row q-col-gutter-y-sm">
-        <div class="col-4 col-sm-2">
-          Aktionstyp:
-        </div>
-        <div class="col-8 col-sm-10">
-          {{ eventTypeLabel }}
-        </div>
-        <div class="col-4 col-sm-2">
-          Treffpunkt:
-        </div>
-        <div class="col-8 col-sm-10">
-          {{ event.location_description }}
-        </div>
-        <div class="col-4 col-sm-2">
-          Start:
-        </div>
-        <div class="col-8 col-sm-10">
-          {{ new Date(event.start_date).toLocaleString([], dateOptions) }}
-        </div>
-        <div class="col-4 col-sm-2">
-          Ende:
-        </div>
-        <div class="col-8 col-sm-10">
-          {{ event.end_date ? new Date(event.end_date).toLocaleString([], dateOptions) : 'Nicht definiert' }}
-        </div>
-        <template v-if="event.external_url">
-          <div class="col-4 col-sm-2">
-            Link:
-          </div>
-          <div class="col-8 col-sm-10">
-            <a target="_blank" class="primary-link" :href="event.external_url">{{ event.external_url }}</a>
-          </div>
-        </template>
-        <div class="col-12">
-          <span
-            v-if="isTeamCaptainOrCoordinator && event.event_type !== EventTypes.GENERIC"
-            class="participants"
-            @click="openParticipantsModal"
-          >
-            <QIcon :name="ionPersonOutline" /> {{ event.participants }}/{{ event.max_participants ?? '∞' }}
-          </span>
-        </div>
+      <div class="row">
         <div class="col-12 event-description">
+          <b>Beschreibung</b><br>
           {{ event.description }}
         </div>
       </div>
@@ -131,48 +171,6 @@
             />
           </QList>
         </div>
-      </div>
-      <div class="social-buttons row q-gutter-x-md" v-if="event">
-        <QBtn
-          dense
-          type="a"
-          target="_blank"
-          :href="twitterShareUrl"
-          size="sm"
-          class="social-button"
-          label="teilen"
-          :icon="ionLogoTwitter"
-        />
-        <QBtn
-          dense
-          type="a"
-          target="_blank"
-          :href="facebookShareUrl"
-          size="sm"
-          class="social-button"
-          label="teilen"
-          :icon="ionLogoFacebook"
-        />
-        <QBtn
-          dense
-          type="a"
-          target="_blank"
-          :href="whatsappShareUrl"
-          size="sm"
-          class="social-button"
-          label="teilen"
-          :icon="ionLogoWhatsapp"
-        />
-        <QBtn
-          dense
-          type="a"
-          target="_blank"
-          :href="mailShareUrl"
-          size="sm"
-          class="social-button"
-          label="teilen"
-          :icon="ionMail"
-        />
       </div>
       <template v-if="event.event_type !== EventTypes.GENERIC">
         <div
@@ -251,17 +249,11 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
-import { authStore } from 'src/store/AuthStore'
+import { getAuthStore } from 'src/store/AuthStore'
 import { userStore } from 'src/store/UserStore'
 import EventInvitePeopleModal from 'src/components/modals/EventInvitePeopleModal.vue'
 import EventParticipantsModal from 'src/components/modals/EventParticipantsModal.vue'
 import { apiClient } from 'src/api/ApiClient'
-import {
-  createFacebookShareUrl,
-  createMailShareUrl,
-  createTwitterShareUrl,
-  createWhatsappShareUrl
-} from 'src/utils/shareLinks'
 import EventAreaItem from 'src/components/EventAreaItem.vue'
 import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import {
@@ -274,25 +266,30 @@ import {
   ionTrash,
   ionPerson,
   ionPersonOutline,
-  ionLocate,
-  ionPrint
+  ionPrint,
+  ionSettingsSharp
 } from '@quasar/extras/ionicons-v5'
-import { QBtn, QIcon, QList, QScrollArea } from 'quasar'
+import { QBtn, QFab, QFabAction, QList, QScrollArea } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
-import { MAP_PAN_TO, MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/mapbox/Map.vue'
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import Share from 'components/Share.vue'
+import LabeledBtn from 'components/LabeledBtn.vue'
 
 const pollIntervalMs = 5000
+const authStore = getAuthStore()
 
 export default defineComponent({
   name: 'EventDetailOverview',
   mixins: [EventDetailMixin],
   components: {
+    LabeledBtn,
+    Share,
     EventAreaItem,
     QScrollArea,
     QBtn,
-    QIcon,
-    QList
+    QList,
+    QFab,
+    QFabAction
   },
   beforeRouteEnter(from, to, next) {
     uiStore.setBottomSheetStateAtLeast(BottomSheetState.HALF)
@@ -301,6 +298,7 @@ export default defineComponent({
   inject: ['scrollArea'],
   data() {
     return {
+      ionSettingsSharp,
       loading: true,
       joinLoading: false,
       dateOptions: {
@@ -321,8 +319,7 @@ export default defineComponent({
       ionPencil,
       ionPersonOutline,
       ionPerson,
-      ionTrash,
-      ionLocate
+      ionTrash
     }
   },
   watch: {
@@ -338,6 +335,27 @@ export default defineComponent({
     }
   },
   computed: {
+    shareUrl(): string {
+      return window.location.origin + this.$router.resolve({
+        name: 'event-detail',
+        params: {
+          eventId: this.event.id
+        }
+      }).path
+    },
+    shareTitle(): string {
+      return this.event.name
+    },
+    shareText(): string {
+      const formattedDate = new Date(this.event.start_date).toLocaleString([], {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+      return `${this.event.name}\n${formattedDate}\n\n${this.event.description}`
+    },
     eventId(): string {
       return this.event.id.toString()
     },
@@ -375,50 +393,6 @@ export default defineComponent({
     },
     isCampaignAdmin(): boolean {
       return userStore.isCampaignAdmin()
-    },
-    twitterShareUrl(): string {
-      return createTwitterShareUrl(
-        `${window.location.origin}${this.$router.resolve({
-          name: 'event-detail',
-          params: {
-            eventId: this.event.id
-          }
-        }).path}`,
-        [],
-        this.event
-      )
-    },
-    facebookShareUrl(): string {
-      return createFacebookShareUrl(
-        window.location.origin + this.$router.resolve({
-          name: 'event-detail',
-          params: {
-            eventId: this.event.id
-          }
-        }).path
-      )
-    },
-    mailShareUrl(): string {
-      return createMailShareUrl(
-        window.location.origin + this.$router.resolve({
-          name: 'event-detail',
-          params: {
-            eventId: this.event.id
-          }
-        }).path,
-        this.event
-      )
-    },
-    whatsappShareUrl(): string {
-      return createWhatsappShareUrl(
-        window.location.origin + this.$router.resolve({
-          name: 'event-detail',
-          params: {
-            eventId: this.event.id
-          }
-        }).path,
-        this.event
-      )
     },
     isPrintableEvent(): boolean {
       const {event_type} = this.event
@@ -539,10 +513,6 @@ export default defineComponent({
           void this.refreshParticipants()
         })
     },
-    locateEvent() {
-      MapEventBus.emit(MAP_GEOLOCATE_STOP_TRACKING, this.event.location)
-      MapEventBus.emit(MAP_PAN_TO, this.event.location)
-    },
     openDeleteModal() {
       this.$q.dialog({
         title: `${this.event.name} wirklich löschen?`,
@@ -575,8 +545,8 @@ export default defineComponent({
 <style lang="scss" scoped>
 @import "src/css/utils.scss";
 
-label {
-  text-align: left;
+.event-details {
+  font-size: 1rem;
 }
 
 .event {
@@ -603,7 +573,9 @@ label {
 }
 
 .event-description {
+  font-size: 1rem;
   white-space: pre-line;
+  margin-bottom: 1rem;
 }
 
 .participants {
@@ -642,5 +614,8 @@ label {
   background-color: $grey-1;
 }
 
-
+.admin-fab {
+  margin-left: 12px !important;
+  margin-right: 12px !important;
+}
 </style>

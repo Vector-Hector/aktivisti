@@ -38,6 +38,7 @@ lint:
     paths:
       - node_modules/
   environment:
+    action: prepare
     name: staging
   artifacts:
     paths:
@@ -46,6 +47,7 @@ lint:
 bundle-staging:
   extends: .bundle
   environment:
+    action: prepare
     name: staging
   only:
     - main
@@ -53,6 +55,7 @@ bundle-staging:
 bundle-development:
   extends: .bundle
   environment:
+    action: prepare
     name: development
   only:
     - develop
@@ -60,10 +63,54 @@ bundle-development:
 bundle-review:
   extends: .bundle
   environment:
+    action: prepare
     name: review/$CI_COMMIT_REF_SLUG
   except:
     - main
     - develop
+
+.android:
+  image: circleci/android:api-30-node
+  stage: bundle
+  before_script:
+    - sudo npm install -g npm@^7
+  script:
+    - sudo npm ci
+    - npx quasar build -m capacitor -T android
+  cache:
+    paths:
+      - node_modules/
+  artifacts:
+    paths:
+      - src-capacitor/android/app/build/
+
+android-development:
+  extends: .android
+  environment:
+    action: prepare
+    name: development
+  only:
+    - branches
+  except:
+    - tags
+    - main
+
+android-staging:
+  extends: .android
+  environment:
+    action: prepare
+    name: staging
+  only:
+    - main
+
+android-production:
+  extends: .android
+  environment:
+    action: prepare
+    name: production
+  only:
+    - tags
+
 
 staging:
   extends: .deploy-template

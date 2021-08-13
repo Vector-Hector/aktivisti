@@ -9,11 +9,12 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import { uiStore } from 'src/store/UiStore'
 import { eventDetailStore } from 'src/store/EventDetailStore'
 import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
-import { authStore } from 'src/store/AuthStore'
+import { getAuthStore } from 'src/store/AuthStore'
 import { ObjectPermissions } from 'src/api/model/ObjectPermissionDto'
 import { includesOneOf } from 'src/utils/array'
 import { EventTypes } from 'src/api/model/EventTypes'
 
+const authStore = getAuthStore()
 
 export default defineComponent({
   name: 'EventDetail',

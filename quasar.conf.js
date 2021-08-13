@@ -8,14 +8,16 @@
 
 /* eslint-env node */
 /* eslint-disable @typescript-eslint/no-var-requires */
+const fs = require('fs')
 const {configure} = require('quasar/wrappers')
-const execSync = require('child_process').execSync;
+const execSync = require('child_process').execSync
 
 const filterAppEnvVariables = (envObject) => {
   return Object.fromEntries(Object
     .entries(envObject)
     .filter(([key]) => key.startsWith('APP'))
-  )}
+  )
+}
 
 // Read .env file and let process env ovewrite it if set
 const env = {
@@ -28,10 +30,16 @@ console.info('Build environment')
 console.info('=================')
 console.dir(env)
 
+let localConfigure = {}
+if (fs.existsSync('./quasar.conf.local.js')) {
+  localConfigure = require('./quasar.conf.local.js')()
+}
+
+
 module.exports = configure(function (ctx) {
   return {
     sourceFiles: {
-      rootComponent: 'src/Entry.vue',
+      rootComponent: 'src/Entry.vue'
     },
     // https://v2.quasar.dev/quasar-cli/supporting-ts
     supportTS: {
@@ -102,8 +110,9 @@ module.exports = configure(function (ctx) {
     devServer: {
       https: false,
       port: 8080,
-      open: false // opens browser window automatically
+      open: false, // opens browser window automatically
     },
+
 
     // https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
     framework: {
@@ -251,6 +260,7 @@ module.exports = configure(function (ctx) {
         // do something with the Electron main process Webpack cfg
         // extendWebpackPreload also available besides this chainWebpackPreload
       }
-    }
+    },
+    ...localConfigure,
   }
 })

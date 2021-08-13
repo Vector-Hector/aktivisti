@@ -155,6 +155,7 @@ export default defineComponent({
   height: 100%;
   display: flex;
   flex-direction: column;
+  margin-top: 1rem;
 }
 
 .filter-content {

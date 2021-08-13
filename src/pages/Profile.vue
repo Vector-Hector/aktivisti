@@ -188,9 +188,10 @@ import { EmailNotificationSettingsDto } from 'src/api/model/EmailNotificationSet
 import { UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
 import { PersonalMetricsDto } from 'src/api/model/PersonalMetricsDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
-import { authStore } from 'src/store/AuthStore'
 import { SettleDebouncer } from 'src/utils/debounce'
+import { getAuthStore } from 'src/store/AuthStore'
 
+const authStore = getAuthStore()
 
 export default defineComponent({
   name: 'Profile',
