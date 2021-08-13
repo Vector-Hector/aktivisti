@@ -22,7 +22,7 @@
           />
           <QBtn
             v-if="
-            event.event_type === EventTypes.DOOR_TO_DOOR &&
+            isPrintableEvent &&
             (personalParticipation?.is_verified || isTeamCaptainOrCoordinator)
           "
             size="sm"
@@ -419,6 +419,10 @@ export default defineComponent({
         }).path,
         this.event
       )
+    },
+    isPrintableEvent(): boolean {
+      const {event_type} = this.event
+      return [EventTypes.DOOR_TO_DOOR, EventTypes.POSTERS].includes(event_type)
     }
   },
   methods: {

@@ -6,16 +6,22 @@ export enum PosterStatus {
   DAMAGED = 'DAMAGED'
 }
 
-export const posterStatusOptions: { key: string, label: string }[] = [{
-  key: PosterStatus.ABSENT,
-  label: 'fehlt'
-}, {
-  key: PosterStatus.MOUNTED,
-  label: 'hängt'
-}, {
-  key: PosterStatus.DAMAGED,
-  label: 'beschädigt'
-}]
+enum _PosterStatusString {
+  ABSENT = 'fehlt',
+  MOUNTED = 'hängt',
+  DAMAGED = 'beschädigt'
+}
+
+export class PosterStatusUtil {
+  static getLabel(posterStatus: PosterStatus): string {
+    return _PosterStatusString[posterStatus]
+  }
+}
+
+export const posterStatusOptions: { key: string, label: string }[] = Object.keys(PosterStatus).map((key) => ({
+  key: key,
+  label: PosterStatusUtil.getLabel(key as PosterStatus)
+}))
 
 export enum PosterMount {
   LAMPPOST = 'LAMPPOST',
@@ -23,16 +29,22 @@ export enum PosterMount {
   OTHER = 'OTHER',
 }
 
-export const posterMountOptions: { key: string, label: string }[] = [{
-  key: PosterMount.LAMPPOST,
-  label: 'Straßenlaterne'
-}, {
-  key: PosterMount.OTHER,
-  label: 'Sonstige'
-}, {
-  key: PosterMount.TREE,
-  label: 'Baum'
-}]
+enum PosterMountString {
+  LAMPPOST = 'Straßenlaterne',
+  TREE = 'Baum',
+  OTHER = 'Sonstige',
+}
+
+export class PosterMountUtil {
+  static getLabel(posterMount: PosterMount): string {
+    return PosterMountString[posterMount]
+  }
+}
+
+export const posterMountOptions: { key: string, label: string }[] = Object.keys(PosterMount).map((key) => ({
+  key: key,
+  label: PosterMountUtil.getLabel(key as PosterMount)
+}))
 
 export interface PosterDto {
   id: number

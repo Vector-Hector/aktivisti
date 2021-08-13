@@ -1,10 +1,9 @@
 <template>
   <div class="d2d-event-printout">
     <QBtn
-      class="back-button"
+      class="back-button bg-white"
       :icon="ionArrowBack"
       @click="$router.go(-1)"
-      style="background: white;"
       round
     />
     <QBtn

@@ -28,6 +28,11 @@ export default defineComponent({
     opacity: {
       type: Number as PropType<number>,
       required: false
+    },
+    isPrint: {
+      type: Boolean as PropType<boolean>,
+      required: false,
+      default: false
     }
   },
   emits: ['update:posters', 'posterClick'],
@@ -50,9 +55,9 @@ export default defineComponent({
       'icon-size': .4,
       'icon-anchor': 'bottom',
       'icon-image': ['case',
-        ['==', ['get', 'status'], PosterStatus.ABSENT], 'absent-icon',
-        ['==', ['get', 'status'], PosterStatus.DAMAGED], 'negative-icon',
-        ['==', ['get', 'status'], PosterStatus.MOUNTED], 'positive-icon',
+        ['==', ['get', 'status'], PosterStatus.ABSENT], ABSENT_IMAGE_NAME,
+        ['==', ['get', 'status'], PosterStatus.DAMAGED], NEGATIVE_IMAGE_NAME,
+        ['==', ['get', 'status'], PosterStatus.MOUNTED], POSITIVE_IMAGE_NAME,
         'absent-icon'
       ],
       'icon-allow-overlap': true
@@ -71,7 +76,8 @@ export default defineComponent({
               properties: {
                 status: poster.status,
                 opacity: props.opacity ?? ((active) ? 1 : 0.5),
-                id: poster.id
+                id: poster.id,
+                poster_id: poster.poster_id
               },
               geometry: {
                 type: 'Point',
@@ -207,32 +213,74 @@ export default defineComponent({
           }
         }, {immediate: true})
 
+        if (props.isPrint) {
+          const posterIdsCaptionId = `${uuid}-postersIds-caption`
+          const posterIdsCircleCircleId = `${uuid}-postersWithIds-circle`
 
-        layers.push(
-          posterLayerId
-        )
-        map?.value.addLayer({
-          id: posterLayerId,
-          type: 'symbol',
-          source: posterSourceId,
-          layout: iconLayout,
-          paint: {
-            'icon-opacity': ['get', 'opacity']
-          }
-        })
-        layers.push(
-          activePosterLayerId
-        )
-        map?.value.addLayer({
-          id: activePosterLayerId,
-          type: 'symbol',
-          source: activePosterSourceId,
-          layout: iconLayout,
-          paint: {
-            'icon-opacity': props.opacity ?? 1
-          }
-        })
-        if (props.editable) {
+          layers.push(
+            posterIdsCaptionId,
+            posterIdsCircleCircleId
+          )
+
+          map?.value.addLayer({
+            id: posterIdsCircleCircleId,
+            type: 'circle',
+            source: posterSourceId,
+            layout: {},
+            paint: {
+              'circle-color': ['case',
+                ['==', ['get', 'status'], PosterStatus.ABSENT], '#93959d',
+                ['==', ['get', 'status'], PosterStatus.DAMAGED], '#df0505',
+                ['==', ['get', 'status'], PosterStatus.MOUNTED], '#2fd370',
+                '#93959d'
+              ],
+              'circle-radius': 14,
+              'circle-stroke-color': '#ffffff',
+              'circle-stroke-width': 1
+            }
+          })
+
+          map?.value.addLayer({
+            id: posterIdsCaptionId,
+            type: 'symbol',
+            source: posterSourceId,
+            layout: {
+              'text-field': '{poster_id}',
+              'text-font': ['Roboto Regular'],
+              'text-size': 13,
+              'text-line-height': 1.0,
+              'text-offset': [0, .1],
+              'text-allow-overlap': true
+            },
+            paint: {
+              'text-color': '#ffffff'
+            }
+          })
+        } else {
+          layers.push(
+            posterLayerId,
+            activePosterLayerId
+          )
+          map?.value.addLayer({
+            id: posterLayerId,
+            type: 'symbol',
+            source: posterSourceId,
+            layout: iconLayout,
+            paint: {
+              'icon-opacity': ['get', 'opacity']
+            }
+          })
+          map?.value.addLayer({
+            id: activePosterLayerId,
+            type: 'symbol',
+            source: activePosterSourceId,
+            layout: iconLayout,
+            paint: {
+              'icon-opacity': props.opacity ?? 1
+            }
+          })
+        }
+        if (props.editable || !props.isPrint) {
           map.value.on('mouseenter', activePosterLayerId, onEnterActivePoster)
           map.value.on('mousedown', activePosterLayerId, onMouseDownActivePoster)
           map.value.on('mouseleave', activePosterLayerId, onLeaveActivePoster)

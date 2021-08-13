@@ -2,7 +2,7 @@
 
 @page {
   size: A4;
-  margin: 0;
+  margin-top: 1cm;
 }
 
 @media print {
@@ -31,13 +31,12 @@
   margin: 0;
   padding: 1cm;
   width: 210mm !important;
-  height: 297mm !important;
   border: initial;
   border-radius: initial;
   min-height: initial;
   box-shadow: initial;
   background: initial;
-  page-break-after: auto;
+  page-break-before: always;
 }
 
 
