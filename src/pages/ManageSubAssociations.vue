@@ -198,18 +198,14 @@ export default defineComponent({
       })
     },
     selectUser(user: UserPermissionItem) {
-      console.log('selectUser triggered!')
       if (!this.userList.find( ({id}) => id === user.id )) {
         user.permission_codename = PermissionCodename.NONE
         user.permission_name = 'Mitglied'
         this.userList.unshift(user)
       }
-      console.log('managedUsers: ', this.userList)
       this.selectedUser = user
     },
     async selectSubAssociation(subAssociation: {id: number, name: string}) {
-      console.log('@update triggered!')
-      console.log('model value: ', subAssociation)
       this.selectedSubAssociation = subAssociation
       await this.getUsersWithPermissionsForSubAssociation(subAssociation)
     },
@@ -233,27 +229,10 @@ export default defineComponent({
             permission_name: permission.permission_name
           }
         }
-          //Object.assign(
-          //  permission,
-          //  {username:
-          //    relevantUserPublicProfiles.filter(
-          //      (publicProfile) => publicProfile.id === permission.user
-          //    )[0].username}
-          //)
       )
-      console.log('userObjectPermissions: ', userObjectPermissions)
-      console.log('userIds: ', userIds)
-      console.log('userPublicProfiles: ', relevantUserPublicProfiles)
       //TODO how do global permissions fall into all this?
     },
-    //TODO How to deal with multiple permissions (teamcaptain AND coordinator?)
-    //In theory, I can do only one, if that's the desired behavior; we have PATCH and PUT
-    //TODO How to deal with demoting
     async updateUserObjectPermissions(permission: { key: string, label: string }, user: UserPermissionItem) {
-      console.log('newly selected permission is: ', permission)
-      //TODO get old permission(s) from userObjectPermissions and if demoting DELETE
-      console.log('user: ', user)
-
       if (user.object_permission_id && permission.key === PermissionCodename.NONE) {
         await this.$apiClient.userPermissions.delete(user.object_permission_id.toString())
       }
@@ -264,7 +243,6 @@ export default defineComponent({
           content_type : 13, //13 === subassociation
           permission_codename : permission.key
         }
-        console.log('newUserObjectPermissions: ', newUserObjectPermissions)
 
         //update existing UserObjectPermission
         if (user.object_permission_id) {
@@ -274,7 +252,6 @@ export default defineComponent({
         else {
           await this.$apiClient.userPermissions.create(newUserObjectPermissions)
         }
-        //TODO Check whether the permission is updated automatically in the select when it's actually posted to the api
       }
       user.permission_name = permission.label
     },
@@ -283,19 +260,16 @@ export default defineComponent({
         (permission) => permission.object_pk === this.selectedSubAssociation.id.toString()
       )
       if (myPermissionsForSubassociation[0].permission_codename === PermissionCodename.MANAGE_EVENTS) {
-        console.log('userMgmtPermissions: ', this.userManagementPermissions)
-        console.log('myPermissionsForSubAssociation: ', myPermissionsForSubassociation)
         return true
       }
       else if (myPermissionsForSubassociation[0].permission_codename === PermissionCodename.TEAM_CAPTAIN
         && (permissionType.key === PermissionCodename.TEAM_CAPTAIN || permissionType.key === PermissionCodename.NONE)) {
+        //and only for users who are not coordinators!
         return true
       }
       else {
         return false
       }
-
-
     }
   }
 })
