@@ -112,6 +112,7 @@ import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 interface UserPermissionItem {
   id: number
   username: string
+  object_permission_id?: number
   permission_codename?: string
   permission_name?: string
 }
@@ -227,6 +228,7 @@ export default defineComponent({
             username: relevantUserPublicProfiles.filter(
               (publicProfile) => publicProfile.id === permission.user
             )[0].username,
+            object_permission_id: permission.id,
             permission_codename: permission.permission_codename,
             permission_name: permission.permission_name
           }
@@ -247,18 +249,33 @@ export default defineComponent({
     //TODO How to deal with multiple permissions (teamcaptain AND coordinator?)
     //In theory, I can do only one, if that's the desired behavior; we have PATCH and PUT
     //TODO How to deal with demoting
-    updateUserObjectPermissions(permission: { key: string, label: string }, user: UserPermissionItem) {
+    async updateUserObjectPermissions(permission: { key: string, label: string }, user: UserPermissionItem) {
       console.log('newly selected permission is: ', permission)
       //TODO get old permission(s) from userObjectPermissions and if demoting DELETE
       console.log('user: ', user)
-      const newUserObjectPermissions = {
-        user: user.id,
-        object_pk : this.selectedSubAssociation.id,
-        content_type : 13, //13 === subassociation
-        permission_codename : permission.key
-      }
-      console.log('newUserObjectPermissions: ', newUserObjectPermissions)
 
+      if (user.object_permission_id && permission.key === PermissionCodename.NONE) {
+        await this.$apiClient.userPermissions.delete(user.object_permission_id.toString())
+      }
+      else {
+        const newUserObjectPermissions = {
+          user: user.id,
+          object_pk : this.selectedSubAssociation.id.toString(),
+          content_type : 13, //13 === subassociation
+          permission_codename : permission.key
+        }
+        console.log('newUserObjectPermissions: ', newUserObjectPermissions)
+
+        //update existing UserObjectPermission
+        if (user.object_permission_id) {
+          await this.$apiClient.userPermissions.patch(user.object_permission_id.toString(), newUserObjectPermissions)
+        }
+        //or create a new one
+        else {
+          await this.$apiClient.userPermissions.create(newUserObjectPermissions)
+        }
+        //TODO Check whether the permission is updated automatically in the select when it's actually posted to the api
+      }
     },
     allowedToManagePermissions(permissionType: { key: string, label: string }) {
       const myPermissionsForSubassociation = this.userManagementPermissions.filter(
