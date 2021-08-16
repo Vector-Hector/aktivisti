@@ -14,6 +14,8 @@
             @update:model-value="selectSubAssociation"
             use-input
             map-options
+            hide-selected
+            fill-input
             input-debounce="0"
             :options="suggestedSubAssociations"
             @filter="filterSubAssociations"
@@ -37,6 +39,8 @@
               placeholder="Benutzer:in suchen"
               :dropdownIcon="ionChevronDown"
               use-input
+              hide-selected
+              fill-input
               :model-value="selectedUser"
               @update:model-value="selectUser"
               :option-label="userLabel"
