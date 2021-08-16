@@ -73,7 +73,7 @@
                           class=""
                           :dropdownIcon="ionChevronDown"
                           filled
-                          :model-value="user.permission_name"
+                          :model-value="user.permission_codename"
                           @update:model-value="(permission) => updateUserObjectPermissions(permission, user)"
                           :options="permissionTypeOptionsForMyPermissions"
                           :option-disable="opt =>
@@ -81,8 +81,8 @@
                             || (user.permission_codename === PermissionCodename.MANAGE_EVENTS &&
                                 myPermissionForSelectedSubAssociation.permission_codename === PermissionCodename.TEAM_CAPTAIN)
                              : true"
-                          option-label="label"
                           option-value="key"
+                          map-options
                         >
 
                         </QSelect>
@@ -105,7 +105,7 @@ import { QSelect, QPage, QItem, QList, QItemSection, QItemLabel } from 'quasar'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { userStore} from 'src/store/UserStore'
-import {UserObjectPermissionDto, permissionTypeOptions, PermissionCodename} from 'src/api/model/UserObjectPermissionDto'
+import { UserObjectPermissionDto, permissionTypeOptions, PermissionCodename } from 'src/api/model/UserObjectPermissionDto'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 
 
@@ -137,7 +137,7 @@ export default defineComponent({
       suggestedSubAssociations: [] as SubAssociationDto[],
       selectedSubAssociation: {id: 0, name: ''},
       myPermissionForSelectedSubAssociation: {},
-      selectedUser: {} as UserPermissionItem,
+      selectedUser: {id: 0, username: ''} as UserPermissionItem,
       suggestedUsers: [] as UserPermissionItem[],
       userList: [] as UserPermissionItem[],
       loading: true,
