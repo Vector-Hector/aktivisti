@@ -276,6 +276,7 @@ export default defineComponent({
         }
         //TODO Check whether the permission is updated automatically in the select when it's actually posted to the api
       }
+      user.permission_name = permission.label
     },
     allowedToManagePermissions(permissionType: { key: string, label: string }) {
       const myPermissionsForSubassociation = this.userManagementPermissions.filter(
