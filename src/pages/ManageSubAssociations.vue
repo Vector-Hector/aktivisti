@@ -281,11 +281,7 @@ export default defineComponent({
       const myPermissionsForSubassociation = this.userManagementPermissions.filter(
         (permission) => permission.object_pk === this.selectedSubAssociation.id.toString()
       )
-      // If I have both teamcaptain and coordinator I am allowed to manage all kinds of permissions
-      if (myPermissionsForSubassociation.length > 1) {
-        return true
-      }
-      else if (myPermissionsForSubassociation[0].permission_codename === PermissionCodename.MANAGE_EVENTS) {
+      if (myPermissionsForSubassociation[0].permission_codename === PermissionCodename.MANAGE_EVENTS) {
         console.log('userMgmtPermissions: ', this.userManagementPermissions)
         console.log('myPermissionsForSubAssociation: ', myPermissionsForSubassociation)
         return true
