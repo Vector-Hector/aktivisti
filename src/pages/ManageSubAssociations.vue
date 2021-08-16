@@ -213,7 +213,7 @@ export default defineComponent({
       await this.getUsersWithPermissionsForSubAssociation(subAssociation)
     },
     async getUsersWithPermissionsForSubAssociation(subAssociation: {id: number, name: string}) {
-      const userObjectPermissions: UserObjectPermissionDto[] = (await this.$apiClient.userPermissions.list({query: subAssociation.id.toString()})).payload.data
+      const userObjectPermissions: UserObjectPermissionDto[] = (await this.$apiClient.userPermissions.list({sub_association: subAssociation.id.toString()})).payload.data
       const userIds: number[] = userObjectPermissions.map((permission) => permission.user)
       const userPublicProfiles: UserPermissionItem[] = (await this.$apiClient.publicProfiles.list()).payload.data
       const relevantUserPublicProfiles = userPublicProfiles.filter((profile) => userIds.indexOf(profile.id) >= 0)
