@@ -115,7 +115,7 @@ android-production:
 
 .ios:
   stage: bundle
-  script:
+  before_script:
     - npm ci
     - npx quasar build -m capacitor -T ios
   tags:
@@ -133,6 +133,9 @@ ios-development:
   environment:
     action: prepare
     name: development
+  script:
+    - cd src-capacitor/ios/App/
+    - fastlane build
   only:
     - branches
   except:
@@ -144,6 +147,9 @@ ios-staging:
   environment:
     action: prepare
     name: staging
+  script:
+    - cd src-capacitor/ios/App/
+    - fastlane beta
   only:
     - main
 
@@ -152,6 +158,9 @@ ios-production:
   environment:
     action: prepare
     name: production
+  script:
+    - cd src-capacitor/ios/App/
+    - fastlane beta
   only:
     - tags
 
