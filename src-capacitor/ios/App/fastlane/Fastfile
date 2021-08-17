@@ -23,7 +23,7 @@ platform :ios do
       build_number: ci_build_number
     )
     increment_version_number_in_plist(
-      version_number: last_git_tag
+      version_number: sh("git", "describe", "--tags", "--abbrev=0")
     )
     build_app(
       workspace: "App.xcworkspace",
@@ -38,7 +38,7 @@ platform :ios do
       build_number: ci_build_number
     )
     increment_version_number_in_plist(
-      version_number: last_git_tag
+      version_number: sh("git", "describe", "--tags", "--abbrev=0")
     )
     build_app(
       workspace: "App.xcworkspace",
