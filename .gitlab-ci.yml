@@ -125,7 +125,8 @@ android-production:
       - node_modules/
   artifacts:
     paths:
-      - src-capacitor/ios/App/
+      - src-capacitor/ios/App/App.ipa
+      - src-capacitor/ios/App/App.app.dSYM.zip
 
 
 ios-development:
