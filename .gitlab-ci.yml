@@ -150,7 +150,7 @@ ios-staging:
     name: staging
   script:
     - cd src-capacitor/ios/App/
-    - fastlane beta
+    - fastlane build
   only:
     - main
 
