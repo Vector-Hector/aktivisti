@@ -2,7 +2,7 @@
   <QPage class="flex-fill">
     <div class="container">
       <PageLoadingSpinner v-if="loading" />
-      <div v-else class="manage-sub-associations-content">
+      <div v-else class="manage-users-content">
         <h3 class="subassociations-section-heading">Kreisverbände</h3>
         <div class="select-wrapper">
           <QSelect
@@ -122,7 +122,7 @@ interface UserPermissionItem {
 }
 
 export default defineComponent({
-  name: 'ManageSubAssociations',
+  name: 'ManageUsers',
   components: {
     PageLoadingSpinner,
     QSelect,

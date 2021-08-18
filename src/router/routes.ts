@@ -45,7 +45,7 @@ import EventDetailPosterDetailMap from 'pages/event-map/detail/area/posters/deta
 import EventDetailPosterList from 'pages/event-map/detail/area/posters/list/EventDetailPosterList.vue'
 import EventDetailPosterListMap from 'pages/event-map/detail/area/posters/list/EventDetailPosterListMap.vue'
 import MyManagedEvents from 'pages/MyManagedEvents.vue'
-import ManageSubAssociations from 'pages/ManageSubAssociations.vue'
+import ManageUsers from 'pages/ManageUsers.vue'
 
 
 const routes = [
@@ -343,11 +343,11 @@ const routes = [
         }
       },
       {
-        path: '/manage-sub-associations',
-        name: 'manage-sub-associations',
-        component: ManageSubAssociations,
+        path: '/manage-users',
+        name: 'manage-users',
+        component: ManageUsers,
         meta: {
-          title: () => 'Kreisverbände verwalten'
+          title: () => 'Benutzer:innen verwalten'
         }
       }
     ]

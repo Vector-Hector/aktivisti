@@ -116,10 +116,10 @@
           class="menu-item"
         >
           <MenuLink
-            :to="{ name: 'manage-sub-associations'}"
+            :to="{ name: 'manage-users'}"
           >
-            <QIcon />
-            <span class="menu-item-link-text">Kreisverbände verwalten</span>
+            <QIcon :name="ionPeopleOutline"/>
+            <span class="menu-item-link-text">Benutzer:innen verwalten</span>
           </MenuLink>
         </div>
       </div>
@@ -169,7 +169,8 @@ import {
   ionLogIn,
   ionMenu,
   ionPersonCircleOutline,
-  ionPersonOutline
+  ionPersonOutline,
+  ionPeopleOutline
 } from '@quasar/extras/ionicons-v5'
 import { QBtn, QDrawer, QIcon } from 'quasar'
 import { farCalendarPlus, farIdCard } from '@quasar/extras/fontawesome-v5'
@@ -196,7 +197,8 @@ export default defineComponent({
       ionExitOutline,
       ionLogIn,
       ionPersonCircleOutline,
-      ionPersonOutline
+      ionPersonOutline,
+      ionPeopleOutline
     }
   },
   computed: {
