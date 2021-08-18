@@ -37,7 +37,7 @@
     </QHeader>
     <NavigationSidebar />
     <QPageContainer
-      class="d-flex page-container"
+      class="d-flex flex-fill page-container"
     >
       <router-view v-slot="{ Component }">
         <component :is="Component" />

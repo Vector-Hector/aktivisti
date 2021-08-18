@@ -228,20 +228,30 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.navigation-sidebar {
-  position: relative;
-  padding: env(safe-area-inset-top) 0 0;
 
+::v-global(body.platform-ios .navigation-sidebar) {
+  padding: calc(env(safe-area-inset-top) - .7rem) 0 0 !important;
+  background: $primary;
+}
+
+body.platform-ios {
+  .menu-button {
+    top: env(safe-area-inset-top);
+  }
+}
+
+::v-deep(.navigation-sidebar) {
+  position: relative;
+  overflow: visible;
   .menu-button {
     visibility: visible !important;
     color: $grey-8;
     background: $white;
-    margin: 0.5rem 0;
     transform: none;
     transition: all 100ms linear;
     position: absolute;
     z-index: 9000;
-    top: 0;
+    top: 0.5rem;
     left: -3.5rem;
 
     &.navbar-expanded {
