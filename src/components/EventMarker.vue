@@ -5,7 +5,8 @@
     <template v-slot:marker>
       <QIcon
         :name="icon"
-        size="xl"
+        class="clickable-marker"
+        size="lg"
       />
     </template>
     <slot />
@@ -41,5 +42,7 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-
+.clickable-marker {
+  cursor: pointer;
+}
 </style>
