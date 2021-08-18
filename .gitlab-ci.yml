@@ -165,10 +165,6 @@ ios-production:
   only:
     - tags
 
-
-
-
-
 staging:
   extends: .deploy-template
   stage: deploy
