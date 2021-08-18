@@ -138,6 +138,7 @@ export default defineComponent({
       ionClose,
       allSubAssociations: [] as SubAssociationDto[],
       mySubAssociations: [] as SubAssociationDto[],
+      myStateAssociationIds: [] as string[],
       suggestedSubAssociations: [] as SubAssociationDto[],
       selectedSubAssociation: {id: 0, name: ''},
       myPermissionForSelectedSubAssociation: {},
@@ -150,14 +151,19 @@ export default defineComponent({
     }
   },
   async created() {
-    await this.getSubAssociations()
-    this.computeMySubAssociations()
+    this.allSubAssociations = await this.getSubAssociations()
+    await this.computeMySubAssociations()
     this.loading = false
   },
   computed: {
-    //TODO check for global campaign:admin (or are there other global permission types)
     userManagementPermissions(): UserObjectPermissionDto[] {
       return userStore.getMyTeamCaptainOrCoordinatorPermissions()
+    },
+    isUserAdminOrGlobalCoordinator(): boolean {
+      return userStore.isAdminOrGlobalCoordinator()
+    },
+    getPermissions(): UserObjectPermissionDto[] {
+      return userStore.getMyPermissions()
     },
     permissionTypeOptionsForMyPermissions(): {key: string, label: string, inactive: boolean}[] {
       return permissionTypeOptions.map(
@@ -166,14 +172,39 @@ export default defineComponent({
     }
   },
   methods: {
-    async getSubAssociations() {
-      this.allSubAssociations = (await this.$apiClient.subAssociations.list()).payload.data
+    async getSubAssociations(stateAssociationId?: number) {
+      return (await this.$apiClient.subAssociations.list({state_association: stateAssociationId})).payload.data
     },
-    computeMySubAssociations() {
-      const mySubAssociationsIds = this.userManagementPermissions.map((permission) => permission.object_pk)
-      this.mySubAssociations = this.allSubAssociations.filter(
-        ({id}) => mySubAssociationsIds.indexOf(id.toString()) >= 0
-      )
+    async computeMySubAssociations() {
+      if (this.isUserAdminOrGlobalCoordinator) {
+        this.mySubAssociations = this.allSubAssociations
+      }
+      else {
+        //Sub association I have direct permissions for
+        const mySubAssociationsIds = this.getPermissions
+          .filter((permission) => permission.content_type_name === 'Sub association')
+          .map((permission) => permission.object_pk)
+        this.mySubAssociations = this.allSubAssociations.filter(
+          ({id}) => mySubAssociationsIds.indexOf(id.toString()) >= 0
+        )
+        //TODO take care of corresponding subassociations if I have state association permission
+        //it doesn't seem to be possible to get all subassociation for an association??
+        // it should work somehow, the admin can do it
+        this.myStateAssociationIds = this.getPermissions
+          .filter((permission) => permission.content_type_name === 'State association')
+          .map((permission) => permission.object_pk)
+        const subAssociationsInMyStateAssociations = [] as SubAssociationDto[]
+        for (const stateAssociationId of this.myStateAssociationIds) {
+          const newSubAssociations = await this.getSubAssociations(parseInt(stateAssociationId))
+          subAssociationsInMyStateAssociations.push(...newSubAssociations)
+        }
+        for (const subAssociation of subAssociationsInMyStateAssociations) {
+          if (mySubAssociationsIds.indexOf(subAssociation.id.toString()) < 0) {
+            //this.mySubAssociations.push(...subAssociationsInMyStateAssociations)
+            this.mySubAssociations.push(subAssociation)
+          }
+        }
+      }
     },
     filterSubAssociations(value: string, update: any) {
       if (!value) {
@@ -234,7 +265,6 @@ export default defineComponent({
           }
         }
       )
-      //TODO how do global permissions fall into all this?
     },
     async updateUserObjectPermissions(permission: { key: string, label: string }, user: UserPermissionItem) {
       if (user.object_permission_id && permission.key === PermissionCodename.NONE) {
@@ -258,11 +288,18 @@ export default defineComponent({
         }
       }
       user.permission_name = permission.label
+      console.log('user.permission_name: ', user.permission_name)
+      console.log('permission.label: ', permission.label)
     },
     allowedToManagePermissions(permissionType: { key: string, label: string }) {
       const myPermissionsForSubassociation = this.userManagementPermissions.filter(
         (permission) => permission.object_pk === this.selectedSubAssociation.id.toString()
       )
+      // if I don't have permissions for the subassociation I'm state association or global coordinator,
+      // so I'm allowed to manage everything
+      if (myPermissionsForSubassociation.length === 0) {
+        return true
+      }
       if (myPermissionsForSubassociation[0].permission_codename === PermissionCodename.MANAGE_EVENTS) {
         return true
       }

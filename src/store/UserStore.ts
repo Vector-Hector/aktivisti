@@ -126,6 +126,15 @@ class UserStore extends Store<UserState> {
       .includes(PermissionCodename.MANAGE_EVENTS)
   }
 
+  public isAdminOrGlobalCoordinator() {
+    if (this.state.user?.roles.includes(CAMPAIGN_ADMIN) == true || this.state.user?.is_superuser) {
+      return true
+    }
+    else {
+      return false
+    }
+  }
+
   public setUser(user: UserDto) {
     this.state.user = user
   }
