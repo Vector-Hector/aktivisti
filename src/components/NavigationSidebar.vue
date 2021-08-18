@@ -229,8 +229,8 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .navigation-sidebar {
-  padding: 0;
   position: relative;
+  padding: env(safe-area-inset-top) 0 0;
 
   .menu-button {
     visibility: visible !important;
