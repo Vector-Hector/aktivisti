@@ -25,8 +25,7 @@ import {
   provide,
   Ref,
   ref,
-  watch,
-  nextTick
+  watch
 } from 'vue'
 import mapboxgl, { LngLat, Point } from 'mapbox-gl'
 import { LocationDto } from 'src/api/model/LocationDto'
