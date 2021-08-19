@@ -170,7 +170,7 @@ staging:
   stage: deploy
   script:
     - cd kustomize/staging
-    - kustomize edit set image $CI_REGISTRY_IMAGE=$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
+    - kustomize edit set image $CI_REGISTRY_IMAGE=$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
     - kustomize edit set namespace $KUBE_NAMESPACE
     - kustomize build | kubectl apply -f -
   only:
