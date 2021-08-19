@@ -1,30 +1,35 @@
 <template>
-  <div class="container">
-    <QTable
-      :columns="columns"
-      dense
-      :flat=!$q.screen.lt.md
-      :grid=$q.screen.lt.md
-      :rows="rows"
-      hide-pagination
-      :pagination="{rowsPerPage:0}"
-      row-key="name"
-    >
-      <template v-slot:body-cell-areaName="props">
-        <QTd :props="props">
-          <div>
-            <QIcon
-              v-if="props.row.areaColor"
-              class="area-indicator-icon"
-              :name="ionEllipse"
-              :style="{ color: props.row.areaColor }"
-            />
-            {{ props.value }}
-          </div>
-        </QTd>
-      </template>
-    </QTable>
-  </div>
+  <QScrollArea
+    class="flex flex-fill"
+  >
+    <QPage>
+      <div class="container">
+        <QTable
+          :columns="columns"
+          :flat=!$q.screen.lt.md
+          :grid=$q.screen.lt.md
+          :rows="rows"
+          hide-pagination
+          :pagination="{rowsPerPage:0}"
+          row-key="name"
+        >
+          <template v-slot:body-cell-areaName="props">
+            <QTd :props="props">
+              <div>
+                <QIcon
+                  v-if="props.row.areaColor"
+                  class="area-indicator-icon"
+                  :name="ionEllipse"
+                  :style="{ color: props.row.areaColor }"
+                />
+                {{ props.value }}
+              </div>
+            </QTd>
+          </template>
+        </QTable>
+      </div>
+    </QPage>
+  </QScrollArea>
 </template>
 
 <script lang="ts">
@@ -34,12 +39,14 @@ import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { ionEllipse } from '@quasar/extras/ionicons-v5'
 import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
-import { QIcon, QTable, QTd } from 'quasar'
+import { QIcon, QPage, QScrollArea, QTable, QTd } from 'quasar'
 
 export default defineComponent({
   name: 'EventDetailReport',
   components: {
     QIcon,
+    QPage,
+    QScrollArea,
     QTable,
     QTd
   },

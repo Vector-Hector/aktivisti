@@ -1,7 +1,7 @@
 <template>
   <Marker
-    v-if="showMarker && position"
-    :location="position"
+    v-if="showMarker && userPosition"
+    :location="userPosition"
   >
     <template v-slot:marker>
       <QIcon
@@ -12,28 +12,54 @@
     </template>
   </Marker>
   <div class="geolocation-control">
-    <QBtn
+    <QFab
       :icon="locatorIcon"
+      :color="locatorColor"
+      direction="left"
+      class="geolocation-control-button"
+      padding="sm"
       flat
       round
-      :disable="disabled"
-      style="background: white"
-      :color="locatorColor"
-      @click="onLocateClicked"
-    />
+    >
+      <QFabAction
+        :icon="locatorIcon"
+        external-label
+        label-position="bottom"
+        :disable="disabled"
+        :color="locatorColor"
+        label="Standort"
+        flat
+        round
+        @click="onLocateClicked(userPosition, true)"
+        class="geolocation-control-button"
+      />
+      <QFabAction
+        v-if="poiLocation"
+        @click="onLocateClicked(poiLocation, false)"
+        external-label
+        label-position="bottom"
+        :icon="ionLocation"
+        label="Aktion"
+        flat
+        round
+        class="geolocation-control-button"
+      />
+    </QFab>
   </div>
+
 </template>
 
 <script lang="ts">
 import { defineComponent, inject, PropType } from 'vue'
 import { MapEventBus, MapInject } from './Map.vue'
 import { FitBoundsOptions, LngLat, PositionOptions } from 'mapbox-gl'
-import { ionLocateOutline, ionRadioButtonOnSharp } from '@quasar/extras/ionicons-v5'
+import { ionLocateOutline, ionLocation, ionRadioButtonOnSharp } from '@quasar/extras/ionicons-v5'
 import { Geolocation, Position } from '@capacitor/geolocation'
 import { matGpsFixed, matGpsNotFixed, matGpsOff } from '@quasar/extras/material-icons'
-import { QBtn, QIcon } from 'quasar'
+import { QFab, QFabAction, QIcon } from 'quasar'
 import Marker from 'src/mapbox/Marker.vue'
 import { MAP_GEOLOCATE_STOP_TRACKING } from 'src/mapbox/Map.vue'
+import { LocationDto } from 'src/api/model/LocationDto'
 
 
 interface GeolocateControlOptions {
@@ -56,13 +82,18 @@ export default defineComponent({
   name: 'GeolocationControl',
   components: {
     Marker,
-    QBtn,
-    QIcon
+    QIcon,
+    QFab,
+    QFabAction
   },
   props: {
     showMarker: {
       type: Boolean as PropType<boolean>,
       default: true
+    },
+    poiLocation: {
+      type: Object as PropType<LocationDto>,
+      required: false
     },
     options: {
       type: Object as PropType<GeolocateControlOptions>,
@@ -92,10 +123,11 @@ export default defineComponent({
   },
   data() {
     return {
+      ionLocation,
       ionLocateOutline,
       locatorState: GeolocateState.DISABLED as GeolocateState,
       locationWatcher: null as null | string,
-      position: null as LngLat | null,
+      userPosition: null as LngLat | null,
       touchListener: null as (() => void) | null,
       ionRadioButtonOnSharp
     }
@@ -136,17 +168,21 @@ export default defineComponent({
     }
   },
   methods: {
-    onLocateClicked() {
-      switch (this.locatorState) {
-      case GeolocateState.ENABLED:
-      case GeolocateState.DISABLED:
-        this.locatorState = GeolocateState.TRACKING
-        break
+    onLocateClicked(position: LocationDto | undefined, tracking = false) {
+      if (tracking) {
+        switch (this.locatorState) {
+        case GeolocateState.ENABLED:
+        case GeolocateState.DISABLED:
+          this.locatorState = GeolocateState.TRACKING
+          break
+        }
+      } else {
+        MapEventBus.emit(MAP_GEOLOCATE_STOP_TRACKING)
       }
-      if (this.position !== null) {
-        this.map.panTo(this.position)
+      if (position) {
+        this.map.panTo(position)
       }
-      this.$emit('locate', this.position)
+      this.$emit('locate', position)
     },
     async startWatch() {
       if (!this.locationWatcher) {
@@ -166,12 +202,12 @@ export default defineComponent({
       if (position?.coords === undefined) {
         return
       }
-      this.position = new LngLat(position.coords.longitude, position.coords.latitude)
+      this.userPosition = new LngLat(position.coords.longitude, position.coords.latitude)
 
       if (this.locatorState === GeolocateState.TRACKING) {
-        this.map.panTo(this.position)
+        this.map.panTo(this.userPosition)
       }
-      this.$emit('position', this.position)
+      this.$emit('position', this.userPosition)
     }
   },
   mounted() {
@@ -204,13 +240,6 @@ export default defineComponent({
 
 </script>
 <style lang="scss">
-.geolocation-control {
-  z-index: 10;
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-}
-
 .pulse {
   font-size: 24px;
   animation: pulse-animation 2s infinite;
@@ -230,5 +259,9 @@ export default defineComponent({
   }
 }
 
+.geolocation-control-button {
+  background: white;
+  box-shadow: $map-overlay-shadow;
+}
 
 </style>

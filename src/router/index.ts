@@ -6,7 +6,9 @@ import {
   createWebHistory
 } from 'vue-router'
 import routes from './routes'
-import { authStore } from 'src/store/AuthStore'
+import { getAuthStore } from 'src/store/AuthStore'
+
+const authStore = getAuthStore()
 
 /*
  * If not building with SSR mode, you can
@@ -42,6 +44,8 @@ export default route(function (/* { store, ssrContext } */) {
           next: to.fullPath
         }
       })
+    } else if (to.matched.length < 1) {
+      next({name: 'app'})
     } else {
       next()
     }

@@ -9,6 +9,9 @@
       ref="mapContainer"
       class="map"
     >
+      <div class="top-right-overlay">
+        <slot v-if="initialized" name="top-right" />
+      </div>
       <slot v-if="initialized" />
     </div>
   </div>
@@ -100,7 +103,11 @@ export default defineComponent({
         zoom: props.zoom,
         center: props.center,
         bounds: props.boundingBox,
-        interactive: props.interactive
+        interactive: props.interactive,
+        // for now we are disabling any rotating and pitching interaction
+        touchPitch: false,
+        dragRotate: false,
+        pitchWithRotate: false
       })
       map.value.on('load', () => {
         map.value?.resize()
@@ -180,5 +187,12 @@ export default defineComponent({
   flex: 1;
   order: 1;
   display: flex;
+}
+
+.top-right-overlay {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
 }
 </style>

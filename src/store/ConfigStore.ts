@@ -1,5 +1,5 @@
 import { Store } from 'src/store/Store'
-import { ConfigDto } from 'src/api/model/ConfigDto'
+import { ConfigDto, VersionHealth } from 'src/api/model/ConfigDto'
 
 interface ConfigStoreState {
   service_config: ConfigDto
@@ -10,7 +10,8 @@ class ConfigStore extends Store<ConfigStoreState> {
   protected data(): ConfigStoreState {
     return {
       service_config: {
-        registration_disabled: false
+        registration_disabled: false,
+        version_health: VersionHealth.UNKNOWN
       }
     }
   }

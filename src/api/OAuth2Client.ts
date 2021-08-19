@@ -3,14 +3,15 @@ import axios from 'axios'
 import { JSONResponse } from './JSONResponse'
 import { TokenDto } from './model/TokenDto'
 
-export type GrantType = 'password'
+export type GrantType = 'password' | 'refresh_token'
 
 export interface OAuthTokenRequestParams {
-    grant_type: GrantType
-    username?: string
-    password?: string
-    scope?: string
-    client_id: string
+  grant_type: GrantType
+  refresh_token?: string
+  username?: string
+  password?: string
+  scope?: string
+  client_id: string
 }
 
 export class OAuth2Client {

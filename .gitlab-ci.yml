@@ -38,6 +38,7 @@ lint:
     paths:
       - node_modules/
   environment:
+    action: prepare
     name: staging
   artifacts:
     paths:
@@ -46,6 +47,7 @@ lint:
 bundle-staging:
   extends: .bundle
   environment:
+    action: prepare
     name: staging
   only:
     - main
@@ -53,6 +55,7 @@ bundle-staging:
 bundle-development:
   extends: .bundle
   environment:
+    action: prepare
     name: development
   only:
     - develop
@@ -60,10 +63,107 @@ bundle-development:
 bundle-review:
   extends: .bundle
   environment:
+    action: prepare
     name: review/$CI_COMMIT_REF_SLUG
   except:
     - main
     - develop
+
+.android:
+  image: circleci/android:api-30-node
+  stage: bundle
+  before_script:
+    - sudo npm install -g npm@^7
+  script:
+    - sudo npm ci
+    - npx quasar build -m capacitor -T android
+    - cd src-capacitor/android
+    - ./gradlew bundleRelease
+  cache:
+    paths:
+      - node_modules/
+  artifacts:
+    paths:
+      - src-capacitor/android/app/build/
+
+android-development:
+  extends: .android
+  environment:
+    action: prepare
+    name: development
+  only:
+    - branches
+  except:
+    - tags
+    - main
+
+android-staging:
+  extends: .android
+  environment:
+    action: prepare
+    name: staging
+  only:
+    - main
+
+android-production:
+  extends: .android
+  environment:
+    action: prepare
+    name: production
+  only:
+    - tags
+
+.ios:
+  stage: bundle
+  before_script:
+    - npm ci
+    - npx quasar build -m capacitor -T ios
+  tags:
+    - macos
+  cache:
+    paths:
+      - node_modules/
+  artifacts:
+    paths:
+      - src-capacitor/ios/App/App.ipa
+      - src-capacitor/ios/App/App.app.dSYM.zip
+
+
+ios-development:
+  extends: .ios
+  environment:
+    action: prepare
+    name: development
+  script:
+    - cd src-capacitor/ios/App/
+    - fastlane build
+  only:
+    - branches
+  except:
+    - tags
+    - main
+
+ios-staging:
+  extends: .ios
+  environment:
+    action: prepare
+    name: staging
+  script:
+    - cd src-capacitor/ios/App/
+    - fastlane build
+  only:
+    - main
+
+ios-production:
+  extends: .ios
+  environment:
+    action: prepare
+    name: production
+  script:
+    - cd src-capacitor/ios/App/
+    - fastlane beta
+  only:
+    - tags
 
 staging:
   extends: .deploy-template
@@ -74,7 +174,7 @@ staging:
     - kustomize edit set namespace $KUBE_NAMESPACE
     - kustomize build | kubectl apply -f -
   only:
-    - main
+    - tags
   environment:
     name: staging
     url: https://staging.wk-frontend.haze.alt.coop

@@ -146,7 +146,7 @@
 import { defineComponent } from 'vue'
 import { uiStore } from 'src/store/UiStore'
 import { userStore } from 'src/store/UserStore'
-import { authStore } from 'src/store/AuthStore'
+import { getAuthStore } from 'src/store/AuthStore'
 import MenuLink from 'src/components/MenuLink.vue'
 import OpenInvitationsBadge from 'components/OpenInvitationsBadge.vue'
 import {
@@ -163,6 +163,7 @@ import {
 import { QBtn, QDrawer, QIcon } from 'quasar'
 import { farCalendarPlus, farIdCard } from '@quasar/extras/fontawesome-v5'
 
+const authStore = getAuthStore()
 
 export default defineComponent({
   name: 'NavigationSidebar',
@@ -227,20 +228,30 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.navigation-sidebar {
-  padding: 0;
-  position: relative;
 
+::v-global(body.platform-ios .navigation-sidebar) {
+  padding: calc(env(safe-area-inset-top) - .7rem) 0 0 !important;
+  background: $primary;
+}
+
+body.platform-ios {
+  .menu-button {
+    top: env(safe-area-inset-top);
+  }
+}
+
+::v-deep(.navigation-sidebar) {
+  position: relative;
+  overflow: visible;
   .menu-button {
     visibility: visible !important;
     color: $grey-8;
     background: $white;
-    margin: 0.5rem 0;
     transform: none;
     transition: all 100ms linear;
     position: absolute;
     z-index: 9000;
-    top: 0;
+    top: 0.5rem;
     left: -3.5rem;
 
     &.navbar-expanded {

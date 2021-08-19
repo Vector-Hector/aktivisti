@@ -32,6 +32,12 @@ a.text-link {
   flex-direction: column;
 }
 
+.q-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
 @media screen {
   #q-app {
     overflow: hidden;

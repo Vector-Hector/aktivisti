@@ -3,6 +3,9 @@ import { JSONResponse } from 'src/api/JSONResponse'
 import { AxiosInstance, Method } from 'axios'
 import { appendAsQueryParams } from 'src/utils/url'
 import { Cookies } from 'quasar'
+import { AuthType, getAuthStore, getAuthType } from 'src/store/AuthStore'
+import { TokenAuthStore } from 'src/store/TokenAuthStore'
+import { VERSION_CODE } from 'src/utils/version'
 
 interface RequestConfig {
   path: string,
@@ -36,10 +39,20 @@ export class BaseApiRoute {
         headers['x-csrftoken'] = Cookies.get('csrftoken');
       }
     }
+
+    if (getAuthType() === AuthType.TOKEN) {
+      const authStore = getAuthStore() as TokenAuthStore
+      if (authStore.state.tokenSet) {
+        headers['Authorization'] = `Bearer ${authStore.state.tokenSet.access_token}`
+      }
+    }
+
+    headers['X-App-Version'] = VERSION_CODE.toString()
+
     return this.axiosInstance(url.toString(), {
       method: config.method,
       data: config.data ? JSON.stringify(config.data) : undefined,
-      withCredentials: true,
+      withCredentials: getAuthType() === AuthType.SESSION,
       headers
     })
   }
