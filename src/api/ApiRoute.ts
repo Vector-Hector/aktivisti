@@ -5,6 +5,7 @@ import { appendAsQueryParams } from 'src/utils/url'
 import { Cookies } from 'quasar'
 import { AuthType, getAuthStore, getAuthType } from 'src/store/AuthStore'
 import { TokenAuthStore } from 'src/store/TokenAuthStore'
+import { VERSION_CODE } from 'src/utils/version'
 
 interface RequestConfig {
   path: string,
@@ -45,6 +46,8 @@ export class BaseApiRoute {
         headers['Authorization'] = `Bearer ${authStore.state.tokenSet.access_token}`
       }
     }
+
+    headers['X-App-Version'] = VERSION_CODE.toString()
 
     return this.axiosInstance(url.toString(), {
       method: config.method,
