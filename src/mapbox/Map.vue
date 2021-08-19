@@ -20,12 +20,13 @@
 import {
   defineComponent,
   InjectionKey,
-  onMounted,
+  onMounted, onUnmounted,
   PropType,
   provide,
   Ref,
   ref,
-  watch
+  watch,
+  nextTick
 } from 'vue'
 import mapboxgl, { LngLat, Point } from 'mapbox-gl'
 import { LocationDto } from 'src/api/model/LocationDto'
@@ -33,6 +34,7 @@ import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { TinyEmitter } from 'tiny-emitter'
 import { isEqual } from 'lodash-es'
 import { uuidv4 } from 'src/utils/uuid'
+import { SettleDebouncer } from 'src/utils/debounce'
 
 
 export const MapInject: InjectionKey<Ref<mapboxgl.Map>> = Symbol()
@@ -96,7 +98,18 @@ export default defineComponent({
       emit(type, event)
       MapEventBus.emit(type, event)
     }
+
+    const resizeDebouncer = new SettleDebouncer()
+
+    const resizeMap = () => {
+      void resizeDebouncer.executeDebounced(() => {
+        map.value?.resize()
+        return Promise.resolve()
+      }, 100)
+    }
+
     onMounted(() => {
+      window.addEventListener('resize', resizeMap)
       map.value = new mapboxgl.Map({
         container: mapUuid,
         style: process.env.APP_MAPBOX_STYLE,
@@ -140,7 +153,6 @@ export default defineComponent({
         MapEventBus.on(MAP_PAN_TO, (location: LngLat) => {
           map.value?.panTo(location)
         })
-
       })
       map.value.on('moveend', () => {
         emitWithBus('update:center', map.value?.getCenter())
@@ -151,6 +163,10 @@ export default defineComponent({
         emitWithBus('update:zoom', map.value?.getZoom())
         emitWithBus('update:boundingBox', getBoundingBox())
       })
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('resize', resizeMap)
     })
 
     const onDrop = (event: any) => {
