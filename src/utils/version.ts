@@ -14,7 +14,7 @@ function getVersionCode(): number {
   const versionRegex = /([0-9]{1,2})\.([0-9]{1,2}).([0-9]{1,2})(?:-(alpha|beta|rc)\.([0-9]{1,2}))?/
   const match = versionRegex.exec(versionString)
   if (!match) return 0
-  const [_, major, minor, patch, preReleaseModifier, preReleaseNumber] = match
+  const [, major, minor, patch, preReleaseModifier, preReleaseNumber] = match
   let prereleaseModifierInteger
   switch (preReleaseModifier) {
   case 'alpha':
