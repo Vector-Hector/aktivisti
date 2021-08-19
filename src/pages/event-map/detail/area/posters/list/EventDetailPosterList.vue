@@ -2,7 +2,9 @@
   <div class="container q-py-sm">
     <div class="row">
       <div class="col">
-        <AssignAreaParticipants />
+        <AssignAreaParticipants
+          v-if="eventArea"
+        />
       </div>
     </div>
     <div class="row q-py-sm">
