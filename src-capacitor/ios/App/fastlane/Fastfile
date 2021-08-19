@@ -17,13 +17,17 @@ default_platform(:ios)
 
 platform :ios do
   desc "Push a new beta build to TestFlight"
+  # Use git describe but only take the base version - omitting the prebuild identifier etc.
+  # Apple doesn't support publishing builds that are not strict semver [major].[minor].[patch]
+  version = sh("git describe --tags --abbrev=0 | tr '-' '\n' | head -n 1")
   lane :build do
     sync_code_signing(type: "appstore")
     increment_build_number_in_plist(
       build_number: ci_build_number
     )
+    puts version
     increment_version_number_in_plist(
-      version_number: sh("git", "describe", "--tags", "--abbrev=0")
+      version_number: version
     )
     build_app(
       workspace: "App.xcworkspace",
@@ -31,20 +35,20 @@ platform :ios do
       xcargs: "-allowProvisioningUpdates"
     )
   end
-  
+
   lane :beta do
     sync_code_signing(type: "appstore")
     increment_build_number_in_plist(
       build_number: ci_build_number
     )
     increment_version_number_in_plist(
-      version_number: sh("git", "describe", "--tags", "--abbrev=0")
+      version_number: version
     )
     build_app(
       workspace: "App.xcworkspace",
       scheme: "App",
       xcargs: "-allowProvisioningUpdates"
-    )   
+    )
     upload_to_testflight
   end
 end
