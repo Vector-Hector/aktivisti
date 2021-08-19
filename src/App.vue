@@ -60,6 +60,7 @@ import { configStore } from 'src/store/ConfigStore'
 import { getAuthStore } from 'src/store/AuthStore'
 import { userStore } from 'src/store/UserStore'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
+import { VersionHealth } from 'src/api/model/ConfigDto'
 
 const authStore = getAuthStore()
 
@@ -110,6 +111,29 @@ export default defineComponent({
       configStore.setServiceConfig(configRequest.payload.data)
     } catch (e) {
       ErrorBus.emit(NO_INTERNET)
+    }
+    // Check version health and show warnings / errors
+    switch (configStore.state.service_config.version_health) {
+    case VersionHealth.UNKNOWN:
+      this.$q.notify({
+        color: 'warning',
+        message: 'Diese App-Version ist unbekannt und wird nicht unterstützt. ' +
+          'Bitte lade eine neue Version aus offiziellen Quellen.'
+      })
+      break
+    case VersionHealth.OBSOLETE:
+      this.$q.notify({
+        color: 'negative',
+        message: 'Diese App-Version ist kritisch veraltet und wird nicht mehr unterstützt. ' +
+          'Du musst die Seite neu laden oder ein Update durchführen, ansonsten wird die App vermutlich Fehler produzieren.'
+      })
+      break
+    case VersionHealth.DEPRECATED:
+      this.$q.notify({
+        color: 'warning',
+        message: 'Es gibt eine neuere Version dieser App. Bitte führe ein Update durch.'
+      })
+      break
     }
     // hydrate profile on app start
     if (authStore.isLoggedIn()) {
