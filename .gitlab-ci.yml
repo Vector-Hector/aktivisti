@@ -77,6 +77,8 @@ bundle-review:
   script:
     - sudo npm ci
     - npx quasar build -m capacitor -T android
+    - cd src-capacitor/android
+    - ./gradlew bundleRelease
   cache:
     paths:
       - node_modules/
@@ -111,6 +113,57 @@ android-production:
   only:
     - tags
 
+.ios:
+  stage: bundle
+  before_script:
+    - npm ci
+    - npx quasar build -m capacitor -T ios
+  tags:
+    - macos
+  cache:
+    paths:
+      - node_modules/
+  artifacts:
+    paths:
+      - src-capacitor/ios/App/App.ipa
+      - src-capacitor/ios/App/App.app.dSYM.zip
+
+
+ios-development:
+  extends: .ios
+  environment:
+    action: prepare
+    name: development
+  script:
+    - cd src-capacitor/ios/App/
+    - fastlane build
+  only:
+    - branches
+  except:
+    - tags
+    - main
+
+ios-staging:
+  extends: .ios
+  environment:
+    action: prepare
+    name: staging
+  script:
+    - cd src-capacitor/ios/App/
+    - fastlane build
+  only:
+    - main
+
+ios-production:
+  extends: .ios
+  environment:
+    action: prepare
+    name: production
+  script:
+    - cd src-capacitor/ios/App/
+    - fastlane beta
+  only:
+    - tags
 
 staging:
   extends: .deploy-template
