@@ -48,6 +48,10 @@ export default boot(async ({app}) => {
     } catch (e) {
       // hydrating profile failed, not logged in
     }
+    apiClient.axiosInstance.interceptors.response.use(
+      (response: AxiosResponse) => response,
+      (error: any) => refreshOnErrorInterceptor(error)
+    )
   } else if (authType === AuthType.SESSION) {
     try {
       const sessionRequest = await apiClient.session.session()
@@ -56,10 +60,6 @@ export default boot(async ({app}) => {
       console.warn('Request to session failed, probably offline')
     }
   }
-  apiClient.axiosInstance.interceptors.response.use(
-    (response: AxiosResponse) => response,
-    (error: any) => refreshOnErrorInterceptor(error)
-  )
   apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
     return response
   }, async (error: any) => {

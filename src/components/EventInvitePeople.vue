@@ -1,27 +1,26 @@
 <template>
   <div class="q-qa-sm">
     <div class="row">
-      <div class="col">
-        <QSelect
+      <div class="col-grow">
+        <QInput
           use-input
-          :model-value="selectedUsers"
-          :multiple="true"
-          placeholder="Tippen, um Leute einzuladen"
-          :option-label="userLabel"
+          dense
+          v-model="usernameToInvite"
+          placeholder="Nutzername"
           class="w-100 d-flex flex-col"
-          :options="suggestedUsers"
-          @filter="searchUsers"
-          @add="inviteUser($event.value)"
-        >
-          <template #item="slotProps">
-            <div class="user-autocomplete-username">
-              {{ slotProps.item.username }}
-            </div>
-            <div class="user-autocomplete-email">
-              {{ slotProps.item.email }}
-            </div>
-          </template>
-        </QSelect>
+          @keydown.enter="inviteUser(usernameToInvite)"
+        />
+      </div>
+      <div class="col-auto">
+        <QBtn
+          :icon="ionPersonAddSharp"
+          color="primary"
+          :disable="isLoading"
+          flat
+          round
+          small
+          @click="inviteUser(usernameToInvite)"
+        />
       </div>
     </div>
     <div class="row">
@@ -88,8 +87,8 @@
 import { defineComponent, PropType } from 'vue'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { userStore } from 'src/store/UserStore'
-import { ionClose, ionMail } from '@quasar/extras/ionicons-v5'
-import { QBtn, QIcon, QItem, QItemLabel, QItemSection, QList, QSelect } from 'quasar'
+import { ionClose, ionMail, ionPersonAddSharp } from '@quasar/extras/ionicons-v5'
+import { QBtn, QIcon, QInput, QItem, QItemLabel, QItemSection, QList } from 'quasar'
 
 interface UserSuggestionItem {
   id: number
@@ -101,7 +100,7 @@ export default defineComponent({
   name: 'EventInvitePeople',
   components: {
     QBtn,
-    QSelect,
+    QInput,
     QList,
     QItem,
     QItemLabel,
@@ -116,12 +115,12 @@ export default defineComponent({
   },
   data() {
     return {
-      query: '',
-      selectedUsers: [],
-      suggestedUsers: [] as UserSuggestionItem[],
+      isLoading: false,
+      usernameToInvite: '',
       participations: [] as EventParticipationDto[],
       ionMail,
-      ionClose
+      ionClose,
+      ionPersonAddSharp
     }
   },
   computed: {
@@ -150,17 +149,6 @@ export default defineComponent({
     userLabel(item: UserSuggestionItem) {
       return `${item.username} ${item.email ?? ''}`
     },
-    async searchUsers(query: string, update: any) {
-      let suggestions: UserSuggestionItem[]
-      if (query) {
-        suggestions = (await this.$apiClient.publicProfiles.list({query: query})).payload.data
-      } else {
-        suggestions = []
-      }
-      update(() => {
-        this.suggestedUsers = suggestions
-      })
-    },
     appendParticipations(participations: EventParticipationDto[]) {
       for (const participation of participations) {
         if (!this.participations.find(({id}) => id === participation.id)) {
@@ -168,18 +156,34 @@ export default defineComponent({
         }
       }
     },
-    async inviteUser(user: UserSuggestionItem) {
-      this.query = ''
-
+    async inviteUser(username: string) {
       const inviteRequestBody = {
-        users: [user.id]
+        users: [username]
       }
-      const response = await this.$apiClient.events.invite(this.eventId.toString(), inviteRequestBody)
-      for (const item of response.payload.data) {
-        if (!this.participations.find(({id}) => id === item.id)) {
-          this.participations.push(item)
+      try {
+        this.isLoading = true
+        const response = await this.$apiClient.events.invite(this.eventId.toString(), inviteRequestBody)
+        for (const item of response.payload.data) {
+          if (!this.participations.find(({id}) => id === item.id)) {
+            this.participations.push(item)
+          }
         }
+      } catch (error) {
+        if (error.response?.status === 400) {
+          this.$q.notify({
+            color: 'negative',
+            message: 'Der Nutzername existiert nicht'
+          })
+        } else {
+          this.$q.notify({
+            color: 'negative',
+            message: 'Etwas ging schief beim Einladen des Nutzers'
+          })
+        }
+      } finally {
+        this.isLoading = false
       }
+
     },
     handleInviteAllTeamCaptains() {
       this.$q.dialog({
@@ -187,7 +191,6 @@ export default defineComponent({
         message: 'Möchtest du alle Teamcaptains des Kreisverbandes einladen?',
         cancel: true
       }).onOk(() => this.inviteTeamCaptains())
-
     },
     async inviteTeamCaptains() {
       const response = await this.$apiClient.events.inviteTeamCaptains(this.eventId.toString())
@@ -200,7 +203,7 @@ export default defineComponent({
             this.participations.push(participation)
           }
         }
-        if (areTeamCaptainsAlreadyInvited){
+        if (areTeamCaptainsAlreadyInvited) {
           this.$q.notify({
             color: 'warning',
             message: 'Es wurden bereits alle Teamcaptains eingeladen.'
