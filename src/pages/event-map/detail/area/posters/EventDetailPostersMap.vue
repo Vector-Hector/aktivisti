@@ -1,5 +1,6 @@
 <template>
   <AreaFeatureLayer
+    v-if="currentAreaFeature"
     :features="[currentAreaFeature]"
   />
   <PosterMarkerLayer

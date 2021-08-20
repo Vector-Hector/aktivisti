@@ -40,7 +40,7 @@ export default defineComponent({
       })
     },
     currentAreaFeature(): Feature | undefined {
-      if (!this.eventArea) return
+      if (!this.eventArea) return undefined
       return {
         type: 'Feature',
         geometry: this.eventArea.geometry,
