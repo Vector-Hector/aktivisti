@@ -20,7 +20,7 @@ declare module '@vue/runtime-core' {
 async function refreshOnErrorInterceptor(error: any) {
   const authStore = getAuthStore() as TokenAuthStore
   const originalRequest = error.config
-  const expiryDate = authStore.expiryDate?.()
+  const expiryDate = authStore.expiryDate()
   if ((error.response?.status === 403 || error.response?.status === 401) && expiryDate && new Date() > expiryDate) {
     try {
       await authStore.renewLogin()
