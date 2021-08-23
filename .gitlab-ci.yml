@@ -117,7 +117,7 @@ android-production:
   stage: bundle
   before_script:
     - npm ci
-    - npx quasar build -m capacitor -T ios
+    - npx quasar build -m capacitor -T ios --skip-pkg
   tags:
     - macos
   cache:
