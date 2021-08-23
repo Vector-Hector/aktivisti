@@ -128,32 +128,6 @@ android-production:
       - src-capacitor/ios/App/App.ipa
       - src-capacitor/ios/App/App.app.dSYM.zip
 
-
-ios-development:
-  extends: .ios
-  environment:
-    action: prepare
-    name: development
-  script:
-    - cd src-capacitor/ios/App/
-    - fastlane build
-  only:
-    - branches
-  except:
-    - tags
-    - main
-
-ios-staging:
-  extends: .ios
-  environment:
-    action: prepare
-    name: staging
-  script:
-    - cd src-capacitor/ios/App/
-    - fastlane build
-  only:
-    - main
-
 ios-production:
   extends: .ios
   environment:
