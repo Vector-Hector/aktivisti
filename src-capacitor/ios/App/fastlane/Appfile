@@ -1,8 +1,8 @@
-app_identifier("app.dielinke.web") # The bundle identifier of your app
+app_identifier("app.dielinke.wahlkampf") # The bundle identifier of your app
 apple_id("admin@ctrl.alt.coop") # Your Apple email address
 
-itc_team_id("123414898") # App Store Connect Team ID
-team_id("H7D5KXX4XB") # Developer Portal Team ID
+team_id("J884MF9SF9")
+team_name("DIE LINKE")
 
 # For more information about the Appfile, see:
 #     https://docs.fastlane.tools/advanced/#appfile
