@@ -288,8 +288,7 @@ export default defineComponent({
         }
       }
       user.permission_name = permission.label
-      console.log('user.permission_name: ', user.permission_name)
-      console.log('permission.label: ', permission.label)
+      user.permission_codename = permission.key
     },
     allowedToManagePermissions(permissionType: { key: string, label: string }) {
       const myPermissionsForSubassociation = this.userManagementPermissions.filter(
