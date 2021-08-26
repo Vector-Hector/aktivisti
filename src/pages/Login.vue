@@ -59,7 +59,7 @@
 import { defineComponent, PropType } from 'vue'
 import { QBtn, QCheckbox, QForm, QInput } from 'quasar'
 import FormError from 'components/FormError.vue'
-import { getAuthStore } from 'src/store/AuthStore'
+import { AuthType, getAuthStore, getAuthType } from 'src/store/AuthStore'
 
 const authStore = getAuthStore()
 
@@ -104,7 +104,12 @@ export default defineComponent({
         await this.$router.push(this.next)
       } catch (error) {
         if (error.response?.status == 400) {
-          this.nonFieldError = error.response?.data?.non_field_errors?.[0]
+          const authType = getAuthType()
+          if (authType === AuthType.SESSION) {
+            this.nonFieldError = error.response?.data?.non_field_errors?.[0]
+          } else {
+            this.nonFieldError = 'Die eingegebenen Zugangsdaten sind ungültig'
+          }
         }
       }
       this.submitting = false
