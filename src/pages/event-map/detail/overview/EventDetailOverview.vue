@@ -263,11 +263,11 @@ import {
   ionLogoWhatsapp,
   ionMail,
   ionPencil,
-  ionTrash,
   ionPerson,
   ionPersonOutline,
   ionPrint,
-  ionSettingsSharp
+  ionSettingsSharp,
+  ionTrash
 } from '@quasar/extras/ionicons-v5'
 import { QBtn, QFab, QFabAction, QList, QScrollArea } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
