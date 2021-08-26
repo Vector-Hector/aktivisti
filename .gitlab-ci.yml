@@ -132,7 +132,7 @@ ios-production:
   extends: .ios
   environment:
     action: prepare
-    name: production
+    name: production-ios
   script:
     - cd src-capacitor/ios/App/
     - fastlane beta
