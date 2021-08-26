@@ -108,7 +108,7 @@
                 />
                 <QFabAction
                   v-if="
-                    event.event_type === EventTypes.DOOR_TO_DOOR &&
+                    [EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(event.event_type) &&
                     isCoordinator
                   "
                   :to="{ name: 'event-detail-report', params: { eventId: event.id }}"
