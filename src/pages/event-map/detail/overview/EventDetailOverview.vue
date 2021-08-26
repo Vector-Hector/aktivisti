@@ -396,7 +396,7 @@ export default defineComponent({
     },
     isPrintableEvent(): boolean {
       const {event_type} = this.event
-      return [EventTypes.DOOR_TO_DOOR, EventTypes.POSTERS].includes(event_type)
+      return [EventTypes.DOOR_TO_DOOR, EventTypes.POSTERS, EventTypes.FLYERS].includes(event_type)
     }
   },
   methods: {
