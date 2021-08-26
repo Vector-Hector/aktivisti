@@ -101,7 +101,7 @@
           :error-message="errors.visibility?.[0]"
           :error="!!errors.visibility?.length"
         />
-        <div class="metric-section" v-if="[EventTypes.DOOR_TO_DOOR].includes(event.event_type)">
+        <div class="metric-section" v-if="[EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(event.event_type)">
           <h3 class="metrics-headline">Zielvorgaben</h3>
           <div class="metrics-input-wrapper">
             <MetricInput
@@ -326,7 +326,7 @@ export default defineComponent({
       }
     },
     async getMetrics() {
-      const metricsRequest = await this.$apiClient.eventMetrics.list()
+      const metricsRequest = await this.$apiClient.eventMetrics.list({available_for_types: this.event.event_type})
       this.metrics = metricsRequest.payload.data
     },
     async back() {
