@@ -138,7 +138,7 @@ import EventMarker from 'components/EventMarker.vue'
 
 
 export default defineComponent({
-  name: 'DoorToDoorPrintout',
+  name: 'MetricBasedPrintout',
   components: {
     EventMarker,
     Map,

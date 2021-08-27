@@ -108,7 +108,7 @@
                 />
                 <QFabAction
                   v-if="
-                    event.event_type === EventTypes.DOOR_TO_DOOR &&
+                    [EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(event.event_type) &&
                     isCoordinator
                   "
                   :to="{ name: 'event-detail-report', params: { eventId: event.id }}"
@@ -263,11 +263,11 @@ import {
   ionLogoWhatsapp,
   ionMail,
   ionPencil,
-  ionTrash,
   ionPerson,
   ionPersonOutline,
   ionPrint,
-  ionSettingsSharp
+  ionSettingsSharp,
+  ionTrash
 } from '@quasar/extras/ionicons-v5'
 import { QBtn, QFab, QFabAction, QList, QScrollArea } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
@@ -396,7 +396,7 @@ export default defineComponent({
     },
     isPrintableEvent(): boolean {
       const {event_type} = this.event
-      return [EventTypes.DOOR_TO_DOOR, EventTypes.POSTERS].includes(event_type)
+      return [EventTypes.DOOR_TO_DOOR, EventTypes.POSTERS, EventTypes.FLYERS].includes(event_type)
     }
   },
   methods: {
