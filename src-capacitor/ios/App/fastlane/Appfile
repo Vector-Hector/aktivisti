@@ -1,4 +1,4 @@
-app_identifier("app.dielinke.web") # The bundle identifier of your app
+app_identifier("app.dielinke.wahlkampf") # The bundle identifier of your app
 apple_id("admin@ctrl.alt.coop") # Your Apple email address
 
 itc_team_id("123422095")
