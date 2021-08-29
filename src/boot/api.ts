@@ -25,14 +25,14 @@ async function refreshOnErrorInterceptor(error: any) {
     try {
       await authStore.renewLogin()
     } catch (e) {
-      return Promise.reject(error.response)
+      return Promise.reject(error)
     }
     // redo initial request
     return apiClient.axiosInstance(originalRequest)
   } else {
 
     // all other request just fail regulary
-    return Promise.reject(error.response)
+    return Promise.reject(error)
   }
 }
 
