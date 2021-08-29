@@ -1,6 +1,6 @@
 <template>
-  <DoorToDoorPrintout
-    v-if="event && eventType === EventTypes.DOOR_TO_DOOR"
+  <MetricBasedPrintout
+    v-if="event && [EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(eventType)"
     :event="event"
     :event-areas="eventAreas"
     :metric-records="metricRecords"
@@ -21,7 +21,7 @@ import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { EventTypes } from 'src/api/model/EventTypes';
-import DoorToDoorPrintout from 'components/print/DoorToDoorPrintout.vue';
+import MetricBasedPrintout from 'components/print/MetricBasedPrintout.vue';
 import PostersPrintout from 'components/print/PostersPrintout.vue';
 import { PosterDto } from 'src/api/model/PosterDto';
 
@@ -32,7 +32,7 @@ export default defineComponent({
 
     const event = (await apiClient.events.get(eventId.toString())).payload.data
     const {event_type} = event
-    if (event_type === EventTypes.DOOR_TO_DOOR) {
+    if ([EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(event_type)) {
       const [eventAreasRequest, metricsRequest] = await Promise.all([
         apiClient.eventAreas.list({event: eventId.toString()}),
         apiClient.eventMetricRecords.list({event: eventId.toString()}, ['metric'])
@@ -72,7 +72,7 @@ export default defineComponent({
   },
   components: {
     PostersPrintout,
-    DoorToDoorPrintout,
+    MetricBasedPrintout,
   },
   data() {
     return {

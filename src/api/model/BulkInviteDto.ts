@@ -1,4 +1,4 @@
 
 export interface BulkInviteDto {
-  users: number[]
+  users: string[]
 }
