@@ -148,7 +148,7 @@ staging:
     - kustomize edit set namespace $KUBE_NAMESPACE
     - kustomize build | kubectl apply -f -
   only:
-    - tags
+    - main
   environment:
     name: staging
     url: https://staging.wk-frontend.haze.alt.coop
