@@ -94,7 +94,8 @@ git tag -a 1.1.1-alpha.1 # ✓
 git tag -a 1.2.0 # ✓
 ```
 
-The build script will possibly throw an error or generate garbage versions if the last tag is wrong like those bad examples:
+The build script will possibly throw an error or generate garbage versions if the last tag is wrong like those bad
+examples:
 
 ```
 
@@ -102,3 +103,5 @@ git tag -a 1.2 # ✗
 git tag -a 1.1.1-alpha-1 # ✗
 git tag -a testtag # ✗
 ```
+
+*Tip: Take a look on [npm-version](https://docs.npmjs.com/cli/v6/commands/npm-version) to update the version*
