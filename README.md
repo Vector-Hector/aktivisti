@@ -73,19 +73,40 @@ npm run lint
 
 Find contribution guidelines [here](./CONTRIBUTE.md)
 
-
 ## Testing
 
 ### Mock backend during testing or development
 
-While running the application in development or especially during automated e2e-tests we like to introduce a mocked API environment,
-to be independent of a backend to be running. For that matter [mirageJS](https://miragejs.com/) is utilized.
-It hooks into `fetch` calls effectively simulating a backend response according the configuration that lives in [server.ts](./src/server.js)
+While running the application in development or especially during automated e2e-tests we like to introduce a mocked API
+environment, to be independent of a backend to be running. For that matter [mirageJS](https://miragejs.com/) is
+utilized. It hooks into `fetch` calls effectively simulating a backend response according the configuration that lives
+in [server.ts](./src/server.js)
 
 ## Releasing / Versioning
 
-Our gradle build scripts automatically create versions based on the git tag. To reduce an integer we follow a strict pattern for release tags, that are a subset of [semver](https://semver.org/lang/de/):
-MAJOR.MINOR.PATCH[-PRE-RELEASE-TYPE].[PRE-RELEASE-VERSION]. Valid prerelease types are 'alpha', 'beta', 'rc'
+The release is done as follow. Create a branch coming from develop. It must be name like:
+
+`release/MAJOR.MINOR.PATCH`
+
+E.g.:
+
+```shell
+release/0.5.1 ✓
+release/0.5.1-rc.1 ✗
+release/0.5 ✗
+release/teststring ✗
+```
+
+This will update the staging environment. After merging the branch to main. A tagged commit needs to be added to the
+main branch, which will trigger the creation of production bundle, android build, and a pushing of iOS app to apple
+testflight.
+
+### How the tagging for production version should be done?
+
+Our gradle build scripts automatically create versions based on the git tag. To reduce an integer we follow a strict
+pattern for release tags, that are a subset of [semver](https://semver.org/lang/de/):
+`MAJOR.MINOR.PATCH[-PRE-RELEASE-TYPE].[PRE-RELEASE-VERSION]`. Valid prerelease types are 'alpha', 'beta', 'rc'.
+
 For example:
 
 ```
