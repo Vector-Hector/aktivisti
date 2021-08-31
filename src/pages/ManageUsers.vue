@@ -34,18 +34,12 @@
             class="user-management-section"
             v-show="selectedSubAssociation.name !== ''"
           >
-            <QSelect
+            <QInput
               class="w-100 d-flex flex-col"
-              placeholder="Benutzer:in suchen"
-              :dropdownIcon="ionChevronDown"
-              use-input
-              hide-selected
-              fill-input
+              label="Benutzer:in suchen"
+              debounce="1000"
               :model-value="selectedUser"
               @update:model-value="selectUser"
-              :option-label="userLabel"
-              :options="suggestedUsers"
-              @filter="searchUsers"
             >
               <template #item="slotProps">
                 <div class="user-autocomplete-username">
@@ -55,7 +49,7 @@
                   {{ slotProps.item.email }}
                 </div>
               </template>
-            </QSelect>
+            </QInput>
             <div class="row">
               <div class="col">
                 <QList v-show="userList.length > 0">
@@ -105,7 +99,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { QSelect, QPage, QItem, QList, QItemSection, QItemLabel } from 'quasar'
+import { QSelect, QPage, QItem, QList, QItemSection, QItemLabel, QInput } from 'quasar'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { userStore} from 'src/store/UserStore'
@@ -114,7 +108,6 @@ import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 
 
 interface UserPermissionItem {
-  id: number
   username: string
   object_permission_id?: number
   permission_codename?: string
@@ -130,7 +123,8 @@ export default defineComponent({
     QItem,
     QList,
     QItemSection,
-    QItemLabel
+    QItemLabel,
+    QInput
   },
   data() {
     return {
@@ -142,8 +136,7 @@ export default defineComponent({
       suggestedSubAssociations: [] as SubAssociationDto[],
       selectedSubAssociation: {id: 0, name: ''},
       myPermissionForSelectedSubAssociation: {},
-      selectedUser: {id: 0, username: ''} as UserPermissionItem,
-      suggestedUsers: [] as UserPermissionItem[],
+      selectedUser: {username: ''} as UserPermissionItem,
       userList: [] as UserPermissionItem[],
       loading: true,
       permissionTypeOptions,
@@ -221,24 +214,17 @@ export default defineComponent({
     userLabel(item: UserPermissionItem) {
       return `${item.username}`
     },
-    async searchUsers(query: string, update: any) {
-      let suggestions: UserPermissionItem[]
-      if (query) {
-        suggestions = (await this.$apiClient.publicProfiles.list({query: query})).payload.data
-      } else {
-        suggestions = []
+    selectUser(username: string) {
+      let newUser = {} as UserPermissionItem
+      if (!this.userList.find( (user) => user.username === username )) {
+        newUser = {
+          username: username,
+          permission_codename : PermissionCodename.NONE,
+          permission_name : 'Mitglied'
+        }
+        this.userList.unshift(newUser)
       }
-      update(() => {
-        this.suggestedUsers = suggestions
-      })
-    },
-    selectUser(user: UserPermissionItem) {
-      if (!this.userList.find( ({id}) => id === user.id )) {
-        user.permission_codename = PermissionCodename.NONE
-        user.permission_name = 'Mitglied'
-        this.userList.unshift(user)
-      }
-      this.selectedUser = user
+      this.selectedUser = newUser
     },
     async selectSubAssociation(subAssociation: {id: number, name: string}) {
       this.selectedSubAssociation = subAssociation
@@ -246,19 +232,10 @@ export default defineComponent({
     },
     async getUsersWithPermissionsForSubAssociation(subAssociation: {id: number, name: string}) {
       const userObjectPermissions: UserObjectPermissionDto[] = (await this.$apiClient.userPermissions.list({sub_association: subAssociation.id.toString()})).payload.data
-      const userIds: number[] = userObjectPermissions.map((permission) => permission.user)
-      const userPublicProfiles: UserPermissionItem[] = (await this.$apiClient.publicProfiles.list()).payload.data
-      const relevantUserPublicProfiles = userPublicProfiles.filter((profile) => userIds.indexOf(profile.id) >= 0)
-      this.myPermissionForSelectedSubAssociation = this.userManagementPermissions.filter(
-        (permission) => permission.object_pk === this.selectedSubAssociation.id.toString()
-      )[0]
       this.userList = userObjectPermissions.map(
         (permission) => {
           return {
-            id: permission.user,
-            username: relevantUserPublicProfiles.filter(
-              (publicProfile) => publicProfile.id === permission.user
-            )[0].username,
+            username: permission.user,
             object_permission_id: permission.id,
             permission_codename: permission.permission_codename,
             permission_name: permission.permission_name
@@ -272,7 +249,7 @@ export default defineComponent({
       }
       else {
         const newUserObjectPermissions = {
-          user: user.id,
+          user: user.username,
           object_pk : this.selectedSubAssociation.id.toString(),
           content_type : 13, //13 === subassociation
           permission_codename : permission.key

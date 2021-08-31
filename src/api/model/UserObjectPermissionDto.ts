@@ -28,5 +28,5 @@ export interface UserObjectPermissionDto {
   content_type: number
   content_object_name: string
   content_type_name: string
-  user: number
+  user: string
 }

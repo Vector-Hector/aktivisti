@@ -102,7 +102,7 @@ class UserStore extends Store<UserState> {
 
   public getMyPermissions() {
     return this.state.permissions.filter(
-      (permission) => permission.user == this.state.user?.id
+      (permission) => permission.user == this.state.user?.username
     )
   }
 
