@@ -234,7 +234,14 @@ export default defineComponent({
     },
     async next() {
       await this.saveDebouncer.waitForSettle()
-      this.stepControls.next()
+      if (!this.event.location) {
+        this.$q.notify({
+          color: 'negative',
+          message: 'Bitte geben Sie einen gültigen Treffpunkt an.'
+        })
+      } else {
+        this.stepControls.next()
+      }
     },
     async abort() {
       await this.saveDebouncer.waitForSettle()
