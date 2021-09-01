@@ -3,21 +3,28 @@
     <div class="container">
       <PageLoadingSpinner v-if="loading" />
       <div v-else class="manage-users-content">
-        <h3 class="subassociations-section-heading">Kreisverbände</h3>
-        <div class="select-wrapper">
+        <QSelect
+          label="Auf welcher Ebene möchtest du Benutzer:innen verwalten"
+          filled
+          :dropdownIcon="ionChevronDown"
+          :model-value="managementLevel"
+          @update:model-value="selectManagementLevel"
+          :options="managementLevelOptions"
+        />
+        <div v-show="managementLevel !== ''" class="level-wrapper">
           <QSelect
             class="filter-dropdown"
-            label="Kreisverband"
+            :label="managementLevel"
             :dropdownIcon="ionChevronDown"
             filled
-            :model-value="selectedSubAssociation"
-            @update:model-value="selectSubAssociation"
+            :model-value="selectedEntityToManage"
+            @update:model-value="selectEntityToManage"
             use-input
             map-options
             hide-selected
             fill-input
             input-debounce="0"
-            :options="suggestedSubAssociations"
+            :options="suggestedEntities"
             @filter="filterSubAssociations"
             option-value="id"
             option-label="name"
@@ -32,7 +39,7 @@
           </QSelect>
           <div
             class="user-management-section"
-            v-show="selectedSubAssociation.name !== ''"
+            v-show="selectedEntityToManage.name !== ''"
           >
             <QInput
               class="w-100 d-flex flex-col"
@@ -114,6 +121,34 @@ interface UserPermissionItem {
   permission_name?: string
 }
 
+enum ContentTypes {
+  SUB_ASSOCIATION = 'Kreisverband',
+  STATE_ASSOCIATION = 'Landesverband',
+  CAMPAIGN = 'Kampagne'
+}
+
+const contentTypeQueryParams: { key: string, paramName: string}[] = [{
+  key: ContentTypes.SUB_ASSOCIATION,
+  paramName: 'sub_association'
+}, {
+  key: ContentTypes.STATE_ASSOCIATION,
+  paramName: 'association'
+}, {
+  key: ContentTypes.CAMPAIGN,
+  paramName: 'campaign'
+}]
+
+const contentTypeCodes: { key: string, code: number}[] = [{
+  key: ContentTypes.SUB_ASSOCIATION,
+  code: 13
+}, {
+  key: ContentTypes.STATE_ASSOCIATION,
+  code: 12
+}, {
+  key: ContentTypes.CAMPAIGN,
+  code: 1
+}]
+
 export default defineComponent({
   name: 'ManageUsers',
   components: {
@@ -133,19 +168,25 @@ export default defineComponent({
       allSubAssociations: [] as SubAssociationDto[],
       mySubAssociations: [] as SubAssociationDto[],
       myStateAssociationIds: [] as string[],
+      myStateAssociations: [] as SubAssociationDto[],
       suggestedSubAssociations: [] as SubAssociationDto[],
+      suggestedEntities: [] as SubAssociationDto[],
       selectedSubAssociation: {id: 0, name: ''},
+      selectedEntityToManage: {id: 0, name:''},
+      managementLevel: '',
       myPermissionForSelectedSubAssociation: {},
       selectedUser: {username: ''} as UserPermissionItem,
       userList: [] as UserPermissionItem[],
       loading: true,
       permissionTypeOptions,
-      PermissionCodename
+      PermissionCodename,
+      managementLevelOptions: ['Kreisverband', 'Landesverband', 'Kampagne']
     }
   },
   async created() {
     this.allSubAssociations = await this.getSubAssociations()
     await this.computeMySubAssociations()
+    this.computeMyStateAssociations()
     this.loading = false
   },
   computed: {
@@ -167,6 +208,16 @@ export default defineComponent({
   methods: {
     async getSubAssociations(stateAssociationId?: number) {
       return (await this.$apiClient.subAssociations.list({state_association: stateAssociationId})).payload.data
+    },
+    computeMyStateAssociations() {
+      this.myStateAssociations = this.getPermissions
+        .filter((permission) => permission.content_type_name === 'State association')
+        .map((permission) => {
+          return {
+            id: parseInt(permission.object_pk),
+            name: permission.content_object_name
+          }
+        })
     },
     async computeMySubAssociations() {
       if (this.isUserAdminOrGlobalCoordinator) {
@@ -230,6 +281,56 @@ export default defineComponent({
       this.selectedSubAssociation = subAssociation
       await this.getUsersWithPermissionsForSubAssociation(subAssociation)
     },
+    async selectEntityToManage(entity: {id: number, name: string}) {
+      this.selectedEntityToManage = entity
+      await this.getUsersWithPermissionsForEntity(entity)
+
+    },
+    selectManagementLevel(managementLevel: string) {
+      switch (managementLevel) {
+        case 'Kreisverband':
+          this.suggestedEntities = this.mySubAssociations
+          this.managementLevel = managementLevel
+          break;
+        case 'Landesverband':
+          this.suggestedEntities = this.myStateAssociations
+          this.managementLevel = managementLevel
+          break;
+        case 'Kampagne':
+          console.log('lala') //TODO fix campaigns!
+          this.managementLevel = managementLevel
+          break;
+        default:
+          break;
+      }
+    },
+    async getUsersWithPermissionsForEntity(entity: {id: number, name: string}) {
+      let query
+      switch (this.managementLevel) {
+        case ContentTypes.SUB_ASSOCIATION:
+          query = { sub_association: entity.id.toString() }
+          break;
+        case ContentTypes.STATE_ASSOCIATION:
+          query = { association: entity.id.toString() }
+          break;
+        case ContentTypes.CAMPAIGN:
+          query = { campaign: entity.id.toString() }
+          break;
+        default:
+          break;
+      }
+      const userObjectPermissions: UserObjectPermissionDto[] = (await this.$apiClient.userPermissions.list(query)).payload.data
+      this.userList = userObjectPermissions.map(
+        (permission) => {
+          return {
+            username: permission.user,
+            object_permission_id: permission.id,
+            permission_codename: permission.permission_codename,
+            permission_name: permission.permission_name
+          }
+        }
+      )
+    },
     async getUsersWithPermissionsForSubAssociation(subAssociation: {id: number, name: string}) {
       const userObjectPermissions: UserObjectPermissionDto[] = (await this.$apiClient.userPermissions.list({sub_association: subAssociation.id.toString()})).payload.data
       this.userList = userObjectPermissions.map(
@@ -250,8 +351,8 @@ export default defineComponent({
       else {
         const newUserObjectPermissions = {
           user: user.username,
-          object_pk : this.selectedSubAssociation.id.toString(),
-          content_type : 13, //13 === subassociation
+          object_pk : this.selectedEntityToManage.id.toString(),
+          content_type : contentTypeCodes.find((contentType) => contentType.key === this.managementLevel)?.code,
           permission_codename : permission.key
         }
 
