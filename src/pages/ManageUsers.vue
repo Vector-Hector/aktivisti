@@ -127,17 +127,6 @@ enum ContentTypes {
   CAMPAIGN = 'Kampagne'
 }
 
-const contentTypeQueryParams: { key: string, paramName: string}[] = [{
-  key: ContentTypes.SUB_ASSOCIATION,
-  paramName: 'sub_association'
-}, {
-  key: ContentTypes.STATE_ASSOCIATION,
-  paramName: 'association'
-}, {
-  key: ContentTypes.CAMPAIGN,
-  paramName: 'campaign'
-}]
-
 const contentTypeCodes: { key: string, code: number}[] = [{
   key: ContentTypes.SUB_ASSOCIATION,
   code: 13
@@ -238,9 +227,7 @@ export default defineComponent({
         this.mySubAssociations = this.allSubAssociations.filter(
           ({id}) => mySubAssociationsIds.indexOf(id.toString()) >= 0
         )
-        //TODO take care of corresponding subassociations if I have state association permission
-        //it doesn't seem to be possible to get all subassociation for an association??
-        // it should work somehow, the admin can do it
+        // take care of corresponding subassociations if I have state association permission
         this.myStateAssociationIds = this.getPermissions
           .filter((permission) => permission.content_type_name === 'State association')
           .map((permission) => permission.object_pk)
@@ -251,7 +238,6 @@ export default defineComponent({
         }
         for (const subAssociation of subAssociationsInMyStateAssociations) {
           if (mySubAssociationsIds.indexOf(subAssociation.id.toString()) < 0) {
-            //this.mySubAssociations.push(...subAssociationsInMyStateAssociations)
             this.mySubAssociations.push(subAssociation)
           }
         }
@@ -284,14 +270,9 @@ export default defineComponent({
       }
       this.selectedUser = newUser
     },
-    async selectSubAssociation(subAssociation: {id: number, name: string}) {
-      this.selectedSubAssociation = subAssociation
-      await this.getUsersWithPermissionsForSubAssociation(subAssociation)
-    },
     async selectEntityToManage(entity: {id: number, name: string}) {
       this.selectedEntityToManage = entity
       await this.getUsersWithPermissionsForEntity(entity)
-
     },
     selectManagementLevel(managementLevel: string) {
       switch (managementLevel) {
@@ -330,19 +311,6 @@ export default defineComponent({
           break;
       }
       const userObjectPermissions: UserObjectPermissionDto[] = (await this.$apiClient.userPermissions.list(query)).payload.data
-      this.userList = userObjectPermissions.map(
-        (permission) => {
-          return {
-            username: permission.user,
-            object_permission_id: permission.id,
-            permission_codename: permission.permission_codename,
-            permission_name: permission.permission_name
-          }
-        }
-      )
-    },
-    async getUsersWithPermissionsForSubAssociation(subAssociation: {id: number, name: string}) {
-      const userObjectPermissions: UserObjectPermissionDto[] = (await this.$apiClient.userPermissions.list({sub_association: subAssociation.id.toString()})).payload.data
       this.userList = userObjectPermissions.map(
         (permission) => {
           return {
@@ -411,4 +379,11 @@ export default defineComponent({
   line-height: 1.7rem;
 }
 
+.manage-users-content {
+  margin: 1rem 0 0 0;
+}
+
+.level-wrapper {
+  margin: 1rem 0 0 0;
+}
 </style>
