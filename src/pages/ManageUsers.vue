@@ -109,7 +109,8 @@ import { defineComponent } from 'vue'
 import { QSelect, QPage, QItem, QList, QItemSection, QItemLabel, QInput } from 'quasar'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
-import { userStore} from 'src/store/UserStore'
+import { StateAssociationDto } from 'src/api/model/StateAssociationDto'
+import { userStore } from 'src/store/UserStore'
 import { UserObjectPermissionDto, permissionTypeOptions, PermissionCodename } from 'src/api/model/UserObjectPermissionDto'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 
@@ -155,9 +156,10 @@ export default defineComponent({
       ionChevronDown,
       ionClose,
       allSubAssociations: [] as SubAssociationDto[],
+      allStateAssociations: [] as StateAssociationDto[],
       mySubAssociations: [] as SubAssociationDto[],
       myStateAssociationIds: [] as string[],
-      myStateAssociations: [] as SubAssociationDto[],
+      myStateAssociations: [] as StateAssociationDto[],
       suggestedSubAssociations: [] as SubAssociationDto[],
       suggestedEntities: [] as SubAssociationDto[],
       selectedSubAssociation: {id: 0, name: ''},
@@ -174,6 +176,8 @@ export default defineComponent({
   },
   async created() {
     this.allSubAssociations = await this.getSubAssociations()
+    this.allStateAssociations = await this.getStateAssociations()
+
     await this.computeMySubAssociations()
     this.computeMyStateAssociations()
     this.loading = false
@@ -205,15 +209,23 @@ export default defineComponent({
     async getSubAssociations(stateAssociationId?: number) {
       return (await this.$apiClient.subAssociations.list({state_association: stateAssociationId})).payload.data
     },
+    async getStateAssociations() {
+      return (await this.$apiClient.stateAssociations.list()).payload.data
+    },
     computeMyStateAssociations() {
-      this.myStateAssociations = this.getPermissions
-        .filter((permission) => permission.content_type_name === 'State association')
-        .map((permission) => {
-          return {
-            id: parseInt(permission.object_pk),
-            name: permission.content_object_name
-          }
-        })
+      if (this.isUserAdminOrGlobalCoordinator) {
+        this.myStateAssociations = this.allStateAssociations
+      }
+      else {
+        this.myStateAssociations = this.getPermissions
+          .filter((permission) => permission.content_type_name === 'State association')
+          .map((permission) => {
+            return {
+              id: parseInt(permission.object_pk),
+              name: permission.content_object_name
+            }
+          })
+      }
     },
     async computeMySubAssociations() {
       if (this.isUserAdminOrGlobalCoordinator) {

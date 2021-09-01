@@ -14,6 +14,7 @@ import { EventParticipationRoute } from 'src/api/EventParticipationRoute'
 import { UserRegistrationDto } from 'src/api/model/UserRegistrationDto'
 import { ClusterDto } from 'src/api/model/ClusterDto'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
+import { StateAssociationDto } from 'src/api/model/StateAssociationDto'
 import { AccountRoute } from 'src/api/AccountRoute'
 import { EmailNotificationSettingsDto } from 'src/api/model/EmailNotificationSettingsDto'
 import { UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
@@ -59,6 +60,7 @@ export class ApiClient {
   forgotPassword = new ApiRoute<ForgotPasswordDto>(this.baseURL, 'account/forgot-password/', this.axiosInstance)
   eventClusters = new ApiRoute<ClusterDto>(this.baseURL, 'event-clusters/', this.axiosInstance)
   subAssociations = new ApiRoute<SubAssociationDto>(this.baseURL, 'sub-associations/', this.axiosInstance)
+  stateAssociations = new ApiRoute<StateAssociationDto>(this.baseURL, 'state-associations/', this.axiosInstance)
   account = new AccountRoute(this.baseURL, 'account/', this.axiosInstance)
   emailNotificationSettings = new ApiRoute<EmailNotificationSettingsDto>(this.baseURL, 'email-notification-settings/', this.axiosInstance)
   session = new SessionRoute(this.baseURL, 'session/', this.axiosInstance)
