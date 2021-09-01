@@ -285,8 +285,6 @@ export default defineComponent({
           map.value.on('mousedown', activePosterLayerId, onMouseDownActivePoster)
           map.value.on('mouseleave', activePosterLayerId, onLeaveActivePoster)
           map.value.on('touchstart', activePosterLayerId, onTouchStartActivePoster)
-          map.value.on('touchmove', onMoveActivePoster)
-          map.value.on('touchend', onUpActivePoster)
         }
       }
     )
