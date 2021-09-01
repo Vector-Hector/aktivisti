@@ -200,9 +200,16 @@ export default defineComponent({
       return userStore.getMyPermissions()
     },
     permissionTypeOptionsForMyPermissions(): {key: string, label: string, inactive: boolean}[] {
-      return permissionTypeOptions.map(
-        (option) => Object.assign(option, {inactive: !this.allowedToManagePermissions(option)})
-      )
+      if (this.managementLevel !== 'Kreisverband') {
+        return permissionTypeOptions
+          .filter((option) => option.key !== PermissionCodename.TEAM_CAPTAIN)
+          .map((option) => Object.assign(option, {inactive: !this.allowedToManagePermissions(option)}))
+      }
+      else {
+        return permissionTypeOptions.map(
+          (option) => Object.assign(option, {inactive: !this.allowedToManagePermissions(option)})
+        )
+      }
     }
   },
   methods: {
