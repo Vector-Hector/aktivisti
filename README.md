@@ -84,7 +84,7 @@ in [server.ts](./src/server.js)
 
 ## Releasing / Versioning
 
-The release is done as follow. Create a branch coming from develop. It must be name like:
+The release is done as follows. Create a branch coming from `develop`. It must be named according to the following scheme:
 
 `release/MAJOR.MINOR.PATCH`
 
@@ -97,14 +97,14 @@ release/0.5 ✗
 release/teststring ✗
 ```
 
-This will update the staging environment. After merging the branch to main. A tagged commit needs to be added to the
-main branch, which will trigger the creation of production bundle, android build, and a pushing of iOS app to apple
+This will update the staging environment. After merging the branch to `main`, a tagged commit needs to be added to the
+main branch, which will trigger the creation of the production bundle, the android build, and the pushing of iOS app to apple
 testflight.
 
-### How the tagging for production version should be done?
+### How should the tagging for production version be done?
 
 Our gradle build scripts automatically create versions based on the git tag. To reduce an integer we follow a strict
-pattern for release tags, that are a subset of [semver](https://semver.org/lang/de/):
+pattern for release tags that are a subset of [semver](https://semver.org/lang/de/):
 `MAJOR.MINOR.PATCH[-PRE-RELEASE-TYPE].[PRE-RELEASE-VERSION]`. Valid prerelease types are 'alpha', 'beta', 'rc'.
 
 For example:
