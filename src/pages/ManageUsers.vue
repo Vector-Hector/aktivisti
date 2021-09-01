@@ -298,14 +298,17 @@ export default defineComponent({
         case 'Kreisverband':
           this.suggestedEntities = this.mySubAssociations
           this.managementLevel = managementLevel
+          this.selectedEntityToManage = {id: 0, name:''}
           break;
         case 'Landesverband':
           this.suggestedEntities = this.myStateAssociations
           this.managementLevel = managementLevel
+          this.selectedEntityToManage = {id: 0, name:''}
           break;
         case 'Kampagne':
           console.log('lala') //TODO fix campaigns!
           this.managementLevel = managementLevel
+          this.selectedEntityToManage = {id: 0, name:''}
           break;
         default:
           break;
