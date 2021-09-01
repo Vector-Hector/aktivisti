@@ -237,7 +237,7 @@ export default defineComponent({
       if (!this.event.location) {
         this.$q.notify({
           color: 'negative',
-          message: 'Bitte geben Sie einen gültigen Treffpunkt an.'
+          message: 'Bitte gebe einen gültigen Treffpunkt an.'
         })
       } else {
         this.stepControls.next()
