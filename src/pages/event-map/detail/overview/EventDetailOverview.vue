@@ -336,7 +336,8 @@ export default defineComponent({
   },
   computed: {
     shareUrl(): string {
-      return window.location.origin + this.$router.resolve({
+      const shareUrl = process.env.APP_SHARE_URL as string
+      return shareUrl + this.$router.resolve({
         name: 'event-detail',
         params: {
           eventId: this.event.id
