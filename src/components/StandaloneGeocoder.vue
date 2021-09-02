@@ -2,41 +2,43 @@
   <div class="counter-input">
     <div class="p-fluid">
       <div class="p-field">
-        <QSelect
-          id="queryValue"
-          :model-value="result"
-          class="search-place"
-          hide-dropdown-icon
-          @filter="filterFn"
-          dense
-          filled
-          label="Adresse eingeben"
-          :fill-input="customPlaceName"
-          use-input
-          hide-selected
-          @input-value="updatePlaceName"
-          option-label="place_name"
-          :options="filteredPlaces"
-          :error-message="error"
-          :error="!!error"
-          @update:model-value="emitResult($event)"
-        >
-          <template v-slot:append>
-            <QIcon
-              :name="ionSearch"
-            />
-          </template>
-          <template v-slot:option="slotProps">
-            <QItem
-              v-bind="slotProps.itemProps"
-            >
-              <QItemSection>
-                <QItemLabel>{{ slotProps.opt.place_name.split(',')[0] }}</QItemLabel>
-                <QItemLabel caption>{{ slotProps.opt.place_name.split(',').slice(1).join(', ') }}</QItemLabel>
-              </QItemSection>
-            </QItem>
-          </template>
-        </QSelect>
+        <div @mousedown="stopTracking" @touchstart="stopTracking">
+          <QSelect
+            id="queryValue"
+            :model-value="result"
+            class="search-place"
+            hide-dropdown-icon
+            @filter="filterFn"
+            dense
+            filled
+            label="Adresse eingeben"
+            :fill-input="customPlaceName"
+            use-input
+            hide-selected
+            @input-value="updatePlaceName"
+            option-label="place_name"
+            :options="filteredPlaces"
+            :error-message="error"
+            :error="!!error"
+            @update:model-value="emitResult($event)"
+          >
+            <template v-slot:append>
+              <QIcon
+                :name="ionSearch"
+              />
+            </template>
+            <template v-slot:option="slotProps">
+              <QItem
+                v-bind="slotProps.itemProps"
+              >
+                <QItemSection>
+                  <QItemLabel>{{ slotProps.opt.place_name.split(',')[0] }}</QItemLabel>
+                  <QItemLabel caption>{{ slotProps.opt.place_name.split(',').slice(1).join(', ') }}</QItemLabel>
+                </QItemSection>
+              </QItem>
+            </template>
+          </QSelect>
+        </div>
       </div>
     </div>
   </div>
@@ -48,6 +50,7 @@ import { geocodingService } from 'src/utils/mapbox'
 import { GeocodeResult } from 'src/types/GeocodeResult'
 import { QItem, QItemSection, QItemLabel, QSelect, QIcon } from 'quasar'
 import { ionSearch } from '@quasar/extras/ionicons-v5'
+import { MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/mapbox/Map.vue';
 
 export default defineComponent({
   name: 'StandaloneGeocoder',
@@ -94,6 +97,9 @@ export default defineComponent({
           language: ['de']
         }).send()).body.features
       })
+    },
+    stopTracking() {
+      MapEventBus.emit(MAP_GEOLOCATE_STOP_TRACKING)
     },
     updatePlaceName(value: string) {
       if (!this.customPlaceName) return
