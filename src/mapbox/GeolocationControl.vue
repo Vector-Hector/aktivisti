@@ -181,6 +181,7 @@ export default defineComponent({
       }
       if (position) {
         this.map.panTo(position)
+        this.$emit('position', position)
       }
     },
     async startWatch() {
