@@ -206,8 +206,8 @@ export default defineComponent({
 
       if (this.locatorState === GeolocateState.TRACKING) {
         this.map.panTo(this.userPosition)
+        this.$emit('position', this.userPosition)
       }
-      this.$emit('position', this.userPosition)
     }
   },
   mounted() {
