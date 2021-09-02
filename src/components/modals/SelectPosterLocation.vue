@@ -29,8 +29,6 @@
               <div class="flex column q-gutter-y-sm">
                 <GeolocationControl
                   @position="location = $event"
-                  :locator-icon-not-fixed="locatePosterLocation"
-                  :locator-icon-off="locatePosterLocation"
                   :locator-icon-fixed="locatePosterLocation"
                 />
                 <ResetRotateControl />
