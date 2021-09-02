@@ -25,7 +25,7 @@
         :icon="locatorIcon"
         external-label
         label-position="bottom"
-        :disable="disabled"
+        :disable="isGeolocationServiceUnavailable"
         :color="locatorColor"
         label="Standort"
         flat
@@ -134,7 +134,7 @@ export default defineComponent({
   },
 
   computed: {
-    disabled(): boolean {
+    isGeolocationServiceUnavailable(): boolean {
       return GeolocateState.UNAVAILABLE === this.locatorState
     },
     locatorIcon(): string {
