@@ -114,7 +114,7 @@ export default defineComponent({
       default: matGpsOff
     }
   },
-  emits: ['locate', 'position'],
+  emits: ['position'],
   setup() {
     const map = inject(MapInject)!
     return {
@@ -182,7 +182,6 @@ export default defineComponent({
       if (position) {
         this.map.panTo(position)
       }
-      this.$emit('locate', position)
     },
     async startWatch() {
       if (!this.locationWatcher) {
