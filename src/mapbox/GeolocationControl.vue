@@ -22,7 +22,7 @@
       round
     >
       <QFabAction
-        :icon="locatorIcon"
+        :icon="locatorIconFixed"
         external-label
         label-position="bottom"
         :disable="isGeolocationServiceUnavailable"
