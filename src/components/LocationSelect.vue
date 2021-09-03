@@ -2,7 +2,9 @@
   <div class="row">
     <div class="col-12">
       <span class="description-text">
-        Bitte geben Sie entweder eine Adresse in das Suchfeld ein oder verschieben Sie den rot hervorgehobenen Pin auf der Karte, um die Position dieses Standorts auf der Karte festzulegen.
+        <slot name="hintText">
+          Bitte geben Sie entweder eine Adresse in das Suchfeld ein oder verschieben Sie den rot hervorgehobenen Pin auf der Karte, um die Position dieses Standorts auf der Karte festzulegen.
+        </slot>
       </span>
     </div>
   </div>
