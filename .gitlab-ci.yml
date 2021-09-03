@@ -69,7 +69,6 @@ bundle-review:
     - /^release/(\d+\.)(\d+\.)(\d+)$/
     - main
     - develop
-    - tags
 
 .android:
   image: circleci/android:api-30-node
