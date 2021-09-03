@@ -37,7 +37,7 @@
         </QCard>
       </QPopupProxy>
     </div>
-    <div class="col-shrink marker-column">
+    <div v-if="isDraggableMarkerShown" class="col-shrink marker-column">
       <DraggableMarker
         v-if="!location"
         class="draggable-marker"
@@ -81,6 +81,10 @@ export default defineComponent({
     error: {
       type: String as PropType<string>,
       default: ''
+    },
+    isDraggableMarkerShown: {
+      type: Boolean as PropType<boolean>,
+      default: true
     }
   },
   emits: ['update:location', 'update:locationDescription'],
