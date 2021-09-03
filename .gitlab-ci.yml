@@ -51,6 +51,7 @@ bundle-staging:
     name: staging
   only:
     - /^release/(\d+\.)(\d+\.)(\d+)$/
+    - main
 
 bundle-development:
   extends: .bundle
@@ -107,6 +108,7 @@ android-staging:
     name: staging
   only:
     - /^release/(\d+\.)(\d+\.)(\d+)$/
+    - main
 
 android-production:
   extends: .android
