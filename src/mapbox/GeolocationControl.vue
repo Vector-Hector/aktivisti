@@ -22,10 +22,10 @@
       round
     >
       <QFabAction
-        :icon="locatorIcon"
+        :icon="locatorIconFixed"
         external-label
         label-position="bottom"
-        :disable="disabled"
+        :disable="isGeolocationServiceUnavailable"
         :color="locatorColor"
         label="Standort"
         flat
@@ -114,7 +114,7 @@ export default defineComponent({
       default: matGpsOff
     }
   },
-  emits: ['locate', 'position'],
+  emits: ['position'],
   setup() {
     const map = inject(MapInject)!
     return {
@@ -134,7 +134,7 @@ export default defineComponent({
   },
 
   computed: {
-    disabled(): boolean {
+    isGeolocationServiceUnavailable(): boolean {
       return GeolocateState.UNAVAILABLE === this.locatorState
     },
     locatorIcon(): string {
@@ -181,8 +181,8 @@ export default defineComponent({
       }
       if (position) {
         this.map.panTo(position)
+        this.$emit('position', position)
       }
-      this.$emit('locate', position)
     },
     async startWatch() {
       if (!this.locationWatcher) {
@@ -206,8 +206,8 @@ export default defineComponent({
 
       if (this.locatorState === GeolocateState.TRACKING) {
         this.map.panTo(this.userPosition)
+        this.$emit('position', this.userPosition)
       }
-      this.$emit('position', this.userPosition)
     }
   },
   mounted() {

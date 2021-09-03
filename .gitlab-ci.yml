@@ -50,7 +50,7 @@ bundle-staging:
     action: prepare
     name: staging
   only:
-    - main
+    - /^release/(\d+\.)(\d+\.)(\d+)$/
 
 bundle-development:
   extends: .bundle
@@ -66,8 +66,10 @@ bundle-review:
     action: prepare
     name: review/$CI_COMMIT_REF_SLUG
   except:
+    - /^release/(\d+\.)(\d+\.)(\d+)$/
     - main
     - develop
+    - tags
 
 .android:
   image: circleci/android:api-30-node
@@ -94,6 +96,7 @@ android-development:
   only:
     - branches
   except:
+    - /^release/(\d+\.)(\d+\.)(\d+)$/
     - tags
     - main
 
@@ -103,7 +106,7 @@ android-staging:
     action: prepare
     name: staging
   only:
-    - main
+    - /^release/(\d+\.)(\d+\.)(\d+)$/
 
 android-production:
   extends: .android
@@ -111,7 +114,9 @@ android-production:
     action: prepare
     name: production
   only:
-    - tags
+    - /^(\d+\.)(\d+\.)(\d+)$/
+  except:
+    - branches
 
 .ios:
   stage: bundle
@@ -137,18 +142,20 @@ ios-production:
     - cd src-capacitor/ios/App/
     - fastlane beta
   only:
-    - tags
+    - /^(\d+\.)(\d+\.)(\d+)$/
+  except:
+    - branches
 
 staging:
   extends: .deploy-template
   stage: deploy
   script:
     - cd kustomize/staging
-    - kustomize edit set image $CI_REGISTRY_IMAGE=$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+    - kustomize edit set image $CI_REGISTRY_IMAGE=$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
     - kustomize edit set namespace $KUBE_NAMESPACE
     - kustomize build | kubectl apply -f -
   only:
-    - tags
+    - /^release/(\d+\.)(\d+\.)(\d+)$/
   environment:
     name: staging
     url: https://staging.wk-frontend.haze.alt.coop
@@ -180,6 +187,7 @@ review:
     - kustomize build > out.yaml
     - kubectl apply -f out.yaml
   except:
+    - /^release/(\d+\.)(\d+\.)(\d+)$/
     - main
     - develop
     - tags
@@ -199,6 +207,7 @@ stop_review:
     - kubectl delete -f ./kustomize/review/out.yaml
   when: manual
   except:
+    - /^release/(\d+\.)(\d+\.)(\d+)$/
     - main
     - develop
     - tags

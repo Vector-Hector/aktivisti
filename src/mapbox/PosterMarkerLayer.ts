@@ -6,6 +6,7 @@ import { PosterDto, PosterStatus } from 'src/api/model/PosterDto'
 import { loadImageIfNonExistent } from 'src/utils/mapbox'
 import { FeatureCollection, Point } from 'geojson'
 import { clone } from 'lodash-es'
+import { MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/mapbox/Map.vue';
 
 const ABSENT_IMAGE_NAME = 'absent-icon'
 const POSITIVE_IMAGE_NAME = 'positive-icon'
@@ -122,6 +123,7 @@ export default defineComponent({
 
       map.value.on('mousemove', onMoveActivePoster)
       map.value.once('mouseup', onUpActivePoster)
+      MapEventBus.emit(MAP_GEOLOCATE_STOP_TRACKING)
     }
 
     const onTouchStartActivePoster = (e: any) => {
@@ -131,6 +133,7 @@ export default defineComponent({
 
       map.value.on('touchmove', onMoveActivePoster)
       map.value.once('touchend', onUpActivePoster)
+      MapEventBus.emit(MAP_GEOLOCATE_STOP_TRACKING)
     }
 
     const onEnterPoster = () => {
@@ -285,8 +288,6 @@ export default defineComponent({
           map.value.on('mousedown', activePosterLayerId, onMouseDownActivePoster)
           map.value.on('mouseleave', activePosterLayerId, onLeaveActivePoster)
           map.value.on('touchstart', activePosterLayerId, onTouchStartActivePoster)
-          map.value.on('touchmove', onMoveActivePoster)
-          map.value.on('touchend', onUpActivePoster)
         }
       }
     )

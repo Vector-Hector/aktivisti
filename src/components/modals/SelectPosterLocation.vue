@@ -17,8 +17,20 @@
             <LocationSelect
               v-model:location="location"
               v-model:location-description="location_description"
-            />
-
+              :is-draggable-marker-shown=false
+            >
+              <template v-slot:hintText>
+                Bitte geben Sie entweder eine Adresse in das Suchfeld ein oder nutzen Sie die
+                  <span style="white-space: nowrap">
+                    Ortungsfunktion
+                    <QIcon :name="matGpsNotFixed"
+                           flat
+                           round
+                    />
+                  </span>
+                um die Position dieses Standorts auf der Karte festzulegen.
+              </template>
+            </LocationSelect>
           </div>
           <Map
             :bounding-box="initialBBox"
@@ -29,8 +41,6 @@
               <div class="flex column q-gutter-y-sm">
                 <GeolocationControl
                   @position="location = $event"
-                  :locator-icon-not-fixed="locatePosterLocation"
-                  :locator-icon-off="locatePosterLocation"
                   :locator-icon-fixed="locatePosterLocation"
                 />
                 <ResetRotateControl />
@@ -73,7 +83,8 @@ import Map from 'src/mapbox/Map.vue'
 import PosterMarkerLayer from 'src/mapbox/PosterMarkerLayer'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { PosterDto, PosterMount, PosterStatus } from 'src/api/model/PosterDto'
-import { QBtn, QCard, QCardSection, QDialog, QToolbar, QToolbarTitle } from 'quasar'
+import { QBtn, QIcon, QCard, QCardSection, QDialog, QToolbar, QToolbarTitle } from 'quasar'
+import { matGpsNotFixed } from '@quasar/extras/material-icons'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox, booleanPointInPolygon, circle, polygon } from '@turf/turf'
 import GeolocationControl from 'src/mapbox/GeolocationControl.vue'
@@ -93,6 +104,7 @@ export default defineComponent({
     QDialog,
     QToolbar,
     QBtn,
+    QIcon,
     QCard,
     QCardSection,
     QToolbarTitle,
@@ -170,7 +182,8 @@ export default defineComponent({
     return {
       location: null as LocationDto | null,
       location_description: '',
-      locatePosterLocation
+      locatePosterLocation,
+      matGpsNotFixed
     }
   },
   watch: {

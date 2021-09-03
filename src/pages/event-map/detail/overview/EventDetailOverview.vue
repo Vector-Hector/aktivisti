@@ -336,7 +336,8 @@ export default defineComponent({
   },
   computed: {
     shareUrl(): string {
-      return window.location.origin + this.$router.resolve({
+      const shareUrl = process.env.APP_SHARE_URL as string
+      return shareUrl + this.$router.resolve({
         name: 'event-detail',
         params: {
           eventId: this.event.id
@@ -430,7 +431,7 @@ export default defineComponent({
         event: this.eventId,
         user: userStore.getState().user?.id
       })).payload.data?.[0]
-      if (this.personalParticipation?.is_verified) {
+      if (this.personalParticipation?.is_verified || this.isTeamCaptainOrCoordinator) {
         this.eventAreas = (await this.$apiClient.eventAreas.list({event: this.event.id})).payload.data
         if (this.event.event_type === EventTypes.POSTERS) {
           this.posters = (await this.$apiClient.posters.list({event: this.event.id})).payload.data
