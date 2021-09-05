@@ -69,7 +69,7 @@
           filled
           v-if="event.event_type !== EventTypes.GENERIC"
           v-model.number="event.max_participants"
-          label="Maximale Teilnehmer*innenzahl"
+          label="Maximale Teilnehmer:innenzahl"
           type="number"
           :error-message="errors.max_participants?.[0]"
           :error="!!errors.max_participants?.length"
@@ -118,7 +118,7 @@
         <div v-else-if="event.event_type === EventTypes.POSTERS">
           <QCheckbox
             v-model="event.poster_creation_allowed"
-            label="Teilnehmer*innen können Plakate anlegen"
+            label="Teilnehmer:innen können Plakate anlegen"
           />
         </div>
       </QForm>

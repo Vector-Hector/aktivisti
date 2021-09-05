@@ -16,7 +16,7 @@ export const permissionTypeOptions: { key: string, label: string }[] = [{
   label: 'Teamcaptain'
 }, {
   key: PermissionCodename.MANAGE_EVENTS,
-  label: 'Koordinator*in'
+  label: 'Koordinator:in'
 }]
 
 export interface UserObjectPermissionDto {
