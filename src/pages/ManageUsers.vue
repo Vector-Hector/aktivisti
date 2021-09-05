@@ -183,7 +183,7 @@ export default defineComponent({
       myPermissionForSelectedSubAssociation: {},
       selectedUser: {username: ''} as UserPermissionItem,
       newUser: {username: ''} as UserPermissionItem,
-      newUserPermission: {key: '', label: ''},
+      newUserPermission: {key: PermissionCodename.NONE, label: 'Mitglied'},
       userList: [] as UserPermissionItem[],
       loading: true,
       permissionTypeOptions,
@@ -298,6 +298,7 @@ export default defineComponent({
           await this.updateUserObjectPermissions({key: this.newUserPermission.key, label: this.newUserPermission.label}, this.newUser)
           this.userList.unshift(newUserForList)
           this.newUser =  {username: ''}
+          this.newUserPermission = {key: PermissionCodename.NONE, label: 'Mitglied'}
         }
         catch (e) {
           ErrorBus.emit(USER_NOT_FOUND, 'Benutzer:in nicht gefunden.')
