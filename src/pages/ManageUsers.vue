@@ -41,22 +41,35 @@
             class="user-management-section"
             v-show="selectedEntityToManage.name !== ''"
           >
-            <QInput
-              class="w-100 d-flex flex-col"
-              label="Benutzer:in suchen"
-              debounce="1000"
-              :model-value="selectedUser"
-              @update:model-value="selectUser"
-            >
-              <template #item="slotProps">
-                <div class="user-autocomplete-username">
-                  {{ slotProps.item.username }}
-                </div>
-                <div class="user-autocomplete-email">
-                  {{ slotProps.item.email }}
-                </div>
-              </template>
-            </QInput>
+            <div class="row">
+              <div class="col-grow">
+                <QInput
+                  class="w-100 d-flex flex-col"
+                  placeholder="Benutzer:in suchen"
+                  use-input
+                  v-model="newUser.username"
+                  @keydown.enter="addUser"
+                />
+              </div>
+              <QSelect
+                class=""
+                :dropdownIcon="ionChevronDown"
+                filled
+                v-model="newUserPermission"
+                :options="permissionTypeOptionsForMyPermissions"
+                :option-disable="opt =>
+                            Object(opt) === opt ? opt.inactive === true : true"
+                option-value="key"
+                map-options
+              >
+              </QSelect>
+              <div class="col-auto">
+                <QBtn
+                  label="Hinzufügen"
+                  @click="addUser"
+                />
+              </div>
+            </div>
             <div class="row">
               <div class="col">
                 <QList v-show="userList.length > 0">
@@ -106,7 +119,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { QSelect, QPage, QItem, QList, QItemSection, QItemLabel, QInput } from 'quasar'
+import { QSelect, QPage, QItem, QList, QItemSection, QItemLabel, QInput, QBtn } from 'quasar'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { StateAssociationDto } from 'src/api/model/StateAssociationDto'
@@ -149,7 +162,8 @@ export default defineComponent({
     QList,
     QItemSection,
     QItemLabel,
-    QInput
+    QInput,
+    QBtn
   },
   data() {
     return {
@@ -167,6 +181,8 @@ export default defineComponent({
       managementLevel: '',
       myPermissionForSelectedSubAssociation: {},
       selectedUser: {username: ''} as UserPermissionItem,
+      newUser: {username: ''} as UserPermissionItem,
+      newUserPermission: {key: '', label: ''},
       userList: [] as UserPermissionItem[],
       loading: true,
       permissionTypeOptions,
@@ -269,6 +285,19 @@ export default defineComponent({
     },
     userLabel(item: UserPermissionItem) {
       return `${item.username}`
+    },
+    async addUser() {
+      if (!this.userList.find( (user) => user.username === this.newUser.username )) {
+        Object.assign(
+          this.newUser,
+          {
+            permission_codename: this.newUserPermission.key,
+            permission_name : this.newUserPermission.label
+          }
+        )
+        this.userList.unshift(this.newUser)
+        await this.updateUserObjectPermissions({key: this.newUserPermission.key, label: this.newUserPermission.label}, this.newUser)
+      }
     },
     selectUser(username: string) {
       let newUser = {} as UserPermissionItem
