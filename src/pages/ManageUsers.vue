@@ -126,6 +126,7 @@ import { StateAssociationDto } from 'src/api/model/StateAssociationDto'
 import { userStore } from 'src/store/UserStore'
 import { UserObjectPermissionDto, permissionTypeOptions, PermissionCodename } from 'src/api/model/UserObjectPermissionDto'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
+import { ErrorBus, USER_NOT_FOUND } from 'src/utils/errorBus'
 
 
 interface UserPermissionItem {
@@ -288,15 +289,19 @@ export default defineComponent({
     },
     async addUser() {
       if (!this.userList.find( (user) => user.username === this.newUser.username )) {
-        Object.assign(
-          this.newUser,
-          {
-            permission_codename: this.newUserPermission.key,
-            permission_name : this.newUserPermission.label
-          }
-        )
-        this.userList.unshift(this.newUser)
-        await this.updateUserObjectPermissions({key: this.newUserPermission.key, label: this.newUserPermission.label}, this.newUser)
+        const newUserForList = {
+          username : this.newUser.username,
+          permission_codename: this.newUserPermission.key,
+          permission_name: this.newUserPermission.label
+        }
+        try {
+          await this.updateUserObjectPermissions({key: this.newUserPermission.key, label: this.newUserPermission.label}, this.newUser)
+          this.userList.unshift(newUserForList)
+          this.newUser =  {username: ''}
+        }
+        catch (e) {
+          ErrorBus.emit(USER_NOT_FOUND, 'Benutzer:in nicht gefunden.')
+        }
       }
     },
     selectUser(username: string) {
