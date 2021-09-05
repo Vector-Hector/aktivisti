@@ -138,8 +138,7 @@ interface UserPermissionItem {
 
 enum ContentTypes {
   SUB_ASSOCIATION = 'Kreisverband',
-  STATE_ASSOCIATION = 'Landesverband',
-  CAMPAIGN = 'Kampagne'
+  STATE_ASSOCIATION = 'Landesverband'
 }
 
 const contentTypeCodes: { key: string, code: number}[] = [{
@@ -148,9 +147,6 @@ const contentTypeCodes: { key: string, code: number}[] = [{
 }, {
   key: ContentTypes.STATE_ASSOCIATION,
   code: 12
-}, {
-  key: ContentTypes.CAMPAIGN,
-  code: 1
 }]
 
 export default defineComponent({
@@ -188,7 +184,7 @@ export default defineComponent({
       loading: true,
       permissionTypeOptions,
       PermissionCodename,
-      managementLevelOptions: ['Kreisverband', 'Landesverband', 'Kampagne']
+      managementLevelOptions: ['Kreisverband', 'Landesverband']
     }
   },
   async created() {
@@ -333,11 +329,6 @@ export default defineComponent({
           this.managementLevel = managementLevel
           this.selectedEntityToManage = {id: 0, name:''}
           break;
-        case 'Kampagne':
-          console.log('lala') //TODO fix campaigns!
-          this.managementLevel = managementLevel
-          this.selectedEntityToManage = {id: 0, name:''}
-          break;
         default:
           break;
       }
@@ -350,9 +341,6 @@ export default defineComponent({
           break;
         case ContentTypes.STATE_ASSOCIATION:
           query = { association: entity.id.toString() }
-          break;
-        case ContentTypes.CAMPAIGN:
-          query = { campaign: entity.id.toString() }
           break;
         default:
           break;
