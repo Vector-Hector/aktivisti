@@ -25,7 +25,7 @@
             fill-input
             input-debounce="0"
             :options="suggestedEntities"
-            @filter="filterSubAssociations"
+            @filter="filterEntities"
             option-value="id"
             option-label="name"
           >
@@ -171,7 +171,6 @@ export default defineComponent({
       mySubAssociations: [] as SubAssociationDto[],
       myStateAssociationIds: [] as string[],
       myStateAssociations: [] as StateAssociationDto[],
-      suggestedSubAssociations: [] as SubAssociationDto[],
       suggestedEntities: [] as SubAssociationDto[],
       selectedSubAssociation: {id: 0, name: ''},
       selectedEntityToManage: {id: 0, name:''},
@@ -268,16 +267,36 @@ export default defineComponent({
         }
       }
     },
+    filterEntities(value: string, update: any) {
+      if (this.managementLevel === 'Kreisverband') {
+        this.filterSubAssociations(value, update)
+      }
+      else {
+        this.filterStateAssociations(value, update)
+      }
+    },
     filterSubAssociations(value: string, update: any) {
       if (!value) {
         update(() => {
-          this.suggestedSubAssociations = this.mySubAssociations
+          this.suggestedEntities = this.mySubAssociations
         })
         return
       }
       update(() => {
         const lowercasedValue = value.toLowerCase()
-        this.suggestedSubAssociations = this.mySubAssociations.filter(({name}) => name.toLowerCase().includes(lowercasedValue))
+        this.suggestedEntities = this.mySubAssociations.filter(({name}) => name.toLowerCase().includes(lowercasedValue))
+      })
+    },
+    filterStateAssociations(value: string, update: any) {
+      if (!value) {
+        update(() => {
+          this.suggestedEntities = this.myStateAssociations
+        })
+        return
+      }
+      update(() => {
+        const lowercasedValue = value.toLowerCase()
+        this.suggestedEntities = this.myStateAssociations.filter(({name}) => name.toLowerCase().includes(lowercasedValue))
       })
     },
     userLabel(item: UserPermissionItem) {
