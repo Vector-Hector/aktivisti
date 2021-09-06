@@ -206,8 +206,8 @@ export default defineComponent({
     },
     permissionTypeOptionsForMyPermissions(): {key: string, label: string, inactive: boolean}[] {
       if (this.managementLevel !== 'Kreisverband') {
-        return permissionTypeOptions
-          .filter((option) => option.key !== PermissionCodename.TEAM_CAPTAIN)
+       return permissionTypeOptions
+          .filter((option) => option.key !== PermissionCodename.TEAM_CAPTAIN) //Team captains exist only for sub associations
           .map((option) => Object.assign(option, {inactive: !this.allowedToManagePermissions(option)}))
       }
       else {
@@ -401,24 +401,32 @@ export default defineComponent({
       user.permission_codename = permission.key
     },
     allowedToManagePermissions(permissionType: { key: string, label: string }) {
-      const myPermissionsForSubassociation = this.userManagementPermissions.filter(
-        (permission) => permission.object_pk === this.selectedSubAssociation.id.toString()
-      )
-      // if I don't have permissions for the subassociation I'm state association or global coordinator,
-      // so I'm allowed to manage everything
-      if (myPermissionsForSubassociation.length === 0) {
-        return true
+      if (this.managementLevel === 'Kreisverband') {
+        const myPermissionsForSubassociation = this.userManagementPermissions.filter(
+          (permission) => permission.object_pk === this.selectedSubAssociation.id.toString()
+        )
+        // if I don't have direct permissions for the sub association I'm state association or global coordinator,
+        // so I'm allowed to manage everything
+        if (myPermissionsForSubassociation.length === 0) {
+          return true
+        }
+        // if I am sub association coordinator I can manage all types of permissions
+        if (myPermissionsForSubassociation[0].permission_codename === PermissionCodename.MANAGE_EVENTS) {
+          return true
+        }
+        // If I am team captain I can only manage Team captain (or None) permissions
+        else if (myPermissionsForSubassociation[0].permission_codename === PermissionCodename.TEAM_CAPTAIN
+          && (permissionType.key === PermissionCodename.TEAM_CAPTAIN || permissionType.key === PermissionCodename.NONE)) {
+          //and only for users who are not coordinators which is handled in the template!
+          return true
+        }
+        else {
+          return false
+        }
       }
-      if (myPermissionsForSubassociation[0].permission_codename === PermissionCodename.MANAGE_EVENTS) {
+      else { //managementLevel === 'Landesverband'
+        // If there is anything to manage at all I must have coordinator permissions for the selected state association
         return true
-      }
-      else if (myPermissionsForSubassociation[0].permission_codename === PermissionCodename.TEAM_CAPTAIN
-        && (permissionType.key === PermissionCodename.TEAM_CAPTAIN || permissionType.key === PermissionCodename.NONE)) {
-        //and only for users who are not coordinators!
-        return true
-      }
-      else {
-        return false
       }
     }
   }
