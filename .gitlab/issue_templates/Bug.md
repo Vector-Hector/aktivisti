@@ -4,11 +4,11 @@
 ## Steps to reproduce
 (How one can reproduce the issue)
 
-## Expected behaviour
+## Expected behavior
 
 (Tell us what should happen)
 
-## Actual behaviour
+## Actual behavior
 
 (Tell us what happens instead)
 
