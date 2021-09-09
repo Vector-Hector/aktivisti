@@ -71,8 +71,6 @@ npm run lint
 
 ## Contribution Guidelines & License
 
-Find contribution guidelines [here](./CONTRIBUTING.md)
-
 [GPLv3](./LICENSE.md) with [Apple app store exception](./COPYING.iOS).
 
 DIE LINKE. doesn't require a CLA (Contributor License Agreement). The copyright belongs to all the individual contributors. Therefore we recommend that every contributor adds following line to the header of a file, if they changed it substantially:
@@ -81,6 +79,7 @@ DIE LINKE. doesn't require a CLA (Contributor License Agreement). The copyright 
 @copyright Copyright (c) <year>, <your name> (<your email address>)
 ```
 
+Find contribution guidelines [here](./CONTRIBUTING.md)
 
 ## Testing
 
