@@ -73,6 +73,18 @@ npm run lint
 
 Find contribution guidelines [here](./CONTRIBUTE.md)
 
+## Contribution Guidelines & License
+
+[GPLv3](./LICENSE.md) with [Apple app store exception](./COPYING.iOS).
+
+DIE LINKE. doesn't require a CLA (Contributor License Agreement). The copyright belongs to all the individual contributors. Therefore we recommend that every contributor adds following line to the header of a file, if they changed it substantially:
+
+```
+@copyright Copyright (c) <year>, <your name> (<your email address>)
+```
+
+
+
 ## Testing
 
 ### Mock backend during testing or development
@@ -126,3 +138,4 @@ git tag -a testtag # ✗
 ```
 
 *Tip: Take a look on [npm-version](https://docs.npmjs.com/cli/v6/commands/npm-version) to update the version*
+
