@@ -69,11 +69,9 @@ npm run dev:android # starts dev server for capacitor android target
 npm run lint
 ```
 
-### Contribution guidelines
-
-Find contribution guidelines [here](./CONTRIBUTE.md)
-
 ## Contribution Guidelines & License
+
+Find contribution guidelines [here](./CONTRIBUTING.md)
 
 [GPLv3](./LICENSE.md) with [Apple app store exception](./COPYING.iOS).
 
@@ -82,7 +80,6 @@ DIE LINKE. doesn't require a CLA (Contributor License Agreement). The copyright 
 ```
 @copyright Copyright (c) <year>, <your name> (<your email address>)
 ```
-
 
 
 ## Testing
