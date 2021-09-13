@@ -3,39 +3,42 @@
 ## Code Style Guidelines
 
 * CSS/SCSS
-  * We use kebab-case for class declaration. 
+  * We use kebab-case for class declaration.
 
 ## Submission Guidelines
 
-* name branches according to following schema
+Name branches according to following schema:
 
   ```
-  <type>/<scope>/<reference?>
+  <type>/`<reference?>`-<scope>
   ```
 
-  where type is one of:
-  * feat (new feature for the user)
-  * fix (bug fix for the user, not a fix to build scripts)
-  * docs (changes to documentation)
-  * style (formatting, missing semi colons, etc; no functional code change)
-  * refactor (refactoring production code, eg. renaming a variable)
-  * test (adding missing tests, refactoring tests; no production code change)
-  * chore (updating build/env/packages, etc; no production code chang
+`<type>` should one of the following tokens:
 
-  The scope describes the affected code.
-  The descriptor may be a route, component, feature, utility, etc.
-  It should be one word or camelCased, if needed.
+```
+  feat      new feature for the user
+  fix       bug fix for the user, not a fix to build scripts
+  hotfix    hotfixes, fixes that are urgent and need to be pushed to `main`
+  docs      changes to documentation
+  style     formatting, missing semi colons, etc; no functional code change
+  refactor  refactoring production code, eg. renaming a variable
+  test      adding missing tests, refactoring tests; no production code change
+  chore     updating build/env/packages, etc; no production code changes
+```
 
-  Reference is optional, if the contents of that branch is related to a reference of a tracking system, you should put it there.
+`<reference?>` (optional) if the contents of that branch is related to a reference of a tracking system, you should put
+it there.
+
+`<scope>` describes the affected code. The descriptor may be a route, component, feature, utility, etc. It should be one
+word or camelCased, if needed.
 
   Examples:
 
-  ```
-  feat/drawer
-  feat/newThing/#31
-  style/cleanup/#122
-  refactor/webView
-  ```
+```
+  fix/250-user-translation
+  fix/wk-frontend-250-user-translation
+  feat/31-new-thing
+```
 
 * review and test code before submitting a pull request
 
@@ -44,17 +47,19 @@
 Format commit messages according to the following schema:
 
 ```
-subject
+  <reference?> <subject>
 
-body
+  <body>
 
-footer
+  <footer>
 ```
+`<reference?>` (optional) if the contents of that branch is related to a reference of a tracking system, you should put
+it there.
 
-### Subject
+`<subject>`
 
-* Whenever possible, limit the subject line to 50 characters (rule of a thumb).
 * Capitalise the subject line.
+* Whenever possible, limit the subject line to 50 characters (rule of a thumb).
 * Do not end the subject line with a period (saves characters).
 * Use the imperative mode in the subject line (e.g. `merge` instead of `merged`,
   `update` instead of `updated`).
@@ -62,13 +67,12 @@ footer
   following sentence:
 
 ```
-    If applied, this commit will <your subject line here>
+  If applied, this commit will <your subject line here>
 ```
-
-E.g.:
+Examples:
 
 ```
-    If applied, this commit will remove deprecated methods
+  #255 Remove deprecated methods
 ```
 
 ### Body and Footer (optional)
@@ -81,8 +85,6 @@ Details are important, but too much verbosity can inhibit understanding and
 productivity -- keep it clear and concise.
 Use it to explain *what* and *why* vs. *how*.
 
-The footer should only reference Pull Requests or Issues associated with the
-commit.
 
 ### Piecing It All Together
 
@@ -90,12 +92,9 @@ Below is an example of a full commit message that includes a header, a body,
 and a footer:
 
 ```
-Add prop (isActive)
+#21 Add prop (isActive)
 
 NavItem now supports an "isActive" property.
 This property is used to control the styling of active
 navigation links.
-
-Closes #21
-
 ```
