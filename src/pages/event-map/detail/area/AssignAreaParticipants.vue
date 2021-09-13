@@ -4,7 +4,7 @@
     :model-value="eventAreaParticipants"
     @update:model-value="updateAreaParticipations($event)"
     :multiple="true"
-    label="Teilnehmer*innen"
+    label="Teilnehmer:innen"
     :options="onlyMemberParticipants"
     option-label="user_username"
     :display-value="eventAreaParticipants.map(({user_username}) => user_username).join(',')"
@@ -118,7 +118,7 @@ export default defineComponent({
           await this.refreshParticipants()
         } else {
           this.$q.notify({
-            message: 'Unbekannter fehler beim Aktualisieren der Teilnehmer*innen',
+            message: 'Unbekannter fehler beim Aktualisieren der Teilnehmer:innen',
             timeout: 2000,
             color: 'negative'
           })
