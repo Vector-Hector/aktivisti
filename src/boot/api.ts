@@ -67,7 +67,7 @@ export default boot(async ({app}) => {
       if (error.response?.data?.code === ErrorCode.NOT_AUTHENTICATED && authStore.isLoggedIn()) {
         // If the request is not authenticated our session expired
         authStore.setUserId(null)
-        ErrorBus.emit(SESSION_INVALID, 'Deine Sitzung ist abgelaufen, bitte logge dich erneut ein')
+        ErrorBus.emit(SESSION_INVALID, 'Deine Sitzung ist abgelaufen, bitte melde dich erneut an')
       } else {
         // Emit the permission problem on a global error bus
         ErrorBus.emit(NOT_AUTHORIZED, 'Du hast nicht genügend Rechte, um die angefragte Seite zu lesen.')
