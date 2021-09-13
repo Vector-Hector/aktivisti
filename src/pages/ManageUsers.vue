@@ -41,18 +41,18 @@
             class="user-management-section"
             v-show="selectedEntityToManage.name !== ''"
           >
-            <div class="row">
+            <div class="row new-user-group">
               <div class="col-grow">
                 <QInput
                   class="w-100 d-flex flex-col"
-                  placeholder="Benutzer:in suchen"
+                  label="Benutzer:in wählen"
                   use-input
                   v-model="newUser.username"
                   @keydown.enter="addUser"
                 />
               </div>
               <QSelect
-                class=""
+                class="new-user-select"
                 :dropdownIcon="ionChevronDown"
                 filled
                 v-model="newUserPermission"
@@ -63,52 +63,51 @@
                 map-options
               >
               </QSelect>
-              <div class="col-auto">
-                <QBtn
-                  label="Hinzufügen"
-                  @click="addUser"
-                />
-              </div>
+              <QBtn
+                class="new-user-add-btn full-width"
+                label="Hinzufügen"
+                unelevated
+                outline
+                :icon-right="ionChevronDown"
+                @click="addUser"
+              />
             </div>
-            <div class="row">
-              <div class="col">
-                <QList v-show="userList.length > 0">
-                  <QItem
-                    v-for="user in userList"
-                    :key="user.user"
-                  >
-                    <QItemSection>
-                      <QItemLabel>
-                        <b>{{ user.username}}</b> {{ user.email }}
-                      </QItemLabel>
-                    </QItemSection>
-
-                    <QItemSection side>
-                      <div
-                        class="invitation-item-actions"
+            <div class="col">
+              <QList v-show="userList.length > 0">
+                <QItem
+                  class="manage-users-list-item"
+                  v-for="user in userList"
+                  :key="user.user"
+                >
+                  <QItemSection>
+                    <QItemLabel>
+                      <b>{{ user.username }}</b>
+                    </QItemLabel>
+                  </QItemSection>
+                  <QItemSection side>
+                    <div
+                      class="invitation-item-actions"
+                    >
+                      <QSelect
+                        class=""
+                        :dropdownIcon="ionChevronDown"
+                        filled
+                        :model-value="user.permission_codename"
+                        @update:model-value="(permission) => updateUserObjectPermissions(permission, user)"
+                        :options="permissionTypeOptionsForMyPermissions"
+                        :option-disable="opt =>
+                          Object(opt) === opt ? opt.inactive === true
+                          || (user.permission_codename === PermissionCodename.MANAGE_EVENTS &&
+                              myPermissionForSelectedSubAssociation.permission_codename === PermissionCodename.TEAM_CAPTAIN)
+                           : true"
+                        option-value="key"
+                        map-options
                       >
-                        <QSelect
-                          class=""
-                          :dropdownIcon="ionChevronDown"
-                          filled
-                          :model-value="user.permission_codename"
-                          @update:model-value="(permission) => updateUserObjectPermissions(permission, user)"
-                          :options="permissionTypeOptionsForMyPermissions"
-                          :option-disable="opt =>
-                            Object(opt) === opt ? opt.inactive === true
-                            || (user.permission_codename === PermissionCodename.MANAGE_EVENTS &&
-                                myPermissionForSelectedSubAssociation.permission_codename === PermissionCodename.TEAM_CAPTAIN)
-                             : true"
-                          option-value="key"
-                          map-options
-                        >
-
-                        </QSelect>
-                      </div>
-                    </QItemSection>
-                  </QItem>
-                </QList>
-              </div>
+                      </QSelect>
+                    </div>
+                  </QItemSection>
+                </QItem>
+              </QList>
             </div>
           </div>
         </div>
@@ -447,5 +446,25 @@ export default defineComponent({
 
 .level-wrapper {
   margin: 1rem 0 0 0;
+}
+
+.user-management-section {
+  margin: 1rem 0 0 0;
+}
+
+.new-user-group {
+  margin: 0 0 0.5rem 0;
+}
+
+.new-user-select {
+  margin: 0 0 0 1rem;
+}
+
+.new-user-add-btn {
+  margin: 0.5rem 0 0 0;
+}
+
+.manage-users-list-item {
+  padding: 8px 0;
 }
 </style>
