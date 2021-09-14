@@ -68,6 +68,7 @@
                 aria-label="Benutzer:in von der Aktion entfernen"
               />
               <QBtn
+                v-if="!participation.is_event_coordinator"
                 fill="none"
                 size="md"
                 :icon="matArrowCircleUp"
