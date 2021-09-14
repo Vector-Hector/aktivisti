@@ -30,7 +30,7 @@
                 round
                 @click="deleteParticipation(participation.id)"
 
-                aria-label="Nutzer:in von der Aktion entfernen"
+                aria-label="Benutzer:in von der Aktion entfernen"
               />
             </div>
           </QItemSection>
@@ -65,7 +65,7 @@
                 flat
                 round
                 @click="deleteParticipation(participation.id)"
-                aria-label="Nutzer:in von der Aktion entfernen"
+                aria-label="Benutzer:in von der Aktion entfernen"
               />
               <QBtn
                 fill="none"
@@ -75,7 +75,7 @@
                 flat
                 round
                 @click="handleInviteToTeamCaptain(participation.user, participation.user_username)"
-                aria-label="Nutzer:in zu Teamcaptain machen"
+                aria-label="Benutzer:in zu Teamcaptain machen"
               />
             </div>
           </QItemSection>
@@ -109,7 +109,7 @@
                 dense
                 flat
                 round
-                aria-label="Nutzer:in von der Aktion entfernen"
+                aria-label="Benutzer:in von der Aktion entfernen"
                 :icon="ionClose"
                 @click="deleteParticipation(participation.id)"
               />
@@ -216,7 +216,7 @@ export default defineComponent({
         if (e.response?.status === 400 && e.response?.data?.sub_association) {
           this.$q.notify({
             color: 'negative',
-            message: 'Diesem Event ist kein gültiger Landkreis zugeordnet. Die Ernennung einer*eines Teamcaptains ' +
+            message: 'Dieser Aktion ist kein gültiger Landkreis zugeordnet. Die Ernennung einer:eines Teamcaptains ' +
               'ist an einen Landkreis gebunden.'
           })
         } else {
@@ -230,7 +230,7 @@ export default defineComponent({
     handleInviteToTeamCaptain(userId: number, username: string) {
       this.$q.dialog({
         title: 'Benutzer*innen zu Teamcaptain hochstufen',
-        message: `Möchtest du die*den Nutzer*in <b>${username}</b> zur*zum Teamcaptain hochstufen?`,
+        message: `Möchtest du die*den Benutzer:in <b>${username}</b> zur*zum Teamcaptain machen?`,
         html: true,
         cancel: true
       }).onOk(() => this.elevateToTeamCaptain(userId))
