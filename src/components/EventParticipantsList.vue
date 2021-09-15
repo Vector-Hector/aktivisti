@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col">
       <QList v-if="areTeamCaptainsParticipations.length > 0">
-        <QToolbarTitle>Team Captains</QToolbarTitle>
+        <QToolbarTitle>Teamcaptains</QToolbarTitle>
         <QSeparator spaced />
         <QItem
           v-for="participation in areTeamCaptainsParticipations"
