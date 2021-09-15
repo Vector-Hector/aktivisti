@@ -118,7 +118,7 @@ class UserStore extends Store<UserState> {
   }
 
   public hasAtLeastOneManagePermission() {
-    if (this.state.user?.roles.includes(CAMPAIGN_ADMIN) == true || this.state.user?.is_superuser) {
+    if (this.state.user?.roles.includes(CAMPAIGN_ADMIN) || this.state.user?.is_superuser) {
       return true
     }
     return this.state.permissions
@@ -127,7 +127,7 @@ class UserStore extends Store<UserState> {
   }
 
   public isAdminOrGlobalCoordinator() {
-    if (this.state.user?.roles.includes(CAMPAIGN_ADMIN) == true || this.state.user?.is_superuser) {
+    if (this.state.user?.roles.includes(CAMPAIGN_ADMIN) || this.state.user?.is_superuser) {
       return true
     }
     else {
