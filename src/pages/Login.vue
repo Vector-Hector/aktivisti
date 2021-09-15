@@ -4,7 +4,7 @@
       @submit="login"
     >
       <QInput
-        label="Benutzer:innenname"
+        label="Benutzer*innenname"
         v-model="username"
         :rules="[$validationRules.isRequired]"
         type="text"

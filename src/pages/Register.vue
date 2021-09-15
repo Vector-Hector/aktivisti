@@ -19,7 +19,7 @@
             v-model="registrationData.username"
             :rules="[$validationRules.isRequired]"
             name="username"
-            label="Benutzer:innenname *"
+            label="Benutzer*innenname *"
             :error-message="errors.username?.[0]"
             :error="!!errors.username?.length"
           />
