@@ -57,7 +57,7 @@
                 filled
                 v-model="newUserPermission"
                 :options="permissionTypeOptionsForMyPermissions"
-                :option-disable="opt =>
+                :option-disable="(opt) =>
                             Object(opt) === opt ? opt.inactive === true : true"
                 option-value="key"
                 map-options
@@ -95,7 +95,7 @@
                         :model-value="user.permission_codename"
                         @update:model-value="(permission) => updateUserObjectPermissions(permission, user)"
                         :options="permissionTypeOptionsForMyPermissions"
-                        :option-disable="opt =>
+                        :option-disable="(opt) =>
                           Object(opt) === opt ? opt.inactive === true
                           || (user.permission_codename === PermissionCodename.MANAGE_EVENTS &&
                               myPermissionForSelectedSubAssociation.permission_codename === PermissionCodename.TEAM_CAPTAIN)
