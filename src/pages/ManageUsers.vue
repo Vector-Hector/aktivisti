@@ -169,7 +169,6 @@ export default defineComponent({
       allStateAssociations: [] as StateAssociationDto[],
       mySubAssociations: [] as SubAssociationDto[],
       myStateAssociationIds: [] as string[],
-      myStateAssociations: [] as StateAssociationDto[],
       suggestedEntities: [] as SubAssociationDto[],
       selectedSubAssociation: {id: 0, name: ''},
       selectedEntityToManage: {id: 0, name:''},
@@ -190,7 +189,6 @@ export default defineComponent({
     this.allStateAssociations = await this.getStateAssociations()
 
     await this.computeMySubAssociations()
-    this.computeMyStateAssociations()
     this.loading = false
   },
   computed: {
@@ -202,6 +200,21 @@ export default defineComponent({
     },
     getPermissions(): UserObjectPermissionDto[] {
       return userStore.getMyPermissions()
+    },
+    myStateAssociations(): StateAssociationDto[] {
+      if (this.isUserAdminOrGlobalCoordinator) {
+        return this.allStateAssociations
+      }
+      else {
+        return this.getPermissions
+          .filter((permission) => permission.content_type_name === 'State association')
+          .map((permission) => {
+            return {
+              id: parseInt(permission.object_pk),
+              name: permission.content_object_name
+            }
+          })
+      }
     },
     permissionTypeOptionsForMyPermissions(): {key: string, label: string, inactive: boolean}[] {
       if (this.managementLevel !== 'Kreisverband') {
@@ -222,21 +235,6 @@ export default defineComponent({
     },
     async getStateAssociations() {
       return (await this.$apiClient.stateAssociations.list()).payload.data
-    },
-    computeMyStateAssociations() {
-      if (this.isUserAdminOrGlobalCoordinator) {
-        this.myStateAssociations = this.allStateAssociations
-      }
-      else {
-        this.myStateAssociations = this.getPermissions
-          .filter((permission) => permission.content_type_name === 'State association')
-          .map((permission) => {
-            return {
-              id: parseInt(permission.object_pk),
-              name: permission.content_object_name
-            }
-          })
-      }
     },
     async computeMySubAssociations() {
       if (this.isUserAdminOrGlobalCoordinator) {
