@@ -112,7 +112,7 @@
           </MenuLink>
         </div>
         <div
-          v-if="isTeamCaptainOrLocalCoordinator"
+          v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
           class="menu-item"
         >
           <MenuLink
@@ -216,6 +216,9 @@ export default defineComponent({
     },
     isTeamCaptainOrLocalCoordinator() {
       return userStore.isTeamCaptainOrLocalCoordinator()
+    },
+    isAdminOrGlobalCoordinator() {
+      return userStore.isAdminOrGlobalCoordinator()
     },
     userName() {
       return userStore.getState().user?.username
