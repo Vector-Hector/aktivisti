@@ -198,7 +198,7 @@ export default defineComponent({
     isUserAdminOrGlobalCoordinator(): boolean {
       return userStore.isAdminOrGlobalCoordinator()
     },
-    getPermissions(): UserObjectPermissionDto[] {
+    myPermissions(): UserObjectPermissionDto[] {
       return userStore.getMyPermissions()
     },
     myStateAssociations(): StateAssociationDto[] {
@@ -206,7 +206,7 @@ export default defineComponent({
         return this.allStateAssociations
       }
       else {
-        return this.getPermissions
+        return this.myPermissions
           .filter((permission) => permission.content_type_name === 'State association')
           .map((permission) => {
             return {
@@ -242,14 +242,14 @@ export default defineComponent({
       }
       else {
         //Sub association I have direct permissions for
-        const mySubAssociationsIds = this.getPermissions
+        const mySubAssociationsIds = this.myPermissions
           .filter((permission) => permission.content_type_name === 'Sub association')
           .map((permission) => permission.object_pk)
         this.mySubAssociations = this.allSubAssociations.filter(
           ({id}) => mySubAssociationsIds.indexOf(id.toString()) >= 0
         )
         // take care of corresponding subassociations if I have state association permission
-        this.myStateAssociationIds = this.getPermissions
+        this.myStateAssociationIds = this.myPermissions
           .filter((permission) => permission.content_type_name === 'State association')
           .map((permission) => permission.object_pk)
         const subAssociationsInMyStateAssociations = [] as SubAssociationDto[]
