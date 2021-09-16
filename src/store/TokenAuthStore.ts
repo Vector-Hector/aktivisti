@@ -8,6 +8,7 @@ import { parseIfPossible } from 'src/utils/json'
 
 interface TokenAuthStoreState extends BaseAuthStoreState {
   tokenSet: TokenDto | null
+  renewTokenPromise: Promise<void> | null
 }
 
 const KEY_TOKENSET = 'KEY_TOKENSET'
@@ -17,7 +18,8 @@ export class TokenAuthStore extends BaseAuthStore<TokenAuthStoreState> {
   protected data(): TokenAuthStoreState {
     return {
       userId: null,
-      tokenSet: null
+      tokenSet: null,
+      renewTokenPromise: null
     }
   }
 
@@ -67,14 +69,22 @@ export class TokenAuthStore extends BaseAuthStore<TokenAuthStoreState> {
     await this.setTokenSet(tokenResponse.payload)
   }
 
+  async renewToken()  {
+    this.state.tokenSet = (await oAuth2Client.token({
+      grant_type: 'refresh_token',
+      refresh_token: this.state.tokenSet?.refresh_token,
+      client_id: process.env.APP_CLIENT_ID!
+    })).payload
+    await this.setTokenSet(this.state.tokenSet)
+    this.state.renewTokenPromise = null
+  }
+
   async renewLogin() {
-    if (this.state.tokenSet?.refresh_token) {
-      this.state.tokenSet = (await oAuth2Client.token({
-        grant_type: 'refresh_token',
-        refresh_token: this.state.tokenSet?.refresh_token,
-        client_id: process.env.APP_CLIENT_ID!
-      })).payload
-      await this.setTokenSet(this.state.tokenSet)
+    if (this.state.renewTokenPromise == null && this.state.tokenSet?.refresh_token) {
+      this.state.renewTokenPromise = this.renewToken()
+    }
+    if (this.state.renewTokenPromise) {
+      await this.state.renewTokenPromise
     }
   }
 }
