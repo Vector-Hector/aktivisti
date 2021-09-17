@@ -246,7 +246,7 @@ export default defineComponent({
           .filter((permission) => permission.content_type_name === 'Sub association')
           .map((permission) => permission.object_pk)
         this.mySubAssociations = this.allSubAssociations.filter(
-          ({id}) => mySubAssociationsIds.indexOf(id.toString()) >= 0
+          ({id}) => mySubAssociationsIds.includes(id.toString())
         )
         // take care of corresponding subassociations if I have state association permission
         this.myStateAssociationIds = this.myPermissions
@@ -258,7 +258,7 @@ export default defineComponent({
           subAssociationsInMyStateAssociations.push(...newSubAssociations)
         }
         for (const subAssociation of subAssociationsInMyStateAssociations) {
-          if (mySubAssociationsIds.indexOf(subAssociation.id.toString()) < 0) {
+          if (!mySubAssociationsIds.includes(subAssociation.id.toString())) {
             this.mySubAssociations.push(subAssociation)
           }
         }
