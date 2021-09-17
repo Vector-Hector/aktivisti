@@ -61,7 +61,7 @@
           <div class="privacy-disclaimer">
             <p>
 
-              Als Benutzer:in der LINKEN App nimmst Du zur Kenntnis und stimmst zu, dass Du die per App erhaltenen und
+              Als Benutzer*in der LINKEN App nimmst Du zur Kenntnis und stimmst zu, dass Du die per App erhaltenen und
               übermittelten Daten zu keinem anderen Zweck als der Organisation von Aktionen der Partei DIE LINKE
               nutzt,
               insbesondere diese weder speicherst, noch kopierst oder Dritten für andere Zwecke übermittelst. Du

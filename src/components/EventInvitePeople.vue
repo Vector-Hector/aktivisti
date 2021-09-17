@@ -177,7 +177,7 @@ export default defineComponent({
         } else {
           this.$q.notify({
             color: 'negative',
-            message: 'Etwas ging schief beim Einladen des:der Benutzer:in'
+            message: 'Etwas ging schief beim Einladen des*der Benutzer*in'
           })
         }
       } finally {
