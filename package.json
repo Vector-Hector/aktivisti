@@ -24,8 +24,8 @@
   },
   "dependencies": {
     "@capacitor/app": "^1.0.2",
-    "@capacitor/core": "^3.0.2",
-    "@capacitor/geolocation": "^1.0.2",
+    "@capacitor/core": "^3.2.3",
+    "@capacitor/geolocation": "^1.1.0",
     "@capacitor/share": "^1.0.3",
     "@capacitor/splash-screen": "^1.1.0",
     "@capacitor/storage": "^1.0.3",
