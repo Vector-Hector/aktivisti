@@ -403,7 +403,7 @@ export default defineComponent({
     allowedToManagePermissions(permissionType: { key: string, label: string }) {
       if (this.managementLevel === 'Kreisverband') {
         const myPermissionsForSubassociation = this.userManagementPermissions.filter(
-          (permission) => permission.object_pk === this.selectedSubAssociation.id.toString()
+          (permission) => permission.object_pk === this.selectedEntityToManage.id.toString()
         )
         // if I don't have direct permissions for the sub association I'm state association or global coordinator,
         // so I'm allowed to manage everything
