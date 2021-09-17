@@ -262,7 +262,7 @@ export default defineComponent({
 .edit-event-geometry {
   flex: 1;
   padding: 0.5rem;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .location-description {
