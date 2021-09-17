@@ -95,11 +95,7 @@
                         :model-value="user.permission_codename"
                         @update:model-value="(permission) => updateUserObjectPermissions(permission, user)"
                         :options="permissionTypeOptionsForMyPermissions"
-                        :option-disable="(opt) =>
-                          Object(opt) === opt ? opt.inactive === true
-                          || (user.permission_codename === PermissionCodename.MANAGE_EVENTS &&
-                              myPermissionForSelectedSubAssociation.permission_codename === PermissionCodename.TEAM_CAPTAIN)
-                           : true"
+                        :option-disable="(opt) => isPermissionAssignable(opt, user)"
                         option-value="key"
                         map-options
                       >
@@ -173,7 +169,7 @@ export default defineComponent({
       selectedSubAssociation: {id: 0, name: ''},
       selectedEntityToManage: {id: 0, name:''},
       managementLevel: '',
-      myPermissionForSelectedSubAssociation: {},
+      myPermissionForSelectedSubAssociation: {} as UserObjectPermissionDto,
       selectedUser: {username: ''} as UserPermissionItem,
       newUser: {username: ''} as UserPermissionItem,
       newUserPermission: {key: PermissionCodename.NONE, label: 'Mitglied'},
@@ -263,6 +259,13 @@ export default defineComponent({
           }
         }
       }
+    },
+    isPermissionAssignable(permission: {key: string, label: string, inactive: boolean}, user: UserPermissionItem) {
+      console.log('this.myPermissionForSelected...: ', this.myPermissionForSelectedSubAssociation)
+      return Object(permission) === permission ? permission.inactive
+        || (user.permission_codename === PermissionCodename.MANAGE_EVENTS &&
+          this.myPermissionForSelectedSubAssociation.permission_codename === PermissionCodename.TEAM_CAPTAIN)
+        : true
     },
     filterEntities(value: string, update: any) {
       if (this.managementLevel === 'Kreisverband') {
@@ -407,8 +410,9 @@ export default defineComponent({
         if (myPermissionsForSubassociation.length === 0) {
           return true
         }
+        this.myPermissionForSelectedSubAssociation = myPermissionsForSubassociation[0]
         // if I am sub association coordinator I can manage all types of permissions
-        if (myPermissionsForSubassociation[0].permission_codename === PermissionCodename.MANAGE_EVENTS) {
+        if (this.myPermissionForSelectedSubAssociation.permission_codename === PermissionCodename.MANAGE_EVENTS) {
           return true
         }
         // If I am team captain I can only manage Team captain (or None) permissions
