@@ -48,7 +48,7 @@
                   label="Benutzer:in wählen"
                   use-input
                   v-model="newUser.username"
-                  @keydown.enter="addUser"
+                  @keydown.enter="addUser(selectedEntityToManage.id)"
                 />
               </div>
               <QSelect
@@ -69,7 +69,7 @@
                 unelevated
                 outline
                 :icon-right="ionChevronDown"
-                @click="addUser"
+                @click="addUser(selectedEntityToManage.id)"
               />
             </div>
             <div class="col">
@@ -93,7 +93,7 @@
                         :dropdownIcon="ionChevronDown"
                         filled
                         :model-value="user.permission_codename"
-                        @update:model-value="(permission) => updateUserObjectPermissions(permission, user)"
+                        @update:model-value="(permission) => updateUserObjectPermissions(permission, user, selectedEntityToManage.id)"
                         :options="permissionTypeOptionsForMyPermissions"
                         :option-disable="(opt) => isPermissionAssignable(opt, user)"
                         option-value="key"
@@ -302,7 +302,7 @@ export default defineComponent({
     userLabel(item: UserPermissionItem) {
       return `${item.username}`
     },
-    async addUser() {
+    async addUser(entityObjectID: number) {
       if (!this.userList.find( (user) => user.username === this.newUser.username )) {
         const newUserForList = {
           username : this.newUser.username,
@@ -310,7 +310,7 @@ export default defineComponent({
           permission_name: this.newUserPermission.label
         }
         try {
-          await this.updateUserObjectPermissions({key: this.newUserPermission.key, label: this.newUserPermission.label}, this.newUser)
+          await this.updateUserObjectPermissions({key: this.newUserPermission.key, label: this.newUserPermission.label}, this.newUser, entityObjectID)
           this.userList.unshift(newUserForList)
           this.newUser =  {username: ''}
           this.newUserPermission = {key: PermissionCodename.NONE, label: 'Mitglied'}
@@ -376,14 +376,14 @@ export default defineComponent({
         }
       )
     },
-    async updateUserObjectPermissions(permission: { key: string, label: string }, user: UserPermissionItem) {
+    async updateUserObjectPermissions(permission: { key: string, label: string }, user: UserPermissionItem, objectID: number) {
       if (user.object_permission_id && permission.key === PermissionCodename.NONE) {
         await this.$apiClient.userPermissions.delete(user.object_permission_id.toString())
       }
       else {
         const newUserObjectPermissions = {
           user: user.username,
-          object_pk : this.selectedEntityToManage.id.toString(),
+          object_pk : objectID.toString(),
           content_type : contentTypeCodes.find((contentType) => contentType.key === this.managementLevel)?.code,
           permission_codename : permission.key
         }
