@@ -131,18 +131,10 @@ interface UserPermissionItem {
   permission_name?: string
 }
 
-enum ContentTypes {
+enum ContentTypesDisplayNames {
   SUB_ASSOCIATION = 'Kreisverband',
   STATE_ASSOCIATION = 'Landesverband'
 }
-
-const contentTypeCodes: { key: string, code: number}[] = [{
-  key: ContentTypes.SUB_ASSOCIATION,
-  code: 13
-}, {
-  key: ContentTypes.STATE_ASSOCIATION,
-  code: 12
-}]
 
 export default defineComponent({
   name: 'ManageUsers',
@@ -177,7 +169,19 @@ export default defineComponent({
       loading: true,
       permissionTypeOptions,
       PermissionCodename,
-      managementLevelOptions: ['Kreisverband', 'Landesverband']
+      managementLevelOptions: ['Kreisverband', 'Landesverband'],
+      contentTypeCodes: [
+        {
+          name: 'Sub association',
+          display_name: ContentTypesDisplayNames.SUB_ASSOCIATION,
+          code: 0
+        },
+        {
+          name: 'State association',
+          display_name: ContentTypesDisplayNames.STATE_ASSOCIATION,
+          code: 0
+        }
+      ],
     }
   },
   async created() {
@@ -185,6 +189,7 @@ export default defineComponent({
     this.allStateAssociations = await this.getStateAssociations()
 
     await this.computeMySubAssociations()
+    await this.computeContentTypeCodes()
     this.loading = false
   },
   computed: {
@@ -231,6 +236,13 @@ export default defineComponent({
     },
     async getStateAssociations() {
       return (await this.$apiClient.stateAssociations.list()).payload.data
+    },
+    async computeContentTypeCodes() {
+      const allContentTypes = (await this.$apiClient.contentTypes.list()).payload.data
+      for (const contentType of this.contentTypeCodes) {
+        const apiType = allContentTypes.find((element) => element.name === contentType.name)
+        contentType.code = apiType? apiType.id : 0
+      }
     },
     async computeMySubAssociations() {
       if (this.isUserAdminOrGlobalCoordinator) {
@@ -355,10 +367,10 @@ export default defineComponent({
     async getUsersWithPermissionsForEntity(entity: {id: number, name: string}) {
       let query
       switch (this.managementLevel) {
-        case ContentTypes.SUB_ASSOCIATION:
+        case ContentTypesDisplayNames.SUB_ASSOCIATION:
           query = { sub_association: entity.id.toString() }
           break;
-        case ContentTypes.STATE_ASSOCIATION:
+        case ContentTypesDisplayNames.STATE_ASSOCIATION:
           query = { association: entity.id.toString() }
           break;
         default:
@@ -384,7 +396,7 @@ export default defineComponent({
         const newUserObjectPermissions = {
           user: user.username,
           object_pk : objectID.toString(),
-          content_type : contentTypeCodes.find((contentType) => contentType.key === this.managementLevel)?.code,
+          content_type : this.contentTypeCodes.find((contentType) => contentType.display_name === this.managementLevel)?.code,
           permission_codename : permission.key
         }
 
