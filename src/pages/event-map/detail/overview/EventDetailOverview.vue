@@ -123,6 +123,19 @@
                   label-position="bottom"
                 />
                 <QFabAction
+                  v-if="event.event_type === EventTypes.POSTERS && !isHangDownEvent && isCoordinator"
+                  @click="openPosterTakeDownModal"
+                  color="primary"
+                  :icon="ionReceipt"
+                  class="bg-white admin-fab"
+                  stacked
+                  label="Start Abhängen"
+                  outline
+                  label-class="bg-grey-2 text-primary"
+                  external-label
+                  label-position="bottom"
+                />
+                <QFabAction
                   v-if="isTeamCaptainOrCoordinator && event.event_type !== EventTypes.GENERIC"
                   @click="openParticipantsModal"
                   color="primary"
@@ -266,6 +279,7 @@ import {
   ionPerson,
   ionPersonOutline,
   ionPrint,
+  ionReceipt,
   ionSettingsSharp,
   ionTrash
 } from '@quasar/extras/ionicons-v5'
@@ -275,6 +289,7 @@ import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 import Share from 'components/Share.vue'
 import LabeledBtn from 'components/LabeledBtn.vue'
 
+const PREFIX_HANG_DOWN_POSTERS = '[Abhängen] '
 const pollIntervalMs = 5000
 const authStore = getAuthStore()
 
@@ -319,6 +334,7 @@ export default defineComponent({
       ionPencil,
       ionPersonOutline,
       ionPerson,
+      ionReceipt,
       ionTrash
     }
   },
@@ -388,6 +404,9 @@ export default defineComponent({
     },
     isMember(): boolean {
       return this.personalParticipation?.is_pending_invitation === false
+    },
+    isHangDownEvent(): boolean {
+      return this.event.name.startsWith(PREFIX_HANG_DOWN_POSTERS)
     },
     isInvited(): boolean {
       return this.personalParticipation?.is_pending_invitation === true
@@ -532,6 +551,36 @@ export default defineComponent({
           return
         }
       })
+    },
+    openPosterTakeDownModal() {
+      this.$q.dialog({
+        title: 'Wollen Sie eine Plakat-Abhängaktion starten?',
+        message: `Das Event <b>"${this.event.name}"</b> wird in eine Aktion zum Abhängen von Plakate umgewandelt.`,
+        html: true,
+        cancel: true
+      }).onOk(async () => {
+        const newStartDate = new Date()
+        newStartDate.setHours(newStartDate.getHours() + Math.round(newStartDate.getMinutes() / 60) + 1)
+        newStartDate.setMinutes(0, 0, 0)
+        const newEndDate = new Date(newStartDate)
+        newEndDate.setDate(newEndDate.getDate() + 14)
+        try {
+          await this.$apiClient.events.update(this.event.id.toString(), {
+            ...this.event,
+            name: PREFIX_HANG_DOWN_POSTERS + this.event.name,
+            start_date: newStartDate.toISOString(),
+            end_date: newEndDate.toISOString()
+          })
+          this.$router.go(0)
+        } catch (error) {
+          this.$q.notify({
+            color: 'negative',
+            message: 'Die Aktion konnte nicht in eine Plakate-Abhängaktion umgewandelt werden'
+          })
+          return
+        }
+      })
+
     }
   },
   beforeUnmount() {
@@ -616,7 +665,7 @@ label {
 }
 
 .admin-fab {
-  margin-left: 12px !important;
-  margin-right: 12px !important;
+  margin-left: 20px !important;
+  margin-right: 20px !important;
 }
 </style>
