@@ -58,7 +58,7 @@
                 v-model="newUserPermission"
                 :options="permissionTypeOptionsForMyPermissions"
                 :option-disable="(opt) =>
-                            Object(opt) === opt ? opt.inactive === true : true"
+                            Object(opt) === opt ? opt.inactive : true"
                 option-value="key"
                 map-options
               >
@@ -89,7 +89,6 @@
                       class="invitation-item-actions"
                     >
                       <QSelect
-                        class=""
                         :dropdownIcon="ionChevronDown"
                         filled
                         :model-value="user.permission_codename"
