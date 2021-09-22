@@ -129,7 +129,7 @@
                   :icon="ionReceipt"
                   class="bg-white admin-fab"
                   stacked
-                  label="Start Abhängen"
+                  label="Abhängen"
                   outline
                   label-class="bg-grey-2 text-primary"
                   external-label
@@ -554,7 +554,7 @@ export default defineComponent({
     },
     openPosterTakeDownModal() {
       this.$q.dialog({
-        title: 'Wollen Sie eine Plakat-Abhängaktion starten?',
+        title: 'Willst Du Plakate abhängen?',
         message: `Das Event <b>"${this.event.name}"</b> wird in eine Aktion zum Abhängen von Plakaten umgewandelt.`,
         html: true,
         cancel: true
