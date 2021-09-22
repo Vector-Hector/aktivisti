@@ -6,7 +6,7 @@
           use-input
           dense
           v-model="usernameToInvite"
-          placeholder="Nutzername"
+          placeholder="Benutzer*innenname"
           class="w-100 d-flex flex-col"
           @keydown.enter="inviteUser(usernameToInvite)"
         />
@@ -50,7 +50,7 @@
                 >
                   <QIcon
                     :name="ionClose"
-                    aria-label="Nutzer von der Aktion entfernen"
+                    aria-label="Benutzer:in von der Aktion entfernen"
                   />
                 </QIcon>
               </div>
@@ -172,12 +172,12 @@ export default defineComponent({
         if (error.response?.status === 400) {
           this.$q.notify({
             color: 'negative',
-            message: 'Der Nutzername existiert nicht'
+            message: 'Der Benutzer*innenname existiert nicht'
           })
         } else {
           this.$q.notify({
             color: 'negative',
-            message: 'Etwas ging schief beim Einladen des Nutzers'
+            message: 'Etwas ging schief beim Einladen des*der Benutzer*in'
           })
         }
       } finally {

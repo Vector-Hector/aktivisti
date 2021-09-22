@@ -1,118 +1,5 @@
 <template>
   <div class="edit-event-geometry container">
-    <template v-if="event.event_type !== EventTypes.GENERIC">
-      <QTable
-        :auto-layout="true"
-        flat
-        dense
-        :value="eventAreas"
-        :columns="columns"
-        :rows="eventAreas"
-        virtual-scroll
-        hide-pagination
-        :rows-per-page-options="[0]"
-        class="editable-cells-table overflow-hidden q-my-sm"
-        edit-mode="cell"
-        no-data-label="Noch keine Gebiete gezeichnet"
-        @cell-edit-complete="updateArea($event.data)"
-      >
-        <template v-slot:header="props">
-          <QTr :props="props">
-            <QTh
-              v-for="col in props.cols"
-              :key="col.name"
-              :props="props"
-              class="table-header"
-            >
-              {{ col.label }}
-            </QTh>
-          </QTr>
-        </template>
-        <template v-slot:body="props">
-          <QTr>
-            <QTd key="color" :props="props">
-              <QBtn
-                unelevated
-                round
-                dense
-                size="sm"
-                :style="{
-              'background-color': props.row.color
-            }"
-                :color="props.row.color"
-              >
-                <QPopupProxy>
-                  <QColor
-                    no-header
-                    no-footer
-                    default-view="palette"
-                    :model-value="props.row.color"
-                    @update:modelValue="props.row.color = `${$event}`; updateArea(props.row)"
-                  />
-                </QPopupProxy>
-              </QBtn>
-            </QTd>
-            <QTd key="name" :props="props">
-              <div>
-                {{ props.row.name }}
-                <QBtn
-                  :icon="ionPencil"
-                  flat
-                  round
-                  dense
-                  size="sm"
-                  color="grey-6"
-                />
-                <QPopupEdit
-                  v-model="props.row.name"
-                  @save="(value) => updateArea({ ...props.row, name: value })"
-                  :auto-save="true"
-                  v-slot="scope"
-                >
-                  <QInput v-model="scope.value" @keyup.enter="scope.set" dense autofocus />
-                </QPopupEdit>
-              </div>
-            </QTd>
-            <QTd key="details" :props="props">
-              <QSpinnerPuff
-                v-if="updatingAreaFeatureIds.has(props.row.feature_id)"
-                class="progress-spinner"
-              />
-              <span v-else-if="event.event_type === EventTypes.POSTERS">
-              {{ props.row.poster_count }}
-            </span>
-              <span v-else>
-              {{ props.row.area_details?.streets?.reduce((acc, item) => acc + item.addresses.length, 0) ?? 0 }}
-            </span>
-            </QTd>
-
-            <QTd key="actions" :props="props">
-              <QSpinnerPuff
-                v-if="deletingAreaIds.has(props.row.id)"
-              />
-              <QBtn
-                v-else
-                dense
-                round
-                flat
-                color="grey-6"
-                :icon="ionTrash"
-                @click="deleteAreaByFeatureId(props.row.feature_id)"
-              />
-            </QTd>
-          </QTr>
-        </template>
-      </QTable>
-      <QBtn
-        color="primary"
-        class="add-area-button"
-        :icon="ionShareSocial"
-        dense
-        size="md"
-        label="Gebiet zeichnen"
-        @click="startDrawArea"
-      />
-    </template>
     <div class="location-select">
       <h2 class="headline">
         {{ locationHeadline }}
@@ -123,6 +10,124 @@
         :error="errors.location?.[0]"
       />
     </div>
+    <template v-if="event.event_type !== EventTypes.GENERIC">
+      <div class="area-drawing">
+        <h2 class="headline">
+          Gebiete
+        </h2>
+        <QTable
+          :auto-layout="true"
+          flat
+          dense
+          :value="eventAreas"
+          :columns="columns"
+          :rows="eventAreas"
+          virtual-scroll
+          hide-pagination
+          :rows-per-page-options="[0]"
+          class="editable-cells-table overflow-hidden q-my-sm"
+          edit-mode="cell"
+          no-data-label="Noch keine Gebiete gezeichnet"
+          @cell-edit-complete="updateArea($event.data)"
+        >
+          <template v-slot:header="props">
+            <QTr :props="props">
+              <QTh
+                v-for="col in props.cols"
+                :key="col.name"
+                :props="props"
+                class="table-header"
+              >
+                {{ col.label }}
+              </QTh>
+            </QTr>
+          </template>
+          <template v-slot:body="props">
+            <QTr>
+              <QTd key="color" :props="props">
+                <QBtn
+                  unelevated
+                  round
+                  dense
+                  size="sm"
+                  :style="{
+              'background-color': props.row.color
+            }"
+                  :color="props.row.color"
+                >
+                  <QPopupProxy>
+                    <QColor
+                      no-header
+                      no-footer
+                      default-view="palette"
+                      :model-value="props.row.color"
+                      @update:modelValue="props.row.color = `${$event}`; updateArea(props.row)"
+                    />
+                  </QPopupProxy>
+                </QBtn>
+              </QTd>
+              <QTd key="name" :props="props">
+                <div>
+                  {{ props.row.name }}
+                  <QBtn
+                    :icon="ionPencil"
+                    flat
+                    round
+                    dense
+                    size="sm"
+                    color="grey-6"
+                  />
+                  <QPopupEdit
+                    v-model="props.row.name"
+                    @save="(value) => updateArea({ ...props.row, name: value })"
+                    :auto-save="true"
+                    v-slot="scope"
+                  >
+                    <QInput v-model="scope.value" @keyup.enter="scope.set" dense autofocus />
+                  </QPopupEdit>
+                </div>
+              </QTd>
+              <QTd key="details" :props="props">
+                <QSpinnerPuff
+                  v-if="updatingAreaFeatureIds.has(props.row.feature_id)"
+                  class="progress-spinner"
+                />
+                <span v-else-if="event.event_type === EventTypes.POSTERS">
+              {{ props.row.poster_count }}
+            </span>
+                <span v-else>
+              {{ props.row.area_details?.streets?.reduce((acc, item) => acc + item.addresses.length, 0) ?? 0 }}
+            </span>
+              </QTd>
+
+              <QTd key="actions" :props="props">
+                <QSpinnerPuff
+                  v-if="deletingAreaIds.has(props.row.id)"
+                />
+                <QBtn
+                  v-else
+                  dense
+                  round
+                  flat
+                  color="grey-6"
+                  :icon="ionTrash"
+                  @click="deleteAreaByFeatureId(props.row.feature_id)"
+                />
+              </QTd>
+            </QTr>
+          </template>
+        </QTable>
+        <QBtn
+          color="primary"
+          class="add-area-button"
+          :icon="ionShareSocial"
+          dense
+          size="md"
+          label="Gebiet zeichnen"
+          @click="startDrawArea"
+        />
+      </div>
+    </template>
   </div>
   <SidebarBottomStepNavigation
     @close="abort"
@@ -257,7 +262,7 @@ export default defineComponent({
 .edit-event-geometry {
   flex: 1;
   padding: 0.5rem;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .location-description {
@@ -275,6 +280,12 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   margin: 1rem;
+}
+
+.area-drawing {
+  display: flex;
+  flex-direction: column;
+  margin: 0 1rem;
 }
 
 .table-header {

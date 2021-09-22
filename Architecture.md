@@ -11,7 +11,7 @@ See this commented dirtree for reference:
 
 ```
 .
-├── conf                # Configuration files needed for deployment 
+├── conf                # Configuration files needed for deployment
 ├── dist                # Folder for builds, should never be in version control
 ├── mocks               # Code related to mocking (mock server, mock-fixtures)
 ├── node_modules        # Dependendencies, not part of version control
@@ -19,7 +19,7 @@ See this commented dirtree for reference:
 ├── src                 # Sources root of the actual application (see below)
 ├── Architecture.md     # You are here
 ├── babel.config.js     # custom babel config
-├── CONTRIBUTE.md       # Instructions for contributers
+├── CONTRIBUTING.md     # Instructions for contributers
 ├── Dockerfile          # Dockerfile to containerize this application (i.e. for production)
 ├── LICENSE             # License
 ├── package.json        # https://docs.npmjs.com/cli/v6/configuring-npm/package-json/
@@ -41,7 +41,7 @@ src                             # Sources root
 │   ├── EventRoute.ts           # A specific implementation extending APIRoute to provide extra operations on event endpoint
 │   ├── index.ts                # Index file exporting public classes
 │   └── JSONResponse.ts         # A helper type to wrap the raw fetch response and also the parsed JSON payload
-├── assets                      # Folder for bundled assets (fonts, images etc.)           
+├── assets                      # Folder for bundled assets (fonts, images etc.)
 │   └── [...]
 ├── components                  # Reusable Vue components
 ├── lib                         # Reusable components that provide a most generic feature (like wrapping a library)
@@ -50,8 +50,8 @@ src                             # Sources root
 │   └── index.ts
 ├── scss                        # global or shared scss files
 │   └── [...]
-├── store                       # 
-│   └── [...]                   # Files managing central app-state 
+├── store                       #
+│   └── [...]                   # Files managing central app-state
 ├── types                       # Type definitions
 │   └── [...]
 ├── views                       # Views are just vue components, that are connected to a route

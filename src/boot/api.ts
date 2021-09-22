@@ -20,14 +20,15 @@ declare module '@vue/runtime-core' {
 async function refreshOnErrorInterceptor(error: any) {
   const authStore = getAuthStore() as TokenAuthStore
   const originalRequest = error.config
-  const expiryDate = authStore.expiryDate()
-  if ((error.response?.status === 403 || error.response?.status === 401) && expiryDate && new Date() > expiryDate) {
+  if (error.response?.data?.code == ErrorCode.NOT_AUTHENTICATED && authStore.state.tokenSet) {
+
+    // redo initial request with new access token
     try {
       await authStore.renewLogin()
     } catch (e) {
       return Promise.reject(error)
     }
-    // redo initial request
+    originalRequest.headers['Authorization'] = `Bearer ${authStore.state.tokenSet.access_token}`
     return apiClient.axiosInstance(originalRequest)
   } else {
 
@@ -42,16 +43,16 @@ export default boot(async ({app}) => {
   const authType = getAuthType()
   if (authType === AuthType.TOKEN) {
     await (authStore as TokenAuthStore).loadFromNativeStorage()
+    apiClient.axiosInstance.interceptors.response.use(
+      (response: AxiosResponse) => response,
+      (error: any) => refreshOnErrorInterceptor(error)
+    )
     try {
       const profileRequest = await apiClient.user.get('me')
       authStore.setUserId(profileRequest.payload.data.id)
     } catch (e) {
       // hydrating profile failed, not logged in
     }
-    apiClient.axiosInstance.interceptors.response.use(
-      (response: AxiosResponse) => response,
-      (error: any) => refreshOnErrorInterceptor(error)
-    )
   } else if (authType === AuthType.SESSION) {
     try {
       const sessionRequest = await apiClient.session.session()
@@ -67,7 +68,7 @@ export default boot(async ({app}) => {
       if (error.response?.data?.code === ErrorCode.NOT_AUTHENTICATED && authStore.isLoggedIn()) {
         // If the request is not authenticated our session expired
         authStore.setUserId(null)
-        ErrorBus.emit(SESSION_INVALID, 'Deine Sitzung ist abgelaufen, bitte logge dich erneut ein')
+        ErrorBus.emit(SESSION_INVALID, 'Deine Sitzung ist abgelaufen, bitte melde dich erneut an')
       } else {
         // Emit the permission problem on a global error bus
         ErrorBus.emit(NOT_AUTHORIZED, 'Du hast nicht genügend Rechte, um die angefragte Seite zu lesen.')
