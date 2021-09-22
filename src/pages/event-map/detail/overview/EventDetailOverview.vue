@@ -555,7 +555,7 @@ export default defineComponent({
     openPosterTakeDownModal() {
       this.$q.dialog({
         title: 'Wollen Sie eine Plakat-Abhängaktion starten?',
-        message: `Das Event <b>"${this.event.name}"</b> wird in eine Aktion zum Abhängen von Plakate umgewandelt.`,
+        message: `Das Event <b>"${this.event.name}"</b> wird in eine Aktion zum Abhängen von Plakaten umgewandelt.`,
         html: true,
         cancel: true
       }).onOk(async () => {
