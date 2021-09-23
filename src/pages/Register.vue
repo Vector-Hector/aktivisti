@@ -27,12 +27,20 @@
             v-model="registrationData.password"
             :rules="[$validationRules.isRequired]"
             name="password"
-            type="password"
+            :type="isPwd ? 'password' : 'text'"
             label="Passwort *"
             :minlength="6"
             :error-message="errors.password?.[0]"
             :error="!!errors.password?.length"
-          />
+            >
+          <template v-slot:append>
+            <QIcon
+              :name="isPwd ? ionEyeOffOutline : ionEyeOutline"
+              class="cursor-pointer"
+              @click="isPwd = !isPwd"
+            />
+          </template>
+          </QInput>
           <QInput
             v-model="registrationData.plz"
             :rules="[$validationRules.isRequired]"
@@ -111,10 +119,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 
 import { UserRegistrationDto } from 'src/api/model/UserRegistrationDto'
-import { QBtn, QForm, QInput, QPage, QScrollArea } from 'quasar'
+import { QBtn, QForm, QInput, QPage, QScrollArea, QIcon } from 'quasar'
+import { ionEyeOutline, ionEyeOffOutline } from '@quasar/extras/ionicons-v5'
 import FormError from 'components/FormError.vue'
 import { configStore } from 'src/store/ConfigStore'
 
@@ -127,12 +136,16 @@ export default defineComponent({
     QForm,
     QPage,
     QScrollArea,
+    QIcon
   },
   data() {
     return {
       registrationData: {} as Partial<UserRegistrationDto>,
       errors: {},
-      submitting: false
+      submitting: false,
+      isPwd: ref(true),
+      ionEyeOutline,
+      ionEyeOffOutline
     }
   },
   created() {
