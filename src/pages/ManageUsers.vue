@@ -52,7 +52,7 @@
                 />
               </div>
               <QSelect
-                class="new-user-select"
+                class="new-user-select permission-dropdown"
                 :dropdownIcon="ionChevronDown"
                 filled
                 v-model="newUserPermission"
@@ -89,6 +89,7 @@
                       class="invitation-item-actions"
                     >
                       <QSelect
+                        class="permission-dropdown"
                         :dropdownIcon="ionChevronDown"
                         filled
                         :model-value="user.permission_codename"
@@ -479,5 +480,9 @@ export default defineComponent({
 
 .manage-users-list-item {
   padding: 8px 0;
+}
+
+.permission-dropdown {
+  min-width: 10rem;
 }
 </style>
