@@ -14,21 +14,37 @@
           <QInput
             label="Aktuelles Passwort"
             v-model="oldPassword"
-            type="password"
+            :type="isPwd ? 'password' : 'text'"
             :minlength="8"
             :rules="[$validationRules.isRequired]"
             :error-message="errors.old_password?.[0]"
             :error="!!errors.old_password?.length"
-          />
+            >
+            <template v-slot:append>
+              <QIcon
+                :name="isPwd ? ionEyeOffOutline : ionEyeOutline"
+                class="cursor-pointer"
+                @click="isPwd = !isPwd"
+              />
+            </template>
+          </QInput>
           <QInput
             label="Neues Passwort"
             v-model="newPassword"
-            type="password"
+            :type="isPwd ? 'password' : 'text'"
             :minlength="8"
             :rules="[$validationRules.isRequired]"
             :error-message="errors.new_password?.[0]"
             :error="!!errors.new_password?.length"
-          />
+            >
+            <template v-slot:append>
+              <QIcon
+                :name="isPwd ? ionEyeOffOutline : ionEyeOutline"
+                class="cursor-pointer"
+                @click="isPwd = !isPwd"
+              />
+            </template>
+          </QInput>
           <QInput
             label="Neues Passwort bestätigen"
             v-model="newPasswordConfirm"
@@ -48,8 +64,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { QBtn, QCard, QCardActions, QCardSection, QDialog, QForm, QInput, QToolbar, QToolbarTitle } from 'quasar'
+import { defineComponent, ref } from 'vue'
+import { QBtn, QCard, QCardActions, QCardSection, QDialog, QForm, QInput, QToolbar, QToolbarTitle, QIcon } from 'quasar'
+import { ionEyeOutline, ionEyeOffOutline } from '@quasar/extras/ionicons-v5'
 
 export default defineComponent({
   name: 'ChangeEmailDialog',
@@ -62,7 +79,8 @@ export default defineComponent({
     QInput,
     QCardActions,
     QBtn,
-    QForm
+    QForm,
+    QIcon
   },
   emits: [
     // REQUIRED
@@ -74,7 +92,10 @@ export default defineComponent({
       newPassword: '',
       newPasswordConfirm: '',
       errors: {},
-      isSubmitting: false
+      isSubmitting: false,
+      isPwd: ref(true),
+      ionEyeOutline,
+      ionEyeOffOutline
     }
   },
   methods: {
