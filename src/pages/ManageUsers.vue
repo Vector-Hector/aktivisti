@@ -407,6 +407,10 @@ export default defineComponent({
         else {
           await this.$apiClient.userPermissions.create(newUserObjectPermissions)
         }
+        this.$q.notify({
+          color: 'positive',
+          message: 'Gespeichert'
+        })
       }
       user.permission_name = permission.label
       user.permission_codename = permission.key
