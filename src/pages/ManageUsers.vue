@@ -273,7 +273,6 @@ export default defineComponent({
       }
     },
     isPermissionAssignable(permission: {key: string, label: string, inactive: boolean}, user: UserPermissionItem) {
-      console.log('this.myPermissionForSelected...: ', this.myPermissionForSelectedSubAssociation)
       return Object(permission) === permission ? permission.inactive
         || (user.permission_codename === PermissionCodename.MANAGE_EVENTS &&
           this.myPermissionForSelectedSubAssociation.permission_codename === PermissionCodename.TEAM_CAPTAIN)
