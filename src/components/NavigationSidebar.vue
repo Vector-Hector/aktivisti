@@ -119,7 +119,7 @@
             :to="{ name: 'manage-users'}"
           >
             <QIcon :name="ionPeopleOutline"/>
-            <span class="menu-item-link-text">Benutzer:innen verwalten</span>
+            <span class="menu-item-link-text">Benutzer*innen verwalten</span>
           </MenuLink>
         </div>
       </div>

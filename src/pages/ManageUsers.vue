@@ -4,7 +4,7 @@
       <PageLoadingSpinner v-if="loading" />
       <div v-else class="manage-users-content">
         <QSelect
-          label="Auf welcher Ebene möchtest du Benutzer:innen verwalten"
+          label="Auf welcher Ebene möchtest du Benutzer*innen verwalten"
           filled
           :dropdownIcon="ionChevronDown"
           :model-value="managementLevel"
@@ -45,7 +45,7 @@
               <div class="col-grow">
                 <QInput
                   class="w-100 d-flex flex-col"
-                  label="Benutzer:in wählen"
+                  label="Benutzer*in wählen"
                   use-input
                   v-model="newUser.username"
                   @keydown.enter="addUser(selectedEntityToManage.id)"
