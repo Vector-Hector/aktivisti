@@ -13,8 +13,15 @@
         label="Passwort"
         v-model="password"
         :rules="[$validationRules.isRequired]"
-        type="password"
-      />
+        :type="isPwd ? 'password' : 'text'">
+        <template v-slot:append>
+          <QIcon
+            :name="isPwd ? ionEyeOffOutline : ionEyeOutline"
+            class="cursor-pointer"
+            @click="isPwd = !isPwd"
+          />
+        </template>
+      </QInput>
       <div class="forgot-password-link">
         Passwort
         <a
@@ -56,8 +63,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { QBtn, QCheckbox, QForm, QInput } from 'quasar'
+import { defineComponent, PropType, ref } from 'vue'
+import { QBtn, QCheckbox, QForm, QInput, QIcon } from 'quasar'
+import { ionEyeOutline, ionEyeOffOutline } from '@quasar/extras/ionicons-v5'
 import FormError from 'components/FormError.vue'
 import { AuthType, getAuthStore, getAuthType } from 'src/store/AuthStore'
 
@@ -70,7 +78,8 @@ export default defineComponent({
     QForm,
     QBtn,
     QInput,
-    QCheckbox
+    QCheckbox,
+    QIcon
   },
   beforeRouteEnter(to, from, next) {
     if (authStore.isLoggedIn()) {
@@ -92,7 +101,10 @@ export default defineComponent({
       username: '',
       password: '',
       nonFieldError: null as string | null,
-      longSession: true
+      longSession: true,
+      isPwd: ref(true),
+      ionEyeOutline,
+      ionEyeOffOutline
     }
   },
   methods: {
