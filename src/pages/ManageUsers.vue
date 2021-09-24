@@ -354,6 +354,11 @@ export default defineComponent({
         catch (e) {
           ErrorBus.emit(USER_NOT_FOUND, 'Benutzer:in nicht gefunden.')
         }
+      } else {
+        this.$q.notify({
+          color: 'info',
+          message: 'Die Benutzer*in wurde bereits zur Liste hinzugefügt'
+        })
       }
     },
     selectUser(username: string) {
@@ -415,6 +420,7 @@ export default defineComponent({
       )
     },
     async updateUserObjectPermissions(permission: { key: string, label: string }, user: UserPermissionItem, objectID: number) {
+      console.log('Hallo')
       if (user.object_permission_id && permission.key === PermissionCodename.NONE) {
         await this.$apiClient.userPermissions.delete(user.object_permission_id.toString())
         this.userList = this.userList.filter(({username})=> username !== user.username)
