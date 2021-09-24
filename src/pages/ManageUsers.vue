@@ -56,7 +56,7 @@
                 :dropdownIcon="ionChevronDown"
                 filled
                 v-model="newUserPermission"
-                :options="permissionTypeOptionsForMyPermissions"
+                :options="permissionTypeOptionsForNewUser"
                 :option-disable="(opt) =>
                             Object(opt) === opt ? opt.inactive : true"
                 option-value="key"
@@ -164,7 +164,7 @@ export default defineComponent({
       myPermissionForSelectedSubAssociation: {} as UserObjectPermissionDto,
       selectedUser: {username: ''} as UserPermissionItem,
       newUser: {username: ''} as UserPermissionItem,
-      newUserPermission: {key: PermissionCodename.NONE, label: 'Mitglied'},
+      newUserPermission: {key: '', label: ''},
       userList: [] as UserPermissionItem[],
       loading: true,
       permissionTypeOptions,
@@ -215,6 +215,18 @@ export default defineComponent({
               name: permission.content_object_name
             }
           })
+      }
+    },
+    permissionTypeOptionsForNewUser(): {key: string, label: string, inactive: boolean}[] {
+      if (this.managementLevel !== 'Kreisverband') {
+        return permissionTypeOptions
+          .filter((option) => option.key === PermissionCodename.MANAGE_EVENTS) //On state association level only coordinator permissions are assignable
+          .map((option) => Object.assign(option, {inactive: !this.allowedToManagePermissions(option)}))
+      }
+      else {
+        return permissionTypeOptions
+          .filter((option) => option.key !== PermissionCodename.NONE) // "NONE" permissions serve for demoting users; not applicable for new users
+          .map((option) => Object.assign(option, {inactive: !this.allowedToManagePermissions(option)}))
       }
     },
     permissionTypeOptionsForMyPermissions(): {key: string, label: string, inactive: boolean}[] {
@@ -353,11 +365,13 @@ export default defineComponent({
           this.suggestedEntities = this.mySubAssociations
           this.managementLevel = managementLevel
           this.selectedEntityToManage = {id: 0, name:''}
+          this.newUserPermission = {key: PermissionCodename.TEAM_CAPTAIN, label: 'Teamcaptain'}
           break;
         case 'Landesverband':
           this.suggestedEntities = this.myStateAssociations
           this.managementLevel = managementLevel
           this.selectedEntityToManage = {id: 0, name:''}
+          this.newUserPermission = {key: PermissionCodename.MANAGE_EVENTS, label: 'Koordinator*in'}
           break;
         default:
           break;
