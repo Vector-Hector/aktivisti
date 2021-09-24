@@ -81,7 +81,7 @@ class UserStore extends Store<UserState> {
       localStorage.setItem(KEY_HOMEASSOCIATION, JSON.stringify(this.state.homeAssociation))
     } else {
       localStorage.removeItem(KEY_HOMEASSOCIATION)
-    }
+      }
   }
 
   public clearUser() {
@@ -96,17 +96,43 @@ class UserStore extends Store<UserState> {
     return this.state.user?.roles.includes(CAMPAIGN_ADMIN) ?? false
   }
 
+  public isTeamCaptainOrLocalCoordinator(): boolean {
+    return this.getMyTeamCaptainOrCoordinatorPermissions().length !== 0
+  }
+
+  public getMyPermissions() {
+    return this.state.permissions.filter(
+      (permission) => permission.user == this.state.user?.username
+    )
+  }
+
+  public getMyTeamCaptainOrCoordinatorPermissions() {
+    return this.getMyPermissions().filter(
+      (permission) => permission.permission_codename == 'team_captain'
+        || permission.permission_codename == 'manages_events'
+    )
+  }
+
   public setPermissions(permissions: UserObjectPermissionDto[]) {
     this.state.permissions = permissions
   }
 
   public hasAtLeastOneManagePermission() {
-    if (this.state.user?.roles.includes(CAMPAIGN_ADMIN) == true || this.state.user?.is_superuser) {
+    if (this.state.user?.roles.includes(CAMPAIGN_ADMIN) || this.state.user?.is_superuser) {
       return true
     }
     return this.state.permissions
       .map(({permission_codename}) => permission_codename)
       .includes(PermissionCodename.MANAGE_EVENTS)
+  }
+
+  public isAdminOrGlobalCoordinator() {
+    if (this.state.user?.roles.includes(CAMPAIGN_ADMIN) || this.state.user?.is_superuser) {
+      return true
+    }
+    else {
+      return false
+    }
   }
 
   public setUser(user: UserDto) {

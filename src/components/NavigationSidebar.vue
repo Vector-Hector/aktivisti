@@ -108,7 +108,18 @@
             :to="{ name: 'create-event' }"
           >
             <QIcon :name="farCalendarPlus" />
-            <span class="menu-item-link-text">Aktion Erstellen</span>
+            <span class="menu-item-link-text">Aktion erstellen</span>
+          </MenuLink>
+        </div>
+        <div
+          v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
+          class="menu-item"
+        >
+          <MenuLink
+            :to="{ name: 'manage-users'}"
+          >
+            <QIcon :name="ionPeopleOutline"/>
+            <span class="menu-item-link-text">Benutzer*innen verwalten</span>
           </MenuLink>
         </div>
       </div>
@@ -158,7 +169,8 @@ import {
   ionLogIn,
   ionMenu,
   ionPersonCircleOutline,
-  ionPersonOutline
+  ionPersonOutline,
+  ionPeopleOutline
 } from '@quasar/extras/ionicons-v5'
 import { QBtn, QDrawer, QIcon } from 'quasar'
 import { farCalendarPlus, farIdCard } from '@quasar/extras/fontawesome-v5'
@@ -185,7 +197,8 @@ export default defineComponent({
       ionExitOutline,
       ionLogIn,
       ionPersonCircleOutline,
-      ionPersonOutline
+      ionPersonOutline,
+      ionPeopleOutline
     }
   },
   computed: {
@@ -200,6 +213,12 @@ export default defineComponent({
     },
     hasManagePermission() {
       return userStore.hasAtLeastOneManagePermission()
+    },
+    isTeamCaptainOrLocalCoordinator() {
+      return userStore.isTeamCaptainOrLocalCoordinator()
+    },
+    isAdminOrGlobalCoordinator() {
+      return userStore.isAdminOrGlobalCoordinator()
     },
     userName() {
       return userStore.getState().user?.username
