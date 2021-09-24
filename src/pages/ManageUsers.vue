@@ -405,6 +405,10 @@ export default defineComponent({
       if (user.object_permission_id && permission.key === PermissionCodename.NONE) {
         await this.$apiClient.userPermissions.delete(user.object_permission_id.toString())
         this.userList = this.userList.filter(({username})=> username !== user.username)
+        this.$q.notify({
+          color: 'positive',
+          message: 'Der Benutzer*in wurden die Rechte für das Verwaltungsgebiet entzogen'
+        })
       }
       else {
         const newUserObjectPermissions = {
