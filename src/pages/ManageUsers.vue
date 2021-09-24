@@ -240,6 +240,13 @@ export default defineComponent({
           (option) => Object.assign(option, {inactive: !this.allowedToManagePermissions(option)})
         )
       }
+    },
+    defaultNewUserPermission(): {key: string, label: string}{
+      if (this.managementLevel === 'Landesverband') {
+        return {key: PermissionCodename.MANAGE_EVENTS, label: 'Koordinator*in'}
+      } else {
+        return  {key: PermissionCodename.TEAM_CAPTAIN, label: 'Teamcaptain'}
+      }
     }
   },
   methods: {
@@ -342,7 +349,7 @@ export default defineComponent({
           const response = await this.$apiClient.userPermissions.create(newUserObjectPermissions)
           this.userList.unshift({...newUserForList, object_permission_id: response.payload.data.id})
           this.newUser =  {username: ''}
-          this.newUserPermission = {key: PermissionCodename.NONE, label: 'Mitglied'}
+          this.newUserPermission = this.defaultNewUserPermission
         }
         catch (e) {
           ErrorBus.emit(USER_NOT_FOUND, 'Benutzer:in nicht gefunden.')
@@ -371,13 +378,13 @@ export default defineComponent({
           this.suggestedEntities = this.mySubAssociations
           this.managementLevel = managementLevel
           this.selectedEntityToManage = {id: 0, name:''}
-          this.newUserPermission = {key: PermissionCodename.TEAM_CAPTAIN, label: 'Teamcaptain'}
+          this.newUserPermission = this.defaultNewUserPermission
           break;
         case 'Landesverband':
           this.suggestedEntities = this.myStateAssociations
           this.managementLevel = managementLevel
           this.selectedEntityToManage = {id: 0, name:''}
-          this.newUserPermission = {key: PermissionCodename.MANAGE_EVENTS, label: 'Koordinator*in'}
+          this.newUserPermission = this.defaultNewUserPermission
           break;
         default:
           break;
