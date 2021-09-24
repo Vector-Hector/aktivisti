@@ -23,11 +23,10 @@
             :error-message="errors.username?.[0]"
             :error="!!errors.username?.length"
           />
-          <QInput
+          <PasswordInput
             v-model="registrationData.password"
             :rules="[$validationRules.isRequired]"
             name="password"
-            type="password"
             label="Passwort *"
             :minlength="6"
             :error-message="errors.password?.[0]"
@@ -117,11 +116,13 @@ import { UserRegistrationDto } from 'src/api/model/UserRegistrationDto'
 import { QBtn, QForm, QInput, QPage, QScrollArea } from 'quasar'
 import FormError from 'components/FormError.vue'
 import { configStore } from 'src/store/ConfigStore'
+import PasswordInput from 'components/PasswordInput.vue'
 
 export default defineComponent({
   name: 'Register',
   components: {
     FormError,
+    PasswordInput,
     QInput,
     QBtn,
     QForm,

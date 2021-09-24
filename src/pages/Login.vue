@@ -9,11 +9,10 @@
         :rules="[$validationRules.isRequired]"
         type="text"
       />
-      <QInput
+      <PasswordInput
         label="Passwort"
         v-model="password"
         :rules="[$validationRules.isRequired]"
-        type="password"
       />
       <div class="forgot-password-link">
         Passwort
@@ -60,6 +59,7 @@ import { defineComponent, PropType } from 'vue'
 import { QBtn, QCheckbox, QForm, QInput } from 'quasar'
 import FormError from 'components/FormError.vue'
 import { AuthType, getAuthStore, getAuthType } from 'src/store/AuthStore'
+import PasswordInput from 'components/PasswordInput.vue'
 
 const authStore = getAuthStore()
 
@@ -67,6 +67,7 @@ export default defineComponent({
   name: 'Login',
   components: {
     FormError,
+    PasswordInput,
     QForm,
     QBtn,
     QInput,

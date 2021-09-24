@@ -11,28 +11,25 @@
           <p>
             Hier kannst du eine neues Passwort eingeben. Gib dazu dein aktuelles und das neue Passwort ein
           </p>
-          <QInput
+          <PasswordInput
             label="Aktuelles Passwort"
             v-model="oldPassword"
-            type="password"
             :minlength="8"
             :rules="[$validationRules.isRequired]"
             :error-message="errors.old_password?.[0]"
             :error="!!errors.old_password?.length"
           />
-          <QInput
+          <PasswordInput
             label="Neues Passwort"
             v-model="newPassword"
-            type="password"
             :minlength="8"
             :rules="[$validationRules.isRequired]"
             :error-message="errors.new_password?.[0]"
             :error="!!errors.new_password?.length"
           />
-          <QInput
+          <PasswordInput
             label="Neues Passwort bestätigen"
             v-model="newPasswordConfirm"
-            type="password"
             :minlength="8"
             :rules="[$validationRules.isRequired, passwordMatch]"
           />
@@ -49,17 +46,18 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { QBtn, QCard, QCardActions, QCardSection, QDialog, QForm, QInput, QToolbar, QToolbarTitle } from 'quasar'
+import { QBtn, QCard, QCardActions, QCardSection, QDialog, QForm, QToolbar, QToolbarTitle } from 'quasar'
+import PasswordInput from 'components/PasswordInput.vue'
 
 export default defineComponent({
   name: 'ChangeEmailDialog',
   components: {
+    PasswordInput,
     QDialog,
     QCard,
     QCardSection,
     QToolbar,
     QToolbarTitle,
-    QInput,
     QCardActions,
     QBtn,
     QForm
