@@ -404,6 +404,7 @@ export default defineComponent({
     async updateUserObjectPermissions(permission: { key: string, label: string }, user: UserPermissionItem, objectID: number) {
       if (user.object_permission_id && permission.key === PermissionCodename.NONE) {
         await this.$apiClient.userPermissions.delete(user.object_permission_id.toString())
+        this.userList = this.userList.filter(({username})=> username !== user.username)
       }
       else {
         const newUserObjectPermissions = {
