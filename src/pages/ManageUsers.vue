@@ -333,8 +333,14 @@ export default defineComponent({
           permission_name: this.newUserPermission.label
         }
         try {
-          await this.updateUserObjectPermissions({key: this.newUserPermission.key, label: this.newUserPermission.label}, this.newUser, entityObjectID)
-          this.userList.unshift(newUserForList)
+          const newUserObjectPermissions = {
+            user: this.newUser.username,
+            object_pk : entityObjectID.toString(),
+            content_type : this.contentTypeCodes.find((contentType) => contentType.display_name === this.managementLevel)?.code,
+            permission_codename : this.newUserPermission.key
+          }
+          const response = await this.$apiClient.userPermissions.create(newUserObjectPermissions)
+          this.userList.unshift({...newUserForList, object_permission_id: response.payload.data.id})
           this.newUser =  {username: ''}
           this.newUserPermission = {key: PermissionCodename.NONE, label: 'Mitglied'}
         }
