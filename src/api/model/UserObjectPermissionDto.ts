@@ -10,7 +10,7 @@ export enum ContentType {
 
 export const permissionTypeOptions: { key: string, label: string }[] = [{
   key: PermissionCodename.NONE,
-  label: 'Mitglied'
+  label: 'Keine Rechte'
 }, {
   key: PermissionCodename.TEAM_CAPTAIN,
   label: 'Teamcaptain'

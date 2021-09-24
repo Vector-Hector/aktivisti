@@ -362,7 +362,7 @@ export default defineComponent({
         newUser = {
           username: username,
           permission_codename : PermissionCodename.NONE,
-          permission_name : 'Mitglied'
+          permission_name : 'Keine Rechte'
         }
         this.userList.unshift(newUser)
       }
