@@ -9,31 +9,11 @@
     option-value="id"
     option-label="name"
   />
-  <FilterInput
-    class="filter-dropdown"
-    label="Bezirks/Kreisverband"
-    multiple
+  <SubAssociationFilter
     :model-value="filterParams.sub_association"
     @update:model-value="updateSubAssociations"
-    use-input
-    use-chips
-    emit-value
-    map-options
-    clearable
-    input-debounce="0"
-    :options="suggestedSubassociations"
-    @filter="filterSubAssociations"
-    option-value="id"
-    option-label="name"
-  >
-    <template v-slot:no-option>
-      <q-item>
-        <q-item-section class="text-grey">
-          Kein Verband gefunden
-        </q-item-section>
-      </q-item>
-    </template>
-  </FilterInput>
+    :options="subAssociations">
+  </SubAssociationFilter>
   <FilterInput
     class="filter-dropdown"
     :model-value="filterParams.order_by"
@@ -67,7 +47,8 @@ import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 import { EventFilterParams } from 'src/api/params/EventFilterParams'
-import FilterInput from 'components/FilterInput.vue'
+import FilterInput from 'components/filterInput/FilterInput.vue'
+import SubAssociationFilter from 'components/filterInput/filters/SubAssociationFilter.vue'
 
 const SortOptionLabels = {
   [SortOption.START_DATE]: 'Datum (Beginn)',
@@ -77,6 +58,7 @@ const SortOptionLabels = {
 export default defineComponent({
   name: 'EventFilter',
   components: {
+    SubAssociationFilter,
     FilterInput
   },
   props: {
@@ -105,22 +87,13 @@ export default defineComponent({
       ]
     }
   },
-  created() {
-    this.suggestedSubassociations = this.subAssociations
-  },
   data() {
     return {
       eventTypeOptions,
       SortOptionLabels,
       sortOptions: Object.values(SortOption),
       ionChevronDown,
-      ionClose,
-      suggestedSubassociations: [] as SubAssociationDto[]
-    }
-  },
-  watch: {
-    subAssociations() {
-      this.suggestedSubassociations = this.subAssociations
+      ionClose
     }
   },
   methods: {
@@ -128,18 +101,6 @@ export default defineComponent({
       this.$emit('update:filterParams', {
         ...this.filterParams,
         event_type: value
-      })
-    },
-    filterSubAssociations(value: string, update: any) {
-      if (!value) {
-        update(() => {
-          this.suggestedSubassociations = this.subAssociations
-        })
-        return
-      }
-      update(() => {
-        const lowercasedValue = value.toLowerCase()
-        this.suggestedSubassociations = this.subAssociations.filter(({name}) => name.toLowerCase().includes(lowercasedValue))
       })
     },
     updateSubAssociations(value: number[]) {
