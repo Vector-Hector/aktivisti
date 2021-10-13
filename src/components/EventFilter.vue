@@ -1,14 +1,8 @@
 <template>
-  <FilterInput
-    label="Kampagnen"
-    :model-value="filterParams.campaigns?.[0] ?? 0"
-    @update:model-value="updateCampaign"
-    :options="campaignOptions"
-    emit-value
-    map-options
-    option-value="id"
-    option-label="name"
-  />
+  <CampaignFilter
+    :model-value="filterParams.campaigns?.[0]"
+    :options="campaigns"
+    @update:model-value="updateCampaign" />
   <SubAssociationFilter
     :model-value="filterParams.sub_association"
     @update:model-value="updateSubAssociations"
@@ -49,6 +43,7 @@ import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 import { EventFilterParams } from 'src/api/params/EventFilterParams'
 import FilterInput from 'components/filterInput/FilterInput.vue'
 import SubAssociationFilter from 'components/filterInput/filters/SubAssociationFilter.vue'
+import CampaignFilter from 'components/filterInput/filters/CampaignFilter.vue'
 
 const SortOptionLabels = {
   [SortOption.START_DATE]: 'Datum (Beginn)',
@@ -58,6 +53,7 @@ const SortOptionLabels = {
 export default defineComponent({
   name: 'EventFilter',
   components: {
+    CampaignFilter,
     SubAssociationFilter,
     FilterInput
   },
@@ -76,17 +72,6 @@ export default defineComponent({
     }
   },
   emits: ['update:filterParams'],
-  computed: {
-    campaignOptions(): Partial<CampaignDto>[] {
-      return [
-        {
-          id: 0,
-          name: 'Alle Kampagnen'
-        },
-        ...this.campaigns
-      ]
-    }
-  },
   data() {
     return {
       eventTypeOptions,
@@ -112,7 +97,7 @@ export default defineComponent({
     updateCampaign(value: number) {
       this.$emit('update:filterParams', {
         ...this.filterParams,
-        campaigns: value > 0 ? [value] : undefined
+        campaigns: value ? [value] : undefined
       })
     },
     updateSorting(value: SortOption) {
