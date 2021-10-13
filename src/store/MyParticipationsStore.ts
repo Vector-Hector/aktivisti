@@ -15,7 +15,8 @@ class MyParticipationsStore extends Store<MyParticipationsStoreState> {
         subAssociations: [],
         campaign: undefined,
         sorting: SortOption.START_DATE,
-        eventType: undefined
+        eventType: undefined,
+        status: undefined
       },
       eventParticipations: [] as EventParticipationDto[]
 

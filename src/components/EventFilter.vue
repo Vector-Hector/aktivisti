@@ -1,4 +1,8 @@
 <template>
+  <StatusFilter
+    :model-value="filterParams.status"
+    @update:model-value="updateStatus"
+  />
   <CampaignFilter
     :model-value="filterParams.campaigns?.[0]"
     :options="campaigns"
@@ -44,6 +48,8 @@ import { EventFilterParams } from 'src/api/params/EventFilterParams'
 import FilterInput from 'components/filterInput/FilterInput.vue'
 import SubAssociationFilter from 'components/filterInput/filters/SubAssociationFilter.vue'
 import CampaignFilter from 'components/filterInput/filters/CampaignFilter.vue'
+import StatusFilter from 'components/filterInput/filters/StatusFilter.vue'
+import { EventStatus } from 'src/api/model/EventStatus'
 
 const SortOptionLabels = {
   [SortOption.START_DATE]: 'Datum (Beginn)',
@@ -53,6 +59,7 @@ const SortOptionLabels = {
 export default defineComponent({
   name: 'EventFilter',
   components: {
+    StatusFilter,
     CampaignFilter,
     SubAssociationFilter,
     FilterInput
@@ -99,6 +106,9 @@ export default defineComponent({
     },
     updateSorting(value: SortOption) {
       this.updateFilterParams({order_by: value})
+    },
+    updateStatus(value: EventStatus) {
+      this.updateFilterParams({status: value})
     }
   }
 })

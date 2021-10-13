@@ -1,6 +1,7 @@
 import { SortOption } from 'src/store/UserStore'
 import { EventTypes } from 'src/api/model/EventTypes'
 import { Polygon } from 'geojson'
+import { EventStatus } from 'src/api/model/EventStatus'
 
 export interface EventFilterParams {
   sub_association?: number[]
@@ -11,4 +12,5 @@ export interface EventFilterParams {
   limit?: number
   end_date_after?: string
   end_date_include_null?: boolean
+  status?: EventStatus
 }

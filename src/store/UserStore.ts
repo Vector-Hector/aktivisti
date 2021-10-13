@@ -5,6 +5,7 @@ import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { parseIfPossible } from 'src/utils/json'
 import { PermissionCodename, UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
 import { EventTypes } from 'src/api/model/EventTypes'
+import { EventStatus } from 'src/api/model/EventStatus'
 
 
 export enum SortOption {
@@ -16,7 +17,8 @@ export interface EventFilterPreferences {
   subAssociations: number[],
   campaign: number | undefined,
   sorting: SortOption
-  eventType: EventTypes | undefined
+  eventType: EventTypes | undefined,
+  status: EventStatus | undefined
 }
 
 interface UserState {
@@ -42,7 +44,8 @@ class UserStore extends Store<UserState> {
         subAssociations: [],
         campaign: undefined,
         sorting: SortOption.START_DATE,
-        eventType: undefined
+        eventType: undefined,
+        status: EventStatus.ACTIVE
       }
     }
   }
