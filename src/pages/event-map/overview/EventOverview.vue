@@ -41,7 +41,7 @@ import { EventFilterParams } from 'src/api/params/EventFilterParams'
 
 
 export default defineComponent({
-  name: 'EventMap',
+  name: 'EventOverview',
   mixins: [EventsOverviewMixin],
   components: {
     EventFilter,
