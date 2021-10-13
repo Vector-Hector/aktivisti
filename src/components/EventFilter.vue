@@ -82,29 +82,23 @@ export default defineComponent({
     }
   },
   methods: {
-    updateEventType(value: EventTypes) {
+    updateFilterParams(value: EventFilterParams){
       this.$emit('update:filterParams', {
         ...this.filterParams,
-        event_type: value
+        ...value
       })
+    },
+    updateEventType(value: EventTypes) {
+      this.updateFilterParams({event_type: value})
     },
     updateSubAssociations(value: number[]) {
-      this.$emit('update:filterParams', {
-        ...this.filterParams,
-        sub_association: value
-      })
+      this.updateFilterParams({sub_association: value})
     },
     updateCampaign(value: number) {
-      this.$emit('update:filterParams', {
-        ...this.filterParams,
-        campaigns: value ? [value] : undefined
-      })
+      this.updateFilterParams({ campaigns: value ? [value] : undefined })
     },
     updateSorting(value: SortOption) {
-      this.$emit('update:filterParams', {
-        ...this.filterParams,
-        order_by: value
-      })
+      this.updateFilterParams({order_by: value})
     }
   }
 })
