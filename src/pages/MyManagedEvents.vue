@@ -2,11 +2,8 @@
   <QPage class="flex-fill">
     <div class="container my-managed-events">
       <div class="filter-content">
-        <QSelect
+        <FilterInput
           label="Aktionen erstellt von"
-          filled
-          :dropdownIcon="ionChevronDown"
-          :clearIcon="ionClose"
           :model-value="selectedOwner"
           emit-value
           @update:model-value="handleOwnerSelect"
@@ -29,7 +26,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { QPage, QSelect } from 'quasar'
+import { QPage } from 'quasar'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5';
 
 import { CampaignDto } from 'src/api/model/CampaignDto';
@@ -37,6 +34,7 @@ import EventList from 'components/EventList.vue';
 import { Pagination } from 'src/api/model/APIEnvelope';
 import { EVENT_MAP_MAX_EVENTS } from 'src/constants';
 import { EventDto } from 'src/api/model/EventDto';
+import FilterInput from 'components/filterInput/FilterInput.vue'
 
 enum ownership {
   ME,
@@ -51,9 +49,9 @@ const _defaultPagination = {
 export default defineComponent({
   name: 'MyManagedEvents',
   components: {
+    FilterInput,
     EventList,
     QPage,
-    QSelect,
   },
   async created() {
     await this.updateShownEvents()
