@@ -12,6 +12,10 @@
           option-value="key"
           option-label="label"
         />
+        <StatusFilter
+          :model-value="status"
+          @update:model-value="handleStatusSelect"
+        />
       </div>
       <EventList
         v-model:events="shownEvents"
@@ -34,7 +38,9 @@ import EventList from 'components/EventList.vue';
 import { Pagination } from 'src/api/model/APIEnvelope';
 import { EVENT_MAP_MAX_EVENTS } from 'src/constants';
 import { EventDto } from 'src/api/model/EventDto';
+import StatusFilter from 'components/filterInput/filters/StatusFilter.vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
+import { EventStatus } from 'src/api/model/EventStatus'
 
 enum ownership {
   ME,
@@ -50,6 +56,7 @@ export default defineComponent({
   name: 'MyManagedEvents',
   components: {
     FilterInput,
+    StatusFilter,
     EventList,
     QPage,
   },
@@ -62,7 +69,8 @@ export default defineComponent({
       campaigns: [] as CampaignDto[],
       filterParams: {
         is_owner: true,
-        management_permission: true
+        management_permission: true,
+        status: EventStatus.ACTIVE
       } as Record<string, number | string | boolean>,
       ionChevronDown,
       ionClose,
@@ -83,6 +91,7 @@ export default defineComponent({
       pagination: _defaultPagination as Pagination | null,
       selectedOwner: ownership.ME,
       shownEvents: [] as EventDto[],
+      status: EventStatus.ACTIVE
     }
   },
   methods: {
@@ -91,6 +100,12 @@ export default defineComponent({
       this.setOwnershipFilter(selectedOwner)
       await this.updateShownEvents()
       this.selectedOwner = selectedOwner
+    },
+    async handleStatusSelect(selectedStatus: EventStatus){
+      this.resetPagination()
+      this.setStatusFilter(selectedStatus)
+      await this.updateShownEvents()
+      this.status = selectedStatus
     },
     resetPagination() {
       this.pagination = _defaultPagination as Pagination
@@ -124,6 +139,9 @@ export default defineComponent({
         delete this.filterParams.is_owner
       }
     },
+    setStatusFilter(status: EventStatus){
+      this.filterParams.status = status
+    }
   }
 })
 </script>
