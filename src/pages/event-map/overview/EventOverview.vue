@@ -98,6 +98,12 @@ export default defineComponent({
       if (this.userFilterParams.campaigns) {
         active++
       }
+      if (this.userFilterParams.status === EventStatus.ENDED){
+        active++
+      }
+      if(this.userFilterParams.event_type){
+        active++
+      }
       return active
     },
     filterParams(): EventFilterParams {
