@@ -52,7 +52,7 @@ import { LocationDto } from 'src/api/model/LocationDto'
 import ResetRotateControl from 'src/mapbox/ResetRotateControl.vue'
 
 export default defineComponent({
-  name: 'EventMap',
+  name: 'MapWithSheet',
   components: {
     ResetRotateControl,
     GeolocationControl,

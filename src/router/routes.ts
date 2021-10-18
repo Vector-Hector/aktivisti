@@ -3,7 +3,7 @@ import Login from 'src/pages/Login.vue'
 import Register from 'src/pages/Register.vue'
 import { uiStore } from 'src/store/UiStore'
 import RegistrationSucess from 'src/pages/RegistrationSucess.vue'
-import EventMap from 'src/pages/EventMap.vue'
+import MapWithSheet from 'pages/MapWithSheet.vue'
 import Imprint from 'src/pages/Imprint.vue'
 import Splash from 'src/pages/Splash.vue'
 import EventOverview from 'pages/event-map/overview/EventOverview.vue'
@@ -90,7 +90,7 @@ const routes = [
       {
         path: '/events',
         redirect: {name: 'map-events-overview'},
-        component: EventMap,
+        component: MapWithSheet,
         name: 'events',
         meta: {
           title: () => 'Alle Aktionen'
