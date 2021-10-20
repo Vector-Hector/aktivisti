@@ -16,18 +16,9 @@
     :model-value="filterParams.order_by"
     @update:model-value="updateSorting"
   />
-  <FilterInput
-    class="filter-dropdown"
+  <EventTypeFilter
     :model-value="filterParams.event_type"
     @update:model-value="updateEventType"
-    input-debounce="0"
-    label="Aktionstyp"
-    :options="eventTypeOptions"
-    emit-value
-    map-options
-    option-value="key"
-    option-label="label"
-    clearable
   />
 </template>
 <script lang="ts">
@@ -36,23 +27,23 @@ import { SortOption } from 'src/store/UserStore'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
-import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import { EventTypes } from 'src/api/model/EventTypes'
 import { EventFilterParams } from 'src/api/params/EventFilterParams'
-import FilterInput from 'components/filterInput/FilterInput.vue'
 import SubAssociationFilter from 'components/filterInput/filters/SubAssociationFilter.vue'
 import CampaignFilter from 'components/filterInput/filters/CampaignFilter.vue'
 import StatusFilter from 'components/filterInput/filters/StatusFilter.vue'
 import { EventStatus } from 'src/api/model/EventStatus'
 import SortOrderFilter from 'components/filterInput/filters/SortOrderFilter.vue'
+import EventTypeFilter from 'components/filterInput/filters/EventTypeFilter.vue'
 
 export default defineComponent({
   name: 'EventFilter',
   components: {
+    EventTypeFilter,
     SortOrderFilter,
     StatusFilter,
     CampaignFilter,
     SubAssociationFilter,
-    FilterInput
   },
   props: {
     filterParams: {
@@ -71,7 +62,6 @@ export default defineComponent({
   emits: ['update:filterParams'],
   data() {
     return {
-      eventTypeOptions,
       ionChevronDown,
       ionClose
     }
