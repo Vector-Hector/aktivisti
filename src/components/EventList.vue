@@ -1,35 +1,22 @@
 <template>
-  <QScrollArea>
-    <QInfiniteScroll
-      v-if="events.length > 0"
-      @load="loadData"
-      :disable="events.length === pagination.total"
-    >
-      <QList>
-        <EventListItem
-          v-for="item in events"
-          :key="item.id"
-          clickable
-          v-ripple
-          @click="goToEvent(item)"
-          :event="item"
-          :campaigns="campaigns"
-        />
-      </QList>
-      <template v-slot:loading>
-        <div class="row justify-center q-my-md">
-          <QSpinnerDots color="primary" size="40px" />
-        </div>
-      </template>
-    </QInfiniteScroll>
-    <div
-      v-else
-      class="empty-list-placeholder"
-    >
-
+  <InfiniteList
+    :items="events"
+    :disable="events.length === pagination.total"
+    @load="loadData"
+  >
+    <template v-slot:item="{item}">
+      <EventListItem
+        clickable
+        v-ripple
+        @click="goToEvent(item)"
+        :event="item"
+        :campaigns="campaigns"
+      />
+    </template>
+    <template v-slot:emptyList>
       Keine Aktionen gefunden
-    </div>
-  </QScrollArea>
+    </template>
+  </InfiniteList>
 </template>
 
 <script lang="ts">
@@ -39,23 +26,20 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
 import { Pagination } from 'src/api/model/APIEnvelope'
 import { distinctBy } from 'src/utils/array'
-import { QInfiniteScroll, QList, QScrollArea, QSpinnerDots } from 'quasar'
 import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 import EventListItem from 'components/EventListItem.vue'
+import InfiniteList from 'components/InfiniteList.vue'
 
 
 export default defineComponent({
   name: 'EventList',
   components: {
-    EventListItem,
-    QInfiniteScroll,
-    QSpinnerDots,
-    QList,
-    QScrollArea
+    InfiniteList,
+    EventListItem
   },
   props: {
     filterParams: {
-      type: Object as PropType<{ [key: string]: string }>,
+      type: Object as PropType<{[key: string]: string}>,
       required: true
     },
     events: {
@@ -147,11 +131,5 @@ export default defineComponent({
     margin-left: 0.6rem;
 
   }
-}
-
-.empty-list-placeholder {
-  margin: 1rem 0;
-  display: flex;
-  justify-content: center;
 }
 </style>
