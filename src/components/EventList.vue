@@ -76,7 +76,7 @@ export default defineComponent({
         }
       })
     },
-    async getParticipatedEvents(pagination: Pagination) {
+    async getEvents(pagination: Pagination) {
       const response = await this.$apiClient.events.list({
         ...this.filterParams,
         ...this.pagination,
@@ -94,7 +94,7 @@ export default defineComponent({
         limit: EVENT_LIST_CHUNK_SIZE,
         offset: (this.events?.length ?? 0)
       }
-      const moreEvents = await this.getParticipatedEvents(pagination)
+      const moreEvents = await this.getEvents(pagination)
       this.$emit('update:events', distinctBy(this.events.concat(moreEvents), (item: EventDto) => item.id))
       done()
     }
