@@ -101,35 +101,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<style lang="scss" scoped>
-@import "src/css/variables";
-
-.buttons {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-}
-
-.autocomplete {
-  padding-bottom: 20px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.item-buttons {
-  display: flex;
-  align-items: center;
-  font-size: 1.5rem;
-
-  a {
-    display: inline-flex;
-    color: $black;
-  }
-
-  .delete-button {
-    margin-left: 0.6rem;
-
-  }
-}
-</style>
