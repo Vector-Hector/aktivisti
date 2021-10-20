@@ -12,15 +12,9 @@
     @update:model-value="updateSubAssociations"
     :options="subAssociations">
   </SubAssociationFilter>
-  <FilterInput
-    class="filter-dropdown"
+  <SortOrderFilter
     :model-value="filterParams.order_by"
-    @change="updateSorting"
-    input-debounce="0"
-    label="Sortierung"
-    :options="sortOptions"
-    :option-label="(item) => SortOptionLabels[item]"
-    placeholder="Sortierung auswählen"
+    @update:model-value="updateSorting"
   />
   <FilterInput
     class="filter-dropdown"
@@ -34,7 +28,6 @@
     option-value="key"
     option-label="label"
     clearable
-
   />
 </template>
 <script lang="ts">
@@ -50,15 +43,12 @@ import SubAssociationFilter from 'components/filterInput/filters/SubAssociationF
 import CampaignFilter from 'components/filterInput/filters/CampaignFilter.vue'
 import StatusFilter from 'components/filterInput/filters/StatusFilter.vue'
 import { EventStatus } from 'src/api/model/EventStatus'
-
-const SortOptionLabels = {
-  [SortOption.START_DATE]: 'Datum (Beginn)',
-  [SortOption.NAME]: 'Aktionsname'
-}
+import SortOrderFilter from 'components/filterInput/filters/SortOrderFilter.vue'
 
 export default defineComponent({
   name: 'EventFilter',
   components: {
+    SortOrderFilter,
     StatusFilter,
     CampaignFilter,
     SubAssociationFilter,
@@ -82,8 +72,6 @@ export default defineComponent({
   data() {
     return {
       eventTypeOptions,
-      SortOptionLabels,
-      sortOptions: Object.values(SortOption),
       ionChevronDown,
       ionClose
     }
