@@ -3,6 +3,7 @@
     :items="events"
     :disable="events.length === pagination.total"
     @load="loadData"
+    ref="infiniteList"
   >
     <template v-slot:item="{item}">
       <EventListItem
@@ -92,6 +93,10 @@ export default defineComponent({
       const moreEvents = await this.getEvents()
       this.$emit('update:events', distinctBy(this.events.concat(moreEvents), (item: EventDto) => item.id))
       done()
+    },
+    resetScrollPosition(){
+      // @ts-ignore
+      this.$refs.infiniteList.resetScrollPosition()
     }
   }
 })

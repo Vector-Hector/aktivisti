@@ -1,5 +1,7 @@
 <template>
-  <QScrollArea>
+  <QScrollArea
+    ref="qScrollArea"
+  >
     <QInfiniteScroll
       v-if="items.length > 0"
       @load="(index, done)=>$emit('load', index, done)"
@@ -49,7 +51,13 @@ export default defineComponent({
       default: false
     }
   },
-  emits: ['load']
+  emits: ['load'],
+  methods: {
+    resetScrollPosition(){
+      // @ts-ignore
+      this.$refs.qScrollArea.setScrollPosition('vertical', 0)
+    }
+  }
 })
 </script>
 <style lang="scss" scoped>

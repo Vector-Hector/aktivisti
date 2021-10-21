@@ -19,6 +19,7 @@
       :filter-params="filterParams"
       :campaigns="campaigns"
       class="event-list"
+      ref="eventList"
     />
   </div>
 </template>
@@ -136,6 +137,10 @@ export default defineComponent({
       this.subAssociations = (await this.$apiClient.subAssociations.list()).payload.data
     },
     async updateView() {
+      if (this.$refs.eventList){
+        // @ts-ignore
+        this.$refs.eventList.resetScrollPosition()
+      }
       if (this.filterParams.within) {
         const clusterResponse = await this.$apiClient.eventClusters.list(this.filterParams)
         if (!isEqual(this.clusters, clusterResponse.payload.data)) {

@@ -17,6 +17,7 @@
         :filter-params="filterParams"
         :campaigns="campaigns"
         class="event-list"
+        ref="eventList"
       />
     </div>
   </QPage>
@@ -69,6 +70,8 @@ export default defineComponent({
   },
   methods: {
     async handleOwnerSelect(isOwner: boolean) {
+      // @ts-ignore
+      this.$refs.eventList.resetScrollPosition()
       this.resetPagination()
       this.filterParams.is_owner = isOwner
       await this.updateShownEvents()
