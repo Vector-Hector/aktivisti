@@ -36,7 +36,7 @@ import EventList from 'src/components/EventList.vue'
 import { Pagination } from 'src/api/model/APIEnvelope'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import EventsOverviewMixin from 'pages/event-map/overview/EventsOverviewMixin'
-import { EVENT_MAP_MAX_EVENTS } from 'src/constants'
+import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
 import EventFilter from 'components/EventFilter.vue'
 import { EventFilterParams } from 'src/api/params/EventFilterParams'
 import { EventStatus } from 'src/api/model/EventStatus'
@@ -112,7 +112,7 @@ export default defineComponent({
         ...this.userFilterParams,
         within: this.boundingBoxJson ?? undefined,
 
-        limit: EVENT_MAP_MAX_EVENTS,
+        limit: EVENT_LIST_CHUNK_SIZE,
         end_date_include_null: true
       }
     }
