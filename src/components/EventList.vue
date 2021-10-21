@@ -76,11 +76,11 @@ export default defineComponent({
         }
       })
     },
-    async getEvents(pagination: Pagination) {
+    async getEvents() {
       const response = await this.$apiClient.events.list({
         ...this.filterParams,
-        ...this.pagination,
-        ...pagination
+        limit: EVENT_LIST_CHUNK_SIZE,
+        offset: (this.events?.length ?? 0)
       })
       this.$emit('update:pagination', response.payload.pagination)
       return response.payload.data
@@ -89,12 +89,7 @@ export default defineComponent({
       if (this.isDisabled) {
         return
       }
-      const pagination = {
-        ...this.pagination!,
-        limit: EVENT_LIST_CHUNK_SIZE,
-        offset: (this.events?.length ?? 0)
-      }
-      const moreEvents = await this.getEvents(pagination)
+      const moreEvents = await this.getEvents()
       this.$emit('update:events', distinctBy(this.events.concat(moreEvents), (item: EventDto) => item.id))
       done()
     }
