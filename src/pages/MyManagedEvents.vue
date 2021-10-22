@@ -2,18 +2,13 @@
   <QPage class="flex-fill">
     <div class="container my-managed-events">
       <div class="filter-content">
-        <QSelect
-          label="Aktionen erstellt von"
-          filled
-          :dropdownIcon="ionChevronDown"
-          :clearIcon="ionClose"
-          :model-value="selectedOwner"
-          emit-value
+        <OwnershipFilter
+          :model-value="filterParams.is_owner"
           @update:model-value="handleOwnerSelect"
-          :options="ownershipOptions"
-          map-options
-          option-value="key"
-          option-label="label"
+        />
+        <StatusFilter
+          :model-value="status"
+          @update:model-value="handleStatusSelect"
         />
       </div>
       <EventList
@@ -29,7 +24,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { QPage, QSelect } from 'quasar'
+import { QPage } from 'quasar'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5';
 
 import { CampaignDto } from 'src/api/model/CampaignDto';
@@ -37,12 +32,9 @@ import EventList from 'components/EventList.vue';
 import { Pagination } from 'src/api/model/APIEnvelope';
 import { EVENT_MAP_MAX_EVENTS } from 'src/constants';
 import { EventDto } from 'src/api/model/EventDto';
-
-enum ownership {
-  ME,
-  OTHER,
-  ALL
-}
+import StatusFilter from 'components/filterInput/filters/StatusFilter.vue'
+import { EventStatus } from 'src/api/model/EventStatus'
+import OwnershipFilter from 'components/filterInput/filters/OwnershipFilter.vue'
 
 const _defaultPagination = {
   limit: EVENT_MAP_MAX_EVENTS
@@ -51,9 +43,10 @@ const _defaultPagination = {
 export default defineComponent({
   name: 'MyManagedEvents',
   components: {
+    OwnershipFilter,
+    StatusFilter,
     EventList,
     QPage,
-    QSelect,
   },
   async created() {
     await this.updateShownEvents()
@@ -64,35 +57,27 @@ export default defineComponent({
       campaigns: [] as CampaignDto[],
       filterParams: {
         is_owner: true,
-        management_permission: true
+        management_permission: true,
+        status: EventStatus.ACTIVE
       } as Record<string, number | string | boolean>,
       ionChevronDown,
       ionClose,
-      ownershipOptions: [
-        {
-          label: 'Mir',
-          key: ownership.ME,
-        },
-        {
-          label: 'Anderen',
-          key: ownership.OTHER,
-        },
-        {
-          label: 'Allen',
-          key: ownership.ALL,
-        }
-      ],
       pagination: _defaultPagination as Pagination | null,
-      selectedOwner: ownership.ME,
       shownEvents: [] as EventDto[],
+      status: EventStatus.ACTIVE
     }
   },
   methods: {
-    async handleOwnerSelect(selectedOwner: number) {
+    async handleOwnerSelect(isOwner: boolean) {
       this.resetPagination()
-      this.setOwnershipFilter(selectedOwner)
+      this.filterParams.is_owner = isOwner
       await this.updateShownEvents()
-      this.selectedOwner = selectedOwner
+    },
+    async handleStatusSelect(selectedStatus: EventStatus){
+      this.resetPagination()
+      this.setStatusFilter(selectedStatus)
+      await this.updateShownEvents()
+      this.status = selectedStatus
     },
     resetPagination() {
       this.pagination = _defaultPagination as Pagination
@@ -117,15 +102,9 @@ export default defineComponent({
         })
       }
     },
-    setOwnershipFilter(owner = ownership.ALL) {
-      if (owner === ownership.ME) {
-        this.filterParams.is_owner = true
-      } else if (owner === ownership.OTHER) {
-        this.filterParams.is_owner = false
-      } else {
-        delete this.filterParams.is_owner
-      }
-    },
+    setStatusFilter(status: EventStatus){
+      this.filterParams.status = status
+    }
   }
 })
 </script>

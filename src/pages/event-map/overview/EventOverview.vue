@@ -38,10 +38,11 @@ import EventsOverviewMixin from 'pages/event-map/overview/EventsOverviewMixin'
 import { EVENT_MAP_MAX_EVENTS } from 'src/constants'
 import EventFilter from 'components/EventFilter.vue'
 import { EventFilterParams } from 'src/api/params/EventFilterParams'
+import { EventStatus } from 'src/api/model/EventStatus'
 
 
 export default defineComponent({
-  name: 'EventMap',
+  name: 'EventOverview',
   mixins: [EventsOverviewMixin],
   components: {
     EventFilter,
@@ -67,12 +68,13 @@ export default defineComponent({
   computed: {
     userFilterParams: {
       get(): EventFilterParams {
-        const {campaign, subAssociations, sorting, eventType} = userStore.getState().filterPreferences
+        const {campaign, subAssociations, sorting, eventType, status} = userStore.getState().filterPreferences
         return {
           sub_association: subAssociations,
           campaigns: campaign !== undefined ? [campaign] : undefined,
           order_by: sorting,
-          event_type: eventType
+          event_type: eventType,
+          status: status ?? EventStatus.ACTIVE
         }
       },
       set(value: EventFilterParams) {
@@ -82,7 +84,8 @@ export default defineComponent({
             subAssociations: value.sub_association ?? [],
             campaign: value.campaigns?.[0],
             sorting: value.order_by!,
-            eventType: value.event_type ?? undefined
+            eventType: value.event_type ?? undefined,
+            status: value.status ?? undefined
           }
         })
       }
@@ -95,6 +98,12 @@ export default defineComponent({
       if (this.userFilterParams.campaigns) {
         active++
       }
+      if (this.userFilterParams.status === EventStatus.ENDED){
+        active++
+      }
+      if(this.userFilterParams.event_type){
+        active++
+      }
       return active
     },
     filterParams(): EventFilterParams {
@@ -103,10 +112,6 @@ export default defineComponent({
         within: this.boundingBoxJson ?? undefined,
 
         limit: EVENT_MAP_MAX_EVENTS,
-        end_date_after: new Date().toISOString(),
-        // TODO: jonatan@ctrl.alt.coop
-        // atm it's well possible to not set an end date of an event making it indefinitely going, so we include them
-        // in the query... Maybe we should rethink that (mandatory/default end date?)
         end_date_include_null: true
       }
     }
