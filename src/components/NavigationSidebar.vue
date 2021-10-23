@@ -77,6 +77,16 @@
             <span class="menu-item-link-text">Alle Aktionen</span>
           </MenuLink>
         </div>
+        <div class="menu-item">
+          <MenuLink
+            to="/offices"
+          >
+            <QIcon
+              :name="ionHomeOutline"
+            />
+            <span class="menu-item-link-text">Geschäftstellen</span>
+          </MenuLink>
+        </div>
         <div
           v-if="isLoggedIn"
           class="menu-item"
@@ -170,7 +180,7 @@ import {
   ionMenu,
   ionPersonCircleOutline,
   ionPersonOutline,
-  ionPeopleOutline
+  ionPeopleOutline, ionHomeOutline
 } from '@quasar/extras/ionicons-v5'
 import { QBtn, QDrawer, QIcon } from 'quasar'
 import { farCalendarPlus, farIdCard } from '@quasar/extras/fontawesome-v5'
@@ -195,6 +205,7 @@ export default defineComponent({
       ionClose,
       ionCreateOutline,
       ionExitOutline,
+      ionHomeOutline,
       ionLogIn,
       ionPersonCircleOutline,
       ionPersonOutline,

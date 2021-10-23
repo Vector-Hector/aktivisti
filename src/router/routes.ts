@@ -46,6 +46,8 @@ import EventDetailPosterList from 'pages/event-map/detail/area/posters/list/Even
 import EventDetailPosterListMap from 'pages/event-map/detail/area/posters/list/EventDetailPosterListMap.vue'
 import MyManagedEvents from 'pages/MyManagedEvents.vue'
 import ManageUsers from 'pages/ManageUsers.vue'
+import OfficeOverview from 'pages/office-map/overview/OfficeOverview.vue'
+import OfficeOverviewMap from 'pages/office-map/overview/OfficeOverviewMap.vue'
 
 
 const routes = [
@@ -86,6 +88,24 @@ const routes = [
           requiresAuth: true,
           title: () => 'Aktionen verwalten'
         }
+      },
+      {
+        path: '/offices',
+        component: MapWithSheet,
+        name: 'office-map',
+        meta: {
+          title: () => 'Geschäftsstellen'
+        },
+        children: [
+          {
+            path: '',
+            name: 'map-office-overview',
+            components: {
+              default: OfficeOverview,
+              map: OfficeOverviewMap
+            }
+          }
+        ]
       },
       {
         path: '/events',
@@ -361,7 +381,7 @@ const routes = [
       component: PrintEvent,
       name: 'print-event'
     }]
-  },
+  }
 ]
 
 
