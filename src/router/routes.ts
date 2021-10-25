@@ -98,6 +98,9 @@ const routes = [
         meta: {
           title: () => 'Geschäftsstellen'
         },
+        props: {
+          isShowingOfficeLayer: false
+        },
         children: [
           {
             path: '',

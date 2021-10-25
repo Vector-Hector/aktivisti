@@ -4,7 +4,7 @@
   >
     <template v-slot:marker>
       <QIcon
-        name="img:static/icons/map-pin-office.svg"
+        :name="icon"
         class="clickable-marker"
         size="lg"
       />
@@ -27,6 +27,18 @@ export default defineComponent({
     location: {
       type: Object as PropType<LocationDto>,
       required: true
+    },
+    isGrayedOut: {
+      type: Boolean as PropType<boolean>,
+      default: false
+    }
+  },
+  computed: {
+    icon(): string {
+      if (this.isGrayedOut) {
+        return 'img:static/icons/map-pin-office-grayed-out.svg'
+      }
+      return 'img:static/icons/map-pin-office.svg'
     }
   }
 })
