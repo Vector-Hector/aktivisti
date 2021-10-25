@@ -65,6 +65,14 @@ export default defineComponent({
       })).payload
       this.offices = distinctBy(this.offices.concat(offices), (office) => office.id)
       this.pagination = pagination!
+    },
+    goToOffice(officeId: number) {
+      void this.$router.push({
+        name: 'office-detail',
+        params: {
+          officeId: officeId
+        }
+      })
     }
   }
 })

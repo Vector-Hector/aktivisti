@@ -17,6 +17,7 @@
   >
       <OfficeMarker v-if="!officeHoveredOver || office.id !== officeHoveredOver.id"
                     :location="office.location"
+                    @click="goToOffice(office.id)"
       />
       <SelectedMarker v-if="officeHoveredOver && office.id === officeHoveredOver.id"
                       :location="office.location" />

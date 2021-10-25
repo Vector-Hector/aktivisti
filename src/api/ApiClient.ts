@@ -70,7 +70,7 @@ export class ApiClient {
   eventPermissions = new ObjectPermissionsRoute(this.baseURL, 'event-permissions/', this.axiosInstance)
   posters = new ApiRoute<PosterDto>(this.baseURL, 'posters/', this.axiosInstance)
   contentTypes = new ApiRoute<ContentTypeDto>(this.baseURL, 'content-types/', this.axiosInstance)
-  offices = new ApiRoute<OfficeDto>(this.baseURL, 'offices', this.axiosInstance)
+  offices = new ApiRoute<OfficeDto>(this.baseURL, 'offices/', this.axiosInstance)
   officeClusters = new ApiRoute<ClusterDto>(this.baseURL, 'office-clusters/', this.axiosInstance)
 }
 

@@ -9,7 +9,9 @@
     >
       <template v-slot:item="{item}">
         <OfficeListItem :office="item" @mouseover="() => handleMouseOver(item)"
-                        @mouseout="()=> handleMouseOver(null)" />
+                        @mouseout="()=> handleMouseOver(null)"
+                        @click="goToOffice(item.id)"
+        />
       </template>
       <template v-slot:emptyList>
         Keine Einträge im Gebiet gefunden

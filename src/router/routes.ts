@@ -48,6 +48,8 @@ import MyManagedEvents from 'pages/MyManagedEvents.vue'
 import ManageUsers from 'pages/ManageUsers.vue'
 import OfficeOverview from 'pages/office-map/overview/OfficeOverview.vue'
 import OfficeOverviewMap from 'pages/office-map/overview/OfficeOverviewMap.vue'
+import OfficeDetail from 'pages/office-map/detail/OfficeDetail.vue'
+import OfficeDetailMap from 'pages/office-map/detail/OfficeDetailMap.vue'
 
 
 const routes = [
@@ -103,6 +105,18 @@ const routes = [
             components: {
               default: OfficeOverview,
               map: OfficeOverviewMap
+            }
+          },
+          {
+            path: ':officeId',
+            name: 'office-detail',
+            components: {
+              default: OfficeDetail,
+              map: OfficeDetailMap
+            },
+            meta: {
+              isShowBackButton: true,
+              title: () => uiStore.getState().activeTitleElements.office
             }
           }
         ]
