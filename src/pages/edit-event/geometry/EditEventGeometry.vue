@@ -167,6 +167,7 @@ import { EditEventBus, START_DRAW_AREA } from 'src/store/EditEventStore'
 import { StepControls } from 'pages/EditEvent.vue'
 import LocationSelect from 'components/LocationSelect.vue'
 import { EventTypes } from 'src/api/model/EventTypes'
+import AdoptEventAreas from 'components/modals/AdoptEventAreas.vue'
 
 export default defineComponent({
   name: 'EditEventGeometry',
@@ -264,7 +265,9 @@ export default defineComponent({
       this.stepControls.abort()
     },
     openAdoptAreasModal() {
-      console.error('Needs to be implemented.')
+      this.$q.dialog({
+        component: AdoptEventAreas,
+      })
     }
   }
 })
