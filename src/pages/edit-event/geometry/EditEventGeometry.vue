@@ -117,15 +117,25 @@
             </QTr>
           </template>
         </QTable>
-        <QBtn
-          color="primary"
-          class="add-area-button"
-          :icon="ionShareSocial"
-          dense
-          size="md"
-          label="Gebiet zeichnen"
-          @click="startDrawArea"
-        />
+        <div class="buttons">
+          <QBtn
+            color="primary"
+            class="add-area-button"
+            :icon="ionShareSocial"
+            dense
+            size="md"
+            label="Gebiet zeichnen"
+            @click="startDrawArea"
+          />
+          <QBtn
+            color="primary"
+            :icon="ionCopyOutline"
+            dense
+            size="md"
+            label="Gebiete übernehmen"
+            @click="openAdoptAreasModal"
+          />
+        </div>
       </div>
     </template>
   </div>
@@ -149,7 +159,7 @@ import {
   QTd, QTh,
   QTr
 } from 'quasar'
-import { ionPencil, ionShareSocial, ionTrash } from '@quasar/extras/ionicons-v5'
+import { ionCopyOutline, ionPencil, ionShareSocial, ionTrash } from '@quasar/extras/ionicons-v5'
 import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
 import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
@@ -183,6 +193,7 @@ export default defineComponent({
   data() {
     return {
       loading: false,
+      ionCopyOutline,
       ionShareSocial,
       ionTrash,
       ionPencil,
@@ -251,6 +262,9 @@ export default defineComponent({
     async abort() {
       await this.saveDebouncer.waitForSettle()
       this.stepControls.abort()
+    },
+    openAdoptAreasModal() {
+      console.error('Needs to be implemented.')
     }
   }
 })
@@ -258,6 +272,17 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import "src/css/quasar.variables";
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  * {
+    margin-left: 1rem;
+    flex-grow: 1;
+  }
+}
 
 .edit-event-geometry {
   flex: 1;
