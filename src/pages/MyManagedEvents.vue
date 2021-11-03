@@ -17,6 +17,7 @@
         :filter-params="filterParams"
         :campaigns="campaigns"
         class="event-list"
+        ref="eventList"
       />
     </div>
   </QPage>
@@ -30,14 +31,14 @@ import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5';
 import { CampaignDto } from 'src/api/model/CampaignDto';
 import EventList from 'components/EventList.vue';
 import { Pagination } from 'src/api/model/APIEnvelope';
-import { EVENT_MAP_MAX_EVENTS } from 'src/constants';
+import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
 import { EventDto } from 'src/api/model/EventDto';
 import StatusFilter from 'components/filterInput/filters/StatusFilter.vue'
 import { EventStatus } from 'src/api/model/EventStatus'
 import OwnershipFilter from 'components/filterInput/filters/OwnershipFilter.vue'
 
 const _defaultPagination = {
-  limit: EVENT_MAP_MAX_EVENTS
+  limit: EVENT_LIST_CHUNK_SIZE
 }
 
 export default defineComponent({
@@ -69,6 +70,8 @@ export default defineComponent({
   },
   methods: {
     async handleOwnerSelect(isOwner: boolean) {
+      // @ts-ignore
+      this.$refs.eventList.resetScrollPosition()
       this.resetPagination()
       this.filterParams.is_owner = isOwner
       await this.updateShownEvents()

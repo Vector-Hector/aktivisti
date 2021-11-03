@@ -27,6 +27,7 @@ import { ObjectPermissionsRoute } from 'src/api/ObjectPermissionsRoute'
 import { UserRoute } from 'src/api/UserRoute'
 import { PosterDto } from 'src/api/model/PosterDto'
 import { ContentTypeDto } from 'src/api/model/ContentTypeDto'
+import { OfficeDto } from 'src/api/model/OfficeDto'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -69,6 +70,8 @@ export class ApiClient {
   eventPermissions = new ObjectPermissionsRoute(this.baseURL, 'event-permissions/', this.axiosInstance)
   posters = new ApiRoute<PosterDto>(this.baseURL, 'posters/', this.axiosInstance)
   contentTypes = new ApiRoute<ContentTypeDto>(this.baseURL, 'content-types/', this.axiosInstance)
+  offices = new ApiRoute<OfficeDto>(this.baseURL, 'offices/', this.axiosInstance)
+  officeClusters = new ApiRoute<ClusterDto>(this.baseURL, 'office-clusters/', this.axiosInstance)
 }
 
 export const apiClient = new ApiClient()

@@ -1,35 +1,23 @@
 <template>
-  <QScrollArea>
-    <QInfiniteScroll
-      v-if="events.length > 0"
-      @load="loadData"
-      :disable="events.length === pagination.total"
-    >
-      <QList>
-        <EventListItem
-          v-for="item in events"
-          :key="item.id"
-          clickable
-          v-ripple
-          @click="goToEvent(item)"
-          :event="item"
-          :campaigns="campaigns"
-        />
-      </QList>
-      <template v-slot:loading>
-        <div class="row justify-center q-my-md">
-          <QSpinnerDots color="primary" size="40px" />
-        </div>
-      </template>
-    </QInfiniteScroll>
-    <div
-      v-else
-      class="empty-list-placeholder"
-    >
-
-      Keine Aktionen gefunden
-    </div>
-  </QScrollArea>
+  <InfiniteList
+    :items="events"
+    :disable="events.length === pagination.total"
+    @load="loadData"
+    ref="infiniteList"
+  >
+    <template v-slot:item="{item}">
+      <EventListItem
+        clickable
+        v-ripple
+        @click="goToEvent(item)"
+        :event="item"
+        :campaigns="campaigns"
+      />
+    </template>
+    <template v-slot:emptyList>
+      Keine Aktionen im Gebiet gefunden
+    </template>
+  </InfiniteList>
 </template>
 
 <script lang="ts">
@@ -39,23 +27,20 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
 import { Pagination } from 'src/api/model/APIEnvelope'
 import { distinctBy } from 'src/utils/array'
-import { QInfiniteScroll, QList, QScrollArea, QSpinnerDots } from 'quasar'
 import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 import EventListItem from 'components/EventListItem.vue'
+import InfiniteList from 'components/InfiniteList.vue'
 
 
 export default defineComponent({
   name: 'EventList',
   components: {
-    EventListItem,
-    QInfiniteScroll,
-    QSpinnerDots,
-    QList,
-    QScrollArea
+    InfiniteList,
+    EventListItem
   },
   props: {
     filterParams: {
-      type: Object as PropType<{ [key: string]: string }>,
+      type: Object as PropType<{[key: string]: string}>,
       required: true
     },
     events: {
@@ -92,11 +77,11 @@ export default defineComponent({
         }
       })
     },
-    async getParticipatedEvents(pagination: Pagination) {
+    async getEvents() {
       const response = await this.$apiClient.events.list({
         ...this.filterParams,
-        ...this.pagination,
-        ...pagination
+        limit: EVENT_LIST_CHUNK_SIZE,
+        offset: (this.events?.length ?? 0)
       })
       this.$emit('update:pagination', response.payload.pagination)
       return response.payload.data
@@ -105,53 +90,14 @@ export default defineComponent({
       if (this.isDisabled) {
         return
       }
-      const pagination = {
-        ...this.pagination!,
-        limit: EVENT_LIST_CHUNK_SIZE,
-        offset: (this.events?.length ?? 0)
-      }
-      const moreEvents = await this.getParticipatedEvents(pagination)
+      const moreEvents = await this.getEvents()
       this.$emit('update:events', distinctBy(this.events.concat(moreEvents), (item: EventDto) => item.id))
       done()
+    },
+    resetScrollPosition(){
+      // @ts-ignore
+      this.$refs.infiniteList.resetScrollPosition()
     }
   }
 })
 </script>
-
-<style lang="scss" scoped>
-@import "src/css/variables";
-
-.buttons {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-}
-
-.autocomplete {
-  padding-bottom: 20px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.item-buttons {
-  display: flex;
-  align-items: center;
-  font-size: 1.5rem;
-
-  a {
-    display: inline-flex;
-    color: $black;
-  }
-
-  .delete-button {
-    margin-left: 0.6rem;
-
-  }
-}
-
-.empty-list-placeholder {
-  margin: 1rem 0;
-  display: flex;
-  justify-content: center;
-}
-</style>

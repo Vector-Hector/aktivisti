@@ -7,6 +7,7 @@ export interface TitleElements {
   campaigns?: string
   street?: string
   houseNumber?: string
+  office?: string
 }
 
 export enum BottomSheetState {

@@ -14,7 +14,7 @@
         class="toolbar"
       >
         <QBtn
-          v-if="currentDepth > 2"
+          v-if="currentDepth > 2  || $route.meta.isShowBackButton"
           @click="backButton"
           :icon="ionArrowBack"
           flat

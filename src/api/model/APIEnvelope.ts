@@ -1,7 +1,7 @@
 export interface Pagination {
-  limit: number
-  total: number
-  offset: number
+  limit?: number
+  total?: number
+  offset?: number
 }
 
 type HttpOperation = 'GET' | 'PATCH' | 'POST' | 'PUT' | 'DELETE'

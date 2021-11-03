@@ -3,7 +3,7 @@ import Login from 'src/pages/Login.vue'
 import Register from 'src/pages/Register.vue'
 import { uiStore } from 'src/store/UiStore'
 import RegistrationSucess from 'src/pages/RegistrationSucess.vue'
-import EventMap from 'src/pages/EventMap.vue'
+import MapWithSheet from 'pages/MapWithSheet.vue'
 import Imprint from 'src/pages/Imprint.vue'
 import Splash from 'src/pages/Splash.vue'
 import EventOverview from 'pages/event-map/overview/EventOverview.vue'
@@ -46,6 +46,10 @@ import EventDetailPosterList from 'pages/event-map/detail/area/posters/list/Even
 import EventDetailPosterListMap from 'pages/event-map/detail/area/posters/list/EventDetailPosterListMap.vue'
 import MyManagedEvents from 'pages/MyManagedEvents.vue'
 import ManageUsers from 'pages/ManageUsers.vue'
+import OfficeOverview from 'pages/office-map/overview/OfficeOverview.vue'
+import OfficeOverviewMap from 'pages/office-map/overview/OfficeOverviewMap.vue'
+import OfficeDetail from 'pages/office-map/detail/OfficeDetail.vue'
+import OfficeDetailMap from 'pages/office-map/detail/OfficeDetailMap.vue'
 
 
 const routes = [
@@ -88,9 +92,42 @@ const routes = [
         }
       },
       {
+        path: '/offices',
+        component: MapWithSheet,
+        name: 'office-map',
+        meta: {
+          title: () => 'Geschäftsstellen'
+        },
+        props: {
+          isShowingOfficeLayer: false
+        },
+        children: [
+          {
+            path: '',
+            name: 'map-office-overview',
+            components: {
+              default: OfficeOverview,
+              map: OfficeOverviewMap
+            }
+          },
+          {
+            path: ':officeId',
+            name: 'office-detail',
+            components: {
+              default: OfficeDetail,
+              map: OfficeDetailMap
+            },
+            meta: {
+              isShowBackButton: true,
+              title: () => uiStore.getState().activeTitleElements.office
+            }
+          }
+        ]
+      },
+      {
         path: '/events',
         redirect: {name: 'map-events-overview'},
-        component: EventMap,
+        component: MapWithSheet,
         name: 'events',
         meta: {
           title: () => 'Alle Aktionen'
@@ -361,7 +398,7 @@ const routes = [
       component: PrintEvent,
       name: 'print-event'
     }]
-  },
+  }
 ]
 
 
