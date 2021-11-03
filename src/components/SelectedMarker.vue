@@ -30,8 +30,3 @@ export default defineComponent({
   }
 })
 </script>
-<style lang="scss" scoped>
-.clickable-marker {
-  cursor: pointer;
-}
-</style>
