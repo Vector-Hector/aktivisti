@@ -5,7 +5,7 @@
     <template v-slot:marker>
       <QIcon
         name="img:static/icons/map-pin-selected.svg"
-        class="clickable-maker"
+        class="clickable-marker"
         size="xl"
       />
     </template>
