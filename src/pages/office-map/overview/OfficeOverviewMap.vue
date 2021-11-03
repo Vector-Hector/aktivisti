@@ -77,7 +77,7 @@ export default defineComponent({
     }
   },
   methods: {
-    async updateWithInFilter(polygon: BBox2d) {
+    async updateWithinFilter(polygon: BBox2d) {
       await this.updateFilterParams({
         within: bboxPolygon(polygon).geometry
       })
@@ -98,14 +98,14 @@ export default defineComponent({
     }
   },
   async created() {
-    await this.updateWithInFilter(this.bounds as BBox2d)
+    await this.updateWithinFilter(this.bounds as BBox2d)
     if (this.isShowCluster) {
       await this.updateClusters()
     }
   },
   watch: {
     bounds: async function(newBound) {
-      await this.updateWithInFilter(newBound)
+      await this.updateWithinFilter(newBound)
       if (this.isShowCluster) {
         await this.updateClusters()
       }
