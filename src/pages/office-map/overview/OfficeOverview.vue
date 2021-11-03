@@ -14,7 +14,7 @@
         />
       </template>
       <template v-slot:emptyList>
-        Keine Einträge im Gebiet gefunden
+        Keine Geschäftsstellen im Gebiet gefunden
       </template>
     </InfiniteList>
   </div>

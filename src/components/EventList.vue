@@ -15,7 +15,7 @@
       />
     </template>
     <template v-slot:emptyList>
-      Keine Aktionen gefunden
+      Keine Aktionen im Gebiet gefunden
     </template>
   </InfiniteList>
 </template>
