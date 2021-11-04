@@ -1,7 +1,8 @@
 <template>
   <div class="filter-content">
-    <EventFilterList
+    <EventFilter
       v-model:filter-params="filterParams"
+      :is-collapsible="true"
       :is-ownership-filterable="true"
       :is-campaign-filterable="false"
       :is-sub-association-filterable="false"
@@ -30,7 +31,7 @@ import { Pagination } from 'src/api/model/APIEnvelope'
 import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventStatus } from 'src/api/model/EventStatus'
-import EventFilterList from 'components/EventFilterList.vue'
+import EventFilter from 'components/EventFilter.vue'
 import { isEqual } from 'lodash-es'
 
 const _defaultPagination = {
@@ -40,7 +41,7 @@ const _defaultPagination = {
 export default defineComponent({
   name: 'ManagedEvents',
   components: {
-    EventFilterList,
+    EventFilter,
     EventList,
   },
   async created() {
