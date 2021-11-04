@@ -2,13 +2,13 @@
   <QPage class="flex-fill">
     <div class="container my-managed-events">
       <div class="filter-content">
-        <OwnershipFilter
-          :model-value="filterParams.is_owner"
-          @update:model-value="handleOwnerSelect"
-        />
-        <StatusFilter
-          :model-value="filterParams.status"
-          @update:model-value="handleStatusSelect"
+        <EventFilter
+          v-model:filter-params="filterParams"
+          :is-ownership-filterable="true"
+          :is-campaign-filterable="false"
+          :is-sub-association-filterable="false"
+          :is-sort-order-configurable="false"
+          :is-event-type-filterable="false"
         />
       </div>
       <EventList
@@ -33,9 +33,9 @@ import EventList from 'components/EventList.vue';
 import { Pagination } from 'src/api/model/APIEnvelope';
 import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
 import { EventDto } from 'src/api/model/EventDto';
-import StatusFilter from 'components/filterInput/filters/StatusFilter.vue'
 import { EventStatus } from 'src/api/model/EventStatus'
-import OwnershipFilter from 'components/filterInput/filters/OwnershipFilter.vue'
+import EventFilter from 'components/EventFilter.vue'
+import { isEqual } from 'lodash-es'
 
 const _defaultPagination = {
   limit: EVENT_LIST_CHUNK_SIZE
@@ -44,8 +44,7 @@ const _defaultPagination = {
 export default defineComponent({
   name: 'MyManagedEvents',
   components: {
-    OwnershipFilter,
-    StatusFilter,
+    EventFilter,
     EventList,
     QPage,
   },
@@ -68,18 +67,6 @@ export default defineComponent({
     }
   },
   methods: {
-    async handleOwnerSelect(isOwner: boolean) {
-      // @ts-ignore
-      this.$refs.eventList.resetScrollPosition()
-      this.resetPagination()
-      this.filterParams.is_owner = isOwner
-      await this.updateShownEvents()
-    },
-    async handleStatusSelect(selectedStatus: EventStatus){
-      this.resetPagination()
-      this.setStatusFilter(selectedStatus)
-      await this.updateShownEvents()
-    },
     resetPagination() {
       this.pagination = _defaultPagination as Pagination
     },
@@ -103,8 +90,18 @@ export default defineComponent({
         })
       }
     },
-    setStatusFilter(status: EventStatus){
-      this.filterParams.status = status
+  },
+  watch: {
+    filterParams: {
+      async handler(newValue, oldValue){
+        if(isEqual(newValue,oldValue)) return
+        // @ts-ignore
+        this.$refs.eventList.resetScrollPosition()
+        this.resetPagination()
+        await this.updateShownEvents()
+      },
+      deep: true,
+      immediate: true
     }
   }
 })
