@@ -110,7 +110,7 @@ export default defineComponent({
       })
     },
     updateEventType(value: EventTypes) {
-      this.updateFilterParams({event_type: value})
+      this.updateFilterParams({event_type: value ? value : undefined})
     },
     updateSubAssociations(value: number[]) {
       this.updateFilterParams({sub_association: value})
