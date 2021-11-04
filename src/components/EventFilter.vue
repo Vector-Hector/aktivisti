@@ -1,4 +1,9 @@
 <template>
+  <OwnershipFilter
+    v-if="isOwnershipFilterable"
+    :model-value="filterParams.is_owner"
+    @update:model-value="updateOwnership"
+  />
   <StatusFilter
     v-if="isStatusFilterable"
     :model-value="filterParams.status"
@@ -40,10 +45,12 @@ import StatusFilter from 'components/filterInput/filters/StatusFilter.vue'
 import { EventStatus } from 'src/api/model/EventStatus'
 import SortOrderFilter from 'components/filterInput/filters/SortOrderFilter.vue'
 import EventTypeFilter from 'components/filterInput/filters/EventTypeFilter.vue'
+import OwnershipFilter from 'components/filterInput/filters/OwnershipFilter.vue'
 
 export default defineComponent({
   name: 'EventFilter',
   components: {
+    OwnershipFilter,
     EventTypeFilter,
     SortOrderFilter,
     StatusFilter,
@@ -62,6 +69,10 @@ export default defineComponent({
     subAssociations: {
       type: Array as PropType<SubAssociationDto[]>,
       required: false
+    },
+    isOwnershipFilterable:{
+      type: Boolean as PropType<boolean>,
+      default: false,
     },
     isStatusFilterable: {
       type: Boolean as PropType<boolean>,
@@ -112,6 +123,9 @@ export default defineComponent({
     },
     updateStatus(value: EventStatus) {
       this.updateFilterParams({status: value})
+    },
+    updateOwnership(value: boolean) {
+      this.updateFilterParams({is_owner: value})
     }
   }
 })

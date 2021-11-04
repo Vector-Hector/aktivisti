@@ -12,5 +12,6 @@ export interface EventFilterParams {
   limit?: number
   end_date_after?: string
   end_date_include_null?: boolean
-  status?: EventStatus
+  status?: EventStatus,
+  is_owner?: boolean,
 }
