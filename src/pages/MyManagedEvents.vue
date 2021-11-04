@@ -7,7 +7,7 @@
           @update:model-value="handleOwnerSelect"
         />
         <StatusFilter
-          :model-value="status"
+          :model-value="filterParams.status"
           @update:model-value="handleStatusSelect"
         />
       </div>
@@ -65,7 +65,6 @@ export default defineComponent({
       ionClose,
       pagination: _defaultPagination as Pagination | null,
       shownEvents: [] as EventDto[],
-      status: EventStatus.ACTIVE
     }
   },
   methods: {
@@ -80,7 +79,6 @@ export default defineComponent({
       this.resetPagination()
       this.setStatusFilter(selectedStatus)
       await this.updateShownEvents()
-      this.status = selectedStatus
     },
     resetPagination() {
       this.pagination = _defaultPagination as Pagination
