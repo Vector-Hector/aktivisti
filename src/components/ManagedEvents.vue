@@ -16,7 +16,7 @@
     :campaigns="campaigns"
     class="event-list"
     ref="eventList"
-    @clickOnEvent="goToEvent"
+    @clickOnEvent="handleClickOnEvent"
   />
 </template>
 
@@ -47,6 +47,7 @@ export default defineComponent({
     await this.updateShownEvents()
     await this.updateCampaigns()
   },
+  emits: ['clickOnEvent'],
   data() {
     return {
       campaigns: [] as CampaignDto[],
@@ -62,13 +63,8 @@ export default defineComponent({
     }
   },
   methods: {
-    goToEvent(event: EventDto) {
-      void this.$router.push({
-        name: 'event-detail',
-        params: {
-          eventId: event.id
-        }
-      })
+    handleClickOnEvent(event: EventDto){
+      this.$emit('clickOnEvent', event)
     },
     resetPagination() {
       this.pagination = _defaultPagination as Pagination
