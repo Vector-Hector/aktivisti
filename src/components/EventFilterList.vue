@@ -48,7 +48,7 @@ import EventTypeFilter from 'components/filterInput/filters/EventTypeFilter.vue'
 import OwnershipFilter from 'components/filterInput/filters/OwnershipFilter.vue'
 
 export default defineComponent({
-  name: 'EventFilter',
+  name: 'EventFilterList',
   components: {
     OwnershipFilter,
     EventTypeFilter,

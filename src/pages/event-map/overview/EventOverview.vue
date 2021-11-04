@@ -5,7 +5,7 @@
       :activated-filter-count="activatedFilterCount"
     >
       <div class="filter-content">
-        <EventFilter
+        <EventFilterList
           v-model:filter-params="userFilterParams"
           :campaigns="campaigns"
           :sub-associations="subAssociations"
@@ -38,7 +38,7 @@ import { Pagination } from 'src/api/model/APIEnvelope'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import EventsOverviewMixin from 'pages/event-map/overview/EventsOverviewMixin'
 import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
-import EventFilter from 'components/EventFilter.vue'
+import EventFilterList from 'components/EventFilterList.vue'
 import { EventFilterParams } from 'src/api/params/EventFilterParams'
 import { EventStatus } from 'src/api/model/EventStatus'
 import { EventDto } from 'src/api/model/EventDto'
@@ -48,7 +48,7 @@ export default defineComponent({
   name: 'EventOverview',
   mixins: [EventsOverviewMixin],
   components: {
-    EventFilter,
+    EventFilterList,
     EventList,
     CollapsibleFilters
   },
