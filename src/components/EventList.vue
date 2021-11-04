@@ -9,7 +9,7 @@
       <EventListItem
         clickable
         v-ripple
-        @click="goToEvent(item)"
+        @click="handleClickOnEvent(item)"
         :event="item"
         :campaigns="campaigns"
       />
@@ -56,7 +56,7 @@ export default defineComponent({
       default: () => []
     }
   },
-  emits: ['update:events', 'update:pagination'],
+  emits: ['clickOnEvent','update:events', 'update:pagination'],
   computed: {
     isDisabled(): boolean {
       return this.pagination?.total === this.events.length
@@ -69,13 +69,8 @@ export default defineComponent({
     }
   },
   methods: {
-    goToEvent(event: EventDto) {
-      void this.$router.push({
-        name: 'event-detail',
-        params: {
-          eventId: event.id
-        }
-      })
+    handleClickOnEvent(event: EventDto){
+      this.$emit('clickOnEvent', event)
     },
     async getEvents() {
       const response = await this.$apiClient.events.list({
@@ -98,6 +93,6 @@ export default defineComponent({
       // @ts-ignore
       this.$refs.infiniteList.resetScrollPosition()
     }
-  }
+  },
 })
 </script>

@@ -18,6 +18,7 @@
         :campaigns="campaigns"
         class="event-list"
         ref="eventList"
+        @clickOnEvent="goToEvent"
       />
     </div>
   </QPage>
@@ -67,6 +68,14 @@ export default defineComponent({
     }
   },
   methods: {
+    goToEvent(event: EventDto) {
+      void this.$router.push({
+        name: 'event-detail',
+        params: {
+          eventId: event.id
+        }
+      })
+    },
     resetPagination() {
       this.pagination = _defaultPagination as Pagination
     },

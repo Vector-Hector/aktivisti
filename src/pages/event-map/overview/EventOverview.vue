@@ -20,6 +20,7 @@
       :campaigns="campaigns"
       class="event-list"
       ref="eventList"
+      @clickOnEvent="goToEvent"
     />
   </div>
 </template>
@@ -40,6 +41,7 @@ import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
 import EventFilter from 'components/EventFilter.vue'
 import { EventFilterParams } from 'src/api/params/EventFilterParams'
 import { EventStatus } from 'src/api/model/EventStatus'
+import { EventDto } from 'src/api/model/EventDto'
 
 
 export default defineComponent({
@@ -155,7 +157,15 @@ export default defineComponent({
     async getCampaigns() {
       const response = await this.$apiClient.campaigns.list()
       this.campaigns = response.payload.data
-    }
+    },
+    goToEvent(event: EventDto) {
+      void this.$router.push({
+        name: 'event-detail',
+        params: {
+          eventId: event.id
+        }
+      })
+    },
   }
 })
 </script>
