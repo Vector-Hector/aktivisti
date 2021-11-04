@@ -8,7 +8,7 @@
           :is-campaign-filterable="false"
           :is-sub-association-filterable="false"
           :is-sort-order-configurable="false"
-          :is-event-type-filterable="false"
+          :is-event-type-filterable="true"
         />
       </div>
       <EventList
