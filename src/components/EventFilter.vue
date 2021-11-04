@@ -1,22 +1,27 @@
 <template>
   <StatusFilter
+    v-if="isStatusFilterable"
     :model-value="filterParams.status"
     @update:model-value="updateStatus"
   />
   <CampaignFilter
+    v-if="isCampaignFilterable"
     :model-value="filterParams.campaigns?.[0]"
     :options="campaigns"
     @update:model-value="updateCampaign" />
   <SubAssociationFilter
+    v-if="isSubAssociationFilterable"
     :model-value="filterParams.sub_association"
     @update:model-value="updateSubAssociations"
     :options="subAssociations">
   </SubAssociationFilter>
   <SortOrderFilter
+    v-if="isSortOrderConfigurable"
     :model-value="filterParams.order_by"
     @update:model-value="updateSorting"
   />
   <EventTypeFilter
+    v-if="isEventTypeFilterable"
     :model-value="filterParams.event_type"
     @update:model-value="updateEventType"
   />
@@ -52,12 +57,32 @@ export default defineComponent({
     },
     campaigns: {
       type: Array as PropType<CampaignDto[]>,
-      required: true
+      required: false,
     },
     subAssociations: {
       type: Array as PropType<SubAssociationDto[]>,
-      required: true
-    }
+      required: false
+    },
+    isStatusFilterable: {
+      type: Boolean as PropType<boolean>,
+      default: true,
+    },
+    isCampaignFilterable: {
+      type: Boolean as PropType<boolean>,
+      default: true,
+    },
+    isSubAssociationFilterable: {
+      type: Boolean as PropType<boolean>,
+      default: true,
+    },
+    isSortOrderConfigurable: {
+      type: Boolean as PropType<boolean>,
+      default: true,
+    },
+    isEventTypeFilterable: {
+      type: Boolean as PropType<boolean>,
+      default: true,
+    },
   },
   emits: ['update:filterParams'],
   data() {
