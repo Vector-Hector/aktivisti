@@ -96,7 +96,7 @@ export default defineComponent({
       async handler(newValue, oldValue){
         if(isEqual(newValue,oldValue)) return
         // @ts-ignore
-        this.$refs.eventList.resetScrollPosition()
+        this.$refs.eventList?.resetScrollPosition()
         this.resetPagination()
         await this.updateShownEvents()
       },
