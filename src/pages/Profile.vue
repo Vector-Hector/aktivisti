@@ -316,7 +316,7 @@ export default defineComponent({
         {
           field: 'name',
           name: 'name',
-          label: 'Ergebniss',
+          label: 'Ergebnis',
           align: 'left'
         }, {
           field: 'value',
