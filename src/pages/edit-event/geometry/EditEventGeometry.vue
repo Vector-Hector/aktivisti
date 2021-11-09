@@ -119,6 +119,13 @@
         </QTable>
         <div class="buttons">
           <QBtn
+            :icon="ionCopyOutline"
+            dense
+            size="md"
+            label="Gebiete übernehmen"
+            @click="openAdoptAreasModal"
+          />
+          <QBtn
             color="primary"
             class="add-area-button"
             :icon="ionShareSocial"
@@ -126,14 +133,6 @@
             size="md"
             label="Gebiet zeichnen"
             @click="startDrawArea"
-          />
-          <QBtn
-            color="primary"
-            :icon="ionCopyOutline"
-            dense
-            size="md"
-            label="Gebiete übernehmen"
-            @click="openAdoptAreasModal"
           />
         </div>
       </div>
