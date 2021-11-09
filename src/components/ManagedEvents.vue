@@ -1,24 +1,26 @@
 <template>
-  <div class="filter-content">
-    <EventFilter
-      v-model:filter-params="filterParams"
-      :is-collapsible="true"
-      :is-ownership-filterable="true"
-      :is-campaign-filterable="false"
-      :is-sub-association-filterable="false"
-      :is-sort-order-configurable="false"
-      :is-event-type-filterable="true"
+  <div class="managed-events">
+    <div class="filter-content">
+      <EventFilter
+        v-model:filter-params="filterParams"
+        :is-collapsible="true"
+        :is-ownership-filterable="true"
+        :is-campaign-filterable="false"
+        :is-sub-association-filterable="false"
+        :is-sort-order-configurable="false"
+        :is-event-type-filterable="true"
+      />
+    </div>
+    <EventList
+      v-model:events="shownEvents"
+      v-model:pagination="pagination"
+      :filter-params="filterParams"
+      :campaigns="campaigns"
+      class="event-list"
+      ref="eventList"
+      @clickOnEvent="handleClickOnEvent"
     />
   </div>
-  <EventList
-    v-model:events="shownEvents"
-    v-model:pagination="pagination"
-    :filter-params="filterParams"
-    :campaigns="campaigns"
-    class="event-list"
-    ref="eventList"
-    @clickOnEvent="handleClickOnEvent"
-  />
 </template>
 
 <script lang="ts">
@@ -109,6 +111,12 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import "src/css/variables.scss";
+
+.managed-events{
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
 
 .event-list {
   margin: 1rem 0;
