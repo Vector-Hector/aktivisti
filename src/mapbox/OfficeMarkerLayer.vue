@@ -78,6 +78,11 @@ export default defineComponent({
 
 </script>
 <style lang="scss" scoped>
+.popup-contents {
+  display: flex;
+  flex-direction: column;
+}
+
 .popup-title {
   font-weight: bold;
   display: block;
