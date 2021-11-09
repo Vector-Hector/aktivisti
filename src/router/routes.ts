@@ -96,7 +96,7 @@ const routes = [
         component: MapWithSheet,
         name: 'office-map',
         meta: {
-          title: () => 'Geschäftsstellen'
+          title: () => 'DIE LINKE vor Ort'
         },
         props: {
           isShowingOfficeLayer: false

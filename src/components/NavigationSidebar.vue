@@ -84,7 +84,7 @@
             <QIcon
               :name="ionHomeOutline"
             />
-            <span class="menu-item-link-text">Geschäftstellen</span>
+            <span class="menu-item-link-text">DIE LINKE vor Ort</span>
           </MenuLink>
         </div>
         <div

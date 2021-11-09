@@ -6,7 +6,7 @@
   >
     <Popup>
           <div class="popup-contents">
-            <span class="popup-title">Geschäftsstelle</span>
+            <span class="popup-title">DIE LINKE vor Ort</span>
             <span class="popup-address">{{ office.location_description }}</span>
             <QBtn
               label="Mehr Infos"
