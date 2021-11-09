@@ -17,8 +17,12 @@
   >
       <OfficeMarker v-if="!officeHoveredOver || office.id !== officeHoveredOver.id"
                     :location="office.location"
-                    @click="goToOffice(office.id)"
-      />
+      >
+        <OfficePopup
+          :address="office.location_description"
+          :office-id="office.id"
+          />
+      </OfficeMarker>
       <SelectedMarker v-if="officeHoveredOver && office.id === officeHoveredOver.id"
                       :location="office.location" />
     </span>
@@ -36,10 +40,11 @@ import SelectedMarker from 'components/SelectedMarker.vue'
 import { EVENT_LIST_CHUNK_SIZE, MAX_EPS_DISTANCE_FOR_CLUSTERING } from 'src/constants'
 import ClusterLayer from 'src/mapbox/ClusterLayer.vue'
 import { ClusterDto } from 'src/api/model/ClusterDto'
+import OfficePopup from 'src/mapbox/popup/popups/OfficePopup.vue'
 
 export default defineComponent({
   name: 'OfficeOverviewMap',
-  components: {ClusterLayer, SelectedMarker, Geocoder, OfficeMarker},
+  components: {OfficePopup, ClusterLayer, SelectedMarker, Geocoder, OfficeMarker},
   mixins: [OfficeOverviewMixin],
   data() {
     return {
