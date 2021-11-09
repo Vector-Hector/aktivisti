@@ -9,7 +9,7 @@
 <script lang="ts">
 import { defineComponent, inject, onMounted, ref } from 'vue'
 import { Popup } from 'mapbox-gl'
-import { MarkerInject } from './Marker.vue'
+import { MarkerInject } from 'src/mapbox/Marker.vue'
 
 export default defineComponent({
   name: 'Popup',
@@ -33,7 +33,7 @@ export default defineComponent({
 
 </script>
 <style lang="scss" scoped>
-@import "src/css/variables.scss";
+@import "src/css/variables";
 
 .popup {
   padding: 6px 3px 0 3px;
