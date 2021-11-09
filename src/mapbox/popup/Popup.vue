@@ -21,7 +21,7 @@ export default defineComponent({
       popup.value = new Popup(popupElement.value!)
       popup.value?.setDOMContent(popupElement.value!)
       marker?.value.setPopup(popup.value)
-      marker?.value.setOffset([0, 24])
+      popup.value.setOffset([0, -24])
     })
 
     return {
