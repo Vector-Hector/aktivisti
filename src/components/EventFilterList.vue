@@ -4,11 +4,6 @@
     :model-value="filterParams.is_owner"
     @update:model-value="updateOwnership"
   />
-  <StatusFilter
-    v-if="isStatusFilterable"
-    :model-value="filterParams.status"
-    @update:model-value="updateStatus"
-  />
   <CampaignFilter
     v-if="isCampaignFilterable"
     :model-value="filterParams.campaigns?.[0]"
@@ -29,6 +24,11 @@
     v-if="isEventTypeFilterable"
     :model-value="filterParams.event_type"
     @update:model-value="updateEventType"
+  />
+  <StatusFilter
+    v-if="isStatusFilterable"
+    :model-value="filterParams.status"
+    @update:model-value="updateStatus"
   />
 </template>
 <script lang="ts">
