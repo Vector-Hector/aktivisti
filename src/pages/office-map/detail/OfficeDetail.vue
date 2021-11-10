@@ -7,14 +7,6 @@
       <div class="row q-gutter-sm">
         <div class="col">
           <div class="row q-col-gutter-sm office-details">
-            <template v-if="office.description">
-              <div class="col-4">
-                <b>Beschreibung:</b>
-              </div>
-              <div class="col-8">
-                {{ office.description }}
-              </div>
-            </template>
             <template v-if="office.location_description">
               <div class="col-4">
                 <b>Adresse:</b>
@@ -45,6 +37,14 @@
               </div>
               <div class="col-8">
                 <a :href="'tel:' + office.phone_number">{{ office.phone_number }}</a>
+              </div>
+            </template>
+            <template v-if="office.description">
+              <div class="col-4">
+                <b>Beschreibung:</b>
+              </div>
+              <div class="col-8">
+                {{ office.description }}
               </div>
             </template>
           </div>
