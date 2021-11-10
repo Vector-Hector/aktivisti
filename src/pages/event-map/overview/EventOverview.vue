@@ -1,17 +1,11 @@
 <template>
   <div class="container event-overview">
-    <CollapsibleFilters
-      class="collapsible-filters"
-      :activated-filter-count="activatedFilterCount"
-    >
-      <div class="filter-content">
-        <EventFilter
-          v-model:filter-params="userFilterParams"
-          :campaigns="campaigns"
-          :sub-associations="subAssociations"
-        />
-      </div>
-    </CollapsibleFilters>
+    <EventFilter
+      v-model:filter-params="userFilterParams"
+      :is-collapsible="true"
+      :campaigns="campaigns"
+      :sub-associations="subAssociations"
+    />
     <EventList
       v-if="eventsPagination && events"
       v-model:events="events"
@@ -20,6 +14,7 @@
       :campaigns="campaigns"
       class="event-list"
       ref="eventList"
+      @clickOnEvent="goToEvent"
     />
   </div>
 </template>
@@ -30,7 +25,6 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import { userStore } from 'src/store/UserStore'
 import { isEqual } from 'lodash-es'
 import { showCampaignLevel } from 'src/utils/showCampaignLevel'
-import CollapsibleFilters from 'src/components/CollapsibleFilters.vue'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import EventList from 'src/components/EventList.vue'
 import { Pagination } from 'src/api/model/APIEnvelope'
@@ -40,6 +34,7 @@ import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
 import EventFilter from 'components/EventFilter.vue'
 import { EventFilterParams } from 'src/api/params/EventFilterParams'
 import { EventStatus } from 'src/api/model/EventStatus'
+import { EventDto } from 'src/api/model/EventDto'
 
 
 export default defineComponent({
@@ -48,7 +43,6 @@ export default defineComponent({
   components: {
     EventFilter,
     EventList,
-    CollapsibleFilters
   },
   beforeRouteEnter(to, from, next) {
     if (userStore.getState().bbox === null) {
@@ -90,22 +84,6 @@ export default defineComponent({
           }
         })
       }
-    },
-    activatedFilterCount(): number {
-      let active = 0
-      if ((this.userFilterParams.sub_association?.length ?? 0) > 0) {
-        active++
-      }
-      if (this.userFilterParams.campaigns) {
-        active++
-      }
-      if (this.userFilterParams.status === EventStatus.ENDED){
-        active++
-      }
-      if(this.userFilterParams.event_type){
-        active++
-      }
-      return active
     },
     filterParams(): EventFilterParams {
       return {
@@ -155,7 +133,15 @@ export default defineComponent({
     async getCampaigns() {
       const response = await this.$apiClient.campaigns.list()
       this.campaigns = response.payload.data
-    }
+    },
+    goToEvent(event: EventDto) {
+      void this.$router.push({
+        name: 'event-detail',
+        params: {
+          eventId: event.id
+        }
+      })
+    },
   }
 })
 </script>
