@@ -40,11 +40,11 @@
               </div>
             </template>
             <template v-if="office.description">
-              <div class="col-4">
-                <b>Beschreibung:</b>
-              </div>
-              <div class="col-8">
-                {{ office.description }}
+              <div class="row">
+                <div class="col-12 office-description">
+                  <b>Beschreibung:</b><br>
+                  {{office.description }}
+                </div>
               </div>
             </template>
           </div>
@@ -86,5 +86,10 @@ export default defineComponent({
 <style lang="scss" scoped>
 .office-details {
   font-size: 1rem;
+}
+.off-description {
+  font-size: 1rem;
+  white-space: pre-line;
+  margin-bottom: 1rem;
 }
 </style>
