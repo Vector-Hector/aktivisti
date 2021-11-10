@@ -4,7 +4,7 @@
       <span class="popup-title">DIE LINKE vor Ort</span>
       <span class="popup-address">{{ address }}</span>
       <QBtn
-        label="Mehr Infos"
+        label="Mehr Informationen"
         color="primary"
         :to="`/offices/${officeId}`"
       />
