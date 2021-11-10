@@ -20,7 +20,7 @@
                 <b>Internetseite:</b>
               </div>
               <div class="col-8">
-                <a target="_blank" class="primary-link" :href="office.link">{{ office.link }}</a>
+                <a target="_blank" class="primary-link office-link" :href="office.link">{{ office.link }}</a>
               </div>
             </template>
             <template v-if="office.email">
@@ -87,6 +87,11 @@ export default defineComponent({
 .office-details {
   font-size: 1rem;
 }
+
+.office-link {
+  overflow-wrap: break-word;
+}
+
 .off-description {
   font-size: 1rem;
   white-space: pre-line;
