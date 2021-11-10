@@ -78,6 +78,8 @@ export default defineComponent({
       const eventAreas = response.payload.data
       const cleanedEventAreas = eventAreas.map((area) => ({
         name: area.name,
+        // We're using hat, to get the same shema for the future_id like mapbox see:
+        // https://github.com/mapbox/mapbox-gl-draw/blob/2b9ce3e58e3695c018a48b6fca78ed1a9d1b67c2/src/feature_types/feature.js#L8
         feature_id: hat(),
         color: area.color,
         geometry: area.geometry
