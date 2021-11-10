@@ -37,7 +37,7 @@ import OfficeMarker from 'components/OfficeMarker.vue'
 import Geocoder from 'src/mapbox/Geocoder.vue'
 import { userStore } from 'src/store/UserStore'
 import SelectedMarker from 'components/SelectedMarker.vue'
-import { EVENT_LIST_CHUNK_SIZE, MAX_EPS_DISTANCE_FOR_CLUSTERING } from 'src/constants'
+import { MAX_EPS_DISTANCE_FOR_CLUSTERING, OFFICE_LIST_CHUNK_SIZE } from 'src/constants'
 import ClusterLayer from 'src/mapbox/ClusterLayer.vue'
 import { ClusterDto } from 'src/api/model/ClusterDto'
 import OfficePopup from 'src/mapbox/popup/popups/OfficePopup.vue'
@@ -75,7 +75,7 @@ export default defineComponent({
     },
     isShowCluster(): boolean {
       if (this.pagination.total) {
-        return this.pagination.total > EVENT_LIST_CHUNK_SIZE
+        return this.pagination.total > OFFICE_LIST_CHUNK_SIZE
       } else {
         return false
       }
