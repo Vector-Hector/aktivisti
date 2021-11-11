@@ -156,6 +156,12 @@
             </QItemSection>
           </QItem>
         </QList>
+        <h3 class="profile-section-heading">Aktive Sitzungen</h3>
+        <QSeparator class="profile-section-divider" />
+        <span class="description-text">
+        Dies ist eine Liste der Geräte, die sich bei deinem Konto angemeldet haben. Widerrufe alle Sitzungen, die Du nicht kennst.
+        </span>
+        <AppSessions/>
       </div>
     </QPage>
   </QScrollArea>
@@ -190,12 +196,14 @@ import { PersonalMetricsDto } from 'src/api/model/PersonalMetricsDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { SettleDebouncer } from 'src/utils/debounce'
 import { getAuthStore } from 'src/store/AuthStore'
+import AppSessions from 'components/AppSessions.vue'
 
 const authStore = getAuthStore()
 
 export default defineComponent({
   name: 'Profile',
   components: {
+    AppSessions,
     QAvatar,
     QInput,
     QBtn,
@@ -462,6 +470,14 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import "src/css/variables";
+
+.description-text {
+  color: $grey-6;
+  font-size: 0.75rem;
+  padding: 1rem 2rem 1rem 0;
+  line-height: 1;
+  display: block;
+}
 
 .realname {
   font-weight: bold;

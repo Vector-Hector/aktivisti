@@ -28,6 +28,7 @@ import { UserRoute } from 'src/api/UserRoute'
 import { PosterDto } from 'src/api/model/PosterDto'
 import { ContentTypeDto } from 'src/api/model/ContentTypeDto'
 import { OfficeDto } from 'src/api/model/OfficeDto'
+import { AppSessionDto } from 'src/api/model/AppSessionDto'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -43,6 +44,7 @@ export class ApiClient {
     }
   })
 
+  appSessions = new ApiRoute<AppSessionDto>(this.baseURL, 'app-sessions/', this.axiosInstance)
   events = new EventRoute(this.baseURL, 'events/', this.axiosInstance)
   eventAreas = new EventAreaRoute(this.baseURL, 'event-areas/', this.axiosInstance)
   eventMetrics = new ApiRoute<EventMetricDto>(this.baseURL, 'event-metrics/', this.axiosInstance)
