@@ -139,7 +139,7 @@
           :columns="personalMetricsColumns"
           row-key="name"
         />
-        <h3 class="profile-section-heading">Sicherheit / Daten</h3>
+        <h3 class="profile-section-heading">Account</h3>
         <QSeparator class="profile-section-divider" />
         <QList>
           <QItem>
