@@ -14,7 +14,7 @@
         />
       </template>
       <template v-slot:emptyList>
-        Keine Geschäftsstellen im Gebiet gefunden
+        Keine DIE LINKE im Gebiet gefunden
       </template>
     </InfiniteList>
   </div>

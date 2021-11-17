@@ -7,46 +7,46 @@
       <div class="row q-gutter-sm">
         <div class="col">
           <div class="row q-col-gutter-sm office-details">
-            <div class="col-4">
-              <b>Beschreibung:</b>
-            </div>
-            <div class="col-8">
-              {{ office.description ?? "–" }}
-            </div>
-            <div class="col-4">
-              <b>Adresse:</b>
-            </div>
-            <div class="col-8">
-              {{ office.location_description ?? "–" }}
-            </div>
-            <div class="col-4">
-              <b>Internetseite:</b>
-            </div>
-            <div class="col-8">
-              <a v-if="office.link" target="_blank" class="primary-link" :href="office.link">{{ office.link }}</a>
-              <div v-else>
-                –
+            <template v-if="office.location_description">
+              <div class="col-4">
+                <b>Adresse:</b>
               </div>
-            </div>
-            <div class="col-4">
-              <b>E-Mail-Adresse:</b>
-            </div>
-            <div class="col-8">
-              <a v-if="office.email" :href="'mailto:' + office.email">{{ office.email }}</a>
-              <div v-else>
-                –
+              <div class="col-8">
+                {{ office.location_description }}
               </div>
-            </div>
-            <div class="col-4">
-              <b>Telefon:</b>
-            </div>
-            <div class="col-8">
-              <a v-if="office.phone_number" :href="'tel:' + office.phone_number">{{ office.phone_number }}</a>
-              <div v-else>
-                –
+            </template>
+            <template v-if="office.link">
+              <div class="col-4">
+                <b>Internetseite:</b>
               </div>
-            </div>
-
+              <div class="col-8">
+                <a target="_blank" class="primary-link office-link" :href="office.link">{{ office.link }}</a>
+              </div>
+            </template>
+            <template v-if="office.email">
+              <div class="col-4">
+                <b>E-Mail-Adresse:</b>
+              </div>
+              <div class="col-8">
+                <a :href="'mailto:' + office.email">{{ office.email }}</a>
+              </div>
+            </template>
+            <template v-if="office.phone_number">
+              <div class="col-4">
+                <b>Telefon:</b>
+              </div>
+              <div class="col-8">
+                <a :href="'tel:' + office.phone_number">{{ office.phone_number }}</a>
+              </div>
+            </template>
+            <template v-if="office.description">
+              <div class="row">
+                <div class="col-12 office-description">
+                  <b>Beschreibung:</b><br>
+                  {{office.description }}
+                </div>
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -86,5 +86,15 @@ export default defineComponent({
 <style lang="scss" scoped>
 .office-details {
   font-size: 1rem;
+}
+
+.office-link {
+  overflow-wrap: break-word;
+}
+
+.off-description {
+  font-size: 1rem;
+  white-space: pre-line;
+  margin-bottom: 1rem;
 }
 </style>

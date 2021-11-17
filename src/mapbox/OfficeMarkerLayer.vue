@@ -4,17 +4,10 @@
     :is-grayed-out="true"
     :location="office.location"
   >
-    <Popup>
-          <div class="popup-contents">
-            <span class="popup-title">Geschäftsstelle</span>
-            <span class="popup-address">{{ office.location_description }}</span>
-            <QBtn
-              label="Mehr Infos"
-              color="primary"
-              :to="`/offices/${office.id}`"
-            />
-          </div>
-    </Popup>
+      <OfficePopup
+        :address="office.location_description"
+        :office-id="office.id"
+      />
   </OfficeMarker>
   </span>
 </template>
@@ -27,12 +20,11 @@ import { MapInject } from 'src/mapbox/Map.vue'
 import { userStore } from 'src/store/UserStore'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bboxPolygon } from '@turf/turf'
-import Popup from 'src/mapbox/Popup.vue'
-import { QBtn } from 'quasar'
+import OfficePopup from 'src/mapbox/popup/popups/OfficePopup.vue'
 
 export default defineComponent({
   name: 'OfficeMarkerLayer',
-  components: {QBtn, Popup, OfficeMarker},
+  components: {OfficeMarker, OfficePopup},
   data() {
     return {
       offices: [] as OfficeDto[]
@@ -77,15 +69,3 @@ export default defineComponent({
 })
 
 </script>
-<style lang="scss" scoped>
-.popup-title {
-  font-weight: bold;
-  display: block;
-  font-size: 1rem;
-}
-
-.popup-address {
-  display: block;
-  font-size: 0.9rem;
-}
-</style>

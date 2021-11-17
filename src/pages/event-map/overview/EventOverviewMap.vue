@@ -44,7 +44,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, inject, onUnmounted } from 'vue'
-import Popup from 'src/mapbox/Popup.vue'
+import Popup from 'src/mapbox/popup/Popup.vue'
 import { MapInject } from 'src/mapbox/Map.vue'
 import { ClusterDto } from 'src/api/model/ClusterDto'
 import { EVENT_MAP_MAX_EVENTS } from 'src/constants'
