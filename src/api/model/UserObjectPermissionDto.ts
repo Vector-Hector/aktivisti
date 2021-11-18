@@ -1,3 +1,5 @@
+import { ContentTypeNaturalKey } from 'src/api/model/ContentTypeDto'
+
 export enum PermissionCodename {
   MANAGE_EVENTS = 'manages_events',
   TEAM_CAPTAIN = 'team_captain',
@@ -24,5 +26,6 @@ export interface UserObjectPermissionDto {
   content_type: number
   content_object_name: string
   content_type_name: string
+  content_type_natural_key: ContentTypeNaturalKey
   user: string
 }

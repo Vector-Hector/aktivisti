@@ -122,6 +122,7 @@ import { userStore } from 'src/store/UserStore'
 import { UserObjectPermissionDto, permissionTypeOptions, PermissionCodename } from 'src/api/model/UserObjectPermissionDto'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 import { ErrorBus, USER_NOT_FOUND } from 'src/utils/errorBus'
+import { ContentTypeNaturalKey } from 'src/api/model/ContentTypeDto'
 
 
 interface UserPermissionItem {
@@ -172,12 +173,12 @@ export default defineComponent({
       managementLevelOptions: ['Kreisverband', 'Landesverband'],
       contentTypeCodes: [
         {
-          name: 'Sub association',
+          natural_key: ContentTypeNaturalKey.SUB_ASSOCIATION,
           display_name: ContentTypesDisplayNames.SUB_ASSOCIATION,
           code: 0
         },
         {
-          name: 'State association',
+          natural_key:  ContentTypeNaturalKey.STATE_ASSOCIATION,
           display_name: ContentTypesDisplayNames.STATE_ASSOCIATION,
           code: 0
         }
@@ -208,7 +209,7 @@ export default defineComponent({
       }
       else {
         return this.myPermissions
-          .filter((permission) => permission.content_type_name === 'State association')
+          .filter((permission) => permission.content_type_natural_key === ContentTypeNaturalKey.STATE_ASSOCIATION)
           .map((permission) => {
             return {
               id: parseInt(permission.object_pk),
@@ -259,7 +260,7 @@ export default defineComponent({
     async computeContentTypeCodes() {
       const allContentTypes = (await this.$apiClient.contentTypes.list()).payload.data
       for (const contentType of this.contentTypeCodes) {
-        const apiType = allContentTypes.find((element) => element.name === contentType.name)
+        const apiType = allContentTypes.find((element) => element.natural_key === contentType.natural_key)
         contentType.code = apiType? apiType.id : 0
       }
     },
@@ -270,14 +271,14 @@ export default defineComponent({
       else {
         //Sub association I have direct permissions for
         const mySubAssociationsIds = this.myPermissions
-          .filter((permission) => permission.content_type_name === 'Sub association')
+          .filter((permission) => permission.content_type_natural_key === ContentTypeNaturalKey.SUB_ASSOCIATION)
           .map((permission) => permission.object_pk)
         this.mySubAssociations = this.allSubAssociations.filter(
           ({id}) => mySubAssociationsIds.includes(id.toString())
         )
         // take care of corresponding subassociations if I have state association permission
         this.myStateAssociationIds = this.myPermissions
-          .filter((permission) => permission.content_type_name === 'State association')
+          .filter((permission) => permission.content_type_natural_key === ContentTypeNaturalKey.STATE_ASSOCIATION)
           .map((permission) => permission.object_pk)
         const subAssociationsInMyStateAssociations = [] as SubAssociationDto[]
         for (const stateAssociationId of this.myStateAssociationIds) {
@@ -420,7 +421,6 @@ export default defineComponent({
       )
     },
     async updateUserObjectPermissions(permission: { key: string, label: string }, user: UserPermissionItem, objectID: number) {
-      console.log('Hallo')
       if (user.object_permission_id && permission.key === PermissionCodename.NONE) {
         await this.$apiClient.userPermissions.delete(user.object_permission_id.toString())
         this.userList = this.userList.filter(({username})=> username !== user.username)
