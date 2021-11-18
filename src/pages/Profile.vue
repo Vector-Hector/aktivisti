@@ -470,6 +470,9 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import "src/css/variables";
+.container {
+  margin-bottom: 1.5em;
+}
 
 .description-text {
   color: $grey-6;
