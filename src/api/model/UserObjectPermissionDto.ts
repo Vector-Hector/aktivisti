@@ -4,10 +4,6 @@ export enum PermissionCodename {
   NONE = 'none'
 }
 
-export enum ContentType {
-  SUB_ASSOCIATION = 'Sub association'
-}
-
 export const permissionTypeOptions: { key: string, label: string }[] = [{
   key: PermissionCodename.NONE,
   label: 'Keine Rechte'
