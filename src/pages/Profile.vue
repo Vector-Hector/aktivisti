@@ -34,6 +34,22 @@
         <QInput
           stack-label
           readonly
+          v-model="localUser.username"
+          label="Benutzer*innenname"
+          @update:model-value="saveProfileDebounced"
+        >
+          <template v-slot:after>
+            <QBtn
+              round
+              flat
+              :icon="ionPencil"
+              @click="openChangeUsernameDialog"
+            />
+          </template>
+        </QInput>
+        <QInput
+          stack-label
+          readonly
           v-model="localUser.email"
           label="E-Mail"
           @update:model-value="saveProfileDebounced"
@@ -197,6 +213,7 @@ import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { SettleDebouncer } from 'src/utils/debounce'
 import { getAuthStore } from 'src/store/AuthStore'
 import AppSessions from 'components/AppSessions.vue'
+import ChangeUsernameDialog from 'components/modals/ChangeUsernameDialog.vue'
 
 const authStore = getAuthStore()
 
@@ -347,6 +364,14 @@ export default defineComponent({
       }
       void this.profileSaveDebouncer.executeDebounced(() => {
         return this.saveProfile()
+      })
+    },
+    openChangeUsernameDialog() {
+      this.$q.dialog({
+        component: ChangeUsernameDialog
+      }).onOk((new_username: string) => {
+        this.localUser!.username = new_username
+        this.user!.username = new_username
       })
     },
     openChangeEmailDialog() {
