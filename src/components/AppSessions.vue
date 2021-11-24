@@ -26,7 +26,7 @@
       </QItemSection>
       <QItemSection v-if="!session.is_active" side top>
         <QBtn color="primary" @click="() => revokeSession(session.id)">
-          Widerrufen
+          Abmelden
         </QBtn>
       </QItemSection>
     </QItem>
