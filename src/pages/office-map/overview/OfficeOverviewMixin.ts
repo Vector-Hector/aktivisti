@@ -10,10 +10,10 @@ export default defineComponent({
   computed: {
     offices: {
       get() {
-        return officeOverviewStore.offices
+        return officeOverviewStore.items
       },
       set(offices: OfficeDto[]) {
-        officeOverviewStore.offices = offices
+        officeOverviewStore.items = offices
       }
     },
     filterParams: {
@@ -34,10 +34,10 @@ export default defineComponent({
     },
     officeHoveredOver: {
       get() {
-        return officeOverviewStore.officeHoveredOver
+        return officeOverviewStore.itemHoveredOver
       },
       set(office: OfficeDto) {
-        officeOverviewStore.officeHoveredOver = office
+        officeOverviewStore.itemHoveredOver = office
       }
 
     }
