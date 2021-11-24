@@ -40,7 +40,11 @@ import { MAX_EPS_DISTANCE_FOR_CLUSTERING, OFFICE_LIST_CHUNK_SIZE } from 'src/con
 import ClusterLayer from 'src/mapbox/ClusterLayer.vue'
 import { ClusterDto } from 'src/api/model/ClusterDto'
 import OfficePopup from 'src/mapbox/popup/popups/OfficePopup.vue'
-import useOfficeOverviewMixin from 'pages/office-map/overview/OfficeOverviewMixin'
+import useOverviewMixin from 'src/utils/useOverviewMixin'
+import { OfficeDto } from 'src/api/model/OfficeDto'
+import { OfficeFilterParams } from 'src/api/params/OfficeFilterParams'
+import { officeOverviewStore } from 'src/store/OfficeOverviewStore'
+import { apiClient } from 'src/api/ApiClient'
 
 export default defineComponent({
   name: 'OfficeOverviewMap',
@@ -65,11 +69,11 @@ export default defineComponent({
     updateBounds()
     const {
       filterParams,
-      officeHoveredOver,
-      offices,
+      itemHoveredOver: officeHoveredOver,
+      items: offices,
       pagination,
       updateFilterParams
-    } = useOfficeOverviewMixin()
+    } = useOverviewMixin<OfficeDto, OfficeFilterParams>(officeOverviewStore, apiClient.offices)
     return {
       filterParams,
       officeHoveredOver,
