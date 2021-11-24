@@ -1,5 +1,4 @@
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
 import { Pagination } from 'src/api/model/APIEnvelope'
 import { OfficeFilterParams } from 'src/api/params/OfficeFilterParams'
 import { OfficeDto } from 'src/api/model/OfficeDto'
@@ -50,16 +49,5 @@ export default function useOfficeOverviewMixin() {
     pagination.value = new_pagination!
   }
 
-  const router = useRouter()
-
-  function goToOffice(officeId: number) {
-    void router.push({
-      name: 'office-detail',
-      params: {
-        officeId: officeId
-      }
-    })
-  }
-
-  return {offices, filterParams, pagination, officeHoveredOver, updateFilterParams, fetchMoreOffices, goToOffice}
+  return {offices, filterParams, pagination, officeHoveredOver, updateFilterParams, fetchMoreOffices}
 }

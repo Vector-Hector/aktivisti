@@ -34,13 +34,12 @@ export default defineComponent({
     const {
       fetchMoreOffices,
       filterParams,
-      goToOffice,
       officeHoveredOver,
       offices,
       pagination
     } = useOfficeOverviewMixin()
     return {
-      fetchMoreOffices, filterParams, goToOffice, officeHoveredOver, offices, pagination
+      fetchMoreOffices, filterParams, officeHoveredOver, offices, pagination
     }
   },
   methods: {
@@ -50,6 +49,14 @@ export default defineComponent({
     },
     handleMouseOver(office: OfficeDto) {
       this.officeHoveredOver = office
+    },
+    goToOffice(officeId: number) {
+      void this.$router.push({
+        name: 'office-detail',
+        params: {
+          officeId: officeId
+        }
+      })
     }
   },
   emits: ['hoveredOffice'],
