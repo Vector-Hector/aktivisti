@@ -22,15 +22,27 @@
 <script lang="ts">
 
 import { defineComponent } from 'vue'
-import OfficeOverviewMixin from 'pages/office-map/overview/OfficeOverviewMixin'
 import InfiniteList from 'components/InfiniteList.vue'
 import OfficeListItem from 'components/OfficeListItem.vue'
 import { OfficeDto } from 'src/api/model/OfficeDto'
+import useOfficeOverviewMixin from 'pages/office-map/overview/OfficeOverviewMixin'
 
 export default defineComponent({
   name: 'OfficeOverview',
   components: {InfiniteList, OfficeListItem},
-  mixins: [OfficeOverviewMixin],
+  setup() {
+    const {
+      fetchMoreOffices,
+      filterParams,
+      goToOffice,
+      officeHoveredOver,
+      offices,
+      pagination
+    } = useOfficeOverviewMixin()
+    return {
+      fetchMoreOffices, filterParams, goToOffice, officeHoveredOver, offices, pagination
+    }
+  },
   methods: {
     async loadData(index: number, done: () => void) {
       await this.fetchMoreOffices()

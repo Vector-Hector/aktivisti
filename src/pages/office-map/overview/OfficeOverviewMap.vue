@@ -29,7 +29,6 @@
 </template>
 <script lang="ts">
 import { defineComponent, inject, onUnmounted, ref } from 'vue'
-import OfficeOverviewMixin from 'pages/office-map/overview/OfficeOverviewMixin'
 import { MapInject } from 'src/mapbox/Map.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bboxPolygon } from '@turf/turf'
@@ -41,11 +40,11 @@ import { MAX_EPS_DISTANCE_FOR_CLUSTERING, OFFICE_LIST_CHUNK_SIZE } from 'src/con
 import ClusterLayer from 'src/mapbox/ClusterLayer.vue'
 import { ClusterDto } from 'src/api/model/ClusterDto'
 import OfficePopup from 'src/mapbox/popup/popups/OfficePopup.vue'
+import useOfficeOverviewMixin from 'pages/office-map/overview/OfficeOverviewMixin'
 
 export default defineComponent({
   name: 'OfficeOverviewMap',
   components: {OfficePopup, ClusterLayer, SelectedMarker, Geocoder, OfficeMarker},
-  mixins: [OfficeOverviewMixin],
   data() {
     return {
       clusters: [] as ClusterDto[]
@@ -64,7 +63,19 @@ export default defineComponent({
       map.value.off('moveend', updateBounds)
     })
     updateBounds()
+    const {
+      filterParams,
+      officeHoveredOver,
+      offices,
+      pagination,
+      updateFilterParams
+    } = useOfficeOverviewMixin()
     return {
+      filterParams,
+      officeHoveredOver,
+      offices,
+      pagination,
+      updateFilterParams,
       bounds,
       map
     }
