@@ -1,11 +1,9 @@
+import { ContentTypeNaturalKey } from 'src/api/model/ContentTypeDto'
+
 export enum PermissionCodename {
   MANAGE_EVENTS = 'manages_events',
   TEAM_CAPTAIN = 'team_captain',
   NONE = 'none'
-}
-
-export enum ContentType {
-  SUB_ASSOCIATION = 'Sub association'
 }
 
 export const permissionTypeOptions: { key: string, label: string }[] = [{
@@ -28,5 +26,6 @@ export interface UserObjectPermissionDto {
   content_type: number
   content_object_name: string
   content_type_name: string
+  content_type_natural_key: ContentTypeNaturalKey
   user: string
 }
