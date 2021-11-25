@@ -20,7 +20,7 @@
       <EventMarker
         :event="event"
       >
-        <Popup>
+        <MarkerPopup>
           <div class="popup-contents">
             <span class="popup-title">{{ event.name }}</span>
             <span class="popup-type">
@@ -37,14 +37,14 @@
               :to="`/events/${event.id}`"
             />
           </div>
-        </Popup>
+        </MarkerPopup>
       </EventMarker>
     </span>
   </span>
 </template>
 <script lang="ts">
 import { defineComponent, inject, onUnmounted } from 'vue'
-import Popup from 'src/mapbox/popup/Popup.vue'
+import MarkerPopup from 'src/mapbox/popup/MarkerPopup.vue'
 import { MapInject } from 'src/mapbox/Map.vue'
 import { ClusterDto } from 'src/api/model/ClusterDto'
 import { EVENT_MAP_MAX_EVENTS } from 'src/constants'
@@ -63,7 +63,7 @@ export default defineComponent({
   components: {
     Geocoder,
     EventMarker,
-    Popup,
+    MarkerPopup,
     QBtn,
     ClusterLayer
   },

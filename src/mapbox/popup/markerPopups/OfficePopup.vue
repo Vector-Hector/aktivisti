@@ -1,5 +1,5 @@
 <template>
-  <Popup>
+  <MarkerPopup>
     <div class="popup-contents">
       <span class="popup-title">DIE LINKE vor Ort</span>
       <span class="popup-address">{{ address }}</span>
@@ -9,18 +9,18 @@
         :to="`/offices/${officeId}`"
       />
     </div>
-  </Popup>
+  </MarkerPopup>
 </template>
 <script lang="ts">
 
 import { defineComponent, PropType } from 'vue'
-import Popup from 'src/mapbox/popup/Popup.vue'
+import MarkerPopup from 'src/mapbox/popup/MarkerPopup.vue'
 import { QBtn } from 'quasar'
 
 export default defineComponent({
   name: 'OfficePopup',
   components: {
-    Popup, QBtn
+    MarkerPopup, QBtn
   },
   props: {
     address: {
