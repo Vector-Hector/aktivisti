@@ -87,6 +87,16 @@
             <span class="menu-item-link-text">DIE LINKE vor Ort</span>
           </MenuLink>
         </div>
+        <div class="menu-item">
+          <MenuLink
+            to="/posters"
+          >
+            <QIcon
+              name="img:static/icons/poster.svg"
+            />
+            <span class="menu-item-link-text">Plakate</span>
+          </MenuLink>
+        </div>
         <div
           v-if="isLoggedIn"
           class="menu-item"

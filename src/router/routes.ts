@@ -125,6 +125,27 @@ const routes = [
         ]
       },
       {
+        path: '/posters',
+        component: MapWithSheet,
+        name: 'poster-map',
+        meta: {
+          title: () => 'Plakate'
+        },
+        props: {
+          isShowingOfficeLayer: false
+        },
+        children: [
+          {
+            path: '',
+            name: 'map-poster-overview',
+            components: {
+              default: PosterOverview,
+              map: PosterOverviewMap
+            }
+          },
+        ]
+      },
+      {
         path: '/create-lead',
         name: 'create-lead-general',
         component: CreateLead,
