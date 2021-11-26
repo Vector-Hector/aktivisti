@@ -25,7 +25,7 @@
     :model-value="filterParams.event_type"
     @update:model-value="updateEventType"
   />
-  <StatusFilter
+  <EventStatusFilter
     v-if="isStatusFilterable"
     :model-value="filterParams.status"
     @update:model-value="updateStatus"
@@ -41,7 +41,7 @@ import { EventTypes } from 'src/api/model/EventTypes'
 import { EventFilterParams } from 'src/api/params/EventFilterParams'
 import SubAssociationFilter from 'components/filterInput/filters/SubAssociationFilter.vue'
 import CampaignFilter from 'components/filterInput/filters/CampaignFilter.vue'
-import StatusFilter from 'components/filterInput/filters/StatusFilter.vue'
+import EventStatusFilter from 'components/filterInput/filters/EventStatusFilter.vue'
 import { EventStatus } from 'src/api/model/EventStatus'
 import SortOrderFilter from 'components/filterInput/filters/SortOrderFilter.vue'
 import EventTypeFilter from 'components/filterInput/filters/EventTypeFilter.vue'
@@ -53,7 +53,7 @@ export default defineComponent({
     OwnershipFilter,
     EventTypeFilter,
     SortOrderFilter,
-    StatusFilter,
+    EventStatusFilter,
     CampaignFilter,
     SubAssociationFilter,
   },

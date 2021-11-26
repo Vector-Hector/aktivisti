@@ -16,7 +16,7 @@ import FilterInput from 'components/filterInput/FilterInput.vue'
 import { EventStatus, eventStatusOptions } from 'src/api/model/EventStatus'
 
 export default defineComponent({
-  name: 'StatusFilter',
+  name: 'EventStatusFilter',
   components: {
     FilterInput
   },
