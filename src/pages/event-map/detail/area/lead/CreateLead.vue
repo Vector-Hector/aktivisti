@@ -1,135 +1,151 @@
 <template>
-  <QScrollArea
-    class="flex-fill d-flex"
-  >
-    <div class="q-px-md q-pb-md">
-      <QDialog
-        v-model="qrCodeOpen"
-      >
-        <QCard>
-          <QToolbar>
-            <QToolbarTitle>QR Code zu Linksaktiv</QToolbarTitle>
-            <QBtn
-              flat
-              round
-              dense
-              :icon="ionClose"
-              v-close-popup
-            />
-          </QToolbar>
-
-          <div class="qr-container">
-            <img
-              src="../../../../../assets/img/create-lead-qr.png"
-              alt="QR Code mit Link zu Linksaktiv"
-            >
-          </div>
-        </QCard>
-
-
-      </QDialog>
-      <div class="qr-link">
-        <QBtn
-          flat
-          color="primary"
-          label="QR-Link zu diesem Formular"
-          small
-          @click="openQRCode"
+  <QPage class="flex-fill">
+    <div class="container create-leads">
+    <QScrollArea
+      class="flex-fill d-flex"
+    >
+      <div class="q-px-md q-pb-md">
+        <QDialog
+          v-model="qrCodeOpen"
         >
-          <img
-            class="qr-link-image"
-            src="../../../../../assets/img/create-lead-qr.png"
-            alt="QR Code zum Linksaktiv-Formular"
-          >
-        </QBtn>
-      </div>
-      <QForm
-        ref="form"
-        @submit="saveLead"
-      >
-        <QSelect
-          label="Geschlecht *"
-          v-model="lead.gender"
-          emit-value
-          :rules="[$validationRules.isRequired]"
-          :options="genders"
-          option-value="value"
-          option-label="label"
-          :display-value="genders.find(({value}) => value === lead.gender)?.label"
-          :error-message="errors.gender?.[0]"
-          :error="!!errors.gender?.length"
-        />
-        <QInput
-          label="Nachname *"
-          v-model="lead.last_name"
-          :rules="[$validationRules.isRequired]"
-          :error-message="errors.last_name?.[0]"
-          :error="!!errors.last_name?.length"
-        />
-        <QInput
-          label="Vorname *"
-          v-model="lead.first_name"
-          :rules="[$validationRules.isRequired]"
-          :error-message="errors.first_name?.[0]"
-          :error="!!errors.first_name?.length"
-        />
-        <QInput
-          label="E-Mail *"
-          v-model="lead.email"
-          :rules="[$validationRules.isRequired, $validationRules.email]"
-          :error-message="errors.email?.[0]"
-          :error="!!errors.email?.length"
-        />
-        <QInput
-          label="Telefonnummer"
-          v-model="lead.phone_number"
-          :error-message="errors.phone_number?.[0]"
-          :error="!!errors.phone_number?.length"
-        />
-        <QInput
-          label="Postleitzahl *"
-          v-model="lead.plz"
-          :minlength="5"
-          :maxlength="5"
-          :rules="[$validationRules.isRequired]"
-          :error-message="errors.plz?.[0]"
-          :error="!!errors.plz?.length"
-        />
+          <QCard>
+            <QToolbar>
+              <QToolbarTitle>QR Code zu Linksaktiv</QToolbarTitle>
+              <QBtn
+                flat
+                round
+                dense
+                :icon="ionClose"
+                v-close-popup
+              />
+            </QToolbar>
 
-        <QInput
-          label="Stadt"
-          v-model="lead.city"
-          :error-message="errors.city?.[0]"
-          :error="!!errors.city?.length"
-        />
+            <div class="qr-container">
+              <img
+                src="../../../../../assets/img/create-lead-qr.png"
+                alt="QR Code mit Link zu Linksaktiv"
+              >
+            </div>
+          </QCard>
 
-        <QCheckbox
-          label="Ich bin DIE LINKE Mitglied"
-          v-model="lead.is_party_member"
-        />
-        <QCheckbox
-          label="Ich möchte DIE LINKE Mitglied werden"
-          v-model="lead.want_to_become_member"
-        />
-        <div class="control-buttons">
-          <FormError :error="errors.non_field_error" />
+
+        </QDialog>
+        <div class="qr-link">
           <QBtn
+            flat
             color="primary"
-            type="submit"
-            :disabled="isSubmitting"
+            label="QR-Link zu diesem Formular"
+            small
+            @click="openQRCode"
           >
-            Abschicken
+            <img
+              class="qr-link-image"
+              src="../../../../../assets/img/create-lead-qr.png"
+              alt="QR Code zum Linksaktiv-Formular"
+            >
           </QBtn>
         </div>
-      </QForm>
+        <QForm
+          ref="form"
+          @submit="saveLead"
+        >
+          <QSelect
+            label="Geschlecht *"
+            v-model="lead.gender"
+            emit-value
+            :rules="[$validationRules.isRequired]"
+            :options="genders"
+            option-value="value"
+            option-label="label"
+            :display-value="genders.find(({value}) => value === lead.gender)?.label"
+            :error-message="errors.gender?.[0]"
+            :error="!!errors.gender?.length"
+          />
+          <QInput
+            label="Nachname *"
+            v-model="lead.last_name"
+            :rules="[$validationRules.isRequired]"
+            :error-message="errors.last_name?.[0]"
+            :error="!!errors.last_name?.length"
+          />
+          <QInput
+            label="Vorname *"
+            v-model="lead.first_name"
+            :rules="[$validationRules.isRequired]"
+            :error-message="errors.first_name?.[0]"
+            :error="!!errors.first_name?.length"
+          />
+          <QInput
+            label="E-Mail *"
+            v-model="lead.email"
+            :rules="[$validationRules.isRequired, $validationRules.email]"
+            :error-message="errors.email?.[0]"
+            :error="!!errors.email?.length"
+          />
+          <QInput
+            label="Telefonnummer"
+            v-model="lead.phone_number"
+            :error-message="errors.phone_number?.[0]"
+            :error="!!errors.phone_number?.length"
+          />
+          <QInput
+            label="Postleitzahl *"
+            v-model="lead.plz"
+            :minlength="5"
+            :maxlength="5"
+            :rules="[$validationRules.isRequired]"
+            :error-message="errors.plz?.[0]"
+            :error="!!errors.plz?.length"
+          />
+
+          <QInput
+            label="Stadt"
+            v-model="lead.city"
+            :error-message="errors.city?.[0]"
+            :error="!!errors.city?.length"
+          />
+
+          <QCheckbox
+            label="Ich bin DIE LINKE Mitglied"
+            v-model="lead.is_party_member"
+          />
+          <QCheckbox
+            label="Ich möchte DIE LINKE Mitglied werden"
+            v-model="lead.want_to_become_member"
+          />
+          <div class="control-buttons">
+            <FormError :error="errors.non_field_error" />
+            <QBtn
+              color="primary"
+              type="submit"
+              :disabled="isSubmitting"
+            >
+              Abschicken
+            </QBtn>
+          </div>
+        </QForm>
+      </div>
+    </QScrollArea>
     </div>
-  </QScrollArea>
+  </QPage>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { LeadDto } from 'src/api/model/LeadDto'
-import { QBtn, QCard, QCheckbox, QDialog, QForm, QInput, QScrollArea, QSelect, QToolbar, QToolbarTitle } from 'quasar'
+import {
+  QBtn,
+  QCard,
+  QCheckbox,
+  QDialog,
+  QForm,
+  QInput,
+  QPage,
+  QScrollArea,
+  QSelect,
+  QToolbar,
+  QToolbarTitle
+} from 'quasar'
 import FormError from 'components/FormError.vue'
 import { ionClose } from '@quasar/extras/ionicons-v5'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
@@ -151,6 +167,7 @@ export default defineComponent({
     QDialog,
     QToolbarTitle,
     QToolbar,
+    QPage,
     QCard,
     QScrollArea
   },
@@ -237,6 +254,12 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import "src/css/_variables.scss";
+
+.create-leads {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
 .qr-link {
   display: flex;
