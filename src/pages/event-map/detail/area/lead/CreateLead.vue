@@ -127,16 +127,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { LeadDto } from 'src/api/model/LeadDto'
 import { QBtn, QCard, QCheckbox, QDialog, QForm, QInput, QScrollArea, QSelect, QToolbar, QToolbarTitle } from 'quasar'
 import FormError from 'components/FormError.vue'
-import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { ionClose } from '@quasar/extras/ionicons-v5'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 
 export default defineComponent({
   name: 'CreateLead',
+  props: {
+    areaId: {
+      type: String as PropType<string>,
+    }
+  },
   components: {
     FormError,
     QForm,
@@ -150,7 +154,6 @@ export default defineComponent({
     QCard,
     QScrollArea
   },
-  mixins: [EventDetailStoreMixin],
   beforeRouteEnter(from, to, next) {
     const previousBottomSheetState = uiStore.getState().bottomSheetState
     next(vm => {
@@ -198,7 +201,7 @@ export default defineComponent({
         await this.$apiClient.leads.create(
           {
             ...this.lead,
-            event_area: this.eventArea.id,
+            event_area: this.areaId ? parseInt(this.areaId) : undefined,
             // The form will register the lead on the behalf of someone else - therefor a double opt in is necessary
             // The first opt in here is implicit by offering the data in a person to person talk at the door
             privacy_opt_in: true
