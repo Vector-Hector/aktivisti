@@ -22,7 +22,7 @@ import EventAreaStreet from 'pages/event-map/detail/area/street/EventAreaStreet.
 import EventAreaStreetMap from 'pages/event-map/detail/area/street/EventAreaStreetMap.vue'
 import EventAreaMetrics from 'pages/event-map/detail/area/metrics/EventAreaMetrics.vue'
 import EventAreaMetricsMap from 'pages/event-map/detail/area/metrics/EventAreaMetricsMap'
-import CreateLead from 'pages/event-map/detail/area/lead/CreateLead.vue'
+import CreateLead from 'pages/CreateLead.vue'
 import Profile from 'pages/Profile.vue'
 import EditEventGeometry from 'pages/edit-event/geometry/EditEventGeometry.vue'
 import EditEventGeometryMap from 'pages/edit-event/geometry/EditEventGeometryMap.vue'

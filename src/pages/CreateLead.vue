@@ -22,7 +22,7 @@
 
             <div class="qr-container">
               <img
-                src="../../../../../assets/img/create-lead-qr.png"
+                src="../assets/img/create-lead-qr.png"
                 alt="QR Code mit Link zu Linksaktiv"
               >
             </div>
@@ -40,7 +40,7 @@
           >
             <img
               class="qr-link-image"
-              src="../../../../../assets/img/create-lead-qr.png"
+              src="../assets/img/create-lead-qr.png"
               alt="QR Code zum Linksaktiv-Formular"
             >
           </QBtn>
@@ -253,7 +253,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "src/css/_variables.scss";
+@import "../css/variables";
 
 .create-leads {
   height: 100%;
