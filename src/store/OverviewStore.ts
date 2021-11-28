@@ -1,42 +1,42 @@
 import { Store } from 'src/store/Store'
 import { Pagination } from 'src/api/model/APIEnvelope'
 
-interface OverviewStoreState<T, U> {
-  filterParams: U
-  items: T[]
+interface OverviewStoreState<ItemsType, FilterParamsType> {
+  filterParams: FilterParamsType
+  items: ItemsType[]
   pagination: Pagination
-  itemHoveredOver: T| null
+  itemHoveredOver: ItemsType| null
 }
 
 
-export class OverviewStore<T,U> extends Store<OverviewStoreState<T, U>> {
+export class OverviewStore<ItemsType,FilterParamsType> extends Store<OverviewStoreState<ItemsType, FilterParamsType>> {
   constructor(default_pagination: Pagination) {
     super()
     this.state.pagination = default_pagination
   }
 
-  protected data(): OverviewStoreState<T, U> {
+  protected data(): OverviewStoreState<ItemsType, FilterParamsType> {
     return {
-      filterParams: {} as U ,
-      items: [] as T[],
+      filterParams: {} as FilterParamsType ,
+      items: [] as ItemsType[],
       pagination: {} as Pagination,
-      itemHoveredOver: null as T | null
+      itemHoveredOver: null as ItemsType | null
     }
   }
 
-  public set filterParams(params: U) {
+  public set filterParams(params: FilterParamsType) {
     this.state.filterParams = params
   }
 
-  public get filterParams(): U {
+  public get filterParams(): FilterParamsType {
     return this.getState().filterParams
   }
 
-  public set items(items: T[]) {
+  public set items(items: ItemsType[]) {
     this.state.items = items
   }
 
-  public get items(): T[] {
+  public get items(): ItemsType[] {
     return this.getState().items
   }
 
@@ -48,11 +48,11 @@ export class OverviewStore<T,U> extends Store<OverviewStoreState<T, U>> {
     return this.getState().pagination
   }
 
-  public get itemHoveredOver(): T | null {
+  public get itemHoveredOver(): ItemsType | null {
     return this.getState().itemHoveredOver
   }
 
-  public set itemHoveredOver(item:T|null) {
+  public set itemHoveredOver(item:ItemsType|null) {
     this.state.itemHoveredOver = item
   }
 
