@@ -3,7 +3,7 @@
     v-model:posters="posters"
     :active-poster-index="activePosterIndex"
     :editable="true"
-    @posterClick="goToPoster"
+    @posterClick="({id}) => goToPoster(id)"
   />
   <AreaFeatureLayer
     :features="features"

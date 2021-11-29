@@ -20,7 +20,7 @@ import { MapInject } from 'src/mapbox/Map.vue'
 import { userStore } from 'src/store/UserStore'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bboxPolygon } from '@turf/turf'
-import OfficePopup from 'src/mapbox/popup/popups/OfficePopup.vue'
+import OfficePopup from 'src/mapbox/popup/markerPopups/OfficePopup.vue'
 
 export default defineComponent({
   name: 'OfficeMarkerLayer',

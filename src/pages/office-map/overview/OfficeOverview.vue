@@ -22,15 +22,29 @@
 <script lang="ts">
 
 import { defineComponent } from 'vue'
-import OfficeOverviewMixin from 'pages/office-map/overview/OfficeOverviewMixin'
 import InfiniteList from 'components/InfiniteList.vue'
 import OfficeListItem from 'components/OfficeListItem.vue'
 import { OfficeDto } from 'src/api/model/OfficeDto'
+import { apiClient } from 'src/api/ApiClient'
+import useOverviewMixin from 'src/utils/useOverviewMixin'
+import { officeOverviewStore } from 'src/store/OfficeOverviewStore'
+import { OfficeFilterParams } from 'src/api/params/OfficeFilterParams'
 
 export default defineComponent({
   name: 'OfficeOverview',
   components: {InfiniteList, OfficeListItem},
-  mixins: [OfficeOverviewMixin],
+  setup() {
+    const {
+      fetchMoreItems: fetchMoreOffices,
+      filterParams,
+      itemHoveredOver: officeHoveredOver,
+      items: offices,
+      pagination
+    } = useOverviewMixin<OfficeDto, OfficeFilterParams>(officeOverviewStore, apiClient.offices)
+    return {
+      fetchMoreOffices, filterParams, officeHoveredOver, offices, pagination
+    }
+  },
   methods: {
     async loadData(index: number, done: () => void) {
       await this.fetchMoreOffices()
@@ -38,6 +52,14 @@ export default defineComponent({
     },
     handleMouseOver(office: OfficeDto) {
       this.officeHoveredOver = office
+    },
+    goToOffice(officeId: number) {
+      void this.$router.push({
+        name: 'office-detail',
+        params: {
+          officeId: officeId
+        }
+      })
     }
   },
   emits: ['hoveredOffice'],

@@ -12,7 +12,7 @@ import { Popup } from 'mapbox-gl'
 import { MarkerInject } from 'src/mapbox/Marker.vue'
 
 export default defineComponent({
-  name: 'Popup',
+  name: 'MarkerPopup',
   setup() {
     const marker = inject(MarkerInject)
     const popupElement = ref<HTMLElement | null>(null)

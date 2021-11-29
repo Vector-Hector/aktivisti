@@ -29,7 +29,6 @@
 </template>
 <script lang="ts">
 import { defineComponent, inject, onUnmounted, ref } from 'vue'
-import OfficeOverviewMixin from 'pages/office-map/overview/OfficeOverviewMixin'
 import { MapInject } from 'src/mapbox/Map.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bboxPolygon } from '@turf/turf'
@@ -40,12 +39,16 @@ import SelectedMarker from 'components/SelectedMarker.vue'
 import { MAX_EPS_DISTANCE_FOR_CLUSTERING, OFFICE_LIST_CHUNK_SIZE } from 'src/constants'
 import ClusterLayer from 'src/mapbox/ClusterLayer.vue'
 import { ClusterDto } from 'src/api/model/ClusterDto'
-import OfficePopup from 'src/mapbox/popup/popups/OfficePopup.vue'
+import OfficePopup from 'src/mapbox/popup/markerPopups/OfficePopup.vue'
+import useOverviewMixin from 'src/utils/useOverviewMixin'
+import { OfficeDto } from 'src/api/model/OfficeDto'
+import { OfficeFilterParams } from 'src/api/params/OfficeFilterParams'
+import { officeOverviewStore } from 'src/store/OfficeOverviewStore'
+import { apiClient } from 'src/api/ApiClient'
 
 export default defineComponent({
   name: 'OfficeOverviewMap',
   components: {OfficePopup, ClusterLayer, SelectedMarker, Geocoder, OfficeMarker},
-  mixins: [OfficeOverviewMixin],
   data() {
     return {
       clusters: [] as ClusterDto[]
@@ -64,7 +67,19 @@ export default defineComponent({
       map.value.off('moveend', updateBounds)
     })
     updateBounds()
+    const {
+      filterParams,
+      itemHoveredOver: officeHoveredOver,
+      items: offices,
+      pagination,
+      updateFilterParams
+    } = useOverviewMixin<OfficeDto, OfficeFilterParams>(officeOverviewStore, apiClient.offices)
     return {
+      filterParams,
+      officeHoveredOver,
+      offices,
+      pagination,
+      updateFilterParams,
       bounds,
       map
     }

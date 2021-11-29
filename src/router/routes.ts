@@ -50,6 +50,8 @@ import OfficeOverview from 'pages/office-map/overview/OfficeOverview.vue'
 import OfficeOverviewMap from 'pages/office-map/overview/OfficeOverviewMap.vue'
 import OfficeDetail from 'pages/office-map/detail/OfficeDetail.vue'
 import OfficeDetailMap from 'pages/office-map/detail/OfficeDetailMap.vue'
+import PosterOverview from 'pages/poster-map/overview/PosterOverview.vue'
+import PosterOverviewMap from 'pages/poster-map/overview/PosterOverviewMap.vue'
 
 
 const routes = [
@@ -122,6 +124,27 @@ const routes = [
               title: () => uiStore.getState().activeTitleElements.office
             }
           }
+        ]
+      },
+      {
+        path: '/posters',
+        component: MapWithSheet,
+        name: 'poster-map',
+        meta: {
+          title: () => 'Plakate'
+        },
+        props: {
+          isShowingOfficeLayer: false
+        },
+        children: [
+          {
+            path: '',
+            name: 'map-poster-overview',
+            components: {
+              default: PosterOverview,
+              map: PosterOverviewMap
+            }
+          },
         ]
       },
       {
