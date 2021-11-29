@@ -160,6 +160,7 @@ export default defineComponent({
         title: 'Plakat löschen',
         message: 'Möchtest dieses Plakat wirklich löschen?',
         cancel: true
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
       }).onOk(async () => {
         const poster = this.poster
         await this.$router.push({name: 'edit-event-posters-list'})

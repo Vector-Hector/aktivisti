@@ -190,6 +190,7 @@ export default defineComponent({
         title: 'Alle Teamcaptains einladen',
         message: 'Möchtest du alle Teamcaptains des Kreisverbandes einladen?',
         cancel: true
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
       }).onOk(() => this.inviteTeamCaptains())
     },
     async inviteTeamCaptains() {

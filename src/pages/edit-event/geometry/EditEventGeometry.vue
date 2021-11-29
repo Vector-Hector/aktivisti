@@ -268,6 +268,7 @@ export default defineComponent({
     openAdoptAreasModal() {
       this.$q.dialog({
         component: AdoptEventAreas,
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
       }).onOk(async (eventAreas: EventAreaDto[])=>  {
         eventAreas = eventAreas.map((area) => ({
           ...area,

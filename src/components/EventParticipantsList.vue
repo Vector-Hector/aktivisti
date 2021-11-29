@@ -234,6 +234,7 @@ export default defineComponent({
         message: `Möchtest du die*den Benutzer*in <b>${username}</b> zur*zum Teamcaptain machen?`,
         html: true,
         cancel: true
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
       }).onOk(() => this.elevateToTeamCaptain(userId))
     }
 

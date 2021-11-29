@@ -104,6 +104,7 @@ export default defineComponent({
         title: 'Plakat löschen',
         message: `Möchtest du das Plakat #${this.poster.poster_id} wirklich löschen?`,
         cancel: true
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
       }).onOk(async () => {
         try {
           await this.$apiClient.posters.delete(this.poster.id.toString())

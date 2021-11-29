@@ -126,6 +126,7 @@ export default defineComponent({
         },
         cancel: true,
         persistent: true
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
       }).onOk(async (value: string) => {
         try {
           await this.$apiClient.forgotPassword.create({

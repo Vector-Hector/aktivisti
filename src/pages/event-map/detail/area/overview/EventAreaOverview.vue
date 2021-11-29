@@ -112,6 +112,7 @@ export default defineComponent({
         html: true,
         cancel: true,
         persistent: true
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
       }).onOk(async () => {
         try {
           const response = await this.$apiClient.eventAreas.patch(this.eventArea.id!.toString(), {

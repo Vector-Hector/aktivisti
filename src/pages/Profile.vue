@@ -472,6 +472,7 @@ export default defineComponent({
         ok: 'Account löschen',
         cancel: 'Abbrechen'
       })
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         .onOk(async () => {
           try {
             await this.$apiClient.user.delete('me')
