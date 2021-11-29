@@ -128,7 +128,7 @@
           <QBtn
             color="primary"
             class="add-area-button"
-            :icon="ionShareSocial"
+            :icon="ionCreateOutline"
             dense
             size="md"
             label="Gebiet zeichnen"
@@ -158,7 +158,7 @@ import {
   QTd, QTh,
   QTr
 } from 'quasar'
-import { ionCopyOutline, ionPencil, ionShareSocial, ionTrash } from '@quasar/extras/ionicons-v5'
+import { ionCopyOutline, ionCreateOutline, ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
 import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
@@ -196,7 +196,7 @@ export default defineComponent({
     return {
       loading: false,
       ionCopyOutline,
-      ionShareSocial,
+      ionCreateOutline,
       ionTrash,
       ionPencil,
       EventTypes
