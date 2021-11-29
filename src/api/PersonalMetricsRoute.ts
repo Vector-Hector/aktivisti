@@ -4,9 +4,10 @@ import { PersonalMetricsDto } from 'src/api/model/PersonalMetricsDto'
 import { APIEnvelope } from 'src/api/model/APIEnvelope'
 
 export class PersonalMetricsRoute extends BaseApiRoute {
-  async list() {
+  async list(query: { [key: string]: any } = {}) {
     const response = await this.request({
       method: 'GET',
+      query,
       path: `${this.path}`
     })
     return new JSONResponse<APIEnvelope<PersonalMetricsDto>>(response, response.data)
