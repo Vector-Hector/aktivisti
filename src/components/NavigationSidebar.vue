@@ -141,7 +141,6 @@
           >
             <QIcon :name="ionPersonAddOutline" />
             <span class="menu-item-link-text">Kontakt registrieren</span>
-            <OpenInvitationsBadge />
           </MenuLink>
         </div>
       </div>
