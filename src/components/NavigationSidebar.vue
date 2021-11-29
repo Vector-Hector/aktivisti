@@ -132,6 +132,17 @@
             <span class="menu-item-link-text">Benutzer*innen verwalten</span>
           </MenuLink>
         </div>
+        <div
+          v-if="isLoggedIn"
+          class="menu-item"
+        >
+          <MenuLink
+            :to="{ name: 'create-lead-general' }"
+          >
+            <QIcon :name="ionPersonAddOutline" />
+            <span class="menu-item-link-text">Kontakt registrieren</span>
+          </MenuLink>
+        </div>
       </div>
 
       <div class="menu-group menu-bottom">
@@ -180,7 +191,7 @@ import {
   ionMenu,
   ionPersonCircleOutline,
   ionPersonOutline,
-  ionPeopleOutline, ionHomeOutline
+  ionPeopleOutline, ionHomeOutline, ionPersonAddOutline
 } from '@quasar/extras/ionicons-v5'
 import { QBtn, QDrawer, QIcon } from 'quasar'
 import { farCalendarPlus, farIdCard } from '@quasar/extras/fontawesome-v5'
@@ -209,7 +220,8 @@ export default defineComponent({
       ionLogIn,
       ionPersonCircleOutline,
       ionPersonOutline,
-      ionPeopleOutline
+      ionPeopleOutline,
+      ionPersonAddOutline
     }
   },
   computed: {
