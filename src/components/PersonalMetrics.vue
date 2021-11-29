@@ -1,4 +1,9 @@
 <template>
+  <CampaignFilter
+    :model-value="selectedCampaign"
+    :options="campaigns"
+    @update:model-value="handleUpdateCampaign"
+  />
   <QTable
     flat
     hide-pagination
@@ -13,12 +18,15 @@ import { defineComponent } from 'vue'
 import { PersonalMetricsDto } from 'src/api/model/PersonalMetricsDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { QTable } from 'quasar'
+import CampaignFilter from 'components/filterInput/filters/CampaignFilter.vue'
+import { CampaignDto } from 'src/api/model/CampaignDto'
 
 export default defineComponent({
   name: 'PersonalMetrics',
-  components: {QTable},
+  components: {CampaignFilter, QTable},
   data() {
     return {
+      campaigns: [] as CampaignDto[],
       eventMetrics: {} as EventMetricDto[],
       personalMetricsColumns: [
         {
@@ -32,16 +40,19 @@ export default defineComponent({
           label: 'Anzahl'
         }
       ],
-      personalMetrics: {} as PersonalMetricsDto
+      personalMetrics: {} as PersonalMetricsDto,
+      selectedCampaign: undefined as number | undefined
     }
   },
   async created() {
-    const [personalMetricsResponse, metricsResponse] = await Promise.all([
+    const [campaignsResponse, personalMetricsResponse, metricsResponse] = await Promise.all([
+      this.$apiClient.campaigns.list({include_expired: true}),
       this.$apiClient.personalMetrics.list(),
       this.$apiClient.eventMetrics.list()
     ])
     this.personalMetrics = personalMetricsResponse.payload.data
     this.eventMetrics = metricsResponse.payload.data
+    this.campaigns = campaignsResponse.payload.data
   },
   computed: {
     personalMetricsRows(): {name?: string, value: number}[] {
@@ -64,6 +75,13 @@ export default defineComponent({
           value: this.personalMetrics.completed_addresses ?? 0
         }
       ]
+    }
+  },
+  methods: {
+    async handleUpdateCampaign(campaign: number) {
+      const filterParams = {campaign: campaign ? campaign : undefined}
+      this.personalMetrics = (await this.$apiClient.personalMetrics.list(filterParams)).payload.data
+      this.selectedCampaign = campaign
     }
   }
 })
