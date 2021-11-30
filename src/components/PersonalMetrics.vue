@@ -58,15 +58,15 @@ export default defineComponent({
     personalMetricsRows(): {name?: string, value: number}[] {
       let generalMetrics = [] as {name?: string, value: number}[]
       if (this.personalMetrics?.counts_per_metric !== undefined) {
-        generalMetrics = this.personalMetrics.counts_per_metric.map(({
-                                                                       count,
-                                                                       metric
-                                                                     }: {count: number, metric: number}) => {
-          return {
-            name: this.eventMetrics.find(({id}) => id === metric)?.name,
-            value: count
-          }
-        })
+        generalMetrics = this.personalMetrics
+          .counts_per_metric
+          .map(
+            ({count, metric}: {count: number, metric: number}) => {
+              return {
+                name: this.eventMetrics.find(({id}) => id === metric)?.name,
+                value: count
+              }
+            })
       }
       return [
         ...generalMetrics,
