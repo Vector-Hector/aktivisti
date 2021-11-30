@@ -148,13 +148,7 @@
         </template>
         <h3 class="profile-section-heading">Persönliche Ergebnisse</h3>
         <QSeparator class="profile-section-divider" />
-        <QTable
-          flat
-          hide-pagination
-          :rows="personalMetricsRows"
-          :columns="personalMetricsColumns"
-          row-key="name"
-        />
+        <PersonalMetrics/>
         <h3 class="profile-section-heading">Account</h3>
         <QSeparator class="profile-section-divider" />
         <QList>
@@ -195,7 +189,6 @@ import {
   QPage,
   QScrollArea,
   QSeparator,
-  QTable,
   QToggle
 } from 'quasar'
 import { ionCheckmark, ionClose, ionPencil, ionPersonCircleOutline } from '@quasar/extras/ionicons-v5'
@@ -208,18 +201,18 @@ import ChangeEmailDialog from 'components/modals/ChangeEmailDialog.vue'
 import ChangePasswordDialog from 'components/modals/ChangePasswordDialog.vue'
 import { EmailNotificationSettingsDto } from 'src/api/model/EmailNotificationSettingsDto'
 import { UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
-import { PersonalMetricsDto } from 'src/api/model/PersonalMetricsDto'
-import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { SettleDebouncer } from 'src/utils/debounce'
 import { getAuthStore } from 'src/store/AuthStore'
 import AppSessions from 'components/AppSessions.vue'
 import ChangeUsernameDialog from 'components/modals/ChangeUsernameDialog.vue'
+import PersonalMetrics from 'components/PersonalMetrics.vue'
 
 const authStore = getAuthStore()
 
 export default defineComponent({
   name: 'Profile',
   components: {
+    PersonalMetrics,
     AppSessions,
     QAvatar,
     QInput,
@@ -229,16 +222,11 @@ export default defineComponent({
     QList,
     QPage,
     QItem,
-    QTable,
     QItemSection,
     QScrollArea
   },
   async beforeRouteEnter(from, to, next) {
-    const [userResponse, personalMetricsResponse, metricsResponse] = await Promise.all([
-      apiClient.user.get('me', ['sub_association', 'email_notification_settings']),
-      apiClient.personalMetrics.list(),
-      apiClient.eventMetrics.list()
-    ])
+    const userResponse = await apiClient.user.get('me', ['sub_association', 'email_notification_settings'])
     userStore.setUser(userResponse.payload.data)
     userStore.setHomeAssociation(userResponse.payload.embedded.sub_association?.[0])
 
@@ -254,10 +242,6 @@ export default defineComponent({
       }
       // @ts-ignore
       vm.permissions = userPermissions
-      // @ts-ignore
-      vm.personalMetrics = personalMetricsResponse.payload.data
-      // @ts-ignore
-      vm.eventMetrics = metricsResponse.payload.data
     })
   },
   computed: {
@@ -279,27 +263,6 @@ export default defineComponent({
       } else {
         return null
       }
-    },
-    personalMetricsRows(): { name?: string, value: number }[] {
-      let generalMetrics = [] as { name?: string, value: number }[]
-      if (this.personalMetrics?.counts_per_metric !== undefined) {
-        generalMetrics = this.personalMetrics.counts_per_metric.map(({
-                                                                       count,
-                                                                       metric
-                                                                     }: { count: number, metric: number }) => {
-          return {
-            name: this.eventMetrics.find(({id}) => id === metric)?.name,
-            value: count
-          }
-        })
-      }
-      return [
-        ...generalMetrics,
-        {
-          name: 'Besuchte Adressen',
-          value: this.personalMetrics.completed_addresses ?? 0
-        }
-      ]
     },
     user: {
       get(): UserDto | null {
@@ -335,20 +298,6 @@ export default defineComponent({
         on_new_volunteers: true
       } as Partial<EmailNotificationSettingsDto>,
       permissions: [] as UserObjectPermissionDto[],
-      personalMetrics: {} as PersonalMetricsDto,
-      eventMetrics: {} as EventMetricDto[],
-      personalMetricsColumns: [
-        {
-          field: 'name',
-          name: 'name',
-          label: 'Ergebnis',
-          align: 'left'
-        }, {
-          field: 'value',
-          name: 'value',
-          label: 'Anzahl'
-        }
-      ]
     }
   },
   methods: {
