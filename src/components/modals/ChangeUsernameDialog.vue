@@ -17,7 +17,6 @@
           <PasswordInput
             label="Passwort"
             v-model="password"
-            type="password"
             :minlength="8"
             :rules="[$validationRules.isRequired]"
             :error-message="errors.password?.[0]"
