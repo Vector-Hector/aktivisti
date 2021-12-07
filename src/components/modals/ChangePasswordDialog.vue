@@ -99,7 +99,7 @@ export default defineComponent({
         this.$emit('ok')
         this.$emit('hide')
       } catch (e) {
-        if (e.response?.status === 400) {
+        if (this.$apiClient.isApiClientError(e) && e.response?.status === 400) {
           this.errors = e.response.data
         }
         this.$q.notify({

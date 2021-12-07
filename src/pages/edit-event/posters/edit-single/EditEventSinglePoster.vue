@@ -141,7 +141,7 @@ export default defineComponent({
         }
         await this.$router.push({name: 'edit-event-posters-list'})
       } catch (e) {
-        if (e.response?.status === 400) {
+        if (this.$apiClient.isApiClientError(e) && e.response?.status === 400) {
           this.errors = e.response?.data
         } else {
           this.$q.notify({

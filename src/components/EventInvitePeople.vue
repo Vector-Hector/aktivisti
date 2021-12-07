@@ -169,7 +169,7 @@ export default defineComponent({
           }
         }
       } catch (error) {
-        if (error.response?.status === 400) {
+        if (this.$apiClient.isApiClientError(error) && error.response?.status === 400) {
           this.$q.notify({
             color: 'negative',
             message: 'Der Benutzer*innenname existiert nicht'

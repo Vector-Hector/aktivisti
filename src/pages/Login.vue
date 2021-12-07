@@ -60,6 +60,7 @@ import { QBtn, QCheckbox, QForm, QInput } from 'quasar'
 import FormError from 'components/FormError.vue'
 import { AuthType, getAuthStore, getAuthType } from 'src/store/AuthStore'
 import PasswordInput from 'components/PasswordInput.vue'
+import { apiClient } from 'src/api/ApiClient'
 
 const authStore = getAuthStore()
 
@@ -104,7 +105,7 @@ export default defineComponent({
         await authStore.login(this.username, this.password, this.longSession)
         await this.$router.push(this.next)
       } catch (error) {
-        if (error.response?.status == 400) {
+        if (apiClient.isApiClientError(error) && error.response?.status == 400) {
           const authType = getAuthType()
           if (authType === AuthType.SESSION) {
             this.nonFieldError = error.response?.data?.non_field_errors?.[0]
@@ -137,7 +138,10 @@ export default defineComponent({
             message: 'Bitte sieh nun in deinem Postfach nach. Wir haben dir eine E-Mail mit weiteren Anweisungen geschickt.'
           })
         } catch (e) {
-          const error = e.response?.data?.email ?? 'Beim versuch dein Passwort zurückzusetzen trat ein Fehler auf'
+          let error = 'Beim versuch dein Passwort zurückzusetzen trat ein Fehler auf'
+          if (this.$apiClient.isApiClientError(e) && e.response?.data?.email){
+            error =  e.response?.data?.email
+          }
           this.$q.notify({
             color: 'negative',
             message: error

@@ -413,13 +413,15 @@ export default defineComponent({
           timeout: 1500
         })
       } catch (e) {
-        notification({
-          spinner: false,
-          icon: ionClose,
-          message: `Beim speichern des Profils trat ein Fehler auf: ${e.message}`,
-          color: 'negative',
-          timeout: 1500
-        })
+        if (this.$apiClient.isApiClientError(e) || e instanceof Error){
+          notification({
+            spinner: false,
+            icon: ionClose,
+            message: `Beim speichern des Profils trat ein Fehler auf: ${e.message}`,
+            color: 'negative',
+            timeout: 1500
+          })
+        }
       }
     },
     async saveProfile(): Promise<void> {
@@ -445,7 +447,7 @@ export default defineComponent({
           timeout: 1500
         })
       } catch (e) {
-        if (e.response?.status === 400) {
+        if (this.$apiClient.isApiClientError(e) && e.response?.status === 400) {
           this.errors = e.response.data
           notification({
             spinner: false,
@@ -454,7 +456,7 @@ export default defineComponent({
             color: 'negative',
             timeout: 1500
           })
-        } else {
+        } else if (this.$apiClient.isApiClientError(e) || e instanceof Error) {
           notification({
             spinner: false,
             icon: ionClose,
