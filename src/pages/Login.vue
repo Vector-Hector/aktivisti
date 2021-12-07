@@ -61,6 +61,7 @@ import FormError from 'components/FormError.vue'
 import { AuthType, getAuthStore, getAuthType } from 'src/store/AuthStore'
 import PasswordInput from 'components/PasswordInput.vue'
 import { apiClient } from 'src/api/ApiClient'
+import { emailRegex } from 'boot/validation-rules'
 
 const authStore = getAuthStore()
 
@@ -122,7 +123,7 @@ export default defineComponent({
         message: 'Gib hier deine E-Mail Adresse ein. Wir schicken dir eine E-Mail mit Anweisungen, wie du dein Passwort zurücksetzen kannst.',
         prompt: {
           model: '',
-          isValid: (val: string) => this.$validationRules.email(val),
+          isValid: (val: string) => (!!val && emailRegex.test(val)),
           type: 'email'
         },
         cancel: true,
