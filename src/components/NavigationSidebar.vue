@@ -378,6 +378,7 @@ body.platform-ios {
 
   .menu-item-link {
     display: flex;
+    align-items: center;
     text-decoration: none;
   }
 
