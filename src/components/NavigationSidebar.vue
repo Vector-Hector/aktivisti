@@ -66,6 +66,7 @@
           </MenuLink>
         </div>
       </div>
+      <QScrollArea class="scroll-area">
       <div class="menu-group">
         <div class="menu-item">
           <MenuLink
@@ -155,31 +156,42 @@
         </div>
       </div>
 
-      <div class="menu-group menu-bottom">
+        <div class="menu-group menu-bottom">
 
-        <div class="version">
-          Version: {{ version }}
-        </div>
-        <hr class="menu-divider">
-        <div class="menu-item">
-          <MenuLink to="/imprint">
-            <span class="paragraph-icon">§</span>
-            <span class="menu-item-link-text">Impressum / Datenschutz</span>
-          </MenuLink>
-        </div>
-        <div
-          v-if="isLoggedIn"
-          class="menu-item"
-        >
+          <div class="version">
+            Version: {{ version }}
+          </div>
+          <hr class="menu-divider">
+          <div class="menu-item">
+            <a
+              class="menu-item-link"
+              :href="helpUrl"
+              target="_blank"
+            >
+              <QIcon :name="ionHelpCircleOutline" />
+              <span class="menu-item-link-text">Hilfe</span>
+            </a>
+          </div>
+          <div class="menu-item">
+            <MenuLink to="/imprint">
+              <span class="paragraph-icon">§</span>
+              <span class="menu-item-link-text">Impressum / Datenschutz</span>
+            </MenuLink>
+          </div>
           <div
-            class="menu-item-link"
-            @click="logout()"
+            v-if="isLoggedIn"
+            class="menu-item"
           >
-            <QIcon :name="ionExitOutline" />
-            <span class="menu-item-link-text">Abmelden</span>
+            <div
+              class="menu-item-link"
+              @click="logout()"
+            >
+              <QIcon :name="ionExitOutline" />
+              <span class="menu-item-link-text">Abmelden</span>
+            </div>
           </div>
         </div>
-      </div>
+      </QScrollArea>
     </div>
   </QDrawer>
 </template>
@@ -201,9 +213,9 @@ import {
   ionMenu,
   ionPersonCircleOutline,
   ionPersonOutline,
-  ionPeopleOutline, ionHomeOutline, ionPersonAddOutline
+  ionPeopleOutline, ionHomeOutline, ionPersonAddOutline, ionHelpCircleOutline
 } from '@quasar/extras/ionicons-v5'
-import { QBtn, QDrawer, QIcon } from 'quasar'
+import { QBtn, QDrawer, QIcon, QScrollArea } from 'quasar'
 import { farCalendarPlus, farIdCard } from '@quasar/extras/fontawesome-v5'
 
 const authStore = getAuthStore()
@@ -215,7 +227,8 @@ export default defineComponent({
     MenuLink,
     QBtn,
     QDrawer,
-    QIcon
+    QIcon,
+    QScrollArea
   },
   data() {
     return {
@@ -226,6 +239,7 @@ export default defineComponent({
       ionClose,
       ionCreateOutline,
       ionExitOutline,
+      ionHelpCircleOutline,
       ionHomeOutline,
       ionLogIn,
       ionPersonCircleOutline,
@@ -268,6 +282,9 @@ export default defineComponent({
       set(value: boolean) {
         uiStore.toggleSidebar(value)
       }
+    },
+    helpUrl(): string {
+      return process.env.APP_HELP_URL as string
     }
   },
   methods: {
@@ -280,6 +297,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.scroll-area {
+  height: 100%;
+}
 
 ::v-global(body.platform-ios .navigation-sidebar) {
   padding: calc(env(safe-area-inset-top) - .7rem) 0 0 !important;
@@ -358,6 +378,7 @@ body.platform-ios {
 
   .menu-item-link {
     display: flex;
+    align-items: center;
     text-decoration: none;
   }
 
