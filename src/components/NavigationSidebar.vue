@@ -88,7 +88,9 @@
             <span class="menu-item-link-text">DIE LINKE vor Ort</span>
           </MenuLink>
         </div>
-        <div class="menu-item">
+        <div
+          v-if="hasManagePermission"
+          class="menu-item">
           <MenuLink
             to="/posters"
           >
@@ -139,7 +141,7 @@
           <MenuLink
             :to="{ name: 'manage-users'}"
           >
-            <QIcon :name="ionPeopleOutline"/>
+            <QIcon :name="ionPeopleOutline" />
             <span class="menu-item-link-text">Benutzer*innen verwalten</span>
           </MenuLink>
         </div>
@@ -315,6 +317,7 @@ body.platform-ios {
 ::v-deep(.navigation-sidebar) {
   position: relative;
   overflow: visible;
+
   .menu-button {
     visibility: visible !important;
     color: $grey-8;
