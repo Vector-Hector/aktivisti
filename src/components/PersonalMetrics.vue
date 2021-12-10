@@ -46,7 +46,7 @@ export default defineComponent({
   },
   async created() {
     const [campaignsResponse, personalMetricsResponse, metricsResponse] = await Promise.all([
-      this.$apiClient.campaigns.list({include_expired: true}),
+      this.$apiClient.campaigns.list({include_expired: true, has_participated: true}),
       this.$apiClient.personalMetrics.list(),
       this.$apiClient.eventMetrics.list()
     ])
