@@ -2,7 +2,7 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import { CampaignTypeDto } from 'src/api/model/CampaignTypeDto'
 import { EventRoute } from 'src/api/EventRoute'
 import { ApiRoute } from 'src/api/ApiRoute'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricRecordSubmissionDto } from 'src/api/model/EventMetricRecordSubmissionDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
@@ -43,6 +43,8 @@ export class ApiClient {
       'Content-Type': 'application/json'
     }
   })
+
+  isApiClientError(payload: any): payload is AxiosError {return axios.isAxiosError(payload)}
 
   appSessions = new ApiRoute<AppSessionDto>(this.baseURL, 'app-sessions/', this.axiosInstance)
   events = new EventRoute(this.baseURL, 'events/', this.axiosInstance)

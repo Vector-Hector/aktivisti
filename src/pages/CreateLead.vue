@@ -231,7 +231,7 @@ export default defineComponent({
         (this.$refs.form as QForm).reset()
         this.$router.go(-1)
       } catch (error) {
-        if (error.response.status === 400) {
+        if (this.$apiClient.isApiClientError(error) && error.response?.status === 400) {
           this.errors = error.response.data
         } else {
           this.errors = {'non_field_error': ['Ein unerwarteter Fehler ist aufgetreten']}

@@ -169,7 +169,7 @@ export default defineComponent({
           }
         }
       } catch (error) {
-        if (error.response?.status === 400) {
+        if (this.$apiClient.isApiClientError(error) && error.response?.status === 400) {
           this.$q.notify({
             color: 'negative',
             message: 'Der Benutzer*innenname existiert nicht'
@@ -190,6 +190,7 @@ export default defineComponent({
         title: 'Alle Teamcaptains einladen',
         message: 'Möchtest du alle Teamcaptains des Kreisverbandes einladen?',
         cancel: true
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
       }).onOk(() => this.inviteTeamCaptains())
     },
     async inviteTeamCaptains() {

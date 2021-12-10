@@ -539,6 +539,7 @@ export default defineComponent({
         message: `Das Event <b>"${this.event.name}"</b> wird gelöscht und kann nicht wiederhergestellt werden.`,
         html: true,
         cancel: true
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
       }).onOk(async () => {
         try {
           await this.$apiClient.events.delete(this.event.id.toString())
@@ -558,6 +559,7 @@ export default defineComponent({
         message: `Das Event <b>"${this.event.name}"</b> wird in eine Aktion zum Abhängen von Plakaten umgewandelt.`,
         html: true,
         cancel: true
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
       }).onOk(async () => {
         const newStartDate = new Date()
         newStartDate.setHours(newStartDate.getHours() + Math.round(newStartDate.getMinutes() / 60) + 1)

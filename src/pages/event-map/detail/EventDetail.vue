@@ -85,8 +85,7 @@ export default defineComponent({
         })
       })
     } catch (e) {
-      const {status} = e?.response
-      if (status === 404) {
+      if (apiClient.isApiClientError(e) && e.response?.status === 404) {
         next({name: 'login'})
       }
     }

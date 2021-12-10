@@ -109,7 +109,7 @@ export default defineComponent({
           }
         }
       } catch (e) {
-        if (e.response?.status === 404) {
+        if (this.$apiClient.isApiClientError(e) && e.response?.status === 404) {
           this.$q.notify({
             message: 'Die gewählte Person ist nicht mehr Teil der Aktion',
             timeout: 2000,
