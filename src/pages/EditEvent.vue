@@ -42,7 +42,7 @@ import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 import { userStore } from 'src/store/UserStore'
 import { posterListStore } from 'src/store/PosterListStore'
 
-const DoorToDoorEventSteps = [{
+const Door2DoorAndFlyerSteps = [{
   label: 'Einstellungen',
   routeName: 'edit-event-details'
 }, {
@@ -169,13 +169,14 @@ export default defineComponent({
     },
     steps(): Step[] {
       switch (this.event?.event_type) {
-      case EventTypes.POSTERS:
-        return PosterEventSteps
-      case EventTypes.DOOR_TO_DOOR:
-        return DoorToDoorEventSteps
-      case EventTypes.GENERIC:
-      default:
-        return GenericEventSteps
+        case EventTypes.POSTERS:
+          return PosterEventSteps
+        case EventTypes.DOOR_TO_DOOR:
+        case EventTypes.FLYERS:
+          return Door2DoorAndFlyerSteps
+        case EventTypes.GENERIC:
+        default:
+          return GenericEventSteps
       }
     },
     areaFeatures(): Feature[] {
@@ -194,7 +195,7 @@ export default defineComponent({
   data() {
     return {
       EventTypes,
-      DoorToDoorEventSteps,
+      Door2DoorAndFlyerSteps,
       activeStep: 0,
       bbox: null as BBox2d | null
     }
