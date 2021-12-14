@@ -146,7 +146,7 @@
           </MenuLink>
         </div>
         <div
-          v-if="isLoggedIn"
+          v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
           class="menu-item"
         >
           <MenuLink
