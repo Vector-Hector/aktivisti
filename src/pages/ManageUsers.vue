@@ -175,12 +175,12 @@ export default defineComponent({
         {
           natural_key: ContentTypeNaturalKey.SUB_ASSOCIATION,
           display_name: ContentTypesDisplayNames.SUB_ASSOCIATION,
-          code: 0
+          id: 0
         },
         {
           natural_key:  ContentTypeNaturalKey.STATE_ASSOCIATION,
           display_name: ContentTypesDisplayNames.STATE_ASSOCIATION,
-          code: 0
+          id: 0
         }
       ],
     }
@@ -261,7 +261,7 @@ export default defineComponent({
       const allContentTypes = (await this.$apiClient.contentTypes.list()).payload.data
       for (const contentType of this.contentTypeCodes) {
         const apiType = allContentTypes.find((element) => element.natural_key === contentType.natural_key)
-        contentType.code = apiType? apiType.id : 0
+        contentType.id= apiType? apiType.id : 0
       }
     },
     async computeMySubAssociations() {
@@ -344,7 +344,7 @@ export default defineComponent({
           const newUserObjectPermissions = {
             user: this.newUser.username,
             object_pk : entityObjectID.toString(),
-            content_type : this.contentTypeCodes.find((contentType) => contentType.display_name === this.managementLevel)?.code,
+            content_type : this.contentTypeCodes.find((contentType) => contentType.display_name === this.managementLevel)?.id,
             permission_codename : this.newUserPermission.key
           }
           const response = await this.$apiClient.userPermissions.create(newUserObjectPermissions)
@@ -433,7 +433,7 @@ export default defineComponent({
         const newUserObjectPermissions = {
           user: user.username,
           object_pk : objectID.toString(),
-          content_type : this.contentTypeCodes.find((contentType) => contentType.display_name === this.managementLevel)?.code,
+          content_type : this.contentTypeCodes.find((contentType) => contentType.display_name === this.managementLevel)?.id,
           permission_codename : permission.key
         }
 
