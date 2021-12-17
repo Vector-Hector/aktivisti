@@ -19,11 +19,11 @@
           <QSelect
             v-if="isManagingState"
             class="filter-dropdown"
-            :label="ContentTypesDisplayNames.STATE_ASSOCIATION"
+            :label="`Für welchen ${ContentTypesDisplayNames.STATE_ASSOCIATION} möchtest du Benutzer*innen verwalten`"
             :dropdownIcon="ionChevronDown"
             filled
             :model-value="selectedState"
-            @update:model-value="handleStateSelect"
+            @update:model-value="selectStateAssociation"
             use-input
             map-options
             hide-selected
@@ -33,6 +33,7 @@
             @filter="filterStateAssociations"
             option-value="id"
             option-label="name"
+            :disable="myStateAssociations.length===1"
           >
             <template v-slot:no-option>
               <q-item>
@@ -45,11 +46,11 @@
           <QSelect
             v-if="isManagingSubAssociation"
             class="filter-dropdown"
-            :label="ContentTypesDisplayNames.SUB_ASSOCIATION"
+            :label="`Für welchen ${ContentTypesDisplayNames.SUB_ASSOCIATION} möchtest du Benutzer*innen verwalten`"
             :dropdownIcon="ionChevronDown"
             filled
             :model-value="selectedSubAssociation"
-            @update:model-value="handleSubAssociationSelect"
+            @update:model-value="selectSubAssociation"
             use-input
             map-options
             hide-selected
@@ -59,6 +60,7 @@
             @filter="filterSubAssociations"
             option-value="id"
             option-label="name"
+            :disable="mySubAssociations.length===1"
           >
             <template v-slot:no-option>
               <q-item>
@@ -166,9 +168,17 @@ export default defineComponent({
     this.mySubAssociations = await this.getMySubAssociations()
     this.myStateAssociations = await this.getMyStateAssociations()
 
-    if(!this.isUserAdminOrGlobalCoordinator && this.myStateAssociations.length === 0){
-      this.selectedContentType = this.contentTypeOptions!.find(({natural_key}) => natural_key === ContentTypeNaturalKey.SUB_ASSOCIATION) as ContentTypeOption
-      this.isAbleToManageStateAssociations = false
+    if (!this.isUserAdminOrGlobalCoordinator) {
+      if (this.myStateAssociations.length === 0) {
+        this.selectedContentType = this.contentTypeOptions!.find(({natural_key}) => natural_key === ContentTypeNaturalKey.SUB_ASSOCIATION) as ContentTypeOption
+        this.isAbleToManageStateAssociations = false
+      }
+      if (this.mySubAssociations.length === 1) {
+        this.selectSubAssociation(this.mySubAssociations[0])
+      }
+      if (this.myStateAssociations.length === 1){
+        this.selectStateAssociation(this.myStateAssociations[0])
+      }
     }
 
     this.suggestedSubAssociations = this.mySubAssociations
@@ -279,7 +289,7 @@ export default defineComponent({
     filterSubAssociations(value: string, update: any) {
       if (!value) {
         update(() => {
-          this.suggestedSubAssociations= this.mySubAssociations
+          this.suggestedSubAssociations = this.mySubAssociations
         })
         return
       }
@@ -303,10 +313,10 @@ export default defineComponent({
     handleContentTypeSelect(ct: ContentTypeOption) {
       this.selectedContentType = ct
     },
-    handleStateSelect(state: StateAssociationDto) {
+    selectStateAssociation(state: StateAssociationDto) {
       this.selectedState = state
     },
-    handleSubAssociationSelect(subAssociation: SubAssociationDto) {
+    selectSubAssociation(subAssociation: SubAssociationDto) {
       this.selectedSubAssociation = subAssociation
       this.myExplicitPermissionForSelectedSubAssociation = this.userManagementPermissions.find(
         (permission) => permission.object_pk === subAssociation.id.toString()
