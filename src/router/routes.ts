@@ -416,7 +416,7 @@ const routes = [
         name: 'manage-users',
         component: ManageUsers,
         meta: {
-          title: () => 'Benutzer:innen verwalten'
+          title: () => 'Benutzer*innen verwalten'
         }
       }
     ]
