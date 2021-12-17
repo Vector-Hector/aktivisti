@@ -13,6 +13,7 @@
           :options="contentTypeOptions"
           option-label="label"
           option-value="id"
+          :disable="!isAbleToManageStateAssociations"
         />
         <div class="level-wrapper">
           <QSelect
@@ -155,7 +156,8 @@ export default defineComponent({
       selectedContentType: null as ContentTypeOption | null,
       selectedState: null as StateAssociationDto | null,
       selectedSubAssociation: null as SubAssociationDto | null,
-      myExplicitPermissionForSelectedSubAssociation: null as UserObjectPermissionDto | null
+      myExplicitPermissionForSelectedSubAssociation: null as UserObjectPermissionDto | null,
+      isAbleToManageStateAssociations: true
     }
   },
   async created() {
@@ -163,6 +165,12 @@ export default defineComponent({
 
     this.mySubAssociations = await this.getMySubAssociations()
     this.myStateAssociations = await this.getMyStateAssociations()
+
+    if(!this.isUserAdminOrGlobalCoordinator && this.myStateAssociations.length === 0){
+      this.selectedContentType = this.contentTypeOptions!.find(({natural_key}) => natural_key === ContentTypeNaturalKey.SUB_ASSOCIATION) as ContentTypeOption
+      this.isAbleToManageStateAssociations = false
+    }
+
     this.suggestedSubAssociations = this.mySubAssociations
     this.suggestedStateAssociations = this.myStateAssociations
     this.loading = false
