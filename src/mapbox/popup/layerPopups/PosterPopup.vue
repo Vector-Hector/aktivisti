@@ -7,7 +7,7 @@
         <QBtn
           label="Zum Plakat"
           color="primary"
-          :to="`/events/${poster.event}/area/${poster.area}/posters/${poster.id}`"
+          :to="`/events/${poster.event}/area/${poster.area ? poster.area : UNDEFINED_POSTER_AREA}/posters/${poster.id}`"
         />
       </div>
     </template>
@@ -19,10 +19,16 @@ import { defineComponent } from 'vue'
 import LayerPopup from 'src/mapbox/popup/LayerPopup.vue'
 import { PosterDto } from 'src/api/model/PosterDto'
 import { QBtn } from 'quasar'
+import { UNDEFINED_POSTER_AREA } from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetail.vue'
 
 export default defineComponent({
   name: 'PosterPopup',
   components: {LayerPopup,QBtn},
+  data(){
+    return{
+      UNDEFINED_POSTER_AREA
+    }
+  },
   methods: {
     showPopup(poster: PosterDto) {
       const {lng, lat} = poster.location
