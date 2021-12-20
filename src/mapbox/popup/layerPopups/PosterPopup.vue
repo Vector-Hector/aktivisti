@@ -5,7 +5,7 @@
         <span class="popup-title">Poster</span>
         <span class="popup-address">{{poster.location_description}}</span>
         <QBtn
-          label="Zum Poster"
+          label="Zum Plakat"
           color="primary"
           :to="`/events/${poster.event}/area/${poster.area}/posters/${poster.id}`"
         />
