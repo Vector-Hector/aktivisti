@@ -175,7 +175,7 @@ export default defineComponent({
   },
   beforeRouteEnter(from, to, next) {
     if (!userStore.isTeamCaptainOrLocalCoordinator() && !userStore.isAdminOrGlobalCoordinator()) {
-      ErrorBus.emit(NOT_AUTHORIZED, 'Um eine Kontakt zu registrieren benötigst du eine Teamcaptain- oder Koordinator*innenberechtigung')
+      ErrorBus.emit(NOT_AUTHORIZED, 'Um einen Kontakt zu registrieren, benötigst du eine Teamcaptain- oder Koordinator*innen-Berechtigung')
       next({name: 'login'})
     } else {
       const previousBottomSheetState = uiStore.getState().bottomSheetState
