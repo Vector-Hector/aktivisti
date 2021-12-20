@@ -149,6 +149,8 @@ import {
 import FormError from 'components/FormError.vue'
 import { ionClose } from '@quasar/extras/ionicons-v5'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
+import { userStore } from 'src/store/UserStore'
+import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 
 export default defineComponent({
   name: 'CreateLead',
@@ -172,12 +174,17 @@ export default defineComponent({
     QScrollArea
   },
   beforeRouteEnter(from, to, next) {
-    const previousBottomSheetState = uiStore.getState().bottomSheetState
-    next(vm => {
-      // @ts-ignore
-      vm.previousBottomSheetState = previousBottomSheetState
-      uiStore.setBottomSheetStateAtLeast(BottomSheetState.EXPANDED)
-    })
+    if (!userStore.isTeamCaptainOrLocalCoordinator() && !userStore.isAdminOrGlobalCoordinator()) {
+      ErrorBus.emit(NOT_AUTHORIZED, 'Um einen Kontakt zu registrieren, benötigst du eine Teamcaptain- oder Koordinator*innen-Berechtigung')
+      next({name: 'login'})
+    } else {
+      const previousBottomSheetState = uiStore.getState().bottomSheetState
+      next(vm => {
+        // @ts-ignore
+        vm.previousBottomSheetState = previousBottomSheetState
+        uiStore.setBottomSheetStateAtLeast(BottomSheetState.EXPANDED)
+      })
+    }
   },
   beforeRouteLeave() {
     uiStore.setBottomSheetState(this.previousBottomSheetState)
