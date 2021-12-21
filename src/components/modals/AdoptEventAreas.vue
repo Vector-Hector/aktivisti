@@ -14,7 +14,7 @@
       </span>
       </QCardSection>
       <QCardSection class="section">
-        <ManagedEvents @clickOnEvent="handleClickOnEvent" />
+        <ManagedEvents @clickOnEvent="handleClickOnEvent" :filter="excludeCurrentEvent" />
       </QCardSection>
     </QCard>
   </QDialog>
@@ -86,6 +86,9 @@ export default defineComponent({
       }))
       this.hide()
       this.$emit('ok', cleanedEventAreas)
+    },
+    excludeCurrentEvent(event: EventDto) {
+      return event.id !== this.event.id
     }
   }
 })
