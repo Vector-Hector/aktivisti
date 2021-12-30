@@ -31,7 +31,6 @@ interface UserState {
 
 const KEY_BBOX = 'KEY_BBOX'
 const KEY_FILTERPREFERENCES = 'KEY_FILTERPREFERENCES'
-const KEY_HOMEASSOCIATION = 'KEY_HOMEASSOCIATION'
 
 class UserStore extends Store<UserState> {
   protected data(): UserState {
@@ -59,9 +58,6 @@ class UserStore extends Store<UserState> {
     const filterPreferencesString = localStorage.getItem(KEY_FILTERPREFERENCES)
     const filterPreferences = parseIfPossible(filterPreferencesString) as EventFilterPreferences | null
     data.filterPreferences = filterPreferences ?? data.filterPreferences
-
-    const homeAssociationString = localStorage.getItem(KEY_HOMEASSOCIATION)
-    data.homeAssociation = parseIfPossible(homeAssociationString) as SubAssociationDto | null
   }
 
   public setBbox(bbox: BBox2d | null) {
@@ -80,11 +76,6 @@ class UserStore extends Store<UserState> {
 
   public setHomeAssociation(value: SubAssociationDto | null) {
     this.state.homeAssociation = value
-    if (value !== null) {
-      localStorage.setItem(KEY_HOMEASSOCIATION, JSON.stringify(this.state.homeAssociation))
-    } else {
-      localStorage.removeItem(KEY_HOMEASSOCIATION)
-      }
   }
 
   public clearUser() {
