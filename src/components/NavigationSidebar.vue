@@ -292,6 +292,7 @@ export default defineComponent({
   methods: {
     logout() {
       void authStore.logout()
+      void userStore.reset()
       void this.$router.push('/')
     }
   }
