@@ -135,8 +135,8 @@
           <h3 class="profile-section-heading">Berechtigungen</h3>
           <QSeparator class="profile-section-divider" />
           <QList>
-            <QItem v-if="user.is_superuser"><span>Du bist <b>Administrator</b></span></QItem>
-            <QItem v-if="user.roles.includes(CAMPAIGN_ADMIN)">
+            <QItem v-if="user?.is_superuser"><span>Du bist <b>Administrator</b></span></QItem>
+            <QItem v-if="user?.roles.includes(CAMPAIGN_ADMIN)">
               <span>Du bist globaler <b>Kampagnenkoordinator</b></span></QItem>
             <QItem v-for="permission in permissions" :key="permission.id">
             <span>
