@@ -29,6 +29,8 @@ import { PosterDto } from 'src/api/model/PosterDto'
 import { ContentTypeDto } from 'src/api/model/ContentTypeDto'
 import { OfficeDto } from 'src/api/model/OfficeDto'
 import { AppSessionDto } from 'src/api/model/AppSessionDto'
+import { CampaignGeometriesDto } from 'src/api/model/CampaignGeometriesDto'
+import { CampaignGeometryCollectionsDto } from 'src/api/model/CampaignGeometryCollectionsDto'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -76,6 +78,8 @@ export class ApiClient {
   contentTypes = new ApiRoute<ContentTypeDto>(this.baseURL, 'content-types/', this.axiosInstance)
   offices = new ApiRoute<OfficeDto>(this.baseURL, 'offices/', this.axiosInstance)
   officeClusters = new ApiRoute<ClusterDto>(this.baseURL, 'office-clusters/', this.axiosInstance)
+  campaignGeometries = new ApiRoute<CampaignGeometriesDto>(this.baseURL, 'campaign-geometries/', this.axiosInstance)
+  campaignGeometryCollections = new ApiRoute<CampaignGeometryCollectionsDto>(this.baseURL, 'campaign-geometry-collections/', this.axiosInstance)
 }
 
 export const apiClient = new ApiClient()
