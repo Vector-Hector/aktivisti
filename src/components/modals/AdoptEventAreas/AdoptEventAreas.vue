@@ -1,0 +1,154 @@
+<script setup lang="ts">
+import {
+  QBtn,
+  QCard,
+  QCardActions,
+  QDialog,
+  QToolbar,
+  QToolbarTitle
+} from 'quasar'
+import { useDialogPluginComponent } from 'quasar'
+import { CampaignDto } from 'src/api/model/CampaignDto'
+import SelectAreaSet from 'components/modals/AdoptEventAreas/SelectAreaSet.vue'
+import { CampaignGeometryCollectionsDto } from 'src/api/model/CampaignGeometryCollectionsDto'
+import { computed, onMounted, ref } from 'vue'
+import RecentEventAreas from 'components/modals/AdoptEventAreas/RecentEventAreas.vue'
+import { EventAreaDto } from 'src/api/model/EventAreaDto'
+import CampaignCollections from 'components/modals/AdoptEventAreas/CampaignCollections.vue'
+import { apiClient } from 'src/api/ApiClient'
+
+interface Props {
+  campaigns: CampaignDto[]
+}
+
+const props = defineProps<Props>()
+defineEmits([
+  // REQUIRED by QDialog, we need to emit some events through useDialogPluginComponent
+  ...useDialogPluginComponent.emits
+])
+
+enum Page {
+  SELECT_AREA_SET,
+  RECENT_EVENT_AREAS,
+  CAMPAIGN_COLLECTIONS,
+}
+
+
+const {dialogRef, onDialogHide, onDialogCancel, onDialogOK} = useDialogPluginComponent()
+
+const page = ref<Page>(Page.SELECT_AREA_SET)
+const collections = ref<CampaignGeometryCollectionsDto[] | null>(null)
+const isCollectionExisting = ref<boolean>(false)
+const campaignCollection = ref<CampaignGeometryCollectionsDto | null>(null)
+
+onMounted(async () => {
+  collections.value = await fetchCollections(props.campaigns.map(({id}) => id))
+  isCollectionExisting.value = collections.value.length > 0
+  // if no collections can be found, directly go to recent event areas
+  if (!isCollectionExisting.value){
+    page.value = Page.RECENT_EVENT_AREAS
+  }
+})
+
+/**
+ * Fetch Campaign Geometry Collection
+ * @param campaignIds - List of Campaign IDs
+ */
+async function fetchCollections(campaignIds: number[]): Promise<CampaignGeometryCollectionsDto[]> {
+  const collections = []
+  for (const id of campaignIds) {
+    const campaignCollections = (await apiClient.campaignGeometryCollections.list({
+      campaign: id
+    })).payload.data
+    collections.push(...campaignCollections)
+  }
+  return collections
+}
+
+function handleRecentEventAreasClick() {
+  page.value = Page.RECENT_EVENT_AREAS
+}
+
+function handleCampaignCollectionClick(collection: CampaignGeometryCollectionsDto) {
+  page.value = Page.CAMPAIGN_COLLECTIONS
+  campaignCollection.value = collection
+}
+
+function handleAreaClick(eventAreas: EventAreaDto[]) {
+  onDialogOK(eventAreas)
+}
+
+const qCardClass = computed(() => {
+  if (page.value === Page.RECENT_EVENT_AREAS) {
+    return 'higher-content'
+  }
+  if (page.value === Page.CAMPAIGN_COLLECTIONS) {
+    return 'higher-content broader-content'
+  }
+  return ''
+})
+
+defineExpose({
+  // REQUIRED by QDialog to expose `dialogRef`
+  dialogRef,
+  // REQUIRED by QDialog to expose `onDialogHide`
+  onDialogHide
+})
+
+</script>
+
+<template>
+  <QDialog
+    ref="dialogRef"
+    @hide="onDialogHide"
+    :full-width="$q.screen.lt.md"
+    :full-height="$q.screen.lt.md"
+  >
+    <QCard
+      class="adopt-events-modal"
+      :class="qCardClass"
+    >
+      <QToolbar>
+        <QToolbarTitle>Gebiete übernehmen</QToolbarTitle>
+      </QToolbar>
+      <SelectAreaSet
+        v-if="page===Page.SELECT_AREA_SET"
+        :campaigns="props.campaigns"
+        :collections="collections"
+        @onRecentEventAreasClick="handleRecentEventAreasClick"
+        @onCampaignCollectionClick="handleCampaignCollectionClick"
+      />
+      <RecentEventAreas
+        v-if="page===Page.RECENT_EVENT_AREAS"
+        @onEventClick="handleAreaClick"
+      />
+      <CampaignCollections
+        v-if="page===Page.CAMPAIGN_COLLECTIONS"
+        :collection="campaignCollection"
+        @onGeometryClick="handleAreaClick"
+      />
+      <QCardActions align="left">
+        <QBtn color="primary" outline dense label="Abbrechen" @click="onDialogCancel" />
+        <QBtn v-if="[Page.CAMPAIGN_COLLECTIONS, Page.RECENT_EVENT_AREAS].includes(page) && isCollectionExisting" color="primary" outline dense
+              label="Zurück" @click="() => {page=Page.SELECT_AREA_SET}" />
+      </QCardActions>
+    </QCard>
+  </QDialog>
+</template>
+<style lang="scss" scoped>
+
+.adopt-events-modal {
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+.higher-content {
+  min-height: 800px
+}
+
+.broader-content {
+  min-width: 800px
+}
+
+</style>

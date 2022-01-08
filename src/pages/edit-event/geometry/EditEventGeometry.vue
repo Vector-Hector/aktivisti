@@ -166,7 +166,7 @@ import { EditEventBus, START_DRAW_AREA } from 'src/store/EditEventStore'
 import { StepControls } from 'pages/EditEvent.vue'
 import LocationSelect from 'components/LocationSelect.vue'
 import { EventTypes } from 'src/api/model/EventTypes'
-import AdoptEventAreas from 'components/modals/AdoptEventAreas.vue'
+import AdoptEventAreas from 'components/modals/AdoptEventAreas/AdoptEventAreas.vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { apiClient } from 'src/api/ApiClient'
 
@@ -268,9 +268,12 @@ export default defineComponent({
     openAdoptAreasModal() {
       this.$q.dialog({
         component: AdoptEventAreas,
+        componentProps: {
+          campaigns: this.campaigns.filter(({id}) => this.event.campaigns.includes(id))
+        }
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      }).onOk(async (eventAreas: EventAreaDto[])=>  {
-        eventAreas = eventAreas.map((area) => ({
+      }).onOk(async (newEventAreas: EventAreaDto[]) => {
+        newEventAreas = newEventAreas.map((area) => ({
           ...area,
           event: this.event.id
         }))
@@ -283,11 +286,11 @@ export default defineComponent({
         this.eventAreas = []
 
         const eventAreaCreationPromise: Promise<any>[] = []
-        for (const area of eventAreas) {
+        for (const area of newEventAreas) {
           eventAreaCreationPromise.push(apiClient.eventAreas.create(area))
         }
         const responses = await Promise.all(eventAreaCreationPromise)
-        responses.forEach((response)=> this.eventAreas.push(response.payload.data)
+        responses.forEach((response) => this.eventAreas.push(response.payload.data)
         )
       })
     }
