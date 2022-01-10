@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 
 import { CampaignDto } from 'src/api/model/CampaignDto'
@@ -45,6 +45,15 @@ export default defineComponent({
   components: {
     EventFilter,
     EventList,
+  },
+  props: {
+    /**
+     * A filter function that can be passed to filter the results returned by
+     * the api.
+     */
+    filter: {
+      type: Function as PropType<(event: EventDto) => boolean>
+    }
   },
   async created() {
     await this.updateShownEvents()
@@ -85,6 +94,9 @@ export default defineComponent({
         )).payload
         this.pagination = pagination!
         this.shownEvents = events
+        if (this.filter) {
+          this.shownEvents = this.shownEvents.filter(this.filter)
+        }
       } catch {
         this.$q.notify({
           message: 'Etwas ging schief beim Abrufen der Aktionen',
