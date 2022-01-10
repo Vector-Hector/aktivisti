@@ -6,7 +6,12 @@ export enum PermissionCodename {
   NONE = 'none'
 }
 
-export const permissionTypeOptions: { key: string, label: string }[] = [{
+export interface PermissionTypeOption {
+  key: PermissionCodename,
+  label: string,
+}
+
+export const permissionTypeOptions: PermissionTypeOption[] = [{
   key: PermissionCodename.NONE,
   label: 'Keine Rechte'
 }, {
@@ -20,7 +25,7 @@ export const permissionTypeOptions: { key: string, label: string }[] = [{
 export interface UserObjectPermissionDto {
   id: number
   permission_name: string
-  permission_codename: string
+  permission_codename: PermissionCodename
   permission: number
   object_pk: string
   content_type: number

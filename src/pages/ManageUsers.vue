@@ -7,27 +7,33 @@
           label="Auf welcher Ebene möchtest du Benutzer*innen verwalten"
           filled
           :dropdownIcon="ionChevronDown"
-          :model-value="managementLevel"
-          @update:model-value="selectManagementLevel"
-          :options="managementLevelOptions"
+          :model-value="selectedContentType"
+          @update:model-value="handleContentTypeSelect"
+          map-options
+          :options="contentTypeOptions"
+          option-label="label"
+          option-value="id"
+          :disable="!isAbleToManageStateAssociations"
         />
-        <div v-show="managementLevel !== ''" class="level-wrapper">
+        <div class="level-wrapper">
           <QSelect
+            v-if="isManagingState"
             class="filter-dropdown"
-            :label="managementLevel"
+            :label="`Für welchen ${ContentTypesDisplayNames.STATE_ASSOCIATION} möchtest du Benutzer*innen verwalten`"
             :dropdownIcon="ionChevronDown"
             filled
-            :model-value="selectedEntityToManage"
-            @update:model-value="selectEntityToManage"
+            :model-value="selectedState"
+            @update:model-value="selectStateAssociation"
             use-input
             map-options
             hide-selected
             fill-input
             input-debounce="0"
-            :options="suggestedEntities"
-            @filter="filterEntities"
+            :options="suggestedStateAssociations"
+            @filter="filterStateAssociations"
             option-value="id"
             option-label="name"
+            :disable="myStateAssociations.length===1"
           >
             <template v-slot:no-option>
               <q-item>
@@ -37,75 +43,51 @@
               </q-item>
             </template>
           </QSelect>
-          <div
-            class="user-management-section"
-            v-show="selectedEntityToManage.name !== ''"
+          <QSelect
+            v-if="isManagingSubAssociation"
+            class="filter-dropdown"
+            :label="`Für welchen ${ContentTypesDisplayNames.SUB_ASSOCIATION} möchtest du Benutzer*innen verwalten`"
+            :dropdownIcon="ionChevronDown"
+            filled
+            :model-value="selectedSubAssociation"
+            @update:model-value="selectSubAssociation"
+            use-input
+            map-options
+            hide-selected
+            fill-input
+            input-debounce="0"
+            :options="suggestedSubAssociations"
+            @filter="filterSubAssociations"
+            option-value="id"
+            option-label="name"
+            :disable="mySubAssociations.length===1"
           >
-            <div class="row new-user-group">
-              <div class="col-grow">
-                <QInput
-                  class="w-100 d-flex flex-col"
-                  label="Benutzer*in wählen"
-                  use-input
-                  v-model="newUser.username"
-                  @keydown.enter="addUser(selectedEntityToManage.id)"
-                />
-              </div>
-              <QSelect
-                class="new-user-select permission-dropdown"
-                :dropdownIcon="ionChevronDown"
-                filled
-                v-model="newUserPermission"
-                :options="permissionTypeOptionsForNewUser"
-                :option-disable="(opt) =>
-                            Object(opt) === opt ? opt.inactive : true"
-                option-value="key"
-                map-options
-              >
-              </QSelect>
-              <QBtn
-                class="new-user-add-btn full-width"
-                label="Hinzufügen"
-                unelevated
-                outline
-                :icon-right="ionChevronDown"
-                @click="addUser(selectedEntityToManage.id)"
-              />
-            </div>
-            <div class="col">
-              <QList v-show="userList.length > 0">
-                <QItem
-                  class="manage-users-list-item"
-                  v-for="user in userList"
-                  :key="user.user"
-                >
-                  <QItemSection>
-                    <QItemLabel>
-                      <b>{{ user.username }}</b>
-                    </QItemLabel>
-                  </QItemSection>
-                  <QItemSection side>
-                    <div
-                      class="invitation-item-actions"
-                    >
-                      <QSelect
-                        class="permission-dropdown"
-                        :dropdownIcon="ionChevronDown"
-                        filled
-                        :model-value="user.permission_codename"
-                        @update:model-value="(permission) => updateUserObjectPermissions(permission, user, selectedEntityToManage.id)"
-                        :options="permissionTypeOptionsForMyPermissions"
-                        :option-disable="(opt) => isPermissionAssignable(opt, user)"
-                        option-value="key"
-                        map-options
-                      >
-                      </QSelect>
-                    </div>
-                  </QItemSection>
-                </QItem>
-              </QList>
-            </div>
-          </div>
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  Kein Verband gefunden
+                </q-item-section>
+              </q-item>
+            </template>
+          </QSelect>
+        </div>
+        <div
+          class="user-management-section"
+          v-if="(isManagingSubAssociation && selectedSubAssociation) || (isManagingState && selectedState)"
+        >
+          <UserPermissionAdding
+            :content-type="selectedContentType"
+            :objectId="isManagingSubAssociation ? selectedSubAssociation.id : selectedState.id"
+            :permission-type-conditional-options="permissionOptionsForNewUsers"
+            @submit="userSubmitted"
+          />
+          <UserPermissionList
+            ref="userPermissionList"
+            :content-type="selectedContentType"
+            :objectId="isManagingSubAssociation ? selectedSubAssociation.id : selectedState.id"
+            :permission-type-conditional-options="permissionOptionsForExistingUsers"
+            :myPermissionForSelectedSubAssociation="myExplicitPermissionForSelectedSubAssociation"
+          />
         </div>
       </div>
     </div>
@@ -114,83 +96,93 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { QSelect, QPage, QItem, QList, QItemSection, QItemLabel, QInput, QBtn } from 'quasar'
+import { QItem, QItemSection, QPage, QSelect } from 'quasar'
 import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { StateAssociationDto } from 'src/api/model/StateAssociationDto'
 import { userStore } from 'src/store/UserStore'
-import { UserObjectPermissionDto, permissionTypeOptions, PermissionCodename } from 'src/api/model/UserObjectPermissionDto'
+import {
+  PermissionCodename,
+  PermissionTypeOption,
+  permissionTypeOptions,
+  UserObjectPermissionDto
+} from 'src/api/model/UserObjectPermissionDto'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
-import { ErrorBus, USER_NOT_FOUND } from 'src/utils/errorBus'
 import { ContentTypeNaturalKey } from 'src/api/model/ContentTypeDto'
+import UserPermissionAdding from 'components/UserPermissionAdding.vue'
+import UserPermissionList from 'components/UserPermissionList.vue'
 
-
-interface UserPermissionItem {
-  username: string
-  object_permission_id?: number
-  permission_codename?: string
-  permission_name?: string
-}
 
 enum ContentTypesDisplayNames {
   SUB_ASSOCIATION = 'Kreisverband',
   STATE_ASSOCIATION = 'Landesverband'
 }
 
+export interface ContentTypeOption {
+  id: number,
+  label: ContentTypesDisplayNames
+  natural_key: ContentTypeNaturalKey
+}
+
+export interface ExtendedPermissionTypeOption {
+  key: PermissionCodename,
+  label: string,
+  inactive: boolean
+}
+
 export default defineComponent({
   name: 'ManageUsers',
   components: {
+    UserPermissionList,
+    UserPermissionAdding,
     PageLoadingSpinner,
     QSelect,
     QPage,
     QItem,
-    QList,
-    QItemSection,
-    QItemLabel,
-    QInput,
-    QBtn
+    QItemSection
   },
   data() {
     return {
+      ContentTypesDisplayNames,
+      ContentTypeNaturalKey,
       ionChevronDown,
       ionClose,
-      allSubAssociations: [] as SubAssociationDto[],
-      allStateAssociations: [] as StateAssociationDto[],
       mySubAssociations: [] as SubAssociationDto[],
-      myStateAssociationIds: [] as string[],
-      suggestedEntities: [] as SubAssociationDto[],
-      selectedSubAssociation: {id: 0, name: ''},
-      selectedEntityToManage: {id: 0, name:''},
-      managementLevel: '',
-      myPermissionForSelectedSubAssociation: {} as UserObjectPermissionDto,
-      selectedUser: {username: ''} as UserPermissionItem,
-      newUser: {username: ''} as UserPermissionItem,
-      newUserPermission: {key: '', label: ''},
-      userList: [] as UserPermissionItem[],
+      myStateAssociations: [] as StateAssociationDto[],
+      suggestedSubAssociations: [] as SubAssociationDto[],
+      suggestedStateAssociations: [] as StateAssociationDto[],
       loading: true,
       permissionTypeOptions,
       PermissionCodename,
-      managementLevelOptions: ['Kreisverband', 'Landesverband'],
-      contentTypeCodes: [
-        {
-          natural_key: ContentTypeNaturalKey.SUB_ASSOCIATION,
-          display_name: ContentTypesDisplayNames.SUB_ASSOCIATION,
-          code: 0
-        },
-        {
-          natural_key:  ContentTypeNaturalKey.STATE_ASSOCIATION,
-          display_name: ContentTypesDisplayNames.STATE_ASSOCIATION,
-          code: 0
-        }
-      ],
+      contentTypeOptions: null as ContentTypeOption[] | null,
+      selectedContentType: null as ContentTypeOption | null,
+      selectedState: null as StateAssociationDto | null,
+      selectedSubAssociation: null as SubAssociationDto | null,
+      myExplicitPermissionForSelectedSubAssociation: null as UserObjectPermissionDto | null,
+      isAbleToManageStateAssociations: true
     }
   },
   async created() {
-    this.allSubAssociations = await this.getSubAssociations()
-    this.allStateAssociations = await this.getStateAssociations()
+    this.contentTypeOptions = await this.getContentTypeCodes()
 
-    await this.computeMySubAssociations()
-    await this.computeContentTypeCodes()
+    this.mySubAssociations = await this.getMySubAssociations()
+    this.myStateAssociations = await this.getMyStateAssociations()
+
+    if (!this.isUserAdminOrGlobalCoordinator) {
+      if (this.myStateAssociations.length === 0) {
+        this.selectedContentType = this.contentTypeOptions!.find(({natural_key}) => natural_key === ContentTypeNaturalKey.SUB_ASSOCIATION) as ContentTypeOption
+        this.isAbleToManageStateAssociations = false
+      }
+      if (this.mySubAssociations.length === 1) {
+        this.selectSubAssociation(this.mySubAssociations[0])
+      }
+      if (this.myStateAssociations.length === 1){
+        this.selectStateAssociation(this.myStateAssociations[0])
+      }
+    }
+
+    this.suggestedSubAssociations = this.mySubAssociations
+    this.suggestedStateAssociations = this.myStateAssociations
     this.loading = false
   },
   computed: {
@@ -200,285 +192,156 @@ export default defineComponent({
     isUserAdminOrGlobalCoordinator(): boolean {
       return userStore.isAdminOrGlobalCoordinator()
     },
+    isManagingState(): boolean {
+      return Boolean(this.selectedContentType?.natural_key === ContentTypeNaturalKey.STATE_ASSOCIATION)
+    },
+    isManagingSubAssociation(): boolean {
+      return Boolean(this.selectedContentType?.natural_key === ContentTypeNaturalKey.SUB_ASSOCIATION)
+    },
     myPermissions(): UserObjectPermissionDto[] {
       return userStore.getMyPermissions()
     },
-    myStateAssociations(): StateAssociationDto[] {
-      if (this.isUserAdminOrGlobalCoordinator) {
-        return this.allStateAssociations
+    permissionOptionsForNewUsers(): ExtendedPermissionTypeOption[] {
+      const permissionOptionsForNewUsers = [permissionTypeOptions.find(({key}) => key === PermissionCodename.MANAGE_EVENTS) as PermissionTypeOption]
+      if (this.isManagingSubAssociation) {
+        permissionOptionsForNewUsers.push(permissionTypeOptions.find(({key}) => key === PermissionCodename.TEAM_CAPTAIN) as PermissionTypeOption)
       }
-      else {
-        return this.myPermissions
-          .filter((permission) => permission.content_type_natural_key === ContentTypeNaturalKey.STATE_ASSOCIATION)
-          .map((permission) => {
-            return {
-              id: parseInt(permission.object_pk),
-              name: permission.content_object_name
-            }
-          })
-      }
+      return permissionOptionsForNewUsers.map((option) => Object.assign(option, {inactive: !this.isAllowedToManagePermissions(option)}))
     },
-    permissionTypeOptionsForNewUser(): {key: string, label: string, inactive: boolean}[] {
-      if (this.managementLevel !== 'Kreisverband') {
-        return permissionTypeOptions
-          .filter((option) => option.key === PermissionCodename.MANAGE_EVENTS) //On state association level only coordinator permissions are assignable
-          .map((option) => Object.assign(option, {inactive: !this.allowedToManagePermissions(option)}))
-      }
-      else {
-        return permissionTypeOptions
-          .filter((option) => option.key !== PermissionCodename.NONE) // "NONE" permissions serve for demoting users; not applicable for new users
-          .map((option) => Object.assign(option, {inactive: !this.allowedToManagePermissions(option)}))
-      }
-    },
-    permissionTypeOptionsForMyPermissions(): {key: string, label: string, inactive: boolean}[] {
-      if (this.managementLevel !== 'Kreisverband') {
-       return permissionTypeOptions
-          .filter((option) => option.key !== PermissionCodename.TEAM_CAPTAIN) //Team captains exist only for sub associations
-          .map((option) => Object.assign(option, {inactive: !this.allowedToManagePermissions(option)}))
-      }
-      else {
-        return permissionTypeOptions.map(
-          (option) => Object.assign(option, {inactive: !this.allowedToManagePermissions(option)})
-        )
-      }
-    },
-    defaultNewUserPermission(): {key: string, label: string}{
-      if (this.managementLevel === 'Landesverband') {
-        return {key: PermissionCodename.MANAGE_EVENTS, label: 'Koordinator*in'}
-      } else {
-        return  {key: PermissionCodename.TEAM_CAPTAIN, label: 'Teamcaptain'}
-      }
+    permissionOptionsForExistingUsers(): ExtendedPermissionTypeOption[] {
+      const noPermission = permissionTypeOptions.find(({key}) => key === PermissionCodename.NONE) as ExtendedPermissionTypeOption
+      noPermission.inactive = false
+      return this.permissionOptionsForNewUsers.concat([noPermission])
     }
   },
   methods: {
+    userSubmitted() {
+      // @ts-ignore
+      this.$refs.userPermissionList.getUsersWithPermissionsForEntity()
+    },
     async getSubAssociations(stateAssociationId?: number) {
       return (await this.$apiClient.subAssociations.list({state_association: stateAssociationId})).payload.data
     },
     async getStateAssociations() {
       return (await this.$apiClient.stateAssociations.list()).payload.data
     },
-    async computeContentTypeCodes() {
-      const allContentTypes = (await this.$apiClient.contentTypes.list()).payload.data
-      for (const contentType of this.contentTypeCodes) {
-        const apiType = allContentTypes.find((element) => element.natural_key === contentType.natural_key)
-        contentType.code = apiType? apiType.id : 0
+    async getContentTypeCodes(): Promise<ContentTypeOption[] | null> {
+      const contentTypes = (await this.$apiClient.contentTypes.list()).payload.data
+
+      let contentTypeOptions = [] as ContentTypeOption[]
+      for (const natural_key of [ContentTypeNaturalKey.SUB_ASSOCIATION, ContentTypeNaturalKey.STATE_ASSOCIATION]) {
+        const contentType = contentTypes.find((ct) => natural_key === ct.natural_key)
+        if (!contentType) {
+          throw Error('Natural key seams to be unknown to content-type service')
+        }
+        const label = natural_key === ContentTypeNaturalKey.SUB_ASSOCIATION ? ContentTypesDisplayNames.SUB_ASSOCIATION : ContentTypesDisplayNames.STATE_ASSOCIATION
+        contentTypeOptions.push({
+          id: contentType.id,
+          label: label,
+          natural_key: natural_key
+        })
       }
+      return contentTypeOptions
     },
-    async computeMySubAssociations() {
+    async getMySubAssociations() {
+      const allSubAssociations = await this.getSubAssociations()
       if (this.isUserAdminOrGlobalCoordinator) {
-        this.mySubAssociations = this.allSubAssociations
-      }
-      else {
+        return allSubAssociations
+      } else {
         //Sub association I have direct permissions for
         const mySubAssociationsIds = this.myPermissions
           .filter((permission) => permission.content_type_natural_key === ContentTypeNaturalKey.SUB_ASSOCIATION)
           .map((permission) => permission.object_pk)
-        this.mySubAssociations = this.allSubAssociations.filter(
+        const mySubAssociations = allSubAssociations.filter(
           ({id}) => mySubAssociationsIds.includes(id.toString())
         )
         // take care of corresponding subassociations if I have state association permission
-        this.myStateAssociationIds = this.myPermissions
+        const myStateAssociationIds = this.myPermissions
           .filter((permission) => permission.content_type_natural_key === ContentTypeNaturalKey.STATE_ASSOCIATION)
           .map((permission) => permission.object_pk)
         const subAssociationsInMyStateAssociations = [] as SubAssociationDto[]
-        for (const stateAssociationId of this.myStateAssociationIds) {
+        for (const stateAssociationId of myStateAssociationIds) {
           const newSubAssociations = await this.getSubAssociations(parseInt(stateAssociationId))
           subAssociationsInMyStateAssociations.push(...newSubAssociations)
         }
         for (const subAssociation of subAssociationsInMyStateAssociations) {
           if (!mySubAssociationsIds.includes(subAssociation.id.toString())) {
-            this.mySubAssociations.push(subAssociation)
+            mySubAssociations.push(subAssociation)
           }
         }
+        return mySubAssociations
       }
     },
-    isPermissionAssignable(permission: {key: string, label: string, inactive: boolean}, user: UserPermissionItem) {
-      return Object(permission) === permission ? permission.inactive
-        || (user.permission_codename === PermissionCodename.MANAGE_EVENTS &&
-          this.myPermissionForSelectedSubAssociation.permission_codename === PermissionCodename.TEAM_CAPTAIN)
-        : true
-    },
-    filterEntities(value: string, update: any) {
-      if (this.managementLevel === 'Kreisverband') {
-        this.filterSubAssociations(value, update)
-      }
-      else {
-        this.filterStateAssociations(value, update)
+    async getMyStateAssociations(): Promise<StateAssociationDto[]> {
+      if (this.isUserAdminOrGlobalCoordinator) {
+        return await this.getStateAssociations()
+      } else {
+        return this.myPermissions
+          .filter(({content_type_natural_key}) => content_type_natural_key === ContentTypeNaturalKey.STATE_ASSOCIATION)
+          .map(({object_pk, content_object_name}) => {
+            return {
+              id: parseInt(object_pk),
+              name: content_object_name
+            }
+          })
       }
     },
     filterSubAssociations(value: string, update: any) {
       if (!value) {
         update(() => {
-          this.suggestedEntities = this.mySubAssociations
+          this.suggestedSubAssociations = this.mySubAssociations
         })
         return
       }
       update(() => {
         const lowercasedValue = value.toLowerCase()
-        this.suggestedEntities = this.mySubAssociations.filter(({name}) => name.toLowerCase().includes(lowercasedValue))
+        this.suggestedSubAssociations = this.mySubAssociations.filter(({name}) => name.toLowerCase().includes(lowercasedValue))
       })
     },
     filterStateAssociations(value: string, update: any) {
       if (!value) {
         update(() => {
-          this.suggestedEntities = this.myStateAssociations
+          this.suggestedStateAssociations = this.myStateAssociations
         })
         return
       }
       update(() => {
         const lowercasedValue = value.toLowerCase()
-        this.suggestedEntities = this.myStateAssociations.filter(({name}) => name.toLowerCase().includes(lowercasedValue))
+        this.suggestedStateAssociations = this.myStateAssociations.filter(({name}) => name.toLowerCase().includes(lowercasedValue))
       })
     },
-    userLabel(item: UserPermissionItem) {
-      return `${item.username}`
+    handleContentTypeSelect(ct: ContentTypeOption) {
+      this.selectedContentType = ct
     },
-    async addUser(entityObjectID: number) {
-      if (!this.userList.find( (user) => user.username === this.newUser.username )) {
-        const newUserForList = {
-          username : this.newUser.username,
-          permission_codename: this.newUserPermission.key,
-          permission_name: this.newUserPermission.label
-        }
-        try {
-          const newUserObjectPermissions = {
-            user: this.newUser.username,
-            object_pk : entityObjectID.toString(),
-            content_type : this.contentTypeCodes.find((contentType) => contentType.display_name === this.managementLevel)?.code,
-            permission_codename : this.newUserPermission.key
-          }
-          const response = await this.$apiClient.userPermissions.create(newUserObjectPermissions)
-          this.userList.unshift({...newUserForList, object_permission_id: response.payload.data.id})
-          this.newUser =  {username: ''}
-          this.newUserPermission = this.defaultNewUserPermission
-        }
-        catch (e) {
-          ErrorBus.emit(USER_NOT_FOUND, 'Benutzer:in nicht gefunden.')
-        }
-      } else {
-        this.$q.notify({
-          color: 'info',
-          message: 'Die Benutzer*in wurde bereits zur Liste hinzugefügt'
-        })
-      }
+    selectStateAssociation(state: StateAssociationDto) {
+      this.selectedState = state
     },
-    selectUser(username: string) {
-      let newUser = {} as UserPermissionItem
-      if (!this.userList.find( (user) => user.username === username )) {
-        newUser = {
-          username: username,
-          permission_codename : PermissionCodename.NONE,
-          permission_name : 'Keine Rechte'
-        }
-        this.userList.unshift(newUser)
-      }
-      this.selectedUser = newUser
+    selectSubAssociation(subAssociation: SubAssociationDto) {
+      this.selectedSubAssociation = subAssociation
+      this.myExplicitPermissionForSelectedSubAssociation = this.userManagementPermissions.find(
+        (permission) => permission.object_pk === subAssociation.id.toString()
+      ) || null
     },
-    async selectEntityToManage(entity: {id: number, name: string}) {
-      this.selectedEntityToManage = entity
-      await this.getUsersWithPermissionsForEntity(entity)
-    },
-    selectManagementLevel(managementLevel: string) {
-      switch (managementLevel) {
-        case 'Kreisverband':
-          this.suggestedEntities = this.mySubAssociations
-          this.managementLevel = managementLevel
-          this.selectedEntityToManage = {id: 0, name:''}
-          this.newUserPermission = this.defaultNewUserPermission
-          break;
-        case 'Landesverband':
-          this.suggestedEntities = this.myStateAssociations
-          this.managementLevel = managementLevel
-          this.selectedEntityToManage = {id: 0, name:''}
-          this.newUserPermission = this.defaultNewUserPermission
-          break;
-        default:
-          break;
-      }
-    },
-    async getUsersWithPermissionsForEntity(entity: {id: number, name: string}) {
-      let query
-      switch (this.managementLevel) {
-        case ContentTypesDisplayNames.SUB_ASSOCIATION:
-          query = { sub_association: entity.id.toString() }
-          break;
-        case ContentTypesDisplayNames.STATE_ASSOCIATION:
-          query = { association: entity.id.toString() }
-          break;
-        default:
-          break;
-      }
-      const userObjectPermissions: UserObjectPermissionDto[] = (await this.$apiClient.userPermissions.list(query)).payload.data
-      this.userList = userObjectPermissions.map(
-        (permission) => {
-          return {
-            username: permission.user,
-            object_permission_id: permission.id,
-            permission_codename: permission.permission_codename,
-            permission_name: permission.permission_name
-          }
-        }
-      )
-    },
-    async updateUserObjectPermissions(permission: { key: string, label: string }, user: UserPermissionItem, objectID: number) {
-      if (user.object_permission_id && permission.key === PermissionCodename.NONE) {
-        await this.$apiClient.userPermissions.delete(user.object_permission_id.toString())
-        this.userList = this.userList.filter(({username})=> username !== user.username)
-        this.$q.notify({
-          color: 'positive',
-          message: 'Der Benutzer*in wurden die Rechte für das Verwaltungsgebiet entzogen'
-        })
-      }
-      else {
-        const newUserObjectPermissions = {
-          user: user.username,
-          object_pk : objectID.toString(),
-          content_type : this.contentTypeCodes.find((contentType) => contentType.display_name === this.managementLevel)?.code,
-          permission_codename : permission.key
-        }
-
-        //update existing UserObjectPermission
-        if (user.object_permission_id) {
-          await this.$apiClient.userPermissions.patch(user.object_permission_id.toString(), newUserObjectPermissions)
-        }
-        //or create a new one
-        else {
-          await this.$apiClient.userPermissions.create(newUserObjectPermissions)
-        }
-        this.$q.notify({
-          color: 'positive',
-          message: 'Gespeichert'
-        })
-      }
-      user.permission_name = permission.label
-      user.permission_codename = permission.key
-    },
-    allowedToManagePermissions(permissionType: { key: string, label: string }) {
-      if (this.managementLevel === 'Kreisverband') {
-        const myPermissionsForSubassociation = this.userManagementPermissions.filter(
-          (permission) => permission.object_pk === this.selectedEntityToManage.id.toString()
-        )
+    isAllowedToManagePermissions(permissionType: PermissionTypeOption) {
+      if (this.isManagingSubAssociation) {
         // if I don't have direct permissions for the sub association I'm state association or global coordinator,
         // so I'm allowed to manage everything
-        if (myPermissionsForSubassociation.length === 0) {
+        if (!this.myExplicitPermissionForSelectedSubAssociation) {
           return true
         }
-        this.myPermissionForSelectedSubAssociation = myPermissionsForSubassociation[0]
         // if I am sub association coordinator I can manage all types of permissions
-        if (this.myPermissionForSelectedSubAssociation.permission_codename === PermissionCodename.MANAGE_EVENTS) {
+        if (this.myExplicitPermissionForSelectedSubAssociation.permission_codename === PermissionCodename.MANAGE_EVENTS) {
           return true
         }
         // If I am team captain I can only manage Team captain (or None) permissions
-        else if (myPermissionsForSubassociation[0].permission_codename === PermissionCodename.TEAM_CAPTAIN
+        else if (this.myExplicitPermissionForSelectedSubAssociation.permission_codename === PermissionCodename.TEAM_CAPTAIN
           && (permissionType.key === PermissionCodename.TEAM_CAPTAIN || permissionType.key === PermissionCodename.NONE)) {
           //and only for users who are not coordinators which is handled in the template!
           return true
-        }
-        else {
+        } else {
           return false
         }
-      }
-      else { //managementLevel === 'Landesverband'
+      } else { //managementLevel === 'Landesverband'
         // If there is anything to manage at all I must have coordinator permissions for the selected state association
         return true
       }
@@ -505,25 +368,5 @@ export default defineComponent({
 
 .user-management-section {
   margin: 1rem 0 0 0;
-}
-
-.new-user-group {
-  margin: 0 0 0.5rem 0;
-}
-
-.new-user-select {
-  margin: 0 0 0 1rem;
-}
-
-.new-user-add-btn {
-  margin: 0.5rem 0 0 0;
-}
-
-.manage-users-list-item {
-  padding: 8px 0;
-}
-
-.permission-dropdown {
-  min-width: 10rem;
 }
 </style>
