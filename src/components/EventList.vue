@@ -1,7 +1,7 @@
 <template>
   <InfiniteList
     :items="events"
-    :disable="events.length === pagination.total"
+    :disable="isDisabled"
     @load="loadData"
     ref="infiniteList"
   >
@@ -66,7 +66,7 @@ export default defineComponent({
   emits: ['clickOnEvent','update:events', 'update:pagination'],
   computed: {
     isDisabled(): boolean {
-      return this.pagination?.total === this.events.length
+      return this.pagination?.total ? (this.pagination?.total <= this.events.length) : false
     }
   },
   data() {
