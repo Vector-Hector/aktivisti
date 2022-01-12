@@ -11,10 +11,11 @@ import Timeout = NodeJS.Timeout
 import { EventTypes } from 'src/api/model/EventTypes'
 import { NavigationGuardNext, RouteLocation } from 'vue-router'
 import { uiStore } from 'src/store/UiStore'
+import { UNDEFINED_POSTER_AREA } from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetail.vue'
 
 async function updateRoute(to: RouteLocation, from: RouteLocation, next: NavigationGuardNext) {
   const {areaId} = to.params
-  if (areaId === 'undefined') {
+  if (areaId === UNDEFINED_POSTER_AREA) {
     // the special undefined route is for posters that are not assigned to an area
     eventDetailStore.setEventArea(null)
     eventDetailStore.setEventAreaPermissions(null)

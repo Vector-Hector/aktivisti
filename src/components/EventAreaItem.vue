@@ -73,6 +73,7 @@ import {
   ionPersonCircleOutline
 } from '@quasar/extras/ionicons-v5'
 import { EventTypes } from 'src/api/model/EventTypes'
+import { UNDEFINED_POSTER_AREA } from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetail.vue'
 
 
 export default defineComponent({
@@ -119,7 +120,7 @@ export default defineComponent({
     targetRoute(): RouteLocationRaw {
       switch (this.eventType) {
       case EventTypes.POSTERS:
-        return { name: 'event-detail-poster', params: { areaId: this.area.id! }}
+        return { name: 'event-detail-poster', params: { areaId: this.area.id ? this.area.id : UNDEFINED_POSTER_AREA}}
       case EventTypes.DOOR_TO_DOOR:
       default:
         return { name: 'event-detail-area', params: { areaId: this.area.id! }}
