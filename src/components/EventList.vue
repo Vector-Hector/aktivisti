@@ -54,6 +54,13 @@ export default defineComponent({
     campaigns: {
       type: Array as PropType<CampaignDto[]>,
       default: () => []
+    },
+    /**
+     * A filter function that can be passed to filter the results returned by
+     * the api.
+     */
+    filter: {
+      type: Function as PropType<(event: EventDto) => boolean>
     }
   },
   emits: ['clickOnEvent','update:events', 'update:pagination'],
@@ -85,8 +92,12 @@ export default defineComponent({
       if (this.isDisabled) {
         return
       }
-      const moreEvents = await this.getEvents()
-      this.$emit('update:events', distinctBy(this.events.concat(moreEvents), (item: EventDto) => item.id))
+      let moreEvents = await this.getEvents()
+      let consolidatedEvents = distinctBy(this.events?.concat(moreEvents), (item: EventDto) => item.id)
+      if (this.filter){
+        consolidatedEvents = consolidatedEvents.filter(this.filter)
+      }
+      this.$emit('update:events', consolidatedEvents)
       done()
     },
     resetScrollPosition(){
