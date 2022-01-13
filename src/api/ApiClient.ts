@@ -2,7 +2,7 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import { CampaignTypeDto } from 'src/api/model/CampaignTypeDto'
 import { EventRoute } from 'src/api/EventRoute'
 import { ApiRoute } from 'src/api/ApiRoute'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricRecordSubmissionDto } from 'src/api/model/EventMetricRecordSubmissionDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
@@ -14,6 +14,7 @@ import { EventParticipationRoute } from 'src/api/EventParticipationRoute'
 import { UserRegistrationDto } from 'src/api/model/UserRegistrationDto'
 import { ClusterDto } from 'src/api/model/ClusterDto'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
+import { StateAssociationDto } from 'src/api/model/StateAssociationDto'
 import { AccountRoute } from 'src/api/AccountRoute'
 import { EmailNotificationSettingsDto } from 'src/api/model/EmailNotificationSettingsDto'
 import { UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
@@ -23,9 +24,11 @@ import { ConfigRoute } from 'src/api/ConfigRoute'
 import { SessionRoute } from 'src/api/SessionRoute'
 import { ForgotPasswordDto } from 'src/api/model/ForgotPasswordDto'
 import { ObjectPermissionsRoute } from 'src/api/ObjectPermissionsRoute'
-import { PublicProfileDto } from 'src/api/model/PublicProfileDto'
 import { UserRoute } from 'src/api/UserRoute'
 import { PosterDto } from 'src/api/model/PosterDto'
+import { ContentTypeDto } from 'src/api/model/ContentTypeDto'
+import { OfficeDto } from 'src/api/model/OfficeDto'
+import { AppSessionDto } from 'src/api/model/AppSessionDto'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -41,6 +44,9 @@ export class ApiClient {
     }
   })
 
+  isApiClientError(payload: any): payload is AxiosError {return axios.isAxiosError(payload)}
+
+  appSessions = new ApiRoute<AppSessionDto>(this.baseURL, 'app-sessions/', this.axiosInstance)
   events = new EventRoute(this.baseURL, 'events/', this.axiosInstance)
   eventAreas = new EventAreaRoute(this.baseURL, 'event-areas/', this.axiosInstance)
   eventMetrics = new ApiRoute<EventMetricDto>(this.baseURL, 'event-metrics/', this.axiosInstance)
@@ -49,7 +55,6 @@ export class ApiClient {
   eventMetricRecordSubmissions = new ApiRoute<EventMetricRecordSubmissionDto>(this.baseURL, 'event-metric-record-submissions/', this.axiosInstance)
   campaigns = new ApiRoute<CampaignDto>(this.baseURL, 'campaigns/', this.axiosInstance)
   user = new UserRoute(this.baseURL, 'users/', this.axiosInstance)
-  publicProfiles = new ApiRoute<PublicProfileDto>(this.baseURL, 'public-profiles/', this.axiosInstance)
   tokens = new TokenRoute(this.baseURL, 'tokens/', this.axiosInstance)
   personalMetrics = new PersonalMetricsRoute(this.baseURL, 'personal-metrics/', this.axiosInstance)
   userPermissions = new ApiRoute<UserObjectPermissionDto>(this.baseURL, 'user-permissions/', this.axiosInstance)
@@ -61,12 +66,16 @@ export class ApiClient {
   forgotPassword = new ApiRoute<ForgotPasswordDto>(this.baseURL, 'account/forgot-password/', this.axiosInstance)
   eventClusters = new ApiRoute<ClusterDto>(this.baseURL, 'event-clusters/', this.axiosInstance)
   subAssociations = new ApiRoute<SubAssociationDto>(this.baseURL, 'sub-associations/', this.axiosInstance)
+  stateAssociations = new ApiRoute<StateAssociationDto>(this.baseURL, 'state-associations/', this.axiosInstance)
   account = new AccountRoute(this.baseURL, 'account/', this.axiosInstance)
   emailNotificationSettings = new ApiRoute<EmailNotificationSettingsDto>(this.baseURL, 'email-notification-settings/', this.axiosInstance)
   session = new SessionRoute(this.baseURL, 'session/', this.axiosInstance)
   config = new ConfigRoute(this.baseURL, 'config/', this.axiosInstance)
   eventPermissions = new ObjectPermissionsRoute(this.baseURL, 'event-permissions/', this.axiosInstance)
   posters = new ApiRoute<PosterDto>(this.baseURL, 'posters/', this.axiosInstance)
+  contentTypes = new ApiRoute<ContentTypeDto>(this.baseURL, 'content-types/', this.axiosInstance)
+  offices = new ApiRoute<OfficeDto>(this.baseURL, 'offices/', this.axiosInstance)
+  officeClusters = new ApiRoute<ClusterDto>(this.baseURL, 'office-clusters/', this.axiosInstance)
 }
 
 export const apiClient = new ApiClient()

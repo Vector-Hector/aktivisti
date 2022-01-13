@@ -36,6 +36,7 @@
     "@turf/turf": "^6.3.0",
     "axios": "^0.21.1",
     "geojson": "^0.5.0",
+    "hat": "^0.0.3",
     "lodash-es": "^4.17.20",
     "mapbox-gl": "^2.3.1",
     "quasar": "^2.0.1",
@@ -47,6 +48,7 @@
     "@babel/eslint-parser": "^7.13.14",
     "@quasar/app": "^3.0.1",
     "@types/geojson": "^7946.0.7",
+    "@types/hat": "^0.0.1",
     "@types/lodash-es": "^4.17.4",
     "@types/mapbox__mapbox-sdk": "0.13.0",
     "@types/mapbox-gl": "^2.3.0",
@@ -71,8 +73,8 @@
     "last 5 Opera versions"
   ],
   "engines": {
-    "node": ">= 12.22.1",
-    "npm": ">= 6.13.4",
+    "node": ">= 16.0.0",
+    "npm": ">= 7.10.0",
     "yarn": ">= 1.21.1"
   }
 }

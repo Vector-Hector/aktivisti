@@ -214,7 +214,7 @@ export default defineComponent({
         const participation = this.participations.find(({user}) => user === userId)
         participation!['is_team_captain'] = true
       } catch (e) {
-        if (e.response?.status === 400 && e.response?.data?.sub_association) {
+        if (this.$apiClient.isApiClientError(e) && e.response?.status === 400 && e.response?.data?.sub_association) {
           this.$q.notify({
             color: 'negative',
             message: 'Dieser Aktion ist kein gültiger Landkreis zugeordnet. Die Ernennung einer*eines Teamcaptains ' +
@@ -234,6 +234,7 @@ export default defineComponent({
         message: `Möchtest du die*den Benutzer*in <b>${username}</b> zur*zum Teamcaptain machen?`,
         html: true,
         cancel: true
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
       }).onOk(() => this.elevateToTeamCaptain(userId))
     }
 

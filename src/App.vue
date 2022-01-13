@@ -14,7 +14,7 @@
         class="toolbar"
       >
         <QBtn
-          v-if="currentDepth > 2"
+          v-if="currentDepth > 2  || $route.meta.isShowBackButton"
           @click="backButton"
           :icon="ionArrowBack"
           flat
@@ -51,7 +51,7 @@ import { defineComponent } from 'vue'
 import NavigationSidebar from 'src/components/NavigationSidebar.vue'
 import { uiStore } from 'src/store/UiStore'
 import AppTitle from 'src/components/AppTitle.vue'
-import { ErrorBus, NOT_AUTHORIZED, SESSION_INVALID, NO_INTERNET } from 'src/utils/errorBus'
+import { ErrorBus, NOT_AUTHORIZED, SESSION_INVALID, NO_INTERNET, USER_NOT_FOUND } from 'src/utils/errorBus'
 import { QToolbar, QBtn, QPageContainer, QLayout, QHeader, QToolbarTitle } from 'quasar'
 import { ionArrowBack } from '@quasar/extras/ionicons-v5'
 import { IntervalDebouncer } from 'src/utils/debounce'
@@ -165,6 +165,12 @@ export default defineComponent({
       })
     })
     ErrorBus.on(NOT_AUTHORIZED, (message: string) => {
+      this.$q.notify({
+        type: 'negative',
+        message: message
+      })
+    })
+    ErrorBus.on(USER_NOT_FOUND, (message: string) => {
       this.$q.notify({
         type: 'negative',
         message: message

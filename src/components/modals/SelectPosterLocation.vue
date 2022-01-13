@@ -20,7 +20,7 @@
               :is-draggable-marker-shown=false
             >
               <template v-slot:hintText>
-                Bitte geben Sie entweder eine Adresse in das Suchfeld ein oder nutzen Sie die
+                Bitte gib entweder eine Adresse in das Suchfeld ein oder nutze die
                   <span style="white-space: nowrap">
                     Ortungsfunktion
                     <QIcon :name="matGpsNotFixed"

@@ -66,6 +66,7 @@
           </MenuLink>
         </div>
       </div>
+      <QScrollArea class="scroll-area">
       <div class="menu-group">
         <div class="menu-item">
           <MenuLink
@@ -75,6 +76,28 @@
               :name="ionCalendarClearOutline"
             />
             <span class="menu-item-link-text">Alle Aktionen</span>
+          </MenuLink>
+        </div>
+        <div class="menu-item">
+          <MenuLink
+            to="/offices"
+          >
+            <QIcon
+              :name="ionHomeOutline"
+            />
+            <span class="menu-item-link-text">DIE LINKE vor Ort</span>
+          </MenuLink>
+        </div>
+        <div
+          v-if="hasManagePermission"
+          class="menu-item">
+          <MenuLink
+            to="/posters"
+          >
+            <QIcon
+              name="img:static/icons/poster.svg"
+            />
+            <span class="menu-item-link-text">Plakate</span>
           </MenuLink>
         </div>
         <div
@@ -108,36 +131,69 @@
             :to="{ name: 'create-event' }"
           >
             <QIcon :name="farCalendarPlus" />
-            <span class="menu-item-link-text">Aktion Erstellen</span>
-          </MenuLink>
-        </div>
-      </div>
-
-      <div class="menu-group menu-bottom">
-
-        <div class="version">
-          Version: {{ version }}
-        </div>
-        <hr class="menu-divider">
-        <div class="menu-item">
-          <MenuLink to="/imprint">
-            <span class="paragraph-icon">§</span>
-            <span class="menu-item-link-text">Impressum / Datenschutz</span>
+            <span class="menu-item-link-text">Aktion erstellen</span>
           </MenuLink>
         </div>
         <div
-          v-if="isLoggedIn"
+          v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
           class="menu-item"
         >
-          <div
-            class="menu-item-link"
-            @click="logout()"
+          <MenuLink
+            :to="{ name: 'manage-users'}"
           >
-            <QIcon :name="ionExitOutline" />
-            <span class="menu-item-link-text">Abmelden</span>
-          </div>
+            <QIcon :name="ionPeopleOutline" />
+            <span class="menu-item-link-text">Benutzer*innen verwalten</span>
+          </MenuLink>
+        </div>
+        <div
+          v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
+          class="menu-item"
+        >
+          <MenuLink
+            :to="{ name: 'create-lead-general' }"
+          >
+            <QIcon :name="ionPersonAddOutline" />
+            <span class="menu-item-link-text">Kontakt registrieren</span>
+          </MenuLink>
         </div>
       </div>
+
+        <div class="menu-group menu-bottom">
+
+          <div class="version">
+            Version: {{ version }}
+          </div>
+          <hr class="menu-divider">
+          <div class="menu-item">
+            <a
+              class="menu-item-link"
+              :href="helpUrl"
+              target="_blank"
+            >
+              <QIcon :name="ionHelpCircleOutline" />
+              <span class="menu-item-link-text">Hilfe</span>
+            </a>
+          </div>
+          <div class="menu-item">
+            <MenuLink to="/imprint">
+              <span class="paragraph-icon">§</span>
+              <span class="menu-item-link-text">Impressum / Datenschutz</span>
+            </MenuLink>
+          </div>
+          <div
+            v-if="isLoggedIn"
+            class="menu-item"
+          >
+            <div
+              class="menu-item-link"
+              @click="logout()"
+            >
+              <QIcon :name="ionExitOutline" />
+              <span class="menu-item-link-text">Abmelden</span>
+            </div>
+          </div>
+        </div>
+      </QScrollArea>
     </div>
   </QDrawer>
 </template>
@@ -158,9 +214,10 @@ import {
   ionLogIn,
   ionMenu,
   ionPersonCircleOutline,
-  ionPersonOutline
+  ionPersonOutline,
+  ionPeopleOutline, ionHomeOutline, ionPersonAddOutline, ionHelpCircleOutline
 } from '@quasar/extras/ionicons-v5'
-import { QBtn, QDrawer, QIcon } from 'quasar'
+import { QBtn, QDrawer, QIcon, QScrollArea } from 'quasar'
 import { farCalendarPlus, farIdCard } from '@quasar/extras/fontawesome-v5'
 
 const authStore = getAuthStore()
@@ -172,7 +229,8 @@ export default defineComponent({
     MenuLink,
     QBtn,
     QDrawer,
-    QIcon
+    QIcon,
+    QScrollArea
   },
   data() {
     return {
@@ -183,9 +241,13 @@ export default defineComponent({
       ionClose,
       ionCreateOutline,
       ionExitOutline,
+      ionHelpCircleOutline,
+      ionHomeOutline,
       ionLogIn,
       ionPersonCircleOutline,
-      ionPersonOutline
+      ionPersonOutline,
+      ionPeopleOutline,
+      ionPersonAddOutline
     }
   },
   computed: {
@@ -200,6 +262,12 @@ export default defineComponent({
     },
     hasManagePermission() {
       return userStore.hasAtLeastOneManagePermission()
+    },
+    isTeamCaptainOrLocalCoordinator() {
+      return userStore.isTeamCaptainOrLocalCoordinator()
+    },
+    isAdminOrGlobalCoordinator() {
+      return userStore.isAdminOrGlobalCoordinator()
     },
     userName() {
       return userStore.getState().user?.username
@@ -216,11 +284,15 @@ export default defineComponent({
       set(value: boolean) {
         uiStore.toggleSidebar(value)
       }
+    },
+    helpUrl(): string {
+      return process.env.APP_HELP_URL as string
     }
   },
   methods: {
     logout() {
       void authStore.logout()
+      void userStore.reset()
       void this.$router.push('/')
     }
   }
@@ -228,6 +300,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.scroll-area {
+  height: 100%;
+}
 
 ::v-global(body.platform-ios .navigation-sidebar) {
   padding: calc(env(safe-area-inset-top) - .7rem) 0 0 !important;
@@ -243,6 +318,7 @@ body.platform-ios {
 ::v-deep(.navigation-sidebar) {
   position: relative;
   overflow: visible;
+
   .menu-button {
     visibility: visible !important;
     color: $grey-8;
@@ -306,6 +382,7 @@ body.platform-ios {
 
   .menu-item-link {
     display: flex;
+    align-items: center;
     text-decoration: none;
   }
 

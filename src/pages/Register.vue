@@ -23,11 +23,10 @@
             :error-message="errors.username?.[0]"
             :error="!!errors.username?.length"
           />
-          <QInput
+          <PasswordInput
             v-model="registrationData.password"
             :rules="[$validationRules.isRequired]"
             name="password"
-            type="password"
             label="Passwort *"
             :minlength="6"
             :error-message="errors.password?.[0]"
@@ -117,11 +116,13 @@ import { UserRegistrationDto } from 'src/api/model/UserRegistrationDto'
 import { QBtn, QForm, QInput, QPage, QScrollArea } from 'quasar'
 import FormError from 'components/FormError.vue'
 import { configStore } from 'src/store/ConfigStore'
+import PasswordInput from 'components/PasswordInput.vue'
 
 export default defineComponent({
   name: 'Register',
   components: {
     FormError,
+    PasswordInput,
     QInput,
     QBtn,
     QForm,
@@ -152,11 +153,13 @@ export default defineComponent({
         await this.$apiClient.userRegistration.create(this.registrationData)
         await this.$router.push({name: 'register-success'})
       } catch (error) {
-        if (error.response.status === 400) {
-          this.errors = error.response.data
-        } else if (error.response.status === 503) {
-          this.errors = {
-            'non_field_error': 'Diese Funktion steht derzeit nicht zur Verfügung'
+        if (this.$apiClient.isApiClientError(error)) {
+          if (error.response?.status === 400) {
+            this.errors = error.response.data
+          } else if (error.response?.status === 503) {
+            this.errors = {
+              'non_field_error': 'Diese Funktion steht derzeit nicht zur Verfügung'
+            }
           }
         } else {
           this.errors = {

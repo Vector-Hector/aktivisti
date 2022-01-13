@@ -78,7 +78,8 @@ export default defineComponent({
                 status: poster.status,
                 opacity: props.opacity ?? ((active) ? 1 : 0.5),
                 id: poster.id,
-                poster_id: poster.poster_id
+                poster_id: poster.poster_id,
+                raw_poster_data: {...poster}
               },
               geometry: {
                 type: 'Point',
@@ -145,9 +146,9 @@ export default defineComponent({
     }
 
     const onClickPoster = (e: any) => {
-      const posterId = e.features?.[0]?.properties?.id
-      if (posterId) {
-        emit('posterClick', posterId)
+      const clickedPoster: PosterDto = JSON.parse(e.features?.[0]?.properties?.raw_poster_data)
+      if (clickedPoster) {
+        emit('posterClick', clickedPoster)
       }
     }
 

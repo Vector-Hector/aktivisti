@@ -34,6 +34,22 @@
         <QInput
           stack-label
           readonly
+          v-model="localUser.username"
+          label="Benutzer*innenname"
+          @update:model-value="saveProfileDebounced"
+        >
+          <template v-slot:after>
+            <QBtn
+              round
+              flat
+              :icon="ionPencil"
+              @click="openChangeUsernameDialog"
+            />
+          </template>
+        </QInput>
+        <QInput
+          stack-label
+          readonly
           v-model="localUser.email"
           label="E-Mail"
           @update:model-value="saveProfileDebounced"
@@ -119,8 +135,8 @@
           <h3 class="profile-section-heading">Berechtigungen</h3>
           <QSeparator class="profile-section-divider" />
           <QList>
-            <QItem v-if="user.is_superuser"><span>Du bist <b>Administrator</b></span></QItem>
-            <QItem v-if="user.roles.includes(CAMPAIGN_ADMIN)">
+            <QItem v-if="user?.is_superuser"><span>Du bist <b>Administrator</b></span></QItem>
+            <QItem v-if="user?.roles.includes(CAMPAIGN_ADMIN)">
               <span>Du bist globaler <b>Kampagnenkoordinator</b></span></QItem>
             <QItem v-for="permission in permissions" :key="permission.id">
             <span>
@@ -132,14 +148,8 @@
         </template>
         <h3 class="profile-section-heading">Persönliche Ergebnisse</h3>
         <QSeparator class="profile-section-divider" />
-        <QTable
-          flat
-          hide-pagination
-          :rows="personalMetricsRows"
-          :columns="personalMetricsColumns"
-          row-key="name"
-        />
-        <h3 class="profile-section-heading">Sicherheit / Daten</h3>
+        <PersonalMetrics/>
+        <h3 class="profile-section-heading">Account</h3>
         <QSeparator class="profile-section-divider" />
         <QList>
           <QItem>
@@ -156,6 +166,12 @@
             </QItemSection>
           </QItem>
         </QList>
+        <h3 class="profile-section-heading">Aktive Sitzungen</h3>
+        <QSeparator class="profile-section-divider" />
+        <span class="description-text">
+        Dies ist eine Liste der Geräte, die sich bei deinem Konto angemeldet haben. Widerrufe alle Sitzungen, die Du nicht kennst.
+        </span>
+        <AppSessions/>
       </div>
     </QPage>
   </QScrollArea>
@@ -173,7 +189,6 @@ import {
   QPage,
   QScrollArea,
   QSeparator,
-  QTable,
   QToggle
 } from 'quasar'
 import { ionCheckmark, ionClose, ionPencil, ionPersonCircleOutline } from '@quasar/extras/ionicons-v5'
@@ -186,16 +201,19 @@ import ChangeEmailDialog from 'components/modals/ChangeEmailDialog.vue'
 import ChangePasswordDialog from 'components/modals/ChangePasswordDialog.vue'
 import { EmailNotificationSettingsDto } from 'src/api/model/EmailNotificationSettingsDto'
 import { UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
-import { PersonalMetricsDto } from 'src/api/model/PersonalMetricsDto'
-import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { SettleDebouncer } from 'src/utils/debounce'
 import { getAuthStore } from 'src/store/AuthStore'
+import AppSessions from 'components/AppSessions.vue'
+import ChangeUsernameDialog from 'components/modals/ChangeUsernameDialog.vue'
+import PersonalMetrics from 'components/PersonalMetrics.vue'
 
 const authStore = getAuthStore()
 
 export default defineComponent({
   name: 'Profile',
   components: {
+    PersonalMetrics,
+    AppSessions,
     QAvatar,
     QInput,
     QBtn,
@@ -204,16 +222,11 @@ export default defineComponent({
     QList,
     QPage,
     QItem,
-    QTable,
     QItemSection,
     QScrollArea
   },
   async beforeRouteEnter(from, to, next) {
-    const [userResponse, personalMetricsResponse, metricsResponse] = await Promise.all([
-      apiClient.user.get('me', ['sub_association', 'email_notification_settings']),
-      apiClient.personalMetrics.list(),
-      apiClient.eventMetrics.list()
-    ])
+    const userResponse = await apiClient.user.get('me', ['sub_association', 'email_notification_settings'])
     userStore.setUser(userResponse.payload.data)
     userStore.setHomeAssociation(userResponse.payload.embedded.sub_association?.[0])
 
@@ -229,10 +242,6 @@ export default defineComponent({
       }
       // @ts-ignore
       vm.permissions = userPermissions
-      // @ts-ignore
-      vm.personalMetrics = personalMetricsResponse.payload.data
-      // @ts-ignore
-      vm.eventMetrics = metricsResponse.payload.data
     })
   },
   computed: {
@@ -254,27 +263,6 @@ export default defineComponent({
       } else {
         return null
       }
-    },
-    personalMetricsRows(): { name?: string, value: number }[] {
-      let generalMetrics = [] as { name?: string, value: number }[]
-      if (this.personalMetrics?.counts_per_metric !== undefined) {
-        generalMetrics = this.personalMetrics.counts_per_metric.map(({
-                                                                       count,
-                                                                       metric
-                                                                     }: { count: number, metric: number }) => {
-          return {
-            name: this.eventMetrics.find(({id}) => id === metric)?.name,
-            value: count
-          }
-        })
-      }
-      return [
-        ...generalMetrics,
-        {
-          name: 'Besuchte Adressen',
-          value: this.personalMetrics.completed_addresses ?? 0
-        }
-      ]
     },
     user: {
       get(): UserDto | null {
@@ -310,20 +298,6 @@ export default defineComponent({
         on_new_volunteers: true
       } as Partial<EmailNotificationSettingsDto>,
       permissions: [] as UserObjectPermissionDto[],
-      personalMetrics: {} as PersonalMetricsDto,
-      eventMetrics: {} as EventMetricDto[],
-      personalMetricsColumns: [
-        {
-          field: 'name',
-          name: 'name',
-          label: 'Ergebniss',
-          align: 'left'
-        }, {
-          field: 'value',
-          name: 'value',
-          label: 'Anzahl'
-        }
-      ]
     }
   },
   methods: {
@@ -339,6 +313,14 @@ export default defineComponent({
       }
       void this.profileSaveDebouncer.executeDebounced(() => {
         return this.saveProfile()
+      })
+    },
+    openChangeUsernameDialog() {
+      this.$q.dialog({
+        component: ChangeUsernameDialog
+      }).onOk((new_username: string) => {
+        this.localUser!.username = new_username
+        this.user!.username = new_username
       })
     },
     openChangeEmailDialog() {
@@ -380,13 +362,15 @@ export default defineComponent({
           timeout: 1500
         })
       } catch (e) {
-        notification({
-          spinner: false,
-          icon: ionClose,
-          message: `Beim speichern des Profils trat ein Fehler auf: ${e.message}`,
-          color: 'negative',
-          timeout: 1500
-        })
+        if (this.$apiClient.isApiClientError(e) || e instanceof Error){
+          notification({
+            spinner: false,
+            icon: ionClose,
+            message: `Beim speichern des Profils trat ein Fehler auf: ${e.message}`,
+            color: 'negative',
+            timeout: 1500
+          })
+        }
       }
     },
     async saveProfile(): Promise<void> {
@@ -412,7 +396,7 @@ export default defineComponent({
           timeout: 1500
         })
       } catch (e) {
-        if (e.response?.status === 400) {
+        if (this.$apiClient.isApiClientError(e) && e.response?.status === 400) {
           this.errors = e.response.data
           notification({
             spinner: false,
@@ -421,7 +405,7 @@ export default defineComponent({
             color: 'negative',
             timeout: 1500
           })
-        } else {
+        } else if (this.$apiClient.isApiClientError(e) || e instanceof Error) {
           notification({
             spinner: false,
             icon: ionClose,
@@ -439,6 +423,7 @@ export default defineComponent({
         ok: 'Account löschen',
         cancel: 'Abbrechen'
       })
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         .onOk(async () => {
           try {
             await this.$apiClient.user.delete('me')
@@ -462,6 +447,17 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import "src/css/variables";
+.container {
+  margin-bottom: 1.5em;
+}
+
+.description-text {
+  color: $grey-6;
+  font-size: 0.75rem;
+  padding: 1rem 2rem 1rem 0;
+  line-height: 1;
+  display: block;
+}
 
 .realname {
   font-weight: bold;

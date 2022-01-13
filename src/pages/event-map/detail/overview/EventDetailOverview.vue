@@ -185,76 +185,74 @@
           </QList>
         </div>
       </div>
-      <template v-if="event.event_type !== EventTypes.GENERIC">
-        <div
-          v-if="personalParticipation?.is_verified === false"
-          class="row"
-        >
-          <div v-if="!isTeamCaptainOrCoordinator" class="col-12">
-            Super, dass du mitmachen möchtest. Du hast dich für diese Aktion gemeldet. Der nächste Schritt ist zur
-            angegebenen
-            Zeit am vereinbarten Treffpunkt zu erscheinen. Ein Teamcaptain wird dich dann für diese Aktion freischalten.
-          </div>
+      <div
+        v-if="personalParticipation?.is_verified === false && event.event_type !== EventTypes.GENERIC"
+        class="row"
+      >
+        <div v-if="!isTeamCaptainOrCoordinator" class="col-12">
+          Super, dass du mitmachen möchtest. Du hast dich für diese Aktion gemeldet. Der nächste Schritt ist zur
+          angegebenen
+          Zeit am vereinbarten Treffpunkt zu erscheinen. Ein Teamcaptain wird dich dann für diese Aktion freischalten.
         </div>
-        <div
-          class="row"
-          v-if="!isLoggedIn"
-        >
-          <div class="col-12">
-            <QBtn
-              :to="{ name: 'login', query: {next: $router.resolve($route).path } }"
-              color="primary"
-              class="full-width"
-            >
-              Anmelden um mitzumachen
-            </QBtn>
-          </div>
+      </div>
+      <div
+        class="row"
+        v-if="!isLoggedIn && event.event_type !== EventTypes.GENERIC"
+      >
+        <div class="col-12">
+          <QBtn
+            :to="{ name: 'login', query: {next: $router.resolve($route).path } }"
+            color="primary"
+            class="full-width"
+          >
+            Anmelden um mitzumachen
+          </QBtn>
         </div>
-        <div
-          class="row q-col-gutter-x-md"
-          v-else
-        >
-          <div class="col-6">
-            <QBtn
-              v-if="isTeamCaptainOrCoordinator"
-              class="full-width"
-              @click="openInviteModal"
-              flat
-            >
-              Leute einladen
-            </QBtn>
-          </div>
-          <div class="col-6">
-            <QBtn
-              v-if="isMember"
-              :disabled="joinLoading"
-              color="primary"
-              @click="leave"
-              class="full-width"
-            >
-              Doch nicht dabei
-            </QBtn>
-            <QBtn
-              v-else-if="isInvited"
-              :disabled="joinLoading"
-              @click="acceptInvite"
-              color="primary"
-              class="full-width"
-            >
-              Einladung annehmen
-            </QBtn>
-            <QBtn
-              v-else-if="!isMember"
-              class="full-width"
-              :disabled="joinLoading"
-              @click="join"
-              color="primary"
-            >
-              Ich bin dabei
-            </QBtn>
-          </div>
+      </div>
+      <div
+        class="row q-col-gutter-x-md"
+        v-if="isLoggedIn"
+      >
+        <div class="col-6">
+          <QBtn
+            v-if="isTeamCaptainOrCoordinator"
+            class="full-width"
+            @click="openInviteModal"
+            flat
+          >
+            Leute einladen
+          </QBtn>
         </div>
-      </template>
+        <div class="col-6">
+          <QBtn
+            v-if="isMember"
+            :disabled="joinLoading"
+            color="primary"
+            @click="leave"
+            class="full-width"
+          >
+            Doch nicht dabei
+          </QBtn>
+          <QBtn
+            v-else-if="isInvited"
+            :disabled="joinLoading"
+            @click="acceptInvite"
+            color="primary"
+            class="full-width"
+          >
+            Einladung annehmen
+          </QBtn>
+          <QBtn
+            v-else-if="!isMember"
+            class="full-width"
+            :disabled="joinLoading"
+            @click="join"
+            color="primary"
+          >
+            Ich bin dabei
+          </QBtn>
+        </div>
+      </div>
     </div>
   </QScrollArea>
 </template>
@@ -539,6 +537,7 @@ export default defineComponent({
         message: `Das Event <b>"${this.event.name}"</b> wird gelöscht und kann nicht wiederhergestellt werden.`,
         html: true,
         cancel: true
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
       }).onOk(async () => {
         try {
           await this.$apiClient.events.delete(this.event.id.toString())
@@ -558,6 +557,7 @@ export default defineComponent({
         message: `Das Event <b>"${this.event.name}"</b> wird in eine Aktion zum Abhängen von Plakaten umgewandelt.`,
         html: true,
         cancel: true
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
       }).onOk(async () => {
         const newStartDate = new Date()
         newStartDate.setHours(newStartDate.getHours() + Math.round(newStartDate.getMinutes() / 60) + 1)

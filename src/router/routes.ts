@@ -3,7 +3,7 @@ import Login from 'src/pages/Login.vue'
 import Register from 'src/pages/Register.vue'
 import { uiStore } from 'src/store/UiStore'
 import RegistrationSucess from 'src/pages/RegistrationSucess.vue'
-import EventMap from 'src/pages/EventMap.vue'
+import MapWithSheet from 'pages/MapWithSheet.vue'
 import Imprint from 'src/pages/Imprint.vue'
 import Splash from 'src/pages/Splash.vue'
 import EventOverview from 'pages/event-map/overview/EventOverview.vue'
@@ -22,7 +22,7 @@ import EventAreaStreet from 'pages/event-map/detail/area/street/EventAreaStreet.
 import EventAreaStreetMap from 'pages/event-map/detail/area/street/EventAreaStreetMap.vue'
 import EventAreaMetrics from 'pages/event-map/detail/area/metrics/EventAreaMetrics.vue'
 import EventAreaMetricsMap from 'pages/event-map/detail/area/metrics/EventAreaMetricsMap'
-import CreateLead from 'pages/event-map/detail/area/lead/CreateLead.vue'
+import CreateLead from 'pages/CreateLead.vue'
 import Profile from 'pages/Profile.vue'
 import EditEventGeometry from 'pages/edit-event/geometry/EditEventGeometry.vue'
 import EditEventGeometryMap from 'pages/edit-event/geometry/EditEventGeometryMap.vue'
@@ -44,7 +44,14 @@ import EventDetailPosterDetail from 'pages/event-map/detail/area/posters/detail/
 import EventDetailPosterDetailMap from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetailMap.vue'
 import EventDetailPosterList from 'pages/event-map/detail/area/posters/list/EventDetailPosterList.vue'
 import EventDetailPosterListMap from 'pages/event-map/detail/area/posters/list/EventDetailPosterListMap.vue'
-import MyManagedEvents from 'pages/MyManagedEvents.vue';
+import MyManagedEvents from 'pages/MyManagedEvents.vue'
+import ManageUsers from 'pages/ManageUsers.vue'
+import OfficeOverview from 'pages/office-map/overview/OfficeOverview.vue'
+import OfficeOverviewMap from 'pages/office-map/overview/OfficeOverviewMap.vue'
+import OfficeDetail from 'pages/office-map/detail/OfficeDetail.vue'
+import OfficeDetailMap from 'pages/office-map/detail/OfficeDetailMap.vue'
+import PosterOverview from 'pages/poster-map/overview/PosterOverview.vue'
+import PosterOverviewMap from 'pages/poster-map/overview/PosterOverviewMap.vue'
 
 
 const routes = [
@@ -87,9 +94,72 @@ const routes = [
         }
       },
       {
+        path: '/offices',
+        component: MapWithSheet,
+        name: 'office-map',
+        meta: {
+          title: () => 'DIE LINKE vor Ort'
+        },
+        props: {
+          isShowingOfficeLayer: false
+        },
+        children: [
+          {
+            path: '',
+            name: 'map-office-overview',
+            components: {
+              default: OfficeOverview,
+              map: OfficeOverviewMap
+            }
+          },
+          {
+            path: ':officeId',
+            name: 'office-detail',
+            components: {
+              default: OfficeDetail,
+              map: OfficeDetailMap
+            },
+            meta: {
+              isShowBackButton: true,
+              title: () => uiStore.getState().activeTitleElements.office
+            }
+          }
+        ]
+      },
+      {
+        path: '/posters',
+        component: MapWithSheet,
+        name: 'poster-map',
+        meta: {
+          title: () => 'Plakate'
+        },
+        props: {
+          isShowingOfficeLayer: false
+        },
+        children: [
+          {
+            path: '',
+            name: 'map-poster-overview',
+            components: {
+              default: PosterOverview,
+              map: PosterOverviewMap
+            }
+          },
+        ]
+      },
+      {
+        path: '/create-lead',
+        name: 'create-lead-general',
+        component: CreateLead,
+        meta: {
+          title: () => 'Bei Linksaktiv anmelden',
+          requiresAuth: true
+        }
+      },
+      {
         path: '/events',
         redirect: {name: 'map-events-overview'},
-        component: EventMap,
+        component: MapWithSheet,
         name: 'events',
         meta: {
           title: () => 'Alle Aktionen'
@@ -339,6 +409,14 @@ const routes = [
         component: Imprint,
         meta: {
           title: () => 'Impressum'
+        }
+      },
+      {
+        path: '/manage-users',
+        name: 'manage-users',
+        component: ManageUsers,
+        meta: {
+          title: () => 'Benutzer*innen verwalten'
         }
       }
     ]

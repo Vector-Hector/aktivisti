@@ -39,9 +39,14 @@ import { QBtn } from 'quasar'
 import { uiStore } from 'src/store/UiStore'
 import SidebarBottomBackNavigation from 'components/SidebarBottomBackNavigation.vue'
 
+// If a poster is not assigned to an event area, the event area is 'undefined'
+// e.g. a path /event/<event_id>/area/undefined/... will show all posters that
+// are not assigned to an area.
+export const UNDEFINED_POSTER_AREA = 'undefined'
+
 function updateRoute(to: RouteLocation, from: RouteLocation, next: NavigationGuardNext) {
   const {posterId, areaId} = to.params
-  const parsedAreaId = areaId !== 'undefined' ? parseInt(areaId.toString()) : null
+  const parsedAreaId = areaId !== UNDEFINED_POSTER_AREA ? parseInt(areaId.toString()) : null
 
   const postersInArea = eventDetailStore.state.posters.filter(({area}) => area === parsedAreaId)
   const posterIndex = postersInArea.findIndex(
@@ -104,6 +109,7 @@ export default defineComponent({
         title: 'Plakat löschen',
         message: `Möchtest du das Plakat #${this.poster.poster_id} wirklich löschen?`,
         cancel: true
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
       }).onOk(async () => {
         try {
           await this.$apiClient.posters.delete(this.poster.id.toString())
