@@ -92,7 +92,7 @@ export default defineComponent({
       if (this.isDisabled) {
         return
       }
-      let moreEvents = await this.getEvents()
+      const moreEvents = await this.getEvents()
       let consolidatedEvents = distinctBy(this.events?.concat(moreEvents), (item: EventDto) => item.id)
       if (this.filter){
         consolidatedEvents = consolidatedEvents.filter(this.filter)
