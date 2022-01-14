@@ -278,13 +278,6 @@ export default defineComponent({
           event: this.event.id
         }))
 
-        const eventAreaDeletionPromise: Promise<any>[] = []
-        for (const oldArea of this.eventAreas){
-          eventAreaDeletionPromise.push(apiClient.eventAreas.delete(oldArea.id!.toString()))
-        }
-        await Promise.all(eventAreaDeletionPromise)
-        this.eventAreas = []
-
         const eventAreaCreationPromise: Promise<any>[] = []
         for (const area of newEventAreas) {
           eventAreaCreationPromise.push(apiClient.eventAreas.create(area))
