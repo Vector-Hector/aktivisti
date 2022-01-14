@@ -16,6 +16,8 @@
           Gebiete
         </h2>
         <QTable
+          :loading="isLoading"
+          loading-label="Lade Daten zu Gebieten"
           :auto-layout="true"
           flat
           dense
@@ -194,7 +196,7 @@ export default defineComponent({
   },
   data() {
     return {
-      loading: false,
+      isLoading: false,
       ionCopyOutline,
       ionCreateOutline,
       ionTrash,
@@ -264,6 +266,7 @@ export default defineComponent({
         }
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
       }).onOk(async (newEventAreas: EventAreaDto[]) => {
+        this.isLoading = true
         newEventAreas = newEventAreas.map((area) => ({
           ...area,
           event: this.event.id
@@ -274,8 +277,8 @@ export default defineComponent({
           eventAreaCreationPromise.push(apiClient.eventAreas.create(area))
         }
         const responses = await Promise.all(eventAreaCreationPromise)
-        responses.forEach((response) => this.eventAreas.push(response.payload.data)
-        )
+        responses.forEach((response) => this.eventAreas.push(response.payload.data))
+        this.isLoading = false
       })
     }
   }
