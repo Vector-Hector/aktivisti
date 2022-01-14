@@ -211,18 +211,6 @@ export default defineComponent({
       }
     },
     columns() {
-      let detailsColumns
-      if (this.event.event_type === EventTypes.POSTERS) {
-        detailsColumns = {
-          name: 'details',
-          label: 'Plakate'
-        }
-      } else {
-        detailsColumns = {
-          name: 'details',
-          label: 'Adressen'
-        }
-      }
       return [{
         name: 'color',
         label: 'Farbe',
@@ -234,7 +222,10 @@ export default defineComponent({
         label: 'Name',
         field: 'name',
         align: 'left'
-      }, detailsColumns, {
+      }, {
+        name: 'details',
+        label: this.event.event_type === EventTypes.POSTERS ? 'Plakate' : 'Adressen'
+      }, {
         name: 'actions',
         label: '',
         field: null,
