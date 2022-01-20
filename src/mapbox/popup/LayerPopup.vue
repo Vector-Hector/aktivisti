@@ -6,7 +6,7 @@
 <script lang="ts">
 
 import { defineComponent, inject, onUnmounted, ref } from 'vue'
-import { Popup } from 'mapbox-gl'
+import { Offset, Popup } from 'mapbox-gl'
 import { MapInject } from 'src/mapbox/Map.vue'
 
 export default defineComponent({
@@ -15,6 +15,10 @@ export default defineComponent({
     showCloseButton: {
       type: Boolean,
       default: true,
+    },
+    offset:{
+      type: Array,
+      default: () => [0, -24]
     }
   },
   setup(props) {
@@ -25,7 +29,7 @@ export default defineComponent({
 
     function showPopup(lng: number, lat: number, object: any) {
       passedObject.value = object
-      popup.value = new Popup({offset: [0, -24], closeButton: props.showCloseButton})
+      popup.value = new Popup({offset: props.offset as Offset, closeButton: props.showCloseButton})
         .setLngLat([lng, lat])
         .setDOMContent(popupElement.value!)
         .addTo(map.value)
