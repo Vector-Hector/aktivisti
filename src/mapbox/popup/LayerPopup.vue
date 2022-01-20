@@ -11,7 +11,13 @@ import { MapInject } from 'src/mapbox/Map.vue'
 
 export default defineComponent({
   name: 'LayerPopup',
-  setup() {
+  props: {
+    showCloseButton: {
+      type: Boolean,
+      default: true,
+    }
+  },
+  setup(props) {
     const map = inject(MapInject)!
     const popupElement = ref<HTMLElement | null>(null)
     const popup = ref<Popup | null>(null)
@@ -19,7 +25,7 @@ export default defineComponent({
 
     function showPopup(lng: number, lat: number, object: any) {
       passedObject.value = object
-      popup.value = new Popup({offset: [0, -24]})
+      popup.value = new Popup({offset: [0, -24], closeButton: props.showCloseButton})
         .setLngLat([lng, lat])
         .setDOMContent(popupElement.value!)
         .addTo(map.value)
