@@ -8,6 +8,7 @@ import { CampaignGeometryCollectionsDto } from 'src/api/model/CampaignGeometryCo
 import { uuidv4 } from 'src/utils/uuid'
 import { bbox } from '@turf/turf'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import GeometryPopup from 'src/mapbox/popup/layerPopups/GeometryPopup.vue'
 
 interface Props {
   /**
@@ -33,6 +34,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const map = inject(MapInject)!.value
+const geometryPopup = ref(null)
 let overlayIds: string[] = []
 let hoveredGeometry = {
   layerId: null as string | null,
@@ -220,7 +222,12 @@ function handleGeometryClick(e: any): void {
  */
 function handleGeometryMouseOver(e: any): void {
   if (e.features?.length > 0) {
-    const geom_feature = e.features[0]
+    const {properties, id: layerId, source: sourceId} = e.features?.[0]
+    const metadata = JSON.parse(properties?.raw_metadata)
+    // @ts-ignore
+    geometryPopup.value.remove()
+    // @ts-ignore
+    geometryPopup.value.showPopup(metadata, e.lngLat)
     if (hoveredGeometry.sourceId !== null && hoveredGeometry.layerId !== null) {
       map.setFeatureState(
         {source: hoveredGeometry.sourceId, id: hoveredGeometry.layerId},
@@ -228,8 +235,8 @@ function handleGeometryMouseOver(e: any): void {
       )
     }
     hoveredGeometry = {
-      layerId: geom_feature.id,
-      sourceId: geom_feature.source
+      layerId: layerId,
+      sourceId: sourceId
     }
     map.setFeatureState(
       {source: hoveredGeometry.sourceId!, id: hoveredGeometry.layerId!},
@@ -254,6 +261,8 @@ function handleGeometryLeave(): void {
     layerId: null,
     sourceId: null
   }
+  // @ts-ignore
+  geometryPopup.value.remove()
 }
 
 /**
@@ -268,4 +277,5 @@ function fitMap(featureCollection: FeatureCollection): void {
 
 <template>
   <span />
+  <GeometryPopup ref="geometryPopup" />
 </template>
