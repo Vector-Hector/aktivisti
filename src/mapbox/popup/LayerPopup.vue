@@ -30,6 +30,9 @@ export default defineComponent({
         .setDOMContent(popupElement.value!)
         .addTo(map.value)
     }
+    function remove() {
+      popup.value?.remove()
+    }
 
     onUnmounted(() => {
       popup.value?.remove()
@@ -38,7 +41,8 @@ export default defineComponent({
       passedObject,
       popup,
       popupElement,
-      showPopup
+      showPopup,
+      remove
     }
   }
 })
