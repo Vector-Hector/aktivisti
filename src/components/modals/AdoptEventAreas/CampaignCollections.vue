@@ -24,10 +24,18 @@ function handleGeometryClick(geometryId: number, geometry: Geometry): void {
     // We're using hat, to get the same schema for the future_id like mapbox see:
     // https://github.com/mapbox/mapbox-gl-draw/blob/2b9ce3e58e3695c018a48b6fca78ed1a9d1b67c2/src/feature_types/feature.js#L8
     feature_id: hat(),
-    color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+    color: generateRandomHexColorCode(),
     geometry: geometry
   }
   emit('onGeometryClick', [eventArea])
+}
+
+/**
+ * Generates a random hex color code from range #000000 to #FFFFFF
+ */
+function generateRandomHexColorCode(){
+  // 16777215 = (16^6 - 1), which is total count of possible hex of length 6 (hex color codes)
+  return `#${Math.floor(Math.random() * 16777215).toString(16)}`
 }
 
 </script>
