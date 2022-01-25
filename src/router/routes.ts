@@ -28,6 +28,7 @@ import EditEventGeometry from 'pages/edit-event/geometry/EditEventGeometry.vue'
 import EditEventGeometryMap from 'pages/edit-event/geometry/EditEventGeometryMap.vue'
 import EditEventDetails from 'pages/edit-event/details/EditEventDetails.vue'
 import CreateEvent from 'pages/CreateEvent.vue'
+import CreateEventRequestPermissions from 'pages/CreateEventRequestPermissions.vue'
 import PrintEvent from 'pages/PrintEvent.vue'
 import App from 'src/App.vue'
 import Print from 'src/Print.vue'
@@ -309,7 +310,15 @@ const routes = [
         meta: {
           title: () => 'Aktion erstellen',
           requiresAuth: true
-
+        }
+      },
+      {
+        path: '/events/request-permissions',
+        component: CreateEventRequestPermissions,
+        name: 'create-event-request-permissions',
+        meta: {
+          title: () => 'Aktion erstellen',
+          requiresAuth: true
         }
       },
       {

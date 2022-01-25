@@ -135,6 +135,17 @@
           </MenuLink>
         </div>
         <div
+          v-else
+          class="menu-item"
+        >
+          <MenuLink
+            :to="{ name: 'create-event-request-permissions' }"
+          >
+            <QIcon :name="farCalendarPlus" />
+            <span class="menu-item-link-text">Aktion erstellen</span>
+          </MenuLink>
+        </div>
+        <div
           v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
           class="menu-item"
         >
