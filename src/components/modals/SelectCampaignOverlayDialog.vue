@@ -114,7 +114,10 @@ defineExpose({
                 </QItemLabel>
               </QItemSection>
             </QItem>
-            <QItem clickable v-for="collection in collections" :key="collection.id"
+            <QItem clickable v-for="collection in collections"
+                   :key="collection.id"
+                   :active="props.preselectedCollection?.id === collection.id"
+                   active-class="active-item"
                    @click="() => onDialogOK(collection)">
               <QItemSection>
                 <QItemLabel>
@@ -138,6 +141,11 @@ defineExpose({
 
 <style lang="scss" scoped>
 @import 'src/css/variables.scss';
+
+.active-item {
+  color: black;
+  background: #f2fbf2
+}
 
 .campaign-collections {
   display: flex;
