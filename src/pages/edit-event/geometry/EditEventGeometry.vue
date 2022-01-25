@@ -16,6 +16,8 @@
           Gebiete
         </h2>
         <QTable
+          :loading="isLoading"
+          loading-label="Lade Daten zu Gebieten"
           :auto-layout="true"
           flat
           dense
@@ -166,7 +168,7 @@ import { EditEventBus, START_DRAW_AREA } from 'src/store/EditEventStore'
 import { StepControls } from 'pages/EditEvent.vue'
 import LocationSelect from 'components/LocationSelect.vue'
 import { EventTypes } from 'src/api/model/EventTypes'
-import AdoptEventAreas from 'components/modals/AdoptEventAreas.vue'
+import AdoptEventAreas from 'components/modals/AdoptEventAreas/AdoptEventAreas.vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { apiClient } from 'src/api/ApiClient'
 
@@ -194,7 +196,7 @@ export default defineComponent({
   },
   data() {
     return {
-      loading: false,
+      isLoading: false,
       ionCopyOutline,
       ionCreateOutline,
       ionTrash,
@@ -211,18 +213,6 @@ export default defineComponent({
       }
     },
     columns() {
-      let detailsColumns
-      if (this.event.event_type === EventTypes.POSTERS) {
-        detailsColumns = {
-          name: 'details',
-          label: 'Plakate'
-        }
-      } else {
-        detailsColumns = {
-          name: 'details',
-          label: 'Adressen'
-        }
-      }
       return [{
         name: 'color',
         label: 'Farbe',
@@ -234,7 +224,10 @@ export default defineComponent({
         label: 'Name',
         field: 'name',
         align: 'left'
-      }, detailsColumns, {
+      }, {
+        name: 'details',
+        label: this.event.event_type === EventTypes.POSTERS ? 'Plakate' : 'Adressen'
+      }, {
         name: 'actions',
         label: '',
         field: null,
@@ -268,27 +261,24 @@ export default defineComponent({
     openAdoptAreasModal() {
       this.$q.dialog({
         component: AdoptEventAreas,
+        componentProps: {
+          campaigns: this.campaigns.filter(({id}) => this.event.campaigns.includes(id))
+        }
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      }).onOk(async (eventAreas: EventAreaDto[])=>  {
-        eventAreas = eventAreas.map((area) => ({
+      }).onOk(async (newEventAreas: EventAreaDto[]) => {
+        this.isLoading = true
+        newEventAreas = newEventAreas.map((area) => ({
           ...area,
           event: this.event.id
         }))
 
-        const eventAreaDeletionPromise: Promise<any>[] = []
-        for (const oldArea of this.eventAreas){
-          eventAreaDeletionPromise.push(apiClient.eventAreas.delete(oldArea.id!.toString()))
-        }
-        await Promise.all(eventAreaDeletionPromise)
-        this.eventAreas = []
-
         const eventAreaCreationPromise: Promise<any>[] = []
-        for (const area of eventAreas) {
+        for (const area of newEventAreas) {
           eventAreaCreationPromise.push(apiClient.eventAreas.create(area))
         }
         const responses = await Promise.all(eventAreaCreationPromise)
-        responses.forEach((response)=> this.eventAreas.push(response.payload.data)
-        )
+        responses.forEach((response) => this.eventAreas.push(response.payload.data))
+        this.isLoading = false
       })
     }
   }
