@@ -21,11 +21,11 @@
           v-model="localUser.email"
           label="E-Mail"
         />
-        <QInput
-          stack-label
-          v-model="this.homeAssociationName"
-          label="Kreisverband"
-        />
+        <SubAssociationFilter
+          v-model="selectedSubAssociation"
+          :multiple="false"
+          :options="subAssociations">
+        </SubAssociationFilter>
         <QInput
           stack-label
           type="textarea"
@@ -50,7 +50,8 @@ import {
   QScrollArea,
 } from 'quasar'
 import { userStore } from 'src/store/UserStore'
-import {SubAssociationDto} from 'src/api/model/SubAssociationDto'
+import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
+import SubAssociationFilter from 'components/filterInput/filters/SubAssociationFilter.vue'
 
 export default defineComponent({
   name: 'CreateEventRequestPermissions',
@@ -58,13 +59,16 @@ export default defineComponent({
     QInput,
     QBtn,
     QScrollArea,
-    QPage
+    QPage,
+    SubAssociationFilter
   },
   data() {
     return {
       message: '',
       localUser: cloneDeep(userStore.getState().user),
-      errors: {}
+      errors: {},
+      subAssociations: [] as SubAssociationDto[],
+      selectedSubAssociation: 0
     }
   },
   computed: {
@@ -75,17 +79,21 @@ export default defineComponent({
       set(value: SubAssociationDto) {
         userStore.setHomeAssociation(value)
       }
-    },
-    homeAssociationName(): string {
-      return this.homeAssociation ? this.homeAssociation.name : 'kein Kreisverband'
     }
   },
+  async created() {
+    await this.getSubAssociations()
+    this.selectedSubAssociation = this.homeAssociation ? this.homeAssociation.id : 0
+  },
   methods: {
+    async getSubAssociations() {
+      this.subAssociations = (await this.$apiClient.subAssociations.list()).payload.data
+    },
     async requestCoordinatorPermissions() {
       try {
         await this.$apiClient.contact.post({
           message: this.message,
-          sub_association: this.localUser?.sub_association ? this.localUser?.sub_association : 0
+          sub_association: this.selectedSubAssociation
         })
       }
       catch (e) {
