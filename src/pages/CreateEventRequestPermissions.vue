@@ -4,7 +4,7 @@
   >
     <QPage>
       <div class="container">
-        <p>
+        <p class="description-text">
           Du willst eine Aktion in Deinem Kreisverband planen und andere dazu einladen?
           Dann brauchst Du Koordination-Rechte.
           Schreibe uns kurz, was Du für Veranstaltungen planen willst - wir melden uns bei Dir.
@@ -34,6 +34,7 @@
         />
         <QBtn
           label="Koordinatiosrechte beantragen"
+          color="negative"
           @click="requestCoordinatorPermissions"
         />
       </div>
@@ -110,3 +111,12 @@ export default defineComponent({
   }
 })
 </script>
+<style lang="scss" scoped>
+.description-text {
+  color: $text-primary;
+  font-size: 1rem;
+  padding: 1rem 2rem 1rem 0;
+  line-height: 1;
+  display: block;
+}
+</style>
