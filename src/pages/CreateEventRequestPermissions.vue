@@ -73,13 +73,8 @@ export default defineComponent({
     }
   },
   computed: {
-    homeAssociation: {
-      get(): SubAssociationDto | null {
-        return userStore.getState().homeAssociation
-      },
-      set(value: SubAssociationDto) {
-        userStore.setHomeAssociation(value)
-      }
+    homeAssociation() : SubAssociationDto | null {
+      return userStore.getState().homeAssociation
     }
   },
   async created() {
