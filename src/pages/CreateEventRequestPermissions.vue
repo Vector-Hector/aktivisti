@@ -36,12 +36,6 @@
           label="Koordinatiosrechte beantragen"
           @click="requestCoordinatorPermissions"
         />
-        Benutzername: vorausgefüllt
-        E-Mail-Adresse: vorausgefüllt
-        Kreisverband: vorausgefüllt, änderbar
-        Button: Koordinationsrechte beantragen
-
-
       </div>
     </QPage>
   </QScrollArea>
