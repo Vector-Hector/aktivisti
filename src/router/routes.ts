@@ -317,7 +317,7 @@ const routes = [
         component: CreateEventRequestPermissions,
         name: 'create-event-request-permissions',
         meta: {
-          title: () => 'Aktion erstellen',
+          title: () => 'Koordinator*innen-Rechte beantragen',
           requiresAuth: true
         }
       },
