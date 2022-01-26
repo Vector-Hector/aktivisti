@@ -100,6 +100,11 @@ export default defineComponent({
       catch (e) {
         if (this.$apiClient.isApiClientError(e) && e.response?.status === 400) {
           this.errors = e.response.data
+          this.$q.notify({
+            message: 'Deine Nachricht konnte nicht versendet werden, bitte prüfe deine Angaben.',
+            color: 'negative',
+            timeout: 1500
+          })
         } else {
           this.$q.notify({
             color: 'negative',
