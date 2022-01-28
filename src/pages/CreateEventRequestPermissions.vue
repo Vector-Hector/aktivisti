@@ -24,13 +24,17 @@
         <SubAssociationFilter
           v-model="selectedSubAssociation"
           :multiple="false"
-          :options="subAssociations">
-        </SubAssociationFilter>
+          :options="subAssociations"
+          :error="!!errors.sub_association?.length"
+          :error-message="errors.sub_association?.[0]"
+        />
         <QInput
           stack-label
           type="textarea"
           v-model="message"
           label="Deine Nachricht"
+          :error="!!errors.message?.length"
+          :error-message="errors.message?.[0]"
         />
         <QBtn
           label="Koordinatiosrechte beantragen"
@@ -94,7 +98,6 @@ export default defineComponent({
           this.$q.notify({
             message: 'Deine Nachricht konnte nicht versendet werden, bitte prüfe deine Angaben.',
             color: 'negative',
-            timeout: 1500
           })
         } else {
           this.$q.notify({
