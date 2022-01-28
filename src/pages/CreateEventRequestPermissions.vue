@@ -91,6 +91,10 @@ export default defineComponent({
           message: this.message,
           sub_association: this.selectedSubAssociation
         })
+        this.$q.notify({
+          color: 'positive',
+          message: 'Vielen Dank für deine Nachricht. Wir melden uns bald bei dir.'
+        })
       }
       catch (e) {
         if (this.$apiClient.isApiClientError(e) && e.response?.status === 400) {
