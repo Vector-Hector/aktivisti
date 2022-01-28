@@ -124,21 +124,18 @@
           </MenuLink>
         </div>
         <div
-          v-if="hasManagePermission"
+          v-if="isLoggedIn"
           class="menu-item"
         >
           <MenuLink
+            v-if="hasManagePermission"
             :to="{ name: 'create-event' }"
           >
             <QIcon :name="farCalendarPlus" />
             <span class="menu-item-link-text">Aktion erstellen</span>
           </MenuLink>
-        </div>
-        <div
-          v-else
-          class="menu-item"
-        >
           <MenuLink
+            v-else
             :to="{ name: 'create-event-request-permissions' }"
           >
             <QIcon :name="farCalendarPlus" />
