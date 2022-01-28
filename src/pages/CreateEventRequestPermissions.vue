@@ -72,14 +72,10 @@ export default defineComponent({
       selectedSubAssociation: 0
     }
   },
-  computed: {
-    homeAssociation() : SubAssociationDto | null {
-      return userStore.getState().homeAssociation
-    }
-  },
   async created() {
     await this.getSubAssociations()
-    this.selectedSubAssociation = this.homeAssociation ? this.homeAssociation.id : 0
+    const homeAssociation = userStore.getState().homeAssociation
+    this.selectedSubAssociation = homeAssociation ? homeAssociation.id : 0
   },
   methods: {
     async getSubAssociations() {
