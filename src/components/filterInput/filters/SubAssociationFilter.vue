@@ -1,11 +1,11 @@
 <template>
   <FilterInput
     label="Bezirks/Kreisverband"
-    multiple
+    :multiple = multiple
     :model-value="modelValue"
     @update:model-value="(value)=>this.$emit('update:modelValue', value)"
     use-input
-    use-chips
+    :use-chips = multiple
     emit-value
     map-options
     clearable
@@ -41,6 +41,10 @@ export default defineComponent({
       },
       modelValue: {
         type: Array as PropType<number[]>
+      },
+      multiple: {
+        type: Boolean as PropType<boolean>,
+        default: true
       }
     },
     created() {

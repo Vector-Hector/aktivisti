@@ -4,7 +4,6 @@
   >
     <QPage>
       <div class="container">
-
         <div class="user-header row">
           <div class="col-shrink col">
             <QAvatar size="6em" font-size="4rem" :icon="ionPersonCircleOutline" />
