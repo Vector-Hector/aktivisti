@@ -20,20 +20,16 @@
         class="menu-group highlighted"
       >
         <div class="user-widget">
-          <div class="user-widget-avatar">
-            <QIcon :name="ionPersonCircleOutline" class="avatar-placeholder" />
-          </div>
-          <div class="user-widget-details">
-            <span v-if="userFullname.length>0" class="name">{{ userFullname }}</span>
-            <span class="username">{{ userName }}</span>
-          </div>
-        </div>
-        <div class="menu-item">
           <MenuLink
             to="/profile"
           >
-            <QIcon :name="ionPersonOutline" />
-            <span class="menu-item-link-text">Mein Profil</span>
+            <div class="user-widget-avatar">
+              <QIcon :name="ionPersonCircleOutline" class="avatar-placeholder" />
+            </div>
+            <div class="user-widget-details">
+              <span v-if="userFullname.length>0" class="name">{{ userFullname }}</span>
+              <span class="username">{{ userName }}</span>
+            </div>
           </MenuLink>
         </div>
       </div>
