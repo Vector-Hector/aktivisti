@@ -64,6 +64,18 @@
       </div>
       <QScrollArea class="scroll-area">
       <div class="menu-group">
+        <div
+          v-if="isLoggedIn"
+          class="menu-item"
+        >
+          <MenuLink
+            :to="{ name: 'my-participations' }"
+          >
+            <QIcon :name="ionCalendarOutline" />
+            <span class="menu-item-link-text">Meine Teilnahmen</span>
+            <OpenInvitationsBadge />
+          </MenuLink>
+        </div>
         <div class="menu-item">
           <MenuLink
             to="/events"
@@ -94,18 +106,6 @@
               name="img:static/icons/poster.svg"
             />
             <span class="menu-item-link-text">Plakate</span>
-          </MenuLink>
-        </div>
-        <div
-          v-if="isLoggedIn"
-          class="menu-item"
-        >
-          <MenuLink
-            :to="{ name: 'my-participations' }"
-          >
-            <QIcon :name="ionCalendarOutline" />
-            <span class="menu-item-link-text">Meine Teilnahmen</span>
-            <OpenInvitationsBadge />
           </MenuLink>
         </div>
         <div
