@@ -66,7 +66,11 @@ export default defineComponent({
   emits: ['clickOnEvent','update:events', 'update:pagination'],
   computed: {
     isDisabled(): boolean {
-      return this.pagination?.total ? (this.pagination?.total <= this.events.length) : false
+      let filteredEventsCount = 0
+      if (this.filter){
+        filteredEventsCount = this.events.filter(this.filter).length
+      }
+      return this.pagination?.total ? (this.pagination?.total <= this.events.length + filteredEventsCount) : false
     }
   },
   data() {
