@@ -5,6 +5,7 @@ import { QCardSection } from 'quasar'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { apiClient } from 'src/api/ApiClient'
 import hat from 'hat'
+import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 
 interface Emits {
   (e: 'onEventClick', eventAreas: Partial<EventAreaDto>[]): void
@@ -24,6 +25,10 @@ async function handleClickOnEvent(event: EventDto): Promise<void> {
   }))
   emit('onEventClick', clonedEventAreas)
 }
+function excludeCurrentEvent(event: EventDto) {
+  const {event: currentEvent} = useEditEventMixin()
+  return event.id !== currentEvent.value.id
+}
 
 </script>
 <template>
@@ -33,7 +38,7 @@ async function handleClickOnEvent(event: EventDto): Promise<void> {
       </span>
   </QCardSection>
   <QCardSection class="section">
-    <ManagedEvents @clickOnEvent="handleClickOnEvent" />
+    <ManagedEvents @clickOnEvent="handleClickOnEvent" :filter="excludeCurrentEvent"/>
   </QCardSection>
 </template>
 
