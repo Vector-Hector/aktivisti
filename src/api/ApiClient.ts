@@ -33,6 +33,7 @@ import { CampaignGeometriesDto } from 'src/api/model/CampaignGeometriesDto'
 import { CampaignGeometryCollectionsDto } from 'src/api/model/CampaignGeometryCollectionsDto'
 import { ContactRoute } from 'src/api/ContactRoute'
 import { ReportPosterRoute } from 'src/api/ReportPosterRoute'
+import { ReportEventMetricsRoute } from 'src/api/ReportEventMetricsRoute'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -84,6 +85,7 @@ export class ApiClient {
   campaignGeometryCollections = new ApiRoute<CampaignGeometryCollectionsDto>(this.baseURL, 'campaign-geometry-collections/', this.axiosInstance)
   contact = new ContactRoute(this.baseURL, 'contact/', this.axiosInstance)
   reportPoster = new ReportPosterRoute(this.baseURL, 'report/poster/', this.axiosInstance)
+  reportEventMetrics = new ReportEventMetricsRoute(this.baseURL, 'report/metrics/', this.axiosInstance)
 }
 
 export const apiClient = new ApiClient()
