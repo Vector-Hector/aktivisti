@@ -30,7 +30,7 @@ import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import FilterInput from 'components/filterInput/FilterInput.vue'
 
 export default defineComponent({
-    name: 'SubAssociationFilter',
+    name: 'MultipleSubAssociationFilter',
     components: {
       FilterInput
     },
