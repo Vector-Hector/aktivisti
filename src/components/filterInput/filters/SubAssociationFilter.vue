@@ -14,16 +14,16 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
-import { CampaignDto } from 'src/api/model/CampaignDto'
+import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 
 export default defineComponent({
-  name: 'CampaignFilter',
+  name: 'SubAssociationFilter',
   components: {
     FilterInput
   },
   props: {
     options: {
-      type: Array as PropType<CampaignDto[]>,
+      type: Array as PropType<SubAssociationDto[]>,
       required: true
     },
     modelValue: {
@@ -40,17 +40,17 @@ export default defineComponent({
     },
     label: {
       type: String,
-      default: 'Kampagnen'
+      default: 'Bezirks/Kreisverband'
     }
   },
   emits: ['update:modelValue'],
   computed: {
-    extendedOptions(): Partial<CampaignDto>[] {
+    extendedOptions(): Partial<SubAssociationDto>[] {
       if (this.showAllCampaigns) {
         return [
           {
             id: 0,
-            name: 'Alle Kampagnen'
+            name: 'Alle Bezirks/Kreisverbände'
           },
           ...this.options
         ]
