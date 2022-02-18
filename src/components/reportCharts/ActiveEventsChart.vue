@@ -7,6 +7,7 @@ import { eventTypeOptions } from 'src/api/model/EventTypes'
 import { ReportEventDto } from 'src/api/model/ReportEventDto'
 import { ApexDataUtil, ApexDatePoint } from 'src/api/model/ApexDatePoint'
 import { ReportType, ReportTypeUtil } from 'src/api/model/ReportType'
+import { defaultApexChartOptions } from 'boot/apex'
 
 
 interface Props {
@@ -30,10 +31,13 @@ const {
 } = useReportScope(props.campaignId, props.stateAssociationId, props.subAssociationId)
 
 const series = ref<ApexSeriesEntity[]>([])
+const isLoading = ref<boolean>(false)
 
 onBeforeMount(async () => {
+  isLoading.value = true
   await fetchData()
   await fetchReportEvents()
+  isLoading.value = false
 })
 
 async function fetchReportEvents() {
@@ -42,17 +46,19 @@ async function fetchReportEvents() {
     state_association: stateAssociation.value ? stateAssociation.value.id : undefined,
     sub_association: subAssociation.value ? subAssociation.value.id : undefined
   })).payload.data
-  series.value = []
-  const firstDateOfChart = new Date(report[0].day)
-  const lastDateOfChart = new Date(report[report.length - 1].day)
-  for (const eventType of eventTypeOptions) {
-    const eventTypeData = report
-      .filter((entry) => entry.type === eventType.key)
-      .map(toApexDatePoint)
-    series.value.push({
-      name: eventType.label,
-      data: ApexDataUtil.fillMissingDataPoints(eventTypeData, firstDateOfChart, lastDateOfChart)
-    })
+  if (report.length > 0) {
+    series.value = []
+    const firstDateOfChart = new Date(report[0].day)
+    const lastDateOfChart = new Date(report[report.length - 1].day)
+    for (const eventType of eventTypeOptions) {
+      const eventTypeData = report
+        .filter((entry) => entry.type === eventType.key)
+        .map(toApexDatePoint)
+      series.value.push({
+        name: eventType.label,
+        data: ApexDataUtil.fillMissingDataPoints(eventTypeData, firstDateOfChart, lastDateOfChart)
+      })
+    }
   }
 }
 
@@ -69,6 +75,9 @@ const chartOptions = computed(() => {
     },
     subtitle: {
       text: `${campaign.value?.name}${stateAssociation.value?.name ? ' > ' + stateAssociation.value.name : ''}${subAssociation.value?.name ? ' > ' + subAssociation.value.name : ''}`
+    },
+    noData: {
+      text: isLoading.value ? 'Lade Daten...' : defaultApexChartOptions.noData?.text
     }
   }
 })

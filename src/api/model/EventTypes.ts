@@ -20,3 +20,8 @@ export const eventTypeOptions: { key: string, label: string }[] = [{
 }
 ]
 
+export class EventTypesUtil {
+  static getLabel(eventType: EventTypes): string {
+    return eventTypeOptions.find(({key}) => key === eventType)!.label
+  }
+}
