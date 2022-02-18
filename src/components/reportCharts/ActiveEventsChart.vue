@@ -1,0 +1,78 @@
+<script setup lang="ts">
+import { useReportScope } from 'components/reportCharts/reportChartScope'
+import { computed, onBeforeMount, ref } from 'vue'
+import { apiClient } from 'src/api/ApiClient'
+import VueApexCharts from 'vue3-apexcharts'
+import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { ReportEventDto } from 'src/api/model/ReportEventDto'
+import { ApexDataUtil, ApexDatePoint } from 'src/api/model/ApexDatePoint'
+import { ReportType, ReportTypeUtil } from 'src/api/model/ReportType'
+
+
+interface Props {
+  campaignId: number,
+  stateAssociationId?: number,
+  subAssociationId?: number,
+}
+
+const props = defineProps<Props>()
+
+interface ApexSeriesEntity {
+  name: string,
+  data: ApexDatePoint[]
+}
+
+const {
+  campaign,
+  stateAssociation,
+  subAssociation,
+  fetchData
+} = useReportScope(props.campaignId, props.stateAssociationId, props.subAssociationId)
+
+const series = ref<ApexSeriesEntity[]>([])
+
+onBeforeMount(async () => {
+  await fetchData()
+  await fetchReportEvents()
+})
+
+async function fetchReportEvents() {
+  const report = (await apiClient.reportEvents.list({
+    campaign: campaign.value!.id,
+    state_association: stateAssociation.value ? stateAssociation.value.id : undefined,
+    sub_association: subAssociation.value ? subAssociation.value.id : undefined
+  })).payload.data
+  series.value = []
+  const firstDateOfChart = new Date(report[0].day)
+  const lastDateOfChart = new Date(report[report.length - 1].day)
+  for (const eventType of eventTypeOptions) {
+    const eventTypeData = report
+      .filter((entry) => entry.type === eventType.key)
+      .map(toApexDatePoint)
+    series.value.push({
+      name: eventType.label,
+      data: ApexDataUtil.fillMissingDataPoints(eventTypeData, firstDateOfChart, lastDateOfChart)
+    })
+  }
+}
+
+const toApexDatePoint = (reportEvent: ReportEventDto) => ({x: reportEvent.day, y: reportEvent.count})
+
+
+const chartOptions = computed(() => {
+  return {
+    chart: {
+      stacked: true
+    },
+    title: {
+      text: `${ReportTypeUtil.getLabel(ReportType.ACTIVE_EVENTS)}`
+    },
+    subtitle: {
+      text: `${campaign.value?.name}${stateAssociation.value?.name ? ' > ' + stateAssociation.value.name : ''}${subAssociation.value?.name ? ' > ' + subAssociation.value.name : ''}`
+    }
+  }
+})
+</script>
+<template>
+  <VueApexCharts type="area" :options="chartOptions" :series="series"/>
+</template>
