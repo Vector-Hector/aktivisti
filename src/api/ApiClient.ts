@@ -35,6 +35,7 @@ import { ContactRoute } from 'src/api/ContactRoute'
 import { ReportPosterRoute } from 'src/api/ReportPosterRoute'
 import { ReportEventMetricsRoute } from 'src/api/ReportEventMetricsRoute'
 import { ReportEventsRoute } from 'src/api/ReportEventsRoute'
+import { ReportActiveUsersRoute } from 'src/api/ReportActiveUsersRoute'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -88,6 +89,7 @@ export class ApiClient {
   reportPoster = new ReportPosterRoute(this.baseURL, 'report/poster/', this.axiosInstance)
   reportEventMetrics = new ReportEventMetricsRoute(this.baseURL, 'report/metrics/', this.axiosInstance)
   reportEvents = new ReportEventsRoute(this.baseURL, 'report/events/', this.axiosInstance)
+  reportActiveUsers = new ReportActiveUsersRoute(this.baseURL, 'report/active-users/', this.axiosInstance)
 }
 
 export const apiClient = new ApiClient()
