@@ -5,7 +5,7 @@ export enum EventTypes {
   FLYERS = 'F'
 }
 
-export const eventTypeOptions: { key: string, label: string }[] = [{
+export const eventTypeOptions: {key: EventTypes, label: string}[] = [{
   key: EventTypes.DOOR_TO_DOOR,
   label: 'Haustürgespräch'
 }, {
