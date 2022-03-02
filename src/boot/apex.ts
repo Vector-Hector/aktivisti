@@ -10,7 +10,18 @@ export const defaultApexChartOptions: ApexOptions = {
   chart: {
     stacked: true,
     locales: [de],
-    defaultLocale: 'de'
+    defaultLocale: 'de',
+    toolbar: {
+      show: true,
+      tools: {
+        download: '<img src="static/ionicons/download-outline.svg" width="25px">',
+        zoom: '<img src="static/ionicons/crop-outline.svg" width="25px">',
+        zoomin: '<img src="static/ionicons/add-circle-outline.svg" width="25px">',
+        zoomout: '<img src="static/ionicons/remove-circle-outline.svg" width="25px">',
+        pan: '<img src="static/ionicons/move-outline.svg" width="25px">',
+        reset: '<img src="static/ionicons/arrow-undo-outline.svg"  width="25px">'
+      }
+    }
   },
   noData: {
     text: 'Bisher liegen keine Daten vor',
