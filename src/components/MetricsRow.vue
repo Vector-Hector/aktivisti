@@ -9,7 +9,7 @@
         @update:model-value="$emit('update:modelValue', $event)"
       />
     </div>
-    <div class="col-12 col-sm-4 col-md-3 target-col">
+    <div v-if="target" class="col-12 col-sm-4 col-md-3 target-col">
       <div class="target"> von {{ target }}</div>
     </div>
   </div>
