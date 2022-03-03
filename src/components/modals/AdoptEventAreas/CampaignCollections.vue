@@ -6,6 +6,7 @@ import CampaignCollectionOverlay from 'src/mapbox/CampaignCollectionOverlay.vue'
 import { Geometry } from 'geojson'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import hat from 'hat'
+import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 
 interface Props {
   collection: CampaignGeometryCollectionsDto
@@ -17,10 +18,12 @@ interface Emits {
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
+const {eventAreas} = useEditEventMixin()
 
-function handleGeometryClick(geometryId: number, geometry: Geometry): void {
+function handleGeometryClick(geometryId: number, geometry: Geometry, metadata: any): void {
+  const nameKey = Object.keys(metadata).find((key) => key.toUpperCase() === 'NAME')
   const eventArea: Partial<EventAreaDto> = {
-    name: props.collection.name,
+    name: nameKey ? metadata[nameKey] : `Gebiet ${eventAreas.value.length + 1}`,
     // We're using hat, to get the same schema for the future_id like mapbox see:
     // https://github.com/mapbox/mapbox-gl-draw/blob/2b9ce3e58e3695c018a48b6fca78ed1a9d1b67c2/src/feature_types/feature.js#L8
     feature_id: hat(),
