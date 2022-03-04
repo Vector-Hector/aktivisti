@@ -92,7 +92,7 @@ export default defineComponent({
   data() {
     return {
       ionChevronDown,
-      userPermissions: null as UserPermissionItem[] | null
+      userPermissions: [] as UserPermissionItem[]
     }
   },
   async created() {
@@ -139,7 +139,7 @@ export default defineComponent({
     async updateObjectPermission(permission: ExtendedPermissionTypeOption, user: UserPermissionItem) {
       if (user.object_permission_id && permission.key === PermissionCodename.NONE) {
         await this.$apiClient.userPermissions.delete(user.object_permission_id.toString())
-        this.userPermissions = this.userPermissions!.filter(({username}) => username !== user.username)
+        this.userPermissions = this.userPermissions.filter(({username}) => username !== user.username)
         this.$q.notify({
           color: 'positive',
           message: 'Der Benutzer*in wurden die Rechte für das Verwaltungsgebiet entzogen'
@@ -168,12 +168,12 @@ export default defineComponent({
       user.permission_name = permission.label
       user.permission_codename = permission.key
     }
-  },
-  computed: {}
+  }
 })
 </script>
 
 <style lang="scss" scoped>
+
 .manage-users-list-item {
   padding: 8px 0;
 }
@@ -181,4 +181,5 @@ export default defineComponent({
 .permission-dropdown {
   min-width: 10rem;
 }
+
 </style>
