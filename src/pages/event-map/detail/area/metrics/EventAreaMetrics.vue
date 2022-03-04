@@ -20,6 +20,7 @@
         :key="metricRecord.metric"
         :model-value="metricValues[metricRecord.id]"
         :label="getMetricForId(metricRecord.metric).name"
+        :target="metricRecord.target ? metricRecord.target : 0"
         class="metrics-input"
         @update:modelValue="updateMetricValue(metricRecord.id, $event)"
       />
