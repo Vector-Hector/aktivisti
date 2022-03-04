@@ -12,7 +12,7 @@
         :model-value="filterParams.campaigns?.[0]"
         :options="campaigns"
         @update:model-value="updateCampaign" />
-      <SubAssociationFilter
+      <MultipleSubAssociationFilter
         :model-value="filterParams.sub_association"
         @update:model-value="updateSubAssociations"
         :options="subAssociations"
@@ -31,12 +31,12 @@ import { PosterFilterParams } from 'src/api/params/PosterFilterParams'
 import { PosterStatus } from 'src/api/model/PosterDto'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import CampaignFilter from 'components/filterInput/filters/CampaignFilter.vue'
-import SubAssociationFilter from 'components/filterInput/filters/SubAssociationFilter.vue'
+import MultipleSubAssociationFilter from 'components/filterInput/filters/MultipleSubAssociationFilter.vue'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 
 export default defineComponent({
   name: 'PosterFilter',
-  components: {SubAssociationFilter, PosterStatusFilter, CollapsibleFilters, CampaignFilter},
+  components: {MultipleSubAssociationFilter, PosterStatusFilter, CollapsibleFilters, CampaignFilter},
   emits: ['update:filterParams'],
   props: {
     filterParams: {

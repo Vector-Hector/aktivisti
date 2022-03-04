@@ -21,7 +21,7 @@
           v-model="localUser.email"
           label="E-Mail"
         />
-        <SubAssociationFilter
+        <MultipleSubAssociationFilter
           v-model="selectedSubAssociation"
           :multiple="false"
           :options="subAssociations"
@@ -56,7 +56,7 @@ import {
 } from 'quasar'
 import { userStore } from 'src/store/UserStore'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
-import SubAssociationFilter from 'components/filterInput/filters/SubAssociationFilter.vue'
+import MultipleSubAssociationFilter from 'components/filterInput/filters/MultipleSubAssociationFilter.vue'
 
 export default defineComponent({
   name: 'CreateEventRequestPermissions',
@@ -65,7 +65,7 @@ export default defineComponent({
     QBtn,
     QScrollArea,
     QPage,
-    SubAssociationFilter
+    MultipleSubAssociationFilter
   },
   data() {
     return {

@@ -53,6 +53,7 @@ import OfficeDetail from 'pages/office-map/detail/OfficeDetail.vue'
 import OfficeDetailMap from 'pages/office-map/detail/OfficeDetailMap.vue'
 import PosterOverview from 'pages/poster-map/overview/PosterOverview.vue'
 import PosterOverviewMap from 'pages/poster-map/overview/PosterOverviewMap.vue'
+import Reports from 'pages/Reports.vue'
 
 
 const routes = [
@@ -92,6 +93,15 @@ const routes = [
         meta: {
           requiresAuth: true,
           title: () => 'Aktionen verwalten'
+        }
+      },
+      {
+        path: '/reports',
+        component: Reports,
+        name: 'reports',
+        meta: {
+          requiresAuth: true,
+          title: () => 'Statistiken'
         }
       },
       {

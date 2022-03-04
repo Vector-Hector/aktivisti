@@ -1,1 +1,9 @@
 /* Customizations to the designer theme should be defined here */
+
+.apexcharts-toolbar > div {
+  margin: 5px 5px;
+}
+
+.apexcharts-toolbar {
+  max-width: 200px !important;
+}

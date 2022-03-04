@@ -14,23 +14,23 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
-import { CampaignDto } from 'src/api/model/CampaignDto'
+import { StateAssociationDto } from 'src/api/model/StateAssociationDto'
 
 export default defineComponent({
-  name: 'CampaignFilter',
+  name: 'StateAssociationFilter',
   components: {
     FilterInput
   },
   props: {
     options: {
-      type: Array as PropType<CampaignDto[]>,
+      type: Array as PropType<StateAssociationDto[]>,
       required: true
     },
     modelValue: {
       type: Number as PropType<number>,
       default: 0
     },
-    showAllCampaigns: {
+    showAllStateAssociation: {
       type: Boolean,
       default: true
     },
@@ -40,17 +40,17 @@ export default defineComponent({
     },
     label: {
       type: String,
-      default: 'Kampagnen'
+      default: 'Landesverbände'
     }
   },
   emits: ['update:modelValue'],
   computed: {
-    extendedOptions(): Partial<CampaignDto>[] {
-      if (this.showAllCampaigns) {
+    extendedOptions(): Partial<StateAssociationDto>[] {
+      if (this.showAllStateAssociation) {
         return [
           {
             id: 0,
-            name: 'Alle Kampagnen'
+            name: 'Alle Landesverbände'
           },
           ...this.options
         ]
