@@ -17,9 +17,9 @@
             <LocationSelect
               v-model:location="location"
               v-model:location-description="location_description"
-              :is-draggable-marker-shown=false
+              :is-draggable-marker-shown="!$q.platform.is.mobile"
             >
-              <template v-slot:hintText>
+              <template v-slot:hintText v-if="$q.platform.is.mobile">
                 Bitte gib entweder eine Adresse in das Suchfeld ein oder nutze die
                   <span style="white-space: nowrap">
                     Ortungsfunktion
@@ -29,6 +29,9 @@
                     />
                   </span>
                 um die Position dieses Standorts auf der Karte festzulegen.
+              </template>
+              <template v-else v-slot:hintText>
+                Bitte geben Sie entweder eine Adresse in das Suchfeld ein oder verschieben Sie den rot hervorgehobenen Pin auf der Karte, um die Position dieses Standorts auf der Karte festzulegen.
               </template>
             </LocationSelect>
           </div>
