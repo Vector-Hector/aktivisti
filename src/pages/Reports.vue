@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { QBtn, QPage, QScrollArea, useQuasar } from 'quasar'
+import { QBtn, QCard, QPage, QScrollArea, useQuasar } from 'quasar'
 import { ref } from 'vue'
 import SelectReportDialog from 'components/modals/SelectReportDialog/SelectReportDialog.vue'
 import ChartFabric from 'components/reportCharts/ChartFabric.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { userStore } from 'src/store/UserStore'
 import { ReportChartData } from 'src/api/model/ReportChartData'
+import { ionStatsChartOutline } from '@quasar/extras/ionicons-v5'
 
 const reportCharts = ref<ReportChartData[]>([])
 reportCharts.value = userStore.state.reportCharts
@@ -41,7 +42,7 @@ function handleCloseChart(chart_uuid: string) {
     class="d-flex flex-fill"
   >
     <QPage class="flex-fill">
-      <div class="container report">
+      <div class="container report q-pa-sm q-gutter-md">
         <ChartFabric
           v-for="chart in reportCharts"
           :key="chart.uuid"
@@ -52,13 +53,16 @@ function handleCloseChart(chart_uuid: string) {
           :reportType="chart.reportType"
           @onClose="handleCloseChart"
         />
-        <QBtn
-          color="primary"
-          class="full-width"
-          @click="openReportSelection"
-        >
-          Hinzufügen
-        </QBtn>
+        <QCard class="add-chart">
+          <QBtn
+            outline
+            :icon="ionStatsChartOutline"
+            label="Graph hinzufügen"
+            class="button-add"
+            color="primary"
+            @click="openReportSelection"
+          />
+        </QCard>
       </div>
     </QPage>
   </QScrollArea>
@@ -71,5 +75,14 @@ function handleCloseChart(chart_uuid: string) {
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.add-chart {
+  background-color: #F4F5F8;
+  min-height: 180px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 </style>
