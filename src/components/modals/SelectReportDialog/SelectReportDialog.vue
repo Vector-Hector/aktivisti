@@ -3,6 +3,7 @@ import {
   QCard,
   QDialog,
   QCardActions,
+  QCardSection,
   QBtn
 } from 'quasar'
 import { useDialogPluginComponent } from 'quasar'
@@ -53,24 +54,22 @@ function handleAdd() {
   <QDialog
     ref="dialogRef"
     @hide="onDialogHide"
+    :full-width="$q.screen.lt.md"
   >
     <QCard>
-      <QCardActions>
-        <QCard>
-          <LevelSelection
-            @onSelect="handleLevelSelect"
-          />
-          <ReportFilter
-            :model-value="reportType"
-            @update:model-value="handleReportTypeSelect"
-          />
-          <QCardActions align="right">
-            <QBtn color="primary" label="Abbrechen" @click="onDialogCancel" />
-            <QBtn color="primary" label="Hinzufügen" @click="handleAdd" />
-          </QCardActions>
-        </QCard>
+      <QCardSection>
+        <LevelSelection
+          @onSelect="handleLevelSelect"
+        />
+        <ReportFilter
+          :model-value="reportType"
+          @update:model-value="handleReportTypeSelect"
+        />
+      </QCardSection>
+      <QCardActions align="right">
+        <QBtn color="primary" outline label="Abbrechen" @click="onDialogCancel" />
+        <QBtn color="primary" label="Hinzufügen" @click="handleAdd" />
       </QCardActions>
-
     </QCard>
   </QDialog>
 

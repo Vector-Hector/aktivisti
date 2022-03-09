@@ -3,6 +3,9 @@ import VueApexCharts from 'vue3-apexcharts'
 import de from 'apexcharts/dist/locales/de.json'
 import { ApexOptions } from 'apexcharts'
 
+// Change tooltip of default download tooltip
+de.options.toolbar.menu = 'Download'
+
 // define the default chart options
 // see https://apexcharts.com/docs/options/annotations/
 //

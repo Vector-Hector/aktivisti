@@ -10,7 +10,7 @@ enum _ReportTypeLabel {
   METRICS_POSTER = 'Plakate',
   METRICS_FLYER = 'Flyer',
   METRICS_DOOR2DOOR = 'Haustürgespräche',
-  ACTIVE_EVENTS = 'aktive Veranstaltungen',
+  ACTIVE_EVENTS = 'Aktive Veranstaltungen',
   ACTIVE_USERS = 'Aktivierung Teilnehmer*innen'
 }
 
