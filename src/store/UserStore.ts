@@ -6,6 +6,7 @@ import { parseIfPossible } from 'src/utils/json'
 import { PermissionCodename, UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
 import { EventTypes } from 'src/api/model/EventTypes'
 import { EventStatus } from 'src/api/model/EventStatus'
+import { ReportChartData } from 'src/api/model/ReportChartData'
 
 
 export enum SortOption {
@@ -27,10 +28,12 @@ interface UserState {
   bbox: BBox2d | null
   filterPreferences: EventFilterPreferences
   permissions: UserObjectPermissionDto[]
+  reportCharts: ReportChartData[]
 }
 
 const KEY_BBOX = 'KEY_BBOX'
 const KEY_FILTERPREFERENCES = 'KEY_FILTERPREFERENCES'
+const KEY_REPORT_CHARTS = 'KEY_REPORT_CHARTS'
 
 class UserStore extends Store<UserState> {
   protected data(): UserState {
@@ -45,7 +48,8 @@ class UserStore extends Store<UserState> {
         sorting: SortOption.START_DATE,
         eventType: undefined,
         status: EventStatus.ACTIVE
-      }
+      },
+      reportCharts: [],
     }
   }
 
@@ -54,6 +58,9 @@ class UserStore extends Store<UserState> {
 
     const bboxString = localStorage.getItem(KEY_BBOX)
     data.bbox = bboxString ? JSON.parse(bboxString) : null
+
+    const reportChartsString = localStorage.getItem(KEY_REPORT_CHARTS)
+    data.reportCharts = reportChartsString ? JSON.parse(reportChartsString) : []
 
     const filterPreferencesString = localStorage.getItem(KEY_FILTERPREFERENCES)
     const filterPreferences = parseIfPossible(filterPreferencesString) as EventFilterPreferences | null
@@ -111,6 +118,15 @@ class UserStore extends Store<UserState> {
     this.state.permissions = permissions
   }
 
+  public setReportCharts(reportChats: ReportChartData[] | null){
+    this.state.reportCharts = reportChats ? reportChats : []
+    if (reportChats) {
+      localStorage.setItem(KEY_REPORT_CHARTS, JSON.stringify(this.state.reportCharts))
+    } else {
+      localStorage.removeItem(KEY_REPORT_CHARTS)
+    }
+  }
+
   public hasAtLeastOneManagePermission() {
     if (this.state.user?.roles.includes(CAMPAIGN_ADMIN) || this.state.user?.is_superuser) {
       return true
@@ -131,6 +147,11 @@ class UserStore extends Store<UserState> {
 
   public setUser(user: UserDto) {
     this.state.user = user
+  }
+
+  public reset(){
+    localStorage.removeItem(KEY_REPORT_CHARTS)
+    super.reset()
   }
 }
 

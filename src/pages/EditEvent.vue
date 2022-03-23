@@ -11,9 +11,14 @@
       <Map
         :bounding-box="bbox"
       >
-        <router-view
-          name="map"
-        />
+        <template v-slot:top-right>
+          <div class="flex column q-gutter-y-sm">
+            <CampaignCollectionOverlayControl />
+            <router-view
+              name="map"
+            />
+          </div>
+        </template>
       </Map>
       <MapOverlayProxy
         :title="title"
@@ -41,6 +46,7 @@ import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 import { userStore } from 'src/store/UserStore'
 import { posterListStore } from 'src/store/PosterListStore'
+import CampaignCollectionOverlayControl from 'src/mapbox/CampaignCollectionOverlayControl.vue'
 
 const Door2DoorAndFlyerSteps = [{
   label: 'Einstellungen',
@@ -80,6 +86,7 @@ export interface StepControls {
 export default defineComponent({
   name: 'EditEvent',
   components: {
+    CampaignCollectionOverlayControl,
     RouteStepper,
     MapContainer,
     QPage,

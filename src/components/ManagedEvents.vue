@@ -19,6 +19,7 @@
       class="event-list"
       ref="eventList"
       @clickOnEvent="handleClickOnEvent"
+      :filter="$props.filter"
     />
   </div>
 </template>

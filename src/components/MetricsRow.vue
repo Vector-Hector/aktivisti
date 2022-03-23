@@ -1,14 +1,17 @@
 <template>
   <div class="row q-col-gutter-y-sm">
-      <div class="col-12 col-sm-6 col-md-4 label-col">
-        <div class="label">{{ label }}</div>
-      </div>
-      <div class="col-12 col-sm-6 col-md-8">
-        <CounterInput
-          :model-value="modelValue"
-          @update:model-value="$emit('update:modelValue', $event)"
-        />
-      </div>
+    <div class="col-12 col-sm-4 col-md-3 label-col">
+      <div class="label">{{ label }}</div>
+    </div>
+    <div class="col-12 col-sm-4 col-md-6">
+      <CounterInput
+        :model-value="modelValue"
+        @update:model-value="$emit('update:modelValue', $event)"
+      />
+    </div>
+    <div v-if="target" class="col-12 col-sm-4 col-md-3 target-col">
+      <div class="target"> von {{ target }}</div>
+    </div>
   </div>
 </template>
 
@@ -30,6 +33,10 @@ export default defineComponent({
     label: {
       type: String as PropType<string>,
       required: true
+    },
+    target: {
+      type: Number as PropType<number>,
+      default: 0
     }
   },
   emits: ['update:modelValue']
@@ -77,5 +84,16 @@ input[type=number] {
 
 .label {
   font-weight: bold;
+}
+
+.target {
+  font-size: 1.3rem;
+}
+
+.target-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 </style>

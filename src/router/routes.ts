@@ -28,6 +28,7 @@ import EditEventGeometry from 'pages/edit-event/geometry/EditEventGeometry.vue'
 import EditEventGeometryMap from 'pages/edit-event/geometry/EditEventGeometryMap.vue'
 import EditEventDetails from 'pages/edit-event/details/EditEventDetails.vue'
 import CreateEvent from 'pages/CreateEvent.vue'
+import CreateEventRequestPermissions from 'pages/CreateEventRequestPermissions.vue'
 import PrintEvent from 'pages/PrintEvent.vue'
 import App from 'src/App.vue'
 import Print from 'src/Print.vue'
@@ -52,6 +53,7 @@ import OfficeDetail from 'pages/office-map/detail/OfficeDetail.vue'
 import OfficeDetailMap from 'pages/office-map/detail/OfficeDetailMap.vue'
 import PosterOverview from 'pages/poster-map/overview/PosterOverview.vue'
 import PosterOverviewMap from 'pages/poster-map/overview/PosterOverviewMap.vue'
+import Reports from 'pages/Reports.vue'
 
 
 const routes = [
@@ -91,6 +93,15 @@ const routes = [
         meta: {
           requiresAuth: true,
           title: () => 'Aktionen verwalten'
+        }
+      },
+      {
+        path: '/reports',
+        component: Reports,
+        name: 'reports',
+        meta: {
+          requiresAuth: true,
+          title: () => 'Statistiken'
         }
       },
       {
@@ -309,7 +320,15 @@ const routes = [
         meta: {
           title: () => 'Aktion erstellen',
           requiresAuth: true
-
+        }
+      },
+      {
+        path: '/events/request-permissions',
+        component: CreateEventRequestPermissions,
+        name: 'create-event-request-permissions',
+        meta: {
+          title: () => 'Koordinator*innen-Rechte beantragen',
+          requiresAuth: true
         }
       },
       {

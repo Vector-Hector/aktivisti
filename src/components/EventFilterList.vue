@@ -9,12 +9,12 @@
     :model-value="filterParams.campaigns?.[0]"
     :options="campaigns"
     @update:model-value="updateCampaign" />
-  <SubAssociationFilter
+  <MultipleSubAssociationFilter
     v-if="isSubAssociationFilterable"
     :model-value="filterParams.sub_association"
     @update:model-value="updateSubAssociations"
     :options="subAssociations">
-  </SubAssociationFilter>
+  </MultipleSubAssociationFilter>
   <SortOrderFilter
     v-if="isSortOrderConfigurable"
     :model-value="filterParams.order_by"
@@ -39,7 +39,7 @@ import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { EventTypes } from 'src/api/model/EventTypes'
 import { EventFilterParams } from 'src/api/params/EventFilterParams'
-import SubAssociationFilter from 'components/filterInput/filters/SubAssociationFilter.vue'
+import MultipleSubAssociationFilter from 'components/filterInput/filters/MultipleSubAssociationFilter.vue'
 import CampaignFilter from 'components/filterInput/filters/CampaignFilter.vue'
 import EventStatusFilter from 'components/filterInput/filters/EventStatusFilter.vue'
 import { EventStatus } from 'src/api/model/EventStatus'
@@ -55,7 +55,7 @@ export default defineComponent({
     SortOrderFilter,
     EventStatusFilter,
     CampaignFilter,
-    SubAssociationFilter,
+    MultipleSubAssociationFilter,
   },
   props: {
     filterParams: {

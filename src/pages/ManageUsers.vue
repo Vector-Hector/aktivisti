@@ -1,86 +1,93 @@
 <template>
-  <QPage class="flex-fill">
+  <QPage class="flex-fill scrollbar">
     <div class="container">
       <PageLoadingSpinner v-if="loading" />
       <div v-else class="manage-users-content">
-        <QSelect
-          label="Auf welcher Ebene möchtest du Benutzer*innen verwalten"
-          filled
-          :dropdownIcon="ionChevronDown"
-          :model-value="selectedContentType"
-          @update:model-value="handleContentTypeSelect"
-          map-options
-          :options="contentTypeOptions"
-          option-label="label"
-          option-value="id"
-          :disable="!isAbleToManageStateAssociations"
-        />
-        <div class="level-wrapper">
+        <div class="header">
           <QSelect
-            v-if="isManagingState"
-            class="filter-dropdown"
-            :label="`Für welchen ${ContentTypesDisplayNames.STATE_ASSOCIATION} möchtest du Benutzer*innen verwalten`"
-            :dropdownIcon="ionChevronDown"
+            label="Auf welcher Ebene möchtest du Benutzer*innen verwalten"
             filled
-            :model-value="selectedState"
-            @update:model-value="selectStateAssociation"
-            use-input
-            map-options
-            hide-selected
-            fill-input
-            input-debounce="0"
-            :options="suggestedStateAssociations"
-            @filter="filterStateAssociations"
-            option-value="id"
-            option-label="name"
-            :disable="myStateAssociations.length===1"
-          >
-            <template v-slot:no-option>
-              <q-item>
-                <q-item-section class="text-grey">
-                  Kein Verband gefunden
-                </q-item-section>
-              </q-item>
-            </template>
-          </QSelect>
-          <QSelect
-            v-if="isManagingSubAssociation"
-            class="filter-dropdown"
-            :label="`Für welchen ${ContentTypesDisplayNames.SUB_ASSOCIATION} möchtest du Benutzer*innen verwalten`"
             :dropdownIcon="ionChevronDown"
-            filled
-            :model-value="selectedSubAssociation"
-            @update:model-value="selectSubAssociation"
-            use-input
+            :model-value="selectedContentType"
+            @update:model-value="handleContentTypeSelect"
             map-options
-            hide-selected
-            fill-input
-            input-debounce="0"
-            :options="suggestedSubAssociations"
-            @filter="filterSubAssociations"
+            :options="contentTypeOptions"
+            option-label="label"
             option-value="id"
-            option-label="name"
-            :disable="mySubAssociations.length===1"
+            :disable="!isAbleToManageStateAssociations"
+          />
+          <div class="level-wrapper">
+            <QSelect
+              v-if="isManagingState"
+              class="filter-dropdown"
+              :label="`Für welchen ${ContentTypesDisplayNames.STATE_ASSOCIATION} möchtest du Benutzer*innen verwalten`"
+              :dropdownIcon="ionChevronDown"
+              filled
+              :model-value="selectedState"
+              @update:model-value="selectStateAssociation"
+              use-input
+              map-options
+              hide-selected
+              fill-input
+              input-debounce="0"
+              :options="suggestedStateAssociations"
+              @filter="filterStateAssociations"
+              option-value="id"
+              option-label="name"
+              :disable="myStateAssociations.length===1"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Kein Verband gefunden
+                  </q-item-section>
+                </q-item>
+              </template>
+            </QSelect>
+            <QSelect
+              v-if="isManagingSubAssociation"
+              class="filter-dropdown"
+              :label="`Für welchen ${ContentTypesDisplayNames.SUB_ASSOCIATION} möchtest du Benutzer*innen verwalten`"
+              :dropdownIcon="ionChevronDown"
+              filled
+              :model-value="selectedSubAssociation"
+              @update:model-value="selectSubAssociation"
+              use-input
+              map-options
+              hide-selected
+              fill-input
+              input-debounce="0"
+              :options="suggestedSubAssociations"
+              @filter="filterSubAssociations"
+              option-value="id"
+              option-label="name"
+              :disable="mySubAssociations.length===1"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Kein Verband gefunden
+                  </q-item-section>
+                </q-item>
+              </template>
+            </QSelect>
+          </div>
+          <div
+            class="user-management-controls"
+            v-if="(isManagingSubAssociation && selectedSubAssociation) || (isManagingState && selectedState)"
           >
-            <template v-slot:no-option>
-              <q-item>
-                <q-item-section class="text-grey">
-                  Kein Verband gefunden
-                </q-item-section>
-              </q-item>
-            </template>
-          </QSelect>
+            <UserPermissionAdding
+              :content-type="selectedContentType"
+              :objectId="isManagingSubAssociation ? selectedSubAssociation.id : selectedState.id"
+              :permission-type-conditional-options="permissionOptionsForNewUsers"
+              @submit="userSubmitted"
+            />
+        </div>
         </div>
         <div
-          class="user-management-section"
+          class="user-management-list"
           v-if="(isManagingSubAssociation && selectedSubAssociation) || (isManagingState && selectedState)"
         >
-          <UserPermissionAdding
-            :content-type="selectedContentType"
-            :objectId="isManagingSubAssociation ? selectedSubAssociation.id : selectedState.id"
-            :permission-type-conditional-options="permissionOptionsForNewUsers"
-            @submit="userSubmitted"
-          />
           <UserPermissionList
             ref="userPermissionList"
             :content-type="selectedContentType"
@@ -352,6 +359,10 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 
+.scrollbar {
+  overflow-y: auto;
+}
+
 .subassociations-section-heading {
   font-size: 1.3rem;
   margin: 1rem 0 0 0;
@@ -362,11 +373,19 @@ export default defineComponent({
   margin: 1rem 0 0 0;
 }
 
+.header {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 1000;
+}
+
 .level-wrapper {
   margin: 1rem 0 0 0;
 }
 
-.user-management-section {
+.user-management-controls {
   margin: 1rem 0 0 0;
 }
+
 </style>

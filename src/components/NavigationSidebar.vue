@@ -20,20 +20,16 @@
         class="menu-group highlighted"
       >
         <div class="user-widget">
-          <div class="user-widget-avatar">
-            <QIcon :name="ionPersonCircleOutline" class="avatar-placeholder" />
-          </div>
-          <div class="user-widget-details">
-            <span v-if="userFullname.length>0" class="name">{{ userFullname }}</span>
-            <span class="username">{{ userName }}</span>
-          </div>
-        </div>
-        <div class="menu-item">
           <MenuLink
             to="/profile"
           >
-            <QIcon :name="ionPersonOutline" />
-            <span class="menu-item-link-text">Mein Profil</span>
+            <div class="user-widget-avatar">
+              <QIcon :name="ionPersonCircleOutline" class="avatar-placeholder" />
+            </div>
+            <div class="user-widget-details">
+              <span v-if="userFullname.length>0" class="name">{{ userFullname }}</span>
+              <span class="username">{{ userName }}</span>
+            </div>
           </MenuLink>
         </div>
       </div>
@@ -67,96 +63,113 @@
         </div>
       </div>
       <QScrollArea class="scroll-area">
-      <div class="menu-group">
-        <div class="menu-item">
-          <MenuLink
-            to="/events"
+        <div class="menu-group">
+          <div
+            v-if="isLoggedIn"
+            class="menu-item"
           >
-            <QIcon
-              :name="ionCalendarClearOutline"
-            />
-            <span class="menu-item-link-text">Alle Aktionen</span>
-          </MenuLink>
-        </div>
-        <div class="menu-item">
-          <MenuLink
-            to="/offices"
+            <MenuLink
+              :to="{ name: 'my-participations' }"
+            >
+              <QIcon :name="ionCalendarOutline" />
+              <span class="menu-item-link-text">Meine Teilnahmen</span>
+              <OpenInvitationsBadge />
+            </MenuLink>
+          </div>
+          <div class="menu-item">
+            <MenuLink
+              to="/events"
+            >
+              <QIcon
+                :name="ionCalendarClearOutline"
+              />
+              <span class="menu-item-link-text">Alle Aktionen</span>
+            </MenuLink>
+          </div>
+          <div class="menu-item">
+            <MenuLink
+              to="/offices"
+            >
+              <QIcon
+                :name="ionHomeOutline"
+              />
+              <span class="menu-item-link-text">DIE LINKE vor Ort</span>
+            </MenuLink>
+          </div>
+          <div
+            v-if="hasManagePermission"
+            class="menu-item">
+            <MenuLink
+              to="/posters"
+            >
+              <QIcon
+                name="img:static/icons/poster.svg"
+              />
+              <span class="menu-item-link-text">Plakate</span>
+            </MenuLink>
+          </div>
+          <div
+            v-if="hasManagePermission"
+            class="menu-item"
           >
-            <QIcon
-              :name="ionHomeOutline"
-            />
-            <span class="menu-item-link-text">DIE LINKE vor Ort</span>
-          </MenuLink>
-        </div>
-        <div
-          v-if="hasManagePermission"
-          class="menu-item">
-          <MenuLink
-            to="/posters"
+            <MenuLink
+              :to="{ name: 'my-managed-events' }"
+            >
+              <QIcon :name="ionCreateOutline" />
+              <span class="menu-item-link-text">Aktion verwalten</span>
+            </MenuLink>
+          </div>
+          <div
+            v-if="hasManagePermission"
+            class="menu-item"
           >
-            <QIcon
-              name="img:static/icons/poster.svg"
-            />
-            <span class="menu-item-link-text">Plakate</span>
-          </MenuLink>
-        </div>
-        <div
-          v-if="isLoggedIn"
-          class="menu-item"
-        >
-          <MenuLink
-            :to="{ name: 'my-participations' }"
+            <MenuLink :to="{ name: 'reports'}">
+              <QIcon :name="ionStatsChartOutline" />
+              <span class="menu-item-link-text">Statistiken</span>
+            </MenuLink>
+          </div>
+          <div
+            v-if="isLoggedIn"
+            class="menu-item"
           >
-            <QIcon :name="ionCalendarOutline" />
-            <span class="menu-item-link-text">Meine Teilnahmen</span>
-            <OpenInvitationsBadge />
-          </MenuLink>
-        </div>
-        <div
-          v-if="hasManagePermission"
-          class="menu-item"
-        >
-          <MenuLink
-            :to="{ name: 'my-managed-events' }"
+            <MenuLink
+              v-if="hasManagePermission"
+              :to="{ name: 'create-event' }"
+            >
+              <QIcon :name="farCalendarPlus" />
+              <span class="menu-item-link-text">Aktion erstellen</span>
+            </MenuLink>
+            <MenuLink
+              v-else
+              :to="{ name: 'create-event-request-permissions' }"
+            >
+              <QIcon :name="farCalendarPlus" />
+              <span class="menu-item-link-text">Aktion erstellen</span>
+            </MenuLink>
+          </div>
+          <div
+            v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
+            class="menu-item"
           >
-            <QIcon :name="ionCreateOutline" />
-            <span class="menu-item-link-text">Aktion verwalten</span>
-          </MenuLink>
-        </div>
-        <div
-          v-if="hasManagePermission"
-          class="menu-item"
-        >
-          <MenuLink
-            :to="{ name: 'create-event' }"
+            <MenuLink
+              :to="{ name: 'manage-users'}"
+            >
+              <QIcon :name="ionPeopleOutline" />
+              <span class="menu-item-link-text">Benutzer*innen verwalten</span>
+            </MenuLink>
+          </div>
+          <div
+            v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
+            class="menu-item"
           >
-            <QIcon :name="farCalendarPlus" />
-            <span class="menu-item-link-text">Aktion erstellen</span>
-          </MenuLink>
+            <MenuLink
+              :to="{ name: 'create-lead-general' }"
+            >
+              <QIcon :name="ionPersonAddOutline" />
+              <span class="menu-item-link-text">Kontakt registrieren</span>
+            </MenuLink>
+          </div>
         </div>
-        <div
-          v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
-          class="menu-item"
-        >
-          <MenuLink
-            :to="{ name: 'manage-users'}"
-          >
-            <QIcon :name="ionPeopleOutline" />
-            <span class="menu-item-link-text">Benutzer*innen verwalten</span>
-          </MenuLink>
-        </div>
-        <div
-          v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
-          class="menu-item"
-        >
-          <MenuLink
-            :to="{ name: 'create-lead-general' }"
-          >
-            <QIcon :name="ionPersonAddOutline" />
-            <span class="menu-item-link-text">Kontakt registrieren</span>
-          </MenuLink>
-        </div>
-      </div>
 
         <div class="menu-group menu-bottom">
 
@@ -215,7 +228,11 @@ import {
   ionMenu,
   ionPersonCircleOutline,
   ionPersonOutline,
-  ionPeopleOutline, ionHomeOutline, ionPersonAddOutline, ionHelpCircleOutline
+  ionPeopleOutline,
+  ionHomeOutline,
+  ionPersonAddOutline,
+  ionHelpCircleOutline,
+  ionStatsChartOutline
 } from '@quasar/extras/ionicons-v5'
 import { QBtn, QDrawer, QIcon, QScrollArea } from 'quasar'
 import { farCalendarPlus, farIdCard } from '@quasar/extras/fontawesome-v5'
@@ -247,7 +264,8 @@ export default defineComponent({
       ionPersonCircleOutline,
       ionPersonOutline,
       ionPeopleOutline,
-      ionPersonAddOutline
+      ionPersonAddOutline,
+      ionStatsChartOutline
     }
   },
   computed: {

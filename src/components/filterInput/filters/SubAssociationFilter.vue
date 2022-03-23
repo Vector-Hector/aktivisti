@@ -1,76 +1,68 @@
 <template>
   <FilterInput
-    label="Bezirks/Kreisverband"
-    multiple
+    :label="label"
     :model-value="modelValue"
-    @update:model-value="(value)=>this.$emit('update:modelValue', value)"
-    use-input
-    use-chips
+    @update:model-value="updateModelValue"
+    :options="extendedOptions"
     emit-value
     map-options
-    clearable
-    input-debounce="0"
-    :options="suggestedOptions"
-    @filter="filterOptions"
     option-value="id"
     option-label="name"
-  >
-    <template v-slot:no-option>
-      <q-item>
-        <q-item-section class="text-grey">
-          Kein Verband gefunden
-        </q-item-section>
-      </q-item>
-    </template>
-  </FilterInput>
+    :disable="disable"
+  />
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import FilterInput from 'components/filterInput/FilterInput.vue'
+import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 
 export default defineComponent({
-    name: 'SubAssociationFilter',
-    components: {
-      FilterInput
+  name: 'SubAssociationFilter',
+  components: {
+    FilterInput
+  },
+  props: {
+    options: {
+      type: Array as PropType<SubAssociationDto[]>,
+      required: true
     },
-    props: {
-      options: {
-        type: Array as PropType<SubAssociationDto[]>,
-        required: true
-      },
-      modelValue: {
-        type: Array as PropType<number[]>
-      }
+    modelValue: {
+      type: Number as PropType<number>,
+      default: 0
     },
-    created() {
-      this.suggestedOptions = this.options
+    showAllCampaigns: {
+      type: Boolean,
+      default: true
     },
-    data() {
-      return {
-        suggestedOptions: [] as SubAssociationDto[]
-      }
+    disable: {
+      type: Boolean,
+      default: false
     },
-    emits: ['update:modelValue'],
-    methods: {
-      filterOptions(value: string, update: any) {
-        if (!value) {
-          update(() => {
-            this.suggestedOptions = this.options
-          })
-          return
-        }
-        update(() => {
-          const lowercasedValue = value.toLowerCase()
-          this.suggestedOptions = this.options.filter(({name}) => name.toLowerCase().includes(lowercasedValue))
-        })
-      }
-    },
-    watch: {
-      options() {
-        this.suggestedOptions = this.options
+    label: {
+      type: String,
+      default: 'Bezirks/Kreisverband'
+    }
+  },
+  emits: ['update:modelValue'],
+  computed: {
+    extendedOptions(): Partial<SubAssociationDto>[] {
+      if (this.showAllCampaigns) {
+        return [
+          {
+            id: 0,
+            name: 'Alle Bezirks/Kreisverbände'
+          },
+          ...this.options
+        ]
+      } else {
+        return this.options
       }
     }
+  },
+  methods: {
+    updateModelValue(value: number) {
+      this.$emit('update:modelValue', value > 0 ? value : undefined)
+    }
   }
-)
+})
 </script>

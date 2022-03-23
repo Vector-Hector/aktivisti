@@ -12,6 +12,7 @@
             <GeolocationControl
               :poi-location="poiLocation"
             />
+            <CampaignCollectionOverlayControl v-if="isLoggedIn"/>
             <ResetRotateControl />
           </div>
         </template>
@@ -52,6 +53,8 @@ import { eventDetailStore } from 'src/store/EventDetailStore'
 import { LocationDto } from 'src/api/model/LocationDto'
 import ResetRotateControl from 'src/mapbox/ResetRotateControl.vue'
 import OfficeMarkerLayer from 'src/mapbox/OfficeMarkerLayer.vue'
+import CampaignCollectionOverlayControl from 'src/mapbox/CampaignCollectionOverlayControl.vue'
+import { getAuthStore } from 'src/store/AuthStore'
 
 export default defineComponent({
   name: 'MapWithSheet',
@@ -62,6 +65,7 @@ export default defineComponent({
     }
   },
   components: {
+    CampaignCollectionOverlayControl,
     OfficeMarkerLayer,
     ResetRotateControl,
     GeolocationControl,
@@ -74,7 +78,8 @@ export default defineComponent({
     return {
       bbox: userStore.getState().bbox,
       BottomSheetState,
-      isMapDefined: true
+      isMapDefined: true,
+      isLoggedIn: getAuthStore().isLoggedIn()
     }
   },
   beforeRouteEnter(to, from, next) {

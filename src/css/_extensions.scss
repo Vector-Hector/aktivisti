@@ -1,1 +1,16 @@
 /* Customizations to the designer theme should be defined here */
+
+// when on mobile some toolbar menu entries are getting assigned this class
+// but it's not hiding the elemnts in total, it just makes them invisible and they
+// are still taking space, to fix this we set display: none
+.apexcharts-element-hidden{
+  display: none;
+}
+
+.apexcharts-toolbar > div {
+  margin: 5px 5px;
+}
+
+.apexcharts-toolbar {
+  max-width: 200px !important;
+}

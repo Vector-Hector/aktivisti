@@ -1,6 +1,6 @@
 <template>
   <FilterInput
-    label="Kampagnen"
+    :label="label"
     :model-value="modelValue"
     @update:model-value="updateModelValue"
     :options="extendedOptions"
@@ -8,6 +8,7 @@
     map-options
     option-value="id"
     option-label="name"
+    :disable="disable"
   />
 </template>
 <script lang="ts">
@@ -28,18 +29,34 @@ export default defineComponent({
     modelValue: {
       type: Number as PropType<number>,
       default: 0
+    },
+    showAllCampaigns: {
+      type: Boolean,
+      default: true
+    },
+    disable: {
+      type: Boolean,
+      default: false
+    },
+    label: {
+      type: String,
+      default: 'Kampagnen'
     }
   },
   emits: ['update:modelValue'],
   computed: {
     extendedOptions(): Partial<CampaignDto>[] {
-      return [
-        {
-          id: 0,
-          name: 'Alle Kampagnen'
-        },
-        ...this.options
-      ]
+      if (this.showAllCampaigns) {
+        return [
+          {
+            id: 0,
+            name: 'Alle Kampagnen'
+          },
+          ...this.options
+        ]
+      } else {
+        return this.options
+      }
     }
   },
   methods: {
