@@ -111,7 +111,7 @@ export default defineComponent({
 
 })
 </script>
-<Style lang="scss" scoped>
+<style lang="scss" scoped>
 
 .new-user-group {
   margin: 0 0 0.5rem 0;
@@ -128,4 +128,4 @@ export default defineComponent({
 .permission-dropdown {
   min-width: 10rem;
 }
-</Style>
+</style>

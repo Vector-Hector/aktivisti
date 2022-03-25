@@ -167,6 +167,7 @@ module.exports = configure(function (ctx) {
     pwa: {
       workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {
+        maximumFileSizeToCacheInBytes: 5000000,
         skipWaiting: true,
         clientsClaim: true
       }, // only for GenerateSW
