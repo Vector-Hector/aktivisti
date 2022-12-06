@@ -1,6 +1,5 @@
 <template>
   <Geocoder
-    :access-token="accessToken"
     :collapsed="true"
     position="top-left"
     :countries="['de']"
@@ -85,9 +84,6 @@ export default defineComponent({
     }
   },
   computed: {
-    accessToken() {
-      return process.env.APP_MAPBOX_TOKEN
-    },
     isShowCluster(): boolean {
       if (this.pagination.total) {
         return this.pagination.total > OFFICE_LIST_CHUNK_SIZE

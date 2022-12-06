@@ -27,7 +27,7 @@ import {
   ref,
   watch
 } from 'vue'
-import mapboxgl, { LngLat, Point } from 'mapbox-gl'
+import maplibregl, { LngLat, Point } from 'maplibre-gl'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { TinyEmitter } from 'tiny-emitter'
@@ -36,7 +36,7 @@ import { uuidv4 } from 'src/utils/uuid'
 import { SettleDebouncer } from 'src/utils/debounce'
 
 
-export const MapInject: InjectionKey<Ref<mapboxgl.Map>> = Symbol()
+export const MapInject: InjectionKey<Ref<maplibregl.Map>> = Symbol()
 export const MapEventBus = new TinyEmitter()
 
 export const MAP_PAN_TO = 'MAP_PAN_TO'
@@ -78,8 +78,7 @@ export default defineComponent({
   emits: ['update:zoom', 'update:center', 'update:zoom', 'drop', 'update:boundingBox'],
   setup(props, {emit}) {
     const mapUuid = `map-${uuidv4()}`
-    mapboxgl.accessToken = process.env.APP_MAPBOX_TOKEN as string
-    const map = ref<mapboxgl.Map | null>(null)
+    const map = ref<maplibregl.Map | null>(null)
     const mapContainer = ref<HTMLElement | null>(null)
     const initialized = ref(false)
     provide(MapInject, map)
@@ -109,9 +108,9 @@ export default defineComponent({
 
     onMounted(() => {
       window.addEventListener('resize', resizeMap)
-      map.value = new mapboxgl.Map({
+      map.value = new maplibregl.Map({
         container: mapUuid,
-        style: process.env.APP_MAPBOX_STYLE,
+        style: process.env.APP_MAP_STYLE,
         zoom: props.zoom,
         center: props.center,
         bounds: props.boundingBox,

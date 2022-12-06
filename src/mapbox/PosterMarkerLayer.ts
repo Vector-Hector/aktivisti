@@ -1,7 +1,7 @@
 import { defineComponent, inject, watch, onMounted, PropType, onUnmounted, h } from 'vue'
 import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
-import { GeoJSONSource, GeoJSONSourceRaw, SymbolLayout } from 'mapbox-gl'
+import { GeoJSONSource, GeoJSONSourceRaw, SymbolLayout } from 'maplibre-gl'
 import { PosterDto, PosterStatus } from 'src/api/model/PosterDto'
 import { loadImageIfNonExistent } from 'src/utils/mapbox'
 import { FeatureCollection, Point } from 'geojson'

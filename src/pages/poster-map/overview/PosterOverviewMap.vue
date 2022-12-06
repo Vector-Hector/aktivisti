@@ -1,6 +1,5 @@
 <template>
   <Geocoder
-    :access-token="accessToken"
     :collapsed="true"
     position="top-left"
     :countries="['de']"
@@ -25,7 +24,7 @@ import { PosterFilterParams } from 'src/api/params/PosterFilterParams'
 import { posterOverviewStore } from 'src/store/PosterOverviewStore'
 import { apiClient } from 'src/api/ApiClient'
 import PosterMarkerLayer from 'src/mapbox/PosterMarkerLayer'
-import { Popup } from 'mapbox-gl'
+import { Popup } from 'maplibre-gl'
 import PosterPopup from 'src/mapbox/popup/layerPopups/PosterPopup.vue'
 
 export default defineComponent({
@@ -67,9 +66,6 @@ export default defineComponent({
     }
   },
   computed: {
-    accessToken() {
-      return process.env.APP_MAPBOX_TOKEN
-    }
   },
   methods: {
     async updateWithinFilter(polygon: BBox2d) {

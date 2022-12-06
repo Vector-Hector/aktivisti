@@ -6,7 +6,7 @@
 <script lang="ts">
 
 import { defineComponent, inject, onUnmounted, ref } from 'vue'
-import { Offset, Popup } from 'mapbox-gl'
+import { Offset, Popup } from 'maplibre-gl'
 import { MapInject } from 'src/mapbox/Map.vue'
 
 export default defineComponent({

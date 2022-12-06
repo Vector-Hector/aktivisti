@@ -55,7 +55,7 @@ import { QBtn, QCard, QCardActions, QCardSection, QPopupProxy } from 'quasar'
 import { GeocodeResult } from 'src/types/GeocodeResult'
 import DraggableMarker from 'components/DraggableMarker.vue'
 import { LocationDto } from 'src/api/model/LocationDto'
-import { geocodingService } from 'src/utils/mapbox'
+import { reverseGeocode } from 'src/utils/mapbox'
 
 
 export default defineComponent({
@@ -165,11 +165,11 @@ export default defineComponent({
       this.$emit('update:locationDescription', this.suggestion)
     },
     async reverseLocation(location: LocationDto) {
-      return (await geocodingService.reverseGeocode({
-        query: [location.lng, location.lat],
-        mode: 'mapbox.places',
+      return (await reverseGeocode({
+        lon: location.lng,
+        lat: location.lat,
         language: ['de']
-      }).send()).body.features?.[0]
+      }))
     }
   }
 })

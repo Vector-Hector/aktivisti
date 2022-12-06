@@ -52,7 +52,7 @@
 <script lang="ts">
 import { defineComponent, inject, PropType } from 'vue'
 import { MapEventBus, MapInject } from './Map.vue'
-import { FitBoundsOptions, LngLat, PositionOptions } from 'mapbox-gl'
+import { FitBoundsOptions, LngLat, PositionOptions } from 'maplibre-gl'
 import { ionLocateOutline, ionLocation, ionRadioButtonOnSharp } from '@quasar/extras/ionicons-v5'
 import { Geolocation, Position } from '@capacitor/geolocation'
 import { matGpsFixed, matGpsNotFixed, matGpsOff } from '@quasar/extras/material-icons'

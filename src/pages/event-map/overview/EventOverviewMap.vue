@@ -1,6 +1,5 @@
 <template>
   <Geocoder
-    :access-token="accessToken"
     :collapsed="true"
     position="top-left"
     :countries="['de']"
@@ -85,9 +84,6 @@ export default defineComponent({
     }
   },
   computed: {
-    accessToken() {
-      return process.env.APP_MAPBOX_TOKEN
-    },
     clusterTotal(): number {
       return this.clusters.reduce((acc: number, item: ClusterDto) => acc + item.count, 0)
     },

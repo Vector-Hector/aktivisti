@@ -133,7 +133,7 @@ export default defineComponent({
 }
 
 .map {
-  :deep(.mapboxgl-ctrl-geocoder) {
+  :deep(.maplibregl-ctrl-geocoder) {
     max-width: 75%;
   }
 }

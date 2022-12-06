@@ -10,7 +10,6 @@
       </h2>
       <Geocoder
         class="geocoder"
-        :access-token="mapboxToken"
         :countries="['de']"
         :standalone="true"
         @result="locate"
@@ -69,7 +68,6 @@ export default defineComponent({
   },
   data() {
     return {
-      mapboxToken: process.env.APP_MAPBOX_TOKEN
     }
   },
   computed: {

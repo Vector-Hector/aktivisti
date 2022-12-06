@@ -3,7 +3,7 @@ import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { Feature } from 'geojson'
 import { getColorFromPropertiesWithDefault } from 'pages/edit-event/geometry/route-planner.styles'
-import { GeoJSONSource } from 'mapbox-gl'
+import { GeoJSONSource } from 'maplibre-gl'
 
 
 export default defineComponent({

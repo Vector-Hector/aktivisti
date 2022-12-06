@@ -3,7 +3,7 @@ import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { AllGeoJSON, center } from '@turf/turf'
-import { GeoJSONSource } from 'mapbox-gl'
+import { GeoJSONSource } from 'maplibre-gl'
 
 
 export default defineComponent({

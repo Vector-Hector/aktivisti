@@ -25,7 +25,7 @@ import {
   watch,
   onUnmounted
 } from 'vue'
-import { Marker } from 'mapbox-gl'
+import { Marker } from 'maplibre-gl'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { MapInject } from './Map.vue'
 import { ionLocationSharp } from '@quasar/extras/ionicons-v5'

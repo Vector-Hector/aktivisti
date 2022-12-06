@@ -21,7 +21,7 @@ export interface GeocodeResult {
   language: string
   place_name: string
   place_type: string[]
-  properties: GeocodeResultProperties
+  properties: GeocodeResultProperties|null
   relevance: number
   text: string
   type: string
