@@ -1,4 +1,3 @@
-import { Geometry } from 'geojson'
 
 export interface OSMPlaceDto {
   place_id: string
