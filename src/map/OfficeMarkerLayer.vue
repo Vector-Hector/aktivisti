@@ -16,11 +16,11 @@
 import { defineComponent, inject, onUnmounted, ref } from 'vue'
 import OfficeMarker from 'components/OfficeMarker.vue'
 import { OfficeDto } from 'src/api/model/OfficeDto'
-import { MapInject } from 'src/mapbox/Map.vue'
+import { MapInject } from 'src/map/Map.vue'
 import { userStore } from 'src/store/UserStore'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bboxPolygon } from '@turf/turf'
-import OfficePopup from 'src/mapbox/popup/markerPopups/OfficePopup.vue'
+import OfficePopup from 'src/map/popup/markerPopups/OfficePopup.vue'
 
 export default defineComponent({
   name: 'OfficeMarkerLayer',

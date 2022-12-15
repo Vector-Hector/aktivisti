@@ -11,7 +11,7 @@
 <script lang="ts">
 
 import { defineComponent } from 'vue'
-import FeatureLayer from 'src/mapbox/AreaFeatureLayer'
+import FeatureLayer from 'src/map/AreaFeatureLayer'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import InjectMapMixin from 'src/pages/event-detail/InjectMapMixin'
 import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'

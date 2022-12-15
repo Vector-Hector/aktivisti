@@ -42,18 +42,18 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import MapOverlayProxy from 'components/MapOverlayProxy.vue'
-import Map from 'src/mapbox/Map.vue'
+import Map from 'src/map/Map.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { userStore } from 'src/store/UserStore'
 import { QPage } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
-import GeolocationControl from 'src/mapbox/GeolocationControl.vue'
+import GeolocationControl from 'src/map/GeolocationControl.vue'
 import MapContainer from 'components/MapContainer.vue'
 import { eventDetailStore } from 'src/store/EventDetailStore'
 import { LocationDto } from 'src/api/model/LocationDto'
-import ResetRotateControl from 'src/mapbox/ResetRotateControl.vue'
-import OfficeMarkerLayer from 'src/mapbox/OfficeMarkerLayer.vue'
-import CampaignCollectionOverlayControl from 'src/mapbox/CampaignCollectionOverlayControl.vue'
+import ResetRotateControl from 'src/map/ResetRotateControl.vue'
+import OfficeMarkerLayer from 'src/map/OfficeMarkerLayer.vue'
+import CampaignCollectionOverlayControl from 'src/map/CampaignCollectionOverlayControl.vue'
 import { getAuthStore } from 'src/store/AuthStore'
 
 export default defineComponent({

@@ -14,9 +14,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import EditPosterListMixin from 'pages/edit-event/posters/EditPosterListMixin'
-import PosterMarkerLayer from 'src/mapbox/PosterMarkerLayer'
+import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
 import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
-import AreaFeatureLayer from 'src/mapbox/AreaFeatureLayer'
+import AreaFeatureLayer from 'src/map/AreaFeatureLayer'
 
 export default defineComponent({
   name: 'EditEventPostersMap',

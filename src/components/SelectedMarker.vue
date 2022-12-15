@@ -15,7 +15,7 @@
 <script lang="ts">
 
 import { defineComponent, PropType } from 'vue'
-import Marker from 'src/mapbox/Marker.vue'
+import Marker from 'src/map/Marker.vue'
 import { QIcon } from 'quasar'
 import { LocationDto } from 'src/api/model/LocationDto'
 

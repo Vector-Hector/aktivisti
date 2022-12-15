@@ -7,7 +7,7 @@
 
 import { defineComponent, inject, onUnmounted, ref } from 'vue'
 import { Offset, Popup } from 'maplibre-gl'
-import { MapInject } from 'src/mapbox/Map.vue'
+import { MapInject } from 'src/map/Map.vue'
 
 export default defineComponent({
   name: 'LayerPopup',

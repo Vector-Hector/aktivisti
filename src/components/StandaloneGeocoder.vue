@@ -46,11 +46,11 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { forwardGeocode } from 'src/utils/mapbox'
+import { forwardGeocode } from 'src/utils/map'
 import { GeocodeResult } from 'src/types/GeocodeResult'
 import { QItem, QItemSection, QItemLabel, QSelect, QIcon } from 'quasar'
 import { ionSearch } from '@quasar/extras/ionicons-v5'
-import { MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/mapbox/Map.vue';
+import { MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/map/Map.vue';
 
 export default defineComponent({
   name: 'StandaloneGeocoder',

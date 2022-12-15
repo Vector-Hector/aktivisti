@@ -43,18 +43,18 @@
 </template>
 <script lang="ts">
 import { defineComponent, inject, onUnmounted } from 'vue'
-import MarkerPopup from 'src/mapbox/popup/MarkerPopup.vue'
-import { MapInject } from 'src/mapbox/Map.vue'
+import MarkerPopup from 'src/map/popup/MarkerPopup.vue'
+import { MapInject } from 'src/map/Map.vue'
 import { ClusterDto } from 'src/api/model/ClusterDto'
 import { EVENT_MAP_MAX_EVENTS } from 'src/constants'
-import ClusterLayer from 'src/mapbox/ClusterLayer.vue'
+import ClusterLayer from 'src/map/ClusterLayer.vue'
 import EventsOverviewMixin from 'pages/event-map/overview/EventsOverviewMixin'
 import { eventOverviewStore } from 'src/store/EventOverviewStore'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { QBtn } from 'quasar'
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 import EventMarker from 'components/EventMarker.vue'
-import Geocoder from 'src/mapbox/Geocoder.vue'
+import Geocoder from 'src/map/Geocoder.vue'
 
 export default defineComponent({
   name: 'EventOverviewMap',

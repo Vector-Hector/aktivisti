@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CampaignCollectionOverlay from 'src/mapbox/CampaignCollectionOverlay.vue'
+import CampaignCollectionOverlay from 'src/map/CampaignCollectionOverlay.vue'
 import { onMounted, ref } from 'vue'
 import { CampaignGeometryCollectionsDto } from 'src/api/model/CampaignGeometryCollectionsDto'
 import { apiClient } from 'src/api/ApiClient'

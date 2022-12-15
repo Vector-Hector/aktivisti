@@ -13,9 +13,9 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import PosterMarkerLayer from 'src/mapbox/PosterMarkerLayer'
+import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
 import EventDetailPosterMixin from 'pages/event-map/detail/area/posters/EventDetailPosterMixin'
-import AreaFeatureLayer from 'src/mapbox/AreaFeatureLayer'
+import AreaFeatureLayer from 'src/map/AreaFeatureLayer'
 
 export default defineComponent({
   name: 'EventDetailPostersMap',

@@ -10,9 +10,9 @@ import { defineComponent, inject, onMounted, onUnmounted, PropType, ref } from '
 //@ts-ignore
 import MaplibreGeocoder from '@maplibre/maplibre-gl-geocoder'
 import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css'
-import { forwardGeocode, reverseGeocode } from 'src/utils/mapbox'
+import { forwardGeocode, reverseGeocode } from 'src/utils/map'
 import { GeocodeResult } from 'src/types/GeocodeResult'
-import { MapInject } from 'src/mapbox/Map.vue'
+import { MapInject } from 'src/map/Map.vue'
 import maplibregl, { MarkerOptions } from 'maplibre-gl'
 
 export default defineComponent({

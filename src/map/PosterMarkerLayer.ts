@@ -3,10 +3,10 @@ import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { GeoJSONSource, GeoJSONSourceRaw, SymbolLayout } from 'maplibre-gl'
 import { PosterDto, PosterStatus } from 'src/api/model/PosterDto'
-import { loadImageIfNonExistent } from 'src/utils/mapbox'
+import { loadImageIfNonExistent } from 'src/utils/map'
 import { FeatureCollection, Point } from 'geojson'
 import { clone } from 'lodash-es'
-import { MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/mapbox/Map.vue';
+import { MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/map/Map.vue';
 
 const ABSENT_IMAGE_NAME = 'absent-icon'
 const POSITIVE_IMAGE_NAME = 'positive-icon'
