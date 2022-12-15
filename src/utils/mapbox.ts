@@ -2,17 +2,18 @@
 import maplibregl from 'maplibre-gl'
 import { Geometry } from 'geojson'
 import { GeocodeResult } from 'src/types/GeocodeResult'
+import { OSMPlaceDto } from 'src/api/model/OSMPlaceDto'
 
-function getGeocodeResult(obj: any) {
-  const center = [obj.lon, obj.lat].map(n => parseFloat(n))
+function parseGeocodeResult(place: OSMPlaceDto) {
+  const center = [place.lon, place.lat].map(parseFloat)
   return {
     type: 'Feature',
-    id: obj.place_id,
-    text: obj.display_name,
-    place_name: obj.display_name,
-    place_type: [obj.class],
+    id: place.place_id,
+    text: place.display_name,
+    place_name: place.display_name,
+    place_type: [place.class],
     bbox: [
-      obj.boundingbox[2], obj.boundingbox[0], obj.boundingbox[3], obj.boundingbox[1]
+      place.boundingbox[2], place.boundingbox[0], place.boundingbox[3], place.boundingbox[1]
     ] as [number, number, number, number],
     center: center,
     geometry: {
@@ -22,14 +23,14 @@ function getGeocodeResult(obj: any) {
     context: [],
     language: '',
     properties: null,
-    relevance: obj.importance || 1
+    relevance: place.importance || 1
   } as GeocodeResult
 }
 
-function getFeatureCollection(list: any) {
+function parseFeatureCollection(places: OSMPlaceDto[]) {
     return {
       type: 'FeatureCollection',
-      features: list.map(getGeocodeResult)
+      features: places.map(parseGeocodeResult)
     };
 }
 
@@ -46,25 +47,23 @@ export async function forwardGeocode(config: any) {
       params['accept-language'] = config.language.join(',')
     }
     const urlParams = new URLSearchParams(Object.entries(params)).toString();
-    return fetch((process.env.APP_MAP_NOMINATIM as string) + 'search?' + urlParams).then(function(response) {
-      if(response.ok) {
-        return response.json();
-      } else {
-        return [];
-      }
-    }).then(getFeatureCollection)
+    const response = await fetch((process.env.APP_MAP_NOMINATIM as string) + 'search?' + urlParams)
+    let result = []
+    if(response.ok) {
+      result = await response.json()
+    }
+    return parseFeatureCollection(result as OSMPlaceDto[])
 }
 
 export async function reverseGeocode(config: any) {
-  const params = { format: 'json', lon: config.lon, lat: config.lat };
+  const params = { format: 'json', lon: config.lng, lat: config.lat };
   const urlParams = new URLSearchParams(Object.entries(params)).toString();
-  return fetch((process.env.APP_MAP_NOMINATIM as string) + 'reverse?' + urlParams).then(function(response) {
-    if(response.ok) {
-      return response.json();
-    } else {
-      return {};
-    }
-  }).then(getGeocodeResult)
+  const response = await fetch((process.env.APP_MAP_NOMINATIM as string) + 'search?' + urlParams)
+  let result = {}
+  if(response.ok) {
+    result = await response.json()
+  }
+  return parseGeocodeResult(result as OSMPlaceDto)
 }
 
 

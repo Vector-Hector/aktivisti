@@ -166,7 +166,7 @@ export default defineComponent({
     },
     async reverseLocation(location: LocationDto) {
       return (await reverseGeocode({
-        lon: location.lng,
+        lng: location.lng,
         lat: location.lat,
         language: ['de']
       }))
