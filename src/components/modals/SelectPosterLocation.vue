@@ -238,7 +238,6 @@ export default defineComponent({
 .accept-button {
   box-shadow: $menu-box-shadow;
   left: 50%;
-  right: 50%;
   position: absolute;
   z-index: 10;
   bottom: 1rem;
