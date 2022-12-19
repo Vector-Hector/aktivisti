@@ -14,6 +14,7 @@ import { apiClient } from 'src/api/ApiClient'
 import { POLL_INVITATIONS_MS } from 'src/constants'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { getAuthStore } from 'src/store/AuthStore'
+import { EventStatus } from 'src/api/model/EventStatus'
 
 const authStore = getAuthStore()
 
@@ -57,7 +58,10 @@ export default defineComponent({
   methods: {
     async pollForParticipations() {
       myParticipationsStore.setEventParticipations(
-        (await this.$apiClient.eventParticipations.list({user: userStore.getState().user?.id})).payload.data
+        (await this.$apiClient.eventParticipations.list({
+          user: userStore.getState().user?.id,
+          status: EventStatus.ACTIVE
+        })).payload.data
       )
 
       this.nextPoll = setTimeout(() => void this.pollForParticipations(), POLL_INVITATIONS_MS)
