@@ -57,9 +57,27 @@ export class EventRoute extends ApiRoute<EventDto> {
     return new JSONResponse<APIEnvelope<EventParticipationDto[]>>(response, data)
   }
 
+  async inviteCoordinators(id: string) {
+    const response = await this.request({
+      path: `${this.path}${id}/invite_coordinators/`,
+      method: 'POST'
+    })
+    const data = response.data
+    return new JSONResponse<APIEnvelope<EventParticipationDto[]>>(response, data)
+  }
+
   async inviteTeamCaptains(id: string) {
     const response = await this.request({
       path: `${this.path}${id}/invite_team_captains/`,
+      method: 'POST'
+    })
+    const data = response.data
+    return new JSONResponse<APIEnvelope<EventParticipationDto[]>>(response, data)
+  }
+
+  async inviteUsers(id: string) {
+    const response = await this.request({
+      path: `${this.path}${id}/invite_users/`,
       method: 'POST'
     })
     const data = response.data

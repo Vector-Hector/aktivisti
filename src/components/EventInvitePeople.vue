@@ -75,9 +75,25 @@
     <div class="row">
       <QBtn
         class="full-width"
+        @click="handleInviteAllCoordinators"
+      >
+        Alle Koordinator*innen einladen
+      </QBtn>
+    </div>
+    <div class="row">
+      <QBtn
+        class="full-width"
         @click="handleInviteAllTeamCaptains"
       >
         Alle Teamcaptains einladen
+      </QBtn>
+    </div>
+    <div class="row">
+      <QBtn
+        class="full-width"
+        @click="handleInviteAllUsers"
+      >
+        Alle Benutzer*innen einladen
       </QBtn>
     </div>
   </div>
@@ -185,6 +201,39 @@ export default defineComponent({
       }
 
     },
+    // TODO(peter) Remove code duplication
+    handleInviteAllCoordinators() {
+      this.$q.dialog({
+        title: 'Alle Koordinator*innen einladen',
+        message: 'Möchtest du alle Koordinator*innen des Kreisverbandes einladen?',
+        cancel: true
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      }).onOk(() => this.inviteCoordinators())
+    },
+    async inviteCoordinators() {
+      const response = await this.$apiClient.events.inviteCoordinators(this.eventId.toString())
+      const newParticipations = response.payload.data
+      if (newParticipations.length > 0) {
+        let areCoordinatorsAlreadyInvited = true
+        for (const participation of response.payload.data) {
+          if (!this.participations.find(({id}) => id === participation.id)) {
+            areCoordinatorsAlreadyInvited = false
+            this.participations.push(participation)
+          }
+        }
+        if (areCoordinatorsAlreadyInvited) {
+          this.$q.notify({
+            color: 'warning',
+            message: 'Es wurden bereits alle Koordinator*innen eingeladen.'
+          })
+        }
+      } else {
+        this.$q.notify({
+          color: 'info',
+          message: 'In diesem Eventgebiet gibt es keine Koordinator*innen.'
+        })
+      }
+    },
     handleInviteAllTeamCaptains() {
       this.$q.dialog({
         title: 'Alle Teamcaptains einladen',
@@ -214,6 +263,38 @@ export default defineComponent({
         this.$q.notify({
           color: 'info',
           message: 'In diesem Eventgebiet gibt es keine Teamcaptains.'
+        })
+      }
+    },
+    handleInviteAllUsers() {
+      this.$q.dialog({
+        title: 'Alle Benutzer*innen einladen',
+        message: 'Möchtest du alle Benutzer*innen des Kreisverbandes einladen?',
+        cancel: true
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      }).onOk(() => this.inviteUsers())
+    },
+    async inviteUsers() {
+      const response = await this.$apiClient.events.inviteUsers(this.eventId.toString())
+      const newParticipations = response.payload.data
+      if (newParticipations.length > 0) {
+        let areUsersAlreadyInvited = true
+        for (const participation of response.payload.data) {
+          if (!this.participations.find(({id}) => id === participation.id)) {
+            areUsersAlreadyInvited = false
+            this.participations.push(participation)
+          }
+        }
+        if (areUsersAlreadyInvited) {
+          this.$q.notify({
+            color: 'warning',
+            message: 'Es wurden bereits alle Benutzer*innen eingeladen.'
+          })
+        }
+      } else {
+        this.$q.notify({
+          color: 'info',
+          message: 'In diesem Eventgebiet gibt es keine Benutzer*innen.'
         })
       }
     },
