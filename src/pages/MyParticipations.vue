@@ -172,7 +172,7 @@ export default defineComponent({
           }
         }).sort((a, b) => {
           if (a.event && b.event) {
-            return a.event?.start_date > b.event.start_date ? 1 : -1
+            return a.event?.start_date > b.event.start_date ? -1 : 1
           } else {
             return 0
           }
@@ -188,7 +188,7 @@ export default defineComponent({
           }
         }).sort((a, b) => {
           if (a.event && b.event) {
-            return a.event?.start_date > b.event.start_date ? 1 : -1
+            return a.event?.start_date > b.event.start_date ? -1 : 1
           } else {
             return 0
           }
