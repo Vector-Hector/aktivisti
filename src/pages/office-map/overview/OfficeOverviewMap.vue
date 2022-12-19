@@ -1,6 +1,5 @@
 <template>
   <Geocoder
-    :access-token="accessToken"
     :collapsed="true"
     position="top-left"
     :countries="['de']"
@@ -29,17 +28,17 @@
 </template>
 <script lang="ts">
 import { defineComponent, inject, onUnmounted, ref } from 'vue'
-import { MapInject } from 'src/mapbox/Map.vue'
+import { MapInject } from 'src/map/Map.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bboxPolygon } from '@turf/turf'
 import OfficeMarker from 'components/OfficeMarker.vue'
-import Geocoder from 'src/mapbox/Geocoder.vue'
+import Geocoder from 'src/map/Geocoder.vue'
 import { userStore } from 'src/store/UserStore'
 import SelectedMarker from 'components/SelectedMarker.vue'
 import { MAX_EPS_DISTANCE_FOR_CLUSTERING, OFFICE_LIST_CHUNK_SIZE } from 'src/constants'
-import ClusterLayer from 'src/mapbox/ClusterLayer.vue'
+import ClusterLayer from 'src/map/ClusterLayer.vue'
 import { ClusterDto } from 'src/api/model/ClusterDto'
-import OfficePopup from 'src/mapbox/popup/markerPopups/OfficePopup.vue'
+import OfficePopup from 'src/map/popup/markerPopups/OfficePopup.vue'
 import useOverviewMixin from 'src/utils/useOverviewMixin'
 import { OfficeDto } from 'src/api/model/OfficeDto'
 import { OfficeFilterParams } from 'src/api/params/OfficeFilterParams'
@@ -85,9 +84,6 @@ export default defineComponent({
     }
   },
   computed: {
-    accessToken() {
-      return process.env.APP_MAPBOX_TOKEN
-    },
     isShowCluster(): boolean {
       if (this.pagination.total) {
         return this.pagination.total > OFFICE_LIST_CHUNK_SIZE

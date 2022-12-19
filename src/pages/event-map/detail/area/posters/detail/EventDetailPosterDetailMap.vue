@@ -4,7 +4,7 @@
 <script lang="ts">
 import EventDetailPosterMixin from 'pages/event-map/detail/area/posters/EventDetailPosterMixin'
 import { defineComponent, inject } from 'vue'
-import { MapInject } from 'src/mapbox/Map.vue'
+import { MapInject } from 'src/map/Map.vue'
 
 export default defineComponent({
   name: 'EventDetailPosterDetailMap',

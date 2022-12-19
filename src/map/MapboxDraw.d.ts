@@ -5,7 +5,7 @@
 
 declare module '@mapbox/mapbox-gl-draw' {
   import { Feature, FeatureCollection, GeoJSON } from 'geojson'
-  import {IControl} from 'mapbox-gl'
+  import {IControl} from 'maplibre-gl'
   import {IMapboxDrawControls} from '@mapbox/mapbox-gl-draw'
 
   namespace MapboxDraw {
@@ -69,9 +69,9 @@ declare module '@mapbox/mapbox-gl-draw' {
 
     public setFeatureProperty(featureId: string, property: string, value: any): this
 
-    onAdd(map: mapboxgl.Map): HTMLElement
+    onAdd(map: maplibregl.Map): HTMLElement
 
-    onRemove(map: mapboxgl.Map): any
+    onRemove(map: maplibregl.Map): any
 
   }
 

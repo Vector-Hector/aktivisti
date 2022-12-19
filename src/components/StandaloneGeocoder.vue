@@ -46,11 +46,11 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { geocodingService } from 'src/utils/mapbox'
+import { forwardGeocode } from 'src/utils/map'
 import { GeocodeResult } from 'src/types/GeocodeResult'
 import { QItem, QItemSection, QItemLabel, QSelect, QIcon } from 'quasar'
 import { ionSearch } from '@quasar/extras/ionicons-v5'
-import { MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/mapbox/Map.vue';
+import { MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/map/Map.vue';
 
 export default defineComponent({
   name: 'StandaloneGeocoder',
@@ -90,12 +90,11 @@ export default defineComponent({
         return
       }
       await update(async () => {
-        this.filteredPlaces = (await geocodingService.forwardGeocode({
+        this.filteredPlaces = (await forwardGeocode({
           query: val,
-          mode: 'mapbox.places',
-          countries: ['DE'],
+          countries: ['de'],
           language: ['de']
-        }).send()).body.features
+        })).features
       })
     },
     stopTracking() {

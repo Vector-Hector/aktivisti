@@ -11,7 +11,7 @@
 <script lang="ts">
 
 import { defineComponent } from 'vue'
-import { MapEventBus } from 'src/mapbox/Map.vue'
+import { MapEventBus } from 'src/map/Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { QIcon } from 'quasar'

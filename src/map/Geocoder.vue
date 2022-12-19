@@ -8,19 +8,16 @@
 <script lang="ts">
 import { defineComponent, inject, onMounted, onUnmounted, PropType, ref } from 'vue'
 //@ts-ignore
-import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder'
-import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css'
+import MaplibreGeocoder from '@maplibre/maplibre-gl-geocoder'
+import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css'
+import { forwardGeocode, reverseGeocode } from 'src/utils/map'
 import { GeocodeResult } from 'src/types/GeocodeResult'
-import { MapInject } from 'src/mapbox/Map.vue'
-import mapboxgl, { MarkerOptions } from 'mapbox-gl'
+import { MapInject } from 'src/map/Map.vue'
+import maplibregl, { MarkerOptions } from 'maplibre-gl'
 
 export default defineComponent({
   name: 'Geocoder',
   props: {
-    accessToken: {
-      type: String as PropType<string>,
-      required: true
-    },
     countries: {
       type: Array as PropType<string[]> | null,
       default: null
@@ -56,14 +53,16 @@ export default defineComponent({
     }
   },
   setup(props, {emit}) {
-
-    const geocodeControl = new MapboxGeocoder({
-      mapboxgl: mapboxgl,
-      accessToken: props.accessToken,
+    const geocodeControl = new MaplibreGeocoder({
+      forwardGeocode: forwardGeocode,
+      reverseGeocode: reverseGeocode,
+    }, {
+      collapsed: props.collapsed,
       countries: props.countries?.join(',') ?? undefined,
       marker: props.markerOptions,
-      reverseGeocode: props.reverseGeocode,
-      collapsed: props.collapsed
+      placeholder: 'Suchen',
+      showResultsWhileTyping: true,
+      maplibregl: maplibregl
     })
     const geocodeWrapper = ref<HTMLElement | null>(null)
     geocodeControl.on('result', ({result}: { result: GeocodeResult }) => {

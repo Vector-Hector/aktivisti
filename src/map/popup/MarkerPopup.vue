@@ -8,8 +8,8 @@
 </template>
 <script lang="ts">
 import { defineComponent, inject, onMounted, ref } from 'vue'
-import { Popup } from 'mapbox-gl'
-import { MarkerInject } from 'src/mapbox/Marker.vue'
+import { Popup } from 'maplibre-gl'
+import { MarkerInject } from 'src/map/Marker.vue'
 
 export default defineComponent({
   name: 'MarkerPopup',

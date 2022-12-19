@@ -15,7 +15,7 @@
 <script lang="ts">
 
 import { defineComponent } from 'vue'
-import LayerPopup from 'src/mapbox/popup/LayerPopup.vue'
+import LayerPopup from 'src/map/popup/LayerPopup.vue'
 
 export default defineComponent({
   name: 'GeometryPopup',

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { QCardSection } from 'quasar'
-import Map from 'src/mapbox/Map.vue'
+import Map from 'src/map/Map.vue'
 import { CampaignGeometryCollectionsDto } from 'src/api/model/CampaignGeometryCollectionsDto'
-import CampaignCollectionOverlay from 'src/mapbox/CampaignCollectionOverlay.vue'
+import CampaignCollectionOverlay from 'src/map/CampaignCollectionOverlay.vue'
 import { Geometry } from 'geojson'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import hat from 'hat'

@@ -14,7 +14,7 @@
 <script lang="ts">
 
 import { defineComponent, PropType } from 'vue'
-import MarkerPopup from 'src/mapbox/popup/MarkerPopup.vue'
+import MarkerPopup from 'src/map/popup/MarkerPopup.vue'
 import { QBtn } from 'quasar'
 
 export default defineComponent({

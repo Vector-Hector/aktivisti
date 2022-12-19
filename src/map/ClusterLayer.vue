@@ -4,7 +4,7 @@ import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { ClusterDto } from 'src/api/model/ClusterDto'
 import { GeoJSON } from 'geojson'
-import mapboxgl from 'mapbox-gl'
+import maplibregl from 'maplibre-gl'
 
 const TRANSITION_DURATION = 500
 const MIN_CIRCLE_RADIUS = 20
@@ -17,7 +17,7 @@ class ClusterLayer {
   clusterLayerId = `${this.uuid}-clusters`
   loaded = false
 
-  constructor(private map: mapboxgl.Map, private clusters: ClusterDto[]) {
+  constructor(private map: maplibregl.Map, private clusters: ClusterDto[]) {
   }
 
   add() {

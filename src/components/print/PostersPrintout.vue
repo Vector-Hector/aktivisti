@@ -168,10 +168,10 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
-import Map from 'src/mapbox/Map.vue'
+import Map from 'src/map/Map.vue'
 import { Feature } from 'geojson'
 import { EventAreaDto, eventAreaToFeature } from 'src/api/model/EventAreaDto'
-import FeatureLayer from 'src/mapbox/AreaFeatureLayer'
+import FeatureLayer from 'src/map/AreaFeatureLayer'
 import { BBox } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox, circle } from '@turf/turf'
 import { QBtn, QIcon } from 'quasar'
@@ -179,7 +179,7 @@ import { eventTypeOptions } from 'src/api/model/EventTypes'
 import { ionArrowBack, ionEllipse, ionPrint, ionSquareOutline } from '@quasar/extras/ionicons-v5'
 import EventMarker from 'components/EventMarker.vue'
 import { PosterDto, PosterMountUtil, PosterStatus, PosterStatusUtil } from 'src/api/model/PosterDto';
-import PosterMarkerLayer from 'src/mapbox/PosterMarkerLayer';
+import PosterMarkerLayer from 'src/map/PosterMarkerLayer';
 
 
 export default defineComponent({

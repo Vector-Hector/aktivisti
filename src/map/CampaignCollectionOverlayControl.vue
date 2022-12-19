@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { matLayers } from '@quasar/extras/material-icons'
 import { QBtn, useQuasar } from 'quasar'
-import CampaignCollectionOverlay from 'src/mapbox/CampaignCollectionOverlay.vue'
+import CampaignCollectionOverlay from 'src/map/CampaignCollectionOverlay.vue'
 import { apiClient } from 'src/api/ApiClient'
 import { onMounted, ref } from 'vue'
 import { CampaignDto } from 'src/api/model/CampaignDto'

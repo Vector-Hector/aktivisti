@@ -18,7 +18,7 @@
 
 import { defineComponent, PropType } from 'vue'
 import { LocationDto } from 'src/api/model/LocationDto'
-import Marker from 'src/mapbox/Marker.vue'
+import Marker from 'src/map/Marker.vue'
 import { QIcon } from 'quasar'
 
 export default defineComponent({

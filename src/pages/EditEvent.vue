@@ -37,7 +37,7 @@ import { uiStore } from 'src/store/UiStore'
 import { QPage } from 'quasar'
 import MapOverlayProxy from 'components/MapOverlayProxy.vue'
 import { editEventStore } from 'src/store/EditEventStore'
-import Map from 'src/mapbox/Map.vue'
+import Map from 'src/map/Map.vue'
 import MapContainer from 'components/MapContainer.vue'
 import RouteStepper, { Step } from 'components/stepper/RouteStepper.vue'
 import { bbox, circle } from '@turf/turf'
@@ -46,7 +46,7 @@ import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 import { userStore } from 'src/store/UserStore'
 import { posterListStore } from 'src/store/PosterListStore'
-import CampaignCollectionOverlayControl from 'src/mapbox/CampaignCollectionOverlayControl.vue'
+import CampaignCollectionOverlayControl from 'src/map/CampaignCollectionOverlayControl.vue'
 
 const Door2DoorAndFlyerSteps = [{
   label: 'Einstellungen',

@@ -60,7 +60,7 @@ module.exports = configure(function (ctx) {
     boot: [
       'api',
       'validation-rules',
-      'mapbox',
+      'map',
       'utils',
       'apex'
     ],

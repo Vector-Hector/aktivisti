@@ -52,13 +52,13 @@
 <script lang="ts">
 import { defineComponent, inject, PropType } from 'vue'
 import { MapEventBus, MapInject } from './Map.vue'
-import { FitBoundsOptions, LngLat, PositionOptions } from 'mapbox-gl'
+import { FitBoundsOptions, LngLat, PositionOptions } from 'maplibre-gl'
 import { ionLocateOutline, ionLocation, ionRadioButtonOnSharp } from '@quasar/extras/ionicons-v5'
 import { Geolocation, Position } from '@capacitor/geolocation'
 import { matGpsFixed, matGpsNotFixed, matGpsOff } from '@quasar/extras/material-icons'
 import { QFab, QFabAction, QIcon } from 'quasar'
-import Marker from 'src/mapbox/Marker.vue'
-import { MAP_GEOLOCATE_STOP_TRACKING } from 'src/mapbox/Map.vue'
+import Marker from 'src/map/Marker.vue'
+import { MAP_GEOLOCATE_STOP_TRACKING } from 'src/map/Map.vue'
 import { LocationDto } from 'src/api/model/LocationDto'
 
 

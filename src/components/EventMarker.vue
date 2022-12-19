@@ -13,7 +13,7 @@
   </Marker>
 </template>
 <script lang="ts">
-import Marker from '../mapbox/Marker.vue'
+import Marker from '../map/Marker.vue'
 import { defineComponent, PropType } from 'vue'
 import { EventDto } from '../api/model/EventDto'
 import { EventTypes } from '../api/model/EventTypes'

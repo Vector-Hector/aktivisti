@@ -10,7 +10,6 @@
       </h2>
       <Geocoder
         class="geocoder"
-        :access-token="mapboxToken"
         :countries="['de']"
         :standalone="true"
         @result="locate"
@@ -43,7 +42,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
-import Geocoder from 'src/mapbox/Geocoder.vue'
+import Geocoder from 'src/map/Geocoder.vue'
 import { userStore } from 'src/store/UserStore'
 import { GeocodeResult } from 'src/types/GeocodeResult'
 import { bbox, circle } from '@turf/turf'
@@ -69,7 +68,6 @@ export default defineComponent({
   },
   data() {
     return {
-      mapboxToken: process.env.APP_MAPBOX_TOKEN
     }
   },
   computed: {

@@ -17,7 +17,7 @@ import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { Geometry } from 'geojson'
 import { center as turfCenter } from '@turf/turf'
 import { LocationDto } from 'src/api/model/LocationDto'
-import AddressMarker from 'src/mapbox/AddressMarker.vue'
+import AddressMarker from 'src/map/AddressMarker.vue'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import EventAreaStreetMixin from 'pages/event-map/detail/area/street/EventAreaStreetMixin'
 

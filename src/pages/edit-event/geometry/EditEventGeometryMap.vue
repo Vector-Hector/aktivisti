@@ -30,23 +30,23 @@
 
 <script lang="ts">
 import { defineComponent, inject } from 'vue'
-import Marker from 'src/mapbox/Marker.vue'
-import DrawControl from 'src/mapbox/DrawControl.vue'
+import Marker from 'src/map/Marker.vue'
+import DrawControl from 'src/map/DrawControl.vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { routePlannerStyles } from './route-planner.styles'
 import { Feature, Geometry } from 'geojson'
 import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import { bbox, booleanPointInPolygon, center as turfCenter, circle, polygon } from '@turf/turf'
 
-import { MapInject } from 'src/mapbox/Map.vue'
+import { MapInject } from 'src/map/Map.vue'
 import { EditEventBus, START_DRAW_AREA } from 'src/store/EditEventStore'
 import { noop } from 'lodash-es'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { LocationDto } from 'src/api/model/LocationDto'
 import InjectMapMixin from 'pages/event-detail/InjectMapMixin'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
-import AddressMarkerLayer from 'src/mapbox/AddressMarkerLayer'
-import PosterMarkerLayer from 'src/mapbox/PosterMarkerLayer'
+import AddressMarkerLayer from 'src/map/AddressMarkerLayer'
+import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
 
 const defaultColors = [
   '#E22A3A',

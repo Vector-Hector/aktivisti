@@ -45,7 +45,7 @@ src                             # Sources root
 │   └── [...]
 ├── components                  # Reusable Vue components
 ├── lib                         # Reusable components that provide a most generic feature (like wrapping a library)
-│   └── mapbox                  # Mapbox GL JS specific components that also might be usable in a later different project
+│   └── map                     # Maplibre GL JS specific components that also might be usable in a later different project
 ├── router                      # Vue-router definitions
 │   └── index.ts
 ├── scss                        # global or shared scss files

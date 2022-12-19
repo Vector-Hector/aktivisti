@@ -7,7 +7,7 @@
 <script lang="ts">
 
 import { defineComponent } from 'vue'
-import AreaFeatureLayer from 'src/mapbox/AreaFeatureLayer'
+import AreaFeatureLayer from 'src/map/AreaFeatureLayer'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox } from '@turf/turf'
 import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
