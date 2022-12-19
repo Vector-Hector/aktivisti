@@ -129,6 +129,7 @@ import { ionCheckmark, ionClose } from '@quasar/extras/ionicons-v5'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 import { myParticipationsStore } from 'src/store/MyParticipationsStore'
 import { userStore } from 'src/store/UserStore'
+import { EventStatus } from 'src/api/model/EventStatus'
 
 export default defineComponent({
   name: 'MyParticipations',
@@ -210,7 +211,10 @@ export default defineComponent({
     },
     async getParticipatedEvents() {
       const responseData = (await this.$apiClient.eventParticipations.list(
-        {user: userStore.getState().user?.id}, ['event', 'inviting_users']
+        {
+          user: userStore.getState().user?.id,
+          status: EventStatus.ACTIVE
+        }, ['event', 'inviting_users']
       )).payload
       this.participatedEvents = responseData.embedded.event
       this.invitingUsers = responseData.embedded.inviting_users
