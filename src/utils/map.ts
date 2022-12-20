@@ -58,7 +58,7 @@ export async function forwardGeocode(config: any) {
 export async function reverseGeocode(config: any) {
   const params = { format: 'json', lon: config.lng, lat: config.lat };
   const urlParams = new URLSearchParams(Object.entries(params)).toString();
-  const response = await fetch((process.env.APP_MAP_NOMINATIM as string) + 'search?' + urlParams)
+  const response = await fetch((process.env.APP_MAP_NOMINATIM as string) + 'reverse?' + urlParams)
   let result = {}
   if(response.ok) {
     result = await response.json()
