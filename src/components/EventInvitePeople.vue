@@ -72,7 +72,7 @@
         </p>
       </div>
     </div>
-    <div class="row">
+    <div class="row invite-users">
       <QBtn
         class="full-width"
         @click="handleInviteAllCoordinators"
@@ -80,7 +80,7 @@
         Alle Koordinator*innen einladen
       </QBtn>
     </div>
-    <div class="row">
+    <div class="row invite-users">
       <QBtn
         class="full-width"
         @click="handleInviteAllTeamCaptains"
@@ -88,7 +88,7 @@
         Alle Teamcaptains einladen
       </QBtn>
     </div>
-    <div class="row">
+    <div class="row invite-users">
       <QBtn
         class="full-width"
         @click="handleInviteAllUsers"
@@ -323,5 +323,9 @@ export default defineComponent({
   color: $grey-4;
   justify-self: center;
   align-self: center;
+}
+
+.invite-users {
+  margin: 0.5rem
 }
 </style>
