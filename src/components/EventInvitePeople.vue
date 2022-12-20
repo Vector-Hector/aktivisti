@@ -294,7 +294,7 @@ export default defineComponent({
       } else {
         this.$q.notify({
           color: 'info',
-          message: 'In diesem Eventgebiet gibt es keine Benutzer*innen.'
+          message: 'In dem zugehörigen Kreisverband gibt es keine angemeldeten Benutzer*innen.'
         })
       }
     },
