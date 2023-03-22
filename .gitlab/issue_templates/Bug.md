@@ -16,6 +16,8 @@
 
 (Paste any relevant screenshots/clips)
 
+## Notes
+
 ## Your environment
 
 * App version:
