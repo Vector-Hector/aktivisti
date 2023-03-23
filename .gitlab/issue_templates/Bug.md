@@ -5,15 +5,12 @@
 (How one can reproduce the issue)
 
 ## Expected behavior
-
 (Tell us what should happen)
 
 ## Actual behavior
-
 (Tell us what happens instead)
 
 ## Relevant logs and/or screenshots
-
 (Paste any relevant screenshots/clips)
 
 ## Notes
@@ -23,3 +20,5 @@
 * App version:
 * Operating System:
 * Browser/Version:
+
+/label ~Bug 
