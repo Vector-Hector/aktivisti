@@ -282,7 +282,6 @@ import {
   ionTrash
 } from '@quasar/extras/ionicons-v5'
 import { QBtn, QFab, QFabAction, QList, QScrollArea } from 'quasar'
-import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 import Share from 'components/Share.vue'
 import LabeledBtn from 'components/LabeledBtn.vue'
@@ -305,7 +304,6 @@ export default defineComponent({
     QFabAction
   },
   beforeRouteEnter(from, to, next) {
-    uiStore.setBottomSheetStateAtLeast(BottomSheetState.HALF)
     next()
   },
   inject: ['scrollArea'],
