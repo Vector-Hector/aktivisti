@@ -8,10 +8,16 @@ stages:
 include:
   - template: Jobs/Build.gitlab-ci.yml
 
+variables:
+  KUBE_NAMESPACE: "wk-frontend-$CI_ENVIRONMENT_SLUG"
+
 .deploy-template:
-  image: registry.gitlab.alt.coop/ctrlaltcoop/deployment-toolchain:0-0-3
+  image: registry.gitlab.alt.coop/ctrlaltcoop/deployment-toolchain:v0.0.7
   before_script:
-    - kubectl create secret docker-registry gitlab-registry --docker-server="$CI_REGISTRY" --docker-username="$CI_DEPLOY_USER" --docker-password="$CI_DEPLOY_PASSWORD" --docker-email="$GITLAB_USER_EMAIL" -o yaml --dry-run=client | kubectl apply -f -
+    - kubectl config get-contexts
+    - kubectl config use-context wahlkampf-app/wk-frontend:do-wk-frontend
+    - kubectl create namespace $KUBE_NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
+    - kubectl create secret docker-registry gitlab-registry -n $KUBE_NAMESPACE --docker-server="$CI_REGISTRY" --docker-username="$CI_DEPLOY_USER" --docker-password="$CI_DEPLOY_PASSWORD" --docker-email="$GITLAB_USER_EMAIL" -o yaml --dry-run=client | kubectl apply -f -
     - cd kustomize/base
     - envsubst < add-gitlab-annotations.template.yaml > add-gitlab-annotations.yaml
     - cd ../../
@@ -202,8 +208,6 @@ review:
 stop_review:
   stage: cleanup
   extends: .deploy-template
-  variables:
-    GIT_STRATEGY: none
   script:
     - kubectl delete -f ./kustomize/review/out.yaml
   when: manual
