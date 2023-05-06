@@ -84,6 +84,7 @@ export default defineComponent({
   },
   beforeRouteEnter(to, from, next) {
     const isMapDefined = 'map' in to.matched[to.matched.length - 1].components
+    uiStore.setBottomSheetStateAtLeast(BottomSheetState.HALF)
     next((vm) => {
       // @ts-ignore
       vm.isMapDefined = isMapDefined
