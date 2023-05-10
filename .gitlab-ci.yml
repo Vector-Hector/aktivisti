@@ -207,10 +207,14 @@ review:
 
 stop_review:
   stage: cleanup
-  extends: .deploy-template
+  image: registry.gitlab.alt.coop/ctrlaltcoop/deployment-toolchain:v0.0.7
   script:
+    - kubectl config get-contexts
+    - kubectl config use-context wahlkampf-app/wk-frontend:do-wk-frontend
     - kubectl delete -f ./kustomize/review/out.yaml
   when: manual
+  variables:
+    GIT_STRATEGY: none
   except:
     - /^release/(\d+\.)(\d+\.)(\d+)$/
     - main
