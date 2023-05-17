@@ -20,6 +20,7 @@
       ref="eventList"
       @clickOnEvent="handleClickOnEvent"
       :filter="$props.filter"
+      :show-management-control-buttons="true"
     />
   </div>
 </template>

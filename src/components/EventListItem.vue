@@ -21,7 +21,7 @@
         {{ $utils.dateFormat(event.start_date) }}
       </QItemLabel>
     </QItemSection>
-    <QItemSection side>
+    <QItemSection side v-if="showManagementControlButtons">
       <div class="q-gutter-x-md">
         <QBtn round :icon="ionPencil" color="primary" @click="test()"></QBtn>
         <QBtn round :icon="ionTrash" color="primary" @click="test()"></QBtn>
@@ -61,7 +61,8 @@ export default defineComponent({
     campaigns: {
       type: Array as PropType<CampaignDto[]>,
       required: true
-    }
+    },
+    showManagementControlButtons: Boolean
   },
   computed: {
     eventTypeLabel(): string | undefined {

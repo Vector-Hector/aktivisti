@@ -12,6 +12,7 @@
         @click="handleClickOnEvent(item)"
         :event="item"
         :campaigns="campaigns"
+        :show-management-control-buttons="showManagementControlButtons"
       />
     </template>
     <template v-slot:emptyList>
@@ -60,7 +61,8 @@ export default defineComponent({
      */
     filter: {
       type: Function as PropType<(event: EventDto) => boolean>
-    }
+    },
+    showManagementControlButtons: Boolean
   },
   emits: ['clickOnEvent','update:events', 'update:pagination'],
   computed: {
