@@ -27,7 +27,6 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
 import { Pagination } from 'src/api/model/APIEnvelope'
 import { distinctBy } from 'src/utils/array'
-import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 import EventListItem from 'components/EventListItem.vue'
 import InfiniteList from 'components/InfiniteList.vue'
 
@@ -71,12 +70,6 @@ export default defineComponent({
         filteredEventsCount = this.events.filter(this.filter).length
       }
       return this.pagination?.total ? (this.pagination?.total <= this.events.length + filteredEventsCount) : false
-    }
-  },
-  data() {
-    return {
-      ionTrash,
-      ionPencil
     }
   },
   methods: {

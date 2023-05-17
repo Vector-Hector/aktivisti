@@ -1,10 +1,13 @@
 <template>
   <QItem
-    clickable
-    v-ripple
-    @click="$emit('click', event)"
+    tabindex="-1"
   >
-    <QItemSection>
+    <QItemSection
+      clickable
+      v-ripple
+      tabindex="0"
+      @click="$emit('click', event)"
+    >
       <QItemLabel>
         <b>{{ event.name }}</b>
       </QItemLabel>
@@ -18,22 +21,36 @@
         {{ $utils.dateFormat(event.start_date) }}
       </QItemLabel>
     </QItemSection>
+    <QItemSection side>
+      <div class="q-gutter-x-md">
+        <QBtn round :icon="ionPencil" color="primary" @click="test()"></QBtn>
+        <QBtn round :icon="ionTrash" color="primary" @click="test()"></QBtn>
+      </div>
+    </QItemSection>
   </QItem>
 </template>
 <script lang="ts">
 
 import { defineComponent, PropType } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
-import { QItem, QItemLabel, QItemSection } from 'quasar'
+import { QBtn, QItem, QItemLabel, QItemSection } from 'quasar'
+import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { eventTypeOptions } from 'src/api/model/EventTypes'
 
 export default defineComponent({
   name: 'EventListItem',
   components: {
+    QBtn,
     QItem,
     QItemLabel,
     QItemSection
+  },
+  data() {
+    return {
+      ionPencil,
+      ionTrash
+    }
   },
   emits: ['click'],
   props: {
@@ -54,6 +71,9 @@ export default defineComponent({
   methods: {
     campaignsByIds(findIds: number[]): CampaignDto[] {
       return this.campaigns.filter(({id}) => findIds.includes(id))
+    },
+    test(): void {
+      console.log('Clicked')
     }
   }
 })
