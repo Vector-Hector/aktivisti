@@ -24,7 +24,7 @@
     <QItemSection side v-if="showManagementControlButtons">
       <div class="q-gutter-x-md">
         <QBtn round :icon="ionPencil" color="primary" @click="test()"></QBtn>
-        <QBtn round :icon="ionTrash" color="primary" @click="test()"></QBtn>
+        <QBtn round :icon="ionTrash" color="primary" @click="openDeleteModal()"></QBtn>
       </div>
     </QItemSection>
   </QItem>
@@ -37,6 +37,7 @@ import { QBtn, QItem, QItemLabel, QItemSection } from 'quasar'
 import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { openDeleteDialog } from 'src/utils/dialog'
 
 export default defineComponent({
   name: 'EventListItem',
@@ -52,7 +53,7 @@ export default defineComponent({
       ionTrash
     }
   },
-  emits: ['click'],
+  emits: ['click', 'delete'],
   props: {
     event: {
       type: Object as PropType<EventDto>,
@@ -72,6 +73,9 @@ export default defineComponent({
   methods: {
     campaignsByIds(findIds: number[]): CampaignDto[] {
       return this.campaigns.filter(({id}) => findIds.includes(id))
+    },
+    openDeleteModal() {
+      openDeleteDialog(this.$q, this.event).then(() => this.$emit('delete')).catch(console.error)
     },
     test(): void {
       console.log('Clicked')

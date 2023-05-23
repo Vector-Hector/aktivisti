@@ -10,6 +10,7 @@
         clickable
         v-ripple
         @click="handleClickOnEvent(item)"
+        @delete="handleDeleteEvent()"
         :event="item"
         :campaigns="campaigns"
         :show-management-control-buttons="showManagementControlButtons"
@@ -64,7 +65,7 @@ export default defineComponent({
     },
     showManagementControlButtons: Boolean
   },
-  emits: ['clickOnEvent','update:events', 'update:pagination'],
+  emits: ['clickOnEvent','update:events', 'update:delete', 'update:pagination'],
   computed: {
     isDisabled(): boolean {
       let filteredEventsCount = 0
@@ -77,6 +78,9 @@ export default defineComponent({
   methods: {
     handleClickOnEvent(event: EventDto){
       this.$emit('clickOnEvent', event)
+    },
+    handleDeleteEvent() {
+      this.$emit('update:delete')
     },
     async getEvents() {
       const response = await this.$apiClient.events.list({

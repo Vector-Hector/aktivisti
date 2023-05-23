@@ -19,6 +19,7 @@
       class="event-list"
       ref="eventList"
       @clickOnEvent="handleClickOnEvent"
+      @update:delete="updateShownEvents()"
       :filter="$props.filter"
       :show-management-control-buttons="true"
     />
