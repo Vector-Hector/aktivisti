@@ -23,7 +23,13 @@
     </QItemSection>
     <QItemSection side v-if="showManagementControlButtons">
       <div class="q-gutter-x-md">
-        <QBtn round :icon="ionPencil" color="primary" @click="test()"></QBtn>
+        <QBtn
+          round
+          :icon="ionPencil"
+          color="primary"
+          @click="test()"
+          :to="{name: 'edit-event-details', params: { eventId: event.id }}"
+        ></QBtn>
         <QBtn round :icon="ionTrash" color="primary" @click="openDeleteModal()"></QBtn>
       </div>
     </QItemSection>
