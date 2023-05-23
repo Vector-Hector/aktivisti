@@ -94,9 +94,27 @@
                   v-if="updatingAreaFeatureIds.has(props.row.feature_id)"
                   class="progress-spinner"
                 />
+                <QBtn
+                  v-else-if="
+                    Object.keys(eventAreasWithError).includes(
+                      props.row.feature_id
+                    )
+                  "
+                  class="event-area-error-icon"
+                  :ripple="false"
+                  flat
+                  dense
+                  round
+                  color="negative"
+                  :icon="ionAlertCircleOutline"
+                >
+                  <QTooltip>
+                    {{ eventAreasWithError[props.row.feature_id] }}
+                  </QTooltip>
+                </QBtn>
                 <span v-else-if="event.event_type === EventTypes.POSTERS">
-              {{ props.row.poster_count }}
-            </span>
+                  {{ props.row.poster_count }}
+                </span>
                 <span v-else>
               {{ props.row.area_details?.streets?.reduce((acc, item) => acc + item.addresses.length, 0) ?? 0 }}
             </span>
@@ -158,9 +176,10 @@ import {
   QPopupProxy, QSpinnerPuff,
   QTable,
   QTd, QTh,
+  QTooltip,
   QTr
 } from 'quasar'
-import { ionCopyOutline, ionCreateOutline, ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
+import { ionCopyOutline, ionCreateOutline, ionPencil, ionTrash, ionAlertCircleOutline } from '@quasar/extras/ionicons-v5'
 import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
 import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
@@ -182,6 +201,7 @@ export default defineComponent({
     QSpinnerPuff,
     QPopupProxy,
     QBtn,
+    QTooltip,
     QInput,
     QTable,
     QTd,
@@ -197,6 +217,7 @@ export default defineComponent({
   data() {
     return {
       isLoading: false,
+      ionAlertCircleOutline,
       ionCopyOutline,
       ionCreateOutline,
       ionTrash,
