@@ -1,12 +1,15 @@
 <template>
-  <div
-    v-if="standalone"
-    ref="geocodeWrapper"
-    class="geocode-wrapper"
-  />
+  <div v-if="standalone" ref="geocodeWrapper" class="geocode-wrapper" />
 </template>
 <script lang="ts">
-import { defineComponent, inject, onMounted, onUnmounted, PropType, ref } from 'vue'
+import {
+  defineComponent,
+  inject,
+  onMounted,
+  onUnmounted,
+  PropType,
+  ref
+} from 'vue'
 //@ts-ignore
 import MaplibreGeocoder from '@maplibre/maplibre-gl-geocoder'
 import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css'
@@ -43,7 +46,9 @@ export default defineComponent({
       default: false
     },
     position: {
-      type: String as PropType<'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'>,
+      type: String as PropType<
+        'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
+      >,
       default: 'top-right'
     }
   },
@@ -52,20 +57,23 @@ export default defineComponent({
       return payload
     }
   },
-  setup(props, {emit}) {
-    const geocodeControl = new MaplibreGeocoder({
-      forwardGeocode: forwardGeocode,
-      reverseGeocode: reverseGeocode,
-    }, {
-      collapsed: props.collapsed,
-      countries: props.countries?.join(',') ?? undefined,
-      marker: props.markerOptions,
-      placeholder: 'Suchen',
-      showResultsWhileTyping: true,
-      maplibregl: maplibregl
-    })
+  setup(props, { emit }) {
+    const geocodeControl = new MaplibreGeocoder(
+      {
+        forwardGeocode: forwardGeocode,
+        reverseGeocode: reverseGeocode
+      },
+      {
+        collapsed: props.collapsed,
+        countries: props.countries?.join(',') ?? undefined,
+        marker: props.markerOptions,
+        placeholder: 'Suchen',
+        showResultsWhileTyping: true,
+        maplibregl: maplibregl
+      }
+    )
     const geocodeWrapper = ref<HTMLElement | null>(null)
-    geocodeControl.on('result', ({result}: { result: GeocodeResult }) => {
+    geocodeControl.on('result', ({ result }: { result: GeocodeResult }) => {
       emit('result', result)
     })
 
@@ -73,7 +81,9 @@ export default defineComponent({
       if (!props.standalone) {
         const map = inject(MapInject)
         if (!map?.value) {
-          throw Error('Either mount the Geocoder as a child of Map or set standalone=true')
+          throw Error(
+            'Either mount the Geocoder as a child of Map or set standalone=true'
+          )
         }
         map?.value.addControl(geocodeControl, props.position)
       } else {
@@ -94,13 +104,11 @@ export default defineComponent({
     }
   }
 })
-
 </script>
 <style lang="scss" scoped>
-@import "src/css/variables.scss";
+@import 'src/css/variables.scss';
 
 .popup {
   padding: 6px 3px 0 3px;
 }
-
 </style>

@@ -1,5 +1,5 @@
 export interface ReportEventMetricsDto {
-  count: number,
-  day: string,
+  count: number
+  day: string
   metric: number
 }

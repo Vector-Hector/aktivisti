@@ -20,25 +20,27 @@ declare module '@vue/runtime-core' {
 async function refreshOnErrorInterceptor(error: any) {
   const authStore = getAuthStore() as TokenAuthStore
   const originalRequest = error.config
-  if (error.response?.data?.code == ErrorCode.NOT_AUTHENTICATED && authStore.state.tokenSet) {
-
+  if (
+    error.response?.data?.code == ErrorCode.NOT_AUTHENTICATED &&
+    authStore.state.tokenSet
+  ) {
     // redo initial request with new access token
     try {
       await authStore.renewLogin()
     } catch (e) {
       return Promise.reject(error)
     }
-    originalRequest.headers['Authorization'] = `Bearer ${authStore.state.tokenSet.access_token}`
+    originalRequest.headers[
+      'Authorization'
+    ] = `Bearer ${authStore.state.tokenSet.access_token}`
     return apiClient.axiosInstance(originalRequest)
   } else {
-
     // all other request just fail regulary
     return Promise.reject(error)
   }
 }
 
-export default boot(async ({app}) => {
-
+export default boot(async ({ app }) => {
   app.config.globalProperties.$apiClient = apiClient
   const authType = getAuthType()
   if (authType === AuthType.TOKEN) {
@@ -61,22 +63,32 @@ export default boot(async ({app}) => {
       console.warn('Request to session failed, probably offline')
     }
   }
-  apiClient.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
-    return response
-  }, async (error: any) => {
-    if (error.response?.status === 403) {
-      if (error.response?.data?.code === ErrorCode.NOT_AUTHENTICATED && authStore.isLoggedIn()) {
-        // If the request is not authenticated our session expired
-        authStore.setUserId(null)
-        ErrorBus.emit(SESSION_INVALID, 'Deine Sitzung ist abgelaufen, bitte melde dich erneut an')
-      } else {
-        // Emit the permission problem on a global error bus
-        ErrorBus.emit(NOT_AUTHORIZED, 'Du hast nicht genügend Rechte, um die angefragte Seite zu lesen.')
+  apiClient.axiosInstance.interceptors.response.use(
+    (response: AxiosResponse) => {
+      return response
+    },
+    async (error: any) => {
+      if (error.response?.status === 403) {
+        if (
+          error.response?.data?.code === ErrorCode.NOT_AUTHENTICATED &&
+          authStore.isLoggedIn()
+        ) {
+          // If the request is not authenticated our session expired
+          authStore.setUserId(null)
+          ErrorBus.emit(
+            SESSION_INVALID,
+            'Deine Sitzung ist abgelaufen, bitte melde dich erneut an'
+          )
+        } else {
+          // Emit the permission problem on a global error bus
+          ErrorBus.emit(
+            NOT_AUTHORIZED,
+            'Du hast nicht genügend Rechte, um die angefragte Seite zu lesen.'
+          )
+        }
       }
+      // Ultimately reject the error
+      return Promise.reject(error)
     }
-    // Ultimately reject the error
-    return Promise.reject(error)
-  })
-
-
+  )
 })

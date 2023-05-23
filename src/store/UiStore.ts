@@ -3,7 +3,7 @@ import { Store } from 'src/store/Store'
 export interface TitleElements {
   event?: string
   eventArea?: string
-  poster?: string,
+  poster?: string
   campaigns?: string
   street?: string
   houseNumber?: string
@@ -42,7 +42,10 @@ class UiStore extends Store<UiState> {
   }
 
   public setBottomSheetStateAtLeast(value: BottomSheetState) {
-    if (BottomSheetStateOrder[value] > BottomSheetStateOrder[this.state.bottomSheetState]) {
+    if (
+      BottomSheetStateOrder[value] >
+      BottomSheetStateOrder[this.state.bottomSheetState]
+    ) {
       this.state.bottomSheetState = value
     }
   }
@@ -52,11 +55,10 @@ class UiStore extends Store<UiState> {
   }
 
   public updateActiveElements(titleElements: TitleElements) {
-    this.state.activeTitleElements =
-      {
-        ...this.state.activeTitleElements,
-        ...titleElements
-      }
+    this.state.activeTitleElements = {
+      ...this.state.activeTitleElements,
+      ...titleElements
+    }
   }
 }
 

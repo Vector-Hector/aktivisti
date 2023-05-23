@@ -16,37 +16,26 @@
     <div class="print-page">
       <h1 class="headline">{{ event.name }}</h1>
       <p class="facts">
-        Treffpunkt: {{ event.location_description }}<br>
-        Einsatztyp: {{ eventTypeOptions.find(({key}) => key === event.event_type)?.label }}<br>
+        Treffpunkt: {{ event.location_description }}<br />
+        Einsatztyp:
+        {{ eventTypeOptions.find(({ key }) => key === event.event_type)?.label
+        }}<br />
         Datum: {{ $utils.dateFormat(event.start_date) }}
       </p>
       <p>{{ event.description }}</p>
-      <img class="linke-logo" src="../../assets/logo_dielinke.png">
-      <Map
-        class="map"
-        :interactive="false"
-        :bounding-box="zoomBox"
-      >
-        <EventMarker
-          v-if="event?.location"
-          :event="event"
-        />
-        <FeatureLayer
-          :features="areaFeatures"
-        />
+      <img class="linke-logo" src="../../assets/logo_dielinke.png" />
+      <Map class="map" :interactive="false" :bounding-box="zoomBox">
+        <EventMarker v-if="event?.location" :event="event" />
+        <FeatureLayer :features="areaFeatures" />
       </Map>
       <h3>Gebiete</h3>
       <div class="row q-col-gutter-md">
-        <div
-          class="area-item col-4"
-          v-for="area in eventAreas"
-          :key="area.id"
-        >
+        <div class="area-item col-4" v-for="area in eventAreas" :key="area.id">
           <QIcon
             class="area-icon"
             :style="{
-            color: area.color
-          }"
+              color: area.color
+            }"
             :name="ionEllipse"
           />
           <div class="area-label">
@@ -57,25 +46,27 @@
     </div>
 
     <div class="print-page" v-for="area in eventAreas" :key="area.id">
-      <img class="linke-logo" src="../../assets/logo_dielinke.png">
+      <img class="linke-logo" src="../../assets/logo_dielinke.png" />
       <h1 class="headline">Erfassungsbogen für Gebiet: {{ area.name }}</h1>
       <div class="row q-col-gutter-x-sm">
         <div class="col-8">
           <p class="facts">
-            Einsatztyp: {{ eventTypeOptions.find(({key}) => key === event.event_type)?.label }}<br>
-            Einsatzname: {{ event.name }}<br>
-            Datum: {{ $utils.dateFormat(event.start_date) }}<br>
+            Einsatztyp:
+            {{
+              eventTypeOptions.find(({ key }) => key === event.event_type)
+                ?.label
+            }}<br />
+            Einsatzname: {{ event.name }}<br />
+            Datum: {{ $utils.dateFormat(event.start_date) }}<br />
           </p>
           <Map
             class="area-map"
             :interactive="false"
             :bounding-box="boundingBoxOfArea(area)"
           >
-            <FeatureLayer
-              :features="[eventAreaToFeature(area)]"
-            />
+            <FeatureLayer :features="[eventAreaToFeature(area)]" />
             <PosterMarkerLayer
-              :posters="posters.filter(poster =>  poster.area === area.id)"
+              :posters="posters.filter((poster) => poster.area === area.id)"
               :editable="false"
               :opacity="1.0"
               :is-print="true"
@@ -89,13 +80,24 @@
           <div class="col-5 poster-item-cell location">Ort</div>
           <div class="col-2 poster-item-cell">Position</div>
           <div class="col-2 poster-item-cell">letzter<br />Status</div>
-          <div class="col-2 poster-item-cell new-status">aktueller<br />Status</div>
+          <div class="col-2 poster-item-cell new-status">
+            aktueller<br />Status
+          </div>
         </div>
-        <div class="poster-item row"
-             v-for="{ poster_id, location_description, status, mounted_on } in parsedPoster.filter((poster) => poster.area === area.id)"
-             :key="poster_id">
+        <div
+          class="poster-item row"
+          v-for="{
+            poster_id,
+            location_description,
+            status,
+            mounted_on
+          } in parsedPoster.filter((poster) => poster.area === area.id)"
+          :key="poster_id"
+        >
           <div class="col-1 poster-item-cell">{{ poster_id }}</div>
-          <div class="col-5 poster-item-cell location">{{ location_description }}</div>
+          <div class="col-5 poster-item-cell location">
+            {{ location_description }}
+          </div>
           <div class="col-2 poster-item-cell">{{ mounted_on }}</div>
           <div class="col-2 poster-item-cell">{{ status }}</div>
           <div class="col-2 poster-item-cell new-status">
@@ -107,28 +109,25 @@
           </div>
         </div>
       </div>
-
     </div>
     <div class="print-page" v-if="arePostersOutsideArea">
-      <img class="linke-logo" src="../../assets/logo_dielinke.png">
+      <img class="linke-logo" src="../../assets/logo_dielinke.png" />
       <h1 class="headline">Erfassungsbogen für Plakate ohne Gebiet</h1>
       <div class="row q-col-gutter-x-sm">
         <div class="col-8">
           <p class="facts">
-            Einsatztyp: {{ eventTypeOptions.find(({key}) => key === event.event_type)?.label }}<br>
-            Einsatzname: {{ event.name }}<br>
-            Datum: {{ $utils.dateFormat(event.start_date) }}<br>
+            Einsatztyp:
+            {{
+              eventTypeOptions.find(({ key }) => key === event.event_type)
+                ?.label
+            }}<br />
+            Einsatzname: {{ event.name }}<br />
+            Datum: {{ $utils.dateFormat(event.start_date) }}<br />
           </p>
-          <Map
-            class="area-map"
-            :interactive="false"
-            :bounding-box="zoomBox"
-          >
-            <FeatureLayer
-              :features="areaFeatures"
-            />
+          <Map class="area-map" :interactive="false" :bounding-box="zoomBox">
+            <FeatureLayer :features="areaFeatures" />
             <PosterMarkerLayer
-              :posters="posters.filter(poster =>  poster.area === null)"
+              :posters="posters.filter((poster) => poster.area === null)"
               :editable="false"
               :opacity="1.0"
               :is-print="true"
@@ -142,13 +141,24 @@
           <div class="col-5 poster-item-cell location">Ort</div>
           <div class="col-2 poster-item-cell">Position</div>
           <div class="col-2 poster-item-cell">letzter<br />Status</div>
-          <div class="col-2 poster-item-cell new-status">aktueller<br />Status</div>
+          <div class="col-2 poster-item-cell new-status">
+            aktueller<br />Status
+          </div>
         </div>
-        <div class="poster-item row"
-             v-for="{ poster_id, location_description, status, mounted_on } in parsedPoster.filter((poster) => poster.area === null)"
-             :key="poster_id">
+        <div
+          class="poster-item row"
+          v-for="{
+            poster_id,
+            location_description,
+            status,
+            mounted_on
+          } in parsedPoster.filter((poster) => poster.area === null)"
+          :key="poster_id"
+        >
           <div class="col-1 poster-item-cell">{{ poster_id }}</div>
-          <div class="col-5 poster-item-cell location">{{ location_description }}</div>
+          <div class="col-5 poster-item-cell location">
+            {{ location_description }}
+          </div>
           <div class="col-2 poster-item-cell">{{ mounted_on }}</div>
           <div class="col-2 poster-item-cell">{{ status }}</div>
           <div class="col-2 poster-item-cell new-status">
@@ -160,7 +170,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -176,11 +185,20 @@ import { BBox } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox, circle } from '@turf/turf'
 import { QBtn, QIcon } from 'quasar'
 import { eventTypeOptions } from 'src/api/model/EventTypes'
-import { ionArrowBack, ionEllipse, ionPrint, ionSquareOutline } from '@quasar/extras/ionicons-v5'
+import {
+  ionArrowBack,
+  ionEllipse,
+  ionPrint,
+  ionSquareOutline
+} from '@quasar/extras/ionicons-v5'
 import EventMarker from 'components/EventMarker.vue'
-import { PosterDto, PosterMountUtil, PosterStatus, PosterStatusUtil } from 'src/api/model/PosterDto';
-import PosterMarkerLayer from 'src/map/PosterMarkerLayer';
-
+import {
+  PosterDto,
+  PosterMountUtil,
+  PosterStatus,
+  PosterStatusUtil
+} from 'src/api/model/PosterDto'
+import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
 
 export default defineComponent({
   name: 'PostersPrintout',
@@ -204,7 +222,7 @@ export default defineComponent({
     posters: {
       type: Array as PropType<PosterDto[]>,
       required: true
-    },
+    }
   },
   data() {
     return {
@@ -212,7 +230,7 @@ export default defineComponent({
       ionEllipse,
       ionArrowBack,
       ionPrint,
-      ionSquareOutline,
+      ionSquareOutline
     }
   },
   computed: {
@@ -220,27 +238,43 @@ export default defineComponent({
       return this.eventAreas.map(eventAreaToFeature)
     },
     zoomBox(): BBox {
-      const meetingPoint = circle([this.event.location.lng, this.event.location.lat], 0.2)
-      return this.areaFeatures.length > 0 ? bbox({
-        type: 'FeatureCollection',
-        features: [...this.areaFeatures, meetingPoint]
-      }) : bbox(meetingPoint)
+      const meetingPoint = circle(
+        [this.event.location.lng, this.event.location.lat],
+        0.2
+      )
+      return this.areaFeatures.length > 0
+        ? bbox({
+            type: 'FeatureCollection',
+            features: [...this.areaFeatures, meetingPoint]
+          })
+        : bbox(meetingPoint)
     },
-    parsedPoster(): { poster_id: number, location_description: string, status: string, mounted_on: string, area: number }[] {
-      return this.posters.map(({poster_id, area, location_description, status, mounted_on}) => ({
-        poster_id: poster_id,
-        area: area,
-        location_description: location_description,
-        status: PosterStatusUtil.getLabel(status),
-        mounted_on: PosterMountUtil.getLabel(mounted_on)
-      })).sort((a, b) => (a.poster_id - b.poster_id))
+    parsedPoster(): {
+      poster_id: number
+      location_description: string
+      status: string
+      mounted_on: string
+      area: number
+    }[] {
+      return this.posters
+        .map(
+          ({ poster_id, area, location_description, status, mounted_on }) => ({
+            poster_id: poster_id,
+            area: area,
+            location_description: location_description,
+            status: PosterStatusUtil.getLabel(status),
+            mounted_on: PosterMountUtil.getLabel(mounted_on)
+          })
+        )
+        .sort((a, b) => a.poster_id - b.poster_id)
     },
     posterStates(): string[] {
-      return Object.keys(PosterStatus).map((key) => PosterStatusUtil.getLabel(key as PosterStatus))
-
+      return Object.keys(PosterStatus).map((key) =>
+        PosterStatusUtil.getLabel(key as PosterStatus)
+      )
     },
     arePostersOutsideArea(): boolean {
-      return this.posters.some(({area}) => area === null)
+      return this.posters.some(({ area }) => area === null)
     }
   },
   methods: {
@@ -272,7 +306,6 @@ export default defineComponent({
   h3 {
     font-size: 1.2rem;
     line-height: 1.2;
-
   }
 }
 
@@ -306,7 +339,7 @@ export default defineComponent({
 }
 
 .headline {
-  margin: 2.2rem 0
+  margin: 2.2rem 0;
 }
 
 .area-icon {
@@ -326,7 +359,7 @@ export default defineComponent({
 
   .row {
     page-break-inside: avoid;
-    page-break-after: auto
+    page-break-after: auto;
   }
 
   .tableheader {
@@ -366,14 +399,16 @@ export default defineComponent({
   }
 }
 
-.back-button, .print-button {
+.back-button,
+.print-button {
   position: fixed;
   top: 1rem;
   z-index: 10;
 }
 
 @media print {
-  .back-button, .print-button {
+  .back-button,
+  .print-button {
     display: none;
   }
   .posters-printout {
@@ -388,6 +423,4 @@ export default defineComponent({
 .print-button {
   right: 1rem;
 }
-
-
 </style>

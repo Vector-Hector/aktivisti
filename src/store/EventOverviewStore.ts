@@ -10,7 +10,6 @@ interface EventMapStoreState {
 }
 
 class EventOverviewStore extends Store<EventMapStoreState> {
-
   protected data(): EventMapStoreState {
     return {
       bbox: null,

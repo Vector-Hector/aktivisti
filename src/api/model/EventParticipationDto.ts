@@ -1,4 +1,3 @@
-
 export interface EventParticipationDto {
   id: number
   user: number

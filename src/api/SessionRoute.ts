@@ -5,8 +5,6 @@ import { APIEnvelope } from 'src/api/model/APIEnvelope'
 import { SessionDto } from 'src/api/model/SessionDto'
 
 export class SessionRoute extends BaseApiRoute {
-
-
   async login(payload: LoginDto): Promise<JSONResponse<undefined>> {
     const response = await this.request({
       path: `${this.path}login/`,

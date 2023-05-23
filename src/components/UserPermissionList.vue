@@ -12,15 +12,15 @@
           </QItemLabel>
         </QItemSection>
         <QItemSection side>
-          <div
-            class="invitation-item-actions"
-          >
+          <div class="invitation-item-actions">
             <QSelect
               class="permission-dropdown"
               :dropdownIcon="ionChevronDown"
               filled
               :model-value="user.permission_codename"
-              @update:model-value="(permission) => updateObjectPermission(permission, user)"
+              @update:model-value="
+                (permission) => updateObjectPermission(permission, user)
+              "
               :options="permissionTypeConditionalOptions"
               :option-disable="(opt) => isPermissionAssignable(opt, user)"
               option-value="key"
@@ -34,12 +34,17 @@
   </div>
 </template>
 <script lang="ts">
-
 import { defineComponent, PropType } from 'vue'
-import { ContentTypeOption, ExtendedPermissionTypeOption } from 'pages/ManageUsers.vue'
+import {
+  ContentTypeOption,
+  ExtendedPermissionTypeOption
+} from 'pages/ManageUsers.vue'
 import { QItem, QItemLabel, QItemSection, QList, QSelect } from 'quasar'
 import { ionChevronDown } from '@quasar/extras/ionicons-v5'
-import { PermissionCodename, UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
+import {
+  PermissionCodename,
+  UserObjectPermissionDto
+} from 'src/api/model/UserObjectPermissionDto'
 import { ContentTypeNaturalKey } from 'src/api/model/ContentTypeDto'
 
 interface UserPermissionItem {
@@ -99,10 +104,10 @@ export default defineComponent({
     await this.getUsersWithPermissionsForEntity()
   },
   watch: {
-    contentType: async function() {
+    contentType: async function () {
       await this.getUsersWithPermissionsForEntity()
     },
-    objectId: async function() {
+    objectId: async function () {
       await this.getUsersWithPermissionsForEntity()
     }
   },
@@ -111,38 +116,54 @@ export default defineComponent({
       let query
       switch (this.contentType.natural_key) {
         case ContentTypeNaturalKey.SUB_ASSOCIATION:
-          query = {sub_association: this.objectId.toString()}
+          query = { sub_association: this.objectId.toString() }
           break
         case ContentTypeNaturalKey.STATE_ASSOCIATION:
-          query = {association: this.objectId.toString()}
+          query = { association: this.objectId.toString() }
           break
         default:
           break
       }
-      const userObjectPermissions: UserObjectPermissionDto[] = (await this.$apiClient.userPermissions.list(query)).payload.data
-      this.userPermissions = userObjectPermissions.map(
-        (permission) => {
-          return {
-            username: permission.user,
-            permission_codename: permission.permission_codename,
-            object_permission_id: permission.id
-          }
+      const userObjectPermissions: UserObjectPermissionDto[] = (
+        await this.$apiClient.userPermissions.list(query)
+      ).payload.data
+      this.userPermissions = userObjectPermissions.map((permission) => {
+        return {
+          username: permission.user,
+          permission_codename: permission.permission_codename,
+          object_permission_id: permission.id
         }
-      )
+      })
     },
-    isPermissionAssignable(permission: {key: string, label: string, inactive: boolean}, user: UserPermissionItem) {
-      return Object(permission) === permission ? permission.inactive
-        || (user.permission_codename === PermissionCodename.MANAGE_EVENTS &&
-          this.myPermissionForSelectedSubAssociation?.permission_codename === PermissionCodename.TEAM_CAPTAIN)
+    isPermissionAssignable(
+      permission: { key: string; label: string; inactive: boolean },
+      user: UserPermissionItem
+    ) {
+      return Object(permission) === permission
+        ? permission.inactive ||
+            (user.permission_codename === PermissionCodename.MANAGE_EVENTS &&
+              this.myPermissionForSelectedSubAssociation
+                ?.permission_codename === PermissionCodename.TEAM_CAPTAIN)
         : true
     },
-    async updateObjectPermission(permission: ExtendedPermissionTypeOption, user: UserPermissionItem) {
-      if (user.object_permission_id && permission.key === PermissionCodename.NONE) {
-        await this.$apiClient.userPermissions.delete(user.object_permission_id.toString())
-        this.userPermissions = this.userPermissions.filter(({username}) => username !== user.username)
+    async updateObjectPermission(
+      permission: ExtendedPermissionTypeOption,
+      user: UserPermissionItem
+    ) {
+      if (
+        user.object_permission_id &&
+        permission.key === PermissionCodename.NONE
+      ) {
+        await this.$apiClient.userPermissions.delete(
+          user.object_permission_id.toString()
+        )
+        this.userPermissions = this.userPermissions.filter(
+          ({ username }) => username !== user.username
+        )
         this.$q.notify({
           color: 'positive',
-          message: 'Der Benutzer*in wurden die Rechte für das Verwaltungsgebiet entzogen'
+          message:
+            'Der Benutzer*in wurden die Rechte für das Verwaltungsgebiet entzogen'
         })
       } else {
         const newUserObjectPermission = {
@@ -154,7 +175,10 @@ export default defineComponent({
 
         //update existing UserObjectPermission
         if (user.object_permission_id) {
-          await this.$apiClient.userPermissions.patch(user.object_permission_id.toString(), newUserObjectPermission)
+          await this.$apiClient.userPermissions.patch(
+            user.object_permission_id.toString(),
+            newUserObjectPermission
+          )
         }
         //or create a new one
         else {
@@ -173,7 +197,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-
 .manage-users-list-item {
   padding: 8px 0;
 }
@@ -181,5 +204,4 @@ export default defineComponent({
 .permission-dropdown {
   min-width: 10rem;
 }
-
 </style>

@@ -1,20 +1,12 @@
 <template>
-  <QScrollArea
-    class="d-flex flex-fill column q-py-sm"
-  >
+  <QScrollArea class="d-flex flex-fill column q-py-sm">
     <div class="create-lead">
-      <QBtn
-        :to="{ name: 'create-lead' }"
-        outline
-        color="primary"
-      >
+      <QBtn :to="{ name: 'create-lead' }" outline color="primary">
         Kontakt registrieren
       </QBtn>
     </div>
 
-    <div
-      v-if="metricRecords.length"
-    >
+    <div v-if="metricRecords.length">
       <MetricsRow
         v-for="metricRecord in metricRecords"
         :key="metricRecord.metric"
@@ -25,25 +17,22 @@
         @update:modelValue="updateMetricValue(metricRecord.id, $event)"
       />
     </div>
-    <p
-      v-else
-    >
-      Für diese Aktion wurden keine Ergebnisse definiert
-    </p>
+    <p v-else>Für diese Aktion wurden keine Ergebnisse definiert</p>
   </QScrollArea>
-
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
-import { MetricValueMap, trackingSessionStore } from 'src/store/TrackingSessionStore'
+import {
+  MetricValueMap,
+  trackingSessionStore
+} from 'src/store/TrackingSessionStore'
 import MetricsRow from 'src/components/MetricsRow.vue'
 import { uiStore } from 'src/store/UiStore'
 import EventAreaMetricsMixin from 'pages/event-map/detail/area/metrics/EventAreaMetricsMixin'
 import { QBtn, QScrollArea } from 'quasar'
-
 
 export default defineComponent({
   name: 'EventAreaMetrics',
@@ -62,7 +51,10 @@ export default defineComponent({
   computed: {
     metricValues: {
       get(): MetricValueMap {
-        const storedValues = trackingSessionStore.getMetricsForAddress(this.eventArea.id!, this.address!)
+        const storedValues = trackingSessionStore.getMetricsForAddress(
+          this.eventArea.id!,
+          this.address!
+        )
         if (storedValues) {
           return storedValues
         } else {
@@ -74,7 +66,11 @@ export default defineComponent({
         }
       },
       async set(metrics: MetricValueMap) {
-        await trackingSessionStore.updateMetricsForAddress(this.eventArea.id!, this.address!, metrics)
+        await trackingSessionStore.updateMetricsForAddress(
+          this.eventArea.id!,
+          this.address!,
+          metrics
+        )
       }
     }
   },
@@ -90,13 +86,16 @@ export default defineComponent({
     }
   },
   async created() {
-    const metricsRequest = await this.$apiClient.eventMetricRecords.list({event: this.eventArea.event}, ['metric'])
+    const metricsRequest = await this.$apiClient.eventMetricRecords.list(
+      { event: this.eventArea.event },
+      ['metric']
+    )
     this.metricRecords = metricsRequest.payload.data
     this.metrics = metricsRequest.payload.embedded.metric
   },
   methods: {
     getMetricForId(findId: number): EventMetricDto | undefined {
-      return this.metrics.find(({id}) => id === findId)
+      return this.metrics.find(({ id }) => id === findId)
     },
     updateMetricValue(metricRecordId: number, value: string) {
       this.metricValues = {
@@ -106,7 +105,6 @@ export default defineComponent({
     }
   }
 })
-
 </script>
 
 <style lang="scss" scoped>
@@ -154,7 +152,6 @@ label {
 }
 
 .metrics-input {
-  margin: .7rem 0 0;
+  margin: 0.7rem 0 0;
 }
-
 </style>

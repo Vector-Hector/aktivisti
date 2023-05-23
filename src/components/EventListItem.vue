@@ -1,9 +1,5 @@
 <template>
-  <QItem
-    clickable
-    v-ripple
-    @click="$emit('click', event)"
-  >
+  <QItem clickable v-ripple @click="$emit('click', event)">
     <QItemSection>
       <QItemLabel>
         <b>{{ event.name }}</b>
@@ -12,7 +8,11 @@
         {{ eventTypeLabel }}
       </QItemLabel>
       <QItemLabel>
-        {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
+        {{
+          campaignsByIds(event.campaigns)
+            .map(({ name }) => name)
+            .join(',')
+        }}
       </QItemLabel>
       <QItemLabel>
         {{ $utils.dateFormat(event.start_date) }}
@@ -21,7 +21,6 @@
   </QItem>
 </template>
 <script lang="ts">
-
 import { defineComponent, PropType } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { QItem, QItemLabel, QItemSection } from 'quasar'
@@ -48,15 +47,15 @@ export default defineComponent({
   },
   computed: {
     eventTypeLabel(): string | undefined {
-      return eventTypeOptions.find(({key}) => key === this.event.event_type)?.label
+      return eventTypeOptions.find(({ key }) => key === this.event.event_type)
+        ?.label
     }
   },
   methods: {
     campaignsByIds(findIds: number[]): CampaignDto[] {
-      return this.campaigns.filter(({id}) => findIds.includes(id))
+      return this.campaigns.filter(({ id }) => findIds.includes(id))
     }
   }
 })
 </script>
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

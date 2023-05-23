@@ -3,13 +3,14 @@
     <div class="col-12">
       <span class="description-text">
         <slot name="hintText">
-          Bitte gib entweder eine Adresse in das Suchfeld ein oder verschiebe den rot hervorgehobenen Pin auf der Karte, um die Position dieses Standorts auf der Karte festzulegen.
+          Bitte gib entweder eine Adresse in das Suchfeld ein oder verschiebe
+          den rot hervorgehobenen Pin auf der Karte, um die Position dieses
+          Standorts auf der Karte festzulegen.
         </slot>
       </span>
     </div>
   </div>
   <div class="row">
-
     <div class="col-grow">
       <StandaloneGeocoder
         :result="currentGeocodeResult"
@@ -18,21 +19,24 @@
         :custom-place-name="true"
         :error="error"
       />
-      <QPopupProxy
-        no-parent-event
-        ref="suggestionPopup"
-      >
+      <QPopupProxy no-parent-event ref="suggestionPopup">
         <QCard>
           <QCardSection>
             <span>
               Willst du die Beschreibung für diesen Ort übernehmen?
-              <br>
+              <br />
               <b>{{ suggestion }}</b>
             </span>
           </QCardSection>
           <QCardActions align="right">
             <QBtn v-close-popup flat color="primary" label="Nein" />
-            <QBtn v-close-popup flat color="primary" label="Ja" @click="acceptSuggestedPlace" />
+            <QBtn
+              v-close-popup
+              flat
+              color="primary"
+              label="Ja"
+              @click="acceptSuggestedPlace"
+            />
           </QCardActions>
         </QCard>
       </QPopupProxy>
@@ -48,7 +52,6 @@
 </template>
 
 <script lang="ts">
-
 import { defineComponent, PropType, nextTick } from 'vue'
 import StandaloneGeocoder from 'components/StandaloneGeocoder.vue'
 import { QBtn, QCard, QCardActions, QCardSection, QPopupProxy } from 'quasar'
@@ -56,7 +59,6 @@ import { GeocodeResult } from 'src/types/GeocodeResult'
 import DraggableMarker from 'components/DraggableMarker.vue'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { reverseGeocode } from 'src/utils/map'
-
 
 export default defineComponent({
   name: 'LocationSelect',
@@ -90,7 +92,7 @@ export default defineComponent({
   emits: ['update:location', 'update:locationDescription'],
   data() {
     return {
-      currentGeocodeResult: {place_name: ''} as Partial<GeocodeResult>,
+      currentGeocodeResult: { place_name: '' } as Partial<GeocodeResult>,
       suggestion: '',
       touched: false,
       lastOriginalPlaceName: null as null | string
@@ -112,7 +114,8 @@ export default defineComponent({
     async location(newValue) {
       // By checking if the new location is equal to the last geocoded
       // location we can determine if the location change comes from outside
-      const sameLocation = newValue?.lng === this.currentGeocodeResult?.center?.[0] &&
+      const sameLocation =
+        newValue?.lng === this.currentGeocodeResult?.center?.[0] &&
         newValue?.lat === this.currentGeocodeResult?.center?.[1]
       if (!sameLocation) {
         this.handleLocationChange(await this.reverseLocation(newValue))
@@ -130,7 +133,10 @@ export default defineComponent({
     handleLocationSelect(geocoderResult: GeocodeResult) {
       this.setLastOriginalPlaceName(geocoderResult.place_name)
       this.setGeocodeResult(geocoderResult)
-      this.$emit('update:location', {lng: geocoderResult.center[0], lat: geocoderResult.center[1]})
+      this.$emit('update:location', {
+        lng: geocoderResult.center[0],
+        lat: geocoderResult.center[1]
+      })
       this.$emit('update:locationDescription', geocoderResult.place_name)
     },
     handleLocationChange(geocoderResult: GeocodeResult) {
@@ -138,7 +144,8 @@ export default defineComponent({
       // when retrieving reversed result preserve the location until the user confirms it
       this.setGeocodeResult({
         ...geocoderResult,
-        place_name: this.currentGeocodeResult?.place_name ?? this.locationDescription
+        place_name:
+          this.currentGeocodeResult?.place_name ?? this.locationDescription
       })
       this.suggestion = geocoderResult?.place_name ?? ''
       this.suggestPlace()
@@ -165,11 +172,11 @@ export default defineComponent({
       this.$emit('update:locationDescription', this.suggestion)
     },
     async reverseLocation(location: LocationDto) {
-      return (await reverseGeocode({
+      return await reverseGeocode({
         lng: location.lng,
         lat: location.lat,
         language: ['de']
-      }))
+      })
     }
   }
 })
@@ -177,7 +184,7 @@ export default defineComponent({
 <style lang="scss">
 .marker-column {
   display: flex;
-  padding: 0.25rem .5rem;
+  padding: 0.25rem 0.5rem;
   align-items: flex-start;
 }
 

@@ -20,11 +20,10 @@ interface EventDetailStoreState {
   completionNotes: CompletionNoteDto[]
   selectedEventAreaId: null | number
   posters: PosterDto[]
-  activePosterIndex: number | null,
+  activePosterIndex: number | null
 }
 
 class EventDetailStore extends Store<EventDetailStoreState> {
-
   protected data(): EventDetailStoreState {
     return {
       event: null,
@@ -47,13 +46,17 @@ class EventDetailStore extends Store<EventDetailStoreState> {
   }
 
   public getEventArea(): EventAreaDto | null {
-    return this.state.eventAreas.find(({id}) =>
-      id === this.state.selectedEventAreaId
-    ) ?? null
+    return (
+      this.state.eventAreas.find(
+        ({ id }) => id === this.state.selectedEventAreaId
+      ) ?? null
+    )
   }
 
   public updateEventArea(value: EventAreaDto) {
-    const indexToReplace = this.state.eventAreas.findIndex(({id}) => value.id === id)
+    const indexToReplace = this.state.eventAreas.findIndex(
+      ({ id }) => value.id === id
+    )
     this.state.eventAreas[indexToReplace] = value
   }
 
@@ -76,7 +79,9 @@ class EventDetailStore extends Store<EventDetailStoreState> {
     this.state.personalParticipation = participation
   }
 
-  public setPersonalParticipationPermissions(permissions: PermissionHintsDto | null) {
+  public setPersonalParticipationPermissions(
+    permissions: PermissionHintsDto | null
+  ) {
     this.state.personalParticipationPermissions = permissions
   }
 
@@ -93,10 +98,12 @@ class EventDetailStore extends Store<EventDetailStoreState> {
   }
 
   public addCompletionNotes(completionNotes: CompletionNoteDto[]) {
-    const newIds = completionNotes.map(({target_id}) => target_id)
+    const newIds = completionNotes.map(({ target_id }) => target_id)
     // discard any in the current set that are added with this new set
     this.state.completionNotes = [
-      ...this.state.completionNotes.filter(({target_id}) => !newIds.includes(target_id)),
+      ...this.state.completionNotes.filter(
+        ({ target_id }) => !newIds.includes(target_id)
+      ),
       ...completionNotes
     ]
   }

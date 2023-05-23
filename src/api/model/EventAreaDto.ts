@@ -1,7 +1,6 @@
 import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
 import { Feature, Geometry } from 'geojson'
 
-
 export interface EventAreaDto {
   id?: number
   name: string

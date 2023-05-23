@@ -9,26 +9,26 @@ import { useReportScope } from 'components/reportCharts/reportChartScope'
 import { defaultApexChartOptions } from 'boot/apex'
 
 interface Props {
-  title?: string,
-  eventMetrics?: EventMetricDto[],
-  campaignId: number,
-  stateAssociationId?: number,
-  subAssociationId?: number,
+  title?: string
+  eventMetrics?: EventMetricDto[]
+  campaignId: number
+  stateAssociationId?: number
+  subAssociationId?: number
 }
 
 const props = defineProps<Props>()
 
 interface ApexSeriesEntity {
-  name: string,
+  name: string
   data: ApexDatePoint[]
 }
 
-const {
-  campaign,
-  stateAssociation,
-  subAssociation,
-  fetchData
-} = useReportScope(props.campaignId, props.stateAssociationId, props.subAssociationId)
+const { campaign, stateAssociation, subAssociation, fetchData } =
+  useReportScope(
+    props.campaignId,
+    props.stateAssociationId,
+    props.subAssociationId
+  )
 
 const series = ref<ApexSeriesEntity[]>([])
 const isLoading = ref<boolean>(false)
@@ -41,13 +41,19 @@ onBeforeMount(async () => {
 })
 
 async function fetchMetricsReport() {
-  if (props.eventMetrics){
-    const report = (await apiClient.reportEventMetrics.list({
-      campaign: campaign.value!.id,
-      state_association: stateAssociation.value ? stateAssociation.value.id : undefined,
-      sub_association: subAssociation.value ? subAssociation.value.id : undefined,
-      metrics: props.eventMetrics.map(({id}) => id)
-    })).payload.data
+  if (props.eventMetrics) {
+    const report = (
+      await apiClient.reportEventMetrics.list({
+        campaign: campaign.value!.id,
+        state_association: stateAssociation.value
+          ? stateAssociation.value.id
+          : undefined,
+        sub_association: subAssociation.value
+          ? subAssociation.value.id
+          : undefined,
+        metrics: props.eventMetrics.map(({ id }) => id)
+      })
+    ).payload.data
     series.value = []
     for (const metric of props.eventMetrics) {
       const metricData = report
@@ -61,7 +67,10 @@ async function fetchMetricsReport() {
   }
 }
 
-const toApexDatePoint = (reportMetric: ReportEventMetricsDto) => ({x: reportMetric.day, y: reportMetric.count})
+const toApexDatePoint = (reportMetric: ReportEventMetricsDto) => ({
+  x: reportMetric.day,
+  y: reportMetric.count
+})
 
 const chartOptions = computed(() => {
   return {
@@ -72,10 +81,14 @@ const chartOptions = computed(() => {
       text: `${props.title ? props.title : ''}`
     },
     subtitle: {
-      text: `${campaign.value?.name}${stateAssociation.value?.name ? ' > ' + stateAssociation.value.name : ''}${subAssociation.value?.name ? ' > ' + subAssociation.value.name : ''}`
+      text: `${campaign.value?.name}${
+        stateAssociation.value?.name ? ' > ' + stateAssociation.value.name : ''
+      }${subAssociation.value?.name ? ' > ' + subAssociation.value.name : ''}`
     },
     noData: {
-      text: isLoading.value ? 'Lade Daten...' : defaultApexChartOptions.noData?.text
+      text: isLoading.value
+        ? 'Lade Daten...'
+        : defaultApexChartOptions.noData?.text
     }
   }
 })

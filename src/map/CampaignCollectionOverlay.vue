@@ -26,7 +26,12 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'geometryClick', geometryId: number, geometry: Geometry, metadata: any): void
+  (
+    e: 'geometryClick',
+    geometryId: number,
+    geometry: Geometry,
+    metadata: any
+  ): void
   (e: 'onLoadingFinished'): void
 }
 
@@ -47,19 +52,24 @@ onMounted(async () => {
   await initializeOverlay(props.collection)
 })
 
-watch(() => props.collection, async (newCollection) => {
-  cleanUp()
-  await initializeOverlay(newCollection)
-})
+watch(
+  () => props.collection,
+  async (newCollection) => {
+    cleanUp()
+    await initializeOverlay(newCollection)
+  }
+)
 
 onUnmounted(() => {
   cleanUp()
 })
 
 async function initializeOverlay(collection: CampaignGeometryCollectionsDto) {
-  const geometries = (await apiClient.campaignGeometries.list({
-    geometry_collection: collection.id
-  })).payload.data
+  const geometries = (
+    await apiClient.campaignGeometries.list({
+      geometry_collection: collection.id
+    })
+  ).payload.data
   overlayID.value = uuidv4()
   const featureCollection = composeFeatureCollection(geometries)
   drawFeatureCollection(overlayID.value, featureCollection, collection.color)
@@ -70,7 +80,7 @@ async function initializeOverlay(collection: CampaignGeometryCollectionsDto) {
   }
 }
 
-function cleanUp(){
+function cleanUp() {
   if (overlayID.value) {
     removeCollectionOverlay(overlayID.value)
     removeEventHandlers(overlayID.value)
@@ -81,14 +91,16 @@ function cleanUp(){
  * Create a geoJSON Feature collection from Campaign Geometries
  * @param geometries - List of Campaign Geometries
  */
-function composeFeatureCollection(geometries: CampaignGeometriesDto[]): FeatureCollection {
+function composeFeatureCollection(
+  geometries: CampaignGeometriesDto[]
+): FeatureCollection {
   const features: Feature[] = geometries.map((geo) => ({
     type: 'Feature',
     id: geo.id,
     geometry: geo.geometry,
     properties: {
       id: geo.id,
-      raw_metadata: {...geo.metadata}
+      raw_metadata: { ...geo.metadata }
     }
   }))
   return {
@@ -104,17 +116,19 @@ function composeFeatureCollection(geometries: CampaignGeometriesDto[]): FeatureC
  * @param featureCollection - A geoJSON feature Collection
  * @param color - Base color of the Layer
  */
-function drawFeatureCollection(id: string, featureCollection: FeatureCollection, color: string): void {
+function drawFeatureCollection(
+  id: string,
+  featureCollection: FeatureCollection,
+  color: string
+): void {
   const sourceId = `${id}-source`
   const fillLayerId = `${id}-fill`
   const outlineLayerId = `${id}-outline`
 
-  map.addSource(
-    sourceId,
-    {
-      type: 'geojson',
-      data: featureCollection
-    })
+  map.addSource(sourceId, {
+    type: 'geojson',
+    data: featureCollection
+  })
 
   map.addLayer({
     id: fillLayerId,
@@ -148,7 +162,8 @@ function drawFeatureCollection(id: string, featureCollection: FeatureCollection,
 function addEventHandlers(overlayId: string): void {
   const fillLayerId = `${overlayId}-fill`
   const outlineLayerId = `${overlayId}-outline`
-  map.on('click', fillLayerId, handleGeometryClick)
+  map
+    .on('click', fillLayerId, handleGeometryClick)
     .on('click', outlineLayerId, handleGeometryClick)
 
   if (props.hover) {
@@ -176,7 +191,8 @@ function removeCollectionOverlay(overlayId: string): void {
 function removeEventHandlers(overlayId: string): void {
   const fillLayerId = `${overlayId}-fill`
   const outlineLayerId = `${overlayId}-outline`
-  map.off('click', fillLayerId, handleGeometryClick)
+  map
+    .off('click', fillLayerId, handleGeometryClick)
     .off('click', outlineLayerId, handleGeometryClick)
 
   if (props.hover) {
@@ -184,7 +200,6 @@ function removeEventHandlers(overlayId: string): void {
       .off('mousemove', fillLayerId, handleGeometryMouseOver)
       .off('mouseleave', fillLayerId, handleGeometryLeave)
   }
-
 }
 
 /**
@@ -206,7 +221,7 @@ function removeGeometries(overlayId: string): void {
  * @see {@link drawFeatureCollection}
  */
 function handleGeometryClick(e: any): void {
-  const {properties, geometry} = e.features?.[0]
+  const { properties, geometry } = e.features?.[0]
   const geometryId = properties?.id
   const metadata = JSON.parse(properties?.raw_metadata)
   if (geometryId) {
@@ -222,7 +237,7 @@ function handleGeometryClick(e: any): void {
  */
 function handleGeometryMouseOver(e: any): void {
   if (e.features?.length > 0) {
-    const {properties, id: layerId, source: sourceId} = e.features?.[0]
+    const { properties, id: layerId, source: sourceId } = e.features?.[0]
     const metadata = JSON.parse(properties?.raw_metadata)
     // @ts-ignore
     geometryPopup.value.remove()
@@ -230,8 +245,8 @@ function handleGeometryMouseOver(e: any): void {
     geometryPopup.value.showPopup(metadata, e.lngLat)
     if (hoveredGeometry.sourceId !== null && hoveredGeometry.layerId !== null) {
       map.setFeatureState(
-        {source: hoveredGeometry.sourceId, id: hoveredGeometry.layerId},
-        {hover: false}
+        { source: hoveredGeometry.sourceId, id: hoveredGeometry.layerId },
+        { hover: false }
       )
     }
     hoveredGeometry = {
@@ -239,8 +254,8 @@ function handleGeometryMouseOver(e: any): void {
       sourceId: sourceId
     }
     map.setFeatureState(
-      {source: hoveredGeometry.sourceId!, id: hoveredGeometry.layerId!},
-      {hover: true}
+      { source: hoveredGeometry.sourceId!, id: hoveredGeometry.layerId! },
+      { hover: true }
     )
   }
 }
@@ -253,8 +268,8 @@ function handleGeometryMouseOver(e: any): void {
 function handleGeometryLeave(): void {
   if (hoveredGeometry.layerId !== null && hoveredGeometry.sourceId !== null) {
     map.setFeatureState(
-      {source: hoveredGeometry.sourceId, id: hoveredGeometry.layerId},
-      {hover: false}
+      { source: hoveredGeometry.sourceId, id: hoveredGeometry.layerId },
+      { hover: false }
     )
   }
   hoveredGeometry = {
@@ -271,8 +286,6 @@ function handleGeometryLeave(): void {
 function fitMap(featureCollection: FeatureCollection): void {
   map.fitBounds(bbox(featureCollection) as BBox2d)
 }
-
-
 </script>
 
 <template>

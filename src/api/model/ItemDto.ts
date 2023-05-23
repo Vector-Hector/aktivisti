@@ -1,3 +1,3 @@
-export interface ItemDto{
+export interface ItemDto {
   id: number
 }

@@ -4,7 +4,6 @@ import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { apiClient } from 'src/api/ApiClient'
 import { Feature } from 'geojson'
 
-
 export default defineComponent({
   name: 'EditEventGeometryMixin',
   mixins: [EditEventMixin],
@@ -25,10 +24,18 @@ export default defineComponent({
   },
   methods: {
     async updateArea(area: Partial<EventAreaDto>) {
-      this.updatingAreaFeatureIds = new Set([...this.updatingAreaFeatureIds, area.feature_id!])
+      this.updatingAreaFeatureIds = new Set([
+        ...this.updatingAreaFeatureIds,
+        area.feature_id!
+      ])
       let updatedArea: EventAreaDto
       if (area.id) {
-        updatedArea = (await apiClient.eventAreas.update(area.id.toString(), area as EventAreaDto)).payload.data
+        updatedArea = (
+          await apiClient.eventAreas.update(
+            area.id.toString(),
+            area as EventAreaDto
+          )
+        ).payload.data
       } else {
         updatedArea = (await apiClient.eventAreas.create(area)).payload.data
       }
@@ -42,12 +49,14 @@ export default defineComponent({
       this.updatingAreaFeatureIds.delete(updatedArea.feature_id)
     },
     async deleteAreaByFeatureId(deleteId: string) {
-      const area = this.eventAreas.find(({feature_id}) => feature_id === deleteId)
+      const area = this.eventAreas.find(
+        ({ feature_id }) => feature_id === deleteId
+      )
       if (area?.id) {
         try {
           this.deletingAreaIds.add(deleteId)
           await apiClient.eventAreas.delete(area.id.toString())
-          this.eventAreas = this.eventAreas.filter(({id}) => area?.id !== id)
+          this.eventAreas = this.eventAreas.filter(({ id }) => area?.id !== id)
         } catch (e) {
           this.$q.notify({
             message: 'Etwas ging schief beim löschen des Gebiets',
@@ -58,7 +67,9 @@ export default defineComponent({
           this.deletingAreaIds.delete(deleteId)
         }
       }
-      this.eventAreas = this.eventAreas.filter(({feature_id}) => deleteId !== feature_id)
+      this.eventAreas = this.eventAreas.filter(
+        ({ feature_id }) => deleteId !== feature_id
+      )
     }
   }
 })

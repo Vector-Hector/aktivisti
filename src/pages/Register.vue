@@ -1,12 +1,8 @@
 <template>
-  <QScrollArea
-    class="flex flex-fill"
-  >
+  <QScrollArea class="flex flex-fill">
     <QPage>
       <div class="container">
-        <QForm
-          @submit="register"
-        >
+        <QForm @submit="register">
           <QInput
             v-model="registrationData.email"
             :rules="[$validationRules.isRequired, $validationRules.email]"
@@ -59,21 +55,22 @@
 
           <div class="privacy-disclaimer">
             <p>
-
-              Als Benutzer*in der LINKEN App nimmst Du zur Kenntnis und stimmst zu, dass Du die per App erhaltenen und
-              übermittelten Daten zu keinem anderen Zweck als der Organisation von Aktionen der Partei DIE LINKE
-              nutzt,
-              insbesondere diese weder speicherst, noch kopierst oder Dritten für andere Zwecke übermittelst. Du
-              stimmst
-              zu,
-              dass Passwort stets vertraulich zu behandeln und jeden Verlust des Gerätes oder jede mögliche
-              Offenbarung
-              des
-              Passwortes oder zweckwidrige Nutzung der App durch Dritte unverzüglich dem Bundesvorstand unter
-              <a href="mailto:datenschutz@die-linke.app" class="primary-link">datenschutz@die-linke.app</a> mitzuteilen.
-              Du stimmst zu, jede Nachfrage Dritter zum Umfang der Datenverarbeitung der App an den Verantwortlichen
-              beim
-              Bundesvorstand der Partei weiterzuleiten und dem Betroffenen die Kontaktdaten bzw. den Link zu den
+              Als Benutzer*in der LINKEN App nimmst Du zur Kenntnis und stimmst
+              zu, dass Du die per App erhaltenen und übermittelten Daten zu
+              keinem anderen Zweck als der Organisation von Aktionen der Partei
+              DIE LINKE nutzt, insbesondere diese weder speicherst, noch
+              kopierst oder Dritten für andere Zwecke übermittelst. Du stimmst
+              zu, dass Passwort stets vertraulich zu behandeln und jeden Verlust
+              des Gerätes oder jede mögliche Offenbarung des Passwortes oder
+              zweckwidrige Nutzung der App durch Dritte unverzüglich dem
+              Bundesvorstand unter
+              <a href="mailto:datenschutz@die-linke.app" class="primary-link"
+                >datenschutz@die-linke.app</a
+              >
+              mitzuteilen. Du stimmst zu, jede Nachfrage Dritter zum Umfang der
+              Datenverarbeitung der App an den Verantwortlichen beim
+              Bundesvorstand der Partei weiterzuleiten und dem Betroffenen die
+              Kontaktdaten bzw. den Link zu den
               <a
                 href="https://www.die-linke.de/seitenfuss/datenschutz/#accordion-heading-17445-2912"
                 target="_blank"
@@ -84,15 +81,9 @@
               mitzuteilen.
             </p>
           </div>
-          <FormError
-            :error="errors.non_field_error?.[0]"
-          />
+          <FormError :error="errors.non_field_error?.[0]" />
           <div class="control-buttons">
-            <QBtn
-              color="primary"
-              type="submit"
-              :disabled="submitting"
-            >
+            <QBtn color="primary" type="submit" :disabled="submitting">
               Registrieren
             </QBtn>
           </div>
@@ -127,7 +118,7 @@ export default defineComponent({
     QBtn,
     QForm,
     QPage,
-    QScrollArea,
+    QScrollArea
   },
   data() {
     return {
@@ -140,7 +131,8 @@ export default defineComponent({
     if (configStore.getState().service_config.registration_disabled) {
       this.$q.dialog({
         title: 'Geschlossene Beta',
-        message: 'Schön, dass du dich für die LINKE Wahlkampf-App interessierst. Derzeit befinden wir uns in einer ' +
+        message:
+          'Schön, dass du dich für die LINKE Wahlkampf-App interessierst. Derzeit befinden wir uns in einer ' +
           'geschlossenen Beta-Phase. Registrierungen sind erst ab der nächsten Phase möglich. ' +
           'Um jetzt schon mitzumachen, muss eine Genoss*in dich einladen.'
       })
@@ -151,19 +143,20 @@ export default defineComponent({
       this.submitting = true
       try {
         await this.$apiClient.userRegistration.create(this.registrationData)
-        await this.$router.push({name: 'register-success'})
+        await this.$router.push({ name: 'register-success' })
       } catch (error) {
         if (this.$apiClient.isApiClientError(error)) {
           if (error.response?.status === 400) {
             this.errors = error.response.data
           } else if (error.response?.status === 503) {
             this.errors = {
-              'non_field_error': 'Diese Funktion steht derzeit nicht zur Verfügung'
+              non_field_error:
+                'Diese Funktion steht derzeit nicht zur Verfügung'
             }
           }
         } else {
           this.errors = {
-            'non_field_error': 'Ein unerwarteter Fehler ist aufgetreten'
+            non_field_error: 'Ein unerwarteter Fehler ist aufgetreten'
           }
         }
       }

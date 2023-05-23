@@ -10,6 +10,9 @@ export class PersonalMetricsRoute extends BaseApiRoute {
       query,
       path: `${this.path}`
     })
-    return new JSONResponse<APIEnvelope<PersonalMetricsDto>>(response, response.data)
+    return new JSONResponse<APIEnvelope<PersonalMetricsDto>>(
+      response,
+      response.data
+    )
   }
 }

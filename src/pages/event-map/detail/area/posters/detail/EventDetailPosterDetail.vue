@@ -1,11 +1,7 @@
 <template>
   <div class="flex column full-width">
     <div class="container q-py-sm col-grow full-width">
-      <EditPoster
-        :key="poster.id"
-        v-if="poster"
-        v-model:poster="poster"
-      />
+      <EditPoster :key="poster.id" v-if="poster" v-model:poster="poster" />
       <div class="row">
         <div class="col-grow d-flex justify-center">
           <QBtn
@@ -20,9 +16,7 @@
         </div>
       </div>
     </div>
-    <SidebarBottomBackNavigation
-      @back="$router.go(-1)"
-    />
+    <SidebarBottomBackNavigation @back="$router.go(-1)" />
   </div>
 </template>
 <script lang="ts">
@@ -44,13 +38,20 @@ import SidebarBottomBackNavigation from 'components/SidebarBottomBackNavigation.
 // are not assigned to an area.
 export const UNDEFINED_POSTER_AREA = 'undefined'
 
-function updateRoute(to: RouteLocation, from: RouteLocation, next: NavigationGuardNext) {
-  const {posterId, areaId} = to.params
-  const parsedAreaId = areaId !== UNDEFINED_POSTER_AREA ? parseInt(areaId.toString()) : null
+function updateRoute(
+  to: RouteLocation,
+  from: RouteLocation,
+  next: NavigationGuardNext
+) {
+  const { posterId, areaId } = to.params
+  const parsedAreaId =
+    areaId !== UNDEFINED_POSTER_AREA ? parseInt(areaId.toString()) : null
 
-  const postersInArea = eventDetailStore.state.posters.filter(({area}) => area === parsedAreaId)
+  const postersInArea = eventDetailStore.state.posters.filter(
+    ({ area }) => area === parsedAreaId
+  )
   const posterIndex = postersInArea.findIndex(
-    (({id}) => parseInt(posterId as string) === id)
+    ({ id }) => parseInt(posterId as string) === id
   )
   if (posterIndex > -1) {
     eventDetailStore.state.activePosterIndex = posterIndex
@@ -73,7 +74,7 @@ function updateRoute(to: RouteLocation, from: RouteLocation, next: NavigationGua
 
 export default defineComponent({
   name: 'EventDetailPosterDetail',
-  components: {SidebarBottomBackNavigation, EditPoster, QBtn},
+  components: { SidebarBottomBackNavigation, EditPoster, QBtn },
   mixins: [EventDetailPosterMixin],
   beforeRouteEnter: updateRoute,
   beforeRouteUpdate: updateRoute,
@@ -105,32 +106,33 @@ export default defineComponent({
   },
   methods: {
     onDeleteClicked() {
-      this.$q.dialog({
-        title: 'Plakat löschen',
-        message: `Möchtest du das Plakat #${this.poster.poster_id} wirklich löschen?`,
-        cancel: true
+      this.$q
+        .dialog({
+          title: 'Plakat löschen',
+          message: `Möchtest du das Plakat #${this.poster.poster_id} wirklich löschen?`,
+          cancel: true
+        })
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      }).onOk(async () => {
-        try {
-          await this.$apiClient.posters.delete(this.poster.id.toString())
-          this.$q.notify({
-            color: 'neutral',
-            message: 'Plakat wurde gelöscht'
-          })
-          const posterId = this.poster.id
-          await this.$router.replace({name: 'event-detail-poster-list'})
-          this.deletePostersByIds([posterId])
-        } catch (e) {
-          this.$q.notify({
-            color: 'negative',
-            message: 'Beim Löschen des Plakats trat ein Fehler auf'
-          })
-        }
-      })
-
+        .onOk(async () => {
+          try {
+            await this.$apiClient.posters.delete(this.poster.id.toString())
+            this.$q.notify({
+              color: 'neutral',
+              message: 'Plakat wurde gelöscht'
+            })
+            const posterId = this.poster.id
+            await this.$router.replace({ name: 'event-detail-poster-list' })
+            this.deletePostersByIds([posterId])
+          } catch (e) {
+            this.$q.notify({
+              color: 'negative',
+              message: 'Beim Löschen des Plakats trat ein Fehler auf'
+            })
+          }
+        })
     },
     async save() {
-      const posterToSave = {...this.poster}
+      const posterToSave = { ...this.poster }
       await this.saveDebouncer.executeDebounced(async () => {
         try {
           await this.$apiClient.posters.patch(posterToSave.id.toString(), {
@@ -152,6 +154,4 @@ export default defineComponent({
   }
 })
 </script>
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

@@ -1,18 +1,18 @@
 <template>
-  <QScrollArea
-    class="d-flex flex-fill">
+  <QScrollArea class="d-flex flex-fill">
     <div class="container">
       <QList>
         <QItem
           v-for="address in sortedAddresses"
           :key="address.house_number"
           :clickable="true"
-          :to="{ name: 'event-detail-area-metrics', params: { houseNumber: address.house_number, street: street } }"
+          :to="{
+            name: 'event-detail-area-metrics',
+            params: { houseNumber: address.house_number, street: street }
+          }"
         >
           <QItemSection>
-            <QItemLabel>
-              {{ street }} {{ address.house_number }}
-            </QItemLabel>
+            <QItemLabel> {{ street }} {{ address.house_number }} </QItemLabel>
           </QItemSection>
           <QItemSection side>
             <div class="row">
@@ -21,10 +21,7 @@
                 class="col finished-icon item-icon"
                 :name="ionCheckmarkCircle"
               />
-              <QIcon
-                class="col item-icon"
-                :name="ionChevronForward"
-              />
+              <QIcon class="col item-icon" :name="ionChevronForward" />
             </div>
           </QItemSection>
         </QItem>
@@ -39,9 +36,18 @@ import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { uiStore } from 'src/store/UiStore'
 import Timeout = NodeJS.Timeout
 import EventAreaStreetMixin from 'pages/event-map/detail/area/street/EventAreaStreetMixin'
-import { ionCheckmarkCircle, ionChevronForward } from '@quasar/extras/ionicons-v5'
-import { QIcon, QItem, QItemLabel, QItemSection, QList, QScrollArea } from 'quasar'
-
+import {
+  ionCheckmarkCircle,
+  ionChevronForward
+} from '@quasar/extras/ionicons-v5'
+import {
+  QIcon,
+  QItem,
+  QItemLabel,
+  QItemSection,
+  QList,
+  QScrollArea
+} from 'quasar'
 
 export default defineComponent({
   name: 'EventAreaStreet',
@@ -55,7 +61,7 @@ export default defineComponent({
   },
   mixins: [EventAreaStreetMixin],
   beforeRouteEnter(to, from, next) {
-    next(vm => {
+    next((vm) => {
       uiStore.updateActiveElements({
         // @ts-ignore
         street: vm.street
@@ -71,8 +77,13 @@ export default defineComponent({
   },
   computed: {
     sortedAddresses(): AddressDetails[] {
-      const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'})
-      const street = this.eventArea?.area_details?.streets.find(({name}) => name === this.street)
+      const collator = new Intl.Collator(undefined, {
+        numeric: true,
+        sensitivity: 'base'
+      })
+      const street = this.eventArea?.area_details?.streets.find(
+        ({ name }) => name === this.street
+      )
       if (street) {
         return [...street.addresses].sort((a, b) => {
           return collator.compare(a.house_number, b.house_number)
@@ -83,7 +94,6 @@ export default defineComponent({
     }
   }
 })
-
 </script>
 
 <style lang="scss" scoped>
@@ -116,12 +126,10 @@ label {
 
 .finished-icon {
   margin-right: 1rem;
-  color: #4CAF50;
+  color: #4caf50;
 }
-
 
 .item-icon {
   height: 24px;
 }
-
 </style>

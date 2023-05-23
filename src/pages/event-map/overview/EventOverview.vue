@@ -36,17 +36,16 @@ import { EventFilterParams } from 'src/api/params/EventFilterParams'
 import { EventStatus } from 'src/api/model/EventStatus'
 import { EventDto } from 'src/api/model/EventDto'
 
-
 export default defineComponent({
   name: 'EventOverview',
   mixins: [EventsOverviewMixin],
   components: {
     EventFilter,
-    EventList,
+    EventList
   },
   beforeRouteEnter(to, from, next) {
     if (userStore.getState().bbox === null) {
-      next({name: 'splash'})
+      next({ name: 'splash' })
     } else {
       next()
     }
@@ -63,7 +62,8 @@ export default defineComponent({
   computed: {
     userFilterParams: {
       get(): EventFilterParams {
-        const {campaign, subAssociations, sorting, eventType, status} = userStore.getState().filterPreferences
+        const { campaign, subAssociations, sorting, eventType, status } =
+          userStore.getState().filterPreferences
         return {
           sub_association: subAssociations,
           campaigns: campaign !== undefined ? [campaign] : undefined,
@@ -112,19 +112,25 @@ export default defineComponent({
   methods: {
     showCampaignLevel,
     async getSubAssociations() {
-      this.subAssociations = (await this.$apiClient.subAssociations.list()).payload.data
+      this.subAssociations = (
+        await this.$apiClient.subAssociations.list()
+      ).payload.data
     },
     async updateView() {
-      if (this.$refs.eventList){
+      if (this.$refs.eventList) {
         // @ts-ignore
         this.$refs.eventList.resetScrollPosition()
       }
       if (this.filterParams.within) {
-        const clusterResponse = await this.$apiClient.eventClusters.list(this.filterParams)
+        const clusterResponse = await this.$apiClient.eventClusters.list(
+          this.filterParams
+        )
         if (!isEqual(this.clusters, clusterResponse.payload.data)) {
           this.clusters = clusterResponse.payload.data
         }
-        const eventsResponse = await this.$apiClient.events.list(this.filterParams)
+        const eventsResponse = await this.$apiClient.events.list(
+          this.filterParams
+        )
         if (!isEqual(this.events, eventsResponse.payload.data))
           this.events = eventsResponse.payload.data
         this.eventsPagination = eventsResponse.payload.pagination!
@@ -141,12 +147,11 @@ export default defineComponent({
           eventId: event.id
         }
       })
-    },
+    }
   }
 })
 </script>
 <style lang="scss" scoped>
-
 .event-overview {
   height: 100%;
   display: flex;

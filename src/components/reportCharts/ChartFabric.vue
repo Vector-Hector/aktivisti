@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { ReportType } from 'src/api/model/ReportType'
 import ActiveEventsChart from 'components/reportCharts/ActiveEventsChart.vue'
 import ActiveUsersChart from 'components/reportCharts/ActiveUsersChart.vue'
@@ -10,10 +9,10 @@ import { ionTrashOutline } from '@quasar/extras/ionicons-v5'
 import { QBtn, QCard, QCardSection, QCardActions } from 'quasar'
 
 interface Props {
-  uuid: string,
-  campaign: number,
-  stateAssociation?: number,
-  subAssociation?: number,
+  uuid: string
+  campaign: number
+  stateAssociation?: number
+  subAssociation?: number
   reportType: ReportType
 }
 
@@ -23,7 +22,6 @@ interface Emits {
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
-
 
 const chartType = {
   METRICS_POSTER: PosterChart,
@@ -36,15 +34,17 @@ const chartType = {
 function handleClose() {
   emit('onClose', props.uuid)
 }
-
-
 </script>
 <template>
   <QCard bordered class="card">
     <QCardSection horizontal>
-      <component class="col q-pa-md" :is="chartType[props.reportType]" :campaignId="props.campaign"
-                 :stateAssociationId="props.stateAssociation"
-                 :subAssociationId="props.subAssociation" />
+      <component
+        class="col q-pa-md"
+        :is="chartType[props.reportType]"
+        :campaignId="props.campaign"
+        :stateAssociationId="props.stateAssociation"
+        :subAssociationId="props.subAssociation"
+      />
       <QCardActions vertical class="justify-around">
         <QBtn
           size="sm"
@@ -60,6 +60,6 @@ function handleClose() {
 </template>
 <style lang="scss">
 .card {
-  background-color: #F4F5F8;
+  background-color: #f4f5f8;
 }
 </style>

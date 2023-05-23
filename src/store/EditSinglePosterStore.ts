@@ -5,7 +5,7 @@ interface EditSinglePosterStoreState {
   poster: Partial<PosterDto> | null
 }
 
-class EditSinglePosterStore extends Store<EditSinglePosterStoreState>{
+class EditSinglePosterStore extends Store<EditSinglePosterStoreState> {
   data() {
     return {
       poster: null

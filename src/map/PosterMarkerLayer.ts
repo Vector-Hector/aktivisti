@@ -1,4 +1,12 @@
-import { defineComponent, inject, watch, onMounted, PropType, onUnmounted, h } from 'vue'
+import {
+  defineComponent,
+  inject,
+  watch,
+  onMounted,
+  PropType,
+  onUnmounted,
+  h
+} from 'vue'
 import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { GeoJSONSource, GeoJSONSourceRaw, SymbolLayout } from 'maplibre-gl'
@@ -6,7 +14,7 @@ import { PosterDto, PosterStatus } from 'src/api/model/PosterDto'
 import { loadImageIfNonExistent } from 'src/utils/map'
 import { FeatureCollection, Point } from 'geojson'
 import { clone } from 'lodash-es'
-import { MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/map/Map.vue';
+import { MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/map/Map.vue'
 
 const ABSENT_IMAGE_NAME = 'absent-icon'
 const POSITIVE_IMAGE_NAME = 'positive-icon'
@@ -37,7 +45,7 @@ export default defineComponent({
     }
   },
   emits: ['update:posters', 'posterClick'],
-  setup: function (props, {emit}) {
+  setup: function (props, { emit }) {
     const uuid = uuidv4()
     const map = inject(MapInject)!
 
@@ -53,20 +61,26 @@ export default defineComponent({
     const layers: string[] = []
 
     const iconLayout: SymbolLayout = {
-      'icon-size': .4,
+      'icon-size': 0.4,
       'icon-anchor': 'bottom',
-      'icon-image': ['case',
-        ['==', ['get', 'status'], PosterStatus.ABSENT], ABSENT_IMAGE_NAME,
-        ['==', ['get', 'status'], PosterStatus.DAMAGED], NEGATIVE_IMAGE_NAME,
-        ['==', ['get', 'status'], PosterStatus.MOUNTED], POSITIVE_IMAGE_NAME,
+      'icon-image': [
+        'case',
+        ['==', ['get', 'status'], PosterStatus.ABSENT],
+        ABSENT_IMAGE_NAME,
+        ['==', ['get', 'status'], PosterStatus.DAMAGED],
+        NEGATIVE_IMAGE_NAME,
+        ['==', ['get', 'status'], PosterStatus.MOUNTED],
+        POSITIVE_IMAGE_NAME,
         'absent-icon'
       ],
       'icon-allow-overlap': true
     }
 
-
     const canvas = map.value.getCanvas()
-    const makeFeatureCollection = (posters: PosterDto[], active: boolean): FeatureCollection<Point> => {
+    const makeFeatureCollection = (
+      posters: PosterDto[],
+      active: boolean
+    ): FeatureCollection<Point> => {
       return {
         type: 'FeatureCollection',
         features: posters
@@ -76,10 +90,10 @@ export default defineComponent({
               type: 'Feature',
               properties: {
                 status: poster.status,
-                opacity: props.opacity ?? ((active) ? 1 : 0.5),
+                opacity: props.opacity ?? (active ? 1 : 0.5),
                 id: poster.id,
                 poster_id: poster.poster_id,
-                raw_poster_data: {...poster}
+                raw_poster_data: { ...poster }
               },
               geometry: {
                 type: 'Point',
@@ -94,8 +108,11 @@ export default defineComponent({
       canvas.style.cursor = 'grabbing'
       const activePoster = props.posters[props.activePosterIndex!]
       const baseCollection = makeFeatureCollection([activePoster], true)
-      baseCollection.features[0].geometry.coordinates = [e.lngLat.lng, e.lngLat.lat]
-      const source = (map.value.getSource(activePosterSourceId) as GeoJSONSource)
+      baseCollection.features[0].geometry.coordinates = [
+        e.lngLat.lng,
+        e.lngLat.lat
+      ]
+      const source = map.value.getSource(activePosterSourceId) as GeoJSONSource
       source.setData(baseCollection)
     }
 
@@ -146,7 +163,9 @@ export default defineComponent({
     }
 
     const onClickPoster = (e: any) => {
-      const clickedPoster: PosterDto = JSON.parse(e.features?.[0]?.properties?.raw_poster_data)
+      const clickedPoster: PosterDto = JSON.parse(
+        e.features?.[0]?.properties?.raw_poster_data
+      )
       if (clickedPoster) {
         emit('posterClick', clickedPoster)
       }
@@ -170,128 +189,160 @@ export default defineComponent({
     }
 
     onMounted(async () => {
-        await Promise.all([
-          loadImageIfNonExistent(map.value, ABSENT_IMAGE_NAME, '/static/icons/location-absent-128x128.png'),
-          loadImageIfNonExistent(map.value, POSITIVE_IMAGE_NAME, '/static/icons/location-positive-128x128.png'),
-          loadImageIfNonExistent(map.value, NEGATIVE_IMAGE_NAME, '/static/icons/location-negative-128x128.png')
-        ])
-        const emptySource: GeoJSONSourceRaw = {
-          type: 'geojson',
-          data: {
-            type: 'FeatureCollection',
-            features: []
-          }
+      await Promise.all([
+        loadImageIfNonExistent(
+          map.value,
+          ABSENT_IMAGE_NAME,
+          '/static/icons/location-absent-128x128.png'
+        ),
+        loadImageIfNonExistent(
+          map.value,
+          POSITIVE_IMAGE_NAME,
+          '/static/icons/location-positive-128x128.png'
+        ),
+        loadImageIfNonExistent(
+          map.value,
+          NEGATIVE_IMAGE_NAME,
+          '/static/icons/location-negative-128x128.png'
+        )
+      ])
+      const emptySource: GeoJSONSourceRaw = {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: []
         }
+      }
 
-        sources.push(posterSourceId)
-        map?.value.addSource(posterSourceId, emptySource)
-        sources.push(activePosterSourceId)
-        map?.value.addSource(activePosterSourceId, emptySource)
+      sources.push(posterSourceId)
+      map?.value.addSource(posterSourceId, emptySource)
+      sources.push(activePosterSourceId)
+      map?.value.addSource(activePosterSourceId, emptySource)
 
-        const refreshSource = () => {
-          const active = (typeof (props.activePosterIndex as any)) === 'number';
-          (map.value.getSource(posterSourceId) as GeoJSONSource)?.setData(
-            makeFeatureCollection(props.posters.filter((_, index) => index !== props.activePosterIndex), !active)
+      const refreshSource = () => {
+        const active = typeof (props.activePosterIndex as any) === 'number'
+        ;(map.value.getSource(posterSourceId) as GeoJSONSource)?.setData(
+          makeFeatureCollection(
+            props.posters.filter(
+              (_, index) => index !== props.activePosterIndex
+            ),
+            !active
           )
-          if (active) {
-            (map.value.getSource(activePosterSourceId) as GeoJSONSource)?.setData(
-              makeFeatureCollection([props.posters[props.activePosterIndex!]], true)
+        )
+        if (active) {
+          ;(
+            map.value.getSource(activePosterSourceId) as GeoJSONSource
+          )?.setData(
+            makeFeatureCollection(
+              [props.posters[props.activePosterIndex!]],
+              true
             )
-          } else {
-            (map.value.getSource(activePosterSourceId) as GeoJSONSource)?.setData(emptySource.data as FeatureCollection)
-          }
+          )
+        } else {
+          ;(
+            map.value.getSource(activePosterSourceId) as GeoJSONSource
+          )?.setData(emptySource.data as FeatureCollection)
         }
+      }
 
-
-        watch(() => props.posters, () => {
+      watch(
+        () => props.posters,
+        () => {
           refreshSource()
-        }, {immediate: true, deep: true})
-        watch(() => props.activePosterIndex, () => {
+        },
+        { immediate: true, deep: true }
+      )
+      watch(
+        () => props.activePosterIndex,
+        () => {
           refreshSource()
-          const active = (typeof (props.activePosterIndex as any)) === 'number'
+          const active = typeof (props.activePosterIndex as any) === 'number'
           // If poster layer is not editable markers can stay clickable as it doesn't conflict with moving the poster
           if (!active || !props.editable) {
             activateClickablePosters()
           } else {
             deactivateClickablePosters()
           }
-        }, {immediate: true})
+        },
+        { immediate: true }
+      )
 
-        if (props.isPrint) {
-          const posterIdsCaptionId = `${uuid}-postersIds-caption`
-          const posterIdsCircleCircleId = `${uuid}-postersWithIds-circle`
+      if (props.isPrint) {
+        const posterIdsCaptionId = `${uuid}-postersIds-caption`
+        const posterIdsCircleCircleId = `${uuid}-postersWithIds-circle`
 
-          layers.push(
-            posterIdsCaptionId,
-            posterIdsCircleCircleId
-          )
+        layers.push(posterIdsCaptionId, posterIdsCircleCircleId)
 
-          map?.value.addLayer({
-            id: posterIdsCircleCircleId,
-            type: 'circle',
-            source: posterSourceId,
-            layout: {},
-            paint: {
-              'circle-color': ['case',
-                ['==', ['get', 'status'], PosterStatus.ABSENT], '#93959d',
-                ['==', ['get', 'status'], PosterStatus.DAMAGED], '#df0505',
-                ['==', ['get', 'status'], PosterStatus.MOUNTED], '#2fd370',
-                '#93959d'
-              ],
-              'circle-radius': 14,
-              'circle-stroke-color': '#ffffff',
-              'circle-stroke-width': 1
-            }
-          })
+        map?.value.addLayer({
+          id: posterIdsCircleCircleId,
+          type: 'circle',
+          source: posterSourceId,
+          layout: {},
+          paint: {
+            'circle-color': [
+              'case',
+              ['==', ['get', 'status'], PosterStatus.ABSENT],
+              '#93959d',
+              ['==', ['get', 'status'], PosterStatus.DAMAGED],
+              '#df0505',
+              ['==', ['get', 'status'], PosterStatus.MOUNTED],
+              '#2fd370',
+              '#93959d'
+            ],
+            'circle-radius': 14,
+            'circle-stroke-color': '#ffffff',
+            'circle-stroke-width': 1
+          }
+        })
 
-          map?.value.addLayer({
-            id: posterIdsCaptionId,
-            type: 'symbol',
-            source: posterSourceId,
-            layout: {
-              'text-field': '{poster_id}',
-              'text-font': ['Roboto Regular'],
-              'text-size': 13,
-              'text-line-height': 1.0,
-              'text-offset': [0, .1],
-              'text-allow-overlap': true
-            },
-            paint: {
-              'text-color': '#ffffff'
-            }
-          })
-        } else {
-          layers.push(
-            posterLayerId,
-            activePosterLayerId
-          )
-          map?.value.addLayer({
-            id: posterLayerId,
-            type: 'symbol',
-            source: posterSourceId,
-            layout: iconLayout,
-            paint: {
-              'icon-opacity': ['get', 'opacity']
-            }
-          })
-          map?.value.addLayer({
-            id: activePosterLayerId,
-            type: 'symbol',
-            source: activePosterSourceId,
-            layout: iconLayout,
-            paint: {
-              'icon-opacity': props.opacity ?? 1
-            }
-          })
-        }
-        if (props.editable || !props.isPrint) {
-          map.value.on('mouseenter', activePosterLayerId, onEnterActivePoster)
-          map.value.on('mousedown', activePosterLayerId, onMouseDownActivePoster)
-          map.value.on('mouseleave', activePosterLayerId, onLeaveActivePoster)
-          map.value.on('touchstart', activePosterLayerId, onTouchStartActivePoster)
-        }
+        map?.value.addLayer({
+          id: posterIdsCaptionId,
+          type: 'symbol',
+          source: posterSourceId,
+          layout: {
+            'text-field': '{poster_id}',
+            'text-font': ['Roboto Regular'],
+            'text-size': 13,
+            'text-line-height': 1.0,
+            'text-offset': [0, 0.1],
+            'text-allow-overlap': true
+          },
+          paint: {
+            'text-color': '#ffffff'
+          }
+        })
+      } else {
+        layers.push(posterLayerId, activePosterLayerId)
+        map?.value.addLayer({
+          id: posterLayerId,
+          type: 'symbol',
+          source: posterSourceId,
+          layout: iconLayout,
+          paint: {
+            'icon-opacity': ['get', 'opacity']
+          }
+        })
+        map?.value.addLayer({
+          id: activePosterLayerId,
+          type: 'symbol',
+          source: activePosterSourceId,
+          layout: iconLayout,
+          paint: {
+            'icon-opacity': props.opacity ?? 1
+          }
+        })
       }
-    )
+      if (props.editable || !props.isPrint) {
+        map.value.on('mouseenter', activePosterLayerId, onEnterActivePoster)
+        map.value.on('mousedown', activePosterLayerId, onMouseDownActivePoster)
+        map.value.on('mouseleave', activePosterLayerId, onLeaveActivePoster)
+        map.value.on(
+          'touchstart',
+          activePosterLayerId,
+          onTouchStartActivePoster
+        )
+      }
+    })
 
     onUnmounted(() => {
       deactivateClickablePosters()

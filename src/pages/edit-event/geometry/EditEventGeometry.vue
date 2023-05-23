@@ -12,9 +12,7 @@
     </div>
     <template v-if="event.event_type !== EventTypes.GENERIC">
       <div class="area-drawing">
-        <h2 class="headline">
-          Gebiete
-        </h2>
+        <h2 class="headline">Gebiete</h2>
         <QTable
           :loading="isLoading"
           loading-label="Lade Daten zu Gebieten"
@@ -53,8 +51,8 @@
                   dense
                   size="sm"
                   :style="{
-              'background-color': props.row.color
-            }"
+                    'background-color': props.row.color
+                  }"
                   :color="props.row.color"
                 >
                   <QPopupProxy>
@@ -63,7 +61,7 @@
                       no-footer
                       default-view="palette"
                       :model-value="props.row.color"
-                      @update:modelValue="props.row.color = `${$event}`; updateArea(props.row)"
+                      @update:modelValue="handleUpdateColor(props.row, $event)"
                     />
                   </QPopupProxy>
                 </QBtn>
@@ -85,7 +83,12 @@
                     :auto-save="true"
                     v-slot="scope"
                   >
-                    <QInput v-model="scope.value" @keyup.enter="scope.set" dense autofocus />
+                    <QInput
+                      v-model="scope.value"
+                      @keyup.enter="scope.set"
+                      dense
+                      autofocus
+                    />
                   </QPopupEdit>
                 </div>
               </QTd>
@@ -95,17 +98,20 @@
                   class="progress-spinner"
                 />
                 <span v-else-if="event.event_type === EventTypes.POSTERS">
-              {{ props.row.poster_count }}
-            </span>
+                  {{ props.row.poster_count }}
+                </span>
                 <span v-else>
-              {{ props.row.area_details?.streets?.reduce((acc, item) => acc + item.addresses.length, 0) ?? 0 }}
-            </span>
+                  {{
+                    (props.row.area_details?.streets?.reduce(
+                      (acc, item) => acc + item.addresses.length
+                    ) ?? 0,
+                    0)
+                  }}
+                </span>
               </QTd>
 
               <QTd key="actions" :props="props">
-                <QSpinnerPuff
-                  v-if="deletingAreaIds.has(props.row.id)"
-                />
+                <QSpinnerPuff v-if="deletingAreaIds.has(props.row.id)" />
                 <QBtn
                   v-else
                   dense
@@ -155,12 +161,19 @@ import {
   QColor,
   QInput,
   QPopupEdit,
-  QPopupProxy, QSpinnerPuff,
+  QPopupProxy,
+  QSpinnerPuff,
   QTable,
-  QTd, QTh,
+  QTd,
+  QTh,
   QTr
 } from 'quasar'
-import { ionCopyOutline, ionCreateOutline, ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
+import {
+  ionCopyOutline,
+  ionCreateOutline,
+  ionPencil,
+  ionTrash
+} from '@quasar/extras/ionicons-v5'
 import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
 import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
@@ -213,26 +226,34 @@ export default defineComponent({
       }
     },
     columns() {
-      return [{
-        name: 'color',
-        label: 'Farbe',
-        field: 'color',
-        align: 'left',
-        required: true
-      }, {
-        name: 'name',
-        label: 'Name',
-        field: 'name',
-        align: 'left'
-      }, {
-        name: 'details',
-        label: this.event.event_type === EventTypes.POSTERS ? 'Plakate' : 'Adressen'
-      }, {
-        name: 'actions',
-        label: '',
-        field: null,
-        required: true
-      }]
+      return [
+        {
+          name: 'color',
+          label: 'Farbe',
+          field: 'color',
+          align: 'left',
+          required: true
+        },
+        {
+          name: 'name',
+          label: 'Name',
+          field: 'name',
+          align: 'left'
+        },
+        {
+          name: 'details',
+          label:
+            this.event.event_type === EventTypes.POSTERS
+              ? 'Plakate'
+              : 'Adressen'
+        },
+        {
+          name: 'actions',
+          label: '',
+          field: null,
+          required: true
+        }
+      ]
     }
   },
   methods: {
@@ -258,35 +279,45 @@ export default defineComponent({
       await this.saveDebouncer.waitForSettle()
       this.stepControls.abort()
     },
+    handleUpdateColor(row, color) {
+      row.color = `${color}`
+      void this.updateArea(row)
+    },
     openAdoptAreasModal() {
-      this.$q.dialog({
-        component: AdoptEventAreas,
-        componentProps: {
-          campaigns: this.campaigns.filter(({id}) => this.event.campaigns.includes(id))
-        }
+      this.$q
+        .dialog({
+          component: AdoptEventAreas,
+          componentProps: {
+            campaigns: this.campaigns.filter(({ id }) =>
+              this.event.campaigns.includes(id)
+            )
+          }
+        })
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      }).onOk(async (newEventAreas: EventAreaDto[]) => {
-        this.isLoading = true
-        newEventAreas = newEventAreas.map((area) => ({
-          ...area,
-          event: this.event.id
-        }))
+        .onOk(async (newEventAreas: EventAreaDto[]) => {
+          this.isLoading = true
+          newEventAreas = newEventAreas.map((area) => ({
+            ...area,
+            event: this.event.id
+          }))
 
-        const eventAreaCreationPromise: Promise<any>[] = []
-        for (const area of newEventAreas) {
-          eventAreaCreationPromise.push(apiClient.eventAreas.create(area))
-        }
-        const responses = await Promise.all(eventAreaCreationPromise)
-        responses.forEach((response) => this.eventAreas.push(response.payload.data))
-        this.isLoading = false
-      })
+          const eventAreaCreationPromise: Promise<any>[] = []
+          for (const area of newEventAreas) {
+            eventAreaCreationPromise.push(apiClient.eventAreas.create(area))
+          }
+          const responses = await Promise.all(eventAreaCreationPromise)
+          responses.forEach((response) =>
+            this.eventAreas.push(response.payload.data)
+          )
+          this.isLoading = false
+        })
     }
   }
 })
 </script>
 
 <style lang="scss" scoped>
-@import "src/css/quasar.variables";
+@import 'src/css/quasar.variables';
 
 .buttons {
   display: flex;
@@ -306,7 +337,7 @@ export default defineComponent({
 }
 
 .location-description {
-  width: 100%
+  width: 100%;
 }
 
 .headline {

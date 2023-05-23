@@ -4,7 +4,6 @@ import { cloneDeep, isEqual } from 'lodash-es'
 import { SettleDebouncer } from 'src/utils/debounce'
 import EditEventMixin from 'pages/edit-event/EditEventMixin'
 
-
 export default defineComponent({
   name: 'EditEventAutoSaveMixin',
   mixins: [EditEventMixin],
@@ -15,7 +14,7 @@ export default defineComponent({
     return {
       saveDebouncer: new SettleDebouncer(),
       lastSavedEvent: null as EventDto | null,
-      errors: {}
+      errors: {} as Record<string, unknown>
     }
   },
   computed: {
@@ -50,9 +49,11 @@ export default defineComponent({
     async saveEvent(): Promise<void> {
       this.errors = {}
       try {
-        const event = (await this.$apiClient.events.update(this.event.id.toString(), {
-          ...this.event
-        })).payload.data
+        const event = (
+          await this.$apiClient.events.update(this.event.id.toString(), {
+            ...this.event
+          })
+        ).payload.data
         this.lastSavedEvent = this.normalizedEventCopy(event)
         this.$q.notify({
           color: 'positive',

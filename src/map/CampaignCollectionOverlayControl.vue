@@ -24,12 +24,11 @@ function openLayerSelection() {
       preselectedCollection: collection.value
     }
   }).onOk((selectedCollection) => {
-      collection.value = selectedCollection
-      if (selectedCollection) {
-        isLoading.value = true
-      }
+    collection.value = selectedCollection
+    if (selectedCollection) {
+      isLoading.value = true
     }
-  )
+  })
 }
 
 function handleLoadingFinished() {
@@ -41,17 +40,23 @@ function handleLoadingFinished() {
   <div>
     <QBtn
       class="campaign-collection-overlay-control"
-      :loading="isLoading" :color="collection ? 'primary' : 'unset'"
+      :loading="isLoading"
+      :color="collection ? 'primary' : 'unset'"
       flat
       round
       :icon="matLayers"
-      @click="openLayerSelection" />
-    <CampaignCollectionOverlay v-if="collection" :collection="collection" @onLoadingFinished="handleLoadingFinished" />
+      @click="openLayerSelection"
+    />
+    <CampaignCollectionOverlay
+      v-if="collection"
+      :collection="collection"
+      @onLoadingFinished="handleLoadingFinished"
+    />
   </div>
 </template>
 
 <style lang="scss">
-@import "src/css/variables";
+@import 'src/css/variables';
 .campaign-collection-overlay-control {
   background: white;
   box-shadow: $map-overlay-shadow;

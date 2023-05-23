@@ -2,9 +2,7 @@
   <div class="container q-py-sm">
     <div class="row">
       <div class="col">
-        <AssignAreaParticipants
-          v-if="eventArea"
-        />
+        <AssignAreaParticipants v-if="eventArea" />
       </div>
     </div>
     <div class="row q-py-sm">
@@ -40,7 +38,11 @@ import { uiStore } from 'src/store/UiStore'
 import { NavigationGuardNext, RouteLocation } from 'vue-router'
 import AssignAreaParticipants from 'pages/event-map/detail/area/AssignAreaParticipants.vue'
 
-function updateRoute(to: RouteLocation, from: RouteLocation, next: NavigationGuardNext) {
+function updateRoute(
+  to: RouteLocation,
+  from: RouteLocation,
+  next: NavigationGuardNext
+) {
   uiStore.updateActiveElements({
     poster: `${uiStore.state.activeTitleElements.eventArea}: Plakate`
   })
@@ -64,36 +66,43 @@ export default defineComponent({
   },
   methods: {
     openCreatePosterDialog() {
-      let initialBoundingBox = this.postersInArea.length > 0 ? bbox({
-        type: 'FeatureCollection',
-        features: this.postersInArea.map(
-          ({location}) => circle(point([location.lng, location.lat]), 1)
-        )
-      }) : null
+      let initialBoundingBox =
+        this.postersInArea.length > 0
+          ? bbox({
+              type: 'FeatureCollection',
+              features: this.postersInArea.map(({ location }) =>
+                circle(point([location.lng, location.lat]), 1)
+              )
+            })
+          : null
       if (!initialBoundingBox) {
-        initialBoundingBox = this.eventArea?.geometry ? bbox({
-          type: 'Feature',
-          geometry: this.eventArea.geometry
-        }) : null
+        initialBoundingBox = this.eventArea?.geometry
+          ? bbox({
+              type: 'Feature',
+              geometry: this.eventArea.geometry
+            })
+          : null
       }
       if (!initialBoundingBox) {
         initialBoundingBox = userStore.state.bbox ?? null
       }
-      this.$q.dialog({
-        component: SelectPosterLocation,
-        componentProps: {
-          eventId: this.event.id,
-          posters: this.posters,
-          initialBBox: initialBoundingBox,
-          areaFeatures: [this.currentAreaFeature]
-        }
-      })
+      this.$q
+        .dialog({
+          component: SelectPosterLocation,
+          componentProps: {
+            eventId: this.event.id,
+            posters: this.posters,
+            initialBBox: initialBoundingBox,
+            areaFeatures: [this.currentAreaFeature]
+          }
+        })
         .onOk((poster: PosterDto) => {
           this.mergePosters([poster])
           if (poster.area !== this.eventArea.id) {
             this.$q.notify({
               color: 'warning',
-              message: 'Das neue Plakat wurde nicht im derzeit ausgewählten Gebiet platziert!'
+              message:
+                'Das neue Plakat wurde nicht im derzeit ausgewählten Gebiet platziert!'
             })
           }
           void this.$router.push({

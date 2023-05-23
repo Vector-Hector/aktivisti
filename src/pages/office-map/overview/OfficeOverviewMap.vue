@@ -1,30 +1,23 @@
 <template>
-  <Geocoder
-    :collapsed="true"
-    position="top-left"
-    :countries="['de']"
-  />
+  <Geocoder :collapsed="true" position="top-left" :countries="['de']" />
   <span v-if="isShowCluster">
-    <ClusterLayer
-      :clusters="clusters"
+    <ClusterLayer :clusters="clusters" />
+  </span>
+  <span v-else v-for="office in offices" :key="office.id">
+    <OfficeMarker
+      v-if="!officeHoveredOver || office.id !== officeHoveredOver.id"
+      :location="office.location"
+    >
+      <OfficePopup
+        :address="office.location_description"
+        :office-id="office.id"
+      />
+    </OfficeMarker>
+    <SelectedMarker
+      v-if="officeHoveredOver && office.id === officeHoveredOver.id"
+      :location="office.location"
     />
   </span>
-  <span
-    v-else
-    v-for="office in offices"
-    :key="office.id"
-  >
-      <OfficeMarker v-if="!officeHoveredOver || office.id !== officeHoveredOver.id"
-                    :location="office.location"
-      >
-        <OfficePopup
-          :address="office.location_description"
-          :office-id="office.id"
-          />
-      </OfficeMarker>
-      <SelectedMarker v-if="officeHoveredOver && office.id === officeHoveredOver.id"
-                      :location="office.location" />
-    </span>
 </template>
 <script lang="ts">
 import { defineComponent, inject, onUnmounted, ref } from 'vue'
@@ -35,7 +28,10 @@ import OfficeMarker from 'components/OfficeMarker.vue'
 import Geocoder from 'src/map/Geocoder.vue'
 import { userStore } from 'src/store/UserStore'
 import SelectedMarker from 'components/SelectedMarker.vue'
-import { MAX_EPS_DISTANCE_FOR_CLUSTERING, OFFICE_LIST_CHUNK_SIZE } from 'src/constants'
+import {
+  MAX_EPS_DISTANCE_FOR_CLUSTERING,
+  OFFICE_LIST_CHUNK_SIZE
+} from 'src/constants'
 import ClusterLayer from 'src/map/ClusterLayer.vue'
 import { ClusterDto } from 'src/api/model/ClusterDto'
 import OfficePopup from 'src/map/popup/markerPopups/OfficePopup.vue'
@@ -47,7 +43,13 @@ import { apiClient } from 'src/api/ApiClient'
 
 export default defineComponent({
   name: 'OfficeOverviewMap',
-  components: {OfficePopup, ClusterLayer, SelectedMarker, Geocoder, OfficeMarker},
+  components: {
+    OfficePopup,
+    ClusterLayer,
+    SelectedMarker,
+    Geocoder,
+    OfficeMarker
+  },
   data() {
     return {
       clusters: [] as ClusterDto[]
@@ -72,7 +74,10 @@ export default defineComponent({
       items: offices,
       pagination,
       updateFilterParams
-    } = useOverviewMixin<OfficeDto, OfficeFilterParams>(officeOverviewStore, apiClient.offices)
+    } = useOverviewMixin<OfficeDto, OfficeFilterParams>(
+      officeOverviewStore,
+      apiClient.offices
+    )
     return {
       filterParams,
       officeHoveredOver,
@@ -104,12 +109,10 @@ export default defineComponent({
       if (eps_radius > MAX_EPS_DISTANCE_FOR_CLUSTERING) {
         eps_radius = MAX_EPS_DISTANCE_FOR_CLUSTERING
       }
-      const clusterResponse = await this.$apiClient.officeClusters.list(
-        {
-          ...this.filterParams,
-          eps_radius: eps_radius
-        }
-      )
+      const clusterResponse = await this.$apiClient.officeClusters.list({
+        ...this.filterParams,
+        eps_radius: eps_radius
+      })
       this.clusters = clusterResponse.payload.data
     }
   },
@@ -120,7 +123,7 @@ export default defineComponent({
     }
   },
   watch: {
-    bounds: async function(newBound) {
+    bounds: async function (newBound) {
       await this.updateWithinFilter(newBound)
       if (this.isShowCluster) {
         await this.updateClusters()
@@ -128,5 +131,4 @@ export default defineComponent({
     }
   }
 })
-
 </script>

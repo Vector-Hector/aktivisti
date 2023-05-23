@@ -13,7 +13,10 @@ function parseGeocodeResult(place: OSMPlaceDto) {
     place_name: place.display_name,
     place_type: [place.class],
     bbox: [
-      place.boundingbox[2], place.boundingbox[0], place.boundingbox[3], place.boundingbox[1]
+      place.boundingbox[2],
+      place.boundingbox[0],
+      place.boundingbox[3],
+      place.boundingbox[1]
     ] as [number, number, number, number],
     center: center,
     geometry: {
@@ -28,46 +31,52 @@ function parseGeocodeResult(place: OSMPlaceDto) {
 }
 
 function parseFeatureCollection(places: OSMPlaceDto[]) {
-    return {
-      type: 'FeatureCollection',
-      features: places.map(parseGeocodeResult)
-    };
+  return {
+    type: 'FeatureCollection',
+    features: places.map(parseGeocodeResult)
+  }
 }
 
 export async function forwardGeocode(config: any) {
-    const params: Record<string, any>= {
-      format: 'json',
-      q: config.query,
-      limit: config.limit | 5
-    };
-    if (config.countries) {
-      params.countrycodes = config.countries.join(',')
-    }
-    if (config.language) {
-      params['accept-language'] = config.language.join(',')
-    }
-    const urlParams = new URLSearchParams(Object.entries(params)).toString();
-    const response = await fetch((process.env.APP_MAP_NOMINATIM as string) + 'search?' + urlParams)
-    let result = []
-    if(response.ok) {
-      result = await response.json()
-    }
-    return parseFeatureCollection(result as OSMPlaceDto[])
+  const params: Record<string, any> = {
+    format: 'json',
+    q: config.query,
+    limit: config.limit | 5
+  }
+  if (config.countries) {
+    params.countrycodes = config.countries.join(',')
+  }
+  if (config.language) {
+    params['accept-language'] = config.language.join(',')
+  }
+  const urlParams = new URLSearchParams(Object.entries(params)).toString()
+  const response = await fetch(
+    (process.env.APP_MAP_NOMINATIM as string) + 'search?' + urlParams
+  )
+  let result = []
+  if (response.ok) {
+    result = await response.json()
+  }
+  return parseFeatureCollection(result as OSMPlaceDto[])
 }
 
 export async function reverseGeocode(config: any) {
-  const params = { format: 'json', lon: config.lng, lat: config.lat };
-  const urlParams = new URLSearchParams(Object.entries(params)).toString();
-  const response = await fetch((process.env.APP_MAP_NOMINATIM as string) + 'reverse?' + urlParams)
+  const params = { format: 'json', lon: config.lng, lat: config.lat }
+  const urlParams = new URLSearchParams(Object.entries(params)).toString()
+  const response = await fetch(
+    (process.env.APP_MAP_NOMINATIM as string) + 'reverse?' + urlParams
+  )
   let result = {}
-  if(response.ok) {
+  if (response.ok) {
     result = await response.json()
   }
   return parseGeocodeResult(result as OSMPlaceDto)
 }
 
-
-export async function loadImage(map: maplibregl.Map, url: string): Promise<HTMLImageElement | ImageBitmap> {
+export async function loadImage(
+  map: maplibregl.Map,
+  url: string
+): Promise<HTMLImageElement | ImageBitmap> {
   return new Promise((resolve, reject) => {
     map.loadImage(url, (error: any, result: any) => {
       if (error) {
@@ -79,16 +88,19 @@ export async function loadImage(map: maplibregl.Map, url: string): Promise<HTMLI
   })
 }
 
-export async function loadImageIfNonExistent(map: maplibregl.Map, name: string, url: string) {
+export async function loadImageIfNonExistent(
+  map: maplibregl.Map,
+  name: string,
+  url: string
+) {
   if (map.hasImage(name)) {
     return Promise.resolve(name)
   } else {
-    return loadImage(map, url)
-      .then((image) => {
-        if (!map.hasImage(name)) {
-          map.addImage(name, image)
-        }
-        return name
-      })
+    return loadImage(map, url).then((image) => {
+      if (!map.hasImage(name)) {
+        map.addImage(name, image)
+      }
+      return name
+    })
   }
 }

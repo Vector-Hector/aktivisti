@@ -24,7 +24,7 @@ export default defineComponent({
     try {
       const [eventRequest, eventPermissionsRequest] = await Promise.all([
         apiClient.events.get(eventId.toString(), ['campaigns']),
-        apiClient.eventPermissions.get({event: eventId.toString()})
+        apiClient.eventPermissions.get({ event: eventId.toString() })
       ])
       const event = eventRequest.payload.data
       const campaigns = eventRequest.payload.embedded.campaigns as CampaignDto[]
@@ -33,42 +33,58 @@ export default defineComponent({
       eventDetailStore.setCampaigns(campaigns)
       eventDetailStore.setEventPermissions(eventPermissions)
 
-      const permissionRequests = []
-      if (includesOneOf(
-        eventPermissions.permissions,
-        [ObjectPermissions.TeamCaptain, ObjectPermissions.Coordinator])
+      const permissionRequests: Array<Promise<void>> = []
+      if (
+        includesOneOf(eventPermissions.permissions, [
+          ObjectPermissions.TeamCaptain,
+          ObjectPermissions.Coordinator
+        ])
       ) {
-        permissionRequests.push(apiClient.eventParticipations.list({
-          event: eventId
-        }).then((response) => {
-          eventDetailStore.setParticipations(response.payload.data)
-        }))
+        permissionRequests.push(
+          apiClient.eventParticipations
+            .list({
+              event: eventId
+            })
+            .then((response) => {
+              eventDetailStore.setParticipations(response.payload.data)
+            })
+        )
       }
       if (authStore.isLoggedIn()) {
-        permissionRequests.push(apiClient.eventParticipations.list({
-          event: eventId,
-          user: authStore.getState().userId,
-          show_permissions: true
-        }).then((response) => {
-          eventDetailStore.setPersonalParticipation(
-            response.payload.data?.find(({user}) => user === authStore.getState().userId) ?? null
-          )
-          eventDetailStore.setPersonalParticipationPermissions(response.payload.permissions)
-        }))
+        permissionRequests.push(
+          apiClient.eventParticipations
+            .list({
+              event: eventId,
+              user: authStore.getState().userId,
+              show_permissions: true
+            })
+            .then((response) => {
+              eventDetailStore.setPersonalParticipation(
+                response.payload.data?.find(
+                  ({ user }) => user === authStore.getState().userId
+                ) ?? null
+              )
+              eventDetailStore.setPersonalParticipationPermissions(
+                response.payload.permissions
+              )
+            })
+        )
       }
       await Promise.all(permissionRequests)
 
       // verfied users can see event areas as well as users with write permission
       if (
         eventDetailStore.getState().personalParticipation?.is_verified ||
-        includesOneOf(
-          eventPermissions.permissions,
-          [ObjectPermissions.TeamCaptain, ObjectPermissions.Coordinator]
-        )
+        includesOneOf(eventPermissions.permissions, [
+          ObjectPermissions.TeamCaptain,
+          ObjectPermissions.Coordinator
+        ])
       ) {
-        const promises: Promise<any>[] = [apiClient.eventAreas.list({event: eventId})]
+        const promises: Promise<any>[] = [
+          apiClient.eventAreas.list({ event: eventId })
+        ]
         if (eventRequest.payload.data.event_type === EventTypes.POSTERS) {
-          promises.push(apiClient.posters.list({event: eventId}))
+          promises.push(apiClient.posters.list({ event: eventId }))
         }
         const [eventAreaRequest, posterRequest] = await Promise.all(promises)
         eventDetailStore.setEventAreas(eventAreaRequest.payload.data)
@@ -77,27 +93,25 @@ export default defineComponent({
         }
       }
 
-
       next(() => {
         uiStore.updateActiveElements({
           event: eventDetailStore.getState().event!.name,
-          campaigns: eventDetailStore.getState().campaigns.map(({name}) => name).join(',')
+          campaigns: eventDetailStore
+            .getState()
+            .campaigns.map(({ name }) => name)
+            .join(',')
         })
       })
     } catch (e) {
       if (apiClient.isApiClientError(e) && e.response?.status === 404) {
-        next({name: 'login'})
+        next({ name: 'login' })
       }
     }
   },
   beforeRouteLeave() {
     eventDetailStore.reset()
   }
-
 })
-
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

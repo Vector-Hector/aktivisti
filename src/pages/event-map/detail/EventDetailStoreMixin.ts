@@ -6,7 +6,10 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import { eventDetailStore } from 'src/store/EventDetailStore'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
-import { ObjectPermissionDto, ObjectPermissions } from 'src/api/model/ObjectPermissionDto'
+import {
+  ObjectPermissionDto,
+  ObjectPermissions
+} from 'src/api/model/ObjectPermissionDto'
 import { Feature } from 'geojson'
 import { PosterDto } from 'src/api/model/PosterDto'
 import { apiClient } from 'src/api/ApiClient'
@@ -20,12 +23,16 @@ export default defineComponent({
     zoomBox(): BBox2d | null {
       const locationFeatures = [...this.areaFeatures]
       if (this?.event?.location) {
-        locationFeatures.push(circle([this.event.location.lng, this.event.location.lat], 0.2))
+        locationFeatures.push(
+          circle([this.event.location.lng, this.event.location.lat], 0.2)
+        )
       }
-      return locationFeatures.length > 0 ? bbox({
-        type: 'FeatureCollection',
-        features: [...this.areaFeatures, ...locationFeatures]
-      }) as BBox2d : userStore.getState().bbox
+      return locationFeatures.length > 0
+        ? (bbox({
+            type: 'FeatureCollection',
+            features: [...this.areaFeatures, ...locationFeatures]
+          }) as BBox2d)
+        : userStore.getState().bbox
     },
     areaFeatures(): Feature[] {
       return this.eventAreas.map((area) => {
@@ -67,7 +74,9 @@ export default defineComponent({
     },
     postersInArea: {
       get(): PosterDto[] {
-        return eventDetailStore.state.posters.filter(({area}) => area === (this.eventArea?.id ?? null))
+        return eventDetailStore.state.posters.filter(
+          ({ area }) => area === (this.eventArea?.id ?? null)
+        )
       },
       set(posters: PosterDto[]) {
         this.mergePosters(posters)
@@ -75,7 +84,9 @@ export default defineComponent({
     },
     postersWithoutArea: {
       get(): PosterDto[] {
-        return eventDetailStore.state.posters.filter(({area}) => area === null)
+        return eventDetailStore.state.posters.filter(
+          ({ area }) => area === null
+        )
       },
       set(posters: PosterDto[]) {
         this.mergePosters(posters)
@@ -86,7 +97,9 @@ export default defineComponent({
         return eventDetailStore.getState().participations
       },
       set(value: EventParticipationDto[]) {
-        const personalParticipation = value.find(({id}) => id === this.personalParticipation?.id)
+        const personalParticipation = value.find(
+          ({ id }) => id === this.personalParticipation?.id
+        )
         // if the update contains the personal one keep them in sync
         if (personalParticipation) {
           eventDetailStore.setPersonalParticipation(personalParticipation)
@@ -100,10 +113,14 @@ export default defineComponent({
       },
       set(value: EventParticipationDto | null) {
         const oldParticipation = this.personalParticipation
-        const existingParticipationIndex = this.participations.findIndex(({id}) => oldParticipation?.id === id)
+        const existingParticipationIndex = this.participations.findIndex(
+          ({ id }) => oldParticipation?.id === id
+        )
         // keep the participation list in sync
         if (value === null && existingParticipationIndex > -1) {
-          eventDetailStore.setParticipations(this.participations.filter(({id}) => oldParticipation?.id !== id))
+          eventDetailStore.setParticipations(
+            this.participations.filter(({ id }) => oldParticipation?.id !== id)
+          )
         } else if (value !== null && existingParticipationIndex > -1) {
           const newParticipations = [...this.participations]
           newParticipations[existingParticipationIndex] = value
@@ -121,9 +138,10 @@ export default defineComponent({
       return eventDetailStore.getState().completionNotes
     },
     completedTargetIds(): string[] {
-      return eventDetailStore.getState().completionNotes
-        .filter(({completed}) => completed)
-        .map(({target_id}) => target_id)
+      return eventDetailStore
+        .getState()
+        .completionNotes.filter(({ completed }) => completed)
+        .map(({ target_id }) => target_id)
     },
     event: {
       get(): EventDto {
@@ -174,10 +192,18 @@ export default defineComponent({
       }
     },
     isTeamCaptain(): boolean {
-      return this.eventPermissions?.permissions?.includes(ObjectPermissions.TeamCaptain) ?? false
+      return (
+        this.eventPermissions?.permissions?.includes(
+          ObjectPermissions.TeamCaptain
+        ) ?? false
+      )
     },
     isCoordinator(): boolean {
-      return this.eventPermissions?.permissions?.includes(ObjectPermissions.Coordinator) ?? false
+      return (
+        this.eventPermissions?.permissions?.includes(
+          ObjectPermissions.Coordinator
+        ) ?? false
+      )
     },
     isTeamCaptainOrCoordinator(): boolean {
       return this.isTeamCaptain || this.isCoordinator
@@ -185,11 +211,13 @@ export default defineComponent({
   },
   methods: {
     deletePostersByIds(posterIds: number[]) {
-      this.posters = this.posters.filter(({id}) => !posterIds.includes(id))
+      this.posters = this.posters.filter(({ id }) => !posterIds.includes(id))
     },
     mergePosters(posters: PosterDto[]) {
       for (const poster of posters) {
-        const originalIndex = this.posters.findIndex(({id}) => id === poster.id)
+        const originalIndex = this.posters.findIndex(
+          ({ id }) => id === poster.id
+        )
         if (originalIndex > -1) {
           Object.assign(this.posters[originalIndex], poster)
         } else {
@@ -198,9 +226,11 @@ export default defineComponent({
       }
     },
     async refreshParticipants() {
-      this.participations = (await apiClient.eventParticipations.list({
-        event: this.event.id
-      })).payload.data
+      this.participations = (
+        await apiClient.eventParticipations.list({
+          event: this.event.id
+        })
+      ).payload.data
     }
   }
 })

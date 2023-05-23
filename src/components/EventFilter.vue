@@ -16,7 +16,7 @@
         :isSortOrderConfigurable="isSortOrderConfigurable"
         :isEventTypeFilterable="isEventTypeFilterable"
         @update:filterParams="updateFilterParams"
-        />
+      />
     </div>
   </CollapsibleFilters>
   <EventFilterList
@@ -34,7 +34,6 @@
   />
 </template>
 <script lang="ts">
-
 import { defineComponent, PropType } from 'vue'
 import { EventFilterParams } from 'src/api/params/EventFilterParams'
 import { CampaignDto } from 'src/api/model/CampaignDto'
@@ -47,12 +46,12 @@ export default defineComponent({
   name: 'EventFilter',
   components: {
     CollapsibleFilters,
-    EventFilterList,
+    EventFilterList
   },
   props: {
-    isCollapsible:{
+    isCollapsible: {
       type: Boolean as PropType<boolean>,
-      default: false,
+      default: false
     },
     filterParams: {
       type: Object as PropType<EventFilterParams>,
@@ -60,36 +59,36 @@ export default defineComponent({
     },
     campaigns: {
       type: Array as PropType<CampaignDto[]>,
-      required: false,
+      required: false
     },
     subAssociations: {
       type: Array as PropType<SubAssociationDto[]>,
       required: false
     },
-    isOwnershipFilterable:{
+    isOwnershipFilterable: {
       type: Boolean as PropType<boolean>,
-      default: false,
+      default: false
     },
     isStatusFilterable: {
       type: Boolean as PropType<boolean>,
-      default: true,
+      default: true
     },
     isCampaignFilterable: {
       type: Boolean as PropType<boolean>,
-      default: true,
+      default: true
     },
     isSubAssociationFilterable: {
       type: Boolean as PropType<boolean>,
-      default: true,
+      default: true
     },
     isSortOrderConfigurable: {
       type: Boolean as PropType<boolean>,
-      default: true,
+      default: true
     },
     isEventTypeFilterable: {
       type: Boolean as PropType<boolean>,
-      default: true,
-    },
+      default: true
+    }
   },
   computed: {
     activatedFilterCount(): number {
@@ -100,24 +99,24 @@ export default defineComponent({
       if (this.filterParams.campaigns) {
         active++
       }
-      if (this.filterParams.status === EventStatus.ENDED){
+      if (this.filterParams.status === EventStatus.ENDED) {
         active++
       }
-      if(this.filterParams.event_type){
+      if (this.filterParams.event_type) {
         active++
       }
       return active
-    },
+    }
   },
-  methods:{
-    updateFilterParams(value: EventFilterParams){
+  methods: {
+    updateFilterParams(value: EventFilterParams) {
       this.$emit('update:filterParams', {
         ...this.filterParams,
         ...value
       })
-    },
+    }
   },
-  emits: ['update:filterParams'],
+  emits: ['update:filterParams']
 })
 </script>
 

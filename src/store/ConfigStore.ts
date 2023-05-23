@@ -6,7 +6,6 @@ interface ConfigStoreState {
 }
 
 class ConfigStore extends Store<ConfigStoreState> {
-
   protected data(): ConfigStoreState {
     return {
       service_config: {

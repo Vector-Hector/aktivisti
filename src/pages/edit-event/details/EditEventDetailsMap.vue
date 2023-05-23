@@ -1,19 +1,8 @@
 <template>
-  <AreaFeatureLayer
-    :features="features"
-  />
-  <AddressMarkerLayer
-    :addresses="addresses"
-  />
-  <PosterMarkerLayer
-    :posters="posters"
-    :editable="false"
-    :opacity="0.5"
-  />
-  <EventMarker
-    v-if="event?.location"
-    :event="event"
-  />
+  <AreaFeatureLayer :features="features" />
+  <AddressMarkerLayer :addresses="addresses" />
+  <PosterMarkerLayer :posters="posters" :editable="false" :opacity="0.5" />
+  <EventMarker v-if="event?.location" :event="event" />
 </template>
 
 <script lang="ts">
@@ -29,7 +18,6 @@ import AreaFeatureLayer from 'src/map/AreaFeatureLayer'
 import AddressMarkerLayer from 'src/map/AddressMarkerLayer'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
 import EventMarker from 'components/EventMarker.vue'
-
 
 export default defineComponent({
   name: 'EditEventDetailsMap',
@@ -49,9 +37,9 @@ export default defineComponent({
   computed: {
     addresses(): AddressDetails[] | undefined {
       return this.eventAreas
-        .map(({area_details}) => area_details?.streets ?? [])
+        .map(({ area_details }) => area_details?.streets ?? [])
         .flat()
-        .map(({addresses}) => addresses)
+        .map(({ addresses }) => addresses)
         .flat()
     }
   },
@@ -67,4 +55,3 @@ export default defineComponent({
   }
 })
 </script>
-

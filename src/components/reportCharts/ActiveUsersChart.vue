@@ -10,24 +10,24 @@ import { defaultApexChartOptions } from 'boot/apex'
 import { EventTypes, EventTypesUtil } from 'src/api/model/EventTypes'
 
 interface Props {
-  campaignId: number,
-  stateAssociationId?: number,
-  subAssociationId?: number,
+  campaignId: number
+  stateAssociationId?: number
+  subAssociationId?: number
 }
 
 const props = defineProps<Props>()
 
 interface ApexSeriesEntity {
-  name: string,
+  name: string
   data: ApexDatePoint[]
 }
 
-const {
-  campaign,
-  stateAssociation,
-  subAssociation,
-  fetchData
-} = useReportScope(props.campaignId, props.stateAssociationId, props.subAssociationId)
+const { campaign, stateAssociation, subAssociation, fetchData } =
+  useReportScope(
+    props.campaignId,
+    props.stateAssociationId,
+    props.subAssociationId
+  )
 
 const series = ref<ApexSeriesEntity[]>([])
 const isLoading = ref<boolean>(false)
@@ -42,39 +42,64 @@ onBeforeMount(async () => {
 async function fetchActiveUsersReport() {
   const scopeQueryParams = {
     campaign: campaign.value!.id,
-    state_association: stateAssociation.value ? stateAssociation.value.id : undefined,
+    state_association: stateAssociation.value
+      ? stateAssociation.value.id
+      : undefined,
     sub_association: subAssociation.value ? subAssociation.value.id : undefined
   }
-  const reportOverall = (await apiClient.reportActiveUsers.list(scopeQueryParams)).payload.data
+  const reportOverall = (
+    await apiClient.reportActiveUsers.list(scopeQueryParams)
+  ).payload.data
   if (reportOverall.length > 0) {
     const firstDateOfChart = new Date(reportOverall[0].day)
-    const lastDateOfChart = new Date(reportOverall[reportOverall.length - 1].day)
-    const reportDoor2Door = (await apiClient.reportActiveUsers.list({
-      ...scopeQueryParams,
-      event_type: EventTypes.DOOR_TO_DOOR
-    })).payload.data
-    const reportFlyer = (await apiClient.reportActiveUsers.list({
-      ...scopeQueryParams,
-      event_type: EventTypes.FLYERS
-    })).payload.data
+    const lastDateOfChart = new Date(
+      reportOverall[reportOverall.length - 1].day
+    )
+    const reportDoor2Door = (
+      await apiClient.reportActiveUsers.list({
+        ...scopeQueryParams,
+        event_type: EventTypes.DOOR_TO_DOOR
+      })
+    ).payload.data
+    const reportFlyer = (
+      await apiClient.reportActiveUsers.list({
+        ...scopeQueryParams,
+        event_type: EventTypes.FLYERS
+      })
+    ).payload.data
     series.value = [
       {
         name: 'Gesamt',
-        data: ApexDataUtil.fillMissingDataPoints(reportOverall.map(toApexDatePoint), firstDateOfChart, lastDateOfChart)
+        data: ApexDataUtil.fillMissingDataPoints(
+          reportOverall.map(toApexDatePoint),
+          firstDateOfChart,
+          lastDateOfChart
+        )
       },
       {
         name: EventTypesUtil.getLabel(EventTypes.DOOR_TO_DOOR),
-        data: ApexDataUtil.fillMissingDataPoints(reportDoor2Door.map(toApexDatePoint), firstDateOfChart, lastDateOfChart)
+        data: ApexDataUtil.fillMissingDataPoints(
+          reportDoor2Door.map(toApexDatePoint),
+          firstDateOfChart,
+          lastDateOfChart
+        )
       },
       {
         name: EventTypesUtil.getLabel(EventTypes.FLYERS),
-        data: ApexDataUtil.fillMissingDataPoints(reportFlyer.map(toApexDatePoint), firstDateOfChart, lastDateOfChart)
+        data: ApexDataUtil.fillMissingDataPoints(
+          reportFlyer.map(toApexDatePoint),
+          firstDateOfChart,
+          lastDateOfChart
+        )
       }
     ]
   }
 }
 
-const toApexDatePoint = (reportEvent: ReportActiveUsersDto) => ({x: reportEvent.day, y: reportEvent.count})
+const toApexDatePoint = (reportEvent: ReportActiveUsersDto) => ({
+  x: reportEvent.day,
+  y: reportEvent.count
+})
 
 const chartOptions = computed(() => {
   return {
@@ -85,15 +110,18 @@ const chartOptions = computed(() => {
       text: `${ReportTypeUtil.getLabel(ReportType.ACTIVE_USERS)}`
     },
     subtitle: {
-      text: `${campaign.value?.name}${stateAssociation.value?.name ? ' > ' + stateAssociation.value.name : ''}${subAssociation.value?.name ? ' > ' + subAssociation.value.name : ''}`
+      text: `${campaign.value?.name}${
+        stateAssociation.value?.name ? ' > ' + stateAssociation.value.name : ''
+      }${subAssociation.value?.name ? ' > ' + subAssociation.value.name : ''}`
     },
     yaxis: {
       decimalsInFloat: 3
     },
     noData: {
-      text: isLoading.value ? 'Lade Daten...' : defaultApexChartOptions.noData?.text
+      text: isLoading.value
+        ? 'Lade Daten...'
+        : defaultApexChartOptions.noData?.text
     }
-
   }
 })
 </script>

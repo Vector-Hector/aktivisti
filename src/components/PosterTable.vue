@@ -76,25 +76,30 @@ export default defineComponent({
   emits: ['rowClick', 'rowDeleted'],
   computed: {
     posterColumns(): any[] {
-      const columns: any[] = [{
-        name: 'poster_id',
-        label: '#',
-        field: 'poster_id',
-        align: 'right',
-        required: true
-      }, {
-        name: 'location_description',
-        label: 'Ort',
-        field: 'location_description',
-        align: 'left',
-        required: true,
-        format: (value: string) => value ? ellipsis(value, 25) : 'Unbenannter Ort'
-      }, {
-        name: 'status',
-        label: 'Status',
-        field: 'status',
-        align: 'right'
-      }]
+      const columns: any[] = [
+        {
+          name: 'poster_id',
+          label: '#',
+          field: 'poster_id',
+          align: 'right',
+          required: true
+        },
+        {
+          name: 'location_description',
+          label: 'Ort',
+          field: 'location_description',
+          align: 'left',
+          required: true,
+          format: (value: string) =>
+            value ? ellipsis(value, 25) : 'Unbenannter Ort'
+        },
+        {
+          name: 'status',
+          label: 'Status',
+          field: 'status',
+          align: 'right'
+        }
+      ]
       if (this.showActions) {
         columns.push({
           name: 'actions',
@@ -115,23 +120,28 @@ export default defineComponent({
   methods: {
     onDeleteClicked(poster: PosterDto) {
       if (this.confirmDelete) {
-        this.$q.dialog({
-          title: 'Plakat löschen',
-          message: `Möchtest du Plakat #${poster.poster_id} wirklich löschen?`,
-          options: {
-            type: 'checkbox',
-            model: [],
-            items: [
-              {label: 'Beim nächsten mal nicht mehr fragen', value: 'skipConfirm'}
-            ]
-          },
-          cancel: true
-        }).onOk((data: any) => {
-          if (data.includes('skipConfirm')) {
-            this.confirmDelete = false
-          }
-          this.$emit('rowDeleted', poster)
-        })
+        this.$q
+          .dialog({
+            title: 'Plakat löschen',
+            message: `Möchtest du Plakat #${poster.poster_id} wirklich löschen?`,
+            options: {
+              type: 'checkbox',
+              model: [],
+              items: [
+                {
+                  label: 'Beim nächsten mal nicht mehr fragen',
+                  value: 'skipConfirm'
+                }
+              ]
+            },
+            cancel: true
+          })
+          .onOk((data: any) => {
+            if (data.includes('skipConfirm')) {
+              this.confirmDelete = false
+            }
+            this.$emit('rowDeleted', poster)
+          })
       } else {
         this.$emit('rowDeleted', poster)
       }

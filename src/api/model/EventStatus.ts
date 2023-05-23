@@ -1,9 +1,9 @@
 export enum EventStatus {
   ACTIVE = 'active',
-  ENDED = 'ended',
+  ENDED = 'ended'
 }
 
-export const eventStatusOptions: {key: string, label: string}[] = [
+export const eventStatusOptions: { key: string; label: string }[] = [
   {
     key: EventStatus.ACTIVE,
     label: 'aktuell'
@@ -11,5 +11,5 @@ export const eventStatusOptions: {key: string, label: string}[] = [
   {
     key: EventStatus.ENDED,
     label: 'beendet'
-  },
-  ]
+  }
+]

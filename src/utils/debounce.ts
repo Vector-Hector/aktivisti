@@ -44,11 +44,13 @@ export class SettleDebouncer {
 export class IntervalDebouncer {
   lastCall: null | Date = null
 
-  constructor(private haltInterval = 2000) {
-  }
+  constructor(private haltInterval = 2000) {}
 
   executeDebounced(fn: () => any): boolean {
-    if (this.lastCall === null || new Date().getTime() - this.lastCall.getTime() > this.haltInterval) {
+    if (
+      this.lastCall === null ||
+      new Date().getTime() - this.lastCall.getTime() > this.haltInterval
+    ) {
       fn()
       this.lastCall = new Date()
       return true

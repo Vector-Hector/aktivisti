@@ -1,8 +1,6 @@
 <template>
   <div class="container">
-    <QScrollArea
-      class="d-flex flex-fill"
-    >
+    <QScrollArea class="d-flex flex-fill">
       <QForm>
         <QSelect
           filled
@@ -101,7 +99,14 @@
           :error-message="errors.visibility?.[0]"
           :error="!!errors.visibility?.length"
         />
-        <div class="metric-section" v-if="[EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(event.event_type)">
+        <div
+          class="metric-section"
+          v-if="
+            [EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(
+              event.event_type
+            )
+          "
+        >
           <h3 class="metrics-headline">Zielvorgaben</h3>
           <div class="metrics-input-wrapper">
             <MetricInput
@@ -111,7 +116,9 @@
               :checked="selectedMetricsIds.includes(metric.id)"
               @update:checked="toggleMetric($event, metric)"
               :target="metricRecordForMetricId(metric.id)?.target ?? 0"
-              @update:target="metricRecordForMetricId(metric.id).target = $event"
+              @update:target="
+                metricRecordForMetricId(metric.id).target = $event
+              "
             />
           </div>
         </div>
@@ -190,31 +197,41 @@ export default defineComponent({
     },
     availableMetricOptions(): EventMetricDto[] {
       // do not offer mandatory metrics that already are selected in the select dialog, so they can't be delselected
-      return this.metrics.filter((item) =>
-        !item.mandatory_for_types.includes(this.event.event_type)
-        || !this.selectedMetrics.find(({id}) => id === item.id)
+      return this.metrics.filter(
+        (item) =>
+          !item.mandatory_for_types.includes(this.event.event_type) ||
+          !this.selectedMetrics.find(({ id }) => id === item.id)
       )
     },
     selectedMetrics: {
       get(): EventMetricDto[] {
-        const metricRecordMetricIds = this.metricRecords.map(({metric}) => metric)
-        return this.metrics.filter(({id}) => {
+        const metricRecordMetricIds = this.metricRecords.map(
+          ({ metric }) => metric
+        )
+        return this.metrics.filter(({ id }) => {
           return metricRecordMetricIds.includes(id)
         })
       },
       set(metrics: EventMetricDto[]) {
-        editEventStore.setMetricRecords(metrics.map((metricItem) => {
-          const existingRecord = this.metricRecords.find(({metric}) => metric == metricItem.id)
-          return existingRecord ?? {
-            metric: metricItem.id,
-            event: this.event.id,
-            target: 0
-          } as EventMetricRecordDto
-        }))
+        editEventStore.setMetricRecords(
+          metrics.map((metricItem) => {
+            const existingRecord = this.metricRecords.find(
+              ({ metric }) => metric == metricItem.id
+            )
+            return (
+              existingRecord ??
+              ({
+                metric: metricItem.id,
+                event: this.event.id,
+                target: 0
+              } as EventMetricRecordDto)
+            )
+          })
+        )
       }
     },
     selectedMetricsIds(): number[] {
-      return this.selectedMetrics.map(({id}) => id)
+      return this.selectedMetrics.map(({ id }) => id)
     },
     currentMetricRecords(): EventMetricRecordDto[] {
       return cloneDeep(this.metricRecords)
@@ -225,15 +242,19 @@ export default defineComponent({
       handler(newValue) {
         if (!newValue) {
           const initialDate = new Date()
-          initialDate.setHours(initialDate.getHours() + Math.round(initialDate.getMinutes() / 60))
+          initialDate.setHours(
+            initialDate.getHours() + Math.round(initialDate.getMinutes() / 60)
+          )
           initialDate.setMinutes(0, 0, 0)
           this.startDate = date.formatDate(new Date(initialDate), this.mask)
         } else {
           this.startDate = date.formatDate(new Date(newValue), this.mask)
         }
         if (new Date(this.event.start_date) > new Date(this.event.end_date)) {
-          const startDate = new Date(date.extractDate(this.startDate, this.mask))
-          const newEndDate = date.addToDate(startDate, {hours: 1})
+          const startDate = new Date(
+            date.extractDate(this.startDate, this.mask)
+          )
+          const newEndDate = date.addToDate(startDate, { hours: 1 })
           this.endDate = date.formatDate(newEndDate, this.mask)
         }
       },
@@ -242,8 +263,14 @@ export default defineComponent({
     'event.end_date': {
       handler(newValue) {
         if (!newValue) {
-          const initialDate = this.event.start_date ? new Date(this.event.start_date) : new Date()
-          initialDate.setHours(initialDate.getHours() + Math.round(initialDate.getMinutes() / 60) + 1)
+          const initialDate = this.event.start_date
+            ? new Date(this.event.start_date)
+            : new Date()
+          initialDate.setHours(
+            initialDate.getHours() +
+              Math.round(initialDate.getMinutes() / 60) +
+              1
+          )
           initialDate.setMinutes(0, 0, 0)
           this.endDate = date.formatDate(new Date(initialDate), this.mask)
         } else {
@@ -251,7 +278,7 @@ export default defineComponent({
         }
         if (new Date(this.event.start_date) > new Date(this.event.end_date)) {
           const endDate = new Date(date.extractDate(this.endDate, this.mask))
-          const newStartDate = date.subtractFromDate(endDate, {hours: 1})
+          const newStartDate = date.subtractFromDate(endDate, { hours: 1 })
           this.startDate = date.formatDate(newStartDate, this.mask)
         }
       },
@@ -302,10 +329,14 @@ export default defineComponent({
   methods: {
     async updateMetrics() {
       try {
-        const metricRecordsRequest = await this.$apiClient.events.batchSetMetricRecords(
-          this.event.id.toString(), this.metricRecords
+        const metricRecordsRequest =
+          await this.$apiClient.events.batchSetMetricRecords(
+            this.event.id.toString(),
+            this.metricRecords
+          )
+        this.lastSavedMetricRecords = cloneDeep(
+          metricRecordsRequest.payload.data
         )
-        this.lastSavedMetricRecords = cloneDeep(metricRecordsRequest.payload.data)
         this.metricRecords = cloneDeep(metricRecordsRequest.payload.data)
         this.$q.notify({
           color: 'positive',
@@ -319,14 +350,18 @@ export default defineComponent({
       }
     },
     toggleMetric(enable: boolean, metric: EventMetricDto) {
-      if (enable && !this.selectedMetrics.find(({id}) => id === metric.id)) {
+      if (enable && !this.selectedMetrics.find(({ id }) => id === metric.id)) {
         this.selectedMetrics = [...this.selectedMetrics, metric]
       } else {
-        this.selectedMetrics = this.selectedMetrics.filter(({id}) => id !== metric.id)
+        this.selectedMetrics = this.selectedMetrics.filter(
+          ({ id }) => id !== metric.id
+        )
       }
     },
     async getMetrics() {
-      const metricsRequest = await this.$apiClient.eventMetrics.list({available_for_types: this.event.event_type})
+      const metricsRequest = await this.$apiClient.eventMetrics.list({
+        available_for_types: this.event.event_type
+      })
       this.metrics = metricsRequest.payload.data
     },
     async back() {
@@ -341,11 +376,15 @@ export default defineComponent({
       await this.saveDebouncer.waitForSettle()
       this.stepControls.abort()
     },
-    metricForMetricRecord(record: EventMetricRecordDto): EventMetricDto | undefined {
-      return this.metrics.find(({id}) => record.metric === id)
+    metricForMetricRecord(
+      record: EventMetricRecordDto
+    ): EventMetricDto | undefined {
+      return this.metrics.find(({ id }) => record.metric === id)
     },
-    metricRecordForMetricId(metricId: number): Partial<EventMetricRecordDto> | undefined {
-      return this.metricRecords.find(({metric}) => metricId === metric)
+    metricRecordForMetricId(
+      metricId: number
+    ): Partial<EventMetricRecordDto> | undefined {
+      return this.metricRecords.find(({ metric }) => metricId === metric)
     },
     isRequired(value: string) {
       if (!value) {

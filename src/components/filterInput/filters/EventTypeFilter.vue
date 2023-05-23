@@ -1,7 +1,7 @@
 <template>
   <FilterInput
     :model-value="modelValue"
-    @update:model-value="(value)=>this.$emit('update:modelValue', value)"
+    @update:model-value="(value) => this.$emit('update:modelValue', value)"
     input-debounce="0"
     label="Aktionstyp"
     :options="eventTypeOptions"
@@ -13,7 +13,6 @@
   />
 </template>
 <script lang="ts">
-
 import { defineComponent, PropType } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
 import { eventTypeOptions } from 'src/api/model/EventTypes'
@@ -31,9 +30,9 @@ export default defineComponent({
   },
   data() {
     return {
-      eventTypeOptions,
+      eventTypeOptions
     }
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue']
 })
 </script>

@@ -10,6 +10,4 @@ export default defineComponent({
   mixins: [EventDetailPosterMixin]
 })
 </script>
-<style>
-
-</style>
+<style></style>

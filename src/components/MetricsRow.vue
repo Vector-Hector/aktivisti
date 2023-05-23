@@ -10,7 +10,7 @@
       />
     </div>
     <div v-if="target" class="col-12 col-sm-4 col-md-3 target-col">
-      <div class="target"> von {{ target }}</div>
+      <div class="target">von {{ target }}</div>
     </div>
   </div>
 </template>
@@ -18,7 +18,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import CounterInput from 'src/components/CounterInput.vue'
-
 
 export default defineComponent({
   name: 'MetricsRow',
@@ -44,7 +43,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "src/css/_variables.scss";
+@import 'src/css/_variables.scss';
 
 .counter-input {
   width: 100%;
@@ -71,7 +70,7 @@ input::-webkit-inner-spin-button {
   margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
-input[type=number] {
+input[type='number'] {
   -moz-appearance: textfield; /* Firefox */
 }
 

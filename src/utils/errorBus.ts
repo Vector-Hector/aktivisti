@@ -1,4 +1,4 @@
-import {TinyEmitter} from 'tiny-emitter';
+import { TinyEmitter } from 'tiny-emitter'
 
 export const NO_INTERNET = 'NO_INTERNET'
 export const SESSION_INVALID = 'SESSION_INVALID'

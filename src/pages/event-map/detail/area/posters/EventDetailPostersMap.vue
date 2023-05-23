@@ -19,7 +19,7 @@ import AreaFeatureLayer from 'src/map/AreaFeatureLayer'
 
 export default defineComponent({
   name: 'EventDetailPostersMap',
-  components: {AreaFeatureLayer, PosterMarkerLayer},
+  components: { AreaFeatureLayer, PosterMarkerLayer },
   mixins: [EventDetailPosterMixin]
 })
 </script>

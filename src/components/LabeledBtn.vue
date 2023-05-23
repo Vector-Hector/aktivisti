@@ -1,9 +1,7 @@
 <template>
   <div class="labeled-button">
     <slot name="btn">
-      <QBtn
-        v-bind="$props"
-      />
+      <QBtn v-bind="$props" />
     </slot>
     <div class="button-label">
       {{ $props.externalLabel }}

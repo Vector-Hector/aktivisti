@@ -15,28 +15,25 @@
       round
     />
     <div class="menu">
-      <div
-        v-if="isLoggedIn"
-        class="menu-group highlighted"
-      >
+      <div v-if="isLoggedIn" class="menu-group highlighted">
         <div class="user-widget">
-          <MenuLink
-            to="/profile"
-          >
+          <MenuLink to="/profile">
             <div class="user-widget-avatar">
-              <QIcon :name="ionPersonCircleOutline" class="avatar-placeholder" />
+              <QIcon
+                :name="ionPersonCircleOutline"
+                class="avatar-placeholder"
+              />
             </div>
             <div class="user-widget-details">
-              <span v-if="userFullname.length>0" class="name">{{ userFullname }}</span>
+              <span v-if="userFullname.length > 0" class="name">{{
+                userFullname
+              }}</span>
               <span class="username">{{ userName }}</span>
             </div>
           </MenuLink>
         </div>
       </div>
-      <div
-        v-if="!isLoggedIn"
-        class="menu-group highlighted"
-      >
+      <div v-if="!isLoggedIn" class="menu-group highlighted">
         <QBtn
           :icon="ionClose"
           @click="sidebarExpanded = false"
@@ -45,18 +42,14 @@
           round
         />
         <div class="menu-item">
-          <MenuLink
-            to="/login"
-          >
+          <MenuLink to="/login">
             <QIcon :name="ionLogIn" />
             <span class="menu-item-link-text">Anmelden</span>
           </MenuLink>
         </div>
-        <hr class="menu-divider">
+        <hr class="menu-divider" />
         <div class="menu-item">
-          <MenuLink
-            to="/register"
-          >
+          <MenuLink to="/register">
             <QIcon :name="farIdCard" />
             <span class="menu-item-link-text">Registrieren</span>
           </MenuLink>
@@ -64,85 +57,49 @@
       </div>
       <QScrollArea class="scroll-area">
         <div class="menu-group">
-          <div
-            v-if="isLoggedIn"
-            class="menu-item"
-          >
-            <MenuLink
-              :to="{ name: 'my-participations' }"
-            >
+          <div v-if="isLoggedIn" class="menu-item">
+            <MenuLink :to="{ name: 'my-participations' }">
               <QIcon :name="ionCalendarOutline" />
               <span class="menu-item-link-text">Meine Teilnahmen</span>
               <OpenInvitationsBadge />
             </MenuLink>
           </div>
           <div class="menu-item">
-            <MenuLink
-              to="/events"
-            >
-              <QIcon
-                :name="ionCalendarClearOutline"
-              />
+            <MenuLink to="/events">
+              <QIcon :name="ionCalendarClearOutline" />
               <span class="menu-item-link-text">Alle Aktionen</span>
             </MenuLink>
           </div>
           <div class="menu-item">
-            <MenuLink
-              to="/offices"
-            >
-              <QIcon
-                :name="ionHomeOutline"
-              />
+            <MenuLink to="/offices">
+              <QIcon :name="ionHomeOutline" />
               <span class="menu-item-link-text">DIE LINKE vor Ort</span>
             </MenuLink>
           </div>
-          <div
-            v-if="hasManagePermission"
-            class="menu-item">
-            <MenuLink
-              to="/posters"
-            >
-              <QIcon
-                name="img:static/icons/poster.svg"
-              />
+          <div v-if="hasManagePermission" class="menu-item">
+            <MenuLink to="/posters">
+              <QIcon name="img:static/icons/poster.svg" />
               <span class="menu-item-link-text">Plakate</span>
             </MenuLink>
           </div>
-          <div
-            v-if="hasManagePermission"
-            class="menu-item"
-          >
-            <MenuLink
-              :to="{ name: 'my-managed-events' }"
-            >
+          <div v-if="hasManagePermission" class="menu-item">
+            <MenuLink :to="{ name: 'my-managed-events' }">
               <QIcon :name="ionCreateOutline" />
               <span class="menu-item-link-text">Aktion verwalten</span>
             </MenuLink>
           </div>
-          <div
-            v-if="hasManagePermission"
-            class="menu-item"
-          >
-            <MenuLink :to="{ name: 'reports'}">
+          <div v-if="hasManagePermission" class="menu-item">
+            <MenuLink :to="{ name: 'reports' }">
               <QIcon :name="ionStatsChartOutline" />
               <span class="menu-item-link-text">Statistiken</span>
             </MenuLink>
           </div>
-          <div
-            v-if="isLoggedIn"
-            class="menu-item"
-          >
-            <MenuLink
-              v-if="hasManagePermission"
-              :to="{ name: 'create-event' }"
-            >
+          <div v-if="isLoggedIn" class="menu-item">
+            <MenuLink v-if="hasManagePermission" :to="{ name: 'create-event' }">
               <QIcon :name="farCalendarPlus" />
               <span class="menu-item-link-text">Aktion erstellen</span>
             </MenuLink>
-            <MenuLink
-              v-else
-              :to="{ name: 'create-event-request-permissions' }"
-            >
+            <MenuLink v-else :to="{ name: 'create-event-request-permissions' }">
               <QIcon :name="farCalendarPlus" />
               <span class="menu-item-link-text">Aktion erstellen</span>
             </MenuLink>
@@ -151,9 +108,7 @@
             v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
             class="menu-item"
           >
-            <MenuLink
-              :to="{ name: 'manage-users'}"
-            >
+            <MenuLink :to="{ name: 'manage-users' }">
               <QIcon :name="ionPeopleOutline" />
               <span class="menu-item-link-text">Benutzer*innen verwalten</span>
             </MenuLink>
@@ -162,9 +117,7 @@
             v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
             class="menu-item"
           >
-            <MenuLink
-              :to="{ name: 'create-lead-general' }"
-            >
+            <MenuLink :to="{ name: 'create-lead-general' }">
               <QIcon :name="ionPersonAddOutline" />
               <span class="menu-item-link-text">Kontakt registrieren</span>
             </MenuLink>
@@ -172,17 +125,10 @@
         </div>
 
         <div class="menu-group menu-bottom">
-
-          <div class="version">
-            Version: {{ version }}
-          </div>
-          <hr class="menu-divider">
+          <div class="version">Version: {{ version }}</div>
+          <hr class="menu-divider" />
           <div class="menu-item">
-            <a
-              class="menu-item-link"
-              :href="helpUrl"
-              target="_blank"
-            >
+            <a class="menu-item-link" :href="helpUrl" target="_blank">
               <QIcon :name="ionHelpCircleOutline" />
               <span class="menu-item-link-text">Hilfe</span>
             </a>
@@ -193,14 +139,8 @@
               <span class="menu-item-link-text">Impressum / Datenschutz</span>
             </MenuLink>
           </div>
-          <div
-            v-if="isLoggedIn"
-            class="menu-item"
-          >
-            <div
-              class="menu-item-link"
-              @click="logout()"
-            >
+          <div v-if="isLoggedIn" class="menu-item">
+            <div class="menu-item-link" @click="logout()">
               <QIcon :name="ionExitOutline" />
               <span class="menu-item-link-text">Abmelden</span>
             </div>
@@ -323,7 +263,7 @@ export default defineComponent({
 }
 
 ::v-global(body.platform-ios .navigation-sidebar) {
-  padding: calc(env(safe-area-inset-top) - .7rem) 0 0 !important;
+  padding: calc(env(safe-area-inset-top) - 0.7rem) 0 0 !important;
   background: $primary;
 }
 
@@ -459,5 +399,4 @@ hr {
   align-self: flex-end;
   color: $grey-6;
 }
-
 </style>

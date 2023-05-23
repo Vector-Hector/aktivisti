@@ -1,7 +1,5 @@
 <template>
-  <QScrollArea
-    class="d-flex flex-fill"
-  >
+  <QScrollArea class="d-flex flex-fill">
     <div class="container q-gutter-y-md q-py-sm">
       <div class="row q-gutter-sm">
         <div class="col">
@@ -28,24 +26,35 @@
               <b>Ende:</b>
             </div>
             <div class="col-8">
-              {{ event.end_date ? new Date(event.end_date).toLocaleString([], dateOptions) : 'Nicht definiert' }}
+              {{
+                event.end_date
+                  ? new Date(event.end_date).toLocaleString([], dateOptions)
+                  : 'Nicht definiert'
+              }}
             </div>
             <template v-if="event.external_url">
-              <div class="col-4">
-                Link:
-              </div>
+              <div class="col-4">Link:</div>
               <div class="col-8">
-                <a target="_blank" class="primary-link" :href="event.external_url">{{ event.external_url }}</a>
+                <a
+                  target="_blank"
+                  class="primary-link"
+                  :href="event.external_url"
+                  >{{ event.external_url }}</a
+                >
               </div>
             </template>
             <template
-              v-if="isTeamCaptainOrCoordinator && event.event_type !== EventTypes.GENERIC"
+              v-if="
+                isTeamCaptainOrCoordinator &&
+                event.event_type !== EventTypes.GENERIC
+              "
             >
               <div class="col-4">
                 <b>Teilnahmen:</b>
               </div>
               <div class="col-8">
-                {{ event.participants }} von max. {{ event.max_participants ?? '∞' }}
+                {{ event.participants }} von max.
+                {{ event.max_participants ?? '∞' }}
               </div>
             </template>
           </div>
@@ -59,18 +68,11 @@
             round
             outline
             :icon="ionPrint"
-            :to="{ name: 'print-event', params: {eventId: event.id}}"
+            :to="{ name: 'print-event', params: { eventId: event.id } }"
             external-label="Drucken"
           />
-          <Share
-            :title="shareTitle"
-            :text="shareText"
-            :url="shareUrl"
-          />
-          <LabeledBtn
-            v-if="isTeamCaptainOrCoordinator"
-            external-label="Admin"
-          >
+          <Share :title="shareTitle" :text="shareText" :url="shareUrl" />
+          <LabeledBtn v-if="isTeamCaptainOrCoordinator" external-label="Admin">
             <template v-slot:btn>
               <QFab
                 :icon="ionSettingsSharp"
@@ -95,7 +97,10 @@
                 />
                 <QFabAction
                   v-if="isCoordinator"
-                  :to="{name: 'edit-event-details', params: { eventId: event.id }}"
+                  :to="{
+                    name: 'edit-event-details',
+                    params: { eventId: event.id }
+                  }"
                   color="primary"
                   :icon="ionPencil"
                   class="bg-white admin-fab"
@@ -108,10 +113,14 @@
                 />
                 <QFabAction
                   v-if="
-                    [EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(event.event_type) &&
-                    isCoordinator
+                    [EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(
+                      event.event_type
+                    ) && isCoordinator
                   "
-                  :to="{ name: 'event-detail-report', params: { eventId: event.id }}"
+                  :to="{
+                    name: 'event-detail-report',
+                    params: { eventId: event.id }
+                  }"
                   color="primary"
                   :icon="ionBarChart"
                   class="bg-white admin-fab"
@@ -123,7 +132,11 @@
                   label-position="bottom"
                 />
                 <QFabAction
-                  v-if="event.event_type === EventTypes.POSTERS && !isHangDownEvent && isCoordinator"
+                  v-if="
+                    event.event_type === EventTypes.POSTERS &&
+                    !isHangDownEvent &&
+                    isCoordinator
+                  "
                   @click="openPosterTakeDownModal"
                   color="primary"
                   :icon="ionReceipt"
@@ -136,7 +149,10 @@
                   label-position="bottom"
                 />
                 <QFabAction
-                  v-if="isTeamCaptainOrCoordinator && event.event_type !== EventTypes.GENERIC"
+                  v-if="
+                    isTeamCaptainOrCoordinator &&
+                    event.event_type !== EventTypes.GENERIC
+                  "
                   @click="openParticipantsModal"
                   color="primary"
                   :icon="ionPerson"
@@ -155,18 +171,13 @@
       </div>
       <div class="row">
         <div class="col-12 event-description">
-          <b>Beschreibung</b><br>
+          <b>Beschreibung</b><br />
           {{ event.description }}
         </div>
       </div>
-      <div
-        class="areas row q-col-gutter-y-md"
-        v-if="isMember"
-      >
+      <div class="areas row q-col-gutter-y-md" v-if="isMember">
         <div class="col-12">
-          <QList
-            class="area-list"
-          >
+          <QList class="area-list">
             <EventAreaItem
               v-for="area in eventAreasSorted"
               :key="area.id"
@@ -177,7 +188,10 @@
               :event-type="event.event_type"
             />
             <EventAreaItem
-              v-if="event.event_type === EventTypes.POSTERS && postersWithoutArea.length > 0"
+              v-if="
+                event.event_type === EventTypes.POSTERS &&
+                postersWithoutArea.length > 0
+              "
               :area="noAreaPosters"
               :participations="[]"
               :event-type="event.event_type"
@@ -186,13 +200,17 @@
         </div>
       </div>
       <div
-        v-if="personalParticipation?.is_verified === false && event.event_type !== EventTypes.GENERIC"
+        v-if="
+          personalParticipation?.is_verified === false &&
+          event.event_type !== EventTypes.GENERIC
+        "
         class="row"
       >
         <div v-if="!isTeamCaptainOrCoordinator" class="col-12">
-          Super, dass du mitmachen möchtest. Du hast dich für diese Aktion gemeldet. Der nächste Schritt ist zur
-          angegebenen
-          Zeit am vereinbarten Treffpunkt zu erscheinen. Ein Teamcaptain wird dich dann für diese Aktion freischalten.
+          Super, dass du mitmachen möchtest. Du hast dich für diese Aktion
+          gemeldet. Der nächste Schritt ist zur angegebenen Zeit am vereinbarten
+          Treffpunkt zu erscheinen. Ein Teamcaptain wird dich dann für diese
+          Aktion freischalten.
         </div>
       </div>
       <div
@@ -201,7 +219,10 @@
       >
         <div class="col-12">
           <QBtn
-            :to="{ name: 'login', query: {next: $router.resolve($route).path } }"
+            :to="{
+              name: 'login',
+              query: { next: $router.resolve($route).path }
+            }"
             color="primary"
             class="full-width"
           >
@@ -209,10 +230,7 @@
           </QBtn>
         </div>
       </div>
-      <div
-        class="row q-col-gutter-x-md"
-        v-if="isLoggedIn"
-      >
+      <div class="row q-col-gutter-x-md" v-if="isLoggedIn">
         <div class="col-6">
           <QBtn
             v-if="isTeamCaptainOrCoordinator"
@@ -349,12 +367,15 @@ export default defineComponent({
   computed: {
     shareUrl(): string {
       const shareUrl = process.env.APP_SHARE_URL as string
-      return shareUrl + this.$router.resolve({
-        name: 'event-detail',
-        params: {
-          eventId: this.event.id
-        }
-      }).path
+      return (
+        shareUrl +
+        this.$router.resolve({
+          name: 'event-detail',
+          params: {
+            eventId: this.event.id
+          }
+        }).path
+      )
     },
     shareTitle(): string {
       return this.event.name
@@ -383,7 +404,7 @@ export default defineComponent({
       } as Partial<EventAreaDto>
     },
     eventAreasSorted(): EventAreaDto[] {
-      const collator = new Intl.Collator('de', {caseFirst: 'upper'})
+      const collator = new Intl.Collator('de', { caseFirst: 'upper' })
       return [...this.eventAreas].sort((a, b) => {
         if (a.is_completed) {
           return 1
@@ -393,7 +414,8 @@ export default defineComponent({
       })
     },
     eventTypeLabel(): string | undefined {
-      return eventTypeOptions.find(({key}) => key === this.event.event_type)?.label
+      return eventTypeOptions.find(({ key }) => key === this.event.event_type)
+        ?.label
     },
     isLoggedIn(): boolean {
       return authStore.isLoggedIn()
@@ -411,16 +433,23 @@ export default defineComponent({
       return userStore.isCampaignAdmin()
     },
     isPrintableEvent(): boolean {
-      const {event_type} = this.event
-      return [EventTypes.DOOR_TO_DOOR, EventTypes.POSTERS, EventTypes.FLYERS].includes(event_type)
+      const { event_type } = this.event
+      return [
+        EventTypes.DOOR_TO_DOOR,
+        EventTypes.POSTERS,
+        EventTypes.FLYERS
+      ].includes(event_type)
     }
   },
   methods: {
     async join() {
-      const generalJoinError = 'Ein unerwarteter Fehler trat auf beim versuch der Aktion beizutreten'
+      const generalJoinError =
+        'Ein unerwarteter Fehler trat auf beim versuch der Aktion beizutreten'
       try {
         this.joinLoading = true
-        this.event = (await this.$apiClient.events.join(this.eventId)).payload.data
+        this.event = (
+          await this.$apiClient.events.join(this.eventId)
+        ).payload.data
         await this.updateParticipationAndLoadAreas()
         if (!this.personalParticipation) {
           this.$q.notify({
@@ -442,24 +471,36 @@ export default defineComponent({
       }, 300)
     },
     async updateParticipationAndLoadAreas() {
-      this.personalParticipation = (await this.$apiClient.eventParticipations.list({
-        event: this.eventId,
-        user: userStore.getState().user?.id
-      })).payload.data?.[0]
-      if (this.personalParticipation?.is_verified || this.isTeamCaptainOrCoordinator) {
-        this.eventAreas = (await this.$apiClient.eventAreas.list({event: this.event.id})).payload.data
+      this.personalParticipation = (
+        await this.$apiClient.eventParticipations.list({
+          event: this.eventId,
+          user: userStore.getState().user?.id
+        })
+      ).payload.data?.[0]
+      if (
+        this.personalParticipation?.is_verified ||
+        this.isTeamCaptainOrCoordinator
+      ) {
+        this.eventAreas = (
+          await this.$apiClient.eventAreas.list({ event: this.event.id })
+        ).payload.data
         if (this.event.event_type === EventTypes.POSTERS) {
-          this.posters = (await this.$apiClient.posters.list({event: this.event.id})).payload.data
+          this.posters = (
+            await this.$apiClient.posters.list({ event: this.event.id })
+          ).payload.data
         }
       } else {
         this.eventAreas = []
       }
     },
     async leave() {
-      const generalLeaveError = 'Ein unerwarteter Fehler trat auf beim versuch die Aktion zu verlassen'
+      const generalLeaveError =
+        'Ein unerwarteter Fehler trat auf beim versuch die Aktion zu verlassen'
       try {
         this.joinLoading = true
-        this.event = (await this.$apiClient.events.leave(this.eventId)).payload.data
+        this.event = (
+          await this.$apiClient.events.leave(this.eventId)
+        ).payload.data
         this.personalParticipation = null
       } catch (e) {
         this.$q.notify({
@@ -473,12 +514,15 @@ export default defineComponent({
     async acceptInvite() {
       try {
         this.joinLoading = true
-        const response = await this.$apiClient.eventParticipations.accept(this.personalParticipation!.id.toString())
+        const response = await this.$apiClient.eventParticipations.accept(
+          this.personalParticipation!.id.toString()
+        )
         this.personalParticipation = response.payload.data
       } catch (e) {
         this.$q.notify({
           color: 'negative',
-          message: 'Ein unerwarteter Fehler trat auf beim versuch der Aktion beizutreten'
+          message:
+            'Ein unerwarteter Fehler trat auf beim versuch der Aktion beizutreten'
         })
       } finally {
         this.joinLoading = false
@@ -489,12 +533,13 @@ export default defineComponent({
     },
     openInviteModal() {
       if (this.isTeamCaptainOrCoordinator) {
-        this.$q.dialog({
-          component: EventInvitePeopleModal,
-          componentProps: {
-            eventId: this.event.id
-          }
-        })
+        this.$q
+          .dialog({
+            component: EventInvitePeopleModal,
+            componentProps: {
+              eventId: this.event.id
+            }
+          })
           .onDismiss(() => {
             void this.refreshEvent()
           })
@@ -516,69 +561,76 @@ export default defineComponent({
       }, pollIntervalMs)
     },
     openParticipantsModal() {
-      this.$q.dialog({
-        component: EventParticipantsModal,
-        maximized: true,
-        componentProps: {
-          eventId: this.event.id,
-          eventSubAssociation: this.event.sub_association
-        }
-      })
+      this.$q
+        .dialog({
+          component: EventParticipantsModal,
+          maximized: true,
+          componentProps: {
+            eventId: this.event.id,
+            eventSubAssociation: this.event.sub_association
+          }
+        })
         .onDismiss(() => {
           void this.refreshEvent()
           void this.refreshParticipants()
         })
     },
     openDeleteModal() {
-      this.$q.dialog({
-        title: `${this.event.name} wirklich löschen?`,
-        message: `Das Event <b>"${this.event.name}"</b> wird gelöscht und kann nicht wiederhergestellt werden.`,
-        html: true,
-        cancel: true
+      this.$q
+        .dialog({
+          title: `${this.event.name} wirklich löschen?`,
+          message: `Das Event <b>"${this.event.name}"</b> wird gelöscht und kann nicht wiederhergestellt werden.`,
+          html: true,
+          cancel: true
+        })
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      }).onOk(async () => {
-        try {
-          await this.$apiClient.events.delete(this.event.id.toString())
-          await this.$router.push({name: 'events'})
-        } catch (error) {
-          this.$q.notify({
-            color: 'negative',
-            message: 'Die Aktion konnte nicht gelöscht werden.'
-          })
-          return
-        }
-      })
+        .onOk(async () => {
+          try {
+            await this.$apiClient.events.delete(this.event.id.toString())
+            await this.$router.push({ name: 'events' })
+          } catch (error) {
+            this.$q.notify({
+              color: 'negative',
+              message: 'Die Aktion konnte nicht gelöscht werden.'
+            })
+          }
+        })
     },
     openPosterTakeDownModal() {
-      this.$q.dialog({
-        title: 'Willst Du Plakate abhängen?',
-        message: `Das Event <b>"${this.event.name}"</b> wird in eine Aktion zum Abhängen von Plakaten umgewandelt.`,
-        html: true,
-        cancel: true
+      this.$q
+        .dialog({
+          title: 'Willst Du Plakate abhängen?',
+          message: `Das Event <b>"${this.event.name}"</b> wird in eine Aktion zum Abhängen von Plakaten umgewandelt.`,
+          html: true,
+          cancel: true
+        })
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      }).onOk(async () => {
-        const newStartDate = new Date()
-        newStartDate.setHours(newStartDate.getHours() + Math.round(newStartDate.getMinutes() / 60) + 1)
-        newStartDate.setMinutes(0, 0, 0)
-        const newEndDate = new Date(newStartDate)
-        newEndDate.setDate(newEndDate.getDate() + 14)
-        try {
-          await this.$apiClient.events.update(this.event.id.toString(), {
-            ...this.event,
-            name: PREFIX_HANG_DOWN_POSTERS + this.event.name,
-            start_date: newStartDate.toISOString(),
-            end_date: newEndDate.toISOString()
-          })
-          this.$router.go(0)
-        } catch (error) {
-          this.$q.notify({
-            color: 'negative',
-            message: 'Die Aktion konnte nicht in eine Plakate-Abhängaktion umgewandelt werden'
-          })
-          return
-        }
-      })
-
+        .onOk(async () => {
+          const newStartDate = new Date()
+          newStartDate.setHours(
+            newStartDate.getHours() +
+              Math.round(newStartDate.getMinutes() / 60) +
+              1
+          )
+          newStartDate.setMinutes(0, 0, 0)
+          const newEndDate = new Date(newStartDate)
+          newEndDate.setDate(newEndDate.getDate() + 14)
+          try {
+            await this.$apiClient.events.update(this.event.id.toString(), {
+              ...this.event,
+              name: PREFIX_HANG_DOWN_POSTERS + this.event.name,
+              start_date: newStartDate.toISOString(),
+              end_date: newEndDate.toISOString()
+            })
+            this.$router.go(0)
+          } catch (error) {
+            this.$q.notify({
+              color: 'negative',
+              message:
+                'Die Aktion konnte nicht in eine Plakate-Abhängaktion umgewandelt werden'
+            })
+          }
+        })
     }
   },
   beforeUnmount() {
@@ -587,11 +639,10 @@ export default defineComponent({
     }
   }
 })
-
 </script>
 
 <style lang="scss" scoped>
-@import "src/css/utils.scss";
+@import 'src/css/utils.scss';
 
 .event-details {
   font-size: 1rem;
@@ -604,7 +655,7 @@ export default defineComponent({
 }
 
 .map-container {
-  flex: 1
+  flex: 1;
 }
 
 .campaign {

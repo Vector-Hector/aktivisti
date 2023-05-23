@@ -13,10 +13,18 @@ const props = defineProps<Props>()
 const collections = ref<CampaignGeometryCollectionsDto[]>([])
 
 onMounted(async () => {
-  collections.value = (await apiClient.campaignGeometryCollections.list({campaign: props.campaignId})).payload.data
+  collections.value = (
+    await apiClient.campaignGeometryCollections.list({
+      campaign: props.campaignId
+    })
+  ).payload.data
 })
-
 </script>
 <template>
-  <CampaignCollectionOverlay v-for="collection in collections" :collection="collection" :key="collection.id" :hover="props.hover"/>
+  <CampaignCollectionOverlay
+    v-for="collection in collections"
+    :collection="collection"
+    :key="collection.id"
+    :hover="props.hover"
+  />
 </template>

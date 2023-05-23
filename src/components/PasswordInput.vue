@@ -1,8 +1,5 @@
 <template>
-  <QInput
-    :type="isPasswordVisible ?  'text' : 'password'"
-    v-bind="$props"
-  >
+  <QInput :type="isPasswordVisible ? 'text' : 'password'" v-bind="$props">
     <template v-slot:append>
       <QIcon
         :name="isPasswordVisible ? ionEyeOffOutline : ionEyeOutline"
@@ -13,7 +10,6 @@
   </QInput>
 </template>
 <script lang="ts">
-
 import { defineComponent } from 'vue'
 import { QIcon, QInput } from 'quasar'
 import { ionEyeOffOutline, ionEyeOutline } from '@quasar/extras/ionicons-v5'
@@ -31,7 +27,5 @@ export default defineComponent({
       ionEyeOffOutline
     }
   }
-
 })
-
 </script>

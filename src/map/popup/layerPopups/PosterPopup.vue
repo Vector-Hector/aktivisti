@@ -1,20 +1,21 @@
 <template>
   <LayerPopup ref="layerPopup">
-    <template v-slot:content="{passedObject: poster}">
+    <template v-slot:content="{ passedObject: poster }">
       <div class="popup-contents">
         <span class="popup-title">Poster</span>
-        <span class="popup-address">{{poster.location_description}}</span>
+        <span class="popup-address">{{ poster.location_description }}</span>
         <QBtn
           label="Zum Plakat"
           color="primary"
-          :to="`/events/${poster.event}/area/${poster.area ? poster.area : UNDEFINED_POSTER_AREA}/posters/${poster.id}`"
+          :to="`/events/${poster.event}/area/${
+            poster.area ? poster.area : UNDEFINED_POSTER_AREA
+          }/posters/${poster.id}`"
         />
       </div>
     </template>
   </LayerPopup>
 </template>
 <script lang="ts">
-
 import { defineComponent } from 'vue'
 import LayerPopup from 'src/map/popup/LayerPopup.vue'
 import { PosterDto } from 'src/api/model/PosterDto'
@@ -23,15 +24,15 @@ import { UNDEFINED_POSTER_AREA } from 'pages/event-map/detail/area/posters/detai
 
 export default defineComponent({
   name: 'PosterPopup',
-  components: {LayerPopup,QBtn},
-  data(){
-    return{
+  components: { LayerPopup, QBtn },
+  data() {
+    return {
       UNDEFINED_POSTER_AREA
     }
   },
   methods: {
     showPopup(poster: PosterDto) {
-      const {lng, lat} = poster.location
+      const { lng, lat } = poster.location
       // @ts-ignore
       this.$refs.layerPopup.showPopup(lng, lat, poster)
     }

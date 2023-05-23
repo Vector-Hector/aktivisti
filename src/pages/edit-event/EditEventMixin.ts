@@ -121,5 +121,13 @@ export function useEditEventMixin() {
     }
   })
 
-  return {event, eventAreas, metricRecords, campaigns, updatingAreaFeatureIds, deletingAreaIds, posters}
+  return {
+    event,
+    eventAreas,
+    metricRecords,
+    campaigns,
+    updatingAreaFeatureIds,
+    deletingAreaIds,
+    posters
+  }
 }

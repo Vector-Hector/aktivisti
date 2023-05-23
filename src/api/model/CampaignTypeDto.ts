@@ -1,4 +1,4 @@
 export interface CampaignTypeDto {
-  id: number,
+  id: number
   name: string
 }

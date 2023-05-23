@@ -1,18 +1,22 @@
 <template>
-  <QScrollArea
-    class="d-flex flex-fill"
-  >
+  <QScrollArea class="d-flex flex-fill">
     <QPage>
       <div class="container">
         <div class="user-header row">
           <div class="col-shrink col">
-            <QAvatar size="6em" font-size="4rem" :icon="ionPersonCircleOutline" />
+            <QAvatar
+              size="6em"
+              font-size="4rem"
+              :icon="ionPersonCircleOutline"
+            />
           </div>
           <div class="col justify-center d-flex column">
             <div class="realname" v-if="realName">
               {{ realName }}
             </div>
-            <div class="username" :class="{ 'onlyname': realName }">@{{ user?.username }}</div>
+            <div class="username" :class="{ onlyname: realName }">
+              @{{ user?.username }}
+            </div>
           </div>
         </div>
         <QSeparator class="profile-section-divider" />
@@ -54,12 +58,7 @@
           @update:model-value="saveProfileDebounced"
         >
           <template v-slot:after>
-            <QBtn
-              round
-              flat
-              :icon="ionPencil"
-              @click="openChangeEmailDialog"
-            />
+            <QBtn round flat :icon="ionPencil" @click="openChangeEmailDialog" />
           </template>
         </QInput>
         <QInput
@@ -110,7 +109,6 @@
             <QItemSection side>
               <QToggle
                 @update:model-value="saveEmailNotificationSettingsDebounced"
-
                 v-model="emailNotificationSettings.on_invitation"
                 class="toggle-full-width profile-toggle-item"
               />
@@ -118,12 +116,12 @@
           </QItem>
           <QItem>
             <QItemSection>
-              E-Mailbenachrichtigung wenn sich neue Freiwillige für meine Aktion gemeldet haben
+              E-Mailbenachrichtigung wenn sich neue Freiwillige für meine Aktion
+              gemeldet haben
             </QItemSection>
             <QItemSection side>
               <QToggle
                 @update:model-value="saveEmailNotificationSettingsDebounced"
-
                 v-model="emailNotificationSettings.on_new_volunteers"
                 class="toggle-full-width profile-toggle-item"
               />
@@ -134,27 +132,30 @@
           <h3 class="profile-section-heading">Berechtigungen</h3>
           <QSeparator class="profile-section-divider" />
           <QList>
-            <QItem v-if="user?.is_superuser"><span>Du bist <b>Administrator</b></span></QItem>
+            <QItem v-if="user?.is_superuser"
+              ><span>Du bist <b>Administrator</b></span></QItem
+            >
             <QItem v-if="user?.roles.includes(CAMPAIGN_ADMIN)">
-              <span>Du bist globaler <b>Kampagnenkoordinator</b></span></QItem>
+              <span>Du bist globaler <b>Kampagnenkoordinator</b></span></QItem
+            >
             <QItem v-for="permission in permissions" :key="permission.id">
-            <span>
-              Du hast die Berechtigung <b>{{ permission.permission_name }}</b> in {{ permission.content_type_name }}
-              <b>{{ permission.content_object_name }}</b>
-            </span>
+              <span>
+                Du hast die Berechtigung
+                <b>{{ permission.permission_name }}</b> in
+                {{ permission.content_type_name }}
+                <b>{{ permission.content_object_name }}</b>
+              </span>
             </QItem>
           </QList>
         </template>
         <h3 class="profile-section-heading">Persönliche Ergebnisse</h3>
         <QSeparator class="profile-section-divider" />
-        <PersonalMetrics/>
+        <PersonalMetrics />
         <h3 class="profile-section-heading">Account</h3>
         <QSeparator class="profile-section-divider" />
         <QList>
           <QItem>
-            <QItemSection>
-              Deinen Account löschen
-            </QItemSection>
+            <QItemSection> Deinen Account löschen </QItemSection>
             <QItemSection side>
               <QBtn
                 flat
@@ -168,9 +169,10 @@
         <h3 class="profile-section-heading">Aktive Sitzungen</h3>
         <QSeparator class="profile-section-divider" />
         <span class="description-text">
-        Dies ist eine Liste der Geräte, die sich bei deinem Konto angemeldet haben. Widerrufe alle Sitzungen, die Du nicht kennst.
+          Dies ist eine Liste der Geräte, die sich bei deinem Konto angemeldet
+          haben. Widerrufe alle Sitzungen, die Du nicht kennst.
         </span>
-        <AppSessions/>
+        <AppSessions />
       </div>
     </QPage>
   </QScrollArea>
@@ -190,7 +192,12 @@ import {
   QSeparator,
   QToggle
 } from 'quasar'
-import { ionCheckmark, ionClose, ionPencil, ionPersonCircleOutline } from '@quasar/extras/ionicons-v5'
+import {
+  ionCheckmark,
+  ionClose,
+  ionPencil,
+  ionPersonCircleOutline
+} from '@quasar/extras/ionicons-v5'
 import { userStore } from 'src/store/UserStore'
 import { CAMPAIGN_ADMIN, UserDto } from 'src/api/model/UserDto'
 import { apiClient } from 'src/api/ApiClient'
@@ -225,15 +232,21 @@ export default defineComponent({
     QScrollArea
   },
   async beforeRouteEnter(from, to, next) {
-    const userResponse = await apiClient.user.get('me', ['sub_association', 'email_notification_settings'])
+    const userResponse = await apiClient.user.get('me', [
+      'sub_association',
+      'email_notification_settings'
+    ])
     userStore.setUser(userResponse.payload.data)
-    userStore.setHomeAssociation(userResponse.payload.embedded.sub_association?.[0])
+    userStore.setHomeAssociation(
+      userResponse.payload.embedded.sub_association?.[0]
+    )
 
     const userPermissionResponse = await apiClient.userPermissions.list({
       user: userResponse.payload.data.id
     })
     const userPermissions = userPermissionResponse.payload.data
-    const initialEmailNotificationSettings = userResponse.payload.embedded.email_notification_settings?.[0]
+    const initialEmailNotificationSettings =
+      userResponse.payload.embedded.email_notification_settings?.[0]
     next((vm) => {
       if (initialEmailNotificationSettings) {
         // @ts-ignore
@@ -245,9 +258,11 @@ export default defineComponent({
   },
   computed: {
     hasAnyPermission(): boolean {
-      return this.permissions.length > 0 ||
+      return (
+        this.permissions.length > 0 ||
         this.user?.is_superuser === true ||
         this.user?.roles?.includes(CAMPAIGN_ADMIN) === true
+      )
     },
     realName(): string | null {
       if (this.user === null) {
@@ -255,9 +270,15 @@ export default defineComponent({
       }
       if (this.user.first_name !== null && this.user.last_name === null) {
         return `${this.user.first_name}`
-      } else if (this.user.last_name !== null && this.user.first_name === null) {
+      } else if (
+        this.user.last_name !== null &&
+        this.user.first_name === null
+      ) {
         return `${this.user.last_name}`
-      } else if (this.user.first_name !== null && this.user.last_name !== null) {
+      } else if (
+        this.user.first_name !== null &&
+        this.user.last_name !== null
+      ) {
         return `${this.user.first_name} ${this.user.last_name}`
       } else {
         return null
@@ -296,7 +317,7 @@ export default defineComponent({
         on_invitation: true,
         on_new_volunteers: true
       } as Partial<EmailNotificationSettingsDto>,
-      permissions: [] as UserObjectPermissionDto[],
+      permissions: [] as UserObjectPermissionDto[]
     }
   },
   methods: {
@@ -315,12 +336,14 @@ export default defineComponent({
       })
     },
     openChangeUsernameDialog() {
-      this.$q.dialog({
-        component: ChangeUsernameDialog
-      }).onOk((new_username: string) => {
-        this.localUser!.username = new_username
-        this.user!.username = new_username
-      })
+      this.$q
+        .dialog({
+          component: ChangeUsernameDialog
+        })
+        .onOk((new_username: string) => {
+          this.localUser!.username = new_username
+          this.user!.username = new_username
+        })
     },
     openChangeEmailDialog() {
       this.$q.dialog({
@@ -342,7 +365,9 @@ export default defineComponent({
       try {
         let response
         if (!this.emailNotificationSettings?.id) {
-          response = await this.$apiClient.emailNotificationSettings.create(this.emailNotificationSettings)
+          response = await this.$apiClient.emailNotificationSettings.create(
+            this.emailNotificationSettings
+          )
         } else {
           response = await this.$apiClient.emailNotificationSettings.update(
             this.emailNotificationSettings.id.toString(),
@@ -361,7 +386,7 @@ export default defineComponent({
           timeout: 1500
         })
       } catch (e) {
-        if (this.$apiClient.isApiClientError(e) || e instanceof Error){
+        if (this.$apiClient.isApiClientError(e) || e instanceof Error) {
           notification({
             spinner: false,
             icon: ionClose,
@@ -382,10 +407,16 @@ export default defineComponent({
         timeout: 0
       })
       try {
-        const response = await this.$apiClient.user.update('me', this.localUser!, ['sub_association'])
+        const response = await this.$apiClient.user.update(
+          'me',
+          this.localUser!,
+          ['sub_association']
+        )
         this.user = cloneDeep(response.payload.data)
-        this.homeAssociation = response.payload.embedded.sub_association
-          ?.find((item: SubAssociationDto) => item.id === this.user?.sub_association) ?? null
+        this.homeAssociation =
+          response.payload.embedded.sub_association?.find(
+            (item: SubAssociationDto) => item.id === this.user?.sub_association
+          ) ?? null
 
         notification({
           spinner: false,
@@ -400,7 +431,8 @@ export default defineComponent({
           notification({
             spinner: false,
             icon: ionClose,
-            message: 'Dein Profil konnte nicht gespeichert werden, bitte prüfe deine Angaben',
+            message:
+              'Dein Profil konnte nicht gespeichert werden, bitte prüfe deine Angaben',
             color: 'negative',
             timeout: 1500
           })
@@ -416,12 +448,13 @@ export default defineComponent({
       }
     },
     openDeleteAccountPrompt() {
-      this.$q.dialog({
-        title: 'Account löschen',
-        message: 'Möchtest du wirklich deinen Account löschen?',
-        ok: 'Account löschen',
-        cancel: 'Abbrechen'
-      })
+      this.$q
+        .dialog({
+          title: 'Account löschen',
+          message: 'Möchtest du wirklich deinen Account löschen?',
+          ok: 'Account löschen',
+          cancel: 'Abbrechen'
+        })
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         .onOk(async () => {
           try {
@@ -430,7 +463,7 @@ export default defineComponent({
               message: 'Dein Account wurde gelöscht',
               color: 'positive'
             })
-            await this.$router.push({name: 'splash'})
+            await this.$router.push({ name: 'splash' })
             authStore.deleteSessionData()
           } catch (e) {
             this.$q.notify({
@@ -445,7 +478,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "src/css/variables";
+@import 'src/css/variables';
 .container {
   margin-bottom: 1.5em;
 }
@@ -491,6 +524,4 @@ export default defineComponent({
 .profile-toggle-item {
   margin: 0.5rem 0;
 }
-
-
 </style>

@@ -3,17 +3,17 @@
     <span class="label">
       {{ statusLabel }}
     </span>
-    <QIcon
-      class="icon"
-      :name="statusIcon"
-    >
-    </QIcon>
+    <QIcon class="icon" :name="statusIcon"> </QIcon>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { PosterStatus, posterStatusOptions } from 'src/api/model/PosterDto'
-import { ionAlertCircle, ionCheckmarkCircle, ionCloseCircle } from '@quasar/extras/ionicons-v5'
+import {
+  ionAlertCircle,
+  ionCheckmarkCircle,
+  ionCloseCircle
+} from '@quasar/extras/ionicons-v5'
 import { QIcon } from 'quasar'
 
 export default defineComponent({
@@ -28,28 +28,30 @@ export default defineComponent({
   },
   computed: {
     statusLabel(): string {
-      return posterStatusOptions.find(({key}) => key === this.status)?.label ?? ''
+      return (
+        posterStatusOptions.find(({ key }) => key === this.status)?.label ?? ''
+      )
     },
     statusIcon(): string {
       switch (this.status) {
-      case PosterStatus.MOUNTED:
-        return ionCheckmarkCircle
-      case PosterStatus.DAMAGED:
-        return ionAlertCircle
-      case PosterStatus.ABSENT:
-      default:
-        return ionCloseCircle
+        case PosterStatus.MOUNTED:
+          return ionCheckmarkCircle
+        case PosterStatus.DAMAGED:
+          return ionAlertCircle
+        case PosterStatus.ABSENT:
+        default:
+          return ionCloseCircle
       }
     },
     statusClass(): string {
       switch (this.status) {
-      case PosterStatus.MOUNTED:
-        return 'mounted'
-      case PosterStatus.DAMAGED:
-        return 'damaged'
-      case PosterStatus.ABSENT:
-      default:
-        return 'absent'
+        case PosterStatus.MOUNTED:
+          return 'mounted'
+        case PosterStatus.DAMAGED:
+          return 'damaged'
+        case PosterStatus.ABSENT:
+        default:
+          return 'absent'
       }
     }
   }
@@ -61,11 +63,11 @@ export default defineComponent({
   flex-direction: row;
   align-items: center;
   .label {
-    font-size: .9rem;
+    font-size: 0.9rem;
   }
   .icon {
     font-size: 1.3rem;
-    margin-left: .4rem;
+    margin-left: 0.4rem;
   }
 }
 

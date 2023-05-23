@@ -14,19 +14,20 @@ enum _ReportTypeLabel {
   ACTIVE_USERS = 'Aktivierung Teilnehmer*innen'
 }
 
-
 export interface ReportTypeOption {
-  key: ReportType,
+  key: ReportType
   label: _ReportTypeLabel
 }
 
 export class ReportTypeUtil {
-  static getLabel(reportType: ReportType): _ReportTypeLabel{
+  static getLabel(reportType: ReportType): _ReportTypeLabel {
     return _ReportTypeLabel[reportType]
   }
 }
 
-export const reportTypeOptions: ReportTypeOption[] = Object.keys(ReportType).map((key) => ({
+export const reportTypeOptions: ReportTypeOption[] = Object.keys(
+  ReportType
+).map((key) => ({
   key: key as ReportType,
   label: ReportTypeUtil.getLabel(key as ReportType)
 }))

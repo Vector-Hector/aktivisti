@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { apiClient } from 'src/api/ApiClient'
 import VueApexCharts from 'vue3-apexcharts'
 import { computed, onBeforeMount, ref } from 'vue'
@@ -10,19 +9,19 @@ import { useReportScope } from 'components/reportCharts/reportChartScope'
 import { defaultApexChartOptions } from 'boot/apex'
 
 interface Props {
-  campaignId: number,
-  stateAssociationId?: number,
-  subAssociationId?: number,
+  campaignId: number
+  stateAssociationId?: number
+  subAssociationId?: number
 }
 
 const props = defineProps<Props>()
 
-const {
-  campaign,
-  stateAssociation,
-  subAssociation,
-  fetchData
-} = useReportScope(props.campaignId, props.stateAssociationId, props.subAssociationId)
+const { campaign, stateAssociation, subAssociation, fetchData } =
+  useReportScope(
+    props.campaignId,
+    props.stateAssociationId,
+    props.subAssociationId
+  )
 
 const absentPosterData = ref<ApexDatePoint[]>([])
 const mountedPosterData = ref<ApexDatePoint[]>([])
@@ -37,17 +36,35 @@ onBeforeMount(async () => {
 })
 
 async function fetchPosterReport() {
-  const report = (await apiClient.reportPoster.list({
-    campaign: campaign.value!.id,
-    state_association: stateAssociation.value ? stateAssociation.value.id : undefined,
-    sub_association: subAssociation.value ? subAssociation.value.id : undefined
-  })).payload.data
+  const report = (
+    await apiClient.reportPoster.list({
+      campaign: campaign.value!.id,
+      state_association: stateAssociation.value
+        ? stateAssociation.value.id
+        : undefined,
+      sub_association: subAssociation.value
+        ? subAssociation.value.id
+        : undefined
+    })
+  ).payload.data
   if (report.length > 0) {
     const firstDateOfChart = new Date(report[0].day)
     const lastDateOfChart = new Date(report[report.length - 1].day)
-    absentPosterData.value = ApexDataUtil.fillMissingDataPoints(parseApexChartData(report, PosterStatus.ABSENT), firstDateOfChart, lastDateOfChart)
-    mountedPosterData.value = ApexDataUtil.fillMissingDataPoints(parseApexChartData(report, PosterStatus.MOUNTED), firstDateOfChart, lastDateOfChart)
-    damagedPosterData.value = ApexDataUtil.fillMissingDataPoints(parseApexChartData(report, PosterStatus.DAMAGED), firstDateOfChart, lastDateOfChart)
+    absentPosterData.value = ApexDataUtil.fillMissingDataPoints(
+      parseApexChartData(report, PosterStatus.ABSENT),
+      firstDateOfChart,
+      lastDateOfChart
+    )
+    mountedPosterData.value = ApexDataUtil.fillMissingDataPoints(
+      parseApexChartData(report, PosterStatus.MOUNTED),
+      firstDateOfChart,
+      lastDateOfChart
+    )
+    damagedPosterData.value = ApexDataUtil.fillMissingDataPoints(
+      parseApexChartData(report, PosterStatus.DAMAGED),
+      firstDateOfChart,
+      lastDateOfChart
+    )
   }
 }
 
@@ -75,23 +92,29 @@ const chartOptions = computed(() => {
       text: 'Plakate'
     },
     subtitle: {
-      text: `${campaign.value?.name}${stateAssociation.value?.name ? ' > ' + stateAssociation.value.name : ''}${subAssociation.value?.name ? ' > ' + subAssociation.value.name : ''}`
+      text: `${campaign.value?.name}${
+        stateAssociation.value?.name ? ' > ' + stateAssociation.value.name : ''
+      }${subAssociation.value?.name ? ' > ' + subAssociation.value.name : ''}`
     },
     noData: {
-      text: isLoading.value ? 'Lade Daten...' : defaultApexChartOptions.noData?.text
+      text: isLoading.value
+        ? 'Lade Daten...'
+        : defaultApexChartOptions.noData?.text
     }
   }
 })
 
-
-function parseApexChartData(report: ReportPosterDto[], status: PosterStatus): ApexDatePoint[] {
-  return report
-    .filter((entry) => entry.status === status)
-    .map(toApexDatePoint)
+function parseApexChartData(
+  report: ReportPosterDto[],
+  status: PosterStatus
+): ApexDatePoint[] {
+  return report.filter((entry) => entry.status === status).map(toApexDatePoint)
 }
 
-const toApexDatePoint = (reportPoster: ReportPosterDto) => ({x: reportPoster.day, y: reportPoster.count})
-
+const toApexDatePoint = (reportPoster: ReportPosterDto) => ({
+  x: reportPoster.day,
+  y: reportPoster.count
+})
 </script>
 
 <template>

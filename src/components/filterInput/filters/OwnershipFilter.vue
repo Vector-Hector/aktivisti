@@ -11,10 +11,8 @@
   />
 </template>
 <script lang="ts">
-
 import { defineComponent, PropType } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
-
 
 enum Ownership {
   ME,
@@ -22,7 +20,7 @@ enum Ownership {
   ALL
 }
 
-const ownershipOptions: {key: Ownership, label: string}[] = [
+const ownershipOptions: { key: Ownership; label: string }[] = [
   {
     label: 'Mir',
     key: Ownership.ME

@@ -55,13 +55,12 @@ import PosterOverview from 'pages/poster-map/overview/PosterOverview.vue'
 import PosterOverviewMap from 'pages/poster-map/overview/PosterOverviewMap.vue'
 import Reports from 'pages/Reports.vue'
 
-
 const routes = [
   {
     path: '',
     component: App,
     name: 'app',
-    redirect: {name: 'splash'},
+    redirect: { name: 'splash' },
     children: [
       {
         path: '/',
@@ -155,7 +154,7 @@ const routes = [
               default: PosterOverview,
               map: PosterOverviewMap
             }
-          },
+          }
         ]
       },
       {
@@ -169,7 +168,7 @@ const routes = [
       },
       {
         path: '/events',
-        redirect: {name: 'map-events-overview'},
+        redirect: { name: 'map-events-overview' },
         component: MapWithSheet,
         name: 'events',
         meta: {
@@ -191,7 +190,7 @@ const routes = [
               default: EventDetail,
               map: EventDetailMap
             },
-            redirect: {name: 'event-detail-overview'},
+            redirect: { name: 'event-detail-overview' },
             meta: {
               title: () => uiStore.getState().activeTitleElements.event,
               subtitle: () => uiStore.getState().activeTitleElements.campaigns
@@ -219,7 +218,7 @@ const routes = [
               {
                 path: 'area/:areaId',
                 name: 'event-detail-area',
-                redirect: {name: 'event-detail-area-overview'},
+                redirect: { name: 'event-detail-area-overview' },
                 components: {
                   default: EventDetailArea,
                   map: EventDetailAreaMap
@@ -246,7 +245,8 @@ const routes = [
                     },
                     meta: {
                       title: () => 'Adressen',
-                      subtitle: () => uiStore.getState().activeTitleElements.street
+                      subtitle: () =>
+                        uiStore.getState().activeTitleElements.street
                     },
                     props: true,
                     name: 'event-detail-area-street'
@@ -258,7 +258,8 @@ const routes = [
                       map: EventAreaMetricsMap
                     },
                     meta: {
-                      title: () => uiStore.getState().activeTitleElements.houseNumber,
+                      title: () =>
+                        uiStore.getState().activeTitleElements.houseNumber,
                       subtitle: () => 'Ergebnisse aufnehmen',
                       requiresAuth: true
                     },
@@ -278,7 +279,7 @@ const routes = [
                   {
                     path: 'posters',
                     name: 'event-detail-poster',
-                    redirect: {name: 'event-detail-poster-list'},
+                    redirect: { name: 'event-detail-poster-list' },
                     props: false,
                     components: {
                       default: EventDetailPosters,
@@ -335,7 +336,7 @@ const routes = [
         path: '/events/edit/:eventId',
         component: EditEvent,
         name: 'edit-event',
-        redirect: {name: 'edit-event-details'},
+        redirect: { name: 'edit-event-details' },
         meta: {
           subtitle: () => uiStore.getState().activeTitleElements.event,
           title: () => 'Aktion bearbeiten',
@@ -361,7 +362,7 @@ const routes = [
           {
             name: 'edit-event-posters',
             path: 'posters',
-            redirect: {name: 'edit-event-posters-list'},
+            redirect: { name: 'edit-event-posters-list' },
             components: {
               default: EditEventPosters,
               map: EditEventPostersMap
@@ -386,14 +387,16 @@ const routes = [
                   default: EditEventSinglePoster,
                   map: EditEventSinglePosterMap
                 }
-              }, {
+              },
+              {
                 name: 'edit-event-single-poster-new',
                 path: 'new',
                 components: {
                   default: EditEventSinglePoster,
                   map: EditEventSinglePosterMap
                 }
-              }]
+              }
+            ]
           }
         ]
       },
@@ -443,14 +446,14 @@ const routes = [
   {
     path: '/print',
     component: Print,
-    children: [{
-
-      path: 'event/:eventId',
-      component: PrintEvent,
-      name: 'print-event'
-    }]
+    children: [
+      {
+        path: 'event/:eventId',
+        component: PrintEvent,
+        name: 'print-event'
+      }
+    ]
   }
 ]
-
 
 export default routes

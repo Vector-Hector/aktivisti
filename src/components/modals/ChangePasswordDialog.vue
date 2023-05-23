@@ -4,12 +4,11 @@
       <QToolbar>
         <QToolbarTitle>Passwort ändern</QToolbarTitle>
       </QToolbar>
-      <QForm
-        @submit="onOk"
-      >
+      <QForm @submit="onOk">
         <QCardSection>
           <p>
-            Hier kannst du eine neues Passwort eingeben. Gib dazu dein aktuelles und das neue Passwort ein
+            Hier kannst du eine neues Passwort eingeben. Gib dazu dein aktuelles
+            und das neue Passwort ein
           </p>
           <PasswordInput
             label="Aktuelles Passwort"
@@ -35,10 +34,21 @@
           />
         </QCardSection>
         <QCardActions align="right">
-          <QBtn flat :disabled="isSubmitting" color="primary" label="Abbrechen" @click="onDialogHide" />
-          <QBtn flat :disabled="isSubmitting" color="primary" label="OK" type="submit" />
+          <QBtn
+            flat
+            :disabled="isSubmitting"
+            color="primary"
+            label="Abbrechen"
+            @click="onDialogHide"
+          />
+          <QBtn
+            flat
+            :disabled="isSubmitting"
+            color="primary"
+            label="OK"
+            type="submit"
+          />
         </QCardActions>
-
       </QForm>
     </QCard>
   </QDialog>
@@ -46,7 +56,16 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { QBtn, QCard, QCardActions, QCardSection, QDialog, QForm, QToolbar, QToolbarTitle } from 'quasar'
+import {
+  QBtn,
+  QCard,
+  QCardActions,
+  QCardSection,
+  QDialog,
+  QForm,
+  QToolbar,
+  QToolbarTitle
+} from 'quasar'
 import PasswordInput from 'components/PasswordInput.vue'
 
 export default defineComponent({
@@ -64,7 +83,8 @@ export default defineComponent({
   },
   emits: [
     // REQUIRED
-    'ok', 'hide'
+    'ok',
+    'hide'
   ],
   data() {
     return {
@@ -124,6 +144,4 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

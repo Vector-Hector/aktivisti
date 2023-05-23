@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineEmits, defineProps, withDefaults } from 'vue'
+import { withDefaults } from 'vue'
 import {
   ReportType,
   ReportTypeOption,
@@ -17,15 +17,12 @@ interface Emits {
 
 const emit = defineEmits<Emits>()
 const props = withDefaults(defineProps<Props>(), {
-  modelValue:  () => reportTypeOptions[0]
+  modelValue: () => reportTypeOptions[0]
 })
-
 
 function updateModelValue(reportType: ReportType) {
   emit('update:modelValue', reportType)
 }
-
-
 </script>
 <template>
   <FilterInput

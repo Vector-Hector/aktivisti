@@ -1,4 +1,4 @@
-export interface ReportActiveUsersDto{
-  count:number,
+export interface ReportActiveUsersDto {
+  count: number
   day: string
 }

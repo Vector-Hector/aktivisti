@@ -37,7 +37,10 @@ export class EventRoute extends ApiRoute<EventDto> {
     return new JSONResponse<APIEnvelope<EventDto>>(response, data)
   }
 
-  async batchSetMetricRecords(id: string, body: Partial<EventMetricRecordDto>[]) {
+  async batchSetMetricRecords(
+    id: string,
+    body: Partial<EventMetricRecordDto>[]
+  ) {
     const response = await this.request({
       path: `${this.path}${id}/batch-set-metric-records/`,
       data: body,
@@ -54,7 +57,10 @@ export class EventRoute extends ApiRoute<EventDto> {
       method: 'POST'
     })
     const data = response.data
-    return new JSONResponse<APIEnvelope<EventParticipationDto[]>>(response, data)
+    return new JSONResponse<APIEnvelope<EventParticipationDto[]>>(
+      response,
+      data
+    )
   }
 
   async inviteCoordinators(id: string) {
@@ -63,7 +69,10 @@ export class EventRoute extends ApiRoute<EventDto> {
       method: 'POST'
     })
     const data = response.data
-    return new JSONResponse<APIEnvelope<EventParticipationDto[]>>(response, data)
+    return new JSONResponse<APIEnvelope<EventParticipationDto[]>>(
+      response,
+      data
+    )
   }
 
   async inviteTeamCaptains(id: string) {
@@ -72,7 +81,10 @@ export class EventRoute extends ApiRoute<EventDto> {
       method: 'POST'
     })
     const data = response.data
-    return new JSONResponse<APIEnvelope<EventParticipationDto[]>>(response, data)
+    return new JSONResponse<APIEnvelope<EventParticipationDto[]>>(
+      response,
+      data
+    )
   }
 
   async inviteUsers(id: string) {
@@ -81,7 +93,10 @@ export class EventRoute extends ApiRoute<EventDto> {
       method: 'POST'
     })
     const data = response.data
-    return new JSONResponse<APIEnvelope<EventParticipationDto[]>>(response, data)
+    return new JSONResponse<APIEnvelope<EventParticipationDto[]>>(
+      response,
+      data
+    )
   }
 
   async report(id: string) {

@@ -10,9 +10,9 @@ export interface BaseAuthStoreState {
   userId: number | null
 }
 
-
-export abstract class BaseAuthStore<T extends BaseAuthStoreState> extends Store<T> {
-
+export abstract class BaseAuthStore<
+  T extends BaseAuthStoreState
+> extends Store<T> {
   deleteSessionData() {
     // remove all local tracking data
     trackingSessionStore.clear()
@@ -40,11 +40,15 @@ export abstract class BaseAuthStore<T extends BaseAuthStoreState> extends Store<
       long_session: longSession
     })
     const profileRequest = await apiClient.user.get('me', ['sub_association'])
-    const permissionsRequest = await apiClient.userPermissions.list({user: profileRequest.payload.data.id})
+    const permissionsRequest = await apiClient.userPermissions.list({
+      user: profileRequest.payload.data.id
+    })
     this.state.userId = profileRequest.payload.data.id
     userStore.setPermissions(permissionsRequest.payload.data)
     userStore.setUser(profileRequest.payload.data)
-    userStore.setHomeAssociation(profileRequest.payload.embedded.sub_association?.[0] ?? null)
+    userStore.setHomeAssociation(
+      profileRequest.payload.embedded.sub_association?.[0] ?? null
+    )
     const center = userStore.getState().homeAssociation?.center
     // when loggin in set the map on the bbox of the home association
     if (center) {
@@ -52,5 +56,3 @@ export abstract class BaseAuthStore<T extends BaseAuthStoreState> extends Store<
     }
   }
 }
-
-

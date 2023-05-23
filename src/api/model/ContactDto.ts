@@ -1,4 +1,4 @@
 export interface ContactDto {
-  message: string,
+  message: string
   sub_association: number
 }

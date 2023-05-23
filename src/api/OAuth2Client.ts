@@ -24,7 +24,9 @@ export class OAuth2Client {
     }
   })
 
-  async token(params: OAuthTokenRequestParams): Promise<JSONResponse<TokenDto>> {
+  async token(
+    params: OAuthTokenRequestParams
+  ): Promise<JSONResponse<TokenDto>> {
     const response = await this.axiosInstance(`${this.baseURL}`, {
       method: 'POST',
       data: convertToFormData(params)

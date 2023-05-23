@@ -22,6 +22,6 @@ const utils = {
   }
 }
 
-export default boot(({app}) => {
+export default boot(({ app }) => {
   app.config.globalProperties.$utils = utils
 })

@@ -17,7 +17,8 @@ function openReportSelection() {
   $q.dialog({
     component: SelectReportDialog,
     componentProps: {}
-  }).onOk(({campaignId, stateAssociationId, subAssociationId, reportType}) => {
+  }).onOk(
+    ({ campaignId, stateAssociationId, subAssociationId, reportType }) => {
       reportCharts.value.push({
         uuid: uuidv4(),
         campaign: campaignId,
@@ -31,16 +32,15 @@ function openReportSelection() {
 }
 
 function handleCloseChart(chart_uuid: string) {
-  reportCharts.value = reportCharts.value.filter(({uuid}) => uuid !== chart_uuid)
+  reportCharts.value = reportCharts.value.filter(
+    ({ uuid }) => uuid !== chart_uuid
+  )
   userStore.setReportCharts(reportCharts.value)
 }
-
 </script>
 
 <template>
-  <QScrollArea
-    class="d-flex flex-fill"
-  >
+  <QScrollArea class="d-flex flex-fill">
     <QPage class="flex-fill">
       <div class="container report q-pa-sm q-gutter-md">
         <ChartFabric
@@ -69,7 +69,7 @@ function handleCloseChart(chart_uuid: string) {
 </template>
 
 <style lang="scss" scoped>
-@import "src/css/variables.scss";
+@import 'src/css/variables.scss';
 
 .reports {
   height: 100%;
@@ -78,7 +78,7 @@ function handleCloseChart(chart_uuid: string) {
 }
 
 .add-chart {
-  background-color: #F4F5F8;
+  background-color: #f4f5f8;
   min-height: 180px;
   display: flex;
   flex-direction: row;
