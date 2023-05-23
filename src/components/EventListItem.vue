@@ -43,7 +43,7 @@ import { QBtn, QItem, QItemLabel, QItemSection } from 'quasar'
 import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { eventTypeOptions } from 'src/api/model/EventTypes'
-import { openDeleteDialog } from 'src/utils/dialog'
+import { openDeleteEventDialog } from 'src/utils/dialog'
 
 export default defineComponent({
   name: 'EventListItem',
@@ -81,7 +81,7 @@ export default defineComponent({
       return this.campaigns.filter(({id}) => findIds.includes(id))
     },
     openDeleteModal() {
-      openDeleteDialog(this.$q, this.event).then(() => this.$emit('delete')).catch(console.error)
+      openDeleteEventDialog(this.$q, this.event).then(() => this.$emit('delete')).catch(console.error)
     },
     test(): void {
       console.log('Clicked')

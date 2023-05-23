@@ -2,7 +2,7 @@ import type { QVueGlobals } from 'quasar';
 import { apiClient } from 'src/api/ApiClient';
 import type { EventDto } from 'src/api/model/EventDto';
 
-export async function openDeleteDialog($q: QVueGlobals, event: EventDto): Promise<void> {
+export async function openDeleteEventDialog($q: QVueGlobals, event: EventDto): Promise<void> {
   return new Promise((resolve) => {
     $q.dialog({
         title: `${event.name} wirklich löschen?`,

@@ -285,7 +285,7 @@ import { QBtn, QFab, QFabAction, QList, QScrollArea } from 'quasar'
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 import Share from 'components/Share.vue'
 import LabeledBtn from 'components/LabeledBtn.vue'
-import { openDeleteDialog } from 'src/utils/dialog'
+import { openDeleteEventDialog } from 'src/utils/dialog'
 
 const PREFIX_HANG_DOWN_POSTERS = '[Abhängen] '
 const pollIntervalMs = 5000
@@ -531,7 +531,7 @@ export default defineComponent({
         })
     },
     openDeleteModal() {
-     openDeleteDialog (this.$q, this.event).catch(console.error)
+     openDeleteEventDialog(this.$q, this.event).catch(console.error)
     },
     openPosterTakeDownModal() {
       this.$q.dialog({
