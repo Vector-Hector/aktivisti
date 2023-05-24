@@ -26,7 +26,7 @@ interface UiState {
   sidebarExpanded: boolean
   activeTitleElements: TitleElements
   bottomSheetState: BottomSheetState
-  mapZoom: number | undefined
+  mapZoom: number | null
 }
 
 class UiStore extends Store<UiState> {
@@ -35,7 +35,7 @@ class UiStore extends Store<UiState> {
       sidebarExpanded: false,
       activeTitleElements: {},
       bottomSheetState: BottomSheetState.COLLAPSED,
-      mapZoom: undefined
+      mapZoom: null
     }
   }
 
@@ -61,7 +61,7 @@ class UiStore extends Store<UiState> {
       }
   }
 
-  public setMapZoom(zoom: number | undefined) {
+  public setMapZoom(zoom: number | null) {
     this.state.mapZoom = zoom
   }
 }

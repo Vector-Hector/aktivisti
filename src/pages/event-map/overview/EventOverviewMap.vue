@@ -115,7 +115,7 @@ export default defineComponent({
     const previousZoom = uiStore.getState().mapZoom
     if (previousZoom != null)
       this.map.setZoom(previousZoom, {})
-    uiStore.setMapZoom(undefined)
+    uiStore.setMapZoom(null)
   },
   beforeUnmount() {
     const map: maplibregl.Map = this.map
