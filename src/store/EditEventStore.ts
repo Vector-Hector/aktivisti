@@ -48,8 +48,8 @@ class EditEventStore extends Store<EditEventState> {
     this.state.campaigns = campaigns
   }
 
-  public setEventAreaError(id: string, error: string) {
-    this.state.areasWithError[id] = error;
+  public setEventAreaError(id: string, msg: string) {
+    this.state.areasWithError[id] = msg;
   }
 
   public clearEventAreaError(id: string) {
