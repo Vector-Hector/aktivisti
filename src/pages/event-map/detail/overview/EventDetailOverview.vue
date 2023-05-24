@@ -285,6 +285,7 @@ import { QBtn, QFab, QFabAction, QList, QScrollArea } from 'quasar'
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 import Share from 'components/Share.vue'
 import LabeledBtn from 'components/LabeledBtn.vue'
+import { openDeleteEventDialog } from 'src/utils/dialog'
 
 const PREFIX_HANG_DOWN_POSTERS = '[Abhängen] '
 const pollIntervalMs = 5000
@@ -530,24 +531,7 @@ export default defineComponent({
         })
     },
     openDeleteModal() {
-      this.$q.dialog({
-        title: `${this.event.name} wirklich löschen?`,
-        message: `Das Event <b>"${this.event.name}"</b> wird gelöscht und kann nicht wiederhergestellt werden.`,
-        html: true,
-        cancel: true
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      }).onOk(async () => {
-        try {
-          await this.$apiClient.events.delete(this.event.id.toString())
-          await this.$router.push({name: 'events'})
-        } catch (error) {
-          this.$q.notify({
-            color: 'negative',
-            message: 'Die Aktion konnte nicht gelöscht werden.'
-          })
-          return
-        }
-      })
+     openDeleteEventDialog(this.$q, this.event).catch(console.error)
     },
     openPosterTakeDownModal() {
       this.$q.dialog({
