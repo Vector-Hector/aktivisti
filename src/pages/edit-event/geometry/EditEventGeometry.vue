@@ -53,8 +53,8 @@
                   dense
                   size="sm"
                   :style="{
-              'background-color': props.row.color
-            }"
+                    'background-color': props.row.color
+                  }"
                   :color="props.row.color"
                 >
                   <QPopupProxy>
@@ -94,21 +94,22 @@
                   v-if="updatingAreaFeatureIds.has(props.row.feature_id)"
                   class="progress-spinner"
                 />
-                <QBtn
+                <div
                   v-else-if="props.row.feature_id in eventAreasWithError"
-                  class="event-area-error-icon"
-                  :ripple="false"
-                  flat
-                  dense
-                  round
-                  color="negative"
-                  :icon="ionAlertCircleOutline"
-                  aria-label="Fehlerindikator für Gebiet"
+                  class="error-indicator"
                 >
-                  <QTooltip>
+                  <QIcon
+                    class="event-area-error-icon"
+                    color="negative"
+                    size="sm"
+                    :name="ionAlertCircleOutline"
+                    aria-label="Fehlerindikator für Gebiet"
+                  >
+                  </QIcon>
+                  <QTooltip v-model="showing">
                     {{ eventAreasWithError[props.row.feature_id] }}
                   </QTooltip>
-                </QBtn>
+                </div>
                 <span v-else-if="event.event_type === EventTypes.POSTERS">
                   {{ props.row.poster_count }}
                 </span>
@@ -169,6 +170,7 @@ import {
   QBtn,
   QColor,
   QInput,
+  QIcon,
   QPopupEdit,
   QPopupProxy, QSpinnerPuff,
   QTable,
@@ -197,6 +199,7 @@ export default defineComponent({
     QColor,
     QSpinnerPuff,
     QPopupProxy,
+    QIcon,
     QBtn,
     QTooltip,
     QInput,
@@ -214,6 +217,7 @@ export default defineComponent({
   data() {
     return {
       isLoading: false,
+      showing: false,
       ionAlertCircleOutline,
       ionCopyOutline,
       ionCreateOutline,
