@@ -28,35 +28,35 @@ export default defineComponent({
       this.updatingAreaFeatureIds = new Set([...this.updatingAreaFeatureIds, area.feature_id!])
       let updatedArea: EventAreaDto
       try {
-      if (area.id) {
-        updatedArea = (await apiClient.eventAreas.update(area.id.toString(), area as EventAreaDto)).payload.data
-      } else {
-        updatedArea = (await apiClient.eventAreas.create(area)).payload.data
-      }
-      this.eventAreas = this.eventAreas.map((item) => {
-        if (item.feature_id === updatedArea.feature_id) {
-          return updatedArea
+        if (area.id) {
+          updatedArea = (await apiClient.eventAreas.update(area.id.toString(), area as EventAreaDto)).payload.data
         } else {
-          return item
+          updatedArea = (await apiClient.eventAreas.create(area)).payload.data
         }
-      })
-      this.updatingAreaFeatureIds.delete(updatedArea.feature_id)
-      this.clearAreaError(updatedArea.feature_id)
-    } catch (e) {
-      if (this.$apiClient.isApiClientError(e) && e.response?.status === 400) {
-        const errorMessage = e.response?.data?.[0] ?? 'Etwas ging beim anlegen oder verändern eines Gebiets schief'
-        this.$q.notify({
-          color: 'negative',
-          message: e.response?.data?.[0] ?? 'Etwas ging beim anlegen oder verändern eines Gebiets schief'
+        this.eventAreas = this.eventAreas.map((item) => {
+          if (item.feature_id === updatedArea.feature_id) {
+            return updatedArea
+          } else {
+            return item
+          }
         })
-        if (area.feature_id) {
-          this.updatingAreaFeatureIds.delete(area.feature_id)
-          this.addAreaError(area.feature_id?.toString(), errorMessage)
+        this.updatingAreaFeatureIds.delete(updatedArea.feature_id)
+        this.clearAreaError(updatedArea.feature_id)
+      } catch (e) {
+        if (this.$apiClient.isApiClientError(e) && e.response?.status === 400) {
+          const errorMessage = e.response?.data?.[0] ?? 'Etwas ging beim anlegen oder verändern eines Gebiets schief'
+          this.$q.notify({
+            color: 'negative',
+            message: e.response?.data?.[0] ?? 'Etwas ging beim anlegen oder verändern eines Gebiets schief'
+          })
+          if (area.feature_id) {
+            this.updatingAreaFeatureIds.delete(area.feature_id)
+            this.addAreaError(area.feature_id?.toString(), errorMessage)
+          }
+        } else {
+          throw e
         }
-      } else {
-        throw e
       }
-    }
     },
     async deleteAreaByFeatureId(deleteId: string) {
       const area = this.eventAreas.find(({feature_id}) => feature_id === deleteId)
