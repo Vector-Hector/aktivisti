@@ -107,6 +107,7 @@
                   round
                   color="negative"
                   :icon="ionAlertCircleOutline"
+                  aria-label="Fehlerindikator für Gebiet"
                 >
                   <QTooltip>
                     {{ eventAreasWithError[props.row.feature_id] }}
