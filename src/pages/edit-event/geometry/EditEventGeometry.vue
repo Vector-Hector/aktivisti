@@ -95,11 +95,7 @@
                   class="progress-spinner"
                 />
                 <QBtn
-                  v-else-if="
-                    Object.keys(eventAreasWithError).includes(
-                      props.row.feature_id
-                    )
-                  "
+                  v-else-if="props.row.feature_id in eventAreasWithError"
                   class="event-area-error-icon"
                   :ripple="false"
                   flat
