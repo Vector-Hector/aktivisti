@@ -27,7 +27,6 @@
           round
           :icon="ionPencil"
           color="primary"
-          @click="test()"
           :to="{name: 'edit-event-details', params: { eventId: event.id }}"
         ></QBtn>
         <QBtn round :icon="ionTrash" color="primary" @click="openDeleteModal()"></QBtn>
@@ -82,9 +81,6 @@ export default defineComponent({
     },
     openDeleteModal() {
       openDeleteEventDialog(this.$q, this.event).then(() => this.$emit('delete')).catch(console.error)
-    },
-    test(): void {
-      console.log('Clicked')
     }
   }
 })
