@@ -136,8 +136,8 @@
               ><span>Du bist <b>Administrator</b></span></QItem
             >
             <QItem v-if="user?.roles.includes(CAMPAIGN_ADMIN)">
-              <span>Du bist globaler <b>Kampagnenkoordinator</b></span></QItem
-            >
+              <span>Du bist globale*r <b>Koordinator*in</b></span>
+            </QItem>
             <QItem v-for="permission in permissions" :key="permission.id">
               <span>
                 Du hast die Berechtigung
