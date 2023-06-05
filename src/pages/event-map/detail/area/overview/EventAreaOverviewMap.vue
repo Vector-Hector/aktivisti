@@ -1,11 +1,8 @@
 <template>
-  <AreaFeatureLayer
-    :features="[currentAreaFeature]"
-  />
+  <AreaFeatureLayer :features="[currentAreaFeature]" />
 </template>
 
 <script lang="ts">
-
 import { defineComponent } from 'vue'
 import AreaFeatureLayer from 'src/map/AreaFeatureLayer'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
@@ -15,7 +12,7 @@ import InjectMapMixin from 'pages/event-detail/InjectMapMixin'
 
 export default defineComponent({
   name: 'EventAreaOverviewMap',
-  components: {AreaFeatureLayer},
+  components: { AreaFeatureLayer },
   mixins: [EventDetailStoreMixin, InjectMapMixin],
   mounted() {
     this.map?.fitBounds(this.bbox as BBox2d)
@@ -25,12 +22,8 @@ export default defineComponent({
       if (!this.currentAreaFeature) return
       return bbox(this.currentAreaFeature) as BBox2d
     }
-  },
-
+  }
 })
-
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

@@ -1,16 +1,14 @@
 <template>
-  <QScrollArea
-    class="flex flex-fill"
-  >
+  <QScrollArea class="flex flex-fill">
     <QPage>
       <div class="container">
         <QTable
           :columns="columns"
-          :flat=!$q.screen.lt.md
-          :grid=$q.screen.lt.md
+          :flat="!$q.screen.lt.md"
+          :grid="$q.screen.lt.md"
           :rows="rows"
           hide-pagination
-          :pagination="{rowsPerPage:0}"
+          :pagination="{ rowsPerPage: 0 }"
           row-key="name"
         >
           <template v-slot:body-cell-areaName="props">
@@ -67,10 +65,12 @@ export default defineComponent({
     }
   },
   async created() {
-    const {metrics, records} = await this.fetchMetricRecords()
+    const { metrics, records } = await this.fetchMetricRecords()
     //Only create report columns for metrics available for the event
-    const eventMetricIds = records.map(({metric}) => metric)
-    for (const {id: metricId, name} of metrics.filter(({id}) => eventMetricIds.includes(id))) {
+    const eventMetricIds = records.map(({ metric }) => metric)
+    for (const { id: metricId, name } of metrics.filter(({ id }) =>
+      eventMetricIds.includes(id)
+    )) {
       this.columns.push({
         name: metricId,
         field: metricId,
@@ -82,11 +82,13 @@ export default defineComponent({
         name: 'completedAddresses',
         field: 'completedAddresses',
         label: 'Besuchte Adressen'
-      }, {
+      },
+      {
         name: 'overallAddresses',
         field: 'overallAddresses',
         label: 'Adressen im Gebiet'
-      }, {
+      },
+      {
         name: 'createdLeads',
         field: 'createdLeads',
         label: 'Gewonnene Kontakte'
@@ -99,7 +101,7 @@ export default defineComponent({
       completedAddresses: 0,
       createdLeads: 0
     }
-    for (const {id, color, name} of this.eventAreas) {
+    for (const { id, color, name } of this.eventAreas) {
       if (id) {
         const {
           completed_addresses,
@@ -117,19 +119,22 @@ export default defineComponent({
         summarizedCountsRow.overallAddresses += overall_addresses
         summarizedCountsRow.completedAddresses += completed_addresses
         summarizedCountsRow.createdLeads += created_leads
-        for (const {id: metricId} of metrics) {
-          const countOfMetric = counts_per_metric.find(({metric}) => metric === metricId)?.count || 0
+        for (const { id: metricId } of metrics) {
+          const countOfMetric =
+            counts_per_metric.find(({ metric }) => metric === metricId)
+              ?.count || 0
           row[metricId] = countOfMetric
-          summarizedCountsRow[metricId] = (summarizedCountsRow[metricId] | 0) + countOfMetric
+          summarizedCountsRow[metricId] =
+            (summarizedCountsRow[metricId] | 0) + countOfMetric
         }
         this.rows.push(row)
       }
     }
     this.rows.push(summarizedCountsRow)
 
-    let targetValueOfMetricsRow = {areaName: 'Zielvorgabe'} as any
+    let targetValueOfMetricsRow = { areaName: 'Zielvorgabe' } as any
     let isTargetValueRowShown = false
-    for (const {metric, target} of records) {
+    for (const { metric, target } of records) {
       targetValueOfMetricsRow[metric] = target
       if (target > 0) {
         isTargetValueRowShown = true
@@ -140,20 +145,31 @@ export default defineComponent({
     }
   },
   methods: {
-    async fetchAreaMetricsReports(areaId: number): Promise<EventMetricReportDto> {
+    async fetchAreaMetricsReports(
+      areaId: number
+    ): Promise<EventMetricReportDto> {
       const response = await this.$apiClient.eventAreas.report(areaId)
       return response.payload.data
     },
-    async fetchMetricRecords(): Promise<{ records: EventMetricRecordDto[], metrics: EventMetricDto[] }> {
-      const response = await this.$apiClient.eventMetricRecords.list({event: this.event.id}, ['metric'])
-      return {records: response.payload.data, metrics: response.payload.embedded.metric}
+    async fetchMetricRecords(): Promise<{
+      records: EventMetricRecordDto[]
+      metrics: EventMetricDto[]
+    }> {
+      const response = await this.$apiClient.eventMetricRecords.list(
+        { event: this.event.id },
+        ['metric']
+      )
+      return {
+        records: response.payload.data,
+        metrics: response.payload.embedded.metric
+      }
     }
   }
 })
 </script>
 
 <style lang="scss" scoped>
-@import "src/css/_utils.scss";
+@import 'src/css/_utils.scss';
 
 .campaign {
   font-weight: bold;

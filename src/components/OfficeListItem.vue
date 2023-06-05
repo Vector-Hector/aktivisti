@@ -1,8 +1,5 @@
 <template>
-  <QItem
-    clickable
-    v-ripple
-  >
+  <QItem clickable v-ripple>
     <QItemSection>
       <QItemLabel>
         <b>{{ office.name }}</b>
@@ -18,12 +15,18 @@
       </QItemLabel>
     </QItemSection>
     <QItemSection side v-if="office.link">
-      <QBtn type="a" :icon="ionEarthOutline" dense round :href="office.link" target="_blank"></QBtn>
+      <QBtn
+        type="a"
+        :icon="ionEarthOutline"
+        dense
+        round
+        :href="office.link"
+        target="_blank"
+      ></QBtn>
     </QItemSection>
   </QItem>
 </template>
 <script lang="ts">
-
 import { defineComponent, PropType } from 'vue'
 import { QBtn, QItem, QItemLabel, QItemSection } from 'quasar'
 import { OfficeDto } from 'src/api/model/OfficeDto'
@@ -51,5 +54,4 @@ export default defineComponent({
   }
 })
 </script>
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

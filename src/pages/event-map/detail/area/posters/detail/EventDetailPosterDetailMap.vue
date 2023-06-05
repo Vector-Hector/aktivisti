@@ -11,7 +11,7 @@ export default defineComponent({
   mixins: [EventDetailPosterMixin],
   setup() {
     const map = inject(MapInject)!
-    return {map}
+    return { map }
   },
   created() {
     this.map?.panTo(this.poster.location)
@@ -21,6 +21,4 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-
-</style>
+<style></style>

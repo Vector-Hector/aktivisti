@@ -3,11 +3,13 @@ import { CAMPAIGN_ADMIN, UserDto } from 'src/api/model/UserDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { parseIfPossible } from 'src/utils/json'
-import { PermissionCodename, UserObjectPermissionDto } from 'src/api/model/UserObjectPermissionDto'
+import {
+  PermissionCodename,
+  UserObjectPermissionDto
+} from 'src/api/model/UserObjectPermissionDto'
 import { EventTypes } from 'src/api/model/EventTypes'
 import { EventStatus } from 'src/api/model/EventStatus'
 import { ReportChartData } from 'src/api/model/ReportChartData'
-
 
 export enum SortOption {
   START_DATE = 'start_date',
@@ -15,10 +17,10 @@ export enum SortOption {
 }
 
 export interface EventFilterPreferences {
-  subAssociations: number[],
-  campaign: number | undefined,
+  subAssociations: number[]
+  campaign: number | undefined
   sorting: SortOption
-  eventType: EventTypes | undefined,
+  eventType: EventTypes | undefined
   status: EventStatus | undefined
 }
 
@@ -49,7 +51,7 @@ class UserStore extends Store<UserState> {
         eventType: undefined,
         status: EventStatus.ACTIVE
       },
-      reportCharts: [],
+      reportCharts: []
     }
   }
 
@@ -63,7 +65,9 @@ class UserStore extends Store<UserState> {
     data.reportCharts = reportChartsString ? JSON.parse(reportChartsString) : []
 
     const filterPreferencesString = localStorage.getItem(KEY_FILTERPREFERENCES)
-    const filterPreferences = parseIfPossible(filterPreferencesString) as EventFilterPreferences | null
+    const filterPreferences = parseIfPossible(
+      filterPreferencesString
+    ) as EventFilterPreferences | null
     data.filterPreferences = filterPreferences ?? data.filterPreferences
   }
 
@@ -78,7 +82,10 @@ class UserStore extends Store<UserState> {
 
   public setFilterPreferences(filterPreferences: EventFilterPreferences) {
     this.state.filterPreferences = filterPreferences
-    localStorage.setItem(KEY_FILTERPREFERENCES, JSON.stringify(filterPreferences))
+    localStorage.setItem(
+      KEY_FILTERPREFERENCES,
+      JSON.stringify(filterPreferences)
+    )
   }
 
   public setHomeAssociation(value: SubAssociationDto | null) {
@@ -109,8 +116,9 @@ class UserStore extends Store<UserState> {
 
   public getMyTeamCaptainOrCoordinatorPermissions() {
     return this.getMyPermissions().filter(
-      (permission) => permission.permission_codename == 'team_captain'
-        || permission.permission_codename == 'manages_events'
+      (permission) =>
+        permission.permission_codename == 'team_captain' ||
+        permission.permission_codename == 'manages_events'
     )
   }
 
@@ -118,29 +126,37 @@ class UserStore extends Store<UserState> {
     this.state.permissions = permissions
   }
 
-  public setReportCharts(reportChats: ReportChartData[] | null){
+  public setReportCharts(reportChats: ReportChartData[] | null) {
     this.state.reportCharts = reportChats ? reportChats : []
     if (reportChats) {
-      localStorage.setItem(KEY_REPORT_CHARTS, JSON.stringify(this.state.reportCharts))
+      localStorage.setItem(
+        KEY_REPORT_CHARTS,
+        JSON.stringify(this.state.reportCharts)
+      )
     } else {
       localStorage.removeItem(KEY_REPORT_CHARTS)
     }
   }
 
   public hasAtLeastOneManagePermission() {
-    if (this.state.user?.roles.includes(CAMPAIGN_ADMIN) || this.state.user?.is_superuser) {
+    if (
+      this.state.user?.roles.includes(CAMPAIGN_ADMIN) ||
+      this.state.user?.is_superuser
+    ) {
       return true
     }
     return this.state.permissions
-      .map(({permission_codename}) => permission_codename)
+      .map(({ permission_codename }) => permission_codename)
       .includes(PermissionCodename.MANAGE_EVENTS)
   }
 
   public isAdminOrGlobalCoordinator() {
-    if (this.state.user?.roles.includes(CAMPAIGN_ADMIN) || this.state.user?.is_superuser) {
+    if (
+      this.state.user?.roles.includes(CAMPAIGN_ADMIN) ||
+      this.state.user?.is_superuser
+    ) {
       return true
-    }
-    else {
+    } else {
       return false
     }
   }
@@ -149,7 +165,7 @@ class UserStore extends Store<UserState> {
     this.state.user = user
   }
 
-  public reset(){
+  public reset() {
     localStorage.removeItem(KEY_REPORT_CHARTS)
     super.reset()
   }

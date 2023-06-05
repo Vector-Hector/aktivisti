@@ -47,7 +47,7 @@ export default defineComponent({
   name: 'ManagedEvents',
   components: {
     EventFilter,
-    EventList,
+    EventList
   },
   props: {
     /**
@@ -78,7 +78,7 @@ export default defineComponent({
     }
   },
   methods: {
-    handleClickOnEvent(event: EventDto){
+    handleClickOnEvent(event: EventDto) {
       this.$emit('clickOnEvent', event)
     },
     resetPagination() {
@@ -89,12 +89,12 @@ export default defineComponent({
     },
     async updateShownEvents() {
       try {
-        const {data: events, pagination} = (await this.$apiClient.events.list(
-          {
+        const { data: events, pagination } = (
+          await this.$apiClient.events.list({
             ...this.pagination,
             ...this.filterParams
-          }
-        )).payload
+          })
+        ).payload
         this.pagination = pagination!
         this.shownEvents = events
         if (this.filter) {
@@ -125,9 +125,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "src/css/variables.scss";
+@import 'src/css/variables.scss';
 
-.managed-events{
+.managed-events {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -143,4 +143,3 @@ export default defineComponent({
   padding: 1rem;
 }
 </style>
-

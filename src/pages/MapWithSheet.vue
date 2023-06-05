@@ -9,27 +9,17 @@
       >
         <template v-slot:top-right>
           <div class="flex column q-gutter-y-sm">
-            <GeolocationControl
-              :poi-location="poiLocation"
-            />
-            <CampaignCollectionOverlayControl v-if="isLoggedIn"/>
+            <GeolocationControl :poi-location="poiLocation" />
+            <CampaignCollectionOverlayControl v-if="isLoggedIn" />
             <ResetRotateControl />
           </div>
         </template>
         <OfficeMarkerLayer v-if="isShowingOfficeLayer" />
-        <router-view
-          v-slot="{ Component }"
-          name="map"
-        >
-          <component
-            :is="Component"
-          />
+        <router-view v-slot="{ Component }" name="map">
+          <component :is="Component" />
         </router-view>
       </Map>
-      <MapOverlayProxy
-        :title="$route.meta.title?.()"
-        @changed-size="resizeMap"
-      >
+      <MapOverlayProxy :title="$route.meta.title?.()" @changed-size="resizeMap">
         <div class="overlay-content">
           <router-view />
         </div>
@@ -119,7 +109,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-
 .overlay-content {
   height: 100%;
   display: flex;
@@ -138,5 +127,4 @@ export default defineComponent({
     max-width: 75%;
   }
 }
-
 </style>

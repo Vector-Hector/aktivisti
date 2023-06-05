@@ -13,14 +13,17 @@
       class="poster-list"
       ref="infiniteList"
     >
-      <template v-slot:item="{item:poster}">
-        <PosterListItem :poster="poster" @mouseover="()=>handleMouseOver(poster)" @click="goToPoster(poster)" />
+      <template v-slot:item="{ item: poster }">
+        <PosterListItem
+          :poster="poster"
+          @mouseover="() => handleMouseOver(poster)"
+          @click="goToPoster(poster)"
+        />
       </template>
     </InfiniteList>
   </div>
 </template>
 <script lang="ts">
-
 import { defineComponent } from 'vue'
 import InfiniteList from 'components/InfiniteList.vue'
 import { PosterDto } from 'src/api/model/PosterDto'
@@ -35,7 +38,7 @@ import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 
 export default defineComponent({
   name: 'PosterOverview',
-  components: {PosterListItem, InfiniteList, PosterFilter},
+  components: { PosterListItem, InfiniteList, PosterFilter },
   setup() {
     const {
       fetchMoreItems: fetchMorePosters,
@@ -43,8 +46,17 @@ export default defineComponent({
       itemHoveredOver: posterHoveredOver,
       items: posters,
       updateFilterParams
-    } = useOverviewMixin<PosterDto, PosterFilterParams>(posterOverviewStore, apiClient.posters)
-    return {fetchMorePosters, filterParams, posterHoveredOver, posters, updateFilterParams}
+    } = useOverviewMixin<PosterDto, PosterFilterParams>(
+      posterOverviewStore,
+      apiClient.posters
+    )
+    return {
+      fetchMorePosters,
+      filterParams,
+      posterHoveredOver,
+      posters,
+      updateFilterParams
+    }
   },
   async created() {
     await this.getCampaigns()
@@ -69,7 +81,9 @@ export default defineComponent({
       this.campaigns = response.payload.data
     },
     async getSubAssociations() {
-      this.subAssociations = (await this.$apiClient.subAssociations.list()).payload.data
+      this.subAssociations = (
+        await this.$apiClient.subAssociations.list()
+      ).payload.data
     },
     goToPoster(poster: PosterDto) {
       void this.$router.push({
@@ -78,13 +92,13 @@ export default defineComponent({
           posterId: poster.id,
           eventId: poster.event,
           areaId: poster.area ?? 'undefined'
-        },
+        }
       })
     }
   },
   watch: {
     filterParams() {
-      if (this.$refs.infiniteList){
+      if (this.$refs.infiniteList) {
         // @ts-ignore
         this.$refs.infiniteList.resetScrollPosition()
       }
@@ -93,7 +107,6 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-
 .poster-overview {
   height: 100%;
   display: flex;

@@ -1,6 +1,8 @@
 <template>
   <MetricBasedPrintout
-    v-if="event && [EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(eventType)"
+    v-if="
+      event && [EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(eventType)
+    "
     :event="event"
     :event-areas="eventAreas"
     :metric-records="metricRecords"
@@ -20,22 +22,24 @@ import { apiClient } from 'src/api/ApiClient'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
-import { EventTypes } from 'src/api/model/EventTypes';
-import MetricBasedPrintout from 'components/print/MetricBasedPrintout.vue';
-import PostersPrintout from 'components/print/PostersPrintout.vue';
-import { PosterDto } from 'src/api/model/PosterDto';
+import { EventTypes } from 'src/api/model/EventTypes'
+import MetricBasedPrintout from 'components/print/MetricBasedPrintout.vue'
+import PostersPrintout from 'components/print/PostersPrintout.vue'
+import { PosterDto } from 'src/api/model/PosterDto'
 
 export default defineComponent({
   name: 'PrintEvent',
   async beforeRouteEnter(to, from, next) {
-    const {eventId} = to.params
+    const { eventId } = to.params
 
     const event = (await apiClient.events.get(eventId.toString())).payload.data
-    const {event_type} = event
+    const { event_type } = event
     if ([EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(event_type)) {
       const [eventAreasRequest, metricsRequest] = await Promise.all([
-        apiClient.eventAreas.list({event: eventId.toString()}),
-        apiClient.eventMetricRecords.list({event: eventId.toString()}, ['metric'])
+        apiClient.eventAreas.list({ event: eventId.toString() }),
+        apiClient.eventMetricRecords.list({ event: eventId.toString() }, [
+          'metric'
+        ])
       ])
 
       next((vm) => {
@@ -53,8 +57,8 @@ export default defineComponent({
     }
     if (event_type === EventTypes.POSTERS) {
       const [eventAreasRequest, postersRequest] = await Promise.all([
-        apiClient.eventAreas.list({event: eventId.toString()}),
-        apiClient.posters.list({event: eventId})
+        apiClient.eventAreas.list({ event: eventId.toString() }),
+        apiClient.posters.list({ event: eventId })
       ])
       next((vm) => {
         //@ts-ignore
@@ -67,12 +71,10 @@ export default defineComponent({
         vm.posters = postersRequest.payload.data
       })
     }
-
-
   },
   components: {
     PostersPrintout,
-    MetricBasedPrintout,
+    MetricBasedPrintout
   },
   data() {
     return {

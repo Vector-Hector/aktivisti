@@ -16,37 +16,26 @@
     <div class="print-page">
       <h1 class="headline">{{ event.name }}</h1>
       <p class="facts">
-        Treffpunkt: {{ event.location_description }}<br>
-        Einsatztyp: {{ eventTypeOptions.find(({key}) => key === event.event_type)?.label }}<br>
+        Treffpunkt: {{ event.location_description }}<br />
+        Einsatztyp:
+        {{ eventTypeOptions.find(({ key }) => key === event.event_type)?.label
+        }}<br />
         Datum: {{ $utils.dateFormat(event.start_date) }}
       </p>
       <p>{{ event.description }}</p>
-      <img class="linke-logo" src="../../assets/logo_dielinke.png">
-      <Map
-        class="map"
-        :interactive="false"
-        :bounding-box="zoomBox"
-      >
-        <EventMarker
-          v-if="event?.location"
-          :event="event"
-        />
-        <FeatureLayer
-          :features="areaFeatures"
-        />
+      <img class="linke-logo" src="../../assets/logo_dielinke.png" />
+      <Map class="map" :interactive="false" :bounding-box="zoomBox">
+        <EventMarker v-if="event?.location" :event="event" />
+        <FeatureLayer :features="areaFeatures" />
       </Map>
       <h3>Gebiete</h3>
       <div class="row q-col-gutter-md">
-        <div
-          class="area-item col-4"
-          v-for="area in eventAreas"
-          :key="area.id"
-        >
+        <div class="area-item col-4" v-for="area in eventAreas" :key="area.id">
           <QIcon
             class="area-icon"
             :style="{
-            color: area.color
-          }"
+              color: area.color
+            }"
             :name="ionEllipse"
           />
           <div class="area-label">
@@ -58,14 +47,18 @@
     </div>
 
     <div class="print-page" v-for="area in eventAreas" :key="area.id">
-      <img class="linke-logo" src="../../assets/logo_dielinke.png">
+      <img class="linke-logo" src="../../assets/logo_dielinke.png" />
       <h1 class="headline">Erfassungsbogen für Gebiet: {{ area.name }}</h1>
       <div class="row q-col-gutter-x-sm">
         <div class="col-8">
           <p class="facts">
-            Einsatztyp: {{ eventTypeOptions.find(({key}) => key === event.event_type)?.label }}<br>
-            Einsatzname: {{ event.name }}<br>
-            Datum: {{ $utils.dateFormat(event.start_date) }}<br>
+            Einsatztyp:
+            {{
+              eventTypeOptions.find(({ key }) => key === event.event_type)
+                ?.label
+            }}<br />
+            Einsatzname: {{ event.name }}<br />
+            Datum: {{ $utils.dateFormat(event.start_date) }}<br />
             Anzahl Adressen: {{ countAddresses(area.area_details) }}
           </p>
           <Map
@@ -73,24 +66,26 @@
             :interactive="false"
             :bounding-box="boundingBoxOfArea(area)"
           >
-            <FeatureLayer
-              :features="[eventAreaToFeature(area)]"
-            />
+            <FeatureLayer :features="[eventAreaToFeature(area)]" />
           </Map>
         </div>
         <div class="col-4">
           <h4 class="address-headline">Straßen</h4>
-          <span class="street" v-for="street in area.area_details.streets" :key="street.name">
+          <span
+            class="street"
+            v-for="street in area.area_details.streets"
+            :key="street.name"
+          >
             <p class="street-name">{{ street.name }}</p>
           </span>
-          <span v-if="area.area_details.streets.length === 0">Keine Adressen im OSM Datensatz</span>
+          <span v-if="area.area_details.streets.length === 0"
+            >Keine Adressen im OSM Datensatz</span
+          >
         </div>
       </div>
 
       <div class="metrics-entry-table">
-        <div
-          class="tableheader row"
-        >
+        <div class="tableheader row">
           <div class="col-3">Ergebnisse</div>
           <div class="col-6">Strichliste</div>
           <div class="col-2">Gesamt</div>
@@ -100,16 +95,20 @@
           :key="metric.name"
           class="metric-item row"
         >
-          <div class="col-3 metric-item-cell"><span>{{ metric.name }}</span></div>
+          <div class="col-3 metric-item-cell">
+            <span>{{ metric.name }}</span>
+          </div>
           <div class="col-6 metric-item-cell"></div>
           <div class="col-3 metric-item-cell">
-            <span class="target-hint" v-if="metric.target > 0">Zielvorgabe: {{ metric.target }}</span>
+            <span class="target-hint" v-if="metric.target > 0"
+              >Zielvorgabe: {{ metric.target }}</span
+            >
           </div>
         </div>
-        <div
-          class="metric-item row"
-        >
-          <div class="col-3 metric-item-cell"><span>Aufgenommene Kontaktdaten</span></div>
+        <div class="metric-item row">
+          <div class="col-3 metric-item-cell">
+            <span>Aufgenommene Kontaktdaten</span>
+          </div>
           <div class="col-6 metric-item-cell"></div>
           <div class="col-3 metric-item-cell"></div>
         </div>
@@ -134,8 +133,6 @@ import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import EventMarker from 'components/EventMarker.vue'
-
-
 
 export default defineComponent({
   name: 'MetricBasedPrintout',
@@ -177,15 +174,20 @@ export default defineComponent({
       return this.eventAreas.map(eventAreaToFeature)
     },
     zoomBox(): BBox {
-      const meetingPoint = circle([this.event.location.lng, this.event.location.lat], 0.2)
-      return this.areaFeatures.length > 0 ? bbox({
-        type: 'FeatureCollection',
-        features: [...this.areaFeatures, meetingPoint]
-      }) : bbox(meetingPoint)
+      const meetingPoint = circle(
+        [this.event.location.lng, this.event.location.lat],
+        0.2
+      )
+      return this.areaFeatures.length > 0
+        ? bbox({
+            type: 'FeatureCollection',
+            features: [...this.areaFeatures, meetingPoint]
+          })
+        : bbox(meetingPoint)
     },
-    metricRecordsWithMetric(): { name?: string, target: number }[] {
+    metricRecordsWithMetric(): { name?: string; target: number }[] {
       return this.metricRecords.map((metricRecord) => {
-        const metric = this.metrics.find(({id}) => id === metricRecord.metric)
+        const metric = this.metrics.find(({ id }) => id === metricRecord.metric)
         return {
           name: metric?.name,
           target: metricRecord.target
@@ -227,7 +229,6 @@ export default defineComponent({
   h3 {
     font-size: 1.2rem;
     line-height: 1.2;
-
   }
 }
 
@@ -261,7 +262,7 @@ export default defineComponent({
 }
 
 .headline {
-  margin: 2.2rem 0
+  margin: 2.2rem 0;
 }
 
 .area-icon {
@@ -327,14 +328,16 @@ export default defineComponent({
   font-weight: bold;
 }
 
-.back-button, .print-button {
+.back-button,
+.print-button {
   position: fixed;
   top: 1rem;
   z-index: 10;
 }
 
 @media print {
-  .back-button, .print-button {
+  .back-button,
+  .print-button {
     display: none;
   }
   .d2d-event-printout {
@@ -349,7 +352,4 @@ export default defineComponent({
 .print-button {
   right: 1rem;
 }
-
-
-
 </style>

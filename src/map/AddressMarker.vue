@@ -1,14 +1,13 @@
 <template>
-  <Marker
-    :location="location"
-  >
+  <Marker :location="location">
     <template #marker>
       <i
         :class="{
           'marker-icon': true,
-          'selected': selected
+          selected: selected
         }"
-      >{{ text }}</i>
+        >{{ text }}</i
+      >
     </template>
   </Marker>
 </template>
@@ -19,7 +18,7 @@ import { LocationDto } from 'src/api/model/LocationDto'
 
 export default defineComponent({
   name: 'AddressMarker',
-  components: {Marker},
+  components: { Marker },
   props: {
     text: {
       type: String as PropType<string>,
@@ -36,7 +35,6 @@ export default defineComponent({
       required: true
     }
   }
-
 })
 </script>
 <style lang="scss" scoped>

@@ -1,11 +1,11 @@
 <template>
   <FilterInput
     label="Bezirks/Kreisverband"
-    :multiple = multiple
+    :multiple="multiple"
     :model-value="modelValue"
-    @update:model-value="(value)=>this.$emit('update:modelValue', value)"
+    @update:model-value="(value) => this.$emit('update:modelValue', value)"
     use-input
-    :use-chips = multiple
+    :use-chips="multiple"
     emit-value
     map-options
     clearable
@@ -30,51 +30,52 @@ import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import FilterInput from 'components/filterInput/FilterInput.vue'
 
 export default defineComponent({
-    name: 'MultipleSubAssociationFilter',
-    components: {
-      FilterInput
+  name: 'MultipleSubAssociationFilter',
+  components: {
+    FilterInput
+  },
+  props: {
+    options: {
+      type: Array as PropType<SubAssociationDto[]>,
+      required: true
     },
-    props: {
-      options: {
-        type: Array as PropType<SubAssociationDto[]>,
-        required: true
-      },
-      modelValue: {
-        type: Array as PropType<number[]>
-      },
-      multiple: {
-        type: Boolean as PropType<boolean>,
-        default: true
-      }
+    modelValue: {
+      type: Array as PropType<number[]>
     },
-    created() {
-      this.suggestedOptions = this.options
-    },
-    data() {
-      return {
-        suggestedOptions: [] as SubAssociationDto[]
-      }
-    },
-    emits: ['update:modelValue'],
-    methods: {
-      filterOptions(value: string, update: any) {
-        if (!value) {
-          update(() => {
-            this.suggestedOptions = this.options
-          })
-          return
-        }
+    multiple: {
+      type: Boolean as PropType<boolean>,
+      default: true
+    }
+  },
+  created() {
+    this.suggestedOptions = this.options
+  },
+  data() {
+    return {
+      suggestedOptions: [] as SubAssociationDto[]
+    }
+  },
+  emits: ['update:modelValue'],
+  methods: {
+    filterOptions(value: string, update: any) {
+      if (!value) {
         update(() => {
-          const lowercasedValue = value.toLowerCase()
-          this.suggestedOptions = this.options.filter(({name}) => name.toLowerCase().includes(lowercasedValue))
+          this.suggestedOptions = this.options
         })
+        return
       }
-    },
-    watch: {
-      options() {
-        this.suggestedOptions = this.options
-      }
+      update(() => {
+        const lowercasedValue = value.toLowerCase()
+        this.suggestedOptions = this.options.filter(({ name }) =>
+          name.toLowerCase().includes(lowercasedValue)
+        )
+      })
+    }
+  },
+  watch: {
+    options() {
+      this.suggestedOptions = this.options
     }
   }
-)
+})
 </script>

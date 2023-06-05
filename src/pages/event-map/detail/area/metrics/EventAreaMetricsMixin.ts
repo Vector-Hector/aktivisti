@@ -15,7 +15,9 @@ export default defineComponent({
   },
   computed: {
     address(): AddressDetails | undefined {
-      return this.addresses?.find(({house_number}) => house_number === this.houseNumber)
+      return this.addresses?.find(
+        ({ house_number }) => house_number === this.houseNumber
+      )
     },
     location(): Feature<Point> | undefined {
       if (!this.address?.geometry) return

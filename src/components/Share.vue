@@ -7,18 +7,9 @@
     round
     external-label="Teilen"
   />
-  <LabeledBtn
-    v-else
-    external-label="Teilen"
-  >
+  <LabeledBtn v-else external-label="Teilen">
     <template v-slot:btn>
-      <QFab
-        outline
-        round
-        :icon="ionShareSocial"
-        padding="sm"
-        direction="left"
-      >
+      <QFab outline round :icon="ionShareSocial" padding="sm" direction="left">
         <QFabAction
           class="share-fab"
           :icon="ionLogoTwitter"
@@ -46,16 +37,26 @@
       </QFab>
     </template>
   </LabeledBtn>
-
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { Capacitor } from '@capacitor/core'
 import { Share } from '@capacitor/share'
-import { ionLogoFacebook, ionLogoTwitter, ionLogoWhatsapp, ionMail, ionShareSocial } from '@quasar/extras/ionicons-v5'
+import {
+  ionLogoFacebook,
+  ionLogoTwitter,
+  ionLogoWhatsapp,
+  ionMail,
+  ionShareSocial
+} from '@quasar/extras/ionicons-v5'
 import { QFab, QFabAction } from 'quasar'
 import LabeledBtn from 'components/LabeledBtn.vue'
-import { FACEBOOK_SHARE_URL, MAIL_SHARE_URL, TWITTER_SHARE_URL, WHATSAPP_SHARE_URL } from 'src/constants'
+import {
+  FACEBOOK_SHARE_URL,
+  MAIL_SHARE_URL,
+  TWITTER_SHARE_URL,
+  WHATSAPP_SHARE_URL
+} from 'src/constants'
 import { appendAsQueryParams } from 'src/utils/url'
 
 export default defineComponent({
@@ -114,7 +115,9 @@ export default defineComponent({
     },
     mailShareUrl(): string {
       const subjectLine = `Mach\' mit bei der Aktion von DIE LINKE: ${this.title}`
-      return `${MAIL_SHARE_URL}?subject=${subjectLine}&body=${this.text ? encodeURIComponent(this.text) : ''}%0D%0A%0D%0A${this.url}`
+      return `${MAIL_SHARE_URL}?subject=${subjectLine}&body=${
+        this.text ? encodeURIComponent(this.text) : ''
+      }%0D%0A%0D%0A${this.url}`
     },
     whatsappShareUrl(): string {
       const url = new URL(WHATSAPP_SHARE_URL)

@@ -1,7 +1,6 @@
 import { EventTypes } from 'src/api/model/EventTypes'
 import { LocationDto } from 'src/api/model/LocationDto'
 
-
 export enum VisibilityOptions {
   Public = 'PUBLIC',
   InviteOnly = 'INVITE_ONLY'
@@ -11,8 +10,6 @@ export const VisibilityLabels: { [option in VisibilityOptions]: string } = {
   [VisibilityOptions.Public]: 'Öffentlich',
   [VisibilityOptions.InviteOnly]: 'Nur mit Einladung'
 }
-
-
 
 export interface EventDto {
   id: number

@@ -1,14 +1,7 @@
 <template>
-  <Marker
-    v-if="showMarker && userPosition"
-    :location="userPosition"
-  >
+  <Marker v-if="showMarker && userPosition" :location="userPosition">
     <template v-slot:marker>
-      <QIcon
-        :name="ionRadioButtonOnSharp"
-        color="primary"
-        class="pulse"
-      />
+      <QIcon :name="ionRadioButtonOnSharp" color="primary" class="pulse" />
     </template>
   </Marker>
   <div class="geolocation-control">
@@ -46,29 +39,34 @@
       />
     </QFab>
   </div>
-
 </template>
 
 <script lang="ts">
 import { defineComponent, inject, PropType } from 'vue'
 import { MapEventBus, MapInject } from './Map.vue'
 import { FitBoundsOptions, LngLat, PositionOptions } from 'maplibre-gl'
-import { ionLocateOutline, ionLocation, ionRadioButtonOnSharp } from '@quasar/extras/ionicons-v5'
+import {
+  ionLocateOutline,
+  ionLocation,
+  ionRadioButtonOnSharp
+} from '@quasar/extras/ionicons-v5'
 import { Geolocation, Position } from '@capacitor/geolocation'
-import { matGpsFixed, matGpsNotFixed, matGpsOff } from '@quasar/extras/material-icons'
+import {
+  matGpsFixed,
+  matGpsNotFixed,
+  matGpsOff
+} from '@quasar/extras/material-icons'
 import { QFab, QFabAction, QIcon } from 'quasar'
 import Marker from 'src/map/Marker.vue'
 import { MAP_GEOLOCATE_STOP_TRACKING } from 'src/map/Map.vue'
 import { LocationDto } from 'src/api/model/LocationDto'
 
-
 interface GeolocateControlOptions {
-  positionOptions?: PositionOptions;
-  fitBoundsOptions?: FitBoundsOptions;
-  trackUserLocation?: boolean;
-  showAccuracyCircle?: boolean;
-  showUserLocation?: boolean;
-
+  positionOptions?: PositionOptions
+  fitBoundsOptions?: FitBoundsOptions
+  trackUserLocation?: boolean
+  showAccuracyCircle?: boolean
+  showUserLocation?: boolean
 }
 
 enum GeolocateState {
@@ -139,31 +137,31 @@ export default defineComponent({
     },
     locatorIcon(): string {
       switch (this.locatorState) {
-      case GeolocateState.ENABLED:
-        // @ts-ignore type inference broken
-        return this.locatorIconNotFixed
-      case GeolocateState.DISABLED:
-        // @ts-ignore type inference broken
-        return this.locatorIconNotFixed
-      case GeolocateState.TRACKING:
-        // @ts-ignore type inference broken
-        return this.locatorIconFixed
-      case GeolocateState.UNAVAILABLE:
-      default:
-        // @ts-ignore type inference broken
-        return this.locatorIconOff
+        case GeolocateState.ENABLED:
+          // @ts-ignore type inference broken
+          return this.locatorIconNotFixed
+        case GeolocateState.DISABLED:
+          // @ts-ignore type inference broken
+          return this.locatorIconNotFixed
+        case GeolocateState.TRACKING:
+          // @ts-ignore type inference broken
+          return this.locatorIconFixed
+        case GeolocateState.UNAVAILABLE:
+        default:
+          // @ts-ignore type inference broken
+          return this.locatorIconOff
       }
     },
     locatorColor(): string {
       switch (this.locatorState) {
-      case GeolocateState.TRACKING:
-      case GeolocateState.ENABLED:
-        return 'primary'
-      case GeolocateState.UNAVAILABLE:
-        return 'grey-8'
-      case GeolocateState.DISABLED:
-      default:
-        return '#000000'
+        case GeolocateState.TRACKING:
+        case GeolocateState.ENABLED:
+          return 'primary'
+        case GeolocateState.UNAVAILABLE:
+          return 'grey-8'
+        case GeolocateState.DISABLED:
+        default:
+          return '#000000'
       }
     }
   },
@@ -171,10 +169,10 @@ export default defineComponent({
     onLocateClicked(position: LocationDto | undefined, tracking = false) {
       if (tracking) {
         switch (this.locatorState) {
-        case GeolocateState.ENABLED:
-        case GeolocateState.DISABLED:
-          this.locatorState = GeolocateState.TRACKING
-          break
+          case GeolocateState.ENABLED:
+          case GeolocateState.DISABLED:
+            this.locatorState = GeolocateState.TRACKING
+            break
         }
       } else {
         MapEventBus.emit(MAP_GEOLOCATE_STOP_TRACKING)
@@ -186,12 +184,15 @@ export default defineComponent({
     },
     async startWatch() {
       if (!this.locationWatcher) {
-        this.locationWatcher = await Geolocation.watchPosition({}, (position, err) => this.updatePosition(position, err))
+        this.locationWatcher = await Geolocation.watchPosition(
+          {},
+          (position, err) => this.updatePosition(position, err)
+        )
       }
     },
     stopWatch() {
       if (this.locationWatcher) {
-        void Geolocation.clearWatch({id: this.locationWatcher})
+        void Geolocation.clearWatch({ id: this.locationWatcher })
       }
     },
     updatePosition(position: Position | null, error: any) {
@@ -202,7 +203,10 @@ export default defineComponent({
       if (position?.coords === undefined) {
         return
       }
-      this.userPosition = new LngLat(position.coords.longitude, position.coords.latitude)
+      this.userPosition = new LngLat(
+        position.coords.longitude,
+        position.coords.latitude
+      )
 
       if (this.locatorState === GeolocateState.TRACKING) {
         this.map.panTo(this.userPosition)
@@ -229,15 +233,14 @@ export default defineComponent({
   watch: {
     locatorState(newState) {
       switch (newState) {
-      case GeolocateState.ENABLED:
-      case GeolocateState.TRACKING:
-        void this.startWatch()
-        break
+        case GeolocateState.ENABLED:
+        case GeolocateState.TRACKING:
+          void this.startWatch()
+          break
       }
     }
   }
 })
-
 </script>
 <style lang="scss">
 .pulse {
@@ -263,5 +266,4 @@ export default defineComponent({
   background: white;
   box-shadow: $map-overlay-shadow;
 }
-
 </style>

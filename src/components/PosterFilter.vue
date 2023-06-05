@@ -11,7 +11,8 @@
       <CampaignFilter
         :model-value="filterParams.campaigns?.[0]"
         :options="campaigns"
-        @update:model-value="updateCampaign" />
+        @update:model-value="updateCampaign"
+      />
       <MultipleSubAssociationFilter
         :model-value="filterParams.sub_association"
         @update:model-value="updateSubAssociations"
@@ -19,10 +20,8 @@
       />
     </div>
   </CollapsibleFilters>
-
 </template>
 <script lang="ts">
-
 import { defineComponent, PropType } from 'vue'
 import CollapsibleFilters from 'components/CollapsibleFilters.vue'
 import PosterStatusFilter from 'components/filterInput/filters/PosterStatusFilter.vue'
@@ -36,7 +35,12 @@ import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 
 export default defineComponent({
   name: 'PosterFilter',
-  components: {MultipleSubAssociationFilter, PosterStatusFilter, CollapsibleFilters, CampaignFilter},
+  components: {
+    MultipleSubAssociationFilter,
+    PosterStatusFilter,
+    CollapsibleFilters,
+    CampaignFilter
+  },
   emits: ['update:filterParams'],
   props: {
     filterParams: {
@@ -75,13 +79,13 @@ export default defineComponent({
       })
     },
     updatePosterStatus(value: PosterStatus) {
-      this.updateFilterParams({status: value})
+      this.updateFilterParams({ status: value })
     },
     updateCampaign(value: number) {
-      this.updateFilterParams({campaigns: value ? [value] : undefined})
+      this.updateFilterParams({ campaigns: value ? [value] : undefined })
     },
     updateSubAssociations(value: number[]) {
-      this.updateFilterParams({sub_association: value})
+      this.updateFilterParams({ sub_association: value })
     }
   }
 })

@@ -35,7 +35,11 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { ionCheckmark, ionChevronBack, ionChevronForward } from '@quasar/extras/ionicons-v5'
+import {
+  ionCheckmark,
+  ionChevronBack,
+  ionChevronForward
+} from '@quasar/extras/ionicons-v5'
 import { QBtn } from 'quasar'
 
 export default defineComponent({

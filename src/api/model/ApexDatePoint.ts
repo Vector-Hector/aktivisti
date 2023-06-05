@@ -1,8 +1,8 @@
 export interface ApexDatePoint {
   // The x will be our days
-  x: string,
+  x: string
   // The y will be our count
-  y: number | null,
+  y: number | null
 }
 
 const _MS_PER_DAY = 1000 * 60 * 60 * 24
@@ -18,14 +18,22 @@ export class ApexDataUtil {
    * @param startDate - The starting point from which to start filling missing values.
    * @param endDate - The end point up to which missing value should be filled in.
    */
-  static fillMissingDataPoints(apexDataPoints: ApexDatePoint[], startDate: Date, endDate: Date) {
-    const filledDataPoints = []
+  static fillMissingDataPoints(
+    apexDataPoints: ApexDatePoint[],
+    startDate: Date,
+    endDate: Date
+  ) {
+    const filledDataPoints: Array<ApexDatePoint> = []
     const diffDays = dateDiffInDays(startDate, endDate)
     for (let i = 0; i <= diffDays; i++) {
       const currDate = new Date(startDate)
       currDate.setDate(currDate.getDate() + i)
-      const currDayString = `${currDate.getFullYear()}-${('0' + String(currDate.getMonth() + 1)).slice(-2)}-${('0' + String(currDate.getDate())).slice(-2)}`
-      const currDateDataPoint = apexDataPoints.find((dataPoint) => dataPoint.x === currDayString)
+      const currDayString = `${currDate.getFullYear()}-${(
+        '0' + String(currDate.getMonth() + 1)
+      ).slice(-2)}-${('0' + String(currDate.getDate())).slice(-2)}`
+      const currDateDataPoint = apexDataPoints.find(
+        (dataPoint) => dataPoint.x === currDayString
+      )
       if (currDateDataPoint) {
         filledDataPoints.push(currDateDataPoint)
       } else {

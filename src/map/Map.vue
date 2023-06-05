@@ -4,11 +4,7 @@
     @drop.prevent.stop="onDrop"
     @dragover.prevent.stop
   >
-    <div
-      :id="mapUuid"
-      ref="mapContainer"
-      class="map"
-    >
+    <div :id="mapUuid" ref="mapContainer" class="map">
       <div class="top-right-overlay">
         <slot v-if="initialized" name="top-right" />
       </div>
@@ -20,7 +16,8 @@
 import {
   defineComponent,
   InjectionKey,
-  onMounted, onUnmounted,
+  onMounted,
+  onUnmounted,
   PropType,
   provide,
   Ref,
@@ -35,7 +32,6 @@ import { isEqual } from 'lodash-es'
 import { uuidv4 } from 'src/utils/uuid'
 import { SettleDebouncer } from 'src/utils/debounce'
 
-
 export const MapInject: InjectionKey<Ref<maplibregl.Map>> = Symbol()
 export const MapEventBus = new TinyEmitter()
 
@@ -49,7 +45,7 @@ export default defineComponent({
       type: Object as PropType<LocationDto | undefined>,
       required: false,
       default: () => {
-        return {lng: 10.727275, lat: 51.109919}  // center of germany
+        return { lng: 10.727275, lat: 51.109919 } // center of germany
       }
     },
     animate: {
@@ -75,8 +71,14 @@ export default defineComponent({
       default: true
     }
   },
-  emits: ['update:zoom', 'update:center', 'update:zoom', 'drop', 'update:boundingBox'],
-  setup(props, {emit}) {
+  emits: [
+    'update:zoom',
+    'update:center',
+    'update:zoom',
+    'drop',
+    'update:boundingBox'
+  ],
+  setup(props, { emit }) {
     const mapUuid = `map-${uuidv4()}`
     const map = ref<maplibregl.Map | null>(null)
     const mapContainer = ref<HTMLElement | null>(null)
@@ -84,7 +86,7 @@ export default defineComponent({
     provide(MapInject, map)
 
     const fitBounds = (...args: any) => {
-      map.value?.fitBounds(args, {animate: props.animate})
+      map.value?.fitBounds(args, { animate: props.animate })
     }
 
     const getBoundingBox = () => {
@@ -123,30 +125,46 @@ export default defineComponent({
       map.value.on('load', () => {
         map.value?.resize()
         if (props.zoomBox) {
-          map.value?.fitBounds(props.zoomBox, {padding: 10})
+          map.value?.fitBounds(props.zoomBox, { padding: 10 })
         }
         initialized.value = true
 
-        watch(() => props.center, (newCenter, oldCenter) => {
-          if (!newCenter || isEqual(newCenter, oldCenter)) return
-          map.value?.setCenter([newCenter.lng, newCenter.lat])
-        })
-
-        watch(() => props.zoom, (newZoom) => {
-          map.value?.setZoom(newZoom, {animate: props.animate})
-        })
-
-        watch(() => props.zoomBox, (newBox) => {
-          if (newBox) {
-            map.value?.fitBounds(newBox, {padding: 20, animate: props.animate})
+        watch(
+          () => props.center,
+          (newCenter, oldCenter) => {
+            if (!newCenter || isEqual(newCenter, oldCenter)) return
+            map.value?.setCenter([newCenter.lng, newCenter.lat])
           }
-        }, {immediate: true})
+        )
 
-        watch(() => props.boundingBox, (newBox) => {
-          if (newBox) {
-            map.value?.fitBounds(newBox, {animate: props.animate})
+        watch(
+          () => props.zoom,
+          (newZoom) => {
+            map.value?.setZoom(newZoom, { animate: props.animate })
           }
-        })
+        )
+
+        watch(
+          () => props.zoomBox,
+          (newBox) => {
+            if (newBox) {
+              map.value?.fitBounds(newBox, {
+                padding: 20,
+                animate: props.animate
+              })
+            }
+          },
+          { immediate: true }
+        )
+
+        watch(
+          () => props.boundingBox,
+          (newBox) => {
+            if (newBox) {
+              map.value?.fitBounds(newBox, { animate: props.animate })
+            }
+          }
+        )
 
         MapEventBus.on(MAP_PAN_TO, (location: LngLat) => {
           map.value?.panTo(location)
@@ -190,7 +208,6 @@ export default defineComponent({
     }
   }
 })
-
 </script>
 <style lang="scss" scoped>
 .map {

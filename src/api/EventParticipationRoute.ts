@@ -83,5 +83,4 @@ export class EventParticipationRoute extends ApiRoute<EventParticipationDto> {
     const data = await response.data
     return new JSONResponse<Record<string, unknown>>(response, data)
   }
-
 }

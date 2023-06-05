@@ -6,12 +6,10 @@
 import { AxiosResponse } from 'axios'
 
 export class JSONResponse<T> {
-
   /**
    * Default constructor
    * @param response raw response as returned from axios
    * @param payload parsed JSON payload of type `T`
    */
-  constructor(public response: AxiosResponse, public payload: T) {
-  }
+  constructor(public response: AxiosResponse, public payload: T) {}
 }

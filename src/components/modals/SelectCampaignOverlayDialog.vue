@@ -10,7 +10,7 @@ import {
   QItemSection,
   QList,
   QToolbar,
-  QToolbarTitle,
+  QToolbarTitle
 } from 'quasar'
 import { useDialogPluginComponent } from 'quasar'
 import { ionClose } from '@quasar/extras/ionicons-v5'
@@ -30,25 +30,32 @@ defineEmits([
   ...useDialogPluginComponent.emits
 ])
 
-const {dialogRef, onDialogHide, onDialogCancel, onDialogOK} = useDialogPluginComponent()
+const { dialogRef, onDialogHide, onDialogCancel, onDialogOK } =
+  useDialogPluginComponent()
 const collections = ref<CampaignGeometryCollectionsDto[]>([])
 const campaigns = ref<CampaignDto[]>([])
 
 onMounted(async () => {
   campaigns.value = (await apiClient.campaigns.list()).payload.data
-  collections.value = await fetchCollections(campaigns.value.map(({id}) => id))
+  collections.value = await fetchCollections(
+    campaigns.value.map(({ id }) => id)
+  )
 })
 
 /**
  * Fetch Campaign Geometry Collection
  * @param campaignIds - List of Campaign IDs
  */
-async function fetchCollections(campaignIds: number[]): Promise<CampaignGeometryCollectionsDto[]> {
+async function fetchCollections(
+  campaignIds: number[]
+): Promise<CampaignGeometryCollectionsDto[]> {
   const collections = []
   for (const id of campaignIds) {
-    const campaignCollections = (await apiClient.campaignGeometryCollections.list({
-      campaign: id
-    })).payload.data
+    const campaignCollections = (
+      await apiClient.campaignGeometryCollections.list({
+        campaign: id
+      })
+    ).payload.data
     collections.push(...campaignCollections)
   }
   return collections
@@ -71,9 +78,7 @@ defineExpose({
     transition-hide="slide-right"
   >
     <QCard>
-      <div
-        class="bg-primary text-white"
-      >
+      <div class="bg-primary text-white">
         <QToolbar class="toolbar">
           <QBtn
             @click="onDialogCancel"
@@ -83,9 +88,7 @@ defineExpose({
             :ripple-effect="false"
           />
           <QToolbarTitle class="title-wrapper col">
-            <span class="title">
-            Overlays auswählen
-            </span>
+            <span class="title"> Overlays auswählen </span>
           </QToolbarTitle>
         </QToolbar>
       </div>
@@ -103,32 +106,36 @@ defineExpose({
                 </QItemLabel>
               </QItemSection>
             </QItem>
-            <QItem
-              clickable
-              @click="() => onDialogOK(null)"
-              v-else
-            >
+            <QItem clickable @click="() => onDialogOK(null)" v-else>
               <QItemSection>
                 <QItemLabel>
                   <b>Kein Overlay definiert</b>
                 </QItemLabel>
               </QItemSection>
             </QItem>
-            <QItem clickable v-for="collection in collections"
-                   :key="collection.id"
-                   :active="props.preselectedCollection?.id === collection.id"
-                   active-class="active-item"
-                   @click="() => onDialogOK(collection)">
+            <QItem
+              clickable
+              v-for="collection in collections"
+              :key="collection.id"
+              :active="props.preselectedCollection?.id === collection.id"
+              active-class="active-item"
+              @click="() => onDialogOK(collection)"
+            >
               <QItemSection>
                 <QItemLabel>
                   <b>{{ collection.name }}</b>
                 </QItemLabel>
                 <QItemLabel>
-                  {{ campaigns.find(({ id }) => id === collection.campaign).name }}
+                  {{
+                    campaigns.find(({ id }) => id === collection.campaign).name
+                  }}
                 </QItemLabel>
               </QItemSection>
-              <QItemSection side v-if="props.preselectedCollection?.id === collection.id">
-                <QIcon :name="ionCheckmarkOutline" color="green"/>
+              <QItemSection
+                side
+                v-if="props.preselectedCollection?.id === collection.id"
+              >
+                <QIcon :name="ionCheckmarkOutline" color="green" />
               </QItemSection>
             </QItem>
           </QList>
@@ -136,7 +143,6 @@ defineExpose({
       </QCardSection>
     </QCard>
   </QDialog>
-
 </template>
 
 <style lang="scss" scoped>
@@ -144,7 +150,7 @@ defineExpose({
 
 .active-item {
   color: black;
-  background: #f2fbf2
+  background: #f2fbf2;
 }
 
 .campaign-collections {

@@ -5,7 +5,10 @@
         <QToolbarTitle>Mitmachende</QToolbarTitle>
       </QToolbar>
       <QCardSection>
-        <EventParticipantsList :event-id="eventId" :event-sub-association="eventSubAssociation"/>
+        <EventParticipantsList
+          :event-id="eventId"
+          :event-sub-association="eventSubAssociation"
+        />
       </QCardSection>
     </QCard>
   </QDialog>
@@ -24,11 +27,12 @@ export default defineComponent({
     QCard,
     QCardSection,
     QToolbar,
-    QToolbarTitle,
+    QToolbarTitle
   },
   emits: [
     // REQUIRED
-    'ok', 'hide'
+    'ok',
+    'hide'
   ],
   props: {
     eventId: {

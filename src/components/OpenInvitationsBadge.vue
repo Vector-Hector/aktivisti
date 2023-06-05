@@ -1,6 +1,10 @@
 <template>
   <div v-if="openInvitations.length > 0">
-    <QBadge color="primary" text-color="white" :label="openInvitations.length"/>
+    <QBadge
+      color="primary"
+      text-color="white"
+      :label="openInvitations.length"
+    />
   </div>
 </template>
 
@@ -9,7 +13,7 @@ import { defineComponent } from 'vue'
 import { QBadge } from 'quasar'
 import { myParticipationsStore } from 'src/store/MyParticipationsStore'
 import { userStore } from 'src/store/UserStore'
-import Timeout = NodeJS.Timeout;
+import Timeout = NodeJS.Timeout
 import { apiClient } from 'src/api/ApiClient'
 import { POLL_INVITATIONS_MS } from 'src/constants'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
@@ -24,14 +28,14 @@ export default defineComponent({
     QBadge
   },
   data() {
-   return {
+    return {
       nextPoll: null as Timeout | null
     }
   },
   async created() {
-    const myEventsRequest = await apiClient.eventParticipations.list(
-      {user: userStore.getState().user?.id}
-    )
+    const myEventsRequest = await apiClient.eventParticipations.list({
+      user: userStore.getState().user?.id
+    })
 
     myParticipationsStore.setEventParticipations(myEventsRequest.payload.data)
     await this.pollForParticipations()
@@ -41,35 +45,38 @@ export default defineComponent({
       clearTimeout(this.nextPoll)
     }
   },
-  computed :{
+  computed: {
     isLoggedIn() {
       return authStore.isLoggedIn()
     },
     openInvitations(): EventParticipationDto[] {
       if (this.isLoggedIn) {
-        return myParticipationsStore.getState().eventParticipations.filter((item) => item.is_pending_invitation)
-      }
-      else {
+        return myParticipationsStore
+          .getState()
+          .eventParticipations.filter((item) => item.is_pending_invitation)
+      } else {
         return []
       }
     }
-
   },
   methods: {
     async pollForParticipations() {
       myParticipationsStore.setEventParticipations(
-        (await this.$apiClient.eventParticipations.list({
-          user: userStore.getState().user?.id,
-          status: EventStatus.ACTIVE
-        })).payload.data
+        (
+          await this.$apiClient.eventParticipations.list({
+            user: userStore.getState().user?.id,
+            status: EventStatus.ACTIVE
+          })
+        ).payload.data
       )
 
-      this.nextPoll = setTimeout(() => void this.pollForParticipations(), POLL_INVITATIONS_MS)
+      this.nextPoll = setTimeout(
+        () => void this.pollForParticipations(),
+        POLL_INVITATIONS_MS
+      )
     }
   }
 })
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

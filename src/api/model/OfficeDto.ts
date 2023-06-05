@@ -1,6 +1,6 @@
 import { LocationDto } from 'src/api/model/LocationDto'
 
-export interface OfficeDto{
+export interface OfficeDto {
   id: number
   name: string
   description: string

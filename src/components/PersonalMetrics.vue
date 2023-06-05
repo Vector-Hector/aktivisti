@@ -13,7 +13,6 @@
   />
 </template>
 <script lang="ts">
-
 import { defineComponent } from 'vue'
 import { PersonalMetricsDto } from 'src/api/model/PersonalMetricsDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
@@ -23,7 +22,7 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 
 export default defineComponent({
   name: 'PersonalMetrics',
-  components: {CampaignFilter, QTable},
+  components: { CampaignFilter, QTable },
   data() {
     return {
       campaigns: [] as CampaignDto[],
@@ -34,7 +33,8 @@ export default defineComponent({
           name: 'name',
           label: 'Ergebnis',
           align: 'left'
-        }, {
+        },
+        {
           field: 'value',
           name: 'value',
           label: 'Anzahl'
@@ -45,28 +45,31 @@ export default defineComponent({
     }
   },
   async created() {
-    const [campaignsResponse, personalMetricsResponse, metricsResponse] = await Promise.all([
-      this.$apiClient.campaigns.list({include_expired: true, has_participated: true}),
-      this.$apiClient.personalMetrics.list(),
-      this.$apiClient.eventMetrics.list()
-    ])
+    const [campaignsResponse, personalMetricsResponse, metricsResponse] =
+      await Promise.all([
+        this.$apiClient.campaigns.list({
+          include_expired: true,
+          has_participated: true
+        }),
+        this.$apiClient.personalMetrics.list(),
+        this.$apiClient.eventMetrics.list()
+      ])
     this.personalMetrics = personalMetricsResponse.payload.data
     this.eventMetrics = metricsResponse.payload.data
     this.campaigns = campaignsResponse.payload.data
   },
   computed: {
-    personalMetricsRows(): {name?: string, value: number}[] {
-      let generalMetrics = [] as {name?: string, value: number}[]
+    personalMetricsRows(): { name?: string; value: number }[] {
+      let generalMetrics = [] as { name?: string; value: number }[]
       if (this.personalMetrics?.counts_per_metric !== undefined) {
-        generalMetrics = this.personalMetrics
-          .counts_per_metric
-          .map(
-            ({count, metric}: {count: number, metric: number}) => {
-              return {
-                name: this.eventMetrics.find(({id}) => id === metric)?.name,
-                value: count
-              }
-            })
+        generalMetrics = this.personalMetrics.counts_per_metric.map(
+          ({ count, metric }: { count: number; metric: number }) => {
+            return {
+              name: this.eventMetrics.find(({ id }) => id === metric)?.name,
+              value: count
+            }
+          }
+        )
       }
       return [
         ...generalMetrics,
@@ -79,8 +82,10 @@ export default defineComponent({
   },
   methods: {
     async handleUpdateCampaign(campaign: number) {
-      const filterParams = {campaign: campaign ? campaign : undefined}
-      this.personalMetrics = (await this.$apiClient.personalMetrics.list(filterParams)).payload.data
+      const filterParams = { campaign: campaign ? campaign : undefined }
+      this.personalMetrics = (
+        await this.$apiClient.personalMetrics.list(filterParams)
+      ).payload.data
       this.selectedCampaign = campaign
     }
   }

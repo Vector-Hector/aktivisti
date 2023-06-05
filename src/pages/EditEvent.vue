@@ -1,28 +1,17 @@
 <template>
   <QPage class="edit-event">
-    <RouteStepper
-      :steps="steps"
-      v-model="activeStep"
-    />
+    <RouteStepper :steps="steps" v-model="activeStep" />
 
-    <MapContainer
-      class="map-container"
-    >
-      <Map
-        :bounding-box="bbox"
-      >
+    <MapContainer class="map-container">
+      <Map :bounding-box="bbox">
         <template v-slot:top-right>
           <div class="flex column q-gutter-y-sm">
             <CampaignCollectionOverlayControl />
-            <router-view
-              name="map"
-            />
+            <router-view name="map" />
           </div>
         </template>
       </Map>
-      <MapOverlayProxy
-        :title="title"
-      >
+      <MapOverlayProxy :title="title">
         <router-view />
       </MapOverlayProxy>
     </MapContainer>
@@ -48,40 +37,49 @@ import { userStore } from 'src/store/UserStore'
 import { posterListStore } from 'src/store/PosterListStore'
 import CampaignCollectionOverlayControl from 'src/map/CampaignCollectionOverlayControl.vue'
 
-const Door2DoorAndFlyerSteps = [{
-  label: 'Einstellungen',
-  routeName: 'edit-event-details'
-}, {
-  label: 'Treffpunkt/Gebiete',
-  routeName: 'edit-event-geometry'
-}]
+const Door2DoorAndFlyerSteps = [
+  {
+    label: 'Einstellungen',
+    routeName: 'edit-event-details'
+  },
+  {
+    label: 'Treffpunkt/Gebiete',
+    routeName: 'edit-event-geometry'
+  }
+]
 
-const PosterEventSteps = [{
-  label: 'Einstellungen',
-  routeName: 'edit-event-details'
-}, {
-  label: 'Treffpunkt/Gebiete',
-  routeName: 'edit-event-geometry'
-}, {
-  label: 'Standorte',
-  routeName: 'edit-event-posters'
-}]
+const PosterEventSteps = [
+  {
+    label: 'Einstellungen',
+    routeName: 'edit-event-details'
+  },
+  {
+    label: 'Treffpunkt/Gebiete',
+    routeName: 'edit-event-geometry'
+  },
+  {
+    label: 'Standorte',
+    routeName: 'edit-event-posters'
+  }
+]
 
-const GenericEventSteps = [{
-  label: 'Einstellungen',
-  routeName: 'edit-event-details'
-}, {
-  label: 'Veranstaltungsort',
-  routeName: 'edit-event-geometry'
-}]
+const GenericEventSteps = [
+  {
+    label: 'Einstellungen',
+    routeName: 'edit-event-details'
+  },
+  {
+    label: 'Veranstaltungsort',
+    routeName: 'edit-event-geometry'
+  }
+]
 
 export interface StepControls {
-  isLastStep: ComputedRef<boolean>,
+  isLastStep: ComputedRef<boolean>
   abort: () => void
   next: () => void
   previous: () => void
 }
-
 
 export default defineComponent({
   name: 'EditEvent',
@@ -135,21 +133,31 @@ export default defineComponent({
   },
   beforeRouteEnter: async (to, from, next) => {
     if (!userStore.hasAtLeastOneManagePermission()) {
-      ErrorBus.emit(NOT_AUTHORIZED, 'Um eine Aktion zu erstellen benötigst du eine Koordinator*innenberechtigung')
-      next({name: 'login'})
+      ErrorBus.emit(
+        NOT_AUTHORIZED,
+        'Um eine Aktion zu erstellen benötigst du eine Koordinator*innenberechtigung'
+      )
+      next({ name: 'login' })
     } else {
-      const [eventRequest, campaignRequest, eventAreasRequest] = await Promise.all([
-        apiClient.events.get(to.params.eventId as string, ['eventmetricrecord_set']),
-        apiClient.campaigns.list(),
-        apiClient.eventAreas.list({event: to.params.eventId})
-      ])
+      const [eventRequest, campaignRequest, eventAreasRequest] =
+        await Promise.all([
+          apiClient.events.get(to.params.eventId as string, [
+            'eventmetricrecord_set'
+          ]),
+          apiClient.campaigns.list(),
+          apiClient.eventAreas.list({ event: to.params.eventId })
+        ])
       if (eventRequest.payload.data.event_type === EventTypes.POSTERS) {
-        const posters = await apiClient.posters.list({event: to.params.eventId})
+        const posters = await apiClient.posters.list({
+          event: to.params.eventId
+        })
         posterListStore.state.posters = posters.payload.data
       }
       editEventStore.setEvent(eventRequest.payload.data)
       editEventStore.setCampaigns(campaignRequest.payload.data)
-      editEventStore.setMetricRecords(eventRequest.payload.embedded.eventmetricrecord_set)
+      editEventStore.setMetricRecords(
+        eventRequest.payload.embedded.eventmetricrecord_set
+      )
       editEventStore.setEventAreas(eventAreasRequest.payload.data)
       next(() => {
         uiStore.updateActiveElements({
@@ -210,18 +218,22 @@ export default defineComponent({
   created() {
     const features = [...this.areaFeatures]
     if (this.event?.location) {
-      features.push(circle([this.event.location.lng, this.event.location.lat], 0.2))
+      features.push(
+        circle([this.event.location.lng, this.event.location.lat], 0.2)
+      )
     }
-    this.bbox = features.length > 0 ? bbox({
-      type: 'FeatureCollection',
-      features: features
-    }) as BBox2d : userStore.state.bbox
+    this.bbox =
+      features.length > 0
+        ? (bbox({
+            type: 'FeatureCollection',
+            features: features
+          }) as BBox2d)
+        : userStore.state.bbox
   }
 })
 </script>
 
 <style lang="scss" scoped>
-
 .edit-event {
   display: flex;
   flex-direction: column;
@@ -230,12 +242,11 @@ export default defineComponent({
   overflow: hidden;
   // TODO(peter@ctrl.alt.coop): Don't show/render the html element instead of hiding it.
   ::v-deep .q-stepper__step-inner {
-    display: none
+    display: none;
   }
 
   .map-container {
     overflow: hidden;
   }
 }
-
 </style>

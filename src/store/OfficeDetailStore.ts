@@ -19,7 +19,6 @@ class OfficeDetailStore extends Store<OfficeDetailStoreState> {
   public get office(): OfficeDto | null {
     return this.getState().office
   }
-
 }
 
 export const officeDetailStore = new OfficeDetailStore()

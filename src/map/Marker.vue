@@ -1,13 +1,7 @@
 <template>
-  <div
-    ref="markerElement"
-    class="marker"
-  >
+  <div ref="markerElement" class="marker">
     <slot name="marker">
-      <QIcon
-        class="marker-icon"
-        :name="ionLocationSharp"
-      />
+      <QIcon class="marker-icon" :name="ionLocationSharp" />
     </slot>
     <slot v-if="initialized" />
   </div>
@@ -49,16 +43,19 @@ export default defineComponent({
     QIcon
   },
   emits: ['update:location'],
-  setup(props, {emit}) {
+  setup(props, { emit }) {
     const map = inject(MapInject)
     const initialized = ref(false)
     const markerElement = ref<HTMLElement | null>(null)
     const marker = ref<Marker | null>(null)
     provide(MarkerInject, marker)
 
-    watch(() => props.location, (location) => {
-      marker.value?.setLngLat([location.lng, location.lat])
-    })
+    watch(
+      () => props.location,
+      (location) => {
+        marker.value?.setLngLat([location.lng, location.lat])
+      }
+    )
 
     onMounted(() => {
       marker.value = new Marker({
@@ -89,7 +86,6 @@ export default defineComponent({
     }
   }
 })
-
 </script>
 <style lang="scss" scoped>
 .marker-icon {
@@ -99,5 +95,4 @@ export default defineComponent({
   z-index: 99;
   color: $primary;
 }
-
 </style>

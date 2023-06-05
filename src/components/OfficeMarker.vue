@@ -1,28 +1,20 @@
 <template>
-  <Marker
-    :location="location"
-  >
+  <Marker :location="location">
     <template v-slot:marker>
-      <QIcon
-        :name="icon"
-        class="clickable-marker"
-        size="lg"
-      />
+      <QIcon :name="icon" class="clickable-marker" size="lg" />
     </template>
     <slot />
   </Marker>
 </template>
 
 <script lang="ts">
-
-
 import { defineComponent, PropType } from 'vue'
 import { LocationDto } from 'src/api/model/LocationDto'
 import Marker from 'src/map/Marker.vue'
 import { QIcon } from 'quasar'
 
 export default defineComponent({
-  components: {Marker, QIcon},
+  components: { Marker, QIcon },
   props: {
     location: {
       type: Object as PropType<LocationDto>,

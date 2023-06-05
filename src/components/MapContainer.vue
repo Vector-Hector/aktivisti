@@ -1,7 +1,5 @@
 <template>
-  <div
-    :class="containerClasses"
-  >
+  <div :class="containerClasses">
     <slot />
   </div>
 </template>
@@ -14,8 +12,8 @@ export default defineComponent({
     containerClasses() {
       return {
         'map-container': true,
-        'bottom': this.$q.screen.lt.md,
-        'side': !this.$q.screen.lt.md
+        bottom: this.$q.screen.lt.md,
+        side: !this.$q.screen.lt.md
       }
     }
   }
@@ -35,6 +33,4 @@ export default defineComponent({
     flex-direction: column;
   }
 }
-
-
 </style>

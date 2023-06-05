@@ -12,7 +12,12 @@ import SubAssociationFilter from 'components/filterInput/filters/SubAssociationF
 import { userStore } from 'src/store/UserStore'
 
 interface Emits {
-  (e: 'onSelect', campaignId: number, stateAssociationId: number, subAssociationId: number): void
+  (
+    e: 'onSelect',
+    campaignId: number,
+    stateAssociationId: number,
+    subAssociationId: number
+  ): void
 }
 
 const emit = defineEmits<Emits>()
@@ -20,8 +25,9 @@ const emit = defineEmits<Emits>()
 const campaigns = ref<CampaignDto[]>([])
 const allManagedCampaigns = ref<CampaignDto[]>([])
 const selectedCampaignId = ref<number | null>(null)
-const selectedCampaign = computed(() => campaigns.value.find(({id}) => id === selectedCampaignId.value))
-
+const selectedCampaign = computed(() =>
+  campaigns.value.find(({ id }) => id === selectedCampaignId.value)
+)
 
 const stateAssociations = ref<StateAssociationDto[]>([])
 const allManagedStateAssociations = ref<StateAssociationDto[]>([])
@@ -32,10 +38,15 @@ const selectedSubAssociationId = ref<number | null>(null)
 const subAssociations = ref<SubAssociationDto[]>([])
 const isAbleToRequestAllSubAssociations = ref<boolean>(false)
 
-
-const explicitManagedCampaignsIds = explicitMangedObjects(ContentTypeNaturalKey.CAMPAIGN)
-const explicitManagedStateAssociationsId = explicitMangedObjects(ContentTypeNaturalKey.STATE_ASSOCIATION)
-const explicitManagedSubAssociationsId = explicitMangedObjects(ContentTypeNaturalKey.SUB_ASSOCIATION)
+const explicitManagedCampaignsIds = explicitMangedObjects(
+  ContentTypeNaturalKey.CAMPAIGN
+)
+const explicitManagedStateAssociationsId = explicitMangedObjects(
+  ContentTypeNaturalKey.STATE_ASSOCIATION
+)
+const explicitManagedSubAssociationsId = explicitMangedObjects(
+  ContentTypeNaturalKey.SUB_ASSOCIATION
+)
 
 onBeforeMount(async () => {
   const allCampaigns = await fetchAllCampaigns()
@@ -50,26 +61,44 @@ onBeforeMount(async () => {
         allManagedCampaigns.value.push(camp)
       } else {
         if (camp.campaign_level === CampaignLevel.FEDERAL) {
-          if (explicitManagedStateAssociationsId.length > 0 || explicitManagedSubAssociationsId.length > 0) {
+          if (
+            explicitManagedStateAssociationsId.length > 0 ||
+            explicitManagedSubAssociationsId.length > 0
+          ) {
             campaigns.value.push(camp)
           }
         }
         if (camp.campaign_level === CampaignLevel.STATE_ASSOCIATION) {
-          const isCampaignAssociationManaged = explicitManagedStateAssociationsId.includes(camp.state_association!)
+          const isCampaignAssociationManaged =
+            explicitManagedStateAssociationsId.includes(camp.state_association!)
           if (isCampaignAssociationManaged) {
             campaigns.value.push(camp)
           } else {
-            const managedSubAssociations = await fetchSubAssociations(explicitManagedSubAssociationsId)
-            const requiredStateAssociations = managedSubAssociations.map(({state_association}) => state_association)
-            const isRequiredStateAssociationCampaignAssociation = requiredStateAssociations.includes(camp.state_association)
+            const managedSubAssociations = await fetchSubAssociations(
+              explicitManagedSubAssociationsId
+            )
+            const requiredStateAssociations = managedSubAssociations.map(
+              ({ state_association }) => state_association
+            )
+            const isRequiredStateAssociationCampaignAssociation =
+              requiredStateAssociations.includes(camp.state_association)
             if (isRequiredStateAssociationCampaignAssociation) {
               campaigns.value.push(camp)
             }
           }
         }
         if (camp.campaign_level === CampaignLevel.SUB_ASSOCIATION) {
-          const campaignSubAssociation = await fetchSubAssociation(camp.sub_association!)
-          if (explicitManagedSubAssociationsId.includes(campaignSubAssociation.id) || explicitManagedStateAssociationsId.includes(campaignSubAssociation.state_association)) {
+          const campaignSubAssociation = await fetchSubAssociation(
+            camp.sub_association!
+          )
+          if (
+            explicitManagedSubAssociationsId.includes(
+              campaignSubAssociation.id
+            ) ||
+            explicitManagedStateAssociationsId.includes(
+              campaignSubAssociation.state_association
+            )
+          ) {
             campaigns.value.push(camp)
           }
         }
@@ -79,95 +108,138 @@ onBeforeMount(async () => {
   selectedCampaignId.value = campaigns.value[0].id
 })
 
-watch(() => selectedCampaign.value, async (campaign) => {
-  if (campaign!.campaign_level === CampaignLevel.FEDERAL) {
-    const isManagedCampaign = allManagedCampaigns.value.map(({id}) => id).includes(campaign!.id)
-    if (isManagedCampaign) {
-      stateAssociations.value = await fetchAllStateAssociations()
+watch(
+  () => selectedCampaign.value,
+  async (campaign) => {
+    if (campaign!.campaign_level === CampaignLevel.FEDERAL) {
+      const isManagedCampaign = allManagedCampaigns.value
+        .map(({ id }) => id)
+        .includes(campaign!.id)
+      if (isManagedCampaign) {
+        stateAssociations.value = await fetchAllStateAssociations()
 
-      allManagedStateAssociations.value = stateAssociations.value
-      isAbleToRequestAllStateAssociations.value = true
-      selectedStateAssociationId.value = 0
-    } else {
-      stateAssociations.value = await fetchStateAssociations(explicitManagedStateAssociationsId)
+        allManagedStateAssociations.value = stateAssociations.value
+        isAbleToRequestAllStateAssociations.value = true
+        selectedStateAssociationId.value = 0
+      } else {
+        stateAssociations.value = await fetchStateAssociations(
+          explicitManagedStateAssociationsId
+        )
 
-      allManagedStateAssociations.value = stateAssociations.value
-      isAbleToRequestAllStateAssociations.value = false
-      if (explicitManagedSubAssociationsId.length > 0) {
-        const managedSubAssociations = await fetchSubAssociations(explicitManagedSubAssociationsId)
-        let parentStateAssociationsId = managedSubAssociations.map(({state_association}) => state_association)
-        parentStateAssociationsId = [...new Set(parentStateAssociationsId)]
-        const parentStateAssociation = await fetchStateAssociations(parentStateAssociationsId)
-        stateAssociations.value = [...new Set([...stateAssociations.value, ...parentStateAssociation])]
+        allManagedStateAssociations.value = stateAssociations.value
+        isAbleToRequestAllStateAssociations.value = false
+        if (explicitManagedSubAssociationsId.length > 0) {
+          const managedSubAssociations = await fetchSubAssociations(
+            explicitManagedSubAssociationsId
+          )
+          let parentStateAssociationsId = managedSubAssociations.map(
+            ({ state_association }) => state_association
+          )
+          parentStateAssociationsId = [...new Set(parentStateAssociationsId)]
+          const parentStateAssociation = await fetchStateAssociations(
+            parentStateAssociationsId
+          )
+          stateAssociations.value = [
+            ...new Set([...stateAssociations.value, ...parentStateAssociation])
+          ]
+        }
+        selectedStateAssociationId.value = stateAssociations.value[0].id
       }
+    } else if (campaign!.campaign_level === CampaignLevel.STATE_ASSOCIATION) {
+      stateAssociations.value = [
+        await fetchStateAssociation(campaign!.state_association!)
+      ]
+      isAbleToRequestAllStateAssociations.value = false
+      selectedStateAssociationId.value = stateAssociations.value[0].id
+    } else if (campaign!.campaign_level === CampaignLevel.SUB_ASSOCIATION) {
+      const subAssociation = await fetchSubAssociation(
+        campaign!.sub_association!
+      )
+      stateAssociations.value = [
+        await fetchStateAssociation(subAssociation.state_association)
+      ]
+      isAbleToRequestAllStateAssociations.value = false
       selectedStateAssociationId.value = stateAssociations.value[0].id
     }
-  } else if (campaign!.campaign_level === CampaignLevel.STATE_ASSOCIATION) {
-    stateAssociations.value = [await fetchStateAssociation(campaign!.state_association!)]
-    isAbleToRequestAllStateAssociations.value = false
-    selectedStateAssociationId.value = stateAssociations.value[0].id
-  } else if (campaign!.campaign_level === CampaignLevel.SUB_ASSOCIATION) {
-    const subAssociation = await fetchSubAssociation(campaign!.sub_association!)
-    stateAssociations.value = [await fetchStateAssociation(subAssociation.state_association)]
-    isAbleToRequestAllStateAssociations.value = false
-    selectedStateAssociationId.value = stateAssociations.value[0].id
   }
-})
+)
 
-watch([() => selectedStateAssociationId.value, () => selectedCampaignId.value], async ([stateAssociationId]) => {
-  subAssociations.value = []
-  const isAllStateAssociations = stateAssociationId === 0
-  const isManagedStateAssociation = allManagedStateAssociations.value.map(({id}) => id).includes(stateAssociationId!)
-  if (isAllStateAssociations) {
-    isAbleToRequestAllSubAssociations.value = true
-    selectedSubAssociationId.value = 0
-  } else {
-    if (selectedCampaign.value?.campaign_level === CampaignLevel.SUB_ASSOCIATION) {
-      subAssociations.value = [await fetchSubAssociation(selectedCampaign.value.sub_association!)]
-      selectedSubAssociationId.value = subAssociations.value[0].id
-      isAbleToRequestAllSubAssociations.value = false
+watch(
+  [() => selectedStateAssociationId.value, () => selectedCampaignId.value],
+  async ([stateAssociationId]) => {
+    subAssociations.value = []
+    const isAllStateAssociations = stateAssociationId === 0
+    const isManagedStateAssociation = allManagedStateAssociations.value
+      .map(({ id }) => id)
+      .includes(stateAssociationId!)
+    if (isAllStateAssociations) {
+      isAbleToRequestAllSubAssociations.value = true
+      selectedSubAssociationId.value = 0
     } else {
-      if (stateAssociationId) {
-        const allSubAssociationOfState = await fetchAllSubAssociations(stateAssociationId)
-        if (isManagedStateAssociation) {
-          subAssociations.value = allSubAssociationOfState
-          isAbleToRequestAllSubAssociations.value = true
-          selectedSubAssociationId.value = 0
-        } else {
-          for (const sub of allSubAssociationOfState) {
-            const isManagedSubAssociation = explicitManagedSubAssociationsId.includes(sub.id)
-            if (isManagedSubAssociation) {
-              subAssociations.value.push(sub)
+      if (
+        selectedCampaign.value?.campaign_level === CampaignLevel.SUB_ASSOCIATION
+      ) {
+        subAssociations.value = [
+          await fetchSubAssociation(selectedCampaign.value.sub_association!)
+        ]
+        selectedSubAssociationId.value = subAssociations.value[0].id
+        isAbleToRequestAllSubAssociations.value = false
+      } else {
+        if (stateAssociationId) {
+          const allSubAssociationOfState = await fetchAllSubAssociations(
+            stateAssociationId
+          )
+          if (isManagedStateAssociation) {
+            subAssociations.value = allSubAssociationOfState
+            isAbleToRequestAllSubAssociations.value = true
+            selectedSubAssociationId.value = 0
+          } else {
+            for (const sub of allSubAssociationOfState) {
+              const isManagedSubAssociation =
+                explicitManagedSubAssociationsId.includes(sub.id)
+              if (isManagedSubAssociation) {
+                subAssociations.value.push(sub)
+              }
             }
+            isAbleToRequestAllSubAssociations.value = false
+            selectedSubAssociationId.value = subAssociations.value[0].id
           }
-          isAbleToRequestAllSubAssociations.value = false
-          selectedSubAssociationId.value = subAssociations.value[0].id
         }
       }
     }
   }
-})
+)
 
 watch(
   [selectedCampaignId, selectedStateAssociationId, selectedSubAssociationId],
-  ([selectedCampaignId, selectedStateAssociationId, selectedSubAssociationId]) => {
-    emit('onSelect',
+  ([
+    selectedCampaignId,
+    selectedStateAssociationId,
+    selectedSubAssociationId
+  ]) => {
+    emit(
+      'onSelect',
       selectedCampaignId ? selectedCampaignId : 0,
       selectedStateAssociationId ? selectedStateAssociationId : 0,
-      selectedSubAssociationId ? selectedSubAssociationId : 0)
-  })
+      selectedSubAssociationId ? selectedSubAssociationId : 0
+    )
+  }
+)
 
 function explicitMangedObjects(contentType: ContentTypeNaturalKey): number[] {
-  return userStore.getMyPermissions()
-    .filter(({
-               permission_codename,
-               content_type_natural_key
-             }) => permission_codename === PermissionCodename.MANAGE_EVENTS && content_type_natural_key === contentType)
-    .map(({object_pk}) => parseInt(object_pk))
+  return userStore
+    .getMyPermissions()
+    .filter(
+      ({ permission_codename, content_type_natural_key }) =>
+        permission_codename === PermissionCodename.MANAGE_EVENTS &&
+        content_type_natural_key === contentType
+    )
+    .map(({ object_pk }) => parseInt(object_pk))
 }
 
 async function fetchAllCampaigns() {
-  return (await apiClient.campaigns.list({include_expired: true})).payload.data
+  return (await apiClient.campaigns.list({ include_expired: true })).payload
+    .data
 }
 
 function handleCampaignSelection(campaignId: number) {
@@ -195,15 +267,21 @@ async function fetchSubAssociation(id: number) {
 }
 
 async function fetchAllSubAssociations(stateAssociationId: number) {
-  return (await apiClient.subAssociations.list({state_association: stateAssociationId})).payload.data
+  return (
+    await apiClient.subAssociations.list({
+      state_association: stateAssociationId
+    })
+  ).payload.data
 }
-
 
 async function fetchSubAssociations(ids: number[]) {
   return await multipleFetch(fetchSubAssociation, ids)
 }
 
-async function multipleFetch<T>(fetch: (id: number) => Promise<T>, ids: number[]) {
+async function multipleFetch<T>(
+  fetch: (id: number) => Promise<T>,
+  ids: number[]
+) {
   const fetchPromises: Promise<any>[] = []
   for (const id of ids) {
     fetchPromises.push(fetch(id))
@@ -214,8 +292,6 @@ async function multipleFetch<T>(fetch: (id: number) => Promise<T>, ids: number[]
 function handleSubAssociationSelection(subAssociationId: number) {
   selectedSubAssociationId.value = subAssociationId ? subAssociationId : 0
 }
-
-
 </script>
 <template>
   <CampaignFilter

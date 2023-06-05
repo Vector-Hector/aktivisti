@@ -10,10 +10,7 @@
           :edit-location="true"
         />
         <div class="buttons">
-          <div
-            v-if="posterId"
-            class="button delete-button"
-          >
+          <div v-if="posterId" class="button delete-button">
             <QBtn
               dense
               flat
@@ -52,7 +49,6 @@
               @click="save"
             />
           </div>
-
         </div>
       </div>
     </QScrollArea>
@@ -69,7 +65,12 @@ import EditPoster from 'components/EditPoster.vue'
 import { cloneDeep } from 'lodash-es'
 import { apiClient } from 'src/api/ApiClient'
 import { QBtn, QScrollArea } from 'quasar'
-import { ionClose, ionLocationSharp, ionSave, ionTrash } from '@quasar/extras/ionicons-v5'
+import {
+  ionClose,
+  ionLocationSharp,
+  ionSave,
+  ionTrash
+} from '@quasar/extras/ionicons-v5'
 import EditSinglePosterMixin from 'pages/edit-event/posters/edit-single/EditSinglePosterMixin'
 import { posterListStore } from 'src/store/PosterListStore'
 import EditPosterListMixin from 'pages/edit-event/posters/EditPosterListMixin'
@@ -95,16 +96,21 @@ export default defineComponent({
   mixins: [EditEventGeometryMixin, EditSinglePosterMixin, EditPosterListMixin],
   async beforeRouteEnter(to, from, next) {
     let initialPoster: Partial<PosterDto>
-    const {posterId, eventId} = to.params
+    const { posterId, eventId } = to.params
     if (posterId) {
-      initialPoster = (await apiClient.posters.get(posterId.toString())).payload.data
-      posterListStore.state.activePosterIndex = posterListStore.state.posters.findIndex((({id}) => initialPoster.id === id))
+      initialPoster = (await apiClient.posters.get(posterId.toString())).payload
+        .data
+      posterListStore.state.activePosterIndex =
+        posterListStore.state.posters.findIndex(
+          ({ id }) => initialPoster.id === id
+        )
     } else {
       initialPoster = {
         ...cloneDeep(defaultPoster),
         event: parseInt(eventId as string)
       }
-      posterListStore.state.activePosterIndex = posterListStore.state.posters.push(initialPoster) - 1
+      posterListStore.state.activePosterIndex =
+        posterListStore.state.posters.push(initialPoster) - 1
     }
     next()
   },
@@ -135,11 +141,18 @@ export default defineComponent({
     async save() {
       try {
         if (this.posterId) {
-          this.poster = (await this.$apiClient.posters.update(this.posterId, this.poster as PosterDto)).payload.data
+          this.poster = (
+            await this.$apiClient.posters.update(
+              this.posterId,
+              this.poster as PosterDto
+            )
+          ).payload.data
         } else {
-          this.poster = (await this.$apiClient.posters.create(this.poster)).payload.data
+          this.poster = (
+            await this.$apiClient.posters.create(this.poster)
+          ).payload.data
         }
-        await this.$router.push({name: 'edit-event-posters-list'})
+        await this.$router.push({ name: 'edit-event-posters-list' })
       } catch (e) {
         if (this.$apiClient.isApiClientError(e) && e.response?.status === 400) {
           this.errors = e.response?.data
@@ -152,20 +165,22 @@ export default defineComponent({
       }
     },
     async abort() {
-      await this.$router.push({name: 'edit-event-posters-list'})
+      await this.$router.push({ name: 'edit-event-posters-list' })
     },
     onDeleteClicked() {
       if (!this.posterId) return
-      this.$q.dialog({
-        title: 'Plakat löschen',
-        message: 'Möchtest dieses Plakat wirklich löschen?',
-        cancel: true
+      this.$q
+        .dialog({
+          title: 'Plakat löschen',
+          message: 'Möchtest dieses Plakat wirklich löschen?',
+          cancel: true
+        })
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      }).onOk(async () => {
-        const poster = this.poster
-        await this.$router.push({name: 'edit-event-posters-list'})
-        await this.deletePoster(poster as PosterDto)
-      })
+        .onOk(async () => {
+          const poster = this.poster
+          await this.$router.push({ name: 'edit-event-posters-list' })
+          await this.deletePoster(poster as PosterDto)
+        })
     }
   }
 })
@@ -195,7 +210,6 @@ export default defineComponent({
     &:first-of-type {
       justify-content: flex-start;
     }
-
 
     &:last-of-type {
       justify-content: flex-end;

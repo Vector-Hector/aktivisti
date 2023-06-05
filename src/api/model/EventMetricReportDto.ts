@@ -6,13 +6,13 @@ export interface EventMetricReportDto {
 }
 
 export interface MetricCount {
-  count: number,
-  metric: number,
+  count: number
+  metric: number
 }
 
 export interface MetricReportData {
-  count: number,
-  metricId: number,
+  count: number
+  metricId: number
   name: string
   targetCount: number
 }

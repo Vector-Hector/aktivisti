@@ -4,14 +4,13 @@
       <QToolbar>
         <QToolbarTitle>E-Mail Adresse ändern</QToolbarTitle>
       </QToolbar>
-      <QForm
-        @submit="onOk"
-      >
+      <QForm @submit="onOk">
         <QCardSection>
           <p>
-            Hier kannst du eine neue E-Mail Adresse festlegen. Dazu brauchen wir noch einmal dein aktuelles Passwort.
-            Die E-Mail Adresse wird erst in deinem Profil übernommen, wenn du den Bestätigungslink anklickst, den wir an
-            deine neue E-Mail Adresse schicken.
+            Hier kannst du eine neue E-Mail Adresse festlegen. Dazu brauchen wir
+            noch einmal dein aktuelles Passwort. Die E-Mail Adresse wird erst in
+            deinem Profil übernommen, wenn du den Bestätigungslink anklickst,
+            den wir an deine neue E-Mail Adresse schicken.
           </p>
           <QInput
             label="Passwort"
@@ -31,10 +30,21 @@
           />
         </QCardSection>
         <QCardActions align="right">
-          <QBtn flat :disabled="isSubmitting" color="primary" label="Abbrechen" @click="onDialogHide" />
-          <QBtn flat :disabled="isSubmitting" color="primary" label="OK" type="submit" />
+          <QBtn
+            flat
+            :disabled="isSubmitting"
+            color="primary"
+            label="Abbrechen"
+            @click="onDialogHide"
+          />
+          <QBtn
+            flat
+            :disabled="isSubmitting"
+            color="primary"
+            label="OK"
+            type="submit"
+          />
         </QCardActions>
-
       </QForm>
     </QCard>
   </QDialog>
@@ -42,7 +52,17 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { QBtn, QCard, QCardActions, QCardSection, QDialog, QForm, QInput, QToolbar, QToolbarTitle } from 'quasar'
+import {
+  QBtn,
+  QCard,
+  QCardActions,
+  QCardSection,
+  QDialog,
+  QForm,
+  QInput,
+  QToolbar,
+  QToolbarTitle
+} from 'quasar'
 
 export default defineComponent({
   name: 'ChangeEmailDialog',
@@ -55,11 +75,12 @@ export default defineComponent({
     QInput,
     QCardActions,
     QBtn,
-    QForm,
+    QForm
   },
   emits: [
     // REQUIRED
-    'ok', 'hide'
+    'ok',
+    'hide'
   ],
   data() {
     return {
@@ -114,6 +135,4 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

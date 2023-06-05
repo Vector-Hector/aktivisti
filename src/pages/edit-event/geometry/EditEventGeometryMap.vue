@@ -10,17 +10,10 @@
     @draw:update="handleCreatedFeatures"
     @draw:delete="handleDeletedFeatures"
   />
-  <template
-    v-if="zoomLevel > 16">
-    <AddressMarkerLayer
-      :addresses="addresses"
-    />
+  <template v-if="zoomLevel > 16">
+    <AddressMarkerLayer :addresses="addresses" />
   </template>
-  <PosterMarkerLayer
-    :posters="posters"
-    :editable="false"
-    :opacity="0.5"
-  />
+  <PosterMarkerLayer :posters="posters" :editable="false" :opacity="0.5" />
   <Marker
     v-if="event.location"
     v-model:location="event.location"
@@ -36,7 +29,13 @@ import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { routePlannerStyles } from './route-planner.styles'
 import { Feature, Geometry } from 'geojson'
 import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
-import { bbox, booleanPointInPolygon, center as turfCenter, circle, polygon } from '@turf/turf'
+import {
+  bbox,
+  booleanPointInPolygon,
+  center as turfCenter,
+  circle,
+  polygon
+} from '@turf/turf'
 
 import { MapInject } from 'src/map/Map.vue'
 import { EditEventBus, START_DRAW_AREA } from 'src/store/EditEventStore'
@@ -104,9 +103,9 @@ export default defineComponent({
     },
     addresses(): AddressDetails[] | undefined {
       return this.eventAreas
-        .map(({area_details}) => area_details?.streets ?? [])
+        .map(({ area_details }) => area_details?.streets ?? [])
         .flat()
-        .map(({addresses}) => addresses)
+        .map(({ addresses }) => addresses)
         .flat()
     }
   },
@@ -115,7 +114,7 @@ export default defineComponent({
   },
   mounted() {
     this.startDrawListener = () => {
-      (this.$refs.draw as typeof DrawControl).changeMode('draw_polygon')
+      ;(this.$refs.draw as typeof DrawControl).changeMode('draw_polygon')
     }
     EditEventBus.on(START_DRAW_AREA, this.startDrawListener)
     this.zoomListener = () => {
@@ -141,8 +140,11 @@ export default defineComponent({
               [bounds.getNorthWest().lng, bounds.getNorthWest().lat]
             ]
           ])
-          const {lat, lng} = newLocation
-          if (oldLocation === null || !booleanPointInPolygon([lng, lat], boundsGeometry)) {
+          const { lat, lng } = newLocation
+          if (
+            oldLocation === null ||
+            !booleanPointInPolygon([lng, lat], boundsGeometry)
+          ) {
             this.map?.fitBounds(bbox(circle([lng, lat], 2)) as BBox2d)
           }
         }
@@ -161,7 +163,9 @@ export default defineComponent({
     },
     async handleCreatedFeatures(event: any) {
       for (const feature of event.features) {
-        const existingArea = this.eventAreas.find((area) => area.feature_id === feature.id)
+        const existingArea = this.eventAreas.find(
+          (area) => area.feature_id === feature.id
+        )
         const updatedArea = Object.assign(
           {
             name: `Gebiet ${this.eventAreas.length + 1}`,
@@ -190,13 +194,15 @@ export default defineComponent({
       }
     },
     handleDeletedFeatures(event: any) {
-      const deletedFeatureIds = event.features.map(({id}: { id: string }) => id)
+      const deletedFeatureIds = event.features.map(
+        ({ id }: { id: string }) => id
+      )
       for (const featureId of deletedFeatureIds) {
         void this.deleteAreaByFeatureId(featureId)
       }
     },
     drawArea() {
-      (this.$refs.draw as typeof DrawControl).changeMode('draw_polygon')
+      ;(this.$refs.draw as typeof DrawControl).changeMode('draw_polygon')
     }
   }
 })
@@ -206,4 +212,3 @@ export default defineComponent({
   display: none !important;
 }
 </style>
-

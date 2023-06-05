@@ -1,5 +1,13 @@
 <script lang="ts">
-import { defineComponent, inject, onMounted, PropType, h, watch, onUnmounted } from 'vue'
+import {
+  defineComponent,
+  inject,
+  onMounted,
+  PropType,
+  h,
+  watch,
+  onUnmounted
+} from 'vue'
 import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { ClusterDto } from 'src/api/model/ClusterDto'
@@ -17,8 +25,7 @@ class ClusterLayer {
   clusterLayerId = `${this.uuid}-clusters`
   loaded = false
 
-  constructor(private map: maplibregl.Map, private clusters: ClusterDto[]) {
-  }
+  constructor(private map: maplibregl.Map, private clusters: ClusterDto[]) {}
 
   add() {
     const clusterGeoJson: GeoJSON = {
@@ -51,13 +58,13 @@ class ClusterLayer {
       layout: {},
       paint: {
         'circle-color': '#DF0303',
-        'circle-radius':
-          ['+', MIN_CIRCLE_RADIUS, ['*',
-            ['/', ['get', 'count'], total],
-            CIRCLE_SPAN
-          ]],
+        'circle-radius': [
+          '+',
+          MIN_CIRCLE_RADIUS,
+          ['*', ['/', ['get', 'count'], total], CIRCLE_SPAN]
+        ],
         'circle-opacity': 0,
-        'circle-opacity-transition': {duration: TRANSITION_DURATION}
+        'circle-opacity-transition': { duration: TRANSITION_DURATION }
       }
     })
 
@@ -74,7 +81,7 @@ class ClusterLayer {
       paint: {
         'text-color': '#ffffff',
         'text-opacity': 0,
-        'text-opacity-transition': {duration: TRANSITION_DURATION}
+        'text-opacity-transition': { duration: TRANSITION_DURATION }
       }
     })
     this.map.setPaintProperty(this.clusterLayerId, 'circle-opacity', 1)
@@ -110,11 +117,15 @@ export default defineComponent({
     let activeOverlay: ClusterLayer | null = null
 
     onMounted(() => {
-      watch(() => props.clusters, () => {
-        activeOverlay?.remove()
-        activeOverlay = new ClusterLayer(map.value!, props.clusters)
-        activeOverlay.add()
-      }, {deep: true, immediate: true})
+      watch(
+        () => props.clusters,
+        () => {
+          activeOverlay?.remove()
+          activeOverlay = new ClusterLayer(map.value!, props.clusters)
+          activeOverlay.add()
+        },
+        { deep: true, immediate: true }
+      )
     })
 
     onUnmounted(() => {
@@ -125,5 +136,4 @@ export default defineComponent({
     return h('span')
   }
 })
-
 </script>

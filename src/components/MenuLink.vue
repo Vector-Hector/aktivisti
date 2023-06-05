@@ -1,9 +1,5 @@
 <template>
-  <router-link
-    v-slot="{ href, navigate }"
-    custom
-    :to="to"
-  >
+  <router-link v-slot="{ href, navigate }" custom :to="to">
     <a
       :href="href"
       class="menu-item-link"
@@ -37,5 +33,4 @@ export default defineComponent({
 .menu-item-link {
   align-items: center;
 }
-
 </style>

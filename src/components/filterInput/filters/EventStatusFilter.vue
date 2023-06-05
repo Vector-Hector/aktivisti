@@ -2,7 +2,7 @@
   <FilterInput
     label="Status"
     :model-value="modelValue"
-    @update:model-value="(value)=>this.$emit('update:modelValue', value)"
+    @update:model-value="(value) => this.$emit('update:modelValue', value)"
     :options="eventStatusOptions"
     emit-value
     map-options
@@ -30,6 +30,6 @@ export default defineComponent({
       eventStatusOptions
     }
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue']
 })
 </script>

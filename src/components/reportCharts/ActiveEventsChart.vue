@@ -9,26 +9,25 @@ import { ApexDataUtil, ApexDatePoint } from 'src/api/model/ApexDatePoint'
 import { ReportType, ReportTypeUtil } from 'src/api/model/ReportType'
 import { defaultApexChartOptions } from 'boot/apex'
 
-
 interface Props {
-  campaignId: number,
-  stateAssociationId?: number,
-  subAssociationId?: number,
+  campaignId: number
+  stateAssociationId?: number
+  subAssociationId?: number
 }
 
 const props = defineProps<Props>()
 
 interface ApexSeriesEntity {
-  name: string,
+  name: string
   data: ApexDatePoint[]
 }
 
-const {
-  campaign,
-  stateAssociation,
-  subAssociation,
-  fetchData
-} = useReportScope(props.campaignId, props.stateAssociationId, props.subAssociationId)
+const { campaign, stateAssociation, subAssociation, fetchData } =
+  useReportScope(
+    props.campaignId,
+    props.stateAssociationId,
+    props.subAssociationId
+  )
 
 const series = ref<ApexSeriesEntity[]>([])
 const isLoading = ref<boolean>(false)
@@ -41,11 +40,17 @@ onBeforeMount(async () => {
 })
 
 async function fetchReportEvents() {
-  const report = (await apiClient.reportEvents.list({
-    campaign: campaign.value!.id,
-    state_association: stateAssociation.value ? stateAssociation.value.id : undefined,
-    sub_association: subAssociation.value ? subAssociation.value.id : undefined
-  })).payload.data
+  const report = (
+    await apiClient.reportEvents.list({
+      campaign: campaign.value!.id,
+      state_association: stateAssociation.value
+        ? stateAssociation.value.id
+        : undefined,
+      sub_association: subAssociation.value
+        ? subAssociation.value.id
+        : undefined
+    })
+  ).payload.data
   if (report.length > 0) {
     series.value = []
     const firstDateOfChart = new Date(report[0].day)
@@ -56,14 +61,20 @@ async function fetchReportEvents() {
         .map(toApexDatePoint)
       series.value.push({
         name: eventType.label,
-        data: ApexDataUtil.fillMissingDataPoints(eventTypeData, firstDateOfChart, lastDateOfChart)
+        data: ApexDataUtil.fillMissingDataPoints(
+          eventTypeData,
+          firstDateOfChart,
+          lastDateOfChart
+        )
       })
     }
   }
 }
 
-const toApexDatePoint = (reportEvent: ReportEventDto) => ({x: reportEvent.day, y: reportEvent.count})
-
+const toApexDatePoint = (reportEvent: ReportEventDto) => ({
+  x: reportEvent.day,
+  y: reportEvent.count
+})
 
 const chartOptions = computed(() => {
   return {
@@ -74,14 +85,18 @@ const chartOptions = computed(() => {
       text: `${ReportTypeUtil.getLabel(ReportType.ACTIVE_EVENTS)}`
     },
     subtitle: {
-      text: `${campaign.value?.name}${stateAssociation.value?.name ? ' > ' + stateAssociation.value.name : ''}${subAssociation.value?.name ? ' > ' + subAssociation.value.name : ''}`
+      text: `${campaign.value?.name}${
+        stateAssociation.value?.name ? ' > ' + stateAssociation.value.name : ''
+      }${subAssociation.value?.name ? ' > ' + subAssociation.value.name : ''}`
     },
     noData: {
-      text: isLoading.value ? 'Lade Daten...' : defaultApexChartOptions.noData?.text
+      text: isLoading.value
+        ? 'Lade Daten...'
+        : defaultApexChartOptions.noData?.text
     }
   }
 })
 </script>
 <template>
-  <VueApexCharts type="area" :options="chartOptions" :series="series"/>
+  <VueApexCharts type="area" :options="chartOptions" :series="series" />
 </template>

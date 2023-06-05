@@ -11,7 +11,6 @@
   />
 </template>
 <script lang="ts">
-
 import { defineComponent, PropType } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
 import { PosterStatus, posterStatusOptions } from 'src/api/model/PosterDto'
@@ -20,7 +19,7 @@ const ALL_STATES = 'all_states'
 
 export default defineComponent({
   name: 'PosterStatusFilter',
-  components: {FilterInput},
+  components: { FilterInput },
   props: {
     modelValue: {
       type: String as PropType<PosterStatus>,
@@ -34,7 +33,7 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   computed: {
-    extendedOptions(): {key: string, label: string}[] {
+    extendedOptions(): { key: string; label: string }[] {
       return [
         {
           key: ALL_STATES,

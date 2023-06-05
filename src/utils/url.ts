@@ -20,7 +20,9 @@ export function appendAsQueryParams(url: URL, object: any) {
     }
     if (Array.isArray(value)) {
       // if it's an array append each item for the particular key
-      value.forEach(item => url.searchParams.append(key, formatForQuery(item)))
+      value.forEach((item) =>
+        url.searchParams.append(key, formatForQuery(item))
+      )
     } else {
       url.searchParams.append(key, formatForQuery(value))
     }

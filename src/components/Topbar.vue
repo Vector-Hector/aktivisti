@@ -1,10 +1,6 @@
 <template>
   <div class="topbar">
-    <a
-      v-if="showSidebar"
-      class="hamburger"
-      @click="openSidebar"
-    >
+    <a v-if="showSidebar" class="hamburger" @click="openSidebar">
       <QIcon :name="ionMenu" />
     </a>
     <img
@@ -12,15 +8,15 @@
       alt="Die LINKE Logo"
       src="../assets/logo_dielinke.png"
       @click="$router.push('/')"
-    >
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { uiStore } from 'src/store/UiStore'
-import {QIcon} from 'quasar';
-import {ionMenu} from '@quasar/extras/ionicons-v5';
+import { QIcon } from 'quasar'
+import { ionMenu } from '@quasar/extras/ionicons-v5'
 
 export default defineComponent({
   name: 'Topbar',
@@ -35,7 +31,7 @@ export default defineComponent({
   },
   data() {
     return {
-     ionMenu
+      ionMenu
     }
   },
   methods: {
@@ -70,5 +66,4 @@ a.hamburger {
     font-size: 32pt;
   }
 }
-
 </style>

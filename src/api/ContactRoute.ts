@@ -8,7 +8,7 @@ export class ContactRoute extends BaseApiRoute {
     const response = await this.request({
       path: this.path,
       method: 'POST',
-      data: body,
+      data: body
     })
     const data = response.data
     return new JSONResponse<APIEnvelope<ContactDto>>(response, data)

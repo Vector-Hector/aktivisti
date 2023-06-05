@@ -1,43 +1,19 @@
 <template>
-  <div
-    class="collapsible-filters"
-  >
-    <div
-      class="headline"
-      @click="toggle"
-    >
-      <QIcon
-        :name="ionFunnel"
-        class="filter-icon"
-      />
-      <div
-        class="headline-caption"
-      >
-        <h4
-          class="filter-title"
-        >
-          Filter
-        </h4>
-        <QBadge
-          v-if="activatedFilterCount > 0"
-        >
+  <div class="collapsible-filters">
+    <div class="headline" @click="toggle">
+      <QIcon :name="ionFunnel" class="filter-icon" />
+      <div class="headline-caption">
+        <h4 class="filter-title">Filter</h4>
+        <QBadge v-if="activatedFilterCount > 0">
           {{ activatedFilterCount }} gesetzt
         </QBadge>
       </div>
-      <span
-        class="chevron-icon"
-        :class="{ rotated: !collapsed }"
-      >
-        <QIcon
-          :name="ionChevronDown"
-        />
+      <span class="chevron-icon" :class="{ rotated: !collapsed }">
+        <QIcon :name="ionChevronDown" />
       </span>
     </div>
     <QSlideTransition>
-      <div
-        class="content"
-        v-show="!collapsed"
-      >
+      <div class="content" v-show="!collapsed">
         <slot />
       </div>
     </QSlideTransition>
@@ -48,7 +24,6 @@
 import { defineComponent, PropType } from 'vue'
 import { ionChevronDown, ionFunnel } from '@quasar/extras/ionicons-v5'
 import { QBadge, QIcon, QSlideTransition } from 'quasar'
-
 
 export default defineComponent({
   name: 'CollapsibleFilters',
@@ -81,7 +56,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "src/css/_variables.scss";
+@import 'src/css/_variables.scss';
 
 .collapsible-filters {
   background: $grey-2;
@@ -103,16 +78,19 @@ export default defineComponent({
     align-items: center;
   }
 
-  .filter-icon, .chevron-icon, .headline-caption {
+  .filter-icon,
+  .chevron-icon,
+  .headline-caption {
     font-size: 1.2rem;
     font-weight: bold;
     margin: 0;
     color: $grey-8;
   }
 
-  .filter-icon, .chevron-icon {
+  .filter-icon,
+  .chevron-icon {
     font-size: 1.4rem;
-    padding: 0.8rem 1rem .9rem 1rem;
+    padding: 0.8rem 1rem 0.9rem 1rem;
   }
 
   .filter-title {
@@ -129,5 +107,4 @@ export default defineComponent({
     }
   }
 }
-
 </style>

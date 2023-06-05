@@ -8,9 +8,9 @@ import { TokenAuthStore } from 'src/store/TokenAuthStore'
 import { VERSION_CODE } from 'src/utils/version'
 
 interface RequestConfig {
-  path: string,
-  method: Method,
-  embed?: string[],
+  path: string
+  method: Method
+  embed?: string[]
   query?: { [key: string]: string[] | string | number | number[] }
   data?: any
   omitCsrf?: boolean
@@ -19,12 +19,16 @@ interface RequestConfig {
  * Shared definitions across api endpoint classes
  */
 export class BaseApiRoute {
-  constructor(protected baseUrl: string, protected path: string, protected axiosInstance: AxiosInstance) {}
+  constructor(
+    protected baseUrl: string,
+    protected path: string,
+    protected axiosInstance: AxiosInstance
+  ) {}
 
   protected request(config: RequestConfig) {
     const url = new URL(`${this.baseUrl}/${config.path}`)
     if (config.embed?.length) {
-      appendAsQueryParams(url, {embed: config.embed})
+      appendAsQueryParams(url, { embed: config.embed })
     }
     if (config.query) {
       appendAsQueryParams(url, config.query)
@@ -36,14 +40,16 @@ export class BaseApiRoute {
     }
     if (['POST', 'PATCH', 'PUT', 'DELETE'].includes(config.method)) {
       if (!config.omitCsrf) {
-        headers['x-csrftoken'] = Cookies.get('csrftoken');
+        headers['x-csrftoken'] = Cookies.get('csrftoken')
       }
     }
 
     if (getAuthType() === AuthType.TOKEN) {
       const authStore = getAuthStore() as TokenAuthStore
       if (authStore.state.tokenSet) {
-        headers['Authorization'] = `Bearer ${authStore.state.tokenSet.access_token}`
+        headers[
+          'Authorization'
+        ] = `Bearer ${authStore.state.tokenSet.access_token}`
       }
     }
 
@@ -64,10 +70,15 @@ export class BaseApiRoute {
  * @template E Is the response format for a single entity, defaults to an enveloped T
  * @template L Is the response format for a list of entities, defaults to an enveloped T[]
  */
-export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> extends BaseApiRoute {
-
-
-  async list(query: { [key: string]: any } = {}, embed: string[] = []): Promise<JSONResponse<L>> {
+export class ApiRoute<
+  T,
+  E = APIEnvelope<T>,
+  L = APIEnvelope<T[]>
+> extends BaseApiRoute {
+  async list(
+    query: { [key: string]: any } = {},
+    embed: string[] = []
+  ): Promise<JSONResponse<L>> {
     const response = await this.request({
       path: this.path,
       method: 'GET',
@@ -78,7 +89,11 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> extends BaseA
     return new JSONResponse<L>(response, data)
   }
 
-  async get(id: string, embed: string[] = [], query: { [key: string]: any } = {}): Promise<JSONResponse<E>> {
+  async get(
+    id: string,
+    embed: string[] = [],
+    query: { [key: string]: any } = {}
+  ): Promise<JSONResponse<E>> {
     const response = await this.request({
       path: `${this.path}${id}/`,
       method: 'GET',
@@ -89,7 +104,10 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> extends BaseA
     return new JSONResponse<E>(response, data)
   }
 
-  async create(body: Partial<T>, embed: string[] = []): Promise<JSONResponse<E>> {
+  async create(
+    body: Partial<T>,
+    embed: string[] = []
+  ): Promise<JSONResponse<E>> {
     const response = await this.request({
       path: this.path,
       method: 'POST',
@@ -100,18 +118,26 @@ export class ApiRoute<T, E = APIEnvelope<T>, L = APIEnvelope<T[]>> extends BaseA
     return new JSONResponse<E>(response, data)
   }
 
-  async update(id: string, body: T, embed: string[] = []): Promise<JSONResponse<E>> {
+  async update(
+    id: string,
+    body: T,
+    embed: string[] = []
+  ): Promise<JSONResponse<E>> {
     const response = await this.request({
       path: `${this.path}${id}/`,
       method: 'PUT',
       data: body,
-      embed,
+      embed
     })
     const data = response.data
     return new JSONResponse<E>(response, data)
   }
 
-  async patch(id: string, body: Partial<T>, embed: string[] = []): Promise<JSONResponse<E>> {
+  async patch(
+    id: string,
+    body: Partial<T>,
+    embed: string[] = []
+  ): Promise<JSONResponse<E>> {
     const response = await this.request({
       path: `${this.path}${id}/`,
       method: 'PATCH',

@@ -1,15 +1,9 @@
 <template>
-  <EventMarker
-    v-if="event?.location"
-    :event="event"
-  />
-  <FeatureLayer
-    :features="areaFeatures"
-  />
+  <EventMarker v-if="event?.location" :event="event" />
+  <FeatureLayer :features="areaFeatures" />
 </template>
 
 <script lang="ts">
-
 import { defineComponent } from 'vue'
 import FeatureLayer from 'src/map/AreaFeatureLayer'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
@@ -26,7 +20,7 @@ export default defineComponent({
   },
   mixins: [InjectMapMixin, EventDetailMixin],
   mounted() {
-    this.map?.fitBounds(this.zoomBox as BBox2d, {animate: false})
+    this.map?.fitBounds(this.zoomBox as BBox2d, { animate: false })
   },
   computed: {
     zoomBoxCopy(): BBox2d | null {
@@ -44,10 +38,6 @@ export default defineComponent({
     }
   }
 })
-
 </script>
 
-<style lang="scss" scoped>
-
-
-</style>
+<style lang="scss" scoped></style>

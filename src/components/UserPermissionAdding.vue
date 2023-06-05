@@ -15,7 +15,7 @@
       filled
       v-model="selectedPermissionType"
       :options="permissionTypeConditionalOptions"
-      :option-disable="(opt) => Object(opt) === opt ? opt.inactive : true"
+      :option-disable="(opt) => (Object(opt) === opt ? opt.inactive : true)"
       option-value="key"
       map-options
     >
@@ -31,9 +31,11 @@
   </div>
 </template>
 <script lang="ts">
-
 import { defineComponent, PropType } from 'vue'
-import { ContentTypeOption, ExtendedPermissionTypeOption } from 'pages/ManageUsers.vue'
+import {
+  ContentTypeOption,
+  ExtendedPermissionTypeOption
+} from 'pages/ManageUsers.vue'
 import { QBtn, QInput, QSelect } from 'quasar'
 import { ionChevronDown } from '@quasar/extras/ionicons-v5'
 import { ErrorBus, USER_NOT_FOUND } from 'src/utils/errorBus'
@@ -73,7 +75,9 @@ export default defineComponent({
     return {
       ionChevronDown,
       username: '' as string,
-      selectedPermissionType: this.permissionTypeConditionalOptions.find(({inactive}) => !inactive)
+      selectedPermissionType: this.permissionTypeConditionalOptions.find(
+        ({ inactive }) => !inactive
+      )
     }
   },
   emit: ['submit'],
@@ -90,7 +94,7 @@ export default defineComponent({
         this.$emit('submit')
       } catch (e) {
         if (this.$apiClient.isApiClientError(e) && e.response) {
-          const {status, data} = e.response
+          const { status, data } = e.response
           if (status === 409) {
             this.$q.notify({
               color: 'info',
@@ -102,17 +106,16 @@ export default defineComponent({
         } else {
           this.$q.notify({
             color: 'negative',
-            message: 'Beim Hinzufügen der Benutzer*in ist ein unbekannter Fehler aufgetreten'
+            message:
+              'Beim Hinzufügen der Benutzer*in ist ein unbekannter Fehler aufgetreten'
           })
         }
       }
     }
   }
-
 })
 </script>
 <style lang="scss" scoped>
-
 .new-user-group {
   margin: 0 0 0.5rem 0;
 }

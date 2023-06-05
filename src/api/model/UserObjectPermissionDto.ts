@@ -7,20 +7,24 @@ export enum PermissionCodename {
 }
 
 export interface PermissionTypeOption {
-  key: PermissionCodename,
-  label: string,
+  key: PermissionCodename
+  label: string
 }
 
-export const permissionTypeOptions: PermissionTypeOption[] = [{
-  key: PermissionCodename.NONE,
-  label: 'Keine Rechte'
-}, {
-  key: PermissionCodename.TEAM_CAPTAIN,
-  label: 'Teamcaptain'
-}, {
-  key: PermissionCodename.MANAGE_EVENTS,
-  label: 'Koordinator*in'
-}]
+export const permissionTypeOptions: PermissionTypeOption[] = [
+  {
+    key: PermissionCodename.NONE,
+    label: 'Keine Rechte'
+  },
+  {
+    key: PermissionCodename.TEAM_CAPTAIN,
+    label: 'Teamcaptain'
+  },
+  {
+    key: PermissionCodename.MANAGE_EVENTS,
+    label: 'Koordinator*in'
+  }
+]
 
 export interface UserObjectPermissionDto {
   id: number

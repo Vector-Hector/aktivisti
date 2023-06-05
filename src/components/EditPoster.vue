@@ -1,11 +1,12 @@
 <template>
-
   <LocationSelect
     v-if="editLocation"
     :location="poster.location"
-    @update:location="updatePoster({location: $event})"
+    @update:location="updatePoster({ location: $event })"
     :location-description="poster.location_description"
-    @update:location-description="updatePoster({location_description: $event})"
+    @update:location-description="
+      updatePoster({ location_description: $event })
+    "
     :error="errors.location?.[0]"
   />
   <QInput
@@ -46,9 +47,12 @@
   />
 </template>
 <script lang="ts">
-
 import { defineComponent, PropType } from 'vue'
-import { PosterDto, posterMountOptions, posterStatusOptions } from 'src/api/model/PosterDto'
+import {
+  PosterDto,
+  posterMountOptions,
+  posterStatusOptions
+} from 'src/api/model/PosterDto'
 import { QInput, QSelect } from 'quasar'
 import { GeocodeResult } from 'src/types/GeocodeResult'
 import { cloneDeep } from 'lodash-es'
@@ -108,7 +112,7 @@ export default defineComponent({
   },
   methods: {
     updatePoster(poster: Partial<PosterDto>) {
-      this.localPoster = {...this.localPoster, ...poster}
+      this.localPoster = { ...this.localPoster, ...poster }
       this.$emit('update:poster', this.localPoster)
     }
   }

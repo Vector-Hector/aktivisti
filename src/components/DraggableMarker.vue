@@ -9,13 +9,11 @@
   />
 </template>
 <script lang="ts">
-
 import { defineComponent } from 'vue'
 import { MapEventBus } from 'src/map/Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { QIcon } from 'quasar'
-
 
 export default defineComponent({
   name: 'DraggableMarker',
@@ -30,11 +28,14 @@ export default defineComponent({
     }
   },
   created() {
-    MapEventBus.on('drop', (event: {originalEvent: any, coordinates: LocationDto}) => {
-      if (event.originalEvent.dataTransfer.getData('id') === this.id) {
-        this.$emit('dropped', event)
+    MapEventBus.on(
+      'drop',
+      (event: { originalEvent: any; coordinates: LocationDto }) => {
+        if (event.originalEvent.dataTransfer.getData('id') === this.id) {
+          this.$emit('dropped', event)
+        }
       }
-    })
+    )
   },
   methods: {
     onDragStart(event: any) {
@@ -46,7 +47,6 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-
 .dragging {
   position: fixed;
 }

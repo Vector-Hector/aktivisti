@@ -1,13 +1,9 @@
 <template>
-  <div
-    class="error row inline no-outline"
-    v-if="error"
-  >
+  <div class="error row inline no-outline" v-if="error">
     {{ error }}
   </div>
 </template>
 <script lang="ts">
-
 import { defineComponent, PropType } from 'vue'
 
 export default defineComponent({
