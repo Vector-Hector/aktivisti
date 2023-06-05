@@ -17,7 +17,7 @@
           <QItemSection side>
             <div class="row">
               <QIcon
-                v-if="completedTargetIds.includes(address.osm_id)"
+                v-if="completedTargetIds.includes(address.osm_id.toString())"
                 class="col finished-icon item-icon"
                 :name="ionCheckmarkCircle"
               />
