@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { onBeforeMount, ref } from 'vue'
 import EventMetricChart from 'components/reportCharts/eventMetrics/EventMetricChart.vue'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
@@ -7,9 +6,9 @@ import { EventTypes } from 'src/api/model/EventTypes'
 import { apiClient } from 'src/api/ApiClient'
 
 interface Props {
-  campaignId: number,
-  stateAssociationId?: number,
-  subAssociationId?: number,
+  campaignId: number
+  stateAssociationId?: number
+  subAssociationId?: number
 }
 
 const props = defineProps<Props>()
@@ -21,8 +20,8 @@ onBeforeMount(async () => {
 })
 
 async function fetchEventMetric(eventType: EventTypes) {
-  return (await apiClient.eventMetrics.list({available_for_types: eventType})).payload.data
-
+  return (await apiClient.eventMetrics.list({ available_for_types: eventType }))
+    .payload.data
 }
 </script>
 <template>

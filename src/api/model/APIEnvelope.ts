@@ -17,6 +17,6 @@ export interface PermissionHintsDto {
 export interface APIEnvelope<T, E = any> {
   data: T
   embedded: E
-  pagination?: Pagination,
+  pagination?: Pagination
   permissions: PermissionHintsDto
 }

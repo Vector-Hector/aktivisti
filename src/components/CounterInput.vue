@@ -35,7 +35,6 @@ import { uiStore } from 'src/store/UiStore'
 import { ionAdd, ionRemove } from '@quasar/extras/ionicons-v5'
 import { QBtn, QInput } from 'quasar'
 
-
 export default defineComponent({
   name: 'CounterInput',
   components: {
@@ -105,8 +104,7 @@ export default defineComponent({
   margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
-:deep(input[type=number]) {
+:deep(input[type='number']) {
   -moz-appearance: textfield; /* Firefox */
 }
-
 </style>

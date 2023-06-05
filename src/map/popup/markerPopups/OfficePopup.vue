@@ -12,7 +12,6 @@
   </MarkerPopup>
 </template>
 <script lang="ts">
-
 import { defineComponent, PropType } from 'vue'
 import MarkerPopup from 'src/map/popup/MarkerPopup.vue'
 import { QBtn } from 'quasar'
@@ -20,7 +19,8 @@ import { QBtn } from 'quasar'
 export default defineComponent({
   name: 'OfficePopup',
   components: {
-    MarkerPopup, QBtn
+    MarkerPopup,
+    QBtn
   },
   props: {
     address: {
@@ -31,7 +31,6 @@ export default defineComponent({
       type: Number as PropType<number>,
       required: true
     }
-
   }
 })
 </script>

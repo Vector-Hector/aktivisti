@@ -5,7 +5,7 @@
     @load="loadData"
     ref="infiniteList"
   >
-    <template v-slot:item="{item}">
+    <template v-slot:item="{ item }">
       <EventListItem
         clickable
         v-ripple
@@ -16,9 +16,7 @@
         :show-management-control-buttons="showManagementControlButtons"
       />
     </template>
-    <template v-slot:emptyList>
-      Keine Aktionen im Gebiet gefunden
-    </template>
+    <template v-slot:emptyList> Keine Aktionen im Gebiet gefunden </template>
   </InfiniteList>
 </template>
 
@@ -32,7 +30,6 @@ import { distinctBy } from 'src/utils/array'
 import EventListItem from 'components/EventListItem.vue'
 import InfiniteList from 'components/InfiniteList.vue'
 
-
 export default defineComponent({
   name: 'EventList',
   components: {
@@ -41,7 +38,7 @@ export default defineComponent({
   },
   props: {
     filterParams: {
-      type: Object as PropType<{[key: string]: string}>,
+      type: Object as PropType<{ [key: string]: string }>,
       required: true
     },
     events: {
@@ -65,18 +62,25 @@ export default defineComponent({
     },
     showManagementControlButtons: Boolean
   },
-  emits: ['clickOnEvent','update:events', 'update:delete', 'update:pagination'],
+  emits: [
+    'clickOnEvent',
+    'update:events',
+    'update:delete',
+    'update:pagination'
+  ],
   computed: {
     isDisabled(): boolean {
       let filteredEventsCount = 0
-      if (this.filter){
+      if (this.filter) {
         filteredEventsCount = this.events.filter(this.filter).length
       }
-      return this.pagination?.total ? (this.pagination?.total <= this.events.length + filteredEventsCount) : false
+      return this.pagination?.total
+        ? this.pagination?.total <= this.events.length + filteredEventsCount
+        : false
     }
   },
   methods: {
-    handleClickOnEvent(event: EventDto){
+    handleClickOnEvent(event: EventDto) {
       this.$emit('clickOnEvent', event)
     },
     handleDeleteEvent() {
@@ -86,7 +90,7 @@ export default defineComponent({
       const response = await this.$apiClient.events.list({
         ...this.filterParams,
         limit: EVENT_LIST_CHUNK_SIZE,
-        offset: (this.events?.length ?? 0)
+        offset: this.events?.length ?? 0
       })
       this.$emit('update:pagination', response.payload.pagination)
       return response.payload.data
@@ -96,17 +100,20 @@ export default defineComponent({
         return
       }
       const moreEvents = await this.getEvents()
-      let consolidatedEvents = distinctBy(this.events?.concat(moreEvents), (item: EventDto) => item.id)
-      if (this.filter){
+      let consolidatedEvents = distinctBy(
+        this.events?.concat(moreEvents),
+        (item: EventDto) => item.id
+      )
+      if (this.filter) {
         consolidatedEvents = consolidatedEvents.filter(this.filter)
       }
       this.$emit('update:events', consolidatedEvents)
       done()
     },
-    resetScrollPosition(){
+    resetScrollPosition() {
       // @ts-ignore
       this.$refs.infiniteList.resetScrollPosition()
     }
-  },
+  }
 })
 </script>

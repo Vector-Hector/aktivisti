@@ -4,7 +4,11 @@ import { StateAssociationDto } from 'src/api/model/StateAssociationDto'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { apiClient } from 'src/api/ApiClient'
 
-export function useReportScope(campaignId: number, stateAssociationId: number | undefined, subAssociationId: number | undefined) {
+export function useReportScope(
+  campaignId: number,
+  stateAssociationId: number | undefined,
+  subAssociationId: number | undefined
+) {
   const campaign = ref<CampaignDto | null>(null)
   const stateAssociation = ref<StateAssociationDto | null>(null)
   const subAssociation = ref<SubAssociationDto | null>(null)
@@ -23,7 +27,11 @@ export function useReportScope(campaignId: number, stateAssociationId: number | 
   }
 
   async function fetchCampaign(id: number) {
-    return (await apiClient.campaigns.get(id.toString(),[], {include_expired: true})).payload.data
+    return (
+      await apiClient.campaigns.get(id.toString(), [], {
+        include_expired: true
+      })
+    ).payload.data
   }
 
   async function fetchStateAssociation(id: number) {

@@ -8,12 +8,14 @@
     v-if="isCampaignFilterable"
     :model-value="filterParams.campaigns?.[0]"
     :options="campaigns"
-    @update:model-value="updateCampaign" />
+    @update:model-value="updateCampaign"
+  />
   <MultipleSubAssociationFilter
     v-if="isSubAssociationFilterable"
     :model-value="filterParams.sub_association"
     @update:model-value="updateSubAssociations"
-    :options="subAssociations">
+    :options="subAssociations"
+  >
   </MultipleSubAssociationFilter>
   <SortOrderFilter
     v-if="isSortOrderConfigurable"
@@ -55,7 +57,7 @@ export default defineComponent({
     SortOrderFilter,
     EventStatusFilter,
     CampaignFilter,
-    MultipleSubAssociationFilter,
+    MultipleSubAssociationFilter
   },
   props: {
     filterParams: {
@@ -64,36 +66,36 @@ export default defineComponent({
     },
     campaigns: {
       type: Array as PropType<CampaignDto[]>,
-      required: false,
+      required: false
     },
     subAssociations: {
       type: Array as PropType<SubAssociationDto[]>,
       required: false
     },
-    isOwnershipFilterable:{
+    isOwnershipFilterable: {
       type: Boolean as PropType<boolean>,
-      default: false,
+      default: false
     },
     isStatusFilterable: {
       type: Boolean as PropType<boolean>,
-      default: true,
+      default: true
     },
     isCampaignFilterable: {
       type: Boolean as PropType<boolean>,
-      default: true,
+      default: true
     },
     isSubAssociationFilterable: {
       type: Boolean as PropType<boolean>,
-      default: true,
+      default: true
     },
     isSortOrderConfigurable: {
       type: Boolean as PropType<boolean>,
-      default: true,
+      default: true
     },
     isEventTypeFilterable: {
       type: Boolean as PropType<boolean>,
-      default: true,
-    },
+      default: true
+    }
   },
   emits: ['update:filterParams'],
   data() {
@@ -103,29 +105,29 @@ export default defineComponent({
     }
   },
   methods: {
-    updateFilterParams(value: EventFilterParams){
+    updateFilterParams(value: EventFilterParams) {
       this.$emit('update:filterParams', {
         ...this.filterParams,
         ...value
       })
     },
     updateEventType(value: EventTypes) {
-      this.updateFilterParams({event_type: value ? value : undefined})
+      this.updateFilterParams({ event_type: value ? value : undefined })
     },
     updateSubAssociations(value: number[]) {
-      this.updateFilterParams({sub_association: value})
+      this.updateFilterParams({ sub_association: value })
     },
     updateCampaign(value: number) {
       this.updateFilterParams({ campaigns: value ? [value] : undefined })
     },
     updateSorting(value: SortOption) {
-      this.updateFilterParams({order_by: value})
+      this.updateFilterParams({ order_by: value })
     },
     updateStatus(value: EventStatus) {
-      this.updateFilterParams({status: value})
+      this.updateFilterParams({ status: value })
     },
     updateOwnership(value: boolean) {
-      this.updateFilterParams({is_owner: value})
+      this.updateFilterParams({ is_owner: value })
     }
   }
 })

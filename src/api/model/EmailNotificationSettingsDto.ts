@@ -1,4 +1,3 @@
-
 export interface EmailNotificationSettingsDto {
   id?: number
   user: number

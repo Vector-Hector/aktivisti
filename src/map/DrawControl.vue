@@ -5,7 +5,11 @@ import { MapInject } from './Map.vue'
 import { Feature } from 'geojson'
 import { difference, isEqual } from 'lodash-es'
 
-type ForwardedEvents = 'draw:create' | 'draw:update' | 'draw:delete' | 'draw:selectionchange'
+type ForwardedEvents =
+  | 'draw:create'
+  | 'draw:update'
+  | 'draw:delete'
+  | 'draw:selectionchange'
 
 export default defineComponent({
   name: 'DrawControl',
@@ -27,8 +31,14 @@ export default defineComponent({
       default: undefined
     }
   },
-  emits: ['update:features', 'draw:create', 'draw:update', 'draw:delete', 'draw:selectionchange'],
-  setup(props, {emit}) {
+  emits: [
+    'update:features',
+    'draw:create',
+    'draw:update',
+    'draw:delete',
+    'draw:selectionchange'
+  ],
+  setup(props, { emit }) {
     const map = inject(MapInject)!
     const drawControl = new MapboxDraw({
       userProperties: true,
@@ -39,29 +49,46 @@ export default defineComponent({
 
     map.value.addControl(drawControl, 'top-right')
 
-    watch(() => props.features, (newFeatures) => {
-      for (const feature of newFeatures) {
-        const existentFeature = drawControl.get(feature.id as string)
-        if (!isEqual(feature, existentFeature)) {
-          drawControl.add(feature)
-          // invoke this function to indicate feature change
-          drawControl.setFeatureProperty(feature.id as string, 'changed', true)
+    watch(
+      () => props.features,
+      (newFeatures) => {
+        for (const feature of newFeatures) {
+          const existentFeature = drawControl.get(feature.id as string)
+          if (!isEqual(feature, existentFeature)) {
+            drawControl.add(feature)
+            // invoke this function to indicate feature change
+            drawControl.setFeatureProperty(
+              feature.id as string,
+              'changed',
+              true
+            )
+          }
         }
-      }
-      // determine deleted features
-      const idsToDelete = difference(drawControl.getAll().features.map(({id}) => id), newFeatures.map(({id}) => id))
-      drawControl.delete(idsToDelete as string[])
-    }, {immediate: true})
+        // determine deleted features
+        const idsToDelete = difference(
+          drawControl.getAll().features.map(({ id }) => id),
+          newFeatures.map(({ id }) => id)
+        )
+        drawControl.delete(idsToDelete as string[])
+      },
+      { immediate: true }
+    )
 
-
-    const forwardEventAndUpdateFeatures = (eventName: ForwardedEvents, event: any) => {
+    const forwardEventAndUpdateFeatures = (
+      eventName: ForwardedEvents,
+      event: any
+    ) => {
       emit(eventName, event)
       emit('update:features', drawControl.getAll().features)
     }
-    const createListener = (event: any) => forwardEventAndUpdateFeatures('draw:create', event)
-    const deleteListener = (event: any) => forwardEventAndUpdateFeatures('draw:delete', event)
-    const updateListener = (event: any) => forwardEventAndUpdateFeatures('draw:update', event)
-    const selectionChangeListener = (event: any) => forwardEventAndUpdateFeatures('draw:selectionchange', event)
+    const createListener = (event: any) =>
+      forwardEventAndUpdateFeatures('draw:create', event)
+    const deleteListener = (event: any) =>
+      forwardEventAndUpdateFeatures('draw:delete', event)
+    const updateListener = (event: any) =>
+      forwardEventAndUpdateFeatures('draw:update', event)
+    const selectionChangeListener = (event: any) =>
+      forwardEventAndUpdateFeatures('draw:selectionchange', event)
     map.value
       .on('draw.create', createListener)
       .on('draw.delete', deleteListener)
@@ -86,5 +113,4 @@ export default defineComponent({
     return h('span')
   }
 })
-
 </script>

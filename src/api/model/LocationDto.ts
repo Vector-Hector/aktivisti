@@ -1,4 +1,4 @@
 export interface LocationDto {
-  lat: number,
+  lat: number
   lng: number
 }

@@ -7,24 +7,18 @@
     label="Teilnehmer*innen"
     :options="onlyMemberParticipants"
     option-label="user_username"
-    :display-value="eventAreaParticipants.map(({user_username}) => user_username).join(',')"
+    :display-value="
+      eventAreaParticipants.map(({ user_username }) => user_username).join(',')
+    "
   />
   <div
     v-else-if="personalParticipationPermissions?.assign_event_area?.POST"
     class="join-buttons"
   >
-    <QBtn
-      v-if="isUserEventAreaParticipant"
-      @click="leaveArea"
-      flat
-    >
+    <QBtn v-if="isUserEventAreaParticipant" @click="leaveArea" flat>
       Doch nicht hier mitmachen
     </QBtn>
-    <QBtn
-      v-else
-      color="primary"
-      @click="joinArea"
-    >
+    <QBtn v-else color="primary" @click="joinArea">
       In diesem Gebiet mitmachen
     </QBtn>
   </div>
@@ -48,7 +42,7 @@ export default defineComponent({
       return userStore.getState().user
     },
     eventAreaParticipants(): EventParticipationDto[] {
-      return this.participations.filter(({assigned_event_areas}) => {
+      return this.participations.filter(({ assigned_event_areas }) => {
         return assigned_event_areas.includes(this.eventArea.id!)
       })
     },
@@ -57,33 +51,40 @@ export default defineComponent({
     },
     isUserEventAreaParticipant(): boolean {
       return (
-        this.user !== null
-        && this.personalParticipation?.assigned_event_areas.includes(this.eventArea.id!)
-      ) ?? false
+        (this.user !== null &&
+          this.personalParticipation?.assigned_event_areas.includes(
+            this.eventArea.id!
+          )) ??
+        false
+      )
     },
     onlyMemberParticipants(): EventParticipationDto[] {
-      return this.participations.filter(item => item.user_is_member)
+      return this.participations.filter((item) => item.user_is_member)
     }
   },
   methods: {
     async joinArea() {
       if (this.personalParticipation) {
-        this.personalParticipation = (await this.$apiClient.eventParticipations.assignEventArea(
-          this.personalParticipation.id.toString(),
-          this.eventArea.id!
-        )).payload.data
+        this.personalParticipation = (
+          await this.$apiClient.eventParticipations.assignEventArea(
+            this.personalParticipation.id.toString(),
+            this.eventArea.id!
+          )
+        ).payload.data
       }
     },
     async leaveArea() {
       if (this.personalParticipation) {
-        this.personalParticipation = (await this.$apiClient.eventParticipations.unassignEventArea(
-          this.personalParticipation.id.toString(),
-          this.eventArea.id!
-        )).payload.data
+        this.personalParticipation = (
+          await this.$apiClient.eventParticipations.unassignEventArea(
+            this.personalParticipation.id.toString(),
+            this.eventArea.id!
+          )
+        ).payload.data
       }
     },
     async updateAreaParticipations(participations: EventParticipationDto[]) {
-      const participants = participations.map(({user}) => user)
+      const participants = participations.map(({ user }) => user)
       const changedParticipations: EventParticipationDto[] = []
 
       try {
@@ -93,18 +94,34 @@ export default defineComponent({
             !participation.assigned_event_areas.includes(this.eventArea.id!)
           ) {
             changedParticipations.push(
-              (await this.$apiClient.eventParticipations.patch(participation.id.toString(), {
-                assigned_event_areas: [...participation.assigned_event_areas, this.eventArea.id!]
-              })).payload.data
+              (
+                await this.$apiClient.eventParticipations.patch(
+                  participation.id.toString(),
+                  {
+                    assigned_event_areas: [
+                      ...participation.assigned_event_areas,
+                      this.eventArea.id!
+                    ]
+                  }
+                )
+              ).payload.data
             )
           } else if (
             !participants.includes(participation.user) &&
             participation.assigned_event_areas.includes(this.eventArea.id!)
           ) {
             changedParticipations.push(
-              (await this.$apiClient.eventParticipations.patch(participation.id.toString(), {
-                assigned_event_areas: participation.assigned_event_areas.filter((id) => id !== this.eventArea?.id)
-              })).payload.data
+              (
+                await this.$apiClient.eventParticipations.patch(
+                  participation.id.toString(),
+                  {
+                    assigned_event_areas:
+                      participation.assigned_event_areas.filter(
+                        (id) => id !== this.eventArea?.id
+                      )
+                  }
+                )
+              ).payload.data
             )
           }
         }
@@ -118,7 +135,8 @@ export default defineComponent({
           await this.refreshParticipants()
         } else {
           this.$q.notify({
-            message: 'Unbekannter fehler beim Aktualisieren der Teilnehmer*innen',
+            message:
+              'Unbekannter fehler beim Aktualisieren der Teilnehmer*innen',
             timeout: 2000,
             color: 'negative'
           })
@@ -128,12 +146,13 @@ export default defineComponent({
     },
     updateParticipations(updatedParticipations: EventParticipationDto[]) {
       this.participations = this.participations.map((item) => {
-        const changedItem = updatedParticipations.find(({id}) => item.id === id)
+        const changedItem = updatedParticipations.find(
+          ({ id }) => item.id === id
+        )
         return changedItem ?? item
       })
     }
   }
 })
 </script>
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

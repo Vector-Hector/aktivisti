@@ -5,11 +5,12 @@ interface OverviewStoreState<ItemsType, FilterParamsType> {
   filterParams: FilterParamsType
   items: ItemsType[]
   pagination: Pagination
-  itemHoveredOver: ItemsType| null
+  itemHoveredOver: ItemsType | null
 }
 
-
-export class OverviewStore<ItemsType,FilterParamsType> extends Store<OverviewStoreState<ItemsType, FilterParamsType>> {
+export class OverviewStore<ItemsType, FilterParamsType> extends Store<
+  OverviewStoreState<ItemsType, FilterParamsType>
+> {
   constructor(default_pagination: Pagination) {
     super()
     this.state.pagination = default_pagination
@@ -17,7 +18,7 @@ export class OverviewStore<ItemsType,FilterParamsType> extends Store<OverviewSto
 
   protected data(): OverviewStoreState<ItemsType, FilterParamsType> {
     return {
-      filterParams: {} as FilterParamsType ,
+      filterParams: {} as FilterParamsType,
       items: [] as ItemsType[],
       pagination: {} as Pagination,
       itemHoveredOver: null as ItemsType | null
@@ -52,8 +53,7 @@ export class OverviewStore<ItemsType,FilterParamsType> extends Store<OverviewSto
     return this.getState().itemHoveredOver
   }
 
-  public set itemHoveredOver(item:ItemsType|null) {
+  public set itemHoveredOver(item: ItemsType | null) {
     this.state.itemHoveredOver = item
   }
-
 }

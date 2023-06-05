@@ -4,7 +4,6 @@ import { ChangeEmailRequestDto } from 'src/api/model/ChangeEmailRequestDto'
 import { ChangePasswordDto } from 'src/api/model/ChangePasswordDto'
 import { ChangeUsernameRequestDto } from 'src/api/model/ChangeUsernameRequestDto'
 
-
 export class AccountRoute extends BaseApiRoute {
   async changePassword(data: ChangePasswordDto): Promise<JSONResponse<null>> {
     const response = await this.request({

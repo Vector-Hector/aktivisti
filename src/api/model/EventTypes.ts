@@ -5,23 +5,27 @@ export enum EventTypes {
   FLYERS = 'F'
 }
 
-export const eventTypeOptions: {key: EventTypes, label: string}[] = [{
-  key: EventTypes.DOOR_TO_DOOR,
-  label: 'Haustürgespräch'
-}, {
-  key: EventTypes.POSTERS,
-  label: 'Plakate'
-}, {
-  key: EventTypes.GENERIC,
-  label: 'Veranstaltung'
-}, {
-  key: EventTypes.FLYERS,
-  label: 'Flyer'
-}
+export const eventTypeOptions: { key: EventTypes; label: string }[] = [
+  {
+    key: EventTypes.DOOR_TO_DOOR,
+    label: 'Haustürgespräch'
+  },
+  {
+    key: EventTypes.POSTERS,
+    label: 'Plakate'
+  },
+  {
+    key: EventTypes.GENERIC,
+    label: 'Veranstaltung'
+  },
+  {
+    key: EventTypes.FLYERS,
+    label: 'Flyer'
+  }
 ]
 
 export class EventTypesUtil {
   static getLabel(eventType: EventTypes): string {
-    return eventTypeOptions.find(({key}) => key === eventType)!.label
+    return eventTypeOptions.find(({ key }) => key === eventType)!.label
   }
 }

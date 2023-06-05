@@ -1,7 +1,5 @@
 <template>
-  <router-view
-    name="map"
-  />
+  <router-view name="map" />
 </template>
 
 <script lang="ts">
@@ -12,7 +10,6 @@ export default defineComponent({
   name: 'EventDetailMap',
   mixins: [EventDetailMixin]
 })
-
 </script>
 
 <style lang="scss" scoped>
@@ -52,13 +49,11 @@ label {
 }
 
 .content {
-  flex: 1
+  flex: 1;
 }
 
 .map-container {
   flex: 1;
   display: flex;
 }
-
-
 </style>

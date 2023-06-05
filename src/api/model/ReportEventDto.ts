@@ -1,7 +1,7 @@
-import {EventTypes} from 'src/api/model/EventTypes'
+import { EventTypes } from 'src/api/model/EventTypes'
 
 export interface ReportEventDto {
-  count: number,
-  day: string,
+  count: number
+  day: string
   type: EventTypes
 }

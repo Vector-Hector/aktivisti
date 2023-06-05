@@ -1,18 +1,14 @@
 <template>
   <span v-for="office in offices" :key="office.id">
-  <OfficeMarker
-    :is-grayed-out="true"
-    :location="office.location"
-  >
+    <OfficeMarker :is-grayed-out="true" :location="office.location">
       <OfficePopup
         :address="office.location_description"
         :office-id="office.id"
       />
-  </OfficeMarker>
+    </OfficeMarker>
   </span>
 </template>
 <script lang="ts">
-
 import { defineComponent, inject, onUnmounted, ref } from 'vue'
 import OfficeMarker from 'components/OfficeMarker.vue'
 import { OfficeDto } from 'src/api/model/OfficeDto'
@@ -24,7 +20,7 @@ import OfficePopup from 'src/map/popup/markerPopups/OfficePopup.vue'
 
 export default defineComponent({
   name: 'OfficeMarkerLayer',
-  components: {OfficeMarker, OfficePopup},
+  components: { OfficeMarker, OfficePopup },
   data() {
     return {
       offices: [] as OfficeDto[]
@@ -54,7 +50,9 @@ export default defineComponent({
   methods: {
     async updateOffices(bbox: BBox2d) {
       if (this.map.getZoom() && this.map.getZoom() > 13) {
-        const response = await this.$apiClient.offices.list({within: bboxPolygon(bbox).geometry})
+        const response = await this.$apiClient.offices.list({
+          within: bboxPolygon(bbox).geometry
+        })
         this.offices = response.payload.data
       } else {
         this.offices = []
@@ -67,5 +65,4 @@ export default defineComponent({
     }
   }
 })
-
 </script>

@@ -1,8 +1,6 @@
 <template>
   <div class="app-title">
-    <QToolbarTitle
-      size="small"
-    >
+    <QToolbarTitle size="small">
       {{ subtitle }}
     </QToolbarTitle>
     <QToolbarTitle>
@@ -14,7 +12,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { QToolbarTitle } from 'quasar'
-
 
 export default defineComponent({
   name: 'AppTitle',
@@ -31,7 +28,7 @@ export default defineComponent({
       type: String as PropType<string | undefined>,
       required: false,
       default: undefined
-    },
+    }
   },
   data() {
     return {}
@@ -39,6 +36,4 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

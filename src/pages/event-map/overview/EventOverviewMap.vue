@@ -1,31 +1,20 @@
 <template>
-  <Geocoder
-    :collapsed="true"
-    position="top-left"
-    :countries="['de']"
-  />
+  <Geocoder :collapsed="true" position="top-left" :countries="['de']" />
   <span v-if="clusterMode">
-    <ClusterLayer
-      :clusters="clusters"
-    />
+    <ClusterLayer :clusters="clusters" />
   </span>
-  <span
-    v-else
-  >
-    <span
-      v-for="event in events"
-      :key="event.id"
-    >
-      <EventMarker
-        :event="event"
-      >
+  <span v-else>
+    <span v-for="event in events" :key="event.id">
+      <EventMarker :event="event">
         <MarkerPopup>
           <div class="popup-contents">
             <span class="popup-title">{{ event.name }}</span>
             <span class="popup-type">
               {{ getEventTypeLabel(event.event_type) }}
             </span>
-            <span class="popup-campaign">{{ event.campaigns?.map(({name}) => name).join(',') }}</span>
+            <span class="popup-campaign">{{
+              event.campaigns?.map(({ name }) => name).join(',')
+            }}</span>
 
             <span class="popup-date">
               {{ new Date(event.start_date).toLocaleString() }}
@@ -71,7 +60,9 @@ export default defineComponent({
     const map = inject(MapInject)!
 
     const updateBounds = () => {
-      eventOverviewStore.setBbox(map.value?.getBounds().toArray().flat() as BBox2d)
+      eventOverviewStore.setBbox(
+        map.value?.getBounds().toArray().flat() as BBox2d
+      )
     }
     map.value.on('zoomend', updateBounds)
     map.value.on('moveend', updateBounds)
@@ -86,7 +77,10 @@ export default defineComponent({
   },
   computed: {
     clusterTotal(): number {
-      return this.clusters.reduce((acc: number, item: ClusterDto) => acc + item.count, 0)
+      return this.clusters.reduce(
+        (acc: number, item: ClusterDto) => acc + item.count,
+        0
+      )
     },
     clusterMode(): boolean {
       return this.clusterTotal > EVENT_MAP_MAX_EVENTS
@@ -94,10 +88,11 @@ export default defineComponent({
   },
   watch: {
     clusterMode(isClusterMode) {
-      if (isClusterMode && ((this.map?.getZoom() ?? 0) > 15)) {
+      if (isClusterMode && (this.map?.getZoom() ?? 0) > 15) {
         this.$q.notify({
           multiLine: true,
-          message: '<h5 class="too-many-events-headline">Hier ist zuviel los</h5>' +
+          message:
+            '<h5 class="too-many-events-headline">Hier ist zuviel los</h5>' +
             'Nicht alle Aktionen werden angezeigt, da dies zuviel für die Karte wäre. Nutze die Listenansicht',
           html: true,
           group: 'too-many-events-alert',
@@ -108,13 +103,12 @@ export default defineComponent({
   },
   methods: {
     getEventTypeLabel(eventType: EventTypes): string | undefined {
-      return eventTypeOptions.find(({key}) => key === eventType)?.label
+      return eventTypeOptions.find(({ key }) => key === eventType)?.label
     }
   },
   beforeMount() {
     const previousZoom = uiStore.getState().mapZoom
-    if (previousZoom != null)
-      this.map.setZoom(previousZoom, {})
+    if (previousZoom != null) this.map.setZoom(previousZoom, {})
     uiStore.setMapZoom(null)
   },
   beforeUnmount() {

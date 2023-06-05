@@ -28,7 +28,8 @@ export default defineComponent({
   },
   emits: [
     // REQUIRED
-    'ok', 'hide'
+    'ok',
+    'hide'
   ],
   props: {
     eventId: {

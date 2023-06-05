@@ -1,13 +1,11 @@
 <template>
-  <QScrollArea
-    class="d-flex flex-fill"
-  >
+  <QScrollArea class="d-flex flex-fill">
     <QPage>
       <div class="container">
         <p class="description-text">
-          Du willst eine Aktion in Deinem Kreisverband planen und andere dazu einladen?
-          Dann brauchst Du Koordination-Rechte.
-          Schreibe uns kurz, was Du für Veranstaltungen planen willst - wir melden uns bei Dir.
+          Du willst eine Aktion in Deinem Kreisverband planen und andere dazu
+          einladen? Dann brauchst Du Koordination-Rechte. Schreibe uns kurz, was
+          Du für Veranstaltungen planen willst - wir melden uns bei Dir.
         </p>
         <QInput
           stack-label
@@ -15,12 +13,7 @@
           v-model="localUser.username"
           label="Benutzer*innenname"
         />
-        <QInput
-          stack-label
-          disable
-          v-model="localUser.email"
-          label="E-Mail"
-        />
+        <QInput stack-label disable v-model="localUser.email" label="E-Mail" />
         <MultipleSubAssociationFilter
           v-model="selectedSubAssociation"
           :multiple="false"
@@ -48,12 +41,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { cloneDeep } from 'lodash-es'
-import {
-  QBtn,
-  QInput,
-  QPage,
-  QScrollArea,
-} from 'quasar'
+import { QBtn, QInput, QPage, QScrollArea } from 'quasar'
 import { userStore } from 'src/store/UserStore'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import MultipleSubAssociationFilter from 'components/filterInput/filters/MultipleSubAssociationFilter.vue'
@@ -83,7 +71,9 @@ export default defineComponent({
   },
   methods: {
     async getSubAssociations() {
-      this.subAssociations = (await this.$apiClient.subAssociations.list()).payload.data
+      this.subAssociations = (
+        await this.$apiClient.subAssociations.list()
+      ).payload.data
     },
     async requestCoordinatorPermissions() {
       try {
@@ -93,15 +83,16 @@ export default defineComponent({
         })
         this.$q.notify({
           color: 'positive',
-          message: 'Vielen Dank für deine Nachricht. Wir melden uns bald bei dir.'
+          message:
+            'Vielen Dank für deine Nachricht. Wir melden uns bald bei dir.'
         })
-      }
-      catch (e) {
+      } catch (e) {
         if (this.$apiClient.isApiClientError(e) && e.response?.status === 400) {
           this.errors = e.response.data
           this.$q.notify({
-            message: 'Deine Nachricht konnte nicht versendet werden, bitte prüfe deine Angaben.',
-            color: 'negative',
+            message:
+              'Deine Nachricht konnte nicht versendet werden, bitte prüfe deine Angaben.',
+            color: 'negative'
           })
         } else {
           this.$q.notify({

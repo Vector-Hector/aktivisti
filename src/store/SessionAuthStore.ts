@@ -4,9 +4,7 @@ import { BaseAuthStore, BaseAuthStoreState } from 'src/store/BaseAuthStore'
 
 type SessionAuthStoreState = BaseAuthStoreState
 
-
 class SessionAuthStore extends BaseAuthStore<SessionAuthStoreState> {
-
   protected data(): SessionAuthStoreState {
     return {
       userId: null

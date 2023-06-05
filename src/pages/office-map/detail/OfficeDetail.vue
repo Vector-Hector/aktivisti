@@ -1,8 +1,5 @@
 <template>
-  <QScrollArea
-    class="d-flex flex-fill"
-    v-if="office"
-  >
+  <QScrollArea class="d-flex flex-fill" v-if="office">
     <div class="container q-gutter-y-md q-py-sm">
       <div class="row q-gutter-sm">
         <div class="col">
@@ -20,7 +17,12 @@
                 <b>Internetseite:</b>
               </div>
               <div class="col-8">
-                <a target="_blank" class="primary-link office-link" :href="office.link">{{ office.link }}</a>
+                <a
+                  target="_blank"
+                  class="primary-link office-link"
+                  :href="office.link"
+                  >{{ office.link }}</a
+                >
               </div>
             </template>
             <template v-if="office.email">
@@ -36,14 +38,16 @@
                 <b>Telefon:</b>
               </div>
               <div class="col-8">
-                <a :href="'tel:' + office.phone_number">{{ office.phone_number }}</a>
+                <a :href="'tel:' + office.phone_number">{{
+                  office.phone_number
+                }}</a>
               </div>
             </template>
             <template v-if="office.description">
               <div class="row">
                 <div class="col-12 office-description">
-                  <b>Beschreibung:</b><br>
-                  {{office.description }}
+                  <b>Beschreibung:</b><br />
+                  {{ office.description }}
                 </div>
               </div>
             </template>
@@ -54,7 +58,6 @@
   </QScrollArea>
 </template>
 <script lang="ts">
-
 import { defineComponent } from 'vue'
 import { apiClient } from 'src/api/ApiClient'
 import OfficeDetailMixin from 'pages/office-map/detail/OfficeDetailMixin'
@@ -68,7 +71,7 @@ export default defineComponent({
   },
   mixins: [OfficeDetailMixin],
   async beforeRouteEnter(to, from, next) {
-    const {officeId} = to.params
+    const { officeId } = to.params
     const officeResponse = await apiClient.offices.get(officeId.toString())
     next((vm) => {
       const office = officeResponse.payload.data

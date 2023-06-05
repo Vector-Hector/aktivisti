@@ -18,10 +18,16 @@ interface Emits {
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
-const {eventAreas} = useEditEventMixin()
+const { eventAreas } = useEditEventMixin()
 
-function handleGeometryClick(geometryId: number, geometry: Geometry, metadata: any): void {
-  const nameKey = Object.keys(metadata).find((key) => key.toUpperCase() === 'NAME')
+function handleGeometryClick(
+  geometryId: number,
+  geometry: Geometry,
+  metadata: any
+): void {
+  const nameKey = Object.keys(metadata).find(
+    (key) => key.toUpperCase() === 'NAME'
+  )
   const eventArea: Partial<EventAreaDto> = {
     name: nameKey ? metadata[nameKey] : `Gebiet ${eventAreas.value.length + 1}`,
     // We're using hat, to get the same schema for the future_id like mapbox see:
@@ -36,21 +42,23 @@ function handleGeometryClick(geometryId: number, geometry: Geometry, metadata: a
 /**
  * Generates a random hex color code from range #000000 to #FFFFFF
  */
-function generateRandomHexColorCode(){
+function generateRandomHexColorCode() {
   // 16777215 = (16^6 - 1), which is total count of possible hex of length 6 (hex color codes)
   return `#${Math.floor(Math.random() * 16777215).toString(16)}`
 }
-
 </script>
 <template>
   <QCardSection class="description-section">
-      <span class="description">
-          Bitte wähle ein Gebiet aus
-      </span>
+    <span class="description"> Bitte wähle ein Gebiet aus </span>
   </QCardSection>
   <QCardSection class="section">
     <Map>
-      <CampaignCollectionOverlay :collection="props.collection" hover fit-map @geometry-click="handleGeometryClick" />
+      <CampaignCollectionOverlay
+        :collection="props.collection"
+        hover
+        fit-map
+        @geometry-click="handleGeometryClick"
+      />
     </Map>
   </QCardSection>
 </template>
@@ -76,5 +84,4 @@ function generateRandomHexColorCode(){
 .description-section {
   padding-bottom: 0;
 }
-
 </style>

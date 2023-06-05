@@ -9,7 +9,6 @@ import { defineComponent, PropType, Component } from 'vue'
 import ResizableBottomSheet from 'components/ResizableBottomSheet.vue'
 import MapSidebar from 'components/MapSidebar.vue'
 
-
 export default defineComponent({
   name: 'MapOverlayProxy',
   components: {

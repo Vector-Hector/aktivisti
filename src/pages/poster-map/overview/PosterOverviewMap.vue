@@ -1,17 +1,9 @@
 <template>
-  <Geocoder
-    :collapsed="true"
-    position="top-left"
-    :countries="['de']"
-  />
+  <Geocoder :collapsed="true" position="top-left" :countries="['de']" />
   <PosterPopup ref="posterPopup" />
-  <PosterMarkerLayer
-    :posters="posters"
-    @posterClick="handlePosterClick"
-  />
+  <PosterMarkerLayer :posters="posters" @posterClick="handlePosterClick" />
 </template>
 <script lang="ts">
-
 import { defineComponent, inject, onUnmounted, ref } from 'vue'
 import { MapInject } from 'src/map/Map.vue'
 import { userStore } from 'src/store/UserStore'
@@ -29,7 +21,7 @@ import PosterPopup from 'src/map/popup/layerPopups/PosterPopup.vue'
 
 export default defineComponent({
   name: 'PosterOverviewMap',
-  components: {PosterPopup, PosterMarkerLayer, Geocoder},
+  components: { PosterPopup, PosterMarkerLayer, Geocoder },
   setup() {
     const map = inject(MapInject)!
     const clickedPoster = ref<PosterDto | null>(null)
@@ -52,7 +44,10 @@ export default defineComponent({
       itemHoveredOver: posterHoveredOver,
       items: posters,
       updateFilterParams
-    } = useOverviewMixin<PosterDto, PosterFilterParams>(posterOverviewStore, apiClient.posters)
+    } = useOverviewMixin<PosterDto, PosterFilterParams>(
+      posterOverviewStore,
+      apiClient.posters
+    )
     return {
       clickedPoster,
       filterParams,
@@ -65,8 +60,7 @@ export default defineComponent({
       popupElement
     }
   },
-  computed: {
-  },
+  computed: {},
   methods: {
     async updateWithinFilter(polygon: BBox2d) {
       await this.updateFilterParams({
@@ -82,7 +76,7 @@ export default defineComponent({
     await this.updateWithinFilter(this.bounds as BBox2d)
   },
   watch: {
-    bounds: async function(newBound) {
+    bounds: async function (newBound) {
       await this.updateWithinFilter(newBound)
     }
   }

@@ -1,16 +1,9 @@
 <template>
-  <QInput
-    v-bind="inputProps"
-    v-model="dateTime"
-  >
+  <QInput v-bind="inputProps" v-model="dateTime">
     <template v-slot:prepend>
       <QIcon :name="ionCalendarOutline" class="cursor-pointer" />
       <QPopupProxy transition-show="scale" transition-hide="scale">
-        <QDate
-          v-bind="dateProps"
-          v-model="dateTime"
-          :mask="mask"
-        >
+        <QDate v-bind="dateProps" v-model="dateTime" :mask="mask">
           <div class="row items-center justify-end">
             <QBtn v-close-popup label="Close" color="primary" flat />
           </div>
@@ -21,12 +14,7 @@
     <template v-slot:append>
       <QIcon :name="ionTimeOutline" class="cursor-pointer" />
       <QPopupProxy transition-show="scale" transition-hide="scale">
-        <QTime
-          v-bind="timeProps"
-          v-model="dateTime"
-          :mask="mask"
-          format24h
-        >
+        <QTime v-bind="timeProps" v-model="dateTime" :mask="mask" format24h>
           <div class="row items-center justify-end">
             <QBtn v-close-popup label="Close" color="primary" flat />
           </div>
@@ -93,7 +81,7 @@ export default defineComponent({
   data() {
     return {
       ionCalendarOutline,
-      ionTimeOutline,
+      ionTimeOutline
     }
   }
 })

@@ -7,32 +7,15 @@
       'absolute-sheet': state === BottomSheetState.EXPANDED
     }"
   >
-    <h3
-      v-if="title"
-      class="overlay-title"
-    >
+    <h3 v-if="title" class="overlay-title">
       {{ title }}
     </h3>
-    <div
-      class="size-controls"
-    >
-      <button
-        class="resize-button expand"
-        @click="expand"
-      >
-        <QIcon
-          class="icon"
-          :name="ionChevronUp"
-        />
+    <div class="size-controls">
+      <button class="resize-button expand" @click="expand">
+        <QIcon class="icon" :name="ionChevronUp" />
       </button>
-      <button
-        class="resize-button shrink"
-        @click="shrink"
-      >
-        <QIcon
-          class="icon"
-          :name="ionChevronDown"
-        />
+      <button class="resize-button shrink" @click="shrink">
+        <QIcon class="icon" :name="ionChevronDown" />
       </button>
     </div>
     <slot />
@@ -44,7 +27,6 @@ import { defineComponent, PropType, computed } from 'vue'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import { QIcon } from 'quasar'
 import { ionChevronDown, ionChevronUp } from '@quasar/extras/ionicons-v5'
-
 
 export default defineComponent({
   name: 'ResizableBottomSheet',
@@ -88,39 +70,48 @@ export default defineComponent({
   watch: {
     state(newValue, oldValue) {
       this.transitionListener = () => {
-        this.bottomSheetRef?.removeEventListener('transitionend', this.transitionListener!)
+        this.bottomSheetRef?.removeEventListener(
+          'transitionend',
+          this.transitionListener!
+        )
         this.transitionListener = null
         this.$emit('changedSize', newValue)
       }
       if (newValue !== oldValue) {
-        this.bottomSheetRef?.addEventListener('transitionend', this.transitionListener)
+        this.bottomSheetRef?.addEventListener(
+          'transitionend',
+          this.transitionListener
+        )
       }
     }
   },
   beforeUnmount() {
     if (this.transitionListener) {
-      this.bottomSheetRef!.removeEventListener('transitionend', this.transitionListener)
+      this.bottomSheetRef!.removeEventListener(
+        'transitionend',
+        this.transitionListener
+      )
     }
   },
   methods: {
     expand() {
       switch (this.state) {
-      case BottomSheetState.COLLAPSED:
-        this.state = BottomSheetState.HALF
-        break
-      case BottomSheetState.HALF:
-        this.state = BottomSheetState.EXPANDED
-        break
+        case BottomSheetState.COLLAPSED:
+          this.state = BottomSheetState.HALF
+          break
+        case BottomSheetState.HALF:
+          this.state = BottomSheetState.EXPANDED
+          break
       }
     },
     shrink() {
       switch (this.state) {
-      case BottomSheetState.EXPANDED:
-        this.state = BottomSheetState.HALF
-        break
-      case BottomSheetState.HALF:
-        this.state = BottomSheetState.COLLAPSED
-        break
+        case BottomSheetState.EXPANDED:
+          this.state = BottomSheetState.HALF
+          break
+        case BottomSheetState.HALF:
+          this.state = BottomSheetState.COLLAPSED
+          break
       }
     }
   }
@@ -128,7 +119,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "src/css/_variables.scss";
+@import 'src/css/_variables.scss';
 
 .resizable-bottom-sheet {
   display: flex;

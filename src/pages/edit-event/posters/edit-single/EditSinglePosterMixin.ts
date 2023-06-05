@@ -6,10 +6,14 @@ export default defineComponent({
   computed: {
     poster: {
       set(poster: Partial<PosterDto>) {
-        posterListStore.state.posters[posterListStore.state.activePosterIndex!] = poster
+        posterListStore.state.posters[
+          posterListStore.state.activePosterIndex!
+        ] = poster
       },
       get() {
-        return posterListStore.state.posters[posterListStore.state.activePosterIndex!]
+        return posterListStore.state.posters[
+          posterListStore.state.activePosterIndex!
+        ]
       }
     }
   }

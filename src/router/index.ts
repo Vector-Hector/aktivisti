@@ -22,10 +22,12 @@ const authStore = getAuthStore()
 export default route(function (/* { store, ssrContext } */) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
-    : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory)
+    : process.env.VUE_ROUTER_MODE === 'history'
+    ? createWebHistory
+    : createWebHashHistory
 
   const Router = createRouter({
-    scrollBehavior: () => ({left: 0, top: 0}),
+    scrollBehavior: () => ({ left: 0, top: 0 }),
     routes,
     // Leave this as is and make changes in quasar.conf.js instead!
     // quasar.conf.js -> build -> vueRouterMode
@@ -35,9 +37,11 @@ export default route(function (/* { store, ssrContext } */) {
     )
   })
 
-
   Router.beforeEach((to, from, next) => {
-    if (!authStore.isLoggedIn() && to.matched.some(record => record.meta.requiresAuth)) {
+    if (
+      !authStore.isLoggedIn() &&
+      to.matched.some((record) => record.meta.requiresAuth)
+    ) {
       next({
         name: 'login',
         query: {
@@ -45,7 +49,7 @@ export default route(function (/* { store, ssrContext } */) {
         }
       })
     } else if (to.matched.length < 1) {
-      next({name: 'app'})
+      next({ name: 'app' })
     } else {
       next()
     }

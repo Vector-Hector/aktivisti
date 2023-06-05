@@ -3,16 +3,16 @@
     <div class="stepper">
       <div
         :class="{
-        'step': true,
-        'active': isActiveRoute(step.routeName),
-        'done': activeIndex > index
-      }"
+          step: true,
+          active: isActiveRoute(step.routeName),
+          done: activeIndex > index
+        }"
         v-for="(step, index) in steps"
         :key="index"
         :style="{
-        'z-index': steps.length - index
-      }"
-        @click="$router.push({name: step.routeName})"
+          'z-index': steps.length - index
+        }"
+        @click="$router.push({ name: step.routeName })"
       >
         <div class="step-inner">
           <div class="step-number">{{ index + 1 }}</div>
@@ -23,7 +23,6 @@
   </div>
 </template>
 <script lang="ts">
-
 import { defineComponent, PropType } from 'vue'
 
 export interface Step {
@@ -46,7 +45,9 @@ export default defineComponent({
   emits: ['update:modelValue'],
   computed: {
     activeIndex(): number | undefined {
-      return this.steps.findIndex(({routeName}) => this.isActiveRoute(routeName))
+      return this.steps.findIndex(({ routeName }) =>
+        this.isActiveRoute(routeName)
+      )
     }
   },
   watch: {
@@ -61,14 +62,13 @@ export default defineComponent({
   },
   methods: {
     isActiveRoute(routeName: string): boolean {
-      return this.$route.matched.some(({name}) => name === routeName)
+      return this.$route.matched.some(({ name }) => name === routeName)
     }
   }
 })
-
 </script>
 <style lang="scss" scoped>
-@import "src/css/variables";
+@import 'src/css/variables';
 
 $doneBackground: $grey-5;
 $doneText: $grey-6;
@@ -103,7 +103,6 @@ $stepPadding: 5px;
   color: $inactiveText;
   filter: drop-shadow(0 2px 3px $inactiveText);
 
-
   &:not(:first-of-type) {
     margin-left: -$chevronSize;
 
@@ -113,7 +112,6 @@ $stepPadding: 5px;
   }
 
   .step-inner {
-
     display: flex;
     flex: 1;
     flex-direction: row;
@@ -151,13 +149,11 @@ $stepPadding: 5px;
     }
   }
 
-
   &.active {
     color: $activeText;
 
     .step-inner {
       background: $activeBackground;
-
     }
 
     &:not(:last-of-type) {
@@ -179,7 +175,6 @@ $stepPadding: 5px;
 
     .step-inner {
       background: $doneBackground;
-
     }
 
     &:not(:last-of-type) {
@@ -195,6 +190,5 @@ $stepPadding: 5px;
       border: 1px solid $doneText;
     }
   }
-
 }
 </style>

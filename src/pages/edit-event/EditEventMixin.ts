@@ -17,7 +17,7 @@ export default defineComponent({
       },
       set(value: EventDto) {
         editEventStore.setEvent(value)
-      },
+      }
     },
     eventAreas: {
       get(): EventAreaDto[] {
@@ -25,7 +25,7 @@ export default defineComponent({
       },
       set(areas: EventAreaDto[]) {
         editEventStore.setEventAreas(areas)
-      },
+      }
     },
     metricRecords: {
       get(): EventMetricRecordDto[] {
@@ -33,7 +33,7 @@ export default defineComponent({
       },
       set(records: EventMetricRecordDto[]) {
         editEventStore.setMetricRecords(records)
-      },
+      }
     },
     campaigns() {
       return editEventStore.getState().campaigns
@@ -47,7 +47,7 @@ export default defineComponent({
       },
       set(featureIds: string[] | Set<string>) {
         editEventStore.setUpdatingAreaFeatureIds(featureIds)
-      },
+      }
     },
     deletingAreaIds: {
       get(): Set<string> {
@@ -55,7 +55,7 @@ export default defineComponent({
       },
       set(ids: string[] | Set<string>) {
         editEventStore.setDeletingAreaIds(ids)
-      },
+      }
     },
     posters: {
       get(): Partial<PosterDto>[] {
@@ -63,8 +63,8 @@ export default defineComponent({
       },
       set(posters: PosterDto[]) {
         posterListStore.state.posters = posters
-      },
-    },
+      }
+    }
   },
   methods: {
     addAreaError(id: string, error: string) {
@@ -72,8 +72,8 @@ export default defineComponent({
     },
     clearAreaError(id: string) {
       editEventStore.clearEventAreaError(id)
-    },
-  },
+    }
+  }
 })
 
 export function useEditEventMixin() {
@@ -83,7 +83,7 @@ export function useEditEventMixin() {
     },
     set(value: EventDto) {
       editEventStore.setEvent(value)
-    },
+    }
   })
   const eventAreas = computed({
     get(): EventAreaDto[] {
@@ -91,7 +91,7 @@ export function useEditEventMixin() {
     },
     set(areas: EventAreaDto[]) {
       editEventStore.setEventAreas(areas)
-    },
+    }
   })
 
   const metricRecords = computed({
@@ -100,7 +100,7 @@ export function useEditEventMixin() {
     },
     set(records: EventMetricRecordDto[]) {
       editEventStore.setMetricRecords(records)
-    },
+    }
   })
 
   const campaigns = computed(() => editEventStore.getState().campaigns)
@@ -111,7 +111,7 @@ export function useEditEventMixin() {
     },
     set(featureIds: Set<string>) {
       editEventStore.setUpdatingAreaFeatureIds(featureIds)
-    },
+    }
   })
 
   const deletingAreaIds = computed({
@@ -120,7 +120,7 @@ export function useEditEventMixin() {
     },
     set(ids: Set<string>) {
       editEventStore.setDeletingAreaIds(ids)
-    },
+    }
   })
 
   const posters = computed({
@@ -129,7 +129,7 @@ export function useEditEventMixin() {
     },
     set(posters: Partial<PosterDto>[]) {
       posterListStore.state.posters = posters
-    },
+    }
   })
 
   return {
@@ -139,6 +139,6 @@ export function useEditEventMixin() {
     campaigns,
     updatingAreaFeatureIds,
     deletingAreaIds,
-    posters,
+    posters
   }
 }

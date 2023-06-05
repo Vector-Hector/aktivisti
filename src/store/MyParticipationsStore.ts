@@ -3,12 +3,11 @@ import { EventFilterPreferences, SortOption } from 'src/store/UserStore'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 
 interface MyParticipationsStoreState {
-  filterPreferences: EventFilterPreferences,
+  filterPreferences: EventFilterPreferences
   eventParticipations: EventParticipationDto[]
 }
 
 class MyParticipationsStore extends Store<MyParticipationsStoreState> {
-
   protected data(): MyParticipationsStoreState {
     return {
       filterPreferences: {
@@ -19,7 +18,6 @@ class MyParticipationsStore extends Store<MyParticipationsStoreState> {
         status: undefined
       },
       eventParticipations: [] as EventParticipationDto[]
-
     }
   }
 
@@ -27,8 +25,7 @@ class MyParticipationsStore extends Store<MyParticipationsStoreState> {
     this.state.filterPreferences = filterPreferences
   }
 
-
-  public setEventParticipations(eventParticipations: EventParticipationDto[]){
+  public setEventParticipations(eventParticipations: EventParticipationDto[]) {
     this.state.eventParticipations = eventParticipations
   }
 }

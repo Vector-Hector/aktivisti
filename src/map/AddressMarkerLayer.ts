@@ -1,10 +1,17 @@
-import { defineComponent, inject, watch, onMounted, PropType, onUnmounted, h } from 'vue'
+import {
+  defineComponent,
+  inject,
+  watch,
+  onMounted,
+  PropType,
+  onUnmounted,
+  h
+} from 'vue'
 import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { AllGeoJSON, center } from '@turf/turf'
 import { GeoJSONSource } from 'maplibre-gl'
-
 
 export default defineComponent({
   name: 'AddressMarkerLayer',
@@ -31,28 +38,29 @@ export default defineComponent({
         }
       })
 
-      watch(() => props.addresses, () => {
-        (map?.value.getSource(sourceId) as GeoJSONSource)?.setData({
-          type: 'FeatureCollection',
-          features: props.addresses.map((address: AddressDetails) => {
-            return {
-              type: 'Feature',
-              properties: {
-                house_number: address.house_number
-              },
-              geometry: center(address.geometry as AllGeoJSON).geometry
-            }
+      watch(
+        () => props.addresses,
+        () => {
+          ;(map?.value.getSource(sourceId) as GeoJSONSource)?.setData({
+            type: 'FeatureCollection',
+            features: props.addresses.map((address: AddressDetails) => {
+              return {
+                type: 'Feature',
+                properties: {
+                  house_number: address.house_number
+                },
+                geometry: center(address.geometry as AllGeoJSON).geometry
+              }
+            })
           })
-        })
-      }, { immediate: true })
+        },
+        { immediate: true }
+      )
 
       const circlesId = `${uuid}-circle`
       const captionId = `${uuid}-caption`
 
-      layers.push(
-        circlesId,
-        captionId
-      )
+      layers.push(circlesId, captionId)
       map?.value.addLayer({
         id: circlesId,
         type: 'circle',
@@ -75,7 +83,7 @@ export default defineComponent({
           'text-font': ['Roboto Regular'],
           'text-size': 11,
           'text-line-height': 1.0,
-          'text-offset': [0, .1],
+          'text-offset': [0, 0.1],
           'text-allow-overlap': true
         },
         paint: {

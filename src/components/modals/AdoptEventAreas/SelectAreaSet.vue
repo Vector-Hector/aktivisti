@@ -1,14 +1,7 @@
 <script setup lang="ts">
-
 import { CampaignGeometryCollectionsDto } from 'src/api/model/CampaignGeometryCollectionsDto'
 import { CampaignDto } from 'src/api/model/CampaignDto'
-import {
-  QList,
-  QItem,
-  QItemLabel,
-  QItemSection,
-  QCardSection
-} from 'quasar'
+import { QList, QItem, QItemLabel, QItemSection, QCardSection } from 'quasar'
 
 interface Props {
   collections: CampaignGeometryCollectionsDto[]
@@ -17,27 +10,28 @@ interface Props {
 
 interface Emits {
   (e: 'onRecentEventAreasClick'): void
-  (e: 'onCampaignCollectionClick', collection: CampaignGeometryCollectionsDto): void
+  (
+    e: 'onCampaignCollectionClick',
+    collection: CampaignGeometryCollectionsDto
+  ): void
 }
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-
 function handleRecentEventAreasClick(): void {
   emit('onRecentEventAreasClick')
 }
 
-function handleCampaignCollectionClick(collection: CampaignGeometryCollectionsDto): void {
+function handleCampaignCollectionClick(
+  collection: CampaignGeometryCollectionsDto
+): void {
   emit('onCampaignCollectionClick', collection)
 }
-
 </script>
 <template>
   <QCardSection class="description-section">
-      <span class="description">
-         Von wo möchtest du Gebiete übernehmen?
-      </span>
+    <span class="description"> Von wo möchtest du Gebiete übernehmen? </span>
   </QCardSection>
   <QCardSection class="section">
     <QList>
@@ -48,14 +42,20 @@ function handleCampaignCollectionClick(collection: CampaignGeometryCollectionsDt
           </QItemLabel>
         </QItemSection>
       </QItem>
-      <QItem clickable v-for="collection in props.collections" :key="collection.id"
-             @click="() => handleCampaignCollectionClick(collection)">
+      <QItem
+        clickable
+        v-for="collection in props.collections"
+        :key="collection.id"
+        @click="() => handleCampaignCollectionClick(collection)"
+      >
         <QItemSection>
           <QItemLabel>
             <b>{{ collection.name }}</b>
           </QItemLabel>
           <QItemLabel>
-            {{ props.campaigns.find(({ id }) => id === collection.campaign).name }}
+            {{
+              props.campaigns.find(({ id }) => id === collection.campaign).name
+            }}
           </QItemLabel>
         </QItemSection>
       </QItem>
@@ -84,5 +84,4 @@ function handleCampaignCollectionClick(collection: CampaignGeometryCollectionsDt
 .description-section {
   padding-bottom: 0;
 }
-
 </style>

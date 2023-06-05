@@ -35,7 +35,7 @@ export default defineComponent({
     }
   },
   components: {
-    QChip,
+    QChip
   },
   emits: ['remove']
 })

@@ -3,11 +3,9 @@
     v-model:posters="posters"
     :active-poster-index="activePosterIndex"
     :editable="true"
-    @posterClick="({id}) => goToPoster(id)"
+    @posterClick="({ id }) => goToPoster(id)"
   />
-  <AreaFeatureLayer
-    :features="features"
-  />
+  <AreaFeatureLayer :features="features" />
   <router-view name="map" />
 </template>
 
@@ -29,13 +27,11 @@ export default defineComponent({
     goToPoster(posterId: number) {
       void this.$router.push({
         name: 'edit-event-single-poster-edit',
-        params: {posterId: posterId}
+        params: { posterId: posterId }
       })
     }
   }
 })
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

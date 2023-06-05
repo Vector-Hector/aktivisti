@@ -1,10 +1,17 @@
-import { defineComponent, inject, onMounted, PropType, onUnmounted, h, watch } from 'vue'
+import {
+  defineComponent,
+  inject,
+  onMounted,
+  PropType,
+  onUnmounted,
+  h,
+  watch
+} from 'vue'
 import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { Feature } from 'geojson'
 import { getColorFromPropertiesWithDefault } from 'pages/edit-event/geometry/route-planner.styles'
 import { GeoJSONSource } from 'maplibre-gl'
-
 
 export default defineComponent({
   name: 'AreaFeatureLayer',
@@ -29,21 +36,22 @@ export default defineComponent({
         }
       })
 
-      watch(() => props.features, (newValue) => {
-        (map.value?.getSource(uuid) as GeoJSONSource)?.setData({
-          type: 'FeatureCollection',
-          features: newValue
-        })
-      }, {immediate: true})
+      watch(
+        () => props.features,
+        (newValue) => {
+          ;(map.value?.getSource(uuid) as GeoJSONSource)?.setData({
+            type: 'FeatureCollection',
+            features: newValue
+          })
+        },
+        { immediate: true }
+      )
       const fillLayer = `${uuid}-fill`
       const outlineLayer = `${uuid}-outline`
 
-      layers.push(
-        fillLayer,
-        outlineLayer
-      )
+      layers.push(fillLayer, outlineLayer)
       map?.value.addLayer({
-        'id': `${uuid}-fill`,
+        id: `${uuid}-fill`,
         type: 'fill',
         source: uuid,
         paint: {
@@ -68,7 +76,6 @@ export default defineComponent({
         map?.value?.removeLayer(layerId)
       })
     })
-
   },
   render() {
     return h('span')

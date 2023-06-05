@@ -1,14 +1,10 @@
 <template>
-  <QScrollArea
-    class="flex-fill d-flex"
-  >
+  <QScrollArea class="flex-fill d-flex">
     <QPage>
       <div class="container">
         <div class="create-event">
           <h3>Neue Aktion erstellen</h3>
-          <FormError
-            :error="errors.non_field_error"
-          />
+          <FormError :error="errors.non_field_error" />
           <QInput
             filled
             class="create-event-input"
@@ -54,11 +50,7 @@
               label="Abbrechen"
               @click="$router.go(-1)"
             />
-            <QBtn
-              color="primary"
-              label="Erstellen"
-              @click="saveAndProceed()"
-            />
+            <QBtn color="primary" label="Erstellen" @click="saveAndProceed()" />
           </div>
         </div>
       </div>
@@ -88,8 +80,11 @@ export default defineComponent({
   },
   async beforeRouteEnter(to, from, next) {
     if (!userStore.hasAtLeastOneManagePermission()) {
-      ErrorBus.emit(NOT_AUTHORIZED, 'Um eine Aktion zu erstellen benötigst du eine Koordinator*innenberechtigung')
-      next({name: 'login'})
+      ErrorBus.emit(
+        NOT_AUTHORIZED,
+        'Um eine Aktion zu erstellen benötigst du eine Koordinator*innenberechtigung'
+      )
+      next({ name: 'login' })
     } else {
       const [campaignRequest, metricsRequest] = await Promise.all([
         apiClient.campaigns.list(),
@@ -120,21 +115,28 @@ export default defineComponent({
     async saveAndProceed() {
       this.errors = {}
       const initialStartDate = new Date()
-      initialStartDate.setHours(initialStartDate.getHours() + Math.round(initialStartDate.getMinutes() / 60))
+      initialStartDate.setHours(
+        initialStartDate.getHours() +
+          Math.round(initialStartDate.getMinutes() / 60)
+      )
       initialStartDate.setMinutes(0, 0, 0)
 
       const initialEndDate = new Date(initialStartDate)
       initialEndDate.setHours(initialStartDate.getHours() + 1)
 
       try {
-        this.event = (await this.$apiClient.events.create({
-          ...this.event,
-          metrics: this.metrics
-            .filter((metric) => metric.mandatory_for_types.includes(this.event.event_type!))
-            .map(({id}) => id),
-          start_date: initialStartDate.toISOString(),
-          end_date: initialEndDate.toISOString()
-        })).payload.data
+        this.event = (
+          await this.$apiClient.events.create({
+            ...this.event,
+            metrics: this.metrics
+              .filter((metric) =>
+                metric.mandatory_for_types.includes(this.event.event_type!)
+              )
+              .map(({ id }) => id),
+            start_date: initialStartDate.toISOString(),
+            end_date: initialEndDate.toISOString()
+          })
+        ).payload.data
 
         await this.$router.push({
           name: 'edit-event-details',

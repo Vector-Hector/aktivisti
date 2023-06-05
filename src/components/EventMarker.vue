@@ -1,13 +1,7 @@
 <template>
-  <Marker
-    :location="event.location"
-  >
+  <Marker :location="event.location">
     <template v-slot:marker>
-      <QIcon
-        :name="icon"
-        class="clickable-marker"
-        size="lg"
-      />
+      <QIcon :name="icon" class="clickable-marker" size="lg" />
     </template>
     <slot />
   </Marker>
@@ -20,7 +14,7 @@ import { EventTypes } from '../api/model/EventTypes'
 import { QIcon } from 'quasar'
 
 export default defineComponent({
-  components: {Marker, QIcon},
+  components: { Marker, QIcon },
   props: {
     event: {
       type: Object as PropType<EventDto>,

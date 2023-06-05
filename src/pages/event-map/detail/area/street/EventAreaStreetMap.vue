@@ -10,7 +10,6 @@
 </template>
 
 <script lang="ts">
-
 import { defineComponent } from 'vue'
 import InjectMapMixin from 'src/pages/event-detail/InjectMapMixin'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
@@ -23,7 +22,7 @@ import EventAreaStreetMixin from 'pages/event-map/detail/area/street/EventAreaSt
 
 export default defineComponent({
   name: 'EventAreaStreetMap',
-  components: {AddressMarker},
+  components: { AddressMarker },
   mixins: [InjectMapMixin, EventAreaStreetMixin],
   mounted() {
     this.map?.fitBounds(this.bbox as BBox2d)
@@ -49,5 +48,4 @@ export default defineComponent({
     }
   }
 })
-
 </script>

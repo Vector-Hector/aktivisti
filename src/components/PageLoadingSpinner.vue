@@ -1,11 +1,6 @@
 <template>
-  <div
-    class="loading-spinner-wrapper"
-  >
-    <QSpinnerPuff
-      class="loading-spinner"
-      color="primary"
-    />
+  <div class="loading-spinner-wrapper">
+    <QSpinnerPuff class="loading-spinner" color="primary" />
   </div>
 </template>
 <script lang="ts">

@@ -13,8 +13,12 @@ import { NavigationGuardNext, RouteLocation } from 'vue-router'
 import { uiStore } from 'src/store/UiStore'
 import { UNDEFINED_POSTER_AREA } from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetail.vue'
 
-async function updateRoute(to: RouteLocation, from: RouteLocation, next: NavigationGuardNext) {
-  const {areaId} = to.params
+async function updateRoute(
+  to: RouteLocation,
+  from: RouteLocation,
+  next: NavigationGuardNext
+) {
+  const { areaId } = to.params
   if (areaId === UNDEFINED_POSTER_AREA) {
     // the special undefined route is for posters that are not assigned to an area
     eventDetailStore.setEventArea(null)
@@ -27,7 +31,7 @@ async function updateRoute(to: RouteLocation, from: RouteLocation, next: Navigat
     const response = await apiClient.eventAreas.get(
       to.params.areaId as string,
       [],
-      {show_permissions: true}
+      { show_permissions: true }
     )
     eventDetailStore.setEventArea(response.payload.data)
     eventDetailStore.setEventAreaPermissions(response.payload.permissions)
@@ -62,18 +66,20 @@ export default defineComponent({
   methods: {
     async pollForCompletionNotes() {
       eventDetailStore.addCompletionNotes(
-        (await this.$apiClient.completionNotes.list({event_area: this.eventArea.id})).payload.data
+        (
+          await this.$apiClient.completionNotes.list({
+            event_area: this.eventArea.id
+          })
+        ).payload.data
       )
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       this.nextPoll = setTimeout(() => this.pollForCompletionNotes(), 5000)
     }
   }
 })
-
 </script>
 
 <style lang="scss" scoped>
-
 label {
   text-align: left;
 }
@@ -100,5 +106,4 @@ label {
   font-weight: bold;
   font-size: 1rem;
 }
-
 </style>

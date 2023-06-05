@@ -5,7 +5,8 @@
       :clearIcon="ionClose"
       filled
       :model-value="modelValue"
-      v-bind="$attrs">
+      v-bind="$attrs"
+    >
       <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
         <slot :name="name" v-bind="slotData" />
       </template>
@@ -40,6 +41,6 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .select-wrapper {
-  margin: 0 0 .5rem 0;
+  margin: 0 0 0.5rem 0;
 }
 </style>

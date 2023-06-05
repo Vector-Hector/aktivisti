@@ -13,8 +13,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import { Todo, Meta } from './models';
+import { defineComponent, PropType } from 'vue'
+import { Todo, Meta } from './models'
 
 export default defineComponent({
   name: 'OptionsComponent',
@@ -38,17 +38,17 @@ export default defineComponent({
   data(): { clickCount: number } {
     return {
       clickCount: 0
-    };
+    }
   },
   methods: {
     increment(): void {
-      this.clickCount += 1;
+      this.clickCount += 1
     }
   },
   computed: {
     todoCount(): number {
-      return this.todos.length;
+      return this.todos.length
     }
   }
-});
+})
 </script>

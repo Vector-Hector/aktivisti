@@ -1,29 +1,33 @@
 <template>
-  <QItem
-    clickable
-    v-ripple
-  >
+  <QItem clickable v-ripple>
     <QItemSection>
       <QItemLabel>
         <b>{{ poster.location_description }}</b>
       </QItemLabel>
     </QItemSection>
-      <QItemSection side>
-        <QItemLabel :class="statusClass">
-          {{ statusLabel }}
-        </QItemLabel>
-      </QItemSection>
-      <QItemSection side>
-        <QIcon :name="statusIcon" :class="statusClass" />
-      </QItemSection>
+    <QItemSection side>
+      <QItemLabel :class="statusClass">
+        {{ statusLabel }}
+      </QItemLabel>
+    </QItemSection>
+    <QItemSection side>
+      <QIcon :name="statusIcon" :class="statusClass" />
+    </QItemSection>
   </QItem>
 </template>
 <script lang="ts">
-
 import { defineComponent, PropType } from 'vue'
 import { QIcon, QItem, QItemLabel, QItemSection } from 'quasar'
-import { PosterDto, PosterStatus, posterStatusOptions } from 'src/api/model/PosterDto'
-import { ionAlertCircle, ionCheckmarkCircle, ionCloseCircle } from '@quasar/extras/ionicons-v5'
+import {
+  PosterDto,
+  PosterStatus,
+  posterStatusOptions
+} from 'src/api/model/PosterDto'
+import {
+  ionAlertCircle,
+  ionCheckmarkCircle,
+  ionCloseCircle
+} from '@quasar/extras/ionicons-v5'
 
 export default defineComponent({
   name: 'PosterListItem',
@@ -41,7 +45,10 @@ export default defineComponent({
   },
   computed: {
     statusLabel(): string {
-      return posterStatusOptions.find(({key}) => key === this.poster.status)?.label ?? ''
+      return (
+        posterStatusOptions.find(({ key }) => key === this.poster.status)
+          ?.label ?? ''
+      )
     },
     statusIcon(): string {
       switch (this.poster.status) {

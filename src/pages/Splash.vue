@@ -1,29 +1,16 @@
 <template>
   <QPage class="splash-page">
     <div class="splash">
-      <img
-        src="../assets/logo_dielinke.png"
-        class="logo-splash"
-      >
-      <h2 class="splash-message">
-        Finde Aktionen in deiner Nähe
-      </h2>
+      <img src="../assets/logo_dielinke.png" class="logo-splash" />
+      <h2 class="splash-message">Finde Aktionen in deiner Nähe</h2>
       <Geocoder
         class="geocoder"
         :countries="['de']"
         :standalone="true"
         @result="locate"
       />
-      <div
-        v-if="!isLoggedIn"
-        class="signin-buttons"
-      >
-        <QBtn
-          to="/login"
-          color="primary"
-        >
-          Anmelden
-        </QBtn>
+      <div v-if="!isLoggedIn" class="signin-buttons">
+        <QBtn to="/login" color="primary"> Anmelden </QBtn>
 
         <QBtn
           to="/register"
@@ -58,7 +45,7 @@ export default defineComponent({
   },
   beforeRouteEnter(to, from, next) {
     if (userStore.getState().bbox !== null) {
-      next({name: 'events'})
+      next({ name: 'events' })
     } else {
       next()
     }
@@ -67,8 +54,7 @@ export default defineComponent({
     next()
   },
   data() {
-    return {
-    }
+    return {}
   },
   computed: {
     bbox: {
@@ -85,13 +71,14 @@ export default defineComponent({
   },
   methods: {
     async locate(result: GeocodeResult) {
-      this.bbox = bbox(circle([result.center[0], result.center[1]], 2)) as BBox2d
+      this.bbox = bbox(
+        circle([result.center[0], result.center[1]], 2)
+      ) as BBox2d
       uiStore.setBottomSheetState(BottomSheetState.COLLAPSED)
-      await this.$router.push({name: 'events'})
+      await this.$router.push({ name: 'events' })
     }
   }
 })
-
 </script>
 
 <style lang="scss" scoped>
@@ -148,5 +135,4 @@ export default defineComponent({
 .register-button {
   margin-top: 1rem;
 }
-
 </style>

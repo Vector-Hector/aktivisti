@@ -18,13 +18,9 @@
     </QItemSection>
 
     <QItemSection side>
-      <div
-        class="item-buttons"
-      >
+      <div class="item-buttons">
         <QIcon
-          v-if="
-            personalParticipation?.assigned_event_areas?.includes(area.id)
-          "
+          v-if="personalParticipation?.assigned_event_areas?.includes(area.id)"
           class="area-indicator-icon"
           :name="ionPersonCircleOutline"
         />
@@ -49,10 +45,7 @@
           }"
           :name="ionEllipse"
         />
-        <QIcon
-          class="chevron"
-          :name="ionChevronForward"
-        />
+        <QIcon class="chevron" :name="ionChevronForward" />
       </div>
     </QItemSection>
   </QItem>
@@ -74,7 +67,6 @@ import {
 } from '@quasar/extras/ionicons-v5'
 import { EventTypes } from 'src/api/model/EventTypes'
 import { UNDEFINED_POSTER_AREA } from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetail.vue'
-
 
 export default defineComponent({
   name: 'EventAreaItem',
@@ -119,16 +111,25 @@ export default defineComponent({
   computed: {
     targetRoute(): RouteLocationRaw {
       switch (this.eventType) {
-      case EventTypes.POSTERS:
-        return { name: 'event-detail-poster', params: { areaId: this.area.id ? this.area.id : UNDEFINED_POSTER_AREA}}
-      case EventTypes.DOOR_TO_DOOR:
-      default:
-        return { name: 'event-detail-area', params: { areaId: this.area.id! }}
+        case EventTypes.POSTERS:
+          return {
+            name: 'event-detail-poster',
+            params: {
+              areaId: this.area.id ? this.area.id : UNDEFINED_POSTER_AREA
+            }
+          }
+        case EventTypes.DOOR_TO_DOOR:
+        default:
+          return {
+            name: 'event-detail-area',
+            params: { areaId: this.area.id! }
+          }
       }
     },
     participationsOfArea(): EventParticipationDto[] {
-      return this.participations
-        .filter(({assigned_event_areas}) => assigned_event_areas.includes(this.area.id!))
+      return this.participations.filter(({ assigned_event_areas }) =>
+        assigned_event_areas.includes(this.area.id!)
+      )
     },
     user(): UserDto | null {
       return userStore.getState().user
@@ -145,7 +146,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-
 .chevron {
   margin-left: 1rem;
   font-size: 2rem;
@@ -174,5 +174,4 @@ export default defineComponent({
 .participant-badge {
   margin-left: 1rem;
 }
-
 </style>

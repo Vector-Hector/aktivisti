@@ -17,12 +17,16 @@ export const defaultApexChartOptions: ApexOptions = {
     toolbar: {
       show: true,
       tools: {
-        download: '<img src="static/ionicons/download-outline.svg" width="25px">',
+        download:
+          '<img src="static/ionicons/download-outline.svg" width="25px">',
         zoom: '<img src="static/ionicons/crop-outline.svg" width="25px">',
-        zoomin: '<img src="static/ionicons/add-circle-outline.svg" width="25px">',
-        zoomout: '<img src="static/ionicons/remove-circle-outline.svg" width="25px">',
+        zoomin:
+          '<img src="static/ionicons/add-circle-outline.svg" width="25px">',
+        zoomout:
+          '<img src="static/ionicons/remove-circle-outline.svg" width="25px">',
         pan: '<img src="static/ionicons/move-outline.svg" width="25px">',
-        reset: '<img src="static/ionicons/arrow-undo-outline.svg"  width="25px">'
+        reset:
+          '<img src="static/ionicons/arrow-undo-outline.svg"  width="25px">'
       }
     }
   },
@@ -69,14 +73,14 @@ export const defaultApexChartOptions: ApexOptions = {
     },
     labels: {
       // Don't show decimal points
-      formatter: function(val) {
+      formatter: function (val) {
         return val.toFixed(0).toString()
       }
     }
   }
 }
 
-export default boot(({app}) => {
+export default boot(({ app }) => {
   // @ts-ignore
   app.use(VueApexCharts)
   //@ts-ignore

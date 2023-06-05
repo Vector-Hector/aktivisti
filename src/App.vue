@@ -1,20 +1,10 @@
 <template>
-  <PageLoadingSpinner
-    v-if="!initialized"
-  />
-  <QLayout
-    v-else
-    view="hHr LpR ffr"
-  >
-    <QHeader
-      class="bg-primary text-white"
-      elevated
-    >
-      <QToolbar
-        class="toolbar"
-      >
+  <PageLoadingSpinner v-if="!initialized" />
+  <QLayout v-else view="hHr LpR ffr">
+    <QHeader class="bg-primary text-white" elevated>
+      <QToolbar class="toolbar">
         <QBtn
-          v-if="currentDepth > 2  || $route.meta.isShowBackButton"
+          v-if="currentDepth > 2 || $route.meta.isShowBackButton"
           @click="backButton"
           :icon="ionArrowBack"
           flat
@@ -29,16 +19,11 @@
             {{ $route.meta.subtitle?.() }}
           </span>
         </QToolbarTitle>
-        <QToolbarTitle class="subtitle">
-        </QToolbarTitle>
-
+        <QToolbarTitle class="subtitle"> </QToolbarTitle>
       </QToolbar>
-
     </QHeader>
     <NavigationSidebar />
-    <QPageContainer
-      class="d-flex flex-fill page-container"
-    >
+    <QPageContainer class="d-flex flex-fill page-container">
       <router-view v-slot="{ Component }">
         <component :is="Component" />
       </router-view>
@@ -51,8 +36,21 @@ import { defineComponent } from 'vue'
 import NavigationSidebar from 'src/components/NavigationSidebar.vue'
 import { uiStore } from 'src/store/UiStore'
 import AppTitle from 'src/components/AppTitle.vue'
-import { ErrorBus, NOT_AUTHORIZED, SESSION_INVALID, NO_INTERNET, USER_NOT_FOUND } from 'src/utils/errorBus'
-import { QToolbar, QBtn, QPageContainer, QLayout, QHeader, QToolbarTitle } from 'quasar'
+import {
+  ErrorBus,
+  NOT_AUTHORIZED,
+  SESSION_INVALID,
+  NO_INTERNET,
+  USER_NOT_FOUND
+} from 'src/utils/errorBus'
+import {
+  QToolbar,
+  QBtn,
+  QPageContainer,
+  QLayout,
+  QHeader,
+  QToolbarTitle
+} from 'quasar'
 import { ionArrowBack } from '@quasar/extras/ionicons-v5'
 import { IntervalDebouncer } from 'src/utils/debounce'
 import { apiClient } from 'src/api/ApiClient'
@@ -86,14 +84,14 @@ export default defineComponent({
   },
   computed: {
     currentDepth(): number {
-      return this.$route.path.split('/').filter(item => !!item).length
+      return this.$route.path.split('/').filter((item) => !!item).length
     },
     sidebarExpanded() {
       return uiStore.getState().sidebarExpanded
     }
   },
   watch: {
-    '$route'(to, from) {
+    $route(to, from) {
       const toDepth = to.path.split('/').length
       const fromDepth = from.path.split('/').length
 
@@ -114,34 +112,43 @@ export default defineComponent({
     }
     // Check version health and show warnings / errors
     switch (configStore.state.service_config.version_health) {
-    case VersionHealth.UNKNOWN:
-      this.$q.notify({
-        color: 'warning',
-        message: 'Diese App-Version ist unbekannt und wird nicht unterstützt. ' +
-          'Bitte lade eine neue Version aus offiziellen Quellen.'
-      })
-      break
-    case VersionHealth.OBSOLETE:
-      this.$q.notify({
-        color: 'negative',
-        message: 'Diese App-Version ist kritisch veraltet und wird nicht mehr unterstützt. ' +
-          'Du musst die Seite neu laden oder ein Update durchführen, ansonsten wird die App vermutlich Fehler produzieren.'
-      })
-      break
-    case VersionHealth.DEPRECATED:
-      this.$q.notify({
-        color: 'warning',
-        message: 'Es gibt eine neuere Version dieser App. Bitte führe ein Update durch.'
-      })
-      break
+      case VersionHealth.UNKNOWN:
+        this.$q.notify({
+          color: 'warning',
+          message:
+            'Diese App-Version ist unbekannt und wird nicht unterstützt. ' +
+            'Bitte lade eine neue Version aus offiziellen Quellen.'
+        })
+        break
+      case VersionHealth.OBSOLETE:
+        this.$q.notify({
+          color: 'negative',
+          message:
+            'Diese App-Version ist kritisch veraltet und wird nicht mehr unterstützt. ' +
+            'Du musst die Seite neu laden oder ein Update durchführen, ansonsten wird die App vermutlich Fehler produzieren.'
+        })
+        break
+      case VersionHealth.DEPRECATED:
+        this.$q.notify({
+          color: 'warning',
+          message:
+            'Es gibt eine neuere Version dieser App. Bitte führe ein Update durch.'
+        })
+        break
     }
     // hydrate profile on app start
     if (authStore.isLoggedIn()) {
       try {
-        const profileRequest = await apiClient.user.get('me', ['sub_association'])
-        const permissionRequest = await apiClient.userPermissions.list({user: profileRequest.payload.data.id})
+        const profileRequest = await apiClient.user.get('me', [
+          'sub_association'
+        ])
+        const permissionRequest = await apiClient.userPermissions.list({
+          user: profileRequest.payload.data.id
+        })
         userStore.setUser(profileRequest.payload.data)
-        userStore.setHomeAssociation(profileRequest.payload.embedded?.sub_association?.[0] ?? null)
+        userStore.setHomeAssociation(
+          profileRequest.payload.embedded?.sub_association?.[0] ?? null
+        )
         userStore.setPermissions(permissionRequest.payload.data)
       } catch (error: any) {
         if (error.response?.status === 403) {
@@ -161,7 +168,7 @@ export default defineComponent({
           type: 'warning',
           message: message
         })
-        void this.$router.push({name: 'login'})
+        void this.$router.push({ name: 'login' })
       })
     })
     ErrorBus.on(NOT_AUTHORIZED, (message: string) => {
@@ -181,7 +188,8 @@ export default defineComponent({
         this.$q.notify({
           type: 'negative',
           timeout: 5000,
-          message: 'Die Internetverbindung steht derzeit nicht zur Verfügung oder der ' +
+          message:
+            'Die Internetverbindung steht derzeit nicht zur Verfügung oder der ' +
             'App-Dienst konnte nicht erreicht werden, versuche es später noch einmal'
         })
       })
@@ -237,5 +245,4 @@ export default defineComponent({
   height: 100%;
   overflow: hidden;
 }
-
 </style>

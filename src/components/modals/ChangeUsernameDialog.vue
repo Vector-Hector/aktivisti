@@ -4,15 +4,13 @@
       <QToolbar>
         <QToolbarTitle>Benutzer*innenname ändern</QToolbarTitle>
       </QToolbar>
-      <QForm
-        @submit="onOk"
-      >
+      <QForm @submit="onOk">
         <QCardSection>
           <p>
-            Hier kannst du eine neuen Benutzer*innenname festlegen. Dazu brauchen wir noch einmal dein aktuelles
-            Passwort.
-            Nachdem du dein Benutzer*innenname geändert hast, ist dein alter Benutzer*innenname für alle anderen
-            Benutzer*innen verfügbar.
+            Hier kannst du eine neuen Benutzer*innenname festlegen. Dazu
+            brauchen wir noch einmal dein aktuelles Passwort. Nachdem du dein
+            Benutzer*innenname geändert hast, ist dein alter Benutzer*innenname
+            für alle anderen Benutzer*innen verfügbar.
           </p>
           <PasswordInput
             label="Passwort"
@@ -31,18 +29,38 @@
           />
         </QCardSection>
         <QCardActions align="right">
-          <QBtn flat :disabled="isSubmitting" color="primary" label="Abbrechen" @click="onDialogHide" />
-          <QBtn flat :disabled="isSubmitting" color="primary" label="OK" type="submit" />
+          <QBtn
+            flat
+            :disabled="isSubmitting"
+            color="primary"
+            label="Abbrechen"
+            @click="onDialogHide"
+          />
+          <QBtn
+            flat
+            :disabled="isSubmitting"
+            color="primary"
+            label="OK"
+            type="submit"
+          />
         </QCardActions>
-
       </QForm>
     </QCard>
   </QDialog>
 </template>
 <script lang="ts">
-
 import { defineComponent } from 'vue'
-import { QBtn, QCard, QCardActions, QCardSection, QDialog, QForm, QInput, QToolbar, QToolbarTitle } from 'quasar'
+import {
+  QBtn,
+  QCard,
+  QCardActions,
+  QCardSection,
+  QDialog,
+  QForm,
+  QInput,
+  QToolbar,
+  QToolbarTitle
+} from 'quasar'
 import PasswordInput from 'components/PasswordInput.vue'
 
 export default defineComponent({
@@ -61,7 +79,8 @@ export default defineComponent({
   },
   emits: [
     // REQUIRED
-    'ok', 'hide'
+    'ok',
+    'hide'
   ],
   data() {
     return {
@@ -105,7 +124,6 @@ export default defineComponent({
       } finally {
         this.isSubmitting = false
       }
-
     },
     onDialogHide() {
       this.$emit('hide')

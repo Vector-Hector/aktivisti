@@ -1,9 +1,7 @@
 <template>
   <QPage class="flex-fill">
     <div class="container my-managed-events">
-      <ManagedEvents
-        @clickOnEvent="goToEvent"
-      />
+      <ManagedEvents @clickOnEvent="goToEvent" />
     </div>
   </QPage>
 </template>
@@ -14,12 +12,11 @@ import { QPage } from 'quasar'
 import ManagedEvents from 'components/ManagedEvents.vue'
 import { EventDto } from 'src/api/model/EventDto'
 
-
 export default defineComponent({
   name: 'MyManagedEvents',
   components: {
     ManagedEvents,
-    QPage,
+    QPage
   },
   methods: {
     goToEvent(event: EventDto) {
@@ -29,13 +26,13 @@ export default defineComponent({
           eventId: event.id
         }
       })
-    },
+    }
   }
 })
 </script>
 
 <style lang="scss" scoped>
-@import "src/css/variables.scss";
+@import 'src/css/variables.scss';
 
 .my-managed-events {
   height: 100%;
@@ -43,4 +40,3 @@ export default defineComponent({
   flex-direction: column;
 }
 </style>
-

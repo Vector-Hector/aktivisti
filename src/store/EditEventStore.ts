@@ -5,7 +5,6 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { TinyEmitter } from 'tiny-emitter'
 
-
 export const START_DRAW_AREA = 'START_DRAW_AREA'
 export const EditEventBus = new TinyEmitter()
 
@@ -13,7 +12,7 @@ interface EditEventState {
   event: EventDto | null
   eventAreas: EventAreaDto[]
   campaigns: CampaignDto[]
-  metricRecords: EventMetricRecordDto[],
+  metricRecords: EventMetricRecordDto[]
   updatingAreaFeatureIds: Set<string>
   areasWithError: Record<string, string>
   deletingAreaIds: Set<string>
@@ -49,7 +48,7 @@ class EditEventStore extends Store<EditEventState> {
   }
 
   public setEventAreaError(id: string, msg: string) {
-    this.state.areasWithError[id] = msg;
+    this.state.areasWithError[id] = msg
   }
 
   public clearEventAreaError(id: string) {
@@ -62,7 +61,6 @@ class EditEventStore extends Store<EditEventState> {
 
   public setDeletingAreaIds(ids: string[] | Set<string>) {
     this.state.deletingAreaIds = new Set(ids)
-
   }
 }
 

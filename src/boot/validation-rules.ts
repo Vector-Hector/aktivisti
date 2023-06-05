@@ -6,8 +6,8 @@ declare module '@vue/runtime-core' {
   }
 }
 
-export const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-
+export const emailRegex =
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 
 const validationRules = {
   isRequired(value: string | number | null | undefined) {
@@ -24,9 +24,9 @@ const validationRules = {
     } else {
       return 'Dies ist keine gültige E-Mailadresse'
     }
-  },
+  }
 }
 
-export default boot(({app}) => {
+export default boot(({ app }) => {
   app.config.globalProperties.$validationRules = validationRules
 })

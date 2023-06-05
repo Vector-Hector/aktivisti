@@ -14,7 +14,6 @@ interface TokenAuthStoreState extends BaseAuthStoreState {
 const KEY_TOKENSET = 'KEY_TOKENSET'
 
 export class TokenAuthStore extends BaseAuthStore<TokenAuthStoreState> {
-
   protected data(): TokenAuthStoreState {
     return {
       userId: null,
@@ -24,7 +23,9 @@ export class TokenAuthStore extends BaseAuthStore<TokenAuthStoreState> {
   }
 
   async loadFromNativeStorage() {
-    this.state.tokenSet = parseIfPossible((await Storage.get({key: KEY_TOKENSET})).value) as TokenDto | null
+    this.state.tokenSet = parseIfPossible(
+      (await Storage.get({ key: KEY_TOKENSET })).value
+    ) as TokenDto | null
   }
 
   async logout() {
@@ -40,7 +41,7 @@ export class TokenAuthStore extends BaseAuthStore<TokenAuthStoreState> {
   expiryDate(): Date | undefined {
     if (this.state.tokenSet?.expires_in) {
       const expiryDate = new Date()
-      date.addToDate(expiryDate, {seconds: this.state.tokenSet.expires_in})
+      date.addToDate(expiryDate, { seconds: this.state.tokenSet.expires_in })
       return expiryDate
     } else {
       return undefined
@@ -55,7 +56,7 @@ export class TokenAuthStore extends BaseAuthStore<TokenAuthStoreState> {
         value: JSON.stringify(tokenSet)
       })
     } else {
-      await Storage.remove({key: KEY_TOKENSET})
+      await Storage.remove({ key: KEY_TOKENSET })
     }
   }
 
@@ -69,18 +70,23 @@ export class TokenAuthStore extends BaseAuthStore<TokenAuthStoreState> {
     await this.setTokenSet(tokenResponse.payload)
   }
 
-  async renewToken()  {
-    this.state.tokenSet = (await oAuth2Client.token({
-      grant_type: 'refresh_token',
-      refresh_token: this.state.tokenSet?.refresh_token,
-      client_id: process.env.APP_CLIENT_ID!
-    })).payload
+  async renewToken() {
+    this.state.tokenSet = (
+      await oAuth2Client.token({
+        grant_type: 'refresh_token',
+        refresh_token: this.state.tokenSet?.refresh_token,
+        client_id: process.env.APP_CLIENT_ID!
+      })
+    ).payload
     await this.setTokenSet(this.state.tokenSet)
     this.state.renewTokenPromise = null
   }
 
   async renewLogin() {
-    if (this.state.renewTokenPromise == null && this.state.tokenSet?.refresh_token) {
+    if (
+      this.state.renewTokenPromise == null &&
+      this.state.tokenSet?.refresh_token
+    ) {
       this.state.renewTokenPromise = this.renewToken()
     }
     if (this.state.renewTokenPromise) {

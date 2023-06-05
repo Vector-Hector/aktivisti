@@ -2,7 +2,7 @@
   <FilterInput
     class="filter-dropdown"
     :model-value="modelValue"
-    @update:model-value="(value)=>this.$emit('update:modelValue', value)"
+    @update:model-value="(value) => this.$emit('update:modelValue', value)"
     input-debounce="0"
     label="Sortierung"
     :options="sortOptions"
@@ -22,22 +22,21 @@ const SortOptionLabels = {
 }
 
 export default defineComponent({
-    name: 'SortOrderFilter',
-    components: {
-      FilterInput
-    },
-    props: {
-      modelValue: {
-        type: String as PropType<EventStatus>
-      }
-    },
-    data() {
-      return {
-        sortOptions: Object.values(SortOption),
-        SortOptionLabels,
-      }
-    },
-    emits: ['update:modelValue']
-  }
-)
+  name: 'SortOrderFilter',
+  components: {
+    FilterInput
+  },
+  props: {
+    modelValue: {
+      type: String as PropType<EventStatus>
+    }
+  },
+  data() {
+    return {
+      sortOptions: Object.values(SortOption),
+      SortOptionLabels
+    }
+  },
+  emits: ['update:modelValue']
+})
 </script>

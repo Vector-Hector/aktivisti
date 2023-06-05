@@ -16,14 +16,13 @@ Documentation resources for the used tools:
 
 ⚠️ Lots of resources out there still refer to Vue2 while we use Vue3
 
-
 ## Development
 
 ### Install dependencies
 
 Make sure you are running **node version 16** in development
 
-```
+```sh
 npm install
 ```
 
@@ -31,8 +30,8 @@ npm install
 
 As a template for the required environment variables you can use `.env.dist`.
 
-```bash
-$ cp -n .env.dist .env
+```sh
+cp -n .env.dist .env
 ```
 
 You can also define and overwrite variables directly as env var like `APP_VARIABLE=foo npm run dev`
@@ -44,13 +43,13 @@ use a safe access to `process` with a proper default value in constants.
 
 ### Serving the application during development (with hot-reload)
 
-```
+```bash
 npm run dev
 ```
 
 ### Compile for production
 
-```
+```bash
 npm run build
 ```
 
@@ -58,14 +57,14 @@ npm run build
 
 This project also has a capacitor target. Following npm scripts alias capacitor builds:
 
-```
+```bash
 npm run build:android # builds app for capacitor android target
 npm run dev:android # starts dev server for capacitor android target
 ```
 
 ### Run linter and auto-fix
 
-```
+```bash
 npm run lint
 ```
 
@@ -75,7 +74,7 @@ npm run lint
 
 DIE LINKE. doesn't require a CLA (Contributor License Agreement). The copyright belongs to all the individual contributors. Therefore we recommend that every contributor adds following line to the header of a file, if they changed it substantially:
 
-```
+```text
 @copyright Copyright (c) <year>, <your name> (<your email address>)
 ```
 
@@ -98,7 +97,7 @@ The release is done as follows. Create a branch coming from `develop`. It must b
 
 E.g.:
 
-```shell
+```text
 release/0.5.1 ✓
 release/0.5.1-rc.1 ✗
 release/0.5 ✗
@@ -117,7 +116,7 @@ pattern for release tags that are a subset of [semver](https://semver.org/lang/d
 
 For example:
 
-```
+```bash
 git tag -a 1.1.0 # ✓
 git tag -a 1.1.1-alpha.1 # ✓
 git tag -a 1.2.0 # ✓
@@ -126,12 +125,10 @@ git tag -a 1.2.0 # ✓
 The build script will possibly throw an error or generate garbage versions if the last tag is wrong like those bad
 examples:
 
-```
-
+```bash
 git tag -a 1.2 # ✗
 git tag -a 1.1.1-alpha-1 # ✗
 git tag -a testtag # ✗
 ```
 
 *Tip: Take a look on [npm-version](https://docs.npmjs.com/cli/v6/commands/npm-version) to update the version*
-

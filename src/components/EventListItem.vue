@@ -1,7 +1,5 @@
 <template>
-  <QItem
-    tabindex="-1"
-  >
+  <QItem tabindex="-1">
     <QItemSection
       clickable
       v-ripple
@@ -15,7 +13,11 @@
         {{ eventTypeLabel }}
       </QItemLabel>
       <QItemLabel>
-        {{ campaignsByIds(event.campaigns).map(({name}) => name).join(',') }}
+        {{
+          campaignsByIds(event.campaigns)
+            .map(({ name }) => name)
+            .join(',')
+        }}
       </QItemLabel>
       <QItemLabel>
         {{ $utils.dateFormat(event.start_date) }}
@@ -27,15 +29,19 @@
           round
           :icon="ionPencil"
           color="primary"
-          :to="{name: 'edit-event-details', params: { eventId: event.id }}"
+          :to="{ name: 'edit-event-details', params: { eventId: event.id } }"
         ></QBtn>
-        <QBtn round :icon="ionTrash" color="primary" @click="openDeleteModal()"></QBtn>
+        <QBtn
+          round
+          :icon="ionTrash"
+          color="primary"
+          @click="openDeleteModal()"
+        ></QBtn>
       </div>
     </QItemSection>
   </QItem>
 </template>
 <script lang="ts">
-
 import { defineComponent, PropType } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { QBtn, QItem, QItemLabel, QItemSection } from 'quasar'
@@ -72,18 +78,20 @@ export default defineComponent({
   },
   computed: {
     eventTypeLabel(): string | undefined {
-      return eventTypeOptions.find(({key}) => key === this.event.event_type)?.label
+      return eventTypeOptions.find(({ key }) => key === this.event.event_type)
+        ?.label
     }
   },
   methods: {
     campaignsByIds(findIds: number[]): CampaignDto[] {
-      return this.campaigns.filter(({id}) => findIds.includes(id))
+      return this.campaigns.filter(({ id }) => findIds.includes(id))
     },
     openDeleteModal() {
-      openDeleteEventDialog(this.$q, this.event).then(() => this.$emit('delete')).catch(console.error)
+      openDeleteEventDialog(this.$q, this.event)
+        .then(() => this.$emit('delete'))
+        .catch(console.error)
     }
   }
 })
 </script>
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

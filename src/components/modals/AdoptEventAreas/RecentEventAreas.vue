@@ -14,7 +14,9 @@ interface Emits {
 const emit = defineEmits<Emits>()
 
 async function handleClickOnEvent(event: EventDto): Promise<void> {
-  const eventAreas = (await apiClient.eventAreas.list({event: event.id.toString()})).payload.data
+  const eventAreas = (
+    await apiClient.eventAreas.list({ event: event.id.toString() })
+  ).payload.data
   const clonedEventAreas = eventAreas.map((area) => ({
     name: area.name,
     // We're using hat, to get the same shema for the future_id like mapbox see:
@@ -26,19 +28,22 @@ async function handleClickOnEvent(event: EventDto): Promise<void> {
   emit('onEventClick', clonedEventAreas)
 }
 function excludeCurrentEvent(event: EventDto) {
-  const {event: currentEvent} = useEditEventMixin()
+  const { event: currentEvent } = useEditEventMixin()
   return event.id !== currentEvent.value.id
 }
-
 </script>
 <template>
   <QCardSection class="description-section">
-      <span class="description">
-          Bitte wähle eine Aktion aus, von welcher du die definierten Gebiete übernehmen möchtest.
-      </span>
+    <span class="description">
+      Bitte wähle eine Aktion aus, von welcher du die definierten Gebiete
+      übernehmen möchtest.
+    </span>
   </QCardSection>
   <QCardSection class="section">
-    <ManagedEvents @clickOnEvent="handleClickOnEvent" :filter="excludeCurrentEvent"/>
+    <ManagedEvents
+      @clickOnEvent="handleClickOnEvent"
+      :filter="excludeCurrentEvent"
+    />
   </QCardSection>
 </template>
 
@@ -63,5 +68,4 @@ function excludeCurrentEvent(event: EventDto) {
 .description-section {
   padding-bottom: 0;
 }
-
 </style>

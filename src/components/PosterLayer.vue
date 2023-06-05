@@ -1,6 +1,2 @@
-
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'PosterLayer'
-})
+import { defineComponent } from 'vue' export default defineComponent({ name:
+'PosterLayer' })

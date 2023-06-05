@@ -9,11 +9,11 @@ export enum AuthType {
 
 export function getAuthStore() {
   switch (getAuthType()) {
-  case AuthType.SESSION:
-    return sessionAuthStore
-  case AuthType.TOKEN:
-  default:
-    return tokenAuthStore
+    case AuthType.SESSION:
+      return sessionAuthStore
+    case AuthType.TOKEN:
+    default:
+      return tokenAuthStore
   }
 }
 

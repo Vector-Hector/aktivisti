@@ -1,14 +1,17 @@
 <template>
-  <QScrollArea
-    ref="qScrollArea"
-  >
+  <QScrollArea ref="qScrollArea">
     <QInfiniteScroll
       v-if="items.length > 0"
-      @load="(index, done)=>$emit('load', index, done)"
+      @load="(index, done) => $emit('load', index, done)"
       :disable="disable"
     >
       <QList>
-        <slot name="item" :item="item" v-for="(item, index) in items" :key="index">
+        <slot
+          name="item"
+          :item="item"
+          v-for="(item, index) in items"
+          :key="index"
+        >
           {{ item }}
         </slot>
       </QList>
@@ -18,13 +21,8 @@
         </div>
       </template>
     </QInfiniteScroll>
-    <div
-      v-else
-      class="empty-list-placeholder"
-    >
-      <slot name="emptyList">
-        Keine Einträge gefunden
-      </slot>
+    <div v-else class="empty-list-placeholder">
+      <slot name="emptyList"> Keine Einträge gefunden </slot>
     </div>
   </QScrollArea>
 </template>
@@ -53,7 +51,7 @@ export default defineComponent({
   },
   emits: ['load'],
   methods: {
-    resetScrollPosition(){
+    resetScrollPosition() {
       // @ts-ignore
       this.$refs.qScrollArea.setScrollPosition('vertical', 0)
     }

@@ -6,7 +6,7 @@
           color="primary"
           label="Erstellen"
           :icon="ionLocationSharp"
-          :to="{name: 'edit-event-single-poster-new'}"
+          :to="{ name: 'edit-event-single-poster-new' }"
         />
       </div>
     </div>
@@ -28,9 +28,7 @@
 <script lang="ts">
 import { defineComponent, inject } from 'vue'
 
-import {
-  QBtn
-} from 'quasar'
+import { QBtn } from 'quasar'
 import { ionLocationSharp } from '@quasar/extras/ionicons-v5'
 import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
@@ -89,7 +87,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-
 .edit-event-posters {
   flex: 1;
   height: 100%;
@@ -110,5 +107,4 @@ export default defineComponent({
   flex-direction: row;
   justify-content: flex-end;
 }
-
 </style>
