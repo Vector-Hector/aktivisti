@@ -44,6 +44,7 @@ import { QBtn } from 'quasar'
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 import EventMarker from 'components/EventMarker.vue'
 import Geocoder from 'src/map/Geocoder.vue'
+import { uiStore } from 'src/store/UiStore'
 
 export default defineComponent({
   name: 'EventOverviewMap',
@@ -104,6 +105,15 @@ export default defineComponent({
     getEventTypeLabel(eventType: EventTypes): string | undefined {
       return eventTypeOptions.find(({ key }) => key === eventType)?.label
     }
+  },
+  beforeMount() {
+    const previousZoom = uiStore.getState().mapZoom
+    if (previousZoom != null) this.map.setZoom(previousZoom, {})
+    uiStore.setMapZoom(null)
+  },
+  beforeUnmount() {
+    const map: maplibregl.Map = this.map
+    uiStore.setMapZoom(map.getZoom())
   }
 })
 </script>

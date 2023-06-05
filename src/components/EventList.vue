@@ -10,8 +10,10 @@
         clickable
         v-ripple
         @click="handleClickOnEvent(item)"
+        @delete="handleDeleteEvent()"
         :event="item"
         :campaigns="campaigns"
+        :show-management-control-buttons="showManagementControlButtons"
       />
     </template>
     <template v-slot:emptyList> Keine Aktionen im Gebiet gefunden </template>
@@ -25,7 +27,6 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
 import { Pagination } from 'src/api/model/APIEnvelope'
 import { distinctBy } from 'src/utils/array'
-import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 import EventListItem from 'components/EventListItem.vue'
 import InfiniteList from 'components/InfiniteList.vue'
 
@@ -58,9 +59,15 @@ export default defineComponent({
      */
     filter: {
       type: Function as PropType<(event: EventDto) => boolean>
-    }
+    },
+    showManagementControlButtons: Boolean
   },
-  emits: ['clickOnEvent', 'update:events', 'update:pagination'],
+  emits: [
+    'clickOnEvent',
+    'update:events',
+    'update:delete',
+    'update:pagination'
+  ],
   computed: {
     isDisabled(): boolean {
       let filteredEventsCount = 0
@@ -72,15 +79,12 @@ export default defineComponent({
         : false
     }
   },
-  data() {
-    return {
-      ionTrash,
-      ionPencil
-    }
-  },
   methods: {
     handleClickOnEvent(event: EventDto) {
       this.$emit('clickOnEvent', event)
+    },
+    handleDeleteEvent() {
+      this.$emit('update:delete')
     },
     async getEvents() {
       const response = await this.$apiClient.events.list({

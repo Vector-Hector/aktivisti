@@ -1,6 +1,11 @@
 <template>
-  <QItem clickable v-ripple @click="$emit('click', event)">
-    <QItemSection>
+  <QItem tabindex="-1">
+    <QItemSection
+      clickable
+      v-ripple
+      tabindex="0"
+      @click="$emit('click', event)"
+    >
       <QItemLabel>
         <b>{{ event.name }}</b>
       </QItemLabel>
@@ -18,23 +23,48 @@
         {{ $utils.dateFormat(event.start_date) }}
       </QItemLabel>
     </QItemSection>
+    <QItemSection side v-if="showManagementControlButtons">
+      <div class="q-gutter-x-md">
+        <QBtn
+          round
+          :icon="ionPencil"
+          color="primary"
+          :to="{ name: 'edit-event-details', params: { eventId: event.id } }"
+        ></QBtn>
+        <QBtn
+          round
+          :icon="ionTrash"
+          color="primary"
+          @click="openDeleteModal()"
+        ></QBtn>
+      </div>
+    </QItemSection>
   </QItem>
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
-import { QItem, QItemLabel, QItemSection } from 'quasar'
+import { QBtn, QItem, QItemLabel, QItemSection } from 'quasar'
+import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { openDeleteEventDialog } from 'src/utils/dialog'
 
 export default defineComponent({
   name: 'EventListItem',
   components: {
+    QBtn,
     QItem,
     QItemLabel,
     QItemSection
   },
-  emits: ['click'],
+  data() {
+    return {
+      ionPencil,
+      ionTrash
+    }
+  },
+  emits: ['click', 'delete'],
   props: {
     event: {
       type: Object as PropType<EventDto>,
@@ -43,7 +73,8 @@ export default defineComponent({
     campaigns: {
       type: Array as PropType<CampaignDto[]>,
       required: true
-    }
+    },
+    showManagementControlButtons: Boolean
   },
   computed: {
     eventTypeLabel(): string | undefined {
@@ -54,6 +85,11 @@ export default defineComponent({
   methods: {
     campaignsByIds(findIds: number[]): CampaignDto[] {
       return this.campaigns.filter(({ id }) => findIds.includes(id))
+    },
+    openDeleteModal() {
+      openDeleteEventDialog(this.$q, this.event)
+        .then(() => this.$emit('delete'))
+        .catch(console.error)
     }
   }
 })

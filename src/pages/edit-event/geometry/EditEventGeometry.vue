@@ -97,6 +97,22 @@
                   v-if="updatingAreaFeatureIds.has(props.row.feature_id)"
                   class="progress-spinner"
                 />
+                <div
+                  v-else-if="props.row.feature_id in eventAreasWithError"
+                  class="error-indicator"
+                >
+                  <QIcon
+                    class="event-area-error-icon"
+                    color="negative"
+                    size="sm"
+                    :name="ionAlertCircleOutline"
+                    aria-label="Fehlerindikator für Gebiet"
+                  >
+                  </QIcon>
+                  <QTooltip v-model="showing">
+                    {{ eventAreasWithError[props.row.feature_id] }}
+                  </QTooltip>
+                </div>
                 <span v-else-if="event.event_type === EventTypes.POSTERS">
                   {{ props.row.poster_count }}
                 </span>
@@ -160,19 +176,22 @@ import {
   QBtn,
   QColor,
   QInput,
+  QIcon,
   QPopupEdit,
   QPopupProxy,
   QSpinnerPuff,
   QTable,
   QTd,
   QTh,
+  QTooltip,
   QTr
 } from 'quasar'
 import {
   ionCopyOutline,
   ionCreateOutline,
   ionPencil,
-  ionTrash
+  ionTrash,
+  ionAlertCircleOutline
 } from '@quasar/extras/ionicons-v5'
 import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
@@ -194,7 +213,9 @@ export default defineComponent({
     QColor,
     QSpinnerPuff,
     QPopupProxy,
+    QIcon,
     QBtn,
+    QTooltip,
     QInput,
     QTable,
     QTd,
@@ -210,6 +231,8 @@ export default defineComponent({
   data() {
     return {
       isLoading: false,
+      showing: false,
+      ionAlertCircleOutline,
       ionCopyOutline,
       ionCreateOutline,
       ionTrash,

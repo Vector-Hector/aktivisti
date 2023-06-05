@@ -325,6 +325,10 @@ body.platform-ios {
   .menu-item-link {
     cursor: pointer;
     color: $text-primary;
+
+    :first-child {
+      width: 1rem;
+    }
   }
 
   &.highlighted {
@@ -393,6 +397,7 @@ hr {
 
 .paragraph-icon {
   font-size: 0.9rem;
+  text-align: center;
 }
 
 .version {

@@ -14,6 +14,7 @@ interface EditEventState {
   campaigns: CampaignDto[]
   metricRecords: EventMetricRecordDto[]
   updatingAreaFeatureIds: Set<string>
+  areasWithError: Record<string, string>
   deletingAreaIds: Set<string>
 }
 
@@ -25,6 +26,7 @@ class EditEventStore extends Store<EditEventState> {
       campaigns: [],
       metricRecords: [],
       updatingAreaFeatureIds: new Set<string>(),
+      areasWithError: {},
       deletingAreaIds: new Set<string>()
     }
   }
@@ -43,6 +45,14 @@ class EditEventStore extends Store<EditEventState> {
 
   public setCampaigns(campaigns: CampaignDto[]) {
     this.state.campaigns = campaigns
+  }
+
+  public setEventAreaError(id: string, msg: string) {
+    this.state.areasWithError[id] = msg
+  }
+
+  public clearEventAreaError(id: string) {
+    delete this.state.areasWithError[id]
   }
 
   public setUpdatingAreaFeatureIds(ids: string[] | Set<string>) {

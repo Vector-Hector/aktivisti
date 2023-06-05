@@ -38,6 +38,9 @@ export default defineComponent({
     campaigns() {
       return editEventStore.getState().campaigns
     },
+    eventAreasWithError(): Record<string, string> {
+      return editEventStore.getState().areasWithError
+    },
     updatingAreaFeatureIds: {
       get(): Set<string> {
         return editEventStore.getState().updatingAreaFeatureIds
@@ -61,6 +64,14 @@ export default defineComponent({
       set(posters: PosterDto[]) {
         posterListStore.state.posters = posters
       }
+    }
+  },
+  methods: {
+    addAreaError(id: string, error: string) {
+      editEventStore.setEventAreaError(id, error)
+    },
+    clearAreaError(id: string) {
+      editEventStore.clearEventAreaError(id)
     }
   }
 })
