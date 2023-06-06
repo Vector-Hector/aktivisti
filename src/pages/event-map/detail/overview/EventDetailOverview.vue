@@ -199,19 +199,15 @@
           </QList>
         </div>
       </div>
-      <div
-        v-if="
-          personalParticipation?.is_verified === false &&
-          event.event_type !== EventTypes.GENERIC
-        "
-        class="row"
-      >
-        <div v-if="!isTeamCaptainOrCoordinator" class="col-12">
-          Super, dass du mitmachen möchtest. Du hast dich für diese Aktion
-          gemeldet. Der nächste Schritt ist zur angegebenen Zeit am vereinbarten
-          Treffpunkt zu erscheinen. Ein Teamcaptain wird dich dann für diese
-          Aktion freischalten.
-        </div>
+      <div v-if="needsVerification" class="row text-primary q-col-gutter-x-md">
+        <template v-if="!isTeamCaptainOrCoordinator">
+          <span class="col-12">
+            Super, dass du mitmachen möchtest. Du hast dich für diese Aktion
+            gemeldet. Der nächste Schritt ist zur angegebenen Zeit am
+            vereinbarten Treffpunkt zu erscheinen. Ein Teamcaptain wird dich
+            dann für diese Aktion freischalten.
+          </span>
+        </template>
       </div>
       <div
         class="row"
@@ -233,13 +229,27 @@
       <div class="row q-col-gutter-x-md" v-if="isLoggedIn">
         <div class="col-6">
           <QBtn
-            v-if="isTeamCaptainOrCoordinator"
+            v-if="isTeamCaptain"
             class="full-width"
             @click="openInviteModal"
             flat
           >
             Leute einladen
           </QBtn>
+          <div
+            v-if="needsVerification"
+            class="text-primary verification-indicator"
+          >
+            <QIcon
+              class="q-mr-sm"
+              color="negative"
+              size="md"
+              name="img:static/icons/Icon_Waiting.svg"
+              aria-label="Fehlerindikator für Gebiet"
+            >
+            </QIcon>
+            Freischaltung
+          </div>
         </div>
         <div class="col-6">
           <QBtn
@@ -299,7 +309,7 @@ import {
   ionSettingsSharp,
   ionTrash
 } from '@quasar/extras/ionicons-v5'
-import { QBtn, QFab, QFabAction, QList, QScrollArea } from 'quasar'
+import { QBtn, QIcon, QFab, QFabAction, QList, QScrollArea } from 'quasar'
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 import Share from 'components/Share.vue'
 import LabeledBtn from 'components/LabeledBtn.vue'
@@ -318,6 +328,7 @@ export default defineComponent({
     EventAreaItem,
     QScrollArea,
     QBtn,
+    QIcon,
     QList,
     QFab,
     QFabAction
@@ -440,6 +451,12 @@ export default defineComponent({
         EventTypes.POSTERS,
         EventTypes.FLYERS
       ].includes(event_type)
+    },
+    needsVerification(): boolean {
+      return (
+        this.personalParticipation?.is_verified === false &&
+        this.event.event_type !== EventTypes.GENERIC
+      )
     }
   },
   methods: {
@@ -699,5 +716,9 @@ label {
 .admin-fab {
   margin-left: 20px !important;
   margin-right: 20px !important;
+}
+
+.verification-indicator {
+  font-size: 1rem;
 }
 </style>
