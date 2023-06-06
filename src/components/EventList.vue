@@ -38,7 +38,7 @@ export default defineComponent({
   },
   props: {
     filterParams: {
-      type: Object as PropType<{ [key: string]: string }>,
+      type: Object as PropType<{ [key: string]: unknown }>,
       required: true
     },
     events: {

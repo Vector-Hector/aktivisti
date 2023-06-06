@@ -1,12 +1,12 @@
 import { Store } from 'src/store/Store'
 import { EventDto } from 'src/api/model/EventDto'
-import { ClusterDto } from 'src/api/model/ClusterDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import { EventGeoJsonDto } from 'src/api/model/EventGeoJsonDto'
 
 interface EventMapStoreState {
   bbox: BBox2d | null
   events: EventDto[]
-  clusters: ClusterDto[]
+  featureCollection: EventGeoJsonDto | null
 }
 
 class EventOverviewStore extends Store<EventMapStoreState> {
@@ -14,7 +14,7 @@ class EventOverviewStore extends Store<EventMapStoreState> {
     return {
       bbox: null,
       events: [],
-      clusters: []
+      featureCollection: null
     }
   }
 
@@ -22,8 +22,8 @@ class EventOverviewStore extends Store<EventMapStoreState> {
     this.state.bbox = bbox
   }
 
-  public setClusters(clusters: ClusterDto[]) {
-    this.state.clusters = clusters
+  public setStubs(stubs: EventGeoJsonDto) {
+    this.state.featureCollection = stubs
   }
 
   public setEvents(events: EventDto[]) {

@@ -1,47 +1,26 @@
 <template>
   <Geocoder :collapsed="true" position="top-left" :countries="['de']" />
-  <span v-if="clusterMode">
-    <ClusterLayer :clusters="clusters" />
-  </span>
-  <span v-else>
-    <span v-for="event in events" :key="event.id">
-      <EventMarker :event="event">
-        <MarkerPopup>
-          <div class="popup-contents">
-            <span class="popup-title">{{ event.name }}</span>
-            <span class="popup-type">
-              {{ getEventTypeLabel(event.event_type) }}
-            </span>
-            <span class="popup-campaign">{{
-              event.campaigns?.map(({ name }) => name).join(',')
-            }}</span>
-
-            <span class="popup-date">
-              {{ new Date(event.start_date).toLocaleString() }}
-            </span>
-            <QBtn
-              label="Mitmachen/Infos"
-              color="primary"
-              :to="`/events/${event.id}`"
-            />
-          </div>
-        </MarkerPopup>
-      </EventMarker>
-    </span>
-  </span>
+  <ClusterLayer
+    :feature-collection="featureCollection"
+    @event-clicked="activeEvent = $event"
+    :icon-image-value="['get', 'event_type']"
+  />
+  <CoordinatesPopup
+    v-if="activeEvent"
+    :coordinates="activeEvent.geometry.coordinates"
+    @close="activeEvent = null"
+  >
+    <EventPopupContents v-if="activeEvent" :event="activeEvent">
+    </EventPopupContents>
+  </CoordinatesPopup>
 </template>
 <script lang="ts">
 import { defineComponent, onUnmounted } from 'vue'
-import MarkerPopup from 'src/map/popup/MarkerPopup.vue'
-import { ClusterDto } from 'src/api/model/ClusterDto'
 import { EVENT_MAP_MAX_EVENTS } from 'src/constants'
-import ClusterLayer from 'src/map/ClusterLayer.vue'
+import ClusterLayer from 'src/map/ClusterLayer'
 import EventsOverviewMixin from 'pages/event-map/overview/EventsOverviewMixin'
 import { eventOverviewStore } from 'src/store/EventOverviewStore'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
-import { QBtn } from 'quasar'
-import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
-import EventMarker from 'components/EventMarker.vue'
 import Geocoder from 'src/map/Geocoder.vue'
 import { uiStore } from 'src/store/UiStore'
 import maplibregl from 'maplibre-gl'
@@ -51,15 +30,34 @@ export default defineComponent({
   name: 'EventOverviewMap',
   mixins: [EventsOverviewMixin],
   components: {
+    EventPopupContents,
+    CoordinatesPopup,
     Geocoder,
-    EventMarker,
-    MarkerPopup,
-    QBtn,
     ClusterLayer
   },
   setup() {
     const map = useMap()
 
+    void loadImageIfNonExistent(
+      map.value,
+      POSTER_SYMBOL_NAME,
+      '/static/icons/map-pin-poster.png'
+    )
+    void loadImageIfNonExistent(
+      map.value,
+      DOOR_TO_DOOR_SYMBOL_NAME,
+      '/static/icons/map-pin-door.png'
+    )
+    void loadImageIfNonExistent(
+      map.value,
+      FLYER_SYMBOL_NAME,
+      '/static/icons/map-pin-flyer.png'
+    )
+    void loadImageIfNonExistent(
+      map.value,
+      GENERIC_SYMBOL_NAME,
+      '/static/icons/map-pin-generic.png'
+    )
     const updateBounds = () => {
       eventOverviewStore.setBbox(
         map.value?.getBounds().toArray().flat() as BBox2d
@@ -73,15 +71,13 @@ export default defineComponent({
     })
     updateBounds()
     return {
-      map
+      map,
+      activeEvent
     }
   },
   computed: {
     clusterTotal(): number {
-      return this.clusters.reduce(
-        (acc: number, item: ClusterDto) => acc + item.count,
-        0
-      )
+      return this.featureCollection?.features.length ?? 0
     },
     clusterMode(): boolean {
       return this.clusterTotal > EVENT_MAP_MAX_EVENTS
@@ -102,11 +98,6 @@ export default defineComponent({
       }
     }
   },
-  methods: {
-    getEventTypeLabel(eventType: EventTypes): string | undefined {
-      return eventTypeOptions.find(({ key }) => key === eventType)?.label
-    }
-  },
   beforeMount() {
     const previousZoom = uiStore.getState().mapZoom
     if (previousZoom != null) this.map.setZoom(previousZoom, {})
@@ -119,42 +110,6 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-.popup-title {
-  font-weight: bold;
-  display: block;
-  font-size: 1rem;
-}
-
-.popup-type {
-  display: block;
-  font-size: 0.9rem;
-}
-
-.popup-campaign {
-  display: block;
-  font-size: 0.9rem;
-}
-
-.popup-date {
-  display: block;
-  font-size: 0.9rem;
-}
-
-.join-link {
-  align-self: flex-end;
-
-  Button {
-    padding: 3px 6px;
-  }
-
-  margin-top: 6px;
-}
-
-.popup-contents {
-  display: flex;
-  flex-direction: column;
-}
-
 ::v-global(.too-many-events-headline) {
   margin: 0;
 }

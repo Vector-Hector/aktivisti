@@ -302,7 +302,7 @@ export default defineComponent({
       await this.saveDebouncer.waitForSettle()
       this.stepControls.abort()
     },
-    handleUpdateColor(row, color) {
+    handleUpdateColor(row: EventAreaDto, color: string) {
       row.color = `${color}`
       void this.updateArea(row)
     },

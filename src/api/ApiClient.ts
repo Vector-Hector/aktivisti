@@ -12,7 +12,6 @@ import { LeadDto } from 'src/api/model/LeadDto'
 import { EventAreaRoute } from 'src/api/EventAreaRoute'
 import { EventParticipationRoute } from 'src/api/EventParticipationRoute'
 import { UserRegistrationDto } from 'src/api/model/UserRegistrationDto'
-import { ClusterDto } from 'src/api/model/ClusterDto'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { StateAssociationDto } from 'src/api/model/StateAssociationDto'
 import { AccountRoute } from 'src/api/AccountRoute'
@@ -36,6 +35,8 @@ import { ReportPosterRoute } from 'src/api/ReportPosterRoute'
 import { ReportEventMetricsRoute } from 'src/api/ReportEventMetricsRoute'
 import { ReportEventsRoute } from 'src/api/ReportEventsRoute'
 import { ReportActiveUsersRoute } from 'src/api/ReportActiveUsersRoute'
+import { EventGeometryRoute } from 'src/api/EventGeometryRoute'
+import { OfficeGeometryRoute } from 'src/api/OfficeGeometryRoute'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -129,9 +130,9 @@ export class ApiClient {
     'account/forgot-password/',
     this.axiosInstance
   )
-  eventClusters = new ApiRoute<ClusterDto>(
+  eventGeometry = new EventGeometryRoute(
     this.baseURL,
-    'event-clusters/',
+    'event-geometry/',
     this.axiosInstance
   )
   subAssociations = new ApiRoute<SubAssociationDto>(
@@ -172,9 +173,9 @@ export class ApiClient {
     'offices/',
     this.axiosInstance
   )
-  officeClusters = new ApiRoute<ClusterDto>(
+  officeGeometry = new OfficeGeometryRoute(
     this.baseURL,
-    'office-clusters/',
+    'office-geometry/',
     this.axiosInstance
   )
   campaignGeometries = new ApiRoute<CampaignGeometriesDto>(

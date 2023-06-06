@@ -1,9 +1,9 @@
 import { defineComponent } from 'vue'
 import { eventOverviewStore } from 'src/store/EventOverviewStore'
 import { EventDto } from 'src/api/model/EventDto'
-import { ClusterDto } from 'src/api/model/ClusterDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bboxPolygon } from '@turf/turf'
+import { EventGeoJsonDto } from 'src/api/model/EventGeoJsonDto'
 
 export default defineComponent({
   name: 'EventsOverviewMixin',
@@ -29,12 +29,12 @@ export default defineComponent({
         eventOverviewStore.setEvents(value)
       }
     },
-    clusters: {
+    featureCollection: {
       get() {
-        return eventOverviewStore.getState().clusters
+        return eventOverviewStore.getState().featureCollection
       },
-      set(value: ClusterDto[]) {
-        eventOverviewStore.setClusters(value)
+      set(value: EventGeoJsonDto) {
+        eventOverviewStore.setStubs(value)
       }
     }
   }

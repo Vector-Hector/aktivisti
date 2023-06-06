@@ -108,6 +108,8 @@ export default defineComponent({
   async created() {
     await this.getCampaigns()
     await this.getSubAssociations()
+    const stubsResponse = await this.$apiClient.eventGeometry.list()
+    this.featureCollection = stubsResponse.payload.data
   },
   methods: {
     showCampaignLevel,
@@ -122,17 +124,12 @@ export default defineComponent({
         this.$refs.eventList.resetScrollPosition()
       }
       if (this.filterParams.within) {
-        const clusterResponse = await this.$apiClient.eventClusters.list(
-          this.filterParams
-        )
-        if (!isEqual(this.clusters, clusterResponse.payload.data)) {
-          this.clusters = clusterResponse.payload.data
-        }
         const eventsResponse = await this.$apiClient.events.list(
           this.filterParams
         )
-        if (!isEqual(this.events, eventsResponse.payload.data))
+        if (!isEqual(this.events, eventsResponse.payload.data)) {
           this.events = eventsResponse.payload.data
+        }
         this.eventsPagination = eventsResponse.payload.pagination!
       }
     },
