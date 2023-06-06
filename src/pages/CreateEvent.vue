@@ -93,8 +93,13 @@ export default defineComponent({
       next((vm) => {
         // @ts-ignore
         vm.metrics = metricsRequest.payload.data
+        const campaigns = campaignRequest.payload.data
         // @ts-ignore
-        vm.campaigns = campaignRequest.payload.data
+        vm.campaigns = campaigns
+
+        if (campaigns.length === 1)
+          // @ts-ignore
+          vm.event.campaigns.push(campaigns[0].id)
       })
     }
   },
