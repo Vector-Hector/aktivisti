@@ -72,15 +72,23 @@
             external-label="Drucken"
           />
           <Share :title="shareTitle" :text="shareText" :url="shareUrl" />
-          <LabeledBtn v-if="isTeamCaptainOrCoordinator" external-label="Admin">
+          <LabeledBtn
+            v-if="isTeamCaptainOrCoordinator"
+            external-label="Admin"
+            class="admin-button"
+            :class="{ float: adminMenuOpen }"
+          >
             <template v-slot:btn>
               <QFab
+                class="bg-white"
                 :icon="ionSettingsSharp"
                 color="primary"
                 padding="sm"
                 direction="left"
                 outline
                 round
+                @before-show="openAdminMenu()"
+                @before-hide="hideAdminMenu()"
               >
                 <QFabAction
                   v-if="isCoordinator"
@@ -283,6 +291,7 @@
       </div>
     </div>
   </QScrollArea>
+  <div class="backdrop" :class="{ 'q-dialog__backdrop': adminMenuOpen }"></div>
 </template>
 
 <script lang="ts">
@@ -361,7 +370,8 @@ export default defineComponent({
       ionPersonOutline,
       ionPerson,
       ionReceipt,
-      ionTrash
+      ionTrash,
+      adminMenuOpen: false
     }
   },
   watch: {
@@ -596,6 +606,12 @@ export default defineComponent({
     openDeleteModal() {
       openDeleteEventDialog(this.$q, this.event).catch(console.error)
     },
+    openAdminMenu() {
+      this.adminMenuOpen = true
+    },
+    hideAdminMenu() {
+      this.adminMenuOpen = false
+    },
     openPosterTakeDownModal() {
       this.$q
         .dialog({
@@ -720,5 +736,21 @@ label {
 
 .verification-indicator {
   font-size: 1rem;
+}
+
+.admin-button {
+  &.float {
+    z-index: 2;
+  }
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+
+  &:not(.q-dialog__backdrop) {
+    display: none;
+  }
 }
 </style>
