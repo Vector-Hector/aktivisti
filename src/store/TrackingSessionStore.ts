@@ -1,6 +1,7 @@
 import { Store } from 'src/store/Store'
 import { apiClient } from 'src/api/ApiClient'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
+import { eventDetailStore } from 'src/store/EventDetailStore'
 
 interface TrackingSessionState {
   trackingSessionId: string | null
@@ -224,13 +225,16 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
     if (fromIncompleteState || toIncompleteState) {
       // If there is any metric recorded for this address indicate completion to the backend, if not indicate incompletion
       const completed = metricsToUpdate.some(({ value }) => value > 0)
-      updatePromises.push(
-        apiClient.completionNotes.create({
+      const completionNotePromise = apiClient.completionNotes
+        .create({
           target_id: address.osm_id,
           completed: completed,
           event_area: eventArea
         })
-      )
+        .then((response) => {
+          eventDetailStore.addCompletionNotes([response.payload.data])
+        })
+      updatePromises.push(completionNotePromise)
     }
     await Promise.all(updatePromises)
   }
