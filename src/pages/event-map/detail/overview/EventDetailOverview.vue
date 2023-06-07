@@ -229,7 +229,7 @@
       <div class="row q-col-gutter-x-md" v-if="isLoggedIn">
         <div class="col-6">
           <QBtn
-            v-if="isTeamCaptain"
+            v-if="isTeamCaptainOrCoordinator"
             class="full-width"
             @click="openInviteModal"
             flat
