@@ -49,8 +49,8 @@ export abstract class BaseAuthStore<
     userStore.setHomeAssociation(
       profileRequest.payload.embedded.sub_association?.[0] ?? null
     )
-    const center = userStore.getState().homeAssociation?.center
-    // when loggin in set the map on the bbox of the home association
+    // when loggin in set the map to the center of the postcode
+    const center = userStore.getState().user?.plz_center
     if (center) {
       userStore.setBbox(bbox(circle([center.lng, center.lat], 2)) as BBox2d)
     }
