@@ -25,7 +25,7 @@ import { MapInject } from './Map.vue'
 import { ionLocationSharp } from '@quasar/extras/ionicons-v5'
 import { QIcon } from 'quasar'
 
-export const MarkerInject: InjectionKey<Ref<Marker>> = Symbol()
+export const MarkerInject: InjectionKey<Ref<Marker | null>> = Symbol()
 
 export default defineComponent({
   name: 'Marker',
