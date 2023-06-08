@@ -52,11 +52,7 @@ export default defineComponent({
       default: 'top-right'
     }
   },
-  emits: {
-    result(payload: GeocodeResult) {
-      return payload
-    }
-  },
+  emits: ['result'],
   setup(props, { emit }) {
     const geocodeControl = new MaplibreGeocoder(
       {
