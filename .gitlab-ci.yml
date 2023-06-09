@@ -78,10 +78,10 @@ bundle-review:
     - develop
 
 .android:
-  image: circleci/android:api-30-node
+  image: cimg/android:2023.06-node
   stage: bundle
   before_script:
-    - sudo npm install -g npm@^7
+    - sudo npm install -g npm@^9
   script:
     - sudo npm ci
     - npx quasar build -m capacitor -T android
