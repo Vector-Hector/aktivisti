@@ -31,9 +31,8 @@
   </span>
 </template>
 <script lang="ts">
-import { defineComponent, inject, onUnmounted } from 'vue'
+import { defineComponent, onUnmounted } from 'vue'
 import MarkerPopup from 'src/map/popup/MarkerPopup.vue'
-import { MapInject } from 'src/map/Map.vue'
 import { ClusterDto } from 'src/api/model/ClusterDto'
 import { EVENT_MAP_MAX_EVENTS } from 'src/constants'
 import ClusterLayer from 'src/map/ClusterLayer.vue'
@@ -45,6 +44,8 @@ import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 import EventMarker from 'components/EventMarker.vue'
 import Geocoder from 'src/map/Geocoder.vue'
 import { uiStore } from 'src/store/UiStore'
+import maplibregl from 'maplibre-gl'
+import { useMap } from 'src/map/Map.vue'
 
 export default defineComponent({
   name: 'EventOverviewMap',
@@ -57,7 +58,7 @@ export default defineComponent({
     ClusterLayer
   },
   setup() {
-    const map = inject(MapInject)!
+    const map = useMap()
 
     const updateBounds = () => {
       eventOverviewStore.setBbox(

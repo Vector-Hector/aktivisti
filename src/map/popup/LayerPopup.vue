@@ -4,9 +4,9 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, inject, onUnmounted, ref } from 'vue'
+import { defineComponent, onUnmounted, ref } from 'vue'
 import { Offset, Popup } from 'maplibre-gl'
-import { MapInject } from 'src/map/Map.vue'
+import { useMap } from 'src/map/Map.vue'
 
 export default defineComponent({
   name: 'LayerPopup',
@@ -21,7 +21,7 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const map = inject(MapInject)!
+    const map = useMap()
     const popupElement = ref<HTMLElement | null>(null)
     const popup = ref<Popup | null>(null)
     const passedObject = ref<any | null>(null)

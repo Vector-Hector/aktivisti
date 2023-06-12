@@ -4,8 +4,8 @@
   <PosterMarkerLayer :posters="posters" @posterClick="handlePosterClick" />
 </template>
 <script lang="ts">
-import { defineComponent, inject, onUnmounted, ref } from 'vue'
-import { MapInject } from 'src/map/Map.vue'
+import { defineComponent, onUnmounted, ref } from 'vue'
+import { useMap } from 'src/map/Map.vue'
 import { userStore } from 'src/store/UserStore'
 import Geocoder from 'src/map/Geocoder.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
@@ -23,7 +23,7 @@ export default defineComponent({
   name: 'PosterOverviewMap',
   components: { PosterPopup, PosterMarkerLayer, Geocoder },
   setup() {
-    const map = inject(MapInject)!
+    const map = useMap()
     const clickedPoster = ref<PosterDto | null>(null)
     let bounds = ref(userStore.getState().bbox)
     const popup = ref<Popup | null>(null)

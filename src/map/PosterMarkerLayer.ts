@@ -1,20 +1,22 @@
 import {
   defineComponent,
-  inject,
   watch,
   onMounted,
   PropType,
   onUnmounted,
   h
 } from 'vue'
-import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { GeoJSONSource, GeoJSONSourceRaw, SymbolLayout } from 'maplibre-gl'
 import { PosterDto, PosterStatus } from 'src/api/model/PosterDto'
 import { loadImageIfNonExistent } from 'src/utils/map'
 import { FeatureCollection, Point } from 'geojson'
 import { clone } from 'lodash-es'
-import { MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/map/Map.vue'
+import {
+  MAP_GEOLOCATE_STOP_TRACKING,
+  MapEventBus,
+  useMap
+} from 'src/map/Map.vue'
 
 const ABSENT_IMAGE_NAME = 'absent-icon'
 const POSITIVE_IMAGE_NAME = 'positive-icon'
@@ -47,7 +49,7 @@ export default defineComponent({
   emits: ['update:posters', 'posterClick'],
   setup: function (props, { emit }) {
     const uuid = uuidv4()
-    const map = inject(MapInject)!
+    const map = useMap()
 
     const posterSourceId = `${uuid}-posters-source`
     const activePosterSourceId = `${uuid}-active-poster-source`

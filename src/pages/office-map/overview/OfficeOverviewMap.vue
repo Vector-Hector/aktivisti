@@ -20,8 +20,8 @@
   </span>
 </template>
 <script lang="ts">
-import { defineComponent, inject, onUnmounted, ref } from 'vue'
-import { MapInject } from 'src/map/Map.vue'
+import { defineComponent, onUnmounted, ref } from 'vue'
+import { useMap } from 'src/map/Map.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bboxPolygon } from '@turf/turf'
 import OfficeMarker from 'components/OfficeMarker.vue'
@@ -56,7 +56,7 @@ export default defineComponent({
     }
   },
   setup() {
-    const map = inject(MapInject)!
+    const map = useMap()
     let bounds = ref(userStore.getState().bbox)
     const updateBounds = () => {
       bounds.value = map.value?.getBounds().toArray().flat() as BBox2d
