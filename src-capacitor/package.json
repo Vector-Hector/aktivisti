@@ -4,15 +4,15 @@
   "author": "control.alt.coop eG <kontakt@ctrl.alt.coop>",
   "private": true,
   "dependencies": {
-    "@capacitor/android": "^3.2.3",
-    "@capacitor/app": "^1.0.2",
-    "@capacitor/cli": "^3.2.3",
-    "@capacitor/core": "^3.2.3",
-    "@capacitor/geolocation": "^1.1.0",
-    "@capacitor/ios": "^3.2.3",
-    "@capacitor/share": "^1.0.3",
-    "@capacitor/splash-screen": "^1.1.0",
-    "@capacitor/storage": "^1.0.3"
+    "@capacitor/android": "^4.0.0",
+    "@capacitor/app": "^4.0.0",
+    "@capacitor/cli": "^4.0.0",
+    "@capacitor/core": "^4.0.0",
+    "@capacitor/geolocation": "^4.0.0",
+    "@capacitor/ios": "^4.0.0",
+    "@capacitor/preferences": "^4.0.0",
+    "@capacitor/share": "^4.0.0",
+    "@capacitor/splash-screen": "^4.0.0"
   },
   "version": "2.2.0"
 }
