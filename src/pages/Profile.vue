@@ -127,7 +127,7 @@
               />
             </QItemSection>
           </QItem>
-          <QItem>
+          <QItem v-if="hasAtLeastOneManagePermission">
             <QItemSection>
               E-Mailbenachrichtigung wenn neue Freiwillige meine Bestätigung
               brauchen
@@ -272,6 +272,9 @@ export default defineComponent({
     })
   },
   computed: {
+    hasAtLeastOneManagePermission(): boolean {
+      return userStore.hasAtLeastOneManagePermission()
+    },
     hasAnyPermission(): boolean {
       return (
         this.permissions.length > 0 ||
