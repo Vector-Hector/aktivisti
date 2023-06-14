@@ -9,7 +9,6 @@
 <script lang="ts">
 import {
   defineComponent,
-  inject,
   provide,
   InjectionKey,
   onMounted,
@@ -21,11 +20,11 @@ import {
 } from 'vue'
 import { Marker } from 'maplibre-gl'
 import { LocationDto } from 'src/api/model/LocationDto'
-import { MapInject } from './Map.vue'
 import { ionLocationSharp } from '@quasar/extras/ionicons-v5'
 import { QIcon } from 'quasar'
+import { useMap } from 'src/map/Map.vue'
 
-export const MarkerInject: InjectionKey<Ref<Marker>> = Symbol()
+export const MarkerInject: InjectionKey<Ref<Marker | null>> = Symbol()
 
 export default defineComponent({
   name: 'Marker',
@@ -44,7 +43,7 @@ export default defineComponent({
   },
   emits: ['update:location'],
   setup(props, { emit }) {
-    const map = inject(MapInject)
+    const map = useMap()
     const initialized = ref(false)
     const markerElement = ref<HTMLElement | null>(null)
     const marker = ref<Marker | null>(null)

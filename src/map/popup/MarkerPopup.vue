@@ -17,7 +17,7 @@ export default defineComponent({
     onMounted(() => {
       popup.value = new Popup(popupElement.value!)
       popup.value?.setDOMContent(popupElement.value!)
-      marker?.value.setPopup(popup.value)
+      marker?.value?.setPopup(popup.value)
       popup.value.setOffset([0, -24])
     })
 

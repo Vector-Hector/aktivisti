@@ -1,17 +1,16 @@
 import {
   defineComponent,
-  inject,
   watch,
   onMounted,
   PropType,
   onUnmounted,
   h
 } from 'vue'
-import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { AllGeoJSON, center } from '@turf/turf'
 import { GeoJSONSource } from 'maplibre-gl'
+import { useMap } from 'src/map/Map.vue'
 
 export default defineComponent({
   name: 'AddressMarkerLayer',
@@ -23,7 +22,7 @@ export default defineComponent({
   },
   setup(props) {
     const uuid = uuidv4()
-    const map = inject(MapInject)!
+    const map = useMap()
 
     const sourceId = `${uuid}-source`
 

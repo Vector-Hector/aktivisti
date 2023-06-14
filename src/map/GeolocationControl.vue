@@ -42,8 +42,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, PropType } from 'vue'
-import { MapEventBus, MapInject } from './Map.vue'
+import { defineComponent, PropType } from 'vue'
+import { MapEventBus } from './Map.vue'
 import { FitBoundsOptions, LngLat, PositionOptions } from 'maplibre-gl'
 import {
   ionLocateOutline,
@@ -58,7 +58,7 @@ import {
 } from '@quasar/extras/material-icons'
 import { QFab, QFabAction, QIcon } from 'quasar'
 import Marker from 'src/map/Marker.vue'
-import { MAP_GEOLOCATE_STOP_TRACKING } from 'src/map/Map.vue'
+import { MAP_GEOLOCATE_STOP_TRACKING, useMap } from 'src/map/Map.vue'
 import { LocationDto } from 'src/api/model/LocationDto'
 
 interface GeolocateControlOptions {
@@ -114,7 +114,7 @@ export default defineComponent({
   },
   emits: ['position'],
   setup() {
-    const map = inject(MapInject)!
+    const map = useMap()
     return {
       map
     }

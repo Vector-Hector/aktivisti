@@ -1,17 +1,16 @@
 import {
   defineComponent,
-  inject,
   onMounted,
   PropType,
   onUnmounted,
   h,
   watch
 } from 'vue'
-import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { Feature } from 'geojson'
 import { getColorFromPropertiesWithDefault } from 'pages/edit-event/geometry/route-planner.styles'
 import { GeoJSONSource } from 'maplibre-gl'
+import { useMap } from 'src/map/Map.vue'
 
 export default defineComponent({
   name: 'AreaFeatureLayer',
@@ -24,7 +23,7 @@ export default defineComponent({
   emits: ['update:location'],
   setup(props) {
     const uuid = uuidv4()
-    const map = inject(MapInject)!
+    const map = useMap()
 
     const layers: string[] = []
     onMounted(() => {

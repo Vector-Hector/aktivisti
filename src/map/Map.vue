@@ -15,6 +15,7 @@
 <script lang="ts">
 import {
   defineComponent,
+  inject,
   InjectionKey,
   onMounted,
   onUnmounted,
@@ -32,7 +33,17 @@ import { isEqual } from 'lodash-es'
 import { uuidv4 } from 'src/utils/uuid'
 import { SettleDebouncer } from 'src/utils/debounce'
 
-export const MapInject: InjectionKey<Ref<maplibregl.Map>> = Symbol()
+export const MapInject: InjectionKey<Ref<maplibregl.Map | null>> = Symbol()
+
+export function useMap(): Ref<maplibregl.Map> {
+  const map = inject(MapInject)
+  if (!map?.value) {
+    throw new Error('useMap is only allowed in map contexts')
+  } else {
+    return map as Ref<maplibregl.Map>
+  }
+}
+
 export const MapEventBus = new TinyEmitter()
 
 export const MAP_PAN_TO = 'MAP_PAN_TO'

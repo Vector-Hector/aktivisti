@@ -1,9 +1,9 @@
 <script lang="ts">
-import { defineComponent, inject, onUnmounted, PropType, watch, h } from 'vue'
+import { defineComponent, onUnmounted, PropType, watch, h } from 'vue'
 import MapboxDraw, { IMapboxDrawControls } from '@mapbox/mapbox-gl-draw'
-import { MapInject } from './Map.vue'
 import { Feature } from 'geojson'
 import { difference, isEqual } from 'lodash-es'
+import { useMap } from 'src/map/Map.vue'
 
 type ForwardedEvents =
   | 'draw:create'
@@ -39,7 +39,7 @@ export default defineComponent({
     'draw:selectionchange'
   ],
   setup(props, { emit }) {
-    const map = inject(MapInject)!
+    const map = useMap()
     const drawControl = new MapboxDraw({
       userProperties: true,
       controls: props.controls,
