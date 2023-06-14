@@ -127,14 +127,29 @@
               />
             </QItemSection>
           </QItem>
+          <QItem v-if="hasAtLeastOneManagePermission">
+            <QItemSection>
+              E-Mailbenachrichtigung wenn neue Freiwillige meine Bestätigung
+              brauchen
+            </QItemSection>
+            <QItemSection side>
+              <QToggle
+                @update:model-value="saveEmailNotificationSettingsDebounced"
+                v-model="
+                  emailNotificationSettings.on_new_volunteers_requiring_verification
+                "
+                class="toggle-full-width profile-toggle-item"
+              />
+            </QItemSection>
+          </QItem>
         </QList>
         <template v-if="hasAnyPermission">
           <h3 class="profile-section-heading">Berechtigungen</h3>
           <QSeparator class="profile-section-divider" />
           <QList>
-            <QItem v-if="user?.is_superuser"
-              ><span>Du bist <b>Administrator</b></span></QItem
-            >
+            <QItem v-if="user?.is_superuser">
+              <span>Du bist <b>Administrator</b></span>
+            </QItem>
             <QItem v-if="user?.roles.includes(CAMPAIGN_ADMIN)">
               <span>Du bist globale*r <b>Koordinator*in</b></span>
             </QItem>
@@ -155,7 +170,7 @@
         <QSeparator class="profile-section-divider" />
         <QList>
           <QItem>
-            <QItemSection> Deinen Account löschen </QItemSection>
+            <QItemSection> Deinen Account löschen</QItemSection>
             <QItemSection side>
               <QBtn
                 flat
@@ -257,6 +272,9 @@ export default defineComponent({
     })
   },
   computed: {
+    hasAtLeastOneManagePermission(): boolean {
+      return userStore.hasAtLeastOneManagePermission()
+    },
     hasAnyPermission(): boolean {
       return (
         this.permissions.length > 0 ||
@@ -479,6 +497,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import 'src/css/variables';
+
 .container {
   margin-bottom: 1.5em;
 }
