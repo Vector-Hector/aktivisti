@@ -1,5 +1,8 @@
 <template>
-  <QScrollArea class="d-flex flex-fill">
+  <QScrollArea
+    class="d-flex flex-fill"
+    :class="{ 'contain-none': adminMenuOpen }"
+  >
     <div class="container q-gutter-y-md q-py-sm">
       <div class="row q-gutter-sm">
         <div class="col">
@@ -752,5 +755,9 @@ label {
   &:not(.q-dialog__backdrop) {
     display: none;
   }
+}
+
+.contain-none {
+  contain: none;
 }
 </style>
