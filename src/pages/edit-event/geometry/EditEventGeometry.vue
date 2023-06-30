@@ -118,10 +118,10 @@
                 </span>
                 <span v-else>
                   {{
-                    (props.row.area_details?.streets?.reduce(
-                      (acc, item) => acc + item.addresses.length
-                    ) ?? 0,
-                    0)
+                    props.row.area_details?.streets?.reduce(
+                      (acc, item) => acc + item.addresses.length,
+                      0
+                    ) ?? 0
                   }}
                 </span>
               </QTd>
