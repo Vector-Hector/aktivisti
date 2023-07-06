@@ -7,6 +7,7 @@ import { ApiClient } from 'src/api'
 import { ErrorCode } from 'src/api/ErrorCode'
 import { AuthType, getAuthStore, getAuthType } from 'src/store/AuthStore'
 import { TokenAuthStore } from 'src/store/TokenAuthStore'
+import { registerDevice } from 'src/utils/push-notification'
 
 const authStore = getAuthStore()
 
@@ -59,6 +60,10 @@ export default boot(async ({ app }) => {
     try {
       const sessionRequest = await apiClient.session.session()
       authStore.setUserId(sessionRequest.payload.data.user_id)
+
+      if (!sessionRequest.payload.data.is_authenticated) return
+
+      await registerDevice()
     } catch (e) {
       console.warn('Request to session failed, probably offline')
     }
