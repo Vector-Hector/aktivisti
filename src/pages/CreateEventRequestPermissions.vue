@@ -30,7 +30,7 @@
           :error-message="errors.message?.[0]"
         />
         <QBtn
-          label="Koordinatiosrechte beantragen"
+          label="Koordinationsrechte beantragen"
           color="negative"
           @click="requestCoordinatorPermissions"
         />
