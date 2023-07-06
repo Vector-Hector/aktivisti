@@ -95,7 +95,7 @@ export default defineComponent({
   overflow-wrap: break-word;
 }
 
-.off-description {
+.office-description {
   font-size: 1rem;
   white-space: pre-line;
   margin-bottom: 1rem;
