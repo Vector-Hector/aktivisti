@@ -1,3 +1,14 @@
+<script setup lang="ts">
+import { QBtn } from 'quasar'
+import { OfficeGeoJsonFeature } from 'src/api/model/OfficeGeoJsonDto'
+
+interface Props {
+  office: OfficeGeoJsonFeature
+}
+
+defineProps<Props>()
+</script>
+
 <template>
   <div class="popup-contents">
     <span class="popup-title">DIE LINKE vor Ort</span>
@@ -11,16 +22,6 @@
     />
   </div>
 </template>
-<script setup lang="ts">
-import { QBtn } from 'quasar'
-import { OfficeGeoJsonFeature } from 'src/api/model/OfficeGeoJsonDto'
-
-interface Props {
-  office: OfficeGeoJsonFeature
-}
-
-defineProps<Props>()
-</script>
 
 <style lang="scss">
 .popup-title {

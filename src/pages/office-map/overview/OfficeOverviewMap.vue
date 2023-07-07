@@ -96,15 +96,6 @@ export default defineComponent({
       map,
       officeFeatureCollection
     }
-  },
-  computed: {
-    isShowCluster(): boolean {
-      if (this.pagination.total) {
-        return this.pagination.total > OFFICE_LIST_CHUNK_SIZE
-      } else {
-        return false
-      }
-    }
   }
 })
 </script>
