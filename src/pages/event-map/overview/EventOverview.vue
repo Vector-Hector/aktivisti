@@ -1,3 +1,99 @@
+<script setup lang="ts">
+import { computed, onMounted, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { CampaignDto } from 'src/api/model/CampaignDto'
+import { userStore } from 'src/store/UserStore'
+import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
+import EventFilter from 'components/EventFilter.vue'
+import { EventStatus } from 'src/api/model/EventStatus'
+import EventOverviewList from 'pages/event-map/overview/list/EventOverviewList.vue'
+import { EventGeoJsonFeature } from 'src/api/model/EventGeoJsonDto'
+import { apiClient } from 'src/api/ApiClient'
+import { eventOverviewStore } from 'src/store/EventOverviewStore'
+import { EventFilterParams } from 'src/api/params/EventFilterParams'
+import { inside } from '@turf/turf'
+import { polygonFromBBox } from 'src/utils/geometry'
+
+const router = useRouter()
+
+if (userStore.getState().bbox === null) {
+  debugger
+  void router.replace({ name: 'splash' })
+}
+
+const campaigns = ref<CampaignDto[]>([])
+const subAssociations = ref<SubAssociationDto[]>([])
+
+const userFilterParams = computed({
+  get() {
+    const { campaign, subAssociations, sorting, eventType, status } =
+      userStore.getState().filterPreferences
+    return {
+      sub_association: subAssociations,
+      campaigns: campaign !== undefined ? [campaign] : undefined,
+      order_by: sorting,
+      event_type: eventType,
+      status: status ?? EventStatus.ACTIVE
+    }
+  },
+  set(value) {
+    userStore.setFilterPreferences({
+      ...userStore.getState().filterPreferences,
+      ...{
+        subAssociations: value.sub_association ?? [],
+        campaign: value.campaigns?.[0],
+        sorting: value.order_by!,
+        eventType: value.event_type ?? undefined,
+        status: value.status ?? undefined
+      }
+    })
+  }
+})
+
+async function updateEvents(params: EventFilterParams) {
+  const response = await apiClient.eventGeometry.list(params)
+  eventOverviewStore.state.featureCollection = response.payload.data
+}
+
+watch(
+  userFilterParams,
+  (newValue) => {
+    void updateEvents(newValue)
+  },
+  { immediate: true }
+)
+
+const shownEvents = computed(() => {
+  const bbox = eventOverviewStore.state.bbox
+  return bbox
+    ? eventOverviewStore.state.featureCollection?.features.filter(
+        (eventFeature) => {
+          return bbox && inside(eventFeature, polygonFromBBox(bbox))
+        }
+      ) ?? []
+    : []
+})
+
+function goToEvent(event: EventGeoJsonFeature) {
+  void router.push({
+    name: 'event-detail',
+    params: {
+      eventId: event.id
+    }
+  })
+}
+
+onMounted(async () => {
+  const [subAssociationResponse, campaignsResponse] = await Promise.all([
+    apiClient.subAssociations.list(),
+    apiClient.campaigns.list()
+  ])
+
+  subAssociations.value = subAssociationResponse.payload.data
+  campaigns.value = campaignsResponse.payload.data
+})
+</script>
+
 <template>
   <div class="container event-overview">
     <EventFilter
@@ -6,11 +102,8 @@
       :campaigns="campaigns"
       :sub-associations="subAssociations"
     />
-    <EventList
-      v-if="eventsPagination && events"
-      v-model:events="events"
-      v-model:pagination="eventsPagination"
-      :filter-params="filterParams"
+    <EventOverviewList
+      :events="shownEvents"
       :campaigns="campaigns"
       class="event-list"
       ref="eventList"
@@ -19,135 +112,6 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-import { CampaignDto } from 'src/api/model/CampaignDto'
-import { userStore } from 'src/store/UserStore'
-import { isEqual } from 'lodash-es'
-import { showCampaignLevel } from 'src/utils/showCampaignLevel'
-import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
-import EventList from 'src/components/EventList.vue'
-import { Pagination } from 'src/api/model/APIEnvelope'
-import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
-import EventsOverviewMixin from 'pages/event-map/overview/EventsOverviewMixin'
-import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
-import EventFilter from 'components/EventFilter.vue'
-import { EventFilterParams } from 'src/api/params/EventFilterParams'
-import { EventStatus } from 'src/api/model/EventStatus'
-import { EventDto } from 'src/api/model/EventDto'
-
-export default defineComponent({
-  name: 'EventOverview',
-  mixins: [EventsOverviewMixin],
-  components: {
-    EventFilter,
-    EventList
-  },
-  beforeRouteEnter(to, from, next) {
-    if (userStore.getState().bbox === null) {
-      next({ name: 'splash' })
-    } else {
-      next()
-    }
-  },
-  data() {
-    return {
-      eventsPagination: null as Pagination | null,
-      campaigns: [] as CampaignDto[],
-      subAssociations: [] as SubAssociationDto[],
-      ionChevronDown,
-      ionClose
-    }
-  },
-  computed: {
-    userFilterParams: {
-      get(): EventFilterParams {
-        const { campaign, subAssociations, sorting, eventType, status } =
-          userStore.getState().filterPreferences
-        return {
-          sub_association: subAssociations,
-          campaigns: campaign !== undefined ? [campaign] : undefined,
-          order_by: sorting,
-          event_type: eventType,
-          status: status ?? EventStatus.ACTIVE
-        }
-      },
-      set(value: EventFilterParams) {
-        userStore.setFilterPreferences({
-          ...userStore.getState().filterPreferences,
-          ...{
-            subAssociations: value.sub_association ?? [],
-            campaign: value.campaigns?.[0],
-            sorting: value.order_by!,
-            eventType: value.event_type ?? undefined,
-            status: value.status ?? undefined
-          }
-        })
-      }
-    },
-    filterParams(): EventFilterParams {
-      return {
-        ...this.userFilterParams,
-        within: this.boundingBoxJson ?? undefined,
-
-        limit: EVENT_LIST_CHUNK_SIZE,
-        end_date_include_null: true
-      }
-    }
-  },
-  watch: {
-    filterParams: {
-      handler(newValue, oldValue) {
-        if (isEqual(newValue, oldValue)) return
-        void this.updateView()
-      },
-      deep: true,
-      immediate: true
-    }
-  },
-  async created() {
-    await this.getCampaigns()
-    await this.getSubAssociations()
-    const stubsResponse = await this.$apiClient.eventGeometry.list()
-    this.featureCollection = stubsResponse.payload.data
-  },
-  methods: {
-    showCampaignLevel,
-    async getSubAssociations() {
-      this.subAssociations = (
-        await this.$apiClient.subAssociations.list()
-      ).payload.data
-    },
-    async updateView() {
-      if (this.$refs.eventList) {
-        // @ts-ignore
-        this.$refs.eventList.resetScrollPosition()
-      }
-      if (this.filterParams.within) {
-        const eventsResponse = await this.$apiClient.events.list(
-          this.filterParams
-        )
-        if (!isEqual(this.events, eventsResponse.payload.data)) {
-          this.events = eventsResponse.payload.data
-        }
-        this.eventsPagination = eventsResponse.payload.pagination!
-      }
-    },
-    async getCampaigns() {
-      const response = await this.$apiClient.campaigns.list()
-      this.campaigns = response.payload.data
-    },
-    goToEvent(event: EventDto) {
-      void this.$router.push({
-        name: 'event-detail',
-        params: {
-          eventId: event.id
-        }
-      })
-    }
-  }
-})
-</script>
 <style lang="scss" scoped>
 .event-overview {
   height: 100%;

@@ -22,10 +22,6 @@ class EventOverviewStore extends Store<EventMapStoreState> {
     this.state.bbox = bbox
   }
 
-  public setStubs(stubs: EventGeoJsonDto) {
-    this.state.featureCollection = stubs
-  }
-
   public setEvents(events: EventDto[]) {
     this.state.events = events
   }

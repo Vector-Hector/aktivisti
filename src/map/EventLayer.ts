@@ -18,7 +18,7 @@ import maplibregl, {
 
 const TRANSITION_DURATION = 500
 
-class ClusterLayer {
+class EventLayer {
   uuid = uuidv4()
   sourceId = `${this.uuid}-clusters`
   clusterCountLayerId = `${this.uuid}-cluster-count`
@@ -31,14 +31,15 @@ class ClusterLayer {
     private featureCollection: FeatureCollection,
     private iconImageValue: string | StyleFunction | Expression,
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    private eventClickCallback: (feature: Feature) => void = () => {}
+    private eventClickCallback: (feature: Feature) => void = () => {},
+    private clusterize = true
   ) {}
 
   add() {
     this.map.addSource(this.sourceId, {
       type: 'geojson',
       data: this.featureCollection,
-      cluster: true,
+      cluster: this.clusterize,
       clusterMaxZoom: 14
     })
     this.map.addLayer({
@@ -145,37 +146,42 @@ class ClusterLayer {
 }
 
 export default defineComponent({
-  name: 'ClusterLayer',
+  name: 'EventLayer',
   props: {
     featureCollection: {
       type: Object as PropType<FeatureCollection>,
       required: true
     },
     iconImageValue: {
-      type: Array as PropType<string | StyleFunction | Expression>,
+      type: [Array, String] as PropType<string | StyleFunction | Expression>,
       required: true
     },
     iconName: {
       type: String
+    },
+    clusterize: {
+      type: Boolean,
+      default: true
     }
   },
   emits: ['update:location', 'featureClicked'],
   setup(props, { emit }) {
     const map = inject(MapInject)!
-    let activeOverlay: ClusterLayer | null = null
+    let activeOverlay: EventLayer | null = null
 
     onMounted(() => {
       watch(
         () => props.featureCollection,
         () => {
           activeOverlay?.remove()
-          activeOverlay = new ClusterLayer(
+          activeOverlay = new EventLayer(
             map.value!,
             props.featureCollection,
             props.iconImageValue,
             (eventFeature) => {
               emit('featureClicked', eventFeature)
-            }
+            },
+            props.clusterize
           )
           activeOverlay.add()
         },

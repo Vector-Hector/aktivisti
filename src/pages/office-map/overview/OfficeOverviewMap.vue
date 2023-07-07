@@ -1,7 +1,7 @@
 <template>
   <Geocoder :collapsed="true" position="top-left" :countries="['de']" />
 
-  <ClusterLayer
+  <EventLayer
     v-if="officeFeatureCollection"
     :feature-collection="officeFeatureCollection"
     :icon-image-value="'office'"
@@ -17,13 +17,12 @@
   </CoordinatesPopup>
 </template>
 <script lang="ts">
-import { defineComponent, inject, onUnmounted, ref } from 'vue'
-import { MapInject } from 'src/map/Map.vue'
+import { defineComponent, onUnmounted, ref } from 'vue'
+import { useMap } from 'src/map/Map.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import Geocoder from 'src/map/Geocoder.vue'
 import { userStore } from 'src/store/UserStore'
 import { OFFICE_LIST_CHUNK_SIZE } from 'src/constants'
-import ClusterLayer from 'src/map/ClusterLayer'
 import { ClusterDto } from 'src/api/model/ClusterDto'
 import useOverviewMixin from 'src/utils/useOverviewMixin'
 import { OfficeDto } from 'src/api/model/OfficeDto'
@@ -37,13 +36,14 @@ import {
 import { loadImageIfNonExistent } from 'src/utils/map'
 import CoordinatesPopup from 'src/map/popup/CoordinatesPopup.vue'
 import OfficePopupContents from 'src/map/popup/OfficePopupContents.vue'
+import EventLayer from 'src/map/EventLayer'
 
 export default defineComponent({
   name: 'OfficeOverviewMap',
   components: {
+    EventLayer,
     OfficePopupContents,
     CoordinatesPopup,
-    ClusterLayer,
     Geocoder
   },
   data() {
@@ -53,7 +53,7 @@ export default defineComponent({
     }
   },
   setup() {
-    const map = inject(MapInject)!
+    const map = useMap()
     const bounds = ref(userStore.getState().bbox)
     const officeFeatureCollection = ref<OfficeGeoJsonDto | null>(null)
     void apiClient.officeGeometry.list().then((offices) => {

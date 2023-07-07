@@ -14,7 +14,6 @@
             <ResetRotateControl />
           </div>
         </template>
-        <OfficeMarkerLayer v-if="isShowingOfficeLayer" />
         <router-view v-slot="{ Component }" name="map">
           <component :is="Component" />
         </router-view>
@@ -30,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import MapOverlayProxy from 'components/MapOverlayProxy.vue'
 import Map from 'src/map/Map.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
@@ -42,21 +41,16 @@ import MapContainer from 'components/MapContainer.vue'
 import { eventDetailStore } from 'src/store/EventDetailStore'
 import { LocationDto } from 'src/api/model/LocationDto'
 import ResetRotateControl from 'src/map/ResetRotateControl.vue'
-import OfficeMarkerLayer from 'src/map/OfficeMarkerLayer.vue'
 import CampaignCollectionOverlayControl from 'src/map/CampaignCollectionOverlayControl.vue'
 import { getAuthStore } from 'src/store/AuthStore'
+import EventLayer from 'src/map/EventLayer'
+import { OfficeGeoJsonDto } from 'src/api/model/OfficeGeoJsonDto'
 
 export default defineComponent({
   name: 'MapWithSheet',
-  props: {
-    isShowingOfficeLayer: {
-      type: Boolean as PropType<boolean>,
-      default: true
-    }
-  },
   components: {
+    EventLayer,
     CampaignCollectionOverlayControl,
-    OfficeMarkerLayer,
     ResetRotateControl,
     GeolocationControl,
     MapContainer,
@@ -66,6 +60,7 @@ export default defineComponent({
   },
   data() {
     return {
+      offices: null as OfficeGeoJsonDto | null,
       bbox: userStore.getState().bbox,
       BottomSheetState,
       isMapDefined: true,
