@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { computed, PropType } from 'vue'
+import { computed } from 'vue'
 import { QItem, QItemLabel, QItemSection } from 'quasar'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { eventTypeOptions } from 'src/api/model/EventTypes'
 import { EventGeoJsonFeature } from 'src/api/model/EventGeoJsonDto'
 
-const props = defineProps({
-  event: {
-    type: Object as PropType<EventGeoJsonFeature>,
-    required: true
-  },
-  campaigns: {
-    type: Array as PropType<CampaignDto[]>,
-    required: true
-  }
-})
-const emit = defineEmits(['click'])
+interface Props {
+  event: EventGeoJsonFeature
+  campaigns: CampaignDto[]
+}
+
+interface Emits {
+  (e: 'click', event: EventGeoJsonFeature): void
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
 
 const eventTypeLabel = computed(() => {
   return eventTypeOptions.find(

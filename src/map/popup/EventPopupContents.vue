@@ -11,17 +11,15 @@
   </div>
 </template>
 <script setup lang="ts">
-import { PropType } from 'vue'
 import { EventGeoJsonFeature } from 'src/api/model/EventGeoJsonDto'
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 import { QBtn } from 'quasar'
 
-defineProps({
-  event: {
-    type: Object as PropType<EventGeoJsonFeature>,
-    required: true
-  }
-})
+interface Props {
+  event: EventGeoJsonFeature
+}
+
+defineProps<Props>()
 
 function getEventTypeLabel(eventType: EventTypes): string | undefined {
   return eventTypeOptions.find(({ key }) => key === eventType)?.label

@@ -12,16 +12,14 @@
   </div>
 </template>
 <script setup lang="ts">
-import { PropType } from 'vue'
 import { QBtn } from 'quasar'
 import { OfficeGeoJsonFeature } from 'src/api/model/OfficeGeoJsonDto'
 
-defineProps({
-  office: {
-    type: Object as PropType<OfficeGeoJsonFeature>,
-    required: true
-  }
-})
+interface Props {
+  office: OfficeGeoJsonFeature
+}
+
+defineProps<Props>()
 </script>
 
 <style lang="scss">

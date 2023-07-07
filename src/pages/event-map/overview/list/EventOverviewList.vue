@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import InfiniteList from 'components/InfiniteList.vue'
-import { PropType, ref, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import {
   EventGeoJsonDto,
@@ -8,18 +8,20 @@ import {
 } from 'src/api/model/EventGeoJsonDto'
 import EventOverviewItem from 'pages/event-map/overview/list/EventOverviewItem.vue'
 
-const props = defineProps({
-  campaigns: {
-    type: Array as PropType<CampaignDto[]>,
-    default: () => []
-  },
-  events: {
-    type: Array as PropType<EventGeoJsonFeature[]>,
-    required: true
-  }
+interface Props {
+  campaigns?: CampaignDto[]
+  events: EventGeoJsonFeature[]
+}
+
+interface Emits {
+  (e: 'clickOnEvent', event: EventGeoJsonDto): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  campaigns: () => []
 })
 
-const emit = defineEmits(['clickOnEvent'])
+const emit = defineEmits<Emits>()
 
 function handleClickOnEvent(event: EventGeoJsonDto) {
   emit('clickOnEvent', event)
@@ -49,7 +51,7 @@ function addToVisibile(index, done) {
         v-ripple
         @click="handleClickOnEvent(item)"
         :event="item"
-        :campaigns="campaigns"
+        :campaigns="props.campaigns"
       />
     </template>
     <template v-slot:emptyList> Keine Aktionen im Gebiet gefunden</template>

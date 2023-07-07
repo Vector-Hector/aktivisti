@@ -1,18 +1,22 @@
 <script lang="ts" setup>
-import { onMounted, onUnmounted, PropType, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { Popup } from 'maplibre-gl'
 import { useMap } from 'src/map/Map.vue'
+
+interface Props {
+  coordinates: Array<number>
+}
+
+interface Emits {
+  (e: 'close'): void
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
 
 const map = useMap()
 const popupElement = ref<HTMLElement | null>(null)
 const popup = ref<Popup | null>(null)
-const emit = defineEmits(['close'])
-const props = defineProps({
-  coordinates: {
-    type: Array as PropType<Array<number>>,
-    required: true
-  }
-})
 
 onMounted(() => {
   popup.value = new Popup().setLngLat(props.coordinates as [number, number])
