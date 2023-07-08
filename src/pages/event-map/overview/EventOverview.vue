@@ -17,7 +17,6 @@ import { polygonFromBBox } from 'src/utils/geometry'
 const router = useRouter()
 
 if (userStore.getState().bbox === null) {
-  debugger
   void router.replace({ name: 'splash' })
 }
 
