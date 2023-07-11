@@ -5,6 +5,7 @@ import { ChangePasswordDto } from 'src/api/model/ChangePasswordDto'
 import { ChangeUsernameRequestDto } from 'src/api/model/ChangeUsernameRequestDto'
 import { RegisterDeviceDto } from './model/RegisterDeviceDto'
 import { DeregisterDeviceDto } from './model/DeregisterDeviceDto'
+import { VapidTokenDto } from './model/VapidTokenDto'
 
 export class AccountRoute extends BaseApiRoute {
   async changePassword(data: ChangePasswordDto): Promise<JSONResponse<null>> {
@@ -39,7 +40,7 @@ export class AccountRoute extends BaseApiRoute {
       path: `${this.path}token/`,
       method: 'GET'
     })
-    return new JSONResponse<string>(response, response.data)
+    return new JSONResponse<VapidTokenDto>(response, response.data)
   }
 
   async registerDevice(data: RegisterDeviceDto) {
