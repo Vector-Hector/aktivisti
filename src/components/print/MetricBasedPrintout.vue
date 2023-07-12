@@ -73,12 +73,12 @@
           <h4 class="address-headline">Straßen</h4>
           <span
             class="street"
-            v-for="street in area.area_details.streets"
+            v-for="street in area.area_details?.streets"
             :key="street.name"
           >
             <p class="street-name">{{ street.name }}</p>
           </span>
-          <span v-if="area.area_details.streets.length === 0"
+          <span v-if="area.area_details?.streets.length === 0"
             >Keine Adressen im OSM Datensatz</span
           >
         </div>
@@ -91,18 +91,12 @@
           <div class="col-2">Gesamt</div>
         </div>
         <div
-          v-for="metric in metricRecordsWithMetric"
+          v-for="metric in metrics"
           :key="metric.name"
           class="metric-item row"
         >
           <div class="col-3 metric-item-cell">
             <span>{{ metric.name }}</span>
-          </div>
-          <div class="col-6 metric-item-cell"></div>
-          <div class="col-3 metric-item-cell">
-            <span class="target-hint" v-if="metric.target > 0"
-              >Zielvorgabe: {{ metric.target }}</span
-            >
           </div>
         </div>
         <div class="metric-item row">
@@ -124,7 +118,7 @@ import Map from 'src/map/Map.vue'
 import { Feature } from 'geojson'
 import { EventAreaDto, eventAreaToFeature } from 'src/api/model/EventAreaDto'
 import FeatureLayer from 'src/map/AreaFeatureLayer'
-import { BBox } from '@turf/helpers/dist/js/lib/geojson'
+import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox, circle } from '@turf/turf'
 import { QBtn, QIcon } from 'quasar'
 import { eventTypeOptions } from 'src/api/model/EventTypes'
@@ -173,26 +167,19 @@ export default defineComponent({
     areaFeatures(): Feature[] {
       return this.eventAreas.map(eventAreaToFeature)
     },
-    zoomBox(): BBox {
+    zoomBox(): BBox2d {
       const meetingPoint = circle(
         [this.event.location.lng, this.event.location.lat],
         0.2
       )
-      return this.areaFeatures.length > 0
-        ? bbox({
-            type: 'FeatureCollection',
-            features: [...this.areaFeatures, meetingPoint]
-          })
-        : bbox(meetingPoint)
-    },
-    metricRecordsWithMetric(): { name?: string; target: number }[] {
-      return this.metricRecords.map((metricRecord) => {
-        const metric = this.metrics.find(({ id }) => id === metricRecord.metric)
-        return {
-          name: metric?.name,
-          target: metricRecord.target
-        }
-      })
+      return (
+        this.areaFeatures.length > 0
+          ? bbox({
+              type: 'FeatureCollection',
+              features: [...this.areaFeatures, meetingPoint]
+            })
+          : bbox(meetingPoint)
+      ) as BBox2d
     }
   },
   methods: {
@@ -204,11 +191,11 @@ export default defineComponent({
     eventAreaToFeature(area: EventAreaDto) {
       return eventAreaToFeature(area)
     },
-    boundingBoxOfArea(area: EventAreaDto) {
+    boundingBoxOfArea(area: EventAreaDto): BBox2d {
       return bbox({
         type: 'FeatureCollection',
         features: [eventAreaToFeature(area)]
-      })
+      }) as BBox2d
     },
     print() {
       window.print()

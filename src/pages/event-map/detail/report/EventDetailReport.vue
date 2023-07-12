@@ -131,18 +131,6 @@ export default defineComponent({
       }
     }
     this.rows.push(summarizedCountsRow)
-
-    let targetValueOfMetricsRow = { areaName: 'Zielvorgabe' } as any
-    let isTargetValueRowShown = false
-    for (const { metric, target } of records) {
-      targetValueOfMetricsRow[metric] = target
-      if (target > 0) {
-        isTargetValueRowShown = true
-      }
-    }
-    if (isTargetValueRowShown) {
-      this.rows.push(targetValueOfMetricsRow)
-    }
   },
   methods: {
     async fetchAreaMetricsReports(
