@@ -36,6 +36,7 @@ import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 import { userStore } from 'src/store/UserStore'
 import { posterListStore } from 'src/store/PosterListStore'
 import CampaignCollectionOverlayControl from 'src/map/CampaignCollectionOverlayControl.vue'
+import hat from 'hat'
 
 const Door2DoorAndFlyerSteps = [
   {
@@ -158,7 +159,14 @@ export default defineComponent({
       editEventStore.setMetricRecords(
         eventRequest.payload.embedded.eventmetricrecord_set
       )
-      editEventStore.setEventAreas(eventAreasRequest.payload.data)
+      editEventStore.setEventAreas(
+        eventAreasRequest.payload.data.map((area) => {
+          return {
+            ...area,
+            feature_id: area.feature_id ? area.feature_id : hat()
+          }
+        })
+      )
       next(() => {
         uiStore.updateActiveElements({
           event: eventRequest.payload.data.name

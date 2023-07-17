@@ -196,13 +196,19 @@ import {
 import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
 import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
-import { EditEventBus, START_DRAW_AREA } from 'src/store/EditEventStore'
+import {
+  EditEventBus,
+  PAN_TO_BBOX,
+  START_DRAW_AREA
+} from 'src/store/EditEventStore'
 import { StepControls } from 'pages/EditEvent.vue'
 import LocationSelect from 'components/LocationSelect.vue'
 import { EventTypes } from 'src/api/model/EventTypes'
 import AdoptEventAreas from 'components/modals/AdoptEventAreas/AdoptEventAreas.vue'
-import { EventAreaDto } from 'src/api/model/EventAreaDto'
+import { EventAreaDto, eventAreaToFeature } from 'src/api/model/EventAreaDto'
 import { apiClient } from 'src/api/ApiClient'
+import { bbox } from '@turf/turf'
+import { posterListStore } from 'src/store/PosterListStore'
 
 export default defineComponent({
   name: 'EditEventGeometry',
@@ -316,24 +322,75 @@ export default defineComponent({
             )
           }
         })
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        .onOk(async (newEventAreas: EventAreaDto[]) => {
-          this.isLoading = true
-          newEventAreas = newEventAreas.map((area) => ({
-            ...area,
-            event: this.event.id
-          }))
+        .onOk(
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          async ({
+            eventAreas,
+            adoptPosters
+          }: {
+            eventAreas: EventAreaDto[]
+            adoptPosters: boolean
+          }) => {
+            this.isLoading = true
 
-          const eventAreaCreationPromise: Promise<any>[] = []
-          for (const area of newEventAreas) {
-            eventAreaCreationPromise.push(apiClient.eventAreas.create(area))
+            const events = new Set(eventAreas.map(({ event }) => event))
+
+            if (this.event.event_type === EventTypes.POSTERS && adoptPosters) {
+              for (const event of events) {
+                const posterResponse = await apiClient.posters.list({
+                  event: event
+                })
+                const importedPostersResponse =
+                  await apiClient.events.batchImportPosters(
+                    this.event.id.toString(),
+                    posterResponse.payload.data.map((poster) => ({
+                      location_description: poster.location_description,
+                      location: poster.location,
+                      status: poster.status,
+                      mounted_on: poster.mounted_on
+                    }))
+                  )
+                posterListStore.state.posters.push(
+                  ...importedPostersResponse.payload.data
+                )
+              }
+            }
+
+            const newEventAreas = eventAreas.map((area) => ({
+              ...area,
+              event: this.event.id
+            }))
+
+            const eventAreaCreationPromise = newEventAreas.map((area) =>
+              apiClient.eventAreas.create(area)
+            )
+
+            const eventAreaResponses = await Promise.all(
+              eventAreaCreationPromise
+            )
+            for (const area of eventAreaResponses.map(
+              (response) => response.payload.data
+            )) {
+              this.eventAreas.push(area)
+            }
+
+            const featureCollection = {
+              type: 'FeatureCollection',
+              features: eventAreaResponses.map((response) =>
+                eventAreaToFeature(response.payload.data)
+              )
+            }
+            if (featureCollection.features.length > 0) {
+              EditEventBus.emit(PAN_TO_BBOX, bbox(featureCollection))
+            } else {
+              this.$q.notify({
+                color: 'warning',
+                message: 'Dieses Event hat keine Gebiete'
+              })
+            }
+            this.isLoading = false
           }
-          const responses = await Promise.all(eventAreaCreationPromise)
-          responses.forEach((response) =>
-            this.eventAreas.push(response.payload.data)
-          )
-          this.isLoading = false
-        })
+        )
     }
   }
 })

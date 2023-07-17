@@ -25,6 +25,7 @@
   <EventTypeFilter
     v-if="isEventTypeFilterable"
     :model-value="filterParams.event_type"
+    :availableEventTypes="availableEventTypes"
     @update:model-value="updateEventType"
   />
   <EventStatusFilter
@@ -66,11 +67,13 @@ export default defineComponent({
     },
     campaigns: {
       type: Array as PropType<CampaignDto[]>,
-      required: false
+      required: false,
+      default: () => []
     },
     subAssociations: {
       type: Array as PropType<SubAssociationDto[]>,
-      required: false
+      required: false,
+      default: () => []
     },
     isOwnershipFilterable: {
       type: Boolean as PropType<boolean>,
@@ -95,6 +98,10 @@ export default defineComponent({
     isEventTypeFilterable: {
       type: Boolean as PropType<boolean>,
       default: true
+    },
+    availableEventTypes: {
+      type: Array as PropType<EventTypes[]>,
+      required: false
     }
   },
   emits: ['update:filterParams'],

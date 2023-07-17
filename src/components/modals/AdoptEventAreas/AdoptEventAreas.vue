@@ -5,7 +5,8 @@ import {
   QCardActions,
   QDialog,
   QToolbar,
-  QToolbarTitle
+  QToolbarTitle,
+  QToggle
 } from 'quasar'
 import { useDialogPluginComponent } from 'quasar'
 import { CampaignDto } from 'src/api/model/CampaignDto'
@@ -40,6 +41,7 @@ const page = ref<Page>(Page.SELECT_AREA_SET)
 const collections = ref<CampaignGeometryCollectionsDto[] | null>(null)
 const isCollectionExisting = ref<boolean>(false)
 const campaignCollection = ref<CampaignGeometryCollectionsDto | null>(null)
+const adoptPosters = ref(false)
 
 onMounted(async () => {
   collections.value = await fetchCollections(
@@ -59,7 +61,7 @@ onMounted(async () => {
 async function fetchCollections(
   campaignIds: number[]
 ): Promise<CampaignGeometryCollectionsDto[]> {
-  const collections = []
+  const collections: CampaignGeometryCollectionsDto[] = []
   for (const id of campaignIds) {
     const campaignCollections = (
       await apiClient.campaignGeometryCollections.list({
@@ -83,7 +85,7 @@ function handleCampaignCollectionClick(
 }
 
 function handleAreaClick(eventAreas: EventAreaDto[]) {
-  onDialogOK(eventAreas)
+  onDialogOK({ eventAreas: eventAreas, adoptPosters: adoptPosters.value })
 }
 
 const qCardClass = computed(() => {
@@ -128,7 +130,7 @@ defineExpose({
       />
       <CampaignCollections
         v-if="page === Page.CAMPAIGN_COLLECTIONS"
-        :collection="campaignCollection"
+        :collection="campaignCollection!"
         @onGeometryClick="handleAreaClick"
       />
       <QCardActions align="left">
@@ -155,6 +157,11 @@ defineExpose({
             }
           "
         />
+        <QToggle
+          v-if="page === Page.RECENT_EVENT_AREAS"
+          v-model="adoptPosters"
+          label="Poster übernehmen?"
+        ></QToggle>
       </QCardActions>
     </QCard>
   </QDialog>

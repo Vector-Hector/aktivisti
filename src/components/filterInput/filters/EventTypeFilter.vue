@@ -15,8 +15,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
-import { eventTypeOptions } from 'src/api/model/EventTypes'
-import { EventStatus } from 'src/api/model/EventStatus'
+import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 
 export default defineComponent({
   name: 'EventTypeFilter',
@@ -25,12 +24,18 @@ export default defineComponent({
   },
   props: {
     modelValue: {
-      type: String as PropType<EventStatus>
+      type: String as PropType<EventTypes>
+    },
+    availableEventTypes: {
+      type: Array as PropType<EventTypes[]>,
+      default: () => Object.values(EventTypes)
     }
   },
-  data() {
-    return {
-      eventTypeOptions
+  computed: {
+    eventTypeOptions() {
+      return eventTypeOptions.filter((item) =>
+        this.availableEventTypes.includes(item.key)
+      )
     }
   },
   emits: ['update:modelValue']

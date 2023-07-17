@@ -38,7 +38,11 @@ import {
 } from '@turf/turf'
 
 import { MapInject } from 'src/map/Map.vue'
-import { EditEventBus, START_DRAW_AREA } from 'src/store/EditEventStore'
+import {
+  EditEventBus,
+  PAN_TO_BBOX,
+  START_DRAW_AREA
+} from 'src/store/EditEventStore'
 import { noop } from 'lodash-es'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { LocationDto } from 'src/api/model/LocationDto'
@@ -84,7 +88,8 @@ export default defineComponent({
       },
       zoomLevel: 0,
       zoomListener: noop,
-      startDrawListener: noop
+      startDrawListener: noop,
+      panToBBoxListener: noop
     }
   },
   computed: {
@@ -116,7 +121,14 @@ export default defineComponent({
     this.startDrawListener = () => {
       ;(this.$refs.draw as typeof DrawControl).changeMode('draw_polygon')
     }
+    this.panToBBoxListener = (bbox: BBox2d) => {
+      this.map?.fitBounds(bbox)
+    }
+
     EditEventBus.on(START_DRAW_AREA, this.startDrawListener)
+
+    EditEventBus.on(PAN_TO_BBOX, this.panToBBoxListener)
+
     this.zoomListener = () => {
       this.zoomLevel = this.map?.getZoom() ?? Infinity
     }
@@ -125,6 +137,7 @@ export default defineComponent({
   unmounted() {
     this.map?.off('zoomend', this.zoomListener)
     EditEventBus.off(START_DRAW_AREA, this.startDrawListener)
+    EditEventBus.off(PAN_TO_BBOX, this.panToBBoxListener)
   },
   watch: {
     'event.location': {
