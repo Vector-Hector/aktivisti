@@ -98,6 +98,8 @@
           <div class="col-3 metric-item-cell">
             <span>{{ metric.name }}</span>
           </div>
+          <div class="col-6 metric-item-cell"></div>
+          <div class="col-3 metric-item-cell"></div>
         </div>
         <div class="metric-item row">
           <div class="col-3 metric-item-cell">
