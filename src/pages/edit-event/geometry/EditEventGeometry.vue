@@ -209,6 +209,7 @@ import { EventAreaDto, eventAreaToFeature } from 'src/api/model/EventAreaDto'
 import { apiClient } from 'src/api/ApiClient'
 import { bbox } from '@turf/turf'
 import { posterListStore } from 'src/store/PosterListStore'
+import { PosterStatus } from 'src/api/model/PosterDto'
 
 export default defineComponent({
   name: 'EditEventGeometry',
