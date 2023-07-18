@@ -13,7 +13,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
-import { EventStatus } from 'src/api/model/EventStatus'
 import { SortOption } from 'src/store/UserStore'
 
 const SortOptionLabels = {
@@ -28,7 +27,7 @@ export default defineComponent({
   },
   props: {
     modelValue: {
-      type: String as PropType<EventStatus>
+      type: String as PropType<string>
     }
   },
   data() {

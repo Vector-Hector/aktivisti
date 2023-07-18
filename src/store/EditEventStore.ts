@@ -6,6 +6,8 @@ import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { TinyEmitter } from 'tiny-emitter'
 
 export const START_DRAW_AREA = 'START_DRAW_AREA'
+export const PAN_TO_BBOX = 'PAN_TO_BBOX'
+
 export const EditEventBus = new TinyEmitter()
 
 interface EditEventState {

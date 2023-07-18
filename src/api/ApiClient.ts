@@ -24,7 +24,6 @@ import { SessionRoute } from 'src/api/SessionRoute'
 import { ForgotPasswordDto } from 'src/api/model/ForgotPasswordDto'
 import { ObjectPermissionsRoute } from 'src/api/ObjectPermissionsRoute'
 import { UserRoute } from 'src/api/UserRoute'
-import { PosterDto } from 'src/api/model/PosterDto'
 import { ContentTypeDto } from 'src/api/model/ContentTypeDto'
 import { OfficeDto } from 'src/api/model/OfficeDto'
 import { AppSessionDto } from 'src/api/model/AppSessionDto'
@@ -35,6 +34,7 @@ import { ReportPosterRoute } from 'src/api/ReportPosterRoute'
 import { ReportEventMetricsRoute } from 'src/api/ReportEventMetricsRoute'
 import { ReportEventsRoute } from 'src/api/ReportEventsRoute'
 import { ReportActiveUsersRoute } from 'src/api/ReportActiveUsersRoute'
+import { PosterRoute } from 'src/api/PosterRoute'
 import { EventGeometryRoute } from 'src/api/EventGeometryRoute'
 import { OfficeGeometryRoute } from 'src/api/OfficeGeometryRoute'
 
@@ -158,11 +158,7 @@ export class ApiClient {
     'event-permissions/',
     this.axiosInstance
   )
-  posters = new ApiRoute<PosterDto>(
-    this.baseURL,
-    'posters/',
-    this.axiosInstance
-  )
+  posters = new PosterRoute(this.baseURL, 'posters/', this.axiosInstance)
   contentTypes = new ApiRoute<ContentTypeDto>(
     this.baseURL,
     'content-types/',

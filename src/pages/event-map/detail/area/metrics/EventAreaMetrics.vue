@@ -11,8 +11,7 @@
         v-for="metricRecord in metricRecords"
         :key="metricRecord.metric"
         :model-value="metricValues[metricRecord.id]"
-        :label="getMetricForId(metricRecord.metric).name"
-        :target="metricRecord.target ? metricRecord.target : 0"
+        :label="getMetricForId(metricRecord.metric)!.name"
         class="metrics-input"
         @update:modelValue="updateMetricValue(metricRecord.id, $event)"
       />

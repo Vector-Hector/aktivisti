@@ -4,7 +4,7 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import { QList, QItem, QItemLabel, QItemSection, QCardSection } from 'quasar'
 
 interface Props {
-  collections: CampaignGeometryCollectionsDto[]
+  collections: CampaignGeometryCollectionsDto[] | null
   campaigns: CampaignDto[]
 }
 

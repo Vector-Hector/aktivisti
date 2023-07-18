@@ -15,6 +15,7 @@
         :isSubAssociationFilterable="isSubAssociationFilterable"
         :isSortOrderConfigurable="isSortOrderConfigurable"
         :isEventTypeFilterable="isEventTypeFilterable"
+        :available-event-types="avalableEventTypes"
         @update:filterParams="updateFilterParams"
       />
     </div>
@@ -30,6 +31,7 @@
     :isSubAssociationFilterable="isSubAssociationFilterable"
     :isSortOrderConfigurable="isSortOrderConfigurable"
     :isEventTypeFilterable="isEventTypeFilterable"
+    :available-event-types="avalableEventTypes"
     @update:filterParams="updateFilterParams"
   />
 </template>
@@ -41,6 +43,7 @@ import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import CollapsibleFilters from 'components/CollapsibleFilters.vue'
 import { EventStatus } from 'src/api/model/EventStatus'
 import EventFilterList from 'components/EventFilterList.vue'
+import { EventTypes } from 'src/api/model/EventTypes'
 
 export default defineComponent({
   name: 'EventFilter',
@@ -88,6 +91,10 @@ export default defineComponent({
     isEventTypeFilterable: {
       type: Boolean as PropType<boolean>,
       default: true
+    },
+    avalableEventTypes: {
+      type: Array as PropType<EventTypes[]>,
+      required: false
     }
   },
   computed: {

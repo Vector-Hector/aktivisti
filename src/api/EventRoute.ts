@@ -6,6 +6,7 @@ import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { BulkInviteDto } from 'src/api/model/BulkInviteDto'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { EventMetricReportDto } from 'src/api/model/EventMetricReportDto'
+import { PosterDto } from 'src/api/model/PosterDto'
 
 /**
  * A class extending {@link ApiRoute} to implement some extra non-standard operations (join / leave)
@@ -35,6 +36,16 @@ export class EventRoute extends ApiRoute<EventDto> {
     })
     const data = await response.data
     return new JSONResponse<APIEnvelope<EventDto>>(response, data)
+  }
+
+  async batchImportPosters(id: string, body: Partial<PosterDto>[]) {
+    const response = await this.request({
+      path: `${this.path}${id}/batch-import-posters/`,
+      data: body,
+      method: 'POST'
+    })
+    const data = response.data
+    return new JSONResponse<APIEnvelope<PosterDto[]>>(response, data)
   }
 
   async batchSetMetricRecords(
