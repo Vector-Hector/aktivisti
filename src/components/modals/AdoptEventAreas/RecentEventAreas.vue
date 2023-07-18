@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import ManagedEvents from 'components/ManagedEvents.vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { QCardSection } from 'quasar'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { apiClient } from 'src/api/ApiClient'
 import hat from 'hat'
 import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
+import SelectEvent from './SelectEvent.vue'
 
 interface Emits {
   (e: 'onEventClick', eventAreas: Partial<EventAreaDto>[]): void
@@ -18,8 +18,9 @@ async function handleClickOnEvent(event: EventDto): Promise<void> {
     await apiClient.eventAreas.list({ event: event.id.toString() })
   ).payload.data
   const clonedEventAreas = eventAreas.map((area) => ({
+    event: event.id,
     name: area.name,
-    // We're using hat, to get the same shema for the future_id like mapbox see:
+    // We're using hat, to get the same schema for the feature_id like mapbox see:
     // https://github.com/mapbox/mapbox-gl-draw/blob/2b9ce3e58e3695c018a48b6fca78ed1a9d1b67c2/src/feature_types/feature.js#L8
     feature_id: hat(),
     color: area.color,
@@ -40,7 +41,7 @@ function excludeCurrentEvent(event: EventDto) {
     </span>
   </QCardSection>
   <QCardSection class="section">
-    <ManagedEvents
+    <SelectEvent
       @clickOnEvent="handleClickOnEvent"
       :filter="excludeCurrentEvent"
     />

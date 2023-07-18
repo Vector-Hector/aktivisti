@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { inject, onMounted, onUnmounted, ref, watch } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { CampaignGeometriesDto } from 'src/api/model/CampaignGeometriesDto'
 import { Feature, FeatureCollection, Geometry } from 'geojson'
-import { MapInject } from 'src/map/Map.vue'
+import { useMap } from 'src/map/Map.vue'
 import { apiClient } from 'src/api/ApiClient'
 import { CampaignGeometryCollectionsDto } from 'src/api/model/CampaignGeometryCollectionsDto'
 import { uuidv4 } from 'src/utils/uuid'
@@ -38,7 +38,7 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const map = inject(MapInject)!.value
+const map = useMap()
 const geometryPopup = ref(null)
 let overlayIds: string[] = []
 let hoveredGeometry = {
@@ -125,12 +125,12 @@ function drawFeatureCollection(
   const fillLayerId = `${id}-fill`
   const outlineLayerId = `${id}-outline`
 
-  map.addSource(sourceId, {
+  map.value.addSource(sourceId, {
     type: 'geojson',
     data: featureCollection
   })
 
-  map.addLayer({
+  map.value.addLayer({
     id: fillLayerId,
     type: 'fill',
     source: sourceId,
@@ -144,7 +144,7 @@ function drawFeatureCollection(
       ]
     }
   })
-  map.addLayer({
+  map.value.addLayer({
     id: outlineLayerId,
     type: 'line',
     source: sourceId,
@@ -162,12 +162,12 @@ function drawFeatureCollection(
 function addEventHandlers(overlayId: string): void {
   const fillLayerId = `${overlayId}-fill`
   const outlineLayerId = `${overlayId}-outline`
-  map
+  map.value
     .on('click', fillLayerId, handleGeometryClick)
     .on('click', outlineLayerId, handleGeometryClick)
 
   if (props.hover) {
-    map
+    map.value
       .on('mousemove', fillLayerId, handleGeometryMouseOver)
       .on('mouseleave', fillLayerId, handleGeometryLeave)
   }
@@ -191,12 +191,12 @@ function removeCollectionOverlay(overlayId: string): void {
 function removeEventHandlers(overlayId: string): void {
   const fillLayerId = `${overlayId}-fill`
   const outlineLayerId = `${overlayId}-outline`
-  map
+  map.value
     .off('click', fillLayerId, handleGeometryClick)
     .off('click', outlineLayerId, handleGeometryClick)
 
   if (props.hover) {
-    map
+    map.value
       .off('mousemove', fillLayerId, handleGeometryMouseOver)
       .off('mouseleave', fillLayerId, handleGeometryLeave)
   }
@@ -210,9 +210,9 @@ function removeGeometries(overlayId: string): void {
   const sourceId = `${overlayId}-source`
   const fillLayerId = `${overlayId}-fill`
   const outlineLayerId = `${overlayId}-outline`
-  map.removeLayer(fillLayerId)
-  map.removeLayer(outlineLayerId)
-  map.removeSource(sourceId)
+  map.value.removeLayer(fillLayerId)
+  map.value.removeLayer(outlineLayerId)
+  map.value.removeSource(sourceId)
 }
 
 /**
@@ -244,7 +244,7 @@ function handleGeometryMouseOver(e: any): void {
     // @ts-ignore
     geometryPopup.value.showPopup(metadata, e.lngLat)
     if (hoveredGeometry.sourceId !== null && hoveredGeometry.layerId !== null) {
-      map.setFeatureState(
+      map.value.setFeatureState(
         { source: hoveredGeometry.sourceId, id: hoveredGeometry.layerId },
         { hover: false }
       )
@@ -253,7 +253,7 @@ function handleGeometryMouseOver(e: any): void {
       layerId: layerId,
       sourceId: sourceId
     }
-    map.setFeatureState(
+    map.value.setFeatureState(
       { source: hoveredGeometry.sourceId!, id: hoveredGeometry.layerId! },
       { hover: true }
     )
@@ -267,7 +267,7 @@ function handleGeometryMouseOver(e: any): void {
  */
 function handleGeometryLeave(): void {
   if (hoveredGeometry.layerId !== null && hoveredGeometry.sourceId !== null) {
-    map.setFeatureState(
+    map.value.setFeatureState(
       { source: hoveredGeometry.sourceId, id: hoveredGeometry.layerId },
       { hover: false }
     )
@@ -284,7 +284,7 @@ function handleGeometryLeave(): void {
  * Fit the underlying map, so that all areas are visible.
  */
 function fitMap(featureCollection: FeatureCollection): void {
-  map.fitBounds(bbox(featureCollection) as BBox2d)
+  map.value.fitBounds(bbox(featureCollection) as BBox2d)
 }
 </script>
 
