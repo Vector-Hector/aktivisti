@@ -3,7 +3,7 @@ import { oAuth2Client } from 'src/api/OAuth2Client'
 import { TokenDto } from 'src/api/model/TokenDto'
 import { date } from 'quasar'
 import { BaseAuthStore, BaseAuthStoreState } from 'src/store/BaseAuthStore'
-import { Storage } from '@capacitor/storage'
+import { Preferences } from '@capacitor/preferences'
 import { parseIfPossible } from 'src/utils/json'
 
 interface TokenAuthStoreState extends BaseAuthStoreState {
@@ -24,7 +24,7 @@ export class TokenAuthStore extends BaseAuthStore<TokenAuthStoreState> {
 
   async loadFromNativeStorage() {
     this.state.tokenSet = parseIfPossible(
-      (await Storage.get({ key: KEY_TOKENSET })).value
+      (await Preferences.get({ key: KEY_TOKENSET })).value
     ) as TokenDto | null
   }
 
@@ -51,12 +51,12 @@ export class TokenAuthStore extends BaseAuthStore<TokenAuthStoreState> {
   async setTokenSet(tokenSet: TokenDto | null) {
     this.state.tokenSet = tokenSet
     if (tokenSet) {
-      await Storage.set({
+      await Preferences.set({
         key: KEY_TOKENSET,
         value: JSON.stringify(tokenSet)
       })
     } else {
-      await Storage.remove({ key: KEY_TOKENSET })
+      await Preferences.remove({ key: KEY_TOKENSET })
     }
   }
 
