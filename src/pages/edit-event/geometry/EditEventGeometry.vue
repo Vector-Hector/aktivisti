@@ -346,7 +346,7 @@ export default defineComponent({
                     posterResponse.payload.data.map((poster) => ({
                       location_description: poster.location_description,
                       location: poster.location,
-                      status: poster.status,
+                      status: PosterStatus.ABSENT,
                       mounted_on: poster.mounted_on
                     }))
                   )
