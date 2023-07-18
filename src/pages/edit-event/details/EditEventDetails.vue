@@ -115,10 +115,6 @@
               :name="metric.name"
               :checked="selectedMetricsIds.includes(metric.id)"
               @update:checked="toggleMetric($event, metric)"
-              :target="metricRecordForMetricId(metric.id)?.target ?? 0"
-              @update:target="
-                metricRecordForMetricId(metric.id).target = $event
-              "
             />
           </div>
         </div>
@@ -222,8 +218,7 @@ export default defineComponent({
               existingRecord ??
               ({
                 metric: metricItem.id,
-                event: this.event.id,
-                target: 0
+                event: this.event.id
               } as EventMetricRecordDto)
             )
           })
