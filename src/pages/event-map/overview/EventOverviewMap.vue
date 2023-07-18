@@ -1,160 +1,131 @@
-<template>
-  <Geocoder :collapsed="true" position="top-left" :countries="['de']" />
-  <span v-if="clusterMode">
-    <ClusterLayer :clusters="clusters" />
-  </span>
-  <span v-else>
-    <span v-for="event in events" :key="event.id">
-      <EventMarker :event="event">
-        <MarkerPopup>
-          <div class="popup-contents">
-            <span class="popup-title">{{ event.name }}</span>
-            <span class="popup-type">
-              {{ getEventTypeLabel(event.event_type) }}
-            </span>
-            <span class="popup-campaign">{{
-              event.campaigns?.map(({ name }) => name).join(',')
-            }}</span>
-
-            <span class="popup-date">
-              {{ new Date(event.start_date).toLocaleString() }}
-            </span>
-            <QBtn
-              label="Mitmachen/Infos"
-              color="primary"
-              :to="`/events/${event.id}`"
-            />
-          </div>
-        </MarkerPopup>
-      </EventMarker>
-    </span>
-  </span>
-</template>
-<script lang="ts">
-import { defineComponent, onUnmounted } from 'vue'
-import MarkerPopup from 'src/map/popup/MarkerPopup.vue'
-import { ClusterDto } from 'src/api/model/ClusterDto'
-import { EVENT_MAP_MAX_EVENTS } from 'src/constants'
-import ClusterLayer from 'src/map/ClusterLayer.vue'
-import EventsOverviewMixin from 'pages/event-map/overview/EventsOverviewMixin'
+<script setup lang="ts">
+import { onBeforeMount, onUnmounted, onBeforeUnmount, ref } from 'vue'
+import { useMap } from 'src/map/Map.vue'
 import { eventOverviewStore } from 'src/store/EventOverviewStore'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
-import { QBtn } from 'quasar'
-import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
-import EventMarker from 'components/EventMarker.vue'
 import Geocoder from 'src/map/Geocoder.vue'
 import { uiStore } from 'src/store/UiStore'
-import maplibregl from 'maplibre-gl'
-import { useMap } from 'src/map/Map.vue'
+import { EventGeoJsonFeature } from 'src/api/model/EventGeoJsonDto'
+import CoordinatesPopup from 'src/map/popup/CoordinatesPopup.vue'
+import EventPopupContents from 'src/map/popup/EventPopupContents.vue'
+import { loadImageIfNonExistent } from 'src/utils/map'
+import { EventTypes } from 'src/api/model/EventTypes'
+import EventLayer from 'src/map/EventLayer'
+import { apiClient } from 'src/api/ApiClient'
+import {
+  OfficeGeoJsonDto,
+  OfficeGeoJsonFeature
+} from 'src/api/model/OfficeGeoJsonDto'
+import OfficePopupContents from 'src/map/popup/OfficePopupContents.vue'
 
-export default defineComponent({
-  name: 'EventOverviewMap',
-  mixins: [EventsOverviewMixin],
-  components: {
-    Geocoder,
-    EventMarker,
-    MarkerPopup,
-    QBtn,
-    ClusterLayer
-  },
-  setup() {
-    const map = useMap()
+const POSTER_SYMBOL_NAME = EventTypes.POSTERS
+const DOOR_TO_DOOR_SYMBOL_NAME = EventTypes.DOOR_TO_DOOR
+const FLYER_SYMBOL_NAME = EventTypes.FLYERS
+const GENERIC_SYMBOL_NAME = EventTypes.GENERIC
 
-    const updateBounds = () => {
-      eventOverviewStore.setBbox(
-        map.value?.getBounds().toArray().flat() as BBox2d
-      )
-    }
-    map.value.on('zoomend', updateBounds)
-    map.value.on('moveend', updateBounds)
-    onUnmounted(() => {
-      map.value.off('zoomend', updateBounds)
-      map.value.off('moveend', updateBounds)
-    })
-    updateBounds()
-    return {
-      map
-    }
-  },
-  computed: {
-    clusterTotal(): number {
-      return this.clusters.reduce(
-        (acc: number, item: ClusterDto) => acc + item.count,
-        0
-      )
-    },
-    clusterMode(): boolean {
-      return this.clusterTotal > EVENT_MAP_MAX_EVENTS
-    }
-  },
-  watch: {
-    clusterMode(isClusterMode) {
-      if (isClusterMode && (this.map?.getZoom() ?? 0) > 15) {
-        this.$q.notify({
-          multiLine: true,
-          message:
-            '<h5 class="too-many-events-headline">Hier ist zuviel los</h5>' +
-            'Nicht alle Aktionen werden angezeigt, da dies zuviel für die Karte wäre. Nutze die Listenansicht',
-          html: true,
-          group: 'too-many-events-alert',
-          color: 'warning'
-        })
-      }
-    }
-  },
-  methods: {
-    getEventTypeLabel(eventType: EventTypes): string | undefined {
-      return eventTypeOptions.find(({ key }) => key === eventType)?.label
-    }
-  },
-  beforeMount() {
-    const previousZoom = uiStore.getState().mapZoom
-    if (previousZoom != null) this.map.setZoom(previousZoom, {})
-    uiStore.setMapZoom(null)
-  },
-  beforeUnmount() {
-    const map: maplibregl.Map = this.map
-    uiStore.setMapZoom(map.getZoom())
+const MAX_ZOOM_LEVEL_OFFICES = 14
+
+const map = useMap()
+
+const activeEvent = ref<EventGeoJsonFeature | null>(null)
+const activeOffice = ref<OfficeGeoJsonFeature | null>(null)
+const offices = ref<OfficeGeoJsonDto | null>(null)
+const showOffices = ref(false)
+
+function zoomListener() {
+  showOffices.value = map.value.getZoom() > MAX_ZOOM_LEVEL_OFFICES
+}
+map.value.on('zoomend', zoomListener)
+
+onBeforeMount(async () => {
+  const previousZoom = uiStore.getState().mapZoom
+  if (previousZoom != null) {
+    map.value.setZoom(previousZoom, {})
   }
+  uiStore.setMapZoom(null)
+  const officeResponse = await apiClient.officeGeometry.list()
+  offices.value = officeResponse.payload.data
+})
+
+void loadImageIfNonExistent(
+  map.value,
+  POSTER_SYMBOL_NAME,
+  '/static/icons/map-pin-poster.png'
+)
+void loadImageIfNonExistent(
+  map.value,
+  DOOR_TO_DOOR_SYMBOL_NAME,
+  '/static/icons/map-pin-door.png'
+)
+void loadImageIfNonExistent(
+  map.value,
+  FLYER_SYMBOL_NAME,
+  '/static/icons/map-pin-flyer.png'
+)
+void loadImageIfNonExistent(
+  map.value,
+  GENERIC_SYMBOL_NAME,
+  '/static/icons/map-pin-generic.png'
+)
+
+void loadImageIfNonExistent(
+  map.value,
+  'office-gray',
+  '/static/icons/map-pin-office-grayed-out.png'
+)
+
+const updateBounds = () => {
+  eventOverviewStore.setBbox(map.value?.getBounds().toArray().flat() as BBox2d)
+}
+map.value.on('zoomend', updateBounds)
+map.value.on('moveend', updateBounds)
+
+updateBounds()
+
+onBeforeUnmount(() => {
+  uiStore.setMapZoom(map.value.getZoom())
+})
+
+onUnmounted(() => {
+  map.value.off('zoomend', updateBounds)
+  map.value.off('moveend', updateBounds)
+  map.value.off('zoomend', zoomListener)
 })
 </script>
+<template>
+  <Geocoder :collapsed="true" position="top-left" :countries="['de']" />
+  <EventLayer
+    v-if="offices && showOffices"
+    :clusterize="false"
+    :feature-collection="offices"
+    @feature-clicked="activeOffice = $event"
+    :icon-image-value="'office-gray'"
+  />
+  <CoordinatesPopup
+    v-if="activeOffice"
+    :coordinates="activeOffice.geometry.coordinates"
+    @close="activeOffice = null"
+  >
+    <OfficePopupContents v-if="activeOffice" :office="activeOffice">
+    </OfficePopupContents>
+  </CoordinatesPopup>
+
+  <EventLayer
+    v-if="eventOverviewStore.state.featureCollection"
+    :feature-collection="eventOverviewStore.state.featureCollection"
+    @feature-clicked="activeEvent = $event"
+    :icon-image-value="['get', 'event_type']"
+  />
+  <CoordinatesPopup
+    v-if="activeEvent"
+    :coordinates="activeEvent.geometry.coordinates"
+    @close="activeEvent = null"
+  >
+    <EventPopupContents v-if="activeEvent" :event="activeEvent">
+    </EventPopupContents>
+  </CoordinatesPopup>
+</template>
 <style lang="scss" scoped>
-.popup-title {
-  font-weight: bold;
-  display: block;
-  font-size: 1rem;
-}
-
-.popup-type {
-  display: block;
-  font-size: 0.9rem;
-}
-
-.popup-campaign {
-  display: block;
-  font-size: 0.9rem;
-}
-
-.popup-date {
-  display: block;
-  font-size: 0.9rem;
-}
-
-.join-link {
-  align-self: flex-end;
-
-  Button {
-    padding: 3px 6px;
-  }
-
-  margin-top: 6px;
-}
-
-.popup-contents {
-  display: flex;
-  flex-direction: column;
-}
-
 ::v-global(.too-many-events-headline) {
   margin: 0;
 }
