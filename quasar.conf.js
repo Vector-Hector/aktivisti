@@ -9,13 +9,12 @@
 /* eslint-env node */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const fs = require('fs')
-const {configure} = require('quasar/wrappers')
+const { configure } = require('quasar/wrappers')
 const execSync = require('child_process').execSync
 
 const filterAppEnvVariables = (envObject) => {
-  return Object.fromEntries(Object
-    .entries(envObject)
-    .filter(([key]) => key.startsWith('APP'))
+  return Object.fromEntries(
+    Object.entries(envObject).filter(([key]) => key.startsWith('APP'))
   )
 }
 
@@ -34,7 +33,6 @@ let localConfigure = {}
 if (fs.existsSync('./quasar.conf.local.js')) {
   localConfigure = require('./quasar.conf.local.js')()
 }
-
 
 module.exports = configure(function (ctx) {
   return {
@@ -57,18 +55,10 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli/boot-files
-    boot: [
-      'api',
-      'validation-rules',
-      'map',
-      'utils',
-      'apex'
-    ],
+    boot: ['api', 'validation-rules', 'map', 'utils', 'apex', 'deep-links'],
 
     // https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
-    css: [
-      'app.scss'
-    ],
+    css: ['app.scss'],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
@@ -111,9 +101,8 @@ module.exports = configure(function (ctx) {
     devServer: {
       https: false,
       port: 8080,
-      open: false, // opens browser window automatically
+      open: false // opens browser window automatically
     },
-
 
     // https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
     framework: {
@@ -130,10 +119,7 @@ module.exports = configure(function (ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: [
-        'Dialog',
-        'Notify'
-      ]
+      plugins: ['Dialog', 'Notify']
     },
 
     // animations: 'all', // --- includes all animations
@@ -148,7 +134,7 @@ module.exports = configure(function (ctx) {
       // manualPostHydrationTrigger: true,
 
       prodPort: 3000, // The default port that the production server should use
-                      // (gets superseded if process.env.PORT is specified at runtime)
+      // (gets superseded if process.env.PORT is specified at runtime)
 
       maxAge: 1000 * 60 * 60 * 24 * 30,
       // Tell browser when a file from the server should expire from cache (in ms)
@@ -234,13 +220,11 @@ module.exports = configure(function (ctx) {
 
       packager: {
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
-
         // OS X / Mac App Store
         // appBundleId: '',
         // appCategoryType: '',
         // osxSign: '',
         // protocol: 'myapp://path',
-
         // Windows only
         // win32metadata: { ... }
       },
@@ -263,6 +247,6 @@ module.exports = configure(function (ctx) {
         // extendWebpackPreload also available besides this chainWebpackPreload
       }
     },
-    ...localConfigure,
+    ...localConfigure
   }
 })
