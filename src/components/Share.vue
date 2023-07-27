@@ -13,26 +13,22 @@
         <QFabAction
           class="share-fab"
           :icon="ionLogoTwitter"
-          :href="twitterShareUrl"
-          target="_blank"
+          @click="navigate(twitterShareUrl)"
         />
         <QFabAction
           class="share-fab"
           :icon="ionLogoWhatsapp"
-          :href="whatsappShareUrl"
-          target="_blank"
+          @click="navigate(whatsappShareUrl)"
         />
         <QFabAction
           class="share-fab"
           :icon="ionLogoFacebook"
-          :href="facebookShareUrl"
-          target="_blank"
+          @click="navigate(facebookShareUrl)"
         />
         <QFabAction
           class="share-fab"
           :icon="ionMail"
-          :href="mailShareUrl"
-          target="_blank"
+          @click="navigate(mailShareUrl)"
         />
       </QFab>
     </template>
@@ -117,18 +113,20 @@ export default defineComponent({
       const subjectLine = `Mach\' mit bei der Aktion von DIE LINKE: ${this.title}`
       return `${MAIL_SHARE_URL}?subject=${subjectLine}&body=${
         this.text ? encodeURIComponent(this.text) : ''
-      }%0D%0A%0D%0A${this.url}`
+      }`
     },
     whatsappShareUrl(): string {
       const url = new URL(WHATSAPP_SHARE_URL)
-      const text = `${this.text}\n${this.url}`
       appendAsQueryParams(url, {
-        text: text
+        text: this.text
       })
       return url.toString()
     }
   },
   methods: {
+    navigate(url: string) {
+      window.open(url, '_blank')
+    },
     share() {
       void Share.share({
         title: this.title,

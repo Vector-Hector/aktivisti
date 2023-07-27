@@ -405,15 +405,24 @@ export default defineComponent({
     shareTitle(): string {
       return this.event.name
     },
+    shareDescription() {
+      if (this.event.description) {
+        return `\n\n${this.event.description}`
+      } else {
+        return ''
+      }
+    },
     shareText(): string {
       const formattedDate = new Date(this.event.start_date).toLocaleString([], {
         day: '2-digit',
         month: '2-digit',
-        year: 'numeric',
+        year: 'numeric'
+      })
+      const formattedTime = new Date(this.event.start_date).toLocaleString([], {
         hour: '2-digit',
         minute: '2-digit'
       })
-      return `${this.event.name}\n${formattedDate}\n\n${this.event.description}`
+      return `${this.event.name}\n${this.eventTypeLabel}${this.shareDescription}\n\nam: ${formattedDate}\num: ${formattedTime}\n\nMitmachen:\n${this.shareUrl}`
     },
     eventId(): string {
       return this.event.id.toString()
