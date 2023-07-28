@@ -26,8 +26,6 @@
       class="event-list"
       ref="eventList"
       @clickOnEvent="handleClickOnEvent"
-      @update:delete="updateShownEvents()"
-      :show-management-control-buttons="true"
     />
   </div>
 </template>
