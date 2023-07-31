@@ -5,6 +5,7 @@ import { date } from 'quasar'
 import { BaseAuthStore, BaseAuthStoreState } from 'src/store/BaseAuthStore'
 import { Preferences } from '@capacitor/preferences'
 import { parseIfPossible } from 'src/utils/json'
+import { deregisterDevice } from 'src/utils/push-notification'
 
 interface TokenAuthStoreState extends BaseAuthStoreState {
   tokenSet: TokenDto | null
@@ -29,6 +30,7 @@ export class TokenAuthStore extends BaseAuthStore<TokenAuthStoreState> {
   }
 
   async logout() {
+    await deregisterDevice()
     await this.setTokenSet(null)
     this.deleteSessionData()
   }

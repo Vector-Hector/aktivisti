@@ -1,6 +1,12 @@
 import { Capacitor } from '@capacitor/core'
 import { apiClient } from 'src/api/ApiClient'
 import { RegisterDeviceDto } from 'src/api/model/RegisterDeviceDto'
+import { PushNotifications } from '@capacitor/push-notifications'
+import { Preferences } from '@capacitor/preferences'
+
+const KEY_DEVICE_TOKEN = 'KEY_DEVICE_TOKEN'
+
+const REGISTRATION_SUCCESS_TIMEOUT_SECONDS = 10
 
 interface RegistrationControls {
   register: () => Promise<void>
@@ -11,6 +17,14 @@ const registerDevicePlatformMap: Record<string, RegistrationControls> = {
   web: {
     register: registerWebDevice,
     deregister: deregisterWebDevice
+  },
+  android: {
+    register: registerAndroidDevice,
+    deregister: deregisterMobileDevice
+  },
+  ios: {
+    register: () => Promise.resolve(),
+    deregister: () => Promise.resolve()
   }
 }
 
@@ -29,7 +43,7 @@ export async function deregisterDevice(): Promise<void> {
 }
 
 async function registerWebDevice(): Promise<void> {
-  if (!(await userHasGrantedNotificationPermissions())) return
+  if (!(await webUserHasGrantedNotificationPermissions())) return
 
   const serviceWorkerRegistration =
     await navigator.serviceWorker?.getRegistration()
@@ -53,7 +67,7 @@ async function registerWebDevice(): Promise<void> {
   if (newSubscription != null) return registerSubscription(newSubscription)
 }
 
-async function userHasGrantedNotificationPermissions(): Promise<boolean> {
+async function webUserHasGrantedNotificationPermissions(): Promise<boolean> {
   const permissions = await navigator.permissions.query({
     name: 'notifications'
   })
@@ -99,4 +113,72 @@ async function deregisterWebDevice(): Promise<void> {
     registration: existingSubscription.endpoint
   })
   await existingSubscription.unsubscribe()
+}
+
+async function registerAndroidDevice(): Promise<void> {
+  await registerMobileDevice('A')
+}
+
+async function registerMobileDevice(mode: 'A' | 'I'): Promise<void> {
+  if (!(await mobileUserHasGrantedNotificationPermissions())) return
+
+  await PushNotifications.register()
+
+  const token = await getMobileRegistrationToken()
+
+  await apiClient.account.registerDevice({
+    registration: token,
+    type: mode
+  })
+}
+
+async function mobileUserHasGrantedNotificationPermissions(): Promise<boolean> {
+  const permissionStatus = await PushNotifications.checkPermissions()
+
+  if (permissionStatus.receive === 'granted') return true
+
+  const shouldRequestPermission = permissionStatus.receive === 'prompt'
+  if (!shouldRequestPermission) return false
+
+  const requestedPermission = await PushNotifications.requestPermissions()
+  return requestedPermission.receive === 'granted'
+}
+
+async function deregisterMobileDevice(): Promise<void> {
+  const token = await getMobileRegistrationToken()
+
+  await Promise.all([
+    PushNotifications.removeAllListeners(),
+    PushNotifications.removeAllDeliveredNotifications(),
+    apiClient.account.unregisterDevice({ registration: token })
+  ])
+
+  await Preferences.remove({ key: KEY_DEVICE_TOKEN })
+}
+
+async function getMobileRegistrationToken(): Promise<string> {
+  const existingToken = (
+    await Preferences.get({
+      key: KEY_DEVICE_TOKEN
+    })
+  ).value
+  if (existingToken != null) return existingToken
+
+  const token = await new Promise<string>((resolve, reject) => {
+    PushNotifications.addListener('registration', (token) => {
+      void Preferences.set({
+        key: KEY_DEVICE_TOKEN,
+        value: token.value
+      })
+      resolve(token.value)
+
+      setTimeout(() => {
+        reject()
+      }, REGISTRATION_SUCCESS_TIMEOUT_SECONDS * 1000)
+    })
+      .then((handler) => handler.remove())
+      .catch(console.error)
+  })
+
+  return token
 }
