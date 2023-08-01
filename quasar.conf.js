@@ -167,7 +167,7 @@ module.exports = configure(function (ctx) {
       manifest: {
         name: 'DIE LINKE. App',
         short_name: 'DIE LINKE. App',
-        description: '',
+        description: 'Finde Aktionen und mach mit!',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',

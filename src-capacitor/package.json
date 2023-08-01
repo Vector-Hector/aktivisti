@@ -1,6 +1,6 @@
 {
   "name": "wk-frontend",
-  "description": "The PWA / Hybrid DIE LINKE. App",
+  "description": "Finde Aktionen und mach mit!",
   "author": "control.alt.coop eG <kontakt@ctrl.alt.coop>",
   "private": true,
   "dependencies": {
