@@ -422,7 +422,7 @@ export default defineComponent({
         hour: '2-digit',
         minute: '2-digit'
       })
-      return `${this.event.name}\n${this.eventTypeLabel}${this.shareDescription}\n\nam: ${formattedDate}\num: ${formattedTime}\n\nMitmachen:\n${this.shareUrl}`
+      return `${this.event.name}\n${this.eventTypeLabel}${this.shareDescription}\n\nam: ${formattedDate}\num: ${formattedTime}\n`
     },
     eventId(): string {
       return this.event.id.toString()

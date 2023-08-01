@@ -109,16 +109,19 @@ export default defineComponent({
       })
       return url.toString()
     },
+    urlTextSnippet() {
+      return `\nMitmachen:\n${this.url}`
+    },
     mailShareUrl(): string {
       const subjectLine = `Mach\' mit bei der Aktion von DIE LINKE: ${this.title}`
       return `${MAIL_SHARE_URL}?subject=${subjectLine}&body=${
-        this.text ? encodeURIComponent(this.text) : ''
+        encodeURIComponent(`${this.text}${this.urlTextSnippet}`)
       }`
     },
     whatsappShareUrl(): string {
       const url = new URL(WHATSAPP_SHARE_URL)
       appendAsQueryParams(url, {
-        text: this.text
+        text: `${this.text}${this.urlTextSnippet}`
       })
       return url.toString()
     }
@@ -137,6 +140,8 @@ export default defineComponent({
     }
   }
 })
+
+}
 </script>
 <style lang="scss" scoped>
 .share-fab {
