@@ -1,4 +1,4 @@
-export interface VapidTokenDto {
+export interface VapidPublicKeyDto {
   data: {
     key: string
   }
