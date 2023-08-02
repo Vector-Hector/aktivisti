@@ -1,7 +1,7 @@
 import { BaseApiRoute } from 'src/api/ApiRoute'
 import { JSONResponse } from 'src/api/JSONResponse'
 import { APIEnvelope } from 'src/api/model/APIEnvelope'
-import { EventGeoJsonDto } from 'src/api/model/EventGeoJsonDto'
+import { OfficeGeoJsonDto } from 'src/api/model/OfficeGeoJsonDto'
 
 export class OfficeGeometryRoute extends BaseApiRoute {
   async list(query: { [key: string]: any } = {}) {
@@ -10,7 +10,7 @@ export class OfficeGeometryRoute extends BaseApiRoute {
       query,
       path: `${this.path}`
     })
-    return new JSONResponse<APIEnvelope<EventGeoJsonDto>>(
+    return new JSONResponse<APIEnvelope<OfficeGeoJsonDto>>(
       response,
       response.data
     )
