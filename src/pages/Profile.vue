@@ -104,7 +104,7 @@
         <QList>
           <QItem>
             <QItemSection>
-              E-Mailbenachrichtigung wenn ich zu einer Aktion eingeladen wurde
+              E-Mail-Benachrichtigung wenn ich zu einer Aktion eingeladen wurde
             </QItemSection>
             <QItemSection side>
               <QToggle
@@ -114,10 +114,10 @@
               />
             </QItemSection>
           </QItem>
-          <QItem>
+          <QItem v-if="hasAtLeastOneManagePermission">
             <QItemSection>
-              E-Mailbenachrichtigung wenn sich neue Freiwillige für meine Aktion
-              gemeldet haben
+              E-Mail-Benachrichtigung wenn sich neue Freiwillige für meine
+              Aktion gemeldet haben
             </QItemSection>
             <QItemSection side>
               <QToggle
@@ -129,7 +129,7 @@
           </QItem>
           <QItem v-if="hasAtLeastOneManagePermission">
             <QItemSection>
-              E-Mailbenachrichtigung wenn neue Freiwillige meine Bestätigung
+              E-Mail-Benachrichtigung wenn neue Freiwillige meine Bestätigung
               brauchen
             </QItemSection>
             <QItemSection side>
