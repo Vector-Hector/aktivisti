@@ -114,9 +114,9 @@ export default defineComponent({
     },
     mailShareUrl(): string {
       const subjectLine = `Mach\' mit bei der Aktion von DIE LINKE: ${this.title}`
-      return `${MAIL_SHARE_URL}?subject=${subjectLine}&body=${
-        encodeURIComponent(`${this.text}${this.urlTextSnippet}`)
-      }`
+      return `${MAIL_SHARE_URL}?subject=${subjectLine}&body=${encodeURIComponent(
+        `${this.text}${this.urlTextSnippet}`
+      )}`
     },
     whatsappShareUrl(): string {
       const url = new URL(WHATSAPP_SHARE_URL)
