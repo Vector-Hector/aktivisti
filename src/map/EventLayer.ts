@@ -15,6 +15,8 @@ import maplibregl, {
   GeoJSONSource,
   StyleFunction
 } from 'maplibre-gl'
+import { SpiderifyFeatures } from 'src/map/SpiderifyLayer'
+import { CLUSTER_COLOR } from 'src/constants'
 
 const TRANSITION_DURATION = 500
 
@@ -32,7 +34,8 @@ class EventLayer {
     private iconImageValue: string | StyleFunction | Expression,
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     private eventClickCallback: (feature: Feature) => void = () => {},
-    private clusterize = true
+    private clusterize = true,
+    private spiderify = true
   ) {}
 
   add() {
@@ -49,7 +52,7 @@ class EventLayer {
       filter: ['has', 'point_count'],
       layout: {},
       paint: {
-        'circle-color': '#DF0303',
+        'circle-color': CLUSTER_COLOR,
         'circle-radius': ['step', ['get', 'point_count'], 20, 10, 30, 30, 40],
         'circle-opacity': 0,
         'circle-opacity-transition': { duration: TRANSITION_DURATION }
@@ -85,8 +88,32 @@ class EventLayer {
         'icon-allow-overlap': true
       }
     })
+
     this.map.on('click', this.unclusteredPointId, (e) => {
-      if (e.features?.[0]) {
+      if (!e.features) {
+        return
+      }
+      const spiderifier = new SpiderifyFeatures(
+        this.map,
+        this.map.getLayer(this.unclusteredPointId),
+        e.features as Array<Feature<Point>>,
+        {
+          layout: {
+            'icon-image': this.iconImageValue,
+            'icon-size': 0.32,
+            'icon-anchor': 'bottom',
+            'icon-allow-overlap': true
+          },
+          onFeatureClick: (e) => {
+            if (e.features?.[0]) {
+              this.eventClickCallback(e.features[0])
+            }
+          }
+        }
+      )
+      if (e.features && e.features.length > 1 && this.spiderify) {
+        spiderifier.spiderify()
+      } else if (e.features?.[0]) {
         this.eventClickCallback(e.features[0])
       }
     })

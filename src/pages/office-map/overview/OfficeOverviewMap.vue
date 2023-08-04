@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useMap } from 'src/map/Map.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import Geocoder from 'src/map/Geocoder.vue'
@@ -19,9 +19,13 @@ const activeOffice = ref<null | OfficeGeoJsonFeature>()
 const map = useMap()
 const bounds = ref(userStore.getState().bbox)
 const officeFeatureCollection = ref<OfficeGeoJsonDto | null>(null)
-void apiClient.officeGeometry.list().then((offices) => {
-  officeFeatureCollection.value = offices.payload.data
+
+onMounted(() => {
+  void apiClient.officeGeometry.list().then((offices) => {
+    officeFeatureCollection.value = offices.payload.data
+  })
 })
+
 const updateBounds = () => {
   const currentBbox = map.value?.getBounds().toArray().flat() as BBox2d
   bounds.value = currentBbox
