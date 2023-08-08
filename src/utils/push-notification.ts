@@ -29,7 +29,6 @@ const registerDevicePlatformMap: Record<string, RegistrationControls> = {
 }
 
 export async function registerDevice(): Promise<void> {
-  debugger
   const platform = Capacitor.getPlatform()
 
   const registrationControls = registerDevicePlatformMap[platform]
