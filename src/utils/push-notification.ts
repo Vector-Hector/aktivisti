@@ -29,6 +29,7 @@ const registerDevicePlatformMap: Record<string, RegistrationControls> = {
 }
 
 export async function registerDevice(): Promise<void> {
+  debugger
   const platform = Capacitor.getPlatform()
 
   const registrationControls = registerDevicePlatformMap[platform]
@@ -72,7 +73,12 @@ async function webUserHasGrantedNotificationPermissions(): Promise<boolean> {
   const permissions = await navigator.permissions.query({
     name: 'notifications'
   })
-  return permissions.state === 'granted'
+
+  if (permissions.state === 'granted') return true
+
+  const requestedPermissions = await Notification.requestPermission()
+
+  return requestedPermissions === 'granted'
 }
 
 async function registerSubscription(

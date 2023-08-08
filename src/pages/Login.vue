@@ -53,7 +53,6 @@ import { AuthType, getAuthStore, getAuthType } from 'src/store/AuthStore'
 import PasswordInput from 'components/PasswordInput.vue'
 import { apiClient } from 'src/api/ApiClient'
 import { emailRegex } from 'boot/validation-rules'
-import { registerDevice } from 'src/utils/push-notification'
 
 const authStore = getAuthStore()
 
@@ -96,7 +95,6 @@ export default defineComponent({
       this.nonFieldError = null
       try {
         await authStore.login(this.username, this.password, this.longSession)
-        void registerDevice()
         await this.$router.push(this.next)
       } catch (error) {
         if (

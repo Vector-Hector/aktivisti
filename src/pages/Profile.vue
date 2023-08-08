@@ -237,6 +237,7 @@ import { getAuthStore } from 'src/store/AuthStore'
 import AppSessions from 'components/AppSessions.vue'
 import ChangeUsernameDialog from 'components/modals/ChangeUsernameDialog.vue'
 import PersonalMetrics from 'components/PersonalMetrics.vue'
+import { deregisterDevice, registerDevice } from 'src/utils/push-notification'
 
 const authStore = getAuthStore()
 
@@ -361,6 +362,9 @@ export default defineComponent({
       const newValue = !this.pushNotificationSettings.pushNotifications
       userStore.setPushNotificationPreferences(newValue)
       this.pushNotificationSettings.pushNotifications = newValue
+
+      if (newValue) void registerDevice()
+      else void deregisterDevice()
     },
     saveProfileDebounced() {
       if (isEqual(this.user, this.localUser)) {
