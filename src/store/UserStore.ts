@@ -31,11 +31,13 @@ interface UserState {
   filterPreferences: EventFilterPreferences
   permissions: UserObjectPermissionDto[]
   reportCharts: ReportChartData[]
+  pushNotifications: boolean
 }
 
 const KEY_BBOX = 'KEY_BBOX'
 const KEY_FILTERPREFERENCES = 'KEY_FILTERPREFERENCES'
 const KEY_REPORT_CHARTS = 'KEY_REPORT_CHARTS'
+const KEY_PUSH_NOTIFICATIONS = 'KEY_PUSH_NOTIFICATIONS'
 
 class UserStore extends Store<UserState> {
   protected data(): UserState {
@@ -51,7 +53,8 @@ class UserStore extends Store<UserState> {
         eventType: undefined,
         status: EventStatus.ACTIVE
       },
-      reportCharts: []
+      reportCharts: [],
+      pushNotifications: false
     }
   }
 
@@ -69,6 +72,9 @@ class UserStore extends Store<UserState> {
       filterPreferencesString
     ) as EventFilterPreferences | null
     data.filterPreferences = filterPreferences ?? data.filterPreferences
+    const pushNotifications = localStorage.getItem(KEY_PUSH_NOTIFICATIONS)
+    data.pushNotifications =
+      (pushNotifications && JSON.parse(pushNotifications)) ?? false
   }
 
   public setBbox(bbox: BBox2d | null) {
@@ -90,6 +96,11 @@ class UserStore extends Store<UserState> {
 
   public setHomeAssociation(value: SubAssociationDto | null) {
     this.state.homeAssociation = value
+  }
+
+  public setPushNotificationPreferences(value: boolean) {
+    this.state.pushNotifications = value
+    localStorage.setItem(KEY_PUSH_NOTIFICATIONS, JSON.stringify(value))
   }
 
   public clearUser() {

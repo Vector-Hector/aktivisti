@@ -142,6 +142,16 @@
               />
             </QItemSection>
           </QItem>
+          <QItem>
+            <QItemSection>Push Notifications</QItemSection>
+            <QItemSection side>
+              <QToggle
+                @update:model-value="savePushNotificationSettings"
+                v-model="pushNotificationSettings.pushNotifications"
+                class="toggle-full-width profile-toggle-item"
+              />
+            </QItemSection>
+          </QItem>
         </QList>
         <template v-if="hasAnyPermission">
           <h3 class="profile-section-heading">Berechtigungen</h3>
@@ -335,6 +345,9 @@ export default defineComponent({
         on_invitation: true,
         on_new_volunteers: true
       } as Partial<EmailNotificationSettingsDto>,
+      pushNotificationSettings: {
+        pushNotifications: userStore.state.pushNotifications
+      },
       permissions: [] as UserObjectPermissionDto[]
     }
   },
@@ -343,6 +356,11 @@ export default defineComponent({
       void this.emailNotificationSettingsSaveDebouncer.executeDebounced(() => {
         return this.saveEmailNotificationSettings()
       })
+    },
+    savePushNotificationSettings() {
+      const newValue = !this.pushNotificationSettings.pushNotifications
+      userStore.setPushNotificationPreferences(newValue)
+      this.pushNotificationSettings.pushNotifications = newValue
     },
     saveProfileDebounced() {
       if (isEqual(this.user, this.localUser)) {
