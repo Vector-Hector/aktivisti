@@ -55,7 +55,8 @@ async function registerWebDevice(): Promise<void> {
   if (existingSubscription != null)
     return registerSubscription(existingSubscription)
 
-  const publicVapidToken = (await apiClient.account.getVapidPublicKey()).payload.data.key
+  const publicVapidToken = (await apiClient.account.getVapidPublicKey()).payload
+    .data.key
   const convertedToken = urlBase64ToUint8Array(publicVapidToken)
   const newSubscription = await serviceWorkerRegistration.pushManager.subscribe(
     {
