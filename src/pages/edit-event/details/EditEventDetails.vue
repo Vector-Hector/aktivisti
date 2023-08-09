@@ -65,15 +65,6 @@
         </div>
         <QInput
           filled
-          v-if="event.event_type !== EventTypes.GENERIC"
-          v-model.number="event.max_participants"
-          label="Maximale Teilnehmer*innenzahl"
-          type="number"
-          :error-message="errors.max_participants?.[0]"
-          :error="!!errors.max_participants?.length"
-        />
-        <QInput
-          filled
           v-if="event.event_type === EventTypes.GENERIC"
           v-model.number="event.external_url"
           label="Externe URL"
@@ -99,25 +90,6 @@
           :error-message="errors.visibility?.[0]"
           :error="!!errors.visibility?.length"
         />
-        <div
-          class="metric-section"
-          v-if="
-            [EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(
-              event.event_type
-            )
-          "
-        >
-          <h3 class="metrics-headline">Zielvorgaben</h3>
-          <div class="metrics-input-wrapper">
-            <MetricInput
-              v-for="metric in metrics"
-              :key="metric.id"
-              :name="metric.name"
-              :checked="selectedMetricsIds.includes(metric.id)"
-              @update:checked="toggleMetric($event, metric)"
-            />
-          </div>
-        </div>
         <div v-else-if="event.event_type === EventTypes.POSTERS">
           <QCheckbox
             v-model="event.poster_creation_allowed"
