@@ -11,7 +11,7 @@ defineProps<Props>()
 
 <template>
   <div class="popup-contents">
-    <span class="popup-title">DIE LINKE vor Ort</span>
+    <span class="popup-title">{{ office.properties.name }}</span>
     <span class="popup-address">{{
       office.properties.location_description
     }}</span>

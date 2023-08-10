@@ -2,10 +2,7 @@
 import InfiniteList from 'components/InfiniteList.vue'
 import { ref, computed } from 'vue'
 import { CampaignDto } from 'src/api/model/CampaignDto'
-import {
-  EventGeoJsonDto,
-  EventGeoJsonFeature
-} from 'src/api/model/EventGeoJsonDto'
+import { EventGeoJsonFeature } from 'src/api/model/EventGeoJsonDto'
 import EventOverviewItem from 'pages/event-map/overview/list/EventOverviewItem.vue'
 
 interface Props {
@@ -14,7 +11,7 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'clickOnEvent', event: EventGeoJsonDto): void
+  (e: 'clickOnEvent', event: EventGeoJsonFeature): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -23,7 +20,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
-function handleClickOnEvent(event: EventGeoJsonDto) {
+function handleClickOnEvent(event: EventGeoJsonFeature) {
   emit('clickOnEvent', event)
 }
 
@@ -43,7 +40,6 @@ function addToVisibile(index, done) {
     :items="visibleItems"
     :disable="maxVisibleItems >= events.length"
     @load="addToVisibile"
-    ref="infiniteList"
   >
     <template v-slot:item="{ item }">
       <EventOverviewItem

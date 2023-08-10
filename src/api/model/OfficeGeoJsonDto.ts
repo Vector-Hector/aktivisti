@@ -7,7 +7,11 @@ export interface OfficeGeoJsonFeature {
   }
   properties: {
     name: string
+    description: string
     location_description: string
+    phone_number: string
+    email: string
+    link: string
   }
 }
 

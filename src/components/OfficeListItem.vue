@@ -2,25 +2,25 @@
   <QItem clickable v-ripple>
     <QItemSection>
       <QItemLabel>
-        <b>{{ office.name }}</b>
+        <b>{{ office.properties.name }}</b>
       </QItemLabel>
       <QItemLabel>
-        {{ office.location_description }}
+        {{ office.properties.location_description }}
       </QItemLabel>
-      <QItemLabel v-if="office.phone_number">
-        {{ office.phone_number }}
+      <QItemLabel v-if="office.properties.phone_number">
+        {{ office.properties.phone_number }}
       </QItemLabel>
-      <QItemLabel v-if="office.description">
-        {{ office.description }}
+      <QItemLabel v-if="office.properties.description">
+        {{ office.properties.description }}
       </QItemLabel>
     </QItemSection>
-    <QItemSection side v-if="office.link">
+    <QItemSection side v-if="office.properties.link">
       <QBtn
         type="a"
         :icon="ionEarthOutline"
         dense
         round
-        :href="office.link"
+        :href="office.properties.link"
         target="_blank"
       ></QBtn>
     </QItemSection>
@@ -29,8 +29,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { QBtn, QItem, QItemLabel, QItemSection } from 'quasar'
-import { OfficeDto } from 'src/api/model/OfficeDto'
 import { ionEarthOutline } from '@quasar/extras/ionicons-v5'
+import { OfficeGeoJsonFeature } from 'src/api/model/OfficeGeoJsonDto'
 
 export default defineComponent({
   name: 'OfficeListItem',
@@ -42,7 +42,7 @@ export default defineComponent({
   },
   props: {
     office: {
-      type: Object as PropType<OfficeDto>,
+      type: Object as PropType<OfficeGeoJsonFeature>,
       required: true
     }
   },
