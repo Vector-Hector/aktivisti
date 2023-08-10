@@ -56,8 +56,7 @@
                 <b>Teilnahmen:</b>
               </div>
               <div class="col-8">
-                {{ event.participants }} von max.
-                {{ event.max_participants ?? '∞' }}
+                {{ event.participants }}
               </div>
             </template>
           </div>
