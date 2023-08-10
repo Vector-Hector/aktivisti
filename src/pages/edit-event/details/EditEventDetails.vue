@@ -119,7 +119,6 @@ import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { date, QCheckbox, QForm, QInput, QScrollArea, QSelect } from 'quasar'
 import DateTimeInput from 'components/DateTimeInput.vue'
 import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
-import MetricInput from 'components/MetricInput.vue'
 import { editEventStore } from 'src/store/EditEventStore'
 import { SettleDebouncer } from 'src/utils/debounce'
 import { cloneDeep, isEqual } from 'lodash-es'
@@ -130,7 +129,6 @@ import { StepControls } from 'pages/EditEvent.vue'
 export default defineComponent({
   name: 'EditEventDetails',
   components: {
-    MetricInput,
     SidebarBottomStepNavigation,
     DateTimeInput,
     QForm,
