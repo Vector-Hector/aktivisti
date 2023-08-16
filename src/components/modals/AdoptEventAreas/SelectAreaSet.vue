@@ -10,6 +10,7 @@ interface Props {
 
 interface Emits {
   (e: 'onRecentEventAreasClick'): void
+  (e: 'onSearchEventAreaClick'): void
   (
     e: 'onCampaignCollectionClick',
     collection: CampaignGeometryCollectionsDto
@@ -19,6 +20,9 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
+function handleSearchEventAreaClick(): void {
+  emit('onSearchEventAreaClick')
+}
 function handleRecentEventAreasClick(): void {
   emit('onRecentEventAreasClick')
 }
@@ -35,6 +39,13 @@ function handleCampaignCollectionClick(
   </QCardSection>
   <QCardSection class="section">
     <QList>
+      <QItem clickable @click="handleSearchEventAreaClick">
+        <QItemSection>
+          <QItemLabel>
+            <b>Nach Gebiet bei Namen suchen</b>
+          </QItemLabel>
+        </QItemSection>
+      </QItem>
       <QItem clickable @click="handleRecentEventAreasClick">
         <QItemSection>
           <QItemLabel>

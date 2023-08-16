@@ -17,6 +17,7 @@ import RecentEventAreas from 'components/modals/AdoptEventAreas/RecentEventAreas
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import CampaignCollections from 'components/modals/AdoptEventAreas/CampaignCollections.vue'
 import { apiClient } from 'src/api/ApiClient'
+import SearchEventArea from 'components/modals/AdoptEventAreas/SearchEventArea.vue'
 
 interface Props {
   campaigns: CampaignDto[]
@@ -30,6 +31,7 @@ defineEmits([
 
 enum Page {
   SELECT_AREA_SET,
+  SEARCH_EVENT_AREAS,
   RECENT_EVENT_AREAS,
   CAMPAIGN_COLLECTIONS
 }
@@ -71,6 +73,10 @@ async function fetchCollections(
     collections.push(...campaignCollections)
   }
   return collections
+}
+
+function handleSearchEventAreasClick() {
+  page.value = Page.SEARCH_EVENT_AREAS
 }
 
 function handleRecentEventAreasClick() {
@@ -121,8 +127,13 @@ defineExpose({
         v-if="page === Page.SELECT_AREA_SET"
         :campaigns="props.campaigns"
         :collections="collections"
+        @onSearchEventAreaClick="handleSearchEventAreasClick"
         @onRecentEventAreasClick="handleRecentEventAreasClick"
         @onCampaignCollectionClick="handleCampaignCollectionClick"
+      />
+      <SearchEventArea
+        v-if="page === Page.SEARCH_EVENT_AREAS"
+        @onEventAreaClick="(area) => handleAreaClick([area])"
       />
       <RecentEventAreas
         v-if="page === Page.RECENT_EVENT_AREAS"
@@ -158,7 +169,9 @@ defineExpose({
           "
         />
         <QToggle
-          v-if="page === Page.RECENT_EVENT_AREAS"
+          v-if="
+            page === Page.RECENT_EVENT_AREAS || page === Page.SEARCH_EVENT_AREAS
+          "
           v-model="adoptPosters"
           label="Poster übernehmen?"
         ></QToggle>
