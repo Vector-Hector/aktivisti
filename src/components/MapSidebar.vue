@@ -1,6 +1,32 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { farCalendarPlus } from '@quasar/extras/fontawesome-v5'
+import { QBtn } from 'quasar'
+
+interface Props {
+  showCreateButton: boolean
+}
+
+interface Emits {
+  (e: 'onCreateEvent'): void
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
+
+function handleCreateEvent() {
+  emit('onCreateEvent')
+}
+</script>
 <template>
   <div class="map-sidebar">
+    <QBtn
+      label="Aktion erstellen"
+      class="create-button"
+      color="primary"
+      v-if="props.showCreateButton"
+      :icon="farCalendarPlus"
+      @click="handleCreateEvent"
+    />
     <div class="map-sidebar-content">
       <slot />
     </div>
@@ -23,5 +49,9 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+}
+
+.create-button {
+  margin: 1rem 10px 0 10px;
 }
 </style>

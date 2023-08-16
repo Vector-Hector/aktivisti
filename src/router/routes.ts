@@ -54,6 +54,9 @@ import OfficeDetailMap from 'pages/office-map/detail/OfficeDetailMap.vue'
 import PosterOverview from 'pages/poster-map/overview/PosterOverview.vue'
 import PosterOverviewMap from 'pages/poster-map/overview/PosterOverviewMap.vue'
 import Reports from 'pages/Reports.vue'
+import { getAuthStore } from 'src/store/AuthStore'
+
+const authStore = getAuthStore()
 
 const routes = [
   {
@@ -170,6 +173,14 @@ const routes = [
         path: '/events',
         redirect: { name: 'map-events-overview' },
         component: MapWithSheet,
+        props: (route) => {
+          // We only want to show create button on top level of `/events` route,
+          // not on child routes like `/events/:eventId`
+          return {
+            showCreateButton:
+              route.name === 'map-events-overview' && authStore.isLoggedIn()
+          }
+        },
         name: 'events',
         meta: {
           title: () => 'Alle Aktionen'

@@ -3,13 +3,16 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import { QIcon } from 'quasar'
 import { ionChevronDown, ionChevronUp } from '@quasar/extras/ionicons-v5'
+import { farCalendarPlus } from '@quasar/extras/fontawesome-v5'
 
 interface Props {
   title: string
+  showCreateButton: boolean
 }
 
 interface Emits {
   (e: 'changedSize', state: BottomSheetState): void
+  (e: 'onCreateEvent'): void
 }
 
 const props = defineProps<Props>()
@@ -47,6 +50,10 @@ function shrink() {
       state.value = BottomSheetState.COLLAPSED
       break
   }
+}
+
+function handleCreateEvent() {
+  emit('onCreateEvent')
 }
 
 watch(
@@ -91,13 +98,23 @@ onBeforeUnmount(() => {
     <h3 v-if="props.title" class="overlay-title">
       {{ props.title }}
     </h3>
-    <div class="size-controls">
-      <button class="resize-button expand" @click="expand">
-        <QIcon class="icon" :name="ionChevronUp" />
-      </button>
-      <button class="resize-button shrink" @click="shrink">
-        <QIcon class="icon" :name="ionChevronDown" />
-      </button>
+    <div class="control-button-group">
+      <div class="row">
+        <div class="col create-button-group" v-if="showCreateButton">
+          <button class="control-button create" @click="handleCreateEvent">
+            <QIcon class="icon" :name="farCalendarPlus" />
+          </button>
+          <div class="create-text">Erstellen</div>
+        </div>
+        <div class="col resize-button-group">
+          <button class="control-button expand" @click="expand">
+            <QIcon class="icon" :name="ionChevronUp" />
+          </button>
+          <button class="control-button shrink" @click="shrink">
+            <QIcon class="icon" :name="ionChevronDown" />
+          </button>
+        </div>
+      </div>
     </div>
     <slot />
   </div>
@@ -120,11 +137,11 @@ onBeforeUnmount(() => {
   &.collapsed {
     height: 7%;
 
-    .resize-button.expand {
-      top: -20px;
+    .control-button.expand {
+      margin-top: -18px;
     }
 
-    .resize-button.shrink {
+    .control-button.shrink {
       transform: scale(0);
       opacity: 0;
     }
@@ -133,18 +150,18 @@ onBeforeUnmount(() => {
   &.half {
     height: 50%;
 
-    .resize-button {
+    .control-button {
       line-height: 36px;
       height: 36px;
     }
 
-    .resize-button.expand {
-      top: -36px;
+    .control-button.expand {
+      margin-top: -36px;
       border-radius: 20px 20px 0 0;
     }
 
-    .resize-button.shrink {
-      top: 0;
+    .control-button.shrink {
+      margin-top: 0;
       border-radius: 0 0 20px 20px;
     }
   }
@@ -152,31 +169,43 @@ onBeforeUnmount(() => {
   &.expanded {
     height: 95%;
 
-    .resize-button.expand {
+    .control-button.expand {
       transform: scale(0);
       opacity: 0;
       top: 0;
     }
 
-    .resize-button.shrink {
-      top: -20px;
+    .control-button.shrink {
+      margin-top: -18px;
+    }
+
+    .control-button.create {
+      margin-top: -18px;
     }
   }
 }
 
-.resize-button {
+.control-button-group {
   position: absolute;
-  right: 10px;
+  top: 0;
+  right: 0;
+}
+
+.resize-button-group {
+  margin: 0 12px;
+}
+
+.control-button {
   border: 0 none;
   outline: 0 none;
   padding: 0;
   margin: 0;
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-  line-height: 40px;
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  line-height: 36px;
   text-align: center;
   font-weight: bold;
   font-size: 18px;
@@ -192,12 +221,26 @@ onBeforeUnmount(() => {
   }
 
   &.expand {
-    top: -36px;
+    margin-top: -36px;
   }
 
   &.shrink {
     top: 0;
   }
+
+  &.create {
+    margin-top: -18px;
+    background-color: $primary;
+
+    .icon {
+      color: white;
+    }
+  }
+}
+
+.create-text {
+  font-size: 10px;
+  color: $primary;
 }
 
 .scrollable-content {
