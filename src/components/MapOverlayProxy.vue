@@ -1,34 +1,20 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import ResizableBottomSheet from 'components/ResizableBottomSheet.vue'
+import MapSidebar from 'components/MapSidebar.vue'
+import { useQuasar } from 'quasar'
+
+const $q = useQuasar()
+const overlayComponent = computed(() => {
+  return $q.screen.lt.md ? ResizableBottomSheet : MapSidebar
+})
+</script>
+
 <template>
   <component class="overlay-shadow" :is="overlayComponent" v-bind="$props">
     <slot />
   </component>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType, Component } from 'vue'
-import ResizableBottomSheet from 'components/ResizableBottomSheet.vue'
-import MapSidebar from 'components/MapSidebar.vue'
-
-export default defineComponent({
-  name: 'MapOverlayProxy',
-  components: {
-    MapSidebar,
-    ResizableBottomSheet
-  },
-  props: {
-    title: {
-      type: String as PropType<string>,
-      required: false,
-      default: undefined
-    }
-  },
-  computed: {
-    overlayComponent(): Component {
-      return this.$q.screen.lt.md ? ResizableBottomSheet : MapSidebar
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 ::v-deep(.overlay-title) {
