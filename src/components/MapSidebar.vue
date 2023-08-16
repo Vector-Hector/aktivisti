@@ -1,3 +1,4 @@
+<script setup lang="ts"></script>
 <template>
   <div class="map-sidebar">
     <div class="map-sidebar-content">
@@ -5,24 +6,6 @@
     </div>
   </div>
 </template>
-<script lang="ts">
-import { computed, defineComponent, PropType } from 'vue'
-
-export default defineComponent({
-  name: 'MapSidebar',
-  props: {
-    title: {
-      type: String as PropType<string>,
-      required: false
-    }
-  },
-  provide() {
-    return {
-      scrollArea: computed(() => this.$refs.scrollArea)
-    }
-  }
-})
-</script>
 <style lang="scss" scoped>
 .map-sidebar {
   min-width: 450px;
