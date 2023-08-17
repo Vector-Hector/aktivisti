@@ -143,8 +143,7 @@
           notVerifiedParticipations.length === 0
         "
       >
-        Keine Teilnehmer*innen. Nutze den "Leute einladen"-Button um welche
-        einzuladen.
+        Keine Teilnehmer*innen. Du musst zuerst Leute zu dem Event einladen.
       </p>
     </div>
   </div>
