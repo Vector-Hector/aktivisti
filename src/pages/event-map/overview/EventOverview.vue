@@ -13,6 +13,7 @@ import { eventOverviewStore } from 'src/store/EventOverviewStore'
 import { EventFilterParams } from 'src/api/params/EventFilterParams'
 import { inside } from '@turf/turf'
 import { polygonFromBBox } from 'src/utils/geometry'
+import { QSpinnerDots } from 'quasar'
 
 const router = useRouter()
 
@@ -50,8 +51,10 @@ const userFilterParams = computed({
 })
 
 async function updateEvents(params: EventFilterParams) {
+  eventOverviewStore.state.isLoading = true
   const response = await apiClient.eventGeometry.list(params)
   eventOverviewStore.state.featureCollection = response.payload.data
+  eventOverviewStore.state.isLoading = false
 }
 
 watch(
@@ -102,12 +105,16 @@ onMounted(async () => {
       :sub-associations="subAssociations"
     />
     <EventOverviewList
+      v-if="!eventOverviewStore.state.isLoading || shownEvents.length > 0"
       :events="shownEvents"
       :campaigns="campaigns"
       class="event-list"
       ref="eventList"
       @clickOnEvent="goToEvent"
     />
+    <div v-else class="row justify-center q-my-md">
+      <QSpinnerDots color="primary" size="40px" />
+    </div>
   </div>
 </template>
 
