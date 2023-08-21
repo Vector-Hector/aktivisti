@@ -5,7 +5,7 @@
         <h2>Partei DIE LINKE</h2>
         <p>
           <b>Bundesgeschäftsstelle</b><br />
-          V.i.S.d. Presse- und des Telemediengesetzes: Jörg Schindler<br />
+          V.i.S.d. Presse- und des Telemediengesetzes: Tobias Bank<br />
           Kleine Alexanderstraße 28, 10178 Berlin<br />
           Telefon: (030) 24 009 397<br />
           Telefax: (030) 24 009 310<br />
