@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { userStore } from 'src/store/UserStore'
@@ -14,6 +14,7 @@ import { EventFilterParams } from 'src/api/params/EventFilterParams'
 import { inside } from '@turf/turf'
 import { polygonFromBBox } from 'src/utils/geometry'
 import { QSpinnerDots } from 'quasar'
+import { useGlobalLoadingState } from 'src/utils/app'
 
 const router = useRouter()
 
@@ -23,6 +24,7 @@ if (userStore.getState().bbox === null) {
 
 const campaigns = ref<CampaignDto[]>([])
 const subAssociations = ref<SubAssociationDto[]>([])
+const loading = useGlobalLoadingState()
 
 const userFilterParams = computed({
   get() {
@@ -63,9 +65,11 @@ const userFilterParams = computed({
 
 async function updateEvents(params: EventFilterParams) {
   eventOverviewStore.state.isLoading = true
+  loading.value = true
   const response = await apiClient.eventGeometry.list(params)
   eventOverviewStore.state.featureCollection = response.payload.data
   eventOverviewStore.state.isLoading = false
+  loading.value = false
 }
 
 watch(
@@ -104,6 +108,10 @@ onMounted(async () => {
 
   subAssociations.value = subAssociationResponse.payload.data
   campaigns.value = campaignsResponse.payload.data
+})
+
+onUnmounted(() => {
+  loading.value = false
 })
 </script>
 
