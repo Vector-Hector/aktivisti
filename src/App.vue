@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import NavigationSidebar from 'src/components/NavigationSidebar.vue'
-import { uiStore } from 'src/store/UiStore'
 import {
   ErrorBus,
   NOT_AUTHORIZED,
@@ -38,10 +37,6 @@ const transitionDirection = ref<string | null>(null)
 
 const currentDepth = computed(() => {
   return $route.path.split('/').filter((item) => !!item).length
-})
-
-const sidebarExpanded = computed(() => {
-  return uiStore.getState().sidebarExpanded
 })
 
 watch($route, (to, from) => {
@@ -145,10 +140,6 @@ onMounted(async () => {
     })
   })
 })
-
-function toggleSidebar() {
-  uiStore.toggleSidebar(!uiStore.getState().sidebarExpanded)
-}
 
 function backButton() {
   $router.go(-1)
