@@ -1,44 +1,6 @@
-<template>
-  <OwnershipFilter
-    v-if="isOwnershipFilterable"
-    :model-value="filterParams.is_owner"
-    @update:model-value="updateOwnership"
-  />
-  <CampaignFilter
-    v-if="isCampaignFilterable"
-    :model-value="filterParams.campaigns?.[0]"
-    :options="campaigns"
-    @update:model-value="updateCampaign"
-  />
-  <MultipleSubAssociationFilter
-    v-if="isSubAssociationFilterable"
-    :model-value="filterParams.sub_association"
-    @update:model-value="updateSubAssociations"
-    :options="subAssociations"
-  >
-  </MultipleSubAssociationFilter>
-  <SortOrderFilter
-    v-if="isSortOrderConfigurable"
-    :model-value="filterParams.order_by"
-    @update:model-value="updateSorting"
-  />
-  <EventTypeFilter
-    v-if="isEventTypeFilterable"
-    :model-value="filterParams.event_type"
-    :availableEventTypes="availableEventTypes"
-    @update:model-value="updateEventType"
-  />
-  <EventStatusFilter
-    v-if="isStatusFilterable"
-    :model-value="filterParams.status"
-    @update:model-value="updateStatus"
-  />
-</template>
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
+<script setup lang="ts">
 import { SortOption } from 'src/store/UserStore'
 import { CampaignDto } from 'src/api/model/CampaignDto'
-import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { EventTypes } from 'src/api/model/EventTypes'
 import { EventFilterParams } from 'src/api/params/EventFilterParams'
@@ -50,92 +12,99 @@ import SortOrderFilter from 'components/filterInput/filters/SortOrderFilter.vue'
 import EventTypeFilter from 'components/filterInput/filters/EventTypeFilter.vue'
 import OwnershipFilter from 'components/filterInput/filters/OwnershipFilter.vue'
 
-export default defineComponent({
-  name: 'EventFilterList',
-  components: {
-    OwnershipFilter,
-    EventTypeFilter,
-    SortOrderFilter,
-    EventStatusFilter,
-    CampaignFilter,
-    MultipleSubAssociationFilter
-  },
-  props: {
-    filterParams: {
-      type: Object as PropType<EventFilterParams>,
-      required: true
-    },
-    campaigns: {
-      type: Array as PropType<CampaignDto[]>,
-      required: false,
-      default: () => []
-    },
-    subAssociations: {
-      type: Array as PropType<SubAssociationDto[]>,
-      required: false,
-      default: () => []
-    },
-    isOwnershipFilterable: {
-      type: Boolean as PropType<boolean>,
-      default: false
-    },
-    isStatusFilterable: {
-      type: Boolean as PropType<boolean>,
-      default: true
-    },
-    isCampaignFilterable: {
-      type: Boolean as PropType<boolean>,
-      default: true
-    },
-    isSubAssociationFilterable: {
-      type: Boolean as PropType<boolean>,
-      default: true
-    },
-    isSortOrderConfigurable: {
-      type: Boolean as PropType<boolean>,
-      default: true
-    },
-    isEventTypeFilterable: {
-      type: Boolean as PropType<boolean>,
-      default: true
-    },
-    availableEventTypes: {
-      type: Array as PropType<EventTypes[]>,
-      required: false
-    }
-  },
-  emits: ['update:filterParams'],
-  data() {
-    return {
-      ionChevronDown,
-      ionClose
-    }
-  },
-  methods: {
-    updateFilterParams(value: EventFilterParams) {
-      this.$emit('update:filterParams', {
-        ...this.filterParams,
-        ...value
-      })
-    },
-    updateEventType(value: EventTypes) {
-      this.updateFilterParams({ event_type: value ? value : undefined })
-    },
-    updateSubAssociations(value: number[]) {
-      this.updateFilterParams({ sub_association: value })
-    },
-    updateCampaign(value: number) {
-      this.updateFilterParams({ campaigns: value ? [value] : undefined })
-    },
-    updateSorting(value: SortOption) {
-      this.updateFilterParams({ order_by: value })
-    },
-    updateStatus(value: EventStatus) {
-      this.updateFilterParams({ status: value })
-    },
-    updateOwnership(value: boolean) {
-      this.updateFilterParams({ is_owner: value })
-    }
-  }
+interface Props {
+  filterParams: EventFilterParams
+  campaigns?: CampaignDto[]
+  subAssociations?: SubAssociationDto[]
+  isOwnershipFilterable?: boolean
+  isStatusFilterable?: boolean
+  isCampaignFilterable?: boolean
+  isSubAssociationFilterable?: boolean
+  isSortOrderConfigurable?: boolean
+  isEventTypeFilterable?: boolean
+  availableEventTypes?: EventTypes[]
+}
+
+interface Emits {
+  (e: 'update:filterParams', filterParams: EventFilterParams): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  campaigns: () => [],
+  subAssociations: () => [],
+  isOwnershipFilterable: false,
+  isStatusFilterable: true,
+  isCampaignFilterable: true,
+  isSubAssociationFilterable: true,
+  isSortOrderConfigurable: true,
+  isEventTypeFilterable: true
 })
+const emit = defineEmits<Emits>()
+
+function updateFilterParams(value: EventFilterParams) {
+  emit('update:filterParams', {
+    ...props.filterParams,
+    ...value
+  })
+}
+
+function updateEventType(value: EventTypes) {
+  updateFilterParams({ event_type: value ? value : undefined })
+}
+
+function updateSubAssociations(value: number[]) {
+  updateFilterParams({ sub_association: value })
+}
+
+function updateCampaign(value: number) {
+  updateFilterParams({ campaigns: value ? [value] : undefined })
+}
+
+function updateSorting(value: SortOption) {
+  updateFilterParams({ order_by: value })
+}
+
+function updateStatus(value: EventStatus) {
+  updateFilterParams({ status: value })
+}
+
+function updateOwnership(value: boolean) {
+  updateFilterParams({ is_owner: value })
+}
 </script>
+<template>
+  <OwnershipFilter
+    v-if="props.isOwnershipFilterable"
+    :model-value="props.filterParams.is_owner"
+    @update:model-value="updateOwnership"
+  />
+  <CampaignFilter
+    v-if="props.isCampaignFilterable"
+    :model-value="props.filterParams.campaigns?.[0]"
+    :options="props.campaigns"
+    @update:model-value="updateCampaign"
+  />
+  <MultipleSubAssociationFilter
+    v-if="props.isSubAssociationFilterable"
+    :model-value="props.filterParams.sub_association"
+    @update:model-value="updateSubAssociations"
+    :options="props.subAssociations"
+  >
+  </MultipleSubAssociationFilter>
+  <SortOrderFilter
+    v-if="props.isSortOrderConfigurable"
+    :model-value="props.filterParams.order_by"
+    @update:model-value="updateSorting"
+  />
+  <EventTypeFilter
+    v-if="props.isEventTypeFilterable"
+    :model-value="props.filterParams.event_type"
+    :availableEventTypes="props.availableEventTypes"
+    @update:model-value="updateEventType"
+  />
+  <EventStatusFilter
+    v-if="props.isStatusFilterable"
+    :model-value="props.filterParams.status"
+    @update:model-value="updateStatus"
+  />
+</template>
