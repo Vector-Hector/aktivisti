@@ -83,12 +83,6 @@
             </MenuLink>
           </div>
           <div v-if="hasManagePermission" class="menu-item">
-            <MenuLink :to="{ name: 'my-managed-events' }">
-              <QIcon :name="ionCreateOutline" />
-              <span class="menu-item-link-text">Aktion verwalten</span>
-            </MenuLink>
-          </div>
-          <div v-if="hasManagePermission" class="menu-item">
             <MenuLink :to="{ name: 'reports' }">
               <QIcon :name="ionStatsChartOutline" />
               <span class="menu-item-link-text">Statistiken</span>
