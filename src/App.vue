@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, provide, ref, watch } from 'vue'
 import NavigationSidebar from 'src/components/NavigationSidebar.vue'
 import {
   ErrorBus,
@@ -15,7 +15,8 @@ import {
   QLayout,
   QHeader,
   QToolbarTitle,
-  useQuasar
+  useQuasar,
+  QLinearProgress
 } from 'quasar'
 import { ionArrowBack } from '@quasar/extras/ionicons-v5'
 import { IntervalDebouncer } from 'src/utils/debounce'
@@ -26,6 +27,7 @@ import { userStore } from 'src/store/UserStore'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 import { VersionHealth } from 'src/api/model/ConfigDto'
 import { useRoute, useRouter } from 'vue-router'
+import { GlobalLoadingInjectionKey } from 'src/utils/app'
 
 const authStore = getAuthStore()
 const $route = useRoute()
@@ -34,6 +36,8 @@ const $q = useQuasar()
 
 const initialized = ref(false)
 const transitionDirection = ref<string | null>(null)
+const loading = ref<boolean>(false)
+provide(GlobalLoadingInjectionKey, loading)
 
 const currentDepth = computed(() => {
   return $route.path.split('/').filter((item) => !!item).length
@@ -168,6 +172,13 @@ function backButton() {
         </QToolbarTitle>
         <QToolbarTitle class="subtitle"></QToolbarTitle>
       </QToolbar>
+      <QLinearProgress
+        v-if="loading"
+        class="progress-bar full-width"
+        size="5px"
+        color="white"
+        indeterminate
+      />
     </QHeader>
     <NavigationSidebar />
     <QPageContainer class="d-flex flex-fill page-container">
@@ -216,5 +227,9 @@ function backButton() {
 .page-container {
   height: 100%;
   overflow: hidden;
+}
+
+.progress-bar {
+  z-index: 1;
 }
 </style>
