@@ -26,14 +26,23 @@ const subAssociations = ref<SubAssociationDto[]>([])
 
 const userFilterParams = computed({
   get() {
-    const { campaign, subAssociations, sorting, eventType, status } =
-      userStore.getState().filterPreferences
+    const {
+      campaign,
+      subAssociations,
+      sorting,
+      eventType,
+      status,
+      is_owner,
+      management_permission
+    } = userStore.getState().filterPreferences
     return {
       sub_association: subAssociations,
       campaigns: campaign !== undefined ? [campaign] : undefined,
       order_by: sorting,
       event_type: eventType,
-      status: status ?? EventStatus.ACTIVE
+      status: status ?? EventStatus.ACTIVE,
+      is_owner: is_owner,
+      management_permission: management_permission
     }
   },
   set(value) {
@@ -44,7 +53,9 @@ const userFilterParams = computed({
         campaign: value.campaigns?.[0],
         sorting: value.order_by!,
         eventType: value.event_type ?? undefined,
-        status: value.status ?? undefined
+        status: value.status ?? undefined,
+        is_owner: value.is_owner ?? undefined,
+        management_permission: value.management_permission ?? undefined
       }
     })
   }
@@ -103,6 +114,8 @@ onMounted(async () => {
       :is-collapsible="true"
       :campaigns="campaigns"
       :sub-associations="subAssociations"
+      :is-editable-filterable="userStore.hasAtLeastOneManagePermission()"
+      :is-ownership-filterable="userStore.hasAtLeastOneManagePermission()"
     />
     <EventOverviewList
       v-if="!eventOverviewStore.state.isLoading || shownEvents.length > 0"
