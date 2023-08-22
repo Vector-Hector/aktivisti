@@ -13,6 +13,7 @@ interface Props {
   filterParams: EventFilterParams
   campaigns?: CampaignDto[]
   subAssociations?: SubAssociationDto[]
+  isEditableFilterable?: boolean
   isOwnershipFilterable?: boolean
   isStatusFilterable?: boolean
   isCampaignFilterable?: boolean
@@ -28,6 +29,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   isCollapsible: false,
+  isEditableFilterable: false,
   isOwnershipFilterable: false,
   isStatusFilterable: true,
   isCampaignFilterable: true,
@@ -39,6 +41,9 @@ const emit = defineEmits<Emits>()
 
 const activatedFilterCount = computed(() => {
   let active = 0
+  if (props.filterParams.management_permission === true) {
+    active++
+  }
   if (props.filterParams.is_owner !== undefined) {
     active++
   }
@@ -76,6 +81,7 @@ function updateFilterParams(value: EventFilterParams) {
         :filter-params="props.filterParams"
         :campaigns="props.campaigns"
         :sub-associations="props.subAssociations"
+        :is-editable-filterable="props.isEditableFilterable"
         :isOwnershipFilterable="props.isOwnershipFilterable"
         :isStatusFilterable="props.isStatusFilterable"
         :isCampaignFilterable="props.isCampaignFilterable"
@@ -92,6 +98,7 @@ function updateFilterParams(value: EventFilterParams) {
     :filter-params="props.filterParams"
     :campaigns="props.campaigns"
     :sub-associations="props.subAssociations"
+    :is-editable-filterable="props.isEditableFilterable"
     :isOwnershipFilterable="props.isOwnershipFilterable"
     :isStatusFilterable="props.isStatusFilterable"
     :isCampaignFilterable="props.isCampaignFilterable"

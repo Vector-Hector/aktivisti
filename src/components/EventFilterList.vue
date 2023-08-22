@@ -11,11 +11,13 @@ import { EventStatus } from 'src/api/model/EventStatus'
 import SortOrderFilter from 'components/filterInput/filters/SortOrderFilter.vue'
 import EventTypeFilter from 'components/filterInput/filters/EventTypeFilter.vue'
 import OwnershipFilter from 'components/filterInput/filters/OwnershipFilter.vue'
+import EditableFilter from 'components/filterInput/filters/EditableFilter.vue'
 
 interface Props {
   filterParams: EventFilterParams
   campaigns?: CampaignDto[]
   subAssociations?: SubAssociationDto[]
+  isEditableFilterable?: boolean
   isOwnershipFilterable?: boolean
   isStatusFilterable?: boolean
   isCampaignFilterable?: boolean
@@ -32,6 +34,7 @@ interface Emits {
 const props = withDefaults(defineProps<Props>(), {
   campaigns: () => [],
   subAssociations: () => [],
+  isEditableFilterable: false,
   isOwnershipFilterable: false,
   isStatusFilterable: true,
   isCampaignFilterable: true,
@@ -71,8 +74,17 @@ function updateStatus(value: EventStatus) {
 function updateOwnership(value: boolean) {
   updateFilterParams({ is_owner: value })
 }
+
+function updateEditable(value: boolean) {
+  updateFilterParams({ management_permission: value })
+}
 </script>
 <template>
+  <EditableFilter
+    v-if="props.isEditableFilterable"
+    :model-value="props.filterParams.management_permission"
+    @update:model-value="updateEditable"
+  />
   <OwnershipFilter
     v-if="props.isOwnershipFilterable"
     :model-value="props.filterParams.is_owner"
