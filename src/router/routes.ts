@@ -45,7 +45,6 @@ import EventDetailPosterDetail from 'pages/event-map/detail/area/posters/detail/
 import EventDetailPosterDetailMap from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetailMap.vue'
 import EventDetailPosterList from 'pages/event-map/detail/area/posters/list/EventDetailPosterList.vue'
 import EventDetailPosterListMap from 'pages/event-map/detail/area/posters/list/EventDetailPosterListMap.vue'
-import MyManagedEvents from 'pages/MyManagedEvents.vue'
 import ManageUsers from 'pages/ManageUsers.vue'
 import OfficeOverview from 'pages/office-map/overview/OfficeOverview.vue'
 import OfficeOverviewMap from 'pages/office-map/overview/OfficeOverviewMap.vue'
@@ -83,15 +82,6 @@ const routes = [
         meta: {
           requiresAuth: true,
           title: () => 'Meine Teilnahmen'
-        }
-      },
-      {
-        path: '/my-managed-events',
-        component: MyManagedEvents,
-        name: 'my-managed-events',
-        meta: {
-          requiresAuth: true,
-          title: () => 'Aktionen verwalten'
         }
       },
       {
