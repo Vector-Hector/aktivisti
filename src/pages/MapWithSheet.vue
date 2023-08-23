@@ -18,7 +18,11 @@
           <component :is="Component" />
         </router-view>
       </Map>
-      <MapOverlayProxy :title="$route.meta.title?.()" @changed-size="resizeMap">
+      <MapOverlayProxy
+        :title="$route.meta.title?.()"
+        @changed-size="resizeMap"
+        :showCreateButton="showCreateButton"
+      >
         <div class="overlay-content">
           <router-view />
         </div>
@@ -29,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import MapOverlayProxy from 'components/MapOverlayProxy.vue'
 import Map from 'src/map/Map.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
@@ -57,6 +61,12 @@ export default defineComponent({
     Map,
     MapOverlayProxy,
     QPage
+  },
+  props: {
+    showCreateButton: {
+      type: Boolean as PropType<boolean>,
+      default: false
+    }
   },
   data() {
     return {

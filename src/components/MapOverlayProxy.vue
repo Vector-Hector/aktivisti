@@ -1,34 +1,45 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import ResizableBottomSheet from 'components/ResizableBottomSheet.vue'
+import MapSidebar from 'components/MapSidebar.vue'
+import { useQuasar } from 'quasar'
+import { useRouter } from 'vue-router'
+import { userStore } from 'src/store/UserStore'
+
+interface Props {
+  showCreateButton: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showCreateButton: false
+})
+
+const $q = useQuasar()
+const $router = useRouter()
+const overlayComponent = computed(() => {
+  return $q.screen.lt.md ? ResizableBottomSheet : MapSidebar
+})
+
+async function handleCreateEvent() {
+  let to = 'create-event-request-permissions'
+  if (userStore.hasAtLeastOneManagePermission()) {
+    to = 'create-event'
+  }
+  await $router.push({ name: to })
+}
+</script>
+
 <template>
-  <component class="overlay-shadow" :is="overlayComponent" v-bind="$props">
+  <component
+    class="overlay-shadow"
+    :is="overlayComponent"
+    v-bind="$props"
+    :showCreateButton="props.showCreateButton"
+    @onCreateEvent="handleCreateEvent"
+  >
     <slot />
   </component>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType, Component } from 'vue'
-import ResizableBottomSheet from 'components/ResizableBottomSheet.vue'
-import MapSidebar from 'components/MapSidebar.vue'
-
-export default defineComponent({
-  name: 'MapOverlayProxy',
-  components: {
-    MapSidebar,
-    ResizableBottomSheet
-  },
-  props: {
-    title: {
-      type: String as PropType<string>,
-      required: false,
-      default: undefined
-    }
-  },
-  computed: {
-    overlayComponent(): Component {
-      return this.$q.screen.lt.md ? ResizableBottomSheet : MapSidebar
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 ::v-deep(.overlay-title) {

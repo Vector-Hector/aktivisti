@@ -1,3 +1,91 @@
+<script setup lang="ts">
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { BottomSheetState, uiStore } from 'src/store/UiStore'
+import { QIcon } from 'quasar'
+import { ionChevronDown, ionChevronUp } from '@quasar/extras/ionicons-v5'
+import { farCalendarPlus } from '@quasar/extras/fontawesome-v5'
+
+interface Props {
+  title: string
+  showCreateButton: boolean
+}
+
+interface Emits {
+  (e: 'changedSize', state: BottomSheetState): void
+  (e: 'onCreateEvent'): void
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
+
+const transitionListener = ref<EventListener | null>(null)
+const bottomSheet = ref<HTMLElement | null>(null)
+
+const state = computed({
+  get() {
+    return uiStore.getState().bottomSheetState
+  },
+  set(value: BottomSheetState) {
+    uiStore.setBottomSheetState(value)
+  }
+})
+
+function expand() {
+  switch (state.value) {
+    case BottomSheetState.COLLAPSED:
+      state.value = BottomSheetState.HALF
+      break
+    case BottomSheetState.HALF:
+      state.value = BottomSheetState.EXPANDED
+      break
+  }
+}
+
+function shrink() {
+  switch (state.value) {
+    case BottomSheetState.EXPANDED:
+      state.value = BottomSheetState.HALF
+      break
+    case BottomSheetState.HALF:
+      state.value = BottomSheetState.COLLAPSED
+      break
+  }
+}
+
+function handleCreateEvent() {
+  emit('onCreateEvent')
+}
+
+watch(
+  () => state.value,
+  (newValue, oldValue) => {
+    transitionListener.value = () => {
+      bottomSheet.value?.removeEventListener(
+        'transitionend',
+        transitionListener.value!
+      )
+      transitionListener.value = null
+      emit('changedSize', newValue)
+    }
+    if (newValue !== oldValue) {
+      bottomSheet.value?.addEventListener(
+        'transitionend',
+        transitionListener.value
+      )
+    }
+  }
+)
+
+onBeforeUnmount(() => {
+  if (transitionListener.value) {
+    bottomSheet.value!.removeEventListener(
+      'transitionend',
+      transitionListener.value
+    )
+  }
+})
+</script>
+
 <template>
   <div
     class="resizable-bottom-sheet"
@@ -7,116 +95,30 @@
       'absolute-sheet': state === BottomSheetState.EXPANDED
     }"
   >
-    <h3 v-if="title" class="overlay-title">
-      {{ title }}
+    <h3 v-if="props.title" class="overlay-title">
+      {{ props.title }}
     </h3>
-    <div class="size-controls">
-      <button class="resize-button expand" @click="expand">
-        <QIcon class="icon" :name="ionChevronUp" />
-      </button>
-      <button class="resize-button shrink" @click="shrink">
-        <QIcon class="icon" :name="ionChevronDown" />
-      </button>
+    <div class="control-button-group">
+      <div class="row">
+        <div class="col create-button-group" v-if="showCreateButton">
+          <button class="control-button create" @click="handleCreateEvent">
+            <QIcon class="icon" :name="farCalendarPlus" />
+          </button>
+          <div class="create-text">Erstellen</div>
+        </div>
+        <div class="col resize-button-group">
+          <button class="control-button expand" @click="expand">
+            <QIcon class="icon" :name="ionChevronUp" />
+          </button>
+          <button class="control-button shrink" @click="shrink">
+            <QIcon class="icon" :name="ionChevronDown" />
+          </button>
+        </div>
+      </div>
     </div>
     <slot />
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType, computed } from 'vue'
-import { BottomSheetState, uiStore } from 'src/store/UiStore'
-import { QIcon } from 'quasar'
-import { ionChevronDown, ionChevronUp } from '@quasar/extras/ionicons-v5'
-
-export default defineComponent({
-  name: 'ResizableBottomSheet',
-  components: {
-    QIcon
-  },
-  props: {
-    title: {
-      type: String as PropType<string>,
-      required: false,
-      default: undefined
-    }
-  },
-  provide() {
-    return {
-      scrollArea: computed(() => this.$refs.scrollArea)
-    }
-  },
-  emits: ['changedSize'],
-  data() {
-    return {
-      BottomSheetState,
-      ionChevronUp,
-      ionChevronDown,
-      transitionListener: null as EventListener | null
-    }
-  },
-  computed: {
-    state: {
-      get() {
-        return uiStore.getState().bottomSheetState
-      },
-      set(value: BottomSheetState) {
-        uiStore.setBottomSheetState(value)
-      }
-    },
-    bottomSheetRef(): HTMLElement | undefined {
-      return this.$refs.bottomSheet as HTMLElement | undefined
-    }
-  },
-  watch: {
-    state(newValue, oldValue) {
-      this.transitionListener = () => {
-        this.bottomSheetRef?.removeEventListener(
-          'transitionend',
-          this.transitionListener!
-        )
-        this.transitionListener = null
-        this.$emit('changedSize', newValue)
-      }
-      if (newValue !== oldValue) {
-        this.bottomSheetRef?.addEventListener(
-          'transitionend',
-          this.transitionListener
-        )
-      }
-    }
-  },
-  beforeUnmount() {
-    if (this.transitionListener) {
-      this.bottomSheetRef!.removeEventListener(
-        'transitionend',
-        this.transitionListener
-      )
-    }
-  },
-  methods: {
-    expand() {
-      switch (this.state) {
-        case BottomSheetState.COLLAPSED:
-          this.state = BottomSheetState.HALF
-          break
-        case BottomSheetState.HALF:
-          this.state = BottomSheetState.EXPANDED
-          break
-      }
-    },
-    shrink() {
-      switch (this.state) {
-        case BottomSheetState.EXPANDED:
-          this.state = BottomSheetState.HALF
-          break
-        case BottomSheetState.HALF:
-          this.state = BottomSheetState.COLLAPSED
-          break
-      }
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 @import 'src/css/_variables.scss';
@@ -135,11 +137,11 @@ export default defineComponent({
   &.collapsed {
     height: 7%;
 
-    .resize-button.expand {
-      top: -20px;
+    .control-button.expand {
+      margin-top: -18px;
     }
 
-    .resize-button.shrink {
+    .control-button.shrink {
       transform: scale(0);
       opacity: 0;
     }
@@ -148,18 +150,18 @@ export default defineComponent({
   &.half {
     height: 50%;
 
-    .resize-button {
+    .control-button {
       line-height: 36px;
       height: 36px;
     }
 
-    .resize-button.expand {
-      top: -36px;
+    .control-button.expand {
+      margin-top: -36px;
       border-radius: 20px 20px 0 0;
     }
 
-    .resize-button.shrink {
-      top: 0;
+    .control-button.shrink {
+      margin-top: 0;
       border-radius: 0 0 20px 20px;
     }
   }
@@ -167,31 +169,43 @@ export default defineComponent({
   &.expanded {
     height: 95%;
 
-    .resize-button.expand {
+    .control-button.expand {
       transform: scale(0);
       opacity: 0;
       top: 0;
     }
 
-    .resize-button.shrink {
-      top: -20px;
+    .control-button.shrink {
+      margin-top: -18px;
+    }
+
+    .control-button.create {
+      margin-top: -18px;
     }
   }
 }
 
-.resize-button {
+.control-button-group {
   position: absolute;
-  right: 10px;
+  top: 0;
+  right: 0;
+}
+
+.resize-button-group {
+  margin: 0 12px;
+}
+
+.control-button {
   border: 0 none;
   outline: 0 none;
   padding: 0;
   margin: 0;
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-  line-height: 40px;
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  line-height: 36px;
   text-align: center;
   font-weight: bold;
   font-size: 18px;
@@ -207,12 +221,26 @@ export default defineComponent({
   }
 
   &.expand {
-    top: -36px;
+    margin-top: -36px;
   }
 
   &.shrink {
     top: 0;
   }
+
+  &.create {
+    margin-top: -18px;
+    background-color: $primary;
+
+    .icon {
+      color: white;
+    }
+  }
+}
+
+.create-text {
+  font-size: 10px;
+  color: $primary;
 }
 
 .scrollable-content {

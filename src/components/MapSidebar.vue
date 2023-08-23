@@ -1,28 +1,37 @@
+<script setup lang="ts">
+import { farCalendarPlus } from '@quasar/extras/fontawesome-v5'
+import { QBtn } from 'quasar'
+
+interface Props {
+  showCreateButton: boolean
+}
+
+interface Emits {
+  (e: 'onCreateEvent'): void
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
+
+function handleCreateEvent() {
+  emit('onCreateEvent')
+}
+</script>
 <template>
   <div class="map-sidebar">
+    <QBtn
+      label="Aktion erstellen"
+      class="create-button"
+      color="primary"
+      v-if="props.showCreateButton"
+      :icon="farCalendarPlus"
+      @click="handleCreateEvent"
+    />
     <div class="map-sidebar-content">
       <slot />
     </div>
   </div>
 </template>
-<script lang="ts">
-import { computed, defineComponent, PropType } from 'vue'
-
-export default defineComponent({
-  name: 'MapSidebar',
-  props: {
-    title: {
-      type: String as PropType<string>,
-      required: false
-    }
-  },
-  provide() {
-    return {
-      scrollArea: computed(() => this.$refs.scrollArea)
-    }
-  }
-})
-</script>
 <style lang="scss" scoped>
 .map-sidebar {
   min-width: 450px;
@@ -40,5 +49,9 @@ export default defineComponent({
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+}
+
+.create-button {
+  margin: 1rem 10px 0 10px;
 }
 </style>
