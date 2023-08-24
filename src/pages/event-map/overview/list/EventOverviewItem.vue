@@ -66,6 +66,7 @@ function openParticipantsModal() {
       <div class="q-gutter-x-md">
         <QBtn
           v-if="event.properties.can_edit"
+          aria-label="Aktion bearbeiten"
           round
           outline
           color="primary"
@@ -74,6 +75,7 @@ function openParticipantsModal() {
         ></QBtn>
         <QBtn
           v-if="event.properties.can_edit_participants"
+          aria-label="Teilnehmer:innen verwalten"
           round
           outline
           :icon="ionPeopleSharp"
