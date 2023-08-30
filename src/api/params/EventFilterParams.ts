@@ -14,4 +14,5 @@ export interface EventFilterParams {
   end_date_include_null?: boolean
   status?: EventStatus
   is_owner?: boolean
+  management_permission?: boolean
 }

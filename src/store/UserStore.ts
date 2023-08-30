@@ -22,6 +22,8 @@ export interface EventFilterPreferences {
   sorting: SortOption
   eventType: EventTypes | undefined
   status: EventStatus | undefined
+  is_owner: boolean | undefined
+  management_permission: boolean | undefined
 }
 
 interface UserState {
@@ -49,7 +51,9 @@ class UserStore extends Store<UserState> {
         campaign: undefined,
         sorting: SortOption.START_DATE,
         eventType: undefined,
-        status: EventStatus.ACTIVE
+        status: EventStatus.ACTIVE,
+        is_owner: undefined,
+        management_permission: undefined
       },
       reportCharts: []
     }
