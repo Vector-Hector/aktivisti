@@ -10,11 +10,11 @@ export interface EventGeoJsonFeature {
   properties: {
     name: string
     start_date: string
-    end_date: string | null
-    location_description: string
     event_type: EventTypes
     campaigns: number[]
     sub_association: number
+    can_edit_participants: boolean
+    can_edit: boolean
   }
 }
 

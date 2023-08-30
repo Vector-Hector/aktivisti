@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { QItem, QItemLabel, QItemSection } from 'quasar'
+import { QBtn, QItem, QItemLabel, QItemSection, useQuasar } from 'quasar'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { eventTypeOptions } from 'src/api/model/EventTypes'
 import { EventGeoJsonFeature } from 'src/api/model/EventGeoJsonDto'
+import { ionPencil, ionPeopleSharp } from '@quasar/extras/ionicons-v5'
+import EventParticipantsModal from 'components/modals/EventParticipantsModal.vue'
 
 interface Props {
   event: EventGeoJsonFeature
@@ -17,6 +19,8 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
+const q = useQuasar()
+
 const eventTypeLabel = computed(() => {
   return eventTypeOptions.find(
     ({ key }) => key === props.event.properties.event_type
@@ -25,6 +29,17 @@ const eventTypeLabel = computed(() => {
 
 function campaignsByIds(findIds: number[]): CampaignDto[] {
   return props.campaigns.filter(({ id }) => findIds.includes(id))
+}
+
+function openParticipantsModal() {
+  q.dialog({
+    component: EventParticipantsModal,
+    maximized: true,
+    componentProps: {
+      eventId: props.event.id,
+      eventSubAssociation: props.event.properties.sub_association
+    }
+  })
 }
 </script>
 <template>
@@ -46,6 +61,28 @@ function campaignsByIds(findIds: number[]): CampaignDto[] {
       <QItemLabel>
         {{ $utils.dateFormat(event.properties.start_date) }}
       </QItemLabel>
+    </QItemSection>
+    <QItemSection side>
+      <div class="q-gutter-x-md">
+        <QBtn
+          v-if="event.properties.can_edit"
+          aria-label="Aktion bearbeiten"
+          round
+          outline
+          color="primary"
+          :icon="ionPencil"
+          :to="{ name: 'edit-event-details', params: { eventId: event.id } }"
+        ></QBtn>
+        <QBtn
+          v-if="event.properties.can_edit_participants"
+          aria-label="Teilnehmer:innen verwalten"
+          round
+          outline
+          :icon="ionPeopleSharp"
+          color="primary"
+          @click="openParticipantsModal"
+        ></QBtn>
+      </div>
     </QItemSection>
   </QItem>
 </template>

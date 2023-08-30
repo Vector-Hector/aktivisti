@@ -7,6 +7,7 @@ interface EventMapStoreState {
   bbox: BBox2d | null
   events: EventDto[]
   featureCollection: EventGeoJsonDto | null
+  isLoading: boolean
 }
 
 class EventOverviewStore extends Store<EventMapStoreState> {
@@ -14,7 +15,8 @@ class EventOverviewStore extends Store<EventMapStoreState> {
     return {
       bbox: null,
       events: [],
-      featureCollection: null
+      featureCollection: null,
+      isLoading: false
     }
   }
 
