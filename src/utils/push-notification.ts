@@ -1,4 +1,4 @@
-import { Capacitor } from '@capacitor/core'
+import { Capacitor, PluginListenerHandle } from '@capacitor/core'
 import { apiClient } from 'src/api/ApiClient'
 import { RegisterDeviceDto } from 'src/api/model/RegisterDeviceDto'
 import { PushNotifications } from '@capacitor/push-notifications'
@@ -23,8 +23,8 @@ const registerDevicePlatformMap: Record<string, RegistrationControls> = {
     deregister: deregisterMobileDevice
   },
   ios: {
-    register: () => Promise.resolve(),
-    deregister: () => Promise.resolve()
+    register: registerIOSDevice,
+    deregister: deregisterMobileDevice
   }
 }
 
@@ -120,6 +120,10 @@ async function registerAndroidDevice(): Promise<void> {
   await registerMobileDevice('A')
 }
 
+async function registerIOSDevice(): Promise<void> {
+  await registerMobileDevice('I')
+}
+
 async function registerMobileDevice(mode: 'A' | 'I'): Promise<void> {
   if (!(await mobileUserHasGrantedNotificationPermissions())) return
 
@@ -165,6 +169,8 @@ async function getMobileRegistrationToken(): Promise<string> {
   ).value
   if (existingToken != null) return existingToken
 
+  const handlersToRemove: PluginListenerHandle[] = []
+
   const token = await new Promise<string>((resolve, reject) => {
     PushNotifications.addListener('registration', (token) => {
       void Preferences.set({
@@ -177,9 +183,18 @@ async function getMobileRegistrationToken(): Promise<string> {
         reject()
       }, REGISTRATION_SUCCESS_TIMEOUT_SECONDS * 1000)
     })
-      .then((handler) => handler.remove())
+      .then(handler => handler && handlersToRemove.push(handler))
+      .catch(console.error)
+
+    PushNotifications.addListener('registrationError', (error) => {
+      reject()
+    })
+      .then(h => h && handlersToRemove.push(h))
       .catch(console.error)
   })
+
+  for (const handler of handlersToRemove)
+    handler.remove()
 
   return token
 }
