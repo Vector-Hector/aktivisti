@@ -1,17 +1,15 @@
 <template>
-  <div class="select-wrapper">
-    <QSelect
-      :dropdownIcon="ionChevronDown"
-      :clearIcon="ionClose"
-      filled
-      :model-value="modelValue"
-      v-bind="$attrs"
-    >
-      <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
-        <slot :name="name" v-bind="slotData" />
-      </template>
-    </QSelect>
-  </div>
+  <QSelect
+    :dropdownIcon="ionChevronDown"
+    :clearIcon="ionClose"
+    filled
+    :model-value="modelValue"
+    v-bind="$attrs"
+  >
+    <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
+      <slot :name="name" v-bind="slotData" />
+    </template>
+  </QSelect>
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
@@ -38,9 +36,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<style lang="scss" scoped>
-.select-wrapper {
-  margin: 0 0 0.5rem 0;
-}
-</style>

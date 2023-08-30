@@ -80,43 +80,52 @@ function updateEditable(value: boolean) {
 }
 </script>
 <template>
-  <EditableFilter
-    v-if="props.isEditableFilterable"
-    :model-value="props.filterParams.management_permission"
-    @update:model-value="updateEditable"
-  />
-  <OwnershipFilter
-    v-if="props.isOwnershipFilterable"
-    :model-value="props.filterParams.is_owner"
-    @update:model-value="updateOwnership"
-  />
-  <CampaignFilter
-    v-if="props.isCampaignFilterable"
-    :model-value="props.filterParams.campaigns?.[0]"
-    :options="props.campaigns"
-    @update:model-value="updateCampaign"
-  />
-  <MultipleSubAssociationFilter
-    v-if="props.isSubAssociationFilterable"
-    :model-value="props.filterParams.sub_association"
-    @update:model-value="updateSubAssociations"
-    :options="props.subAssociations"
-  >
-  </MultipleSubAssociationFilter>
-  <SortOrderFilter
-    v-if="props.isSortOrderConfigurable"
-    :model-value="props.filterParams.order_by"
-    @update:model-value="updateSorting"
-  />
-  <EventTypeFilter
-    v-if="props.isEventTypeFilterable"
-    :model-value="props.filterParams.event_type"
-    :availableEventTypes="props.availableEventTypes"
-    @update:model-value="updateEventType"
-  />
-  <EventStatusFilter
-    v-if="props.isStatusFilterable"
-    :model-value="props.filterParams.status"
-    @update:model-value="updateStatus"
-  />
+  <div class="filter-list">
+    <EditableFilter
+      v-if="props.isEditableFilterable"
+      :model-value="props.filterParams.management_permission"
+      @update:model-value="updateEditable"
+    />
+    <OwnershipFilter
+      v-if="props.isOwnershipFilterable"
+      :model-value="props.filterParams.is_owner"
+      @update:model-value="updateOwnership"
+    />
+    <CampaignFilter
+      v-if="props.isCampaignFilterable"
+      :model-value="props.filterParams.campaigns?.[0]"
+      :options="props.campaigns"
+      @update:model-value="updateCampaign"
+    />
+    <MultipleSubAssociationFilter
+      v-if="props.isSubAssociationFilterable"
+      :model-value="props.filterParams.sub_association"
+      @update:model-value="updateSubAssociations"
+      :options="props.subAssociations"
+    >
+    </MultipleSubAssociationFilter>
+    <SortOrderFilter
+      v-if="props.isSortOrderConfigurable"
+      :model-value="props.filterParams.order_by"
+      @update:model-value="updateSorting"
+    />
+    <EventTypeFilter
+      v-if="props.isEventTypeFilterable"
+      :model-value="props.filterParams.event_type"
+      :availableEventTypes="props.availableEventTypes"
+      @update:model-value="updateEventType"
+    />
+    <EventStatusFilter
+      v-if="props.isStatusFilterable"
+      :model-value="props.filterParams.status"
+      @update:model-value="updateStatus"
+    />
+  </div>
 </template>
+
+<style lang="scss" scoped>
+.filter-list {
+  display: grid;
+  gap: 0.5rem 0;
+}
+</style>
