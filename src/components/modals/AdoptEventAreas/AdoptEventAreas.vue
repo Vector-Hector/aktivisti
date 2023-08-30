@@ -181,7 +181,7 @@ defineExpose({
         <QToggle
           v-if="isPageWithAdoptPostersButton"
           v-model="adoptPosters"
-          label="Poster übernehmen?"
+          label="Plakatstandorte übernehmen"
         ></QToggle>
       </QCardActions>
     </QCard>
