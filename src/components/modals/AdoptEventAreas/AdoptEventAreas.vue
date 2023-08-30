@@ -187,7 +187,7 @@ defineExpose({
 }
 
 .higher-content {
-  min-height: 800px;
+  height: 100%;
 }
 
 .broader-content {
