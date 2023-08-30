@@ -320,7 +320,8 @@ export default defineComponent({
           componentProps: {
             campaigns: this.campaigns.filter(({ id }) =>
               this.event.campaigns.includes(id)
-            )
+            ),
+            showAdoptPosters: this.event.event_type === EventTypes.POSTERS
           }
         })
         .onOk(
