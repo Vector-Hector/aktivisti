@@ -183,18 +183,17 @@ async function getMobileRegistrationToken(): Promise<string> {
         reject()
       }, REGISTRATION_SUCCESS_TIMEOUT_SECONDS * 1000)
     })
-      .then(handler => handler && handlersToRemove.push(handler))
+      .then((handler) => handler && handlersToRemove.push(handler))
       .catch(console.error)
 
     PushNotifications.addListener('registrationError', (error) => {
-      reject()
+      reject(error)
     })
-      .then(h => h && handlersToRemove.push(h))
+      .then((handler) => handler && handlersToRemove.push(handler))
       .catch(console.error)
   })
 
-  for (const handler of handlersToRemove)
-    handler.remove()
+  for (const handler of handlersToRemove) void handler.remove()
 
   return token
 }
