@@ -164,9 +164,11 @@ defineExpose({
         />
         <QBtn
           v-if="
-            [Page.CAMPAIGN_COLLECTIONS, Page.RECENT_EVENT_AREAS].includes(
-              page
-            ) && isCollectionExisting
+            [
+              Page.CAMPAIGN_COLLECTIONS,
+              Page.RECENT_EVENT_AREAS,
+              Page.SEARCH_EVENT_AREAS
+            ].includes(page) && isCollectionExisting
           "
           color="primary"
           outline
