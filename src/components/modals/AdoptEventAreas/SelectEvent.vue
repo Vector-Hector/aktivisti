@@ -1,5 +1,5 @@
 <template>
-  <div class="managed-events">
+  <div class="select-events">
     <div class="filter-content">
       <EventFilter
         v-model:filter-params="filterParams"
@@ -51,7 +51,7 @@ const _defaultPagination = {
 }
 
 export default defineComponent({
-  name: 'ManagedEvents',
+  name: 'SelectEvent',
   computed: {
     EventTypes() {
       return EventTypes
@@ -134,7 +134,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 @import 'src/css/variables.scss';
 
-.managed-events {
+.select-events {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
