@@ -1,42 +1,39 @@
 <template>
-  <QScrollArea ref="qScrollArea">
-    <QInfiniteScroll
-      v-if="items.length > 0"
-      @load="(index, done) => $emit('load', index, done)"
-      :disable="disable"
-    >
-      <QList>
-        <slot
-          name="item"
-          :item="item"
-          v-for="(item, index) in items"
-          :key="index"
-        >
-          {{ item }}
-        </slot>
-      </QList>
-      <template v-slot:loading>
-        <div class="row justify-center q-my-md">
-          <QSpinnerDots color="primary" size="40px" />
-        </div>
-      </template>
-    </QInfiniteScroll>
-    <div v-else class="empty-list-placeholder">
-      <slot name="emptyList"> Keine Einträge gefunden </slot>
-    </div>
-  </QScrollArea>
+  <QInfiniteScroll
+    v-if="items.length > 0"
+    @load="(index, done) => $emit('load', index, done)"
+    :disable="disable"
+  >
+    <QList>
+      <slot
+        name="item"
+        :item="item"
+        v-for="(item, index) in items"
+        :key="index"
+      >
+        {{ item }}
+      </slot>
+    </QList>
+    <template v-slot:loading>
+      <div class="row justify-center q-my-md">
+        <QSpinnerDots color="primary" size="40px" />
+      </div>
+    </template>
+  </QInfiniteScroll>
+  <div v-else class="empty-list-placeholder">
+    <slot name="emptyList"> Keine Einträge gefunden</slot>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { QInfiniteScroll, QList, QScrollArea, QSpinnerDots } from 'quasar'
+import { QInfiniteScroll, QList, QSpinnerDots } from 'quasar'
 
 export default defineComponent({
   name: 'InfiniteList',
   components: {
     QInfiniteScroll,
     QList,
-    QScrollArea,
     QSpinnerDots
   },
   props: {
