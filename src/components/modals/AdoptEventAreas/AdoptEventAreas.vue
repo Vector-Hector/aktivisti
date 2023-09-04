@@ -21,9 +21,12 @@ import SearchEventArea from 'components/modals/AdoptEventAreas/SearchEventArea.v
 
 interface Props {
   campaigns: CampaignDto[]
+  showAdoptPosters?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  showAdoptPosters: false
+})
 defineEmits([
   // REQUIRED by QDialog, we need to emit some events through useDialogPluginComponent
   ...useDialogPluginComponent.emits
@@ -104,6 +107,13 @@ const qCardClass = computed(() => {
   return ''
 })
 
+const isPageWithAdoptPostersButton = computed(() => {
+  return (
+    props.showAdoptPosters &&
+    [Page.RECENT_EVENT_AREAS, Page.SEARCH_EVENT_AREAS].includes(page.value)
+  )
+})
+
 defineExpose({
   // REQUIRED by QDialog to expose `dialogRef`
   dialogRef,
@@ -154,9 +164,11 @@ defineExpose({
         />
         <QBtn
           v-if="
-            [Page.CAMPAIGN_COLLECTIONS, Page.RECENT_EVENT_AREAS].includes(
-              page
-            ) && isCollectionExisting
+            [
+              Page.CAMPAIGN_COLLECTIONS,
+              Page.RECENT_EVENT_AREAS,
+              Page.SEARCH_EVENT_AREAS
+            ].includes(page) && isCollectionExisting
           "
           color="primary"
           outline
@@ -169,11 +181,9 @@ defineExpose({
           "
         />
         <QToggle
-          v-if="
-            page === Page.RECENT_EVENT_AREAS || page === Page.SEARCH_EVENT_AREAS
-          "
+          v-if="isPageWithAdoptPostersButton"
           v-model="adoptPosters"
-          label="Poster übernehmen?"
+          label="Plakatstandorte übernehmen"
         ></QToggle>
       </QCardActions>
     </QCard>
@@ -187,7 +197,7 @@ defineExpose({
 }
 
 .higher-content {
-  min-height: 800px;
+  height: 100%;
 }
 
 .broader-content {

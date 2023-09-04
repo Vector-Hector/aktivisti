@@ -7,7 +7,7 @@ import { useRouter } from 'vue-router'
 import { userStore } from 'src/store/UserStore'
 
 interface Props {
-  showCreateButton: boolean
+  showCreateButton?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {

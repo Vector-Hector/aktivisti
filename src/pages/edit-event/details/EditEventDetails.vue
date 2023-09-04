@@ -90,7 +90,7 @@
           :error-message="errors.visibility?.[0]"
           :error="!!errors.visibility?.length"
         />
-        <div v-else-if="event.event_type === EventTypes.POSTERS">
+        <div v-if="event.event_type === EventTypes.POSTERS">
           <QCheckbox
             v-model="event.poster_creation_allowed"
             label="Teilnehmer*innen können Plakate anlegen"
