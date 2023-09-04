@@ -13,7 +13,7 @@ import { eventOverviewStore } from 'src/store/EventOverviewStore'
 import { EventFilterParams } from 'src/api/params/EventFilterParams'
 import { inside } from '@turf/turf'
 import { polygonFromBBox } from 'src/utils/geometry'
-import { QSpinnerDots } from 'quasar'
+import { QScrollArea, QSpinnerDots } from 'quasar'
 import { useGlobalLoadingState } from 'src/utils/app'
 
 const router = useRouter()
@@ -117,29 +117,35 @@ onUnmounted(() => {
 
 <template>
   <div class="container event-overview">
-    <EventFilter
-      v-model:filter-params="userFilterParams"
-      :is-collapsible="true"
-      :campaigns="campaigns"
-      :sub-associations="subAssociations"
-      :is-editable-filterable="userStore.hasAtLeastOneManagePermission()"
-      :is-ownership-filterable="userStore.hasAtLeastOneManagePermission()"
-    />
-    <EventOverviewList
-      v-if="!eventOverviewStore.state.isLoading || shownEvents.length > 0"
-      :events="shownEvents"
-      :campaigns="campaigns"
-      class="event-list"
-      ref="eventList"
-      @clickOnEvent="goToEvent"
-    />
-    <div v-else class="row justify-center q-my-md">
-      <QSpinnerDots color="primary" size="40px" />
-    </div>
+    <QScrollArea class="scroll-area">
+      <EventFilter
+        v-model:filter-params="userFilterParams"
+        :is-collapsible="true"
+        :campaigns="campaigns"
+        :sub-associations="subAssociations"
+        :is-editable-filterable="userStore.hasAtLeastOneManagePermission()"
+        :is-ownership-filterable="userStore.hasAtLeastOneManagePermission()"
+      />
+      <EventOverviewList
+        v-if="!eventOverviewStore.state.isLoading || shownEvents.length > 0"
+        :events="shownEvents"
+        :campaigns="campaigns"
+        class="event-list"
+        ref="eventList"
+        @clickOnEvent="goToEvent"
+      />
+      <div v-else class="row justify-center q-my-md">
+        <QSpinnerDots color="primary" size="40px" />
+      </div>
+    </QScrollArea>
   </div>
 </template>
 
 <style lang="scss" scoped>
+.scroll-area {
+  height: 100%;
+}
+
 .event-overview {
   height: 100%;
   display: flex;

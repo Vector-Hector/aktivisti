@@ -1,32 +1,34 @@
 <template>
-  <div class="managed-events">
-    <div class="filter-content">
-      <EventFilter
-        v-model:filter-params="filterParams"
-        is-collapsible
-        is-ownership-filterable
-        is-campaign-filterable
-        is-sub-association-filterable
-        is-sort-order-configurable
-        is-event-type-filterable
-        :sub-associations="subAssociations"
+  <div class="select-events">
+    <QScrollArea class="scroll-area">
+      <div class="filter-content">
+        <EventFilter
+          v-model:filter-params="filterParams"
+          is-collapsible
+          is-ownership-filterable
+          is-campaign-filterable
+          is-sub-association-filterable
+          is-sort-order-configurable
+          is-event-type-filterable
+          :sub-associations="subAssociations"
+          :campaigns="campaigns"
+          :avalable-event-types="[
+            EventTypes.DOOR_TO_DOOR,
+            EventTypes.FLYERS,
+            EventTypes.POSTERS
+          ]"
+        />
+      </div>
+      <EventList
+        v-model:events="shownEvents"
+        v-model:pagination="pagination"
+        :filter-params="filterParams"
         :campaigns="campaigns"
-        :avalable-event-types="[
-          EventTypes.DOOR_TO_DOOR,
-          EventTypes.FLYERS,
-          EventTypes.POSTERS
-        ]"
+        class="event-list"
+        ref="eventList"
+        @clickOnEvent="handleClickOnEvent"
       />
-    </div>
-    <EventList
-      v-model:events="shownEvents"
-      v-model:pagination="pagination"
-      :filter-params="filterParams"
-      :campaigns="campaigns"
-      class="event-list"
-      ref="eventList"
-      @clickOnEvent="handleClickOnEvent"
-    />
+    </QScrollArea>
   </div>
 </template>
 
@@ -45,19 +47,21 @@ import { EventTypes } from 'src/api/model/EventTypes'
 import { EventFilterParams } from 'src/api/params/EventFilterParams'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { editEventStore } from 'src/store/EditEventStore'
+import { QScrollArea } from 'quasar'
 
 const _defaultPagination = {
   limit: EVENT_LIST_CHUNK_SIZE
 }
 
 export default defineComponent({
-  name: 'ManagedEvents',
+  name: 'SelectEvent',
   computed: {
     EventTypes() {
       return EventTypes
     }
   },
   components: {
+    QScrollArea,
     EventFilter,
     EventList
   },
@@ -134,7 +138,11 @@ export default defineComponent({
 <style lang="scss" scoped>
 @import 'src/css/variables.scss';
 
-.managed-events {
+.scroll-area {
+  height: 100%;
+}
+
+.select-events {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -142,7 +150,6 @@ export default defineComponent({
 
 .event-list {
   margin: 1rem 0;
-  height: 100%;
   overflow: hidden;
 }
 
