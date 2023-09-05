@@ -3,6 +3,9 @@ import { JSONResponse } from 'src/api/JSONResponse'
 import { ChangeEmailRequestDto } from 'src/api/model/ChangeEmailRequestDto'
 import { ChangePasswordDto } from 'src/api/model/ChangePasswordDto'
 import { ChangeUsernameRequestDto } from 'src/api/model/ChangeUsernameRequestDto'
+import { RegisterDeviceDto } from './model/RegisterDeviceDto'
+import { DeregisterDeviceDto } from './model/DeregisterDeviceDto'
+import { VapidPublicKeyDto } from './model/VapidTokenDto'
 
 export class AccountRoute extends BaseApiRoute {
   async changePassword(data: ChangePasswordDto): Promise<JSONResponse<null>> {
@@ -26,6 +29,32 @@ export class AccountRoute extends BaseApiRoute {
   async changeUsername(data: ChangeUsernameRequestDto) {
     const response = await this.request({
       path: `${this.path}change-username/`,
+      method: 'POST',
+      data
+    })
+    return new JSONResponse(response, null)
+  }
+
+  async getVapidPublicKey() {
+    const response = await this.request({
+      path: `${this.path}vapid-public-key/`,
+      method: 'GET'
+    })
+    return new JSONResponse<VapidPublicKeyDto>(response, response.data)
+  }
+
+  async registerDevice(data: RegisterDeviceDto) {
+    const response = await this.request({
+      path: `${this.path}register-device/`,
+      method: 'POST',
+      data
+    })
+    return new JSONResponse(response, null)
+  }
+
+  async unregisterDevice(data: DeregisterDeviceDto) {
+    const response = await this.request({
+      path: `${this.path}unregister-device/`,
       method: 'POST',
       data
     })

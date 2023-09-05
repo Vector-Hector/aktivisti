@@ -1,6 +1,7 @@
 import { apiClient } from 'src/api/ApiClient'
 import { LoginDto } from 'src/api/model/LoginDto'
 import { BaseAuthStore, BaseAuthStoreState } from 'src/store/BaseAuthStore'
+import { deregisterDevice } from 'src/utils/push-notification'
 
 type SessionAuthStoreState = BaseAuthStoreState
 
@@ -12,6 +13,7 @@ class SessionAuthStore extends BaseAuthStore<SessionAuthStoreState> {
   }
 
   async logout() {
+    await deregisterDevice()
     await apiClient.session.logout()
     this.deleteSessionData()
   }

@@ -142,6 +142,16 @@
               />
             </QItemSection>
           </QItem>
+          <QItem>
+            <QItemSection>Push Notifications</QItemSection>
+            <QItemSection side>
+              <QToggle
+                @update:model-value="savePushNotificationSettings"
+                v-model="pushNotificationSettings.pushNotifications"
+                class="toggle-full-width profile-toggle-item"
+              />
+            </QItemSection>
+          </QItem>
         </QList>
         <template v-if="hasAnyPermission">
           <h3 class="profile-section-heading">Berechtigungen</h3>
@@ -205,7 +215,8 @@ import {
   QPage,
   QScrollArea,
   QSeparator,
-  QToggle
+  QToggle,
+  QVueGlobals
 } from 'quasar'
 import {
   ionCheckmark,
@@ -227,6 +238,7 @@ import { getAuthStore } from 'src/store/AuthStore'
 import AppSessions from 'components/AppSessions.vue'
 import ChangeUsernameDialog from 'components/modals/ChangeUsernameDialog.vue'
 import PersonalMetrics from 'components/PersonalMetrics.vue'
+import { deregisterDevice, registerDevice } from 'src/utils/push-notification'
 
 const authStore = getAuthStore()
 
@@ -335,6 +347,9 @@ export default defineComponent({
         on_invitation: true,
         on_new_volunteers: true
       } as Partial<EmailNotificationSettingsDto>,
+      pushNotificationSettings: {
+        pushNotifications: userStore.state.pushNotifications
+      },
       permissions: [] as UserObjectPermissionDto[]
     }
   },
@@ -343,6 +358,29 @@ export default defineComponent({
       void this.emailNotificationSettingsSaveDebouncer.executeDebounced(() => {
         return this.saveEmailNotificationSettings()
       })
+    },
+    async savePushNotificationSettings() {
+      const newValue = !this.pushNotificationSettings.pushNotifications
+
+      const action = newValue === true ? registerDevice : deregisterDevice
+
+      const notification = this.notifySavingInProgress()
+      try {
+        await action()
+        this.notifySuccess(
+          notification,
+          'Deine Einstellungen wurden gespeichert'
+        )
+
+        userStore.setPushNotificationPreferences(newValue)
+        this.pushNotificationSettings.pushNotifications = newValue
+      } catch (e) {
+        this.notifyFailure(
+          notification,
+          'Beim speichern des Profils trat ein Fehler auf'
+        )
+        this.pushNotificationSettings.pushNotifications = !newValue
+      }
     },
     saveProfileDebounced() {
       if (isEqual(this.user, this.localUser)) {
@@ -374,12 +412,8 @@ export default defineComponent({
       })
     },
     async saveEmailNotificationSettings() {
-      const notification = this.$q.notify({
-        group: false,
-        spinner: true,
-        message: 'Wird gespeichert',
-        timeout: 0
-      })
+      const notification = this.notifySavingInProgress()
+
       try {
         let response
         if (!this.emailNotificationSettings?.id) {
@@ -396,34 +430,23 @@ export default defineComponent({
           )
         }
         this.emailNotificationSettings = response.payload.data
-        notification({
-          spinner: false,
-          icon: ionCheckmark,
-          message: 'Dein Einstellungen wurden gespeichert',
-          color: 'positive',
-          timeout: 1500
-        })
+        this.notifySuccess(
+          notification,
+          'Deine Einstellungen wurden gespeichert'
+        )
       } catch (e) {
         if (this.$apiClient.isApiClientError(e) || e instanceof Error) {
-          notification({
-            spinner: false,
-            icon: ionClose,
-            message: `Beim speichern des Profils trat ein Fehler auf: ${e.message}`,
-            color: 'negative',
-            timeout: 1500
-          })
+          this.notifyFailure(
+            notification,
+            `Beim speichern des Profils trat ein Fehler auf: ${e.message}`
+          )
         }
       }
     },
     async saveProfile(): Promise<void> {
       if (this.user === null) return
       this.errors = {}
-      const notification = this.$q.notify({
-        group: false,
-        spinner: true,
-        message: 'Wird gespeichert',
-        timeout: 0
-      })
+      const notification = this.notifySavingInProgress()
       try {
         const response = await this.$apiClient.user.update(
           'me',
@@ -436,32 +459,19 @@ export default defineComponent({
             (item: SubAssociationDto) => item.id === this.user?.sub_association
           ) ?? null
 
-        notification({
-          spinner: false,
-          icon: ionCheckmark,
-          message: 'Dein Profil wurde gespeichert',
-          color: 'positive',
-          timeout: 1500
-        })
+        this.notifySuccess(notification, 'Dein Profil wurde gespeichert')
       } catch (e) {
         if (this.$apiClient.isApiClientError(e) && e.response?.status === 400) {
           this.errors = e.response.data
-          notification({
-            spinner: false,
-            icon: ionClose,
-            message:
-              'Dein Profil konnte nicht gespeichert werden, bitte prüfe deine Angaben',
-            color: 'negative',
-            timeout: 1500
-          })
+          this.notifyFailure(
+            notification,
+            'Dein Profil konnte nicht gespeichert werden, bitte prüfe deine Angaben'
+          )
         } else if (this.$apiClient.isApiClientError(e) || e instanceof Error) {
-          notification({
-            spinner: false,
-            icon: ionClose,
-            message: `Beim speichern des Profils trat ein Fehler auf: ${e.message}`,
-            color: 'negative',
-            timeout: 1500
-          })
+          this.notifyFailure(
+            notification,
+            `Beim speichern des Profils trat ein Fehler auf: ${e.message}`
+          )
         }
       }
     },
@@ -490,6 +500,39 @@ export default defineComponent({
             })
           }
         })
+    },
+    notifySavingInProgress() {
+      const notification = this.$q.notify({
+        group: false,
+        spinner: true,
+        message: 'Wird gespeichert',
+        timeout: 0
+      })
+      return notification
+    },
+    notifySuccess(
+      notification: ReturnType<QVueGlobals['notify']>,
+      message: string
+    ) {
+      notification({
+        spinner: false,
+        icon: ionCheckmark,
+        message,
+        color: 'positive',
+        timeout: 1500
+      })
+    },
+    notifyFailure(
+      notification: ReturnType<QVueGlobals['notify']>,
+      message: string
+    ) {
+      notification({
+        spinner: false,
+        icon: ionClose,
+        message,
+        color: 'negative',
+        timeout: 1500
+      })
     }
   }
 })
