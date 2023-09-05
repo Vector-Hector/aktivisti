@@ -16,6 +16,7 @@ export abstract class BaseAuthStore<
   deleteSessionData() {
     // remove all local tracking data
     trackingSessionStore.clear()
+    userStore.setPushNotificationPreferences(false)
     this.clear()
   }
 

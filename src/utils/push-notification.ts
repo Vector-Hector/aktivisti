@@ -72,7 +72,12 @@ async function webUserHasGrantedNotificationPermissions(): Promise<boolean> {
   const permissions = await navigator.permissions.query({
     name: 'notifications'
   })
-  return permissions.state === 'granted'
+
+  if (permissions.state === 'granted') return true
+
+  const requestedPermissions = await Notification.requestPermission()
+
+  return requestedPermissions === 'granted'
 }
 
 async function registerSubscription(
