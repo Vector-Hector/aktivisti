@@ -82,6 +82,11 @@ bundle-review:
   stage: bundle
   before_script:
     - sudo npm install -g npm@^9
+    - echo $APP_ANDROID_KEYSTORE_B64 | base64 -d > my.keystore
+    - echo "keystorePath=my.keystore" > android-signing.properties
+    - echo "keystorePassword=$APP_ANDROID_KEYSTORE_PASSWORD" >> android-signing.properties
+    - echo "keyAlias=$APP_ANDROID_KEYSTORE_ALIAS" >> android-signing.properties
+    - echo "keyPassword=$APP_ANDROID_KEYSTORE_KEY_PASSWORD" >> android-signing.properties
   script:
     - sudo npm ci
     - npx quasar build -m capacitor -T android
