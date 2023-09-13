@@ -39,4 +39,5 @@ quasar.conf.local.js
 src-capacitor/ios/App/App.ipa
 src-capacitor/ios/App/App.app.*
 src-capacitor/ios/App/fastlane/report.xml
-
+*.keystore
+android-signing.properties
