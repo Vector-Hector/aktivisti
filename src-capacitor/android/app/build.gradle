@@ -70,6 +70,7 @@ def getVersionCode = { ->
 
 
 android {
+    namespace 'app.dielinke.wahlkampf'
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "app.dielinke.wahlkampf"

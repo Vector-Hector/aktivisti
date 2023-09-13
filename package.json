@@ -48,6 +48,7 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",
+    "@capacitor/cli": "^5.0.0",
     "@quasar/app": "^3.3.3",
     "@types/geojson": "^7946.0.7",
     "@types/hat": "^0.0.1",
