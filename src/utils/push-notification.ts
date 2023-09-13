@@ -145,13 +145,13 @@ async function registerMobileDevice(mode: 'A' | 'I'): Promise<void> {
 async function mobileUserHasGrantedNotificationPermissions(): Promise<boolean> {
   const permissionStatus = await PushNotifications.checkPermissions()
 
-  if (permissionStatus.receive === 'granted') return true
-
   const shouldRequestPermission = permissionStatus.receive === 'prompt'
-  if (!shouldRequestPermission) return false
+  if (shouldRequestPermission) {
+    const requestedPermission = await PushNotifications.requestPermissions()
+    return requestedPermission.receive === 'granted'
+  }
 
-  const requestedPermission = await PushNotifications.requestPermissions()
-  return requestedPermission.receive === 'granted'
+  return permissionStatus.receive === 'granted'
 }
 
 async function deregisterMobileDevice(): Promise<void> {
