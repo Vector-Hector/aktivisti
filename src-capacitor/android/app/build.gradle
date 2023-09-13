@@ -90,6 +90,7 @@ android {
         release {
             file('../../../android-signing.properties').with { propFile ->
                 if (propFile.exists()) {
+                    println "Signing using ${propFile}"
                     def properties = new Properties()
                     properties.load(new FileInputStream(propFile))
                     storeFile file('../../../' + properties['keystorePath'])
@@ -97,7 +98,7 @@ android {
                     keyAlias properties['keyAlias']
                     keyPassword properties['keyPassword']
                 } else {
-                  println "Warning: no signing props were found"
+                    println "Warning: no signing props were found"
                 }
             }
         }
