@@ -85,10 +85,31 @@ android {
         }
         manifestPlaceholders = [appHost: "$System.env.APP_HOST"]
     }
+
+    signingConfigs {
+        release {
+            file('../../../android-signing.properties').with { propFile ->
+                if (propFile.exists()) {
+                    println "Signing using ${propFile}"
+                    def properties = new Properties()
+                    properties.load(new FileInputStream(propFile))
+                    storeFile file('../../../' + properties['keystorePath'])
+                    storePassword properties['keystorePassword']
+                    keyAlias properties['keyAlias']
+                    keyPassword properties['keyPassword']
+                } else {
+                    println "Warning: no signing props were found"
+                }
+            }
+        }
+    }
+
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }
