@@ -89,6 +89,7 @@ bundle-review:
     - echo "keystorePassword=$APP_ANDROID_KEYSTORE_PASSWORD" >> android-signing.properties
     - echo "keyAlias=$APP_ANDROID_KEYSTORE_ALIAS" >> android-signing.properties
     - echo "keyPassword=$APP_ANDROID_KEYSTORE_KEY_PASSWORD" >> android-signing.properties
+    - cp $GOOGLE_SERVICES_FILE src-capacitor/android/app/google-services.json
   script:
     - sudo npm ci
     - npx quasar build -m capacitor -T android
