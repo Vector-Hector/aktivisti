@@ -506,7 +506,9 @@ export default defineComponent({
         group: false,
         spinner: true,
         message: 'Wird gespeichert',
-        timeout: 0
+        // Fixme(Peter): Should be reseted to 0, but leads to problem when
+        //  requesting notification permission on android see also wk-frontend#364
+        timeout: 5000
       })
       return notification
     },
