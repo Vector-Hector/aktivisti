@@ -42,7 +42,7 @@ function handleCampaignCollectionClick(
       <QItem clickable @click="handleSearchEventAreaClick">
         <QItemSection>
           <QItemLabel>
-            <b>Nach Gebiet bei Namen suchen</b>
+            <b>Nach Gebietsnamen suchen</b>
           </QItemLabel>
         </QItemSection>
       </QItem>
