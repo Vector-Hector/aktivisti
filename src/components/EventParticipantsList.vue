@@ -143,7 +143,7 @@
           notVerifiedParticipations.length === 0
         "
       >
-        Keine Teilnehmer*innen. Du musst zuerst Leute zu dem Event einladen.
+        Niemand wartet auf Freischaltung. Lade noch mehr Leute zur Aktion ein.
       </p>
     </div>
   </div>
