@@ -159,6 +159,10 @@ module.exports = configure(function (ctx) {
         //
       },
 
+      workboxOptions: {
+        maximumFileSizeToCacheInBytes: 5000000,
+      },
+
       manifest: {
         name: 'DIE LINKE. App',
         short_name: 'DIE LINKE. App',
