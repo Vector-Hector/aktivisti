@@ -53,7 +53,7 @@ const userFilterParams = computed({
       ...{
         subAssociations: value.sub_association ?? [],
         campaign: value.campaigns?.[0],
-        sorting: value.order_by!,
+        sorting: value.order_by,
         eventType: value.event_type ?? undefined,
         status: value.status ?? undefined,
         is_owner: value.is_owner ?? undefined,

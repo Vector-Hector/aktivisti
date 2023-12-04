@@ -78,15 +78,22 @@ export default defineComponent({
     }
   },
   beforeRouteEnter(to, from, next) {
-    const isMapDefined = 'map' in to.matched[to.matched.length - 1].components
+    const componentsOfMostPrecisePath =
+      to.matched[to.matched.length - 1].components
+    const isMapDefined =
+      componentsOfMostPrecisePath && 'map' in componentsOfMostPrecisePath
     uiStore.setBottomSheetStateAtLeast(BottomSheetState.HALF)
     next((vm) => {
       // @ts-ignore
-      vm.isMapDefined = isMapDefined
+      vm.isMapDefined = isMapDefined || false
     })
   },
   beforeRouteUpdate(to, from, next) {
-    this.isMapDefined = 'map' in to.matched[to.matched.length - 1].components
+    const componentsOfMostPrecisePath =
+      to.matched[to.matched.length - 1].components
+    this.isMapDefined =
+      (componentsOfMostPrecisePath && 'map' in componentsOfMostPrecisePath) ||
+      false
     next()
   },
   computed: {
