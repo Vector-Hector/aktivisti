@@ -2,7 +2,7 @@
   <Marker :location="location">
     <template v-slot:marker>
       <QIcon
-        name="img:static/icons/map-pin-selected.svg"
+        name="img:/static/icons/map-pin-selected.svg"
         class="clickable-marker"
         size="xl"
       />

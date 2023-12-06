@@ -78,7 +78,7 @@
           </div>
           <div v-if="hasManagePermission" class="menu-item">
             <MenuLink to="/posters">
-              <QIcon name="img:static/icons/poster.svg" />
+              <QIcon name="img:/static/icons/poster.svg" />
               <span class="menu-item-link-text">Plakate</span>
             </MenuLink>
           </div>

@@ -254,7 +254,7 @@
               class="q-mr-sm"
               color="negative"
               size="md"
-              name="img:static/icons/Icon_Waiting.svg"
+              name="img:/static/icons/Icon_Waiting.svg"
               aria-label="Fehlerindikator für Gebiet"
             >
             </QIcon>

@@ -28,9 +28,9 @@ export default defineComponent({
   computed: {
     icon(): string {
       if (this.isGrayedOut) {
-        return 'img:static/icons/map-pin-office-grayed-out.svg'
+        return 'img:/static/icons/map-pin-office-grayed-out.svg'
       }
-      return 'img:static/icons/map-pin-office.svg'
+      return 'img:/static/icons/map-pin-office.svg'
     }
   }
 })
