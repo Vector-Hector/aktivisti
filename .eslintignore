@@ -1,5 +1,4 @@
 /dist
-/src-bex/www
 /src-capacitor
 /src-cordova
 /.quasar
@@ -7,3 +6,4 @@
 .eslintrc.js
 babel.config.js
 /src-ssr
+/quasar.config.*.temporary.compiled*

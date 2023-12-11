@@ -1,8 +1,11 @@
 /*
  * This file (which will be your service worker)
  * is picked up by the build system ONLY if
- * quasar.conf > pwa > workboxPluginMode is set to "InjectManifest"
+ * quasar.config.js > pwa > workboxMode is set to "injectManifest"
  */
+
+declare const self: ServiceWorkerGlobalScope &
+  typeof globalThis & { skipWaiting: () => void }
 
 import { clientsClaim } from 'workbox-core'
 import {
