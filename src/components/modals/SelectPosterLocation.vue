@@ -1,4 +1,4 @@
-<script lang="ts">
+<script setup lang="ts">
 import { defineComponent, PropType } from 'vue'
 import LocationSelect from 'components/LocationSelect.vue'
 import Map from 'src/map/Map.vue'
