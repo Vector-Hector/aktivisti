@@ -14,10 +14,17 @@ interface Props {
   isDraggableMarkerShown: boolean
 }
 
+interface Emits {
+  (e: 'update:location', LocationDto): void
+  (e: 'update:locationDescription', string): void
+}
+
 const props = withDefaults(defineProps<Props>(), {
   error: () => '',
   isDraggableMarkerShown: () => true
 })
+
+const emit = defineEmits<Emits>()
 
 export default defineComponent({
   name: 'LocationSelect',
@@ -30,7 +37,6 @@ export default defineComponent({
     QCardActions,
     QCardSection
   },
-  emits: ['update:location', 'update:locationDescription'],
   data() {
     return {
       currentGeocodeResult: { place_name: '' } as Partial<GeocodeResult>,
