@@ -32,9 +32,16 @@ interface Props {
   areaFeatures: Feature[]
 }
 
+interface Emits {
+  (e: 'ok', PosterDto): void
+  (e: 'hide'): void
+}
+
 const props = withDefaults(defineProps<Props>(), {
   posters: () => []
 })
+
+const emit = defineEmits<Emits>()
 
 export default defineComponent({
   name: 'SelectPosterLocation',
@@ -53,7 +60,6 @@ export default defineComponent({
     PosterMarkerLayer,
     LocationSelect
   },
-  emits: ['ok', 'hide'],
   computed: {
     mapRef(): InstanceType<typeof Map> | undefined {
       return this.$refs.map as InstanceType<typeof Map> | undefined
