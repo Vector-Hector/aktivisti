@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineComponent, getCurrentInstance, nextTick, ref, watch } from 'vue'
+import { getCurrentInstance, nextTick, ref, watch } from 'vue'
 import StandaloneGeocoder from 'components/StandaloneGeocoder.vue'
 import { QBtn, QCard, QCardActions, QCardSection, QPopupProxy } from 'quasar'
 import { GeocodeResult } from 'src/types/GeocodeResult'
@@ -122,19 +122,6 @@ const reverseLocation = async (location: LocationDto) => {
     language: ['de']
   })
 }
-
-export default defineComponent({
-  name: 'LocationSelect',
-  components: {
-    DraggableMarker,
-    StandaloneGeocoder,
-    QPopupProxy,
-    QBtn,
-    QCard,
-    QCardActions,
-    QCardSection
-  }
-})
 </script>
 
 <template>
