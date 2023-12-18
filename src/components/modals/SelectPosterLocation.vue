@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import LocationSelect from 'components/LocationSelect.vue'
 import Map from 'src/map/Map.vue'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
@@ -42,6 +42,9 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<Emits>()
+
+const location = ref<LocationDto | null>(null)
+const location_description = ref<string>('')
 
 export default defineComponent({
   name: 'SelectPosterLocation',
@@ -106,14 +109,6 @@ export default defineComponent({
     onPosterMove(posters: PosterDto[]) {
       const poster = posters[0]!
       this.location = poster.location
-    }
-  },
-  data() {
-    return {
-      location: null as LocationDto | null,
-      location_description: '',
-      locatePosterLocation,
-      matGpsNotFixed
     }
   },
   watch: {
