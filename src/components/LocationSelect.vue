@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineComponent, nextTick, ref } from 'vue'
+import { defineComponent, nextTick, ref, watch } from 'vue'
 import StandaloneGeocoder from 'components/StandaloneGeocoder.vue'
 import { QBtn, QCard, QCardActions, QCardSection, QPopupProxy } from 'quasar'
 import { GeocodeResult } from 'src/types/GeocodeResult'
@@ -33,6 +33,31 @@ const lastOriginalPlaceName = ref<null | string>(null)
 
 touched.value = !!props.locationDescription
 
+watch(
+  () => props.locationDescription,
+  (newValue) => {
+    currentGeocodeResult.value = {
+      ...currentGeocodeResult.value,
+      place_name: newValue
+    }
+  },
+  { immediate: true }
+)
+
+watch(
+  () => props.location,
+  async (newValue) => {
+    // By checking if the new location is equal to the last geocoded
+    // location we can determine if the location change comes from outside
+    const sameLocation =
+      newValue?.lng === currentGeocodeResult.value?.center?.[0] &&
+      newValue?.lat === currentGeocodeResult.value?.center?.[1]
+    if (!sameLocation) {
+      handleLocationChange(await reverseLocation(newValue))
+    }
+  }
+)
+
 export default defineComponent({
   name: 'LocationSelect',
   components: {
@@ -43,27 +68,6 @@ export default defineComponent({
     QCard,
     QCardActions,
     QCardSection
-  },
-  watch: {
-    locationDescription: {
-      handler(newValue) {
-        this.currentGeocodeResult = {
-          ...this.currentGeocodeResult,
-          place_name: newValue
-        }
-      },
-      immediate: true
-    },
-    async location(newValue) {
-      // By checking if the new location is equal to the last geocoded
-      // location we can determine if the location change comes from outside
-      const sameLocation =
-        newValue?.lng === this.currentGeocodeResult?.center?.[0] &&
-        newValue?.lat === this.currentGeocodeResult?.center?.[1]
-      if (!sameLocation) {
-        this.handleLocationChange(await this.reverseLocation(newValue))
-      }
-    }
   },
   methods: {
     setLastOriginalPlaceName(placeName: string) {
