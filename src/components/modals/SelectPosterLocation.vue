@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineComponent, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import LocationSelect from 'components/LocationSelect.vue'
 import Map from 'src/map/Map.vue'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
@@ -121,25 +121,6 @@ const onPosterMove = (posters: PosterDto[]) => {
   const poster = posters[0]!
   location.value = poster.location
 }
-
-export default defineComponent({
-  name: 'SelectPosterLocation',
-  components: {
-    ResetRotateControl,
-    AreaFeatureLayer,
-    GeolocationControl,
-    QDialog,
-    QToolbar,
-    QBtn,
-    QIcon,
-    QCard,
-    QCardSection,
-    QToolbarTitle,
-    Map,
-    PosterMarkerLayer,
-    LocationSelect
-  },
-})
 </script>
 
 <template>
