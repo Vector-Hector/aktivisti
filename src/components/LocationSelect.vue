@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineComponent, nextTick } from 'vue'
+import { defineComponent, nextTick, ref } from 'vue'
 import StandaloneGeocoder from 'components/StandaloneGeocoder.vue'
 import { QBtn, QCard, QCardActions, QCardSection, QPopupProxy } from 'quasar'
 import { GeocodeResult } from 'src/types/GeocodeResult'
@@ -26,6 +26,11 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
+const currentGeocodeResult = ref<Partial<GeocodeResult>>({ place_name: '' })
+const suggestion = ref<string>('')
+const touched = ref<boolean>(false)
+const lastOriginalPlaceName = ref<null | string>(null)
+
 export default defineComponent({
   name: 'LocationSelect',
   components: {
@@ -36,14 +41,6 @@ export default defineComponent({
     QCard,
     QCardActions,
     QCardSection
-  },
-  data() {
-    return {
-      currentGeocodeResult: { place_name: '' } as Partial<GeocodeResult>,
-      suggestion: '',
-      touched: false,
-      lastOriginalPlaceName: null as null | string
-    }
   },
   created() {
     this.touched = !!this.locationDescription
