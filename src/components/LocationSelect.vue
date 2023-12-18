@@ -1,4 +1,4 @@
-<script lang="ts">
+<script setup lang="ts">
 import { defineComponent, PropType, nextTick } from 'vue'
 import StandaloneGeocoder from 'components/StandaloneGeocoder.vue'
 import { QBtn, QCard, QCardActions, QCardSection, QPopupProxy } from 'quasar'
