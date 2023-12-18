@@ -1,11 +1,23 @@
 <script setup lang="ts">
-import { defineComponent, PropType, nextTick } from 'vue'
+import { defineComponent, nextTick } from 'vue'
 import StandaloneGeocoder from 'components/StandaloneGeocoder.vue'
 import { QBtn, QCard, QCardActions, QCardSection, QPopupProxy } from 'quasar'
 import { GeocodeResult } from 'src/types/GeocodeResult'
 import DraggableMarker from 'components/DraggableMarker.vue'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { reverseGeocode } from 'src/utils/map'
+
+interface Props {
+  location?: LocationDto
+  locationDescription?: string
+  error?: string
+  isDraggableMarkerShown: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  error: () => '',
+  isDraggableMarkerShown: () => true
+})
 
 export default defineComponent({
   name: 'LocationSelect',
@@ -17,24 +29,6 @@ export default defineComponent({
     QCard,
     QCardActions,
     QCardSection
-  },
-  props: {
-    location: {
-      type: Object as PropType<LocationDto>,
-      required: false
-    },
-    locationDescription: {
-      type: String as PropType<string>,
-      required: false
-    },
-    error: {
-      type: String as PropType<string>,
-      default: ''
-    },
-    isDraggableMarkerShown: {
-      type: Boolean as PropType<boolean>,
-      default: true
-    }
   },
   emits: ['update:location', 'update:locationDescription'],
   data() {
