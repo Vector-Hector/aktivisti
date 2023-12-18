@@ -106,10 +106,6 @@ const createPoster = async () => {
     })
   }
 }
-const show = () => {
-  // @ts-ignore
-  dialog.value.show()
-}
 const hide = () => {
   // @ts-ignore
   dialog.value.hide()
