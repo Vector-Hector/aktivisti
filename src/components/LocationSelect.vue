@@ -31,6 +31,8 @@ const suggestion = ref<string>('')
 const touched = ref<boolean>(false)
 const lastOriginalPlaceName = ref<null | string>(null)
 
+touched.value = !!props.locationDescription
+
 export default defineComponent({
   name: 'LocationSelect',
   components: {
@@ -41,9 +43,6 @@ export default defineComponent({
     QCard,
     QCardActions,
     QCardSection
-  },
-  created() {
-    this.touched = !!this.locationDescription
   },
   watch: {
     locationDescription: {
