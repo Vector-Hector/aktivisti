@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
 import LocationSelect from 'components/LocationSelect.vue'
 import Map from 'src/map/Map.vue'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
@@ -45,6 +45,20 @@ const emit = defineEmits<Emits>()
 
 const location = ref<LocationDto | null>(null)
 const location_description = ref<string>('')
+const map = ref<InstanceType<typeof Map> | undefined | null>(null)
+
+const mapRef = computed(() => {
+  return map.value
+})
+
+const newPoster = computed(() => {
+  return [
+    {
+      location: location.value ?? undefined,
+      location_description: location_description.value
+    }
+  ]
+})
 
 export default defineComponent({
   name: 'SelectPosterLocation',
@@ -62,19 +76,6 @@ export default defineComponent({
     Map,
     PosterMarkerLayer,
     LocationSelect
-  },
-  computed: {
-    mapRef(): InstanceType<typeof Map> | undefined {
-      return this.$refs.map as InstanceType<typeof Map> | undefined
-    },
-    newPoster(): Partial<PosterDto>[] {
-      return [
-        {
-          location: this.location ?? undefined,
-          location_description: this.location_description
-        }
-      ]
-    }
   },
   methods: {
     async createPoster() {
