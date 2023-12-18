@@ -1,76 +1,3 @@
-<template>
-  <QDialog
-    ref="dialog"
-    @hide="onDialogHide"
-    :full-width="$q.screen.lt.md"
-    :full-height="$q.screen.lt.md"
-  >
-    <QCard class="select-poster-location-modal">
-      <QToolbar>
-        <QToolbarTitle>Neuer Plakatstandort</QToolbarTitle>
-      </QToolbar>
-      <QCardSection class="flex-fill d-flex">
-        <div class="select-poster-location-content">
-          <div class="location-select">
-            <LocationSelect
-              v-model:location="location"
-              v-model:location-description="location_description"
-              :is-draggable-marker-shown="!$q.platform.is.mobile"
-            >
-              <template v-slot:hintText v-if="$q.platform.is.mobile">
-                Bitte gib entweder eine Adresse in das Suchfeld ein oder nutze
-                die
-                <span style="white-space: nowrap">
-                  Ortungsfunktion
-                  <QIcon :name="matGpsNotFixed" flat round />
-                </span>
-                um die Position dieses Standorts auf der Karte festzulegen.
-              </template>
-              <template v-else v-slot:hintText>
-                Bitte geben Sie entweder eine Adresse in das Suchfeld ein oder
-                verschieben Sie den rot hervorgehobenen Pin auf der Karte, um
-                die Position dieses Standorts auf der Karte festzulegen.
-              </template>
-            </LocationSelect>
-          </div>
-          <Map :bounding-box="initialBBox" ref="map" class="flex-fill">
-            <template v-slot:top-right>
-              <div class="flex column q-gutter-y-sm">
-                <GeolocationControl
-                  @position="location = $event"
-                  :locator-icon-fixed="locatePosterLocation"
-                />
-                <ResetRotateControl />
-              </div>
-            </template>
-            <AreaFeatureLayer :features="areaFeatures" />
-            <PosterMarkerLayer
-              :posters="posters"
-              :editable="false"
-              :opacity="0.2"
-            />
-            <PosterMarkerLayer
-              :posters="newPoster"
-              :editable="true"
-              :active-poster-index="0"
-              @update:posters="onPosterMove"
-              :opacity="1"
-            />
-            <div class="accept-overlay">
-              <QBtn
-                v-if="location"
-                class="accept-button"
-                label="Plakat erstellen"
-                color="primary"
-                @click="createPoster"
-              />
-            </div>
-          </Map>
-        </div>
-      </QCardSection>
-    </QCard>
-  </QDialog>
-</template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import LocationSelect from 'components/LocationSelect.vue'
@@ -215,6 +142,81 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <QDialog
+    ref="dialog"
+    @hide="onDialogHide"
+    :full-width="$q.screen.lt.md"
+    :full-height="$q.screen.lt.md"
+  >
+    <QCard class="select-poster-location-modal">
+      <QToolbar>
+        <QToolbarTitle>Neuer Plakatstandort</QToolbarTitle>
+      </QToolbar>
+      <QCardSection class="flex-fill d-flex">
+        <div class="select-poster-location-content">
+          <div class="location-select">
+            <LocationSelect
+              v-model:location="location"
+              v-model:location-description="location_description"
+              :is-draggable-marker-shown="!$q.platform.is.mobile"
+            >
+              <template v-slot:hintText v-if="$q.platform.is.mobile">
+                Bitte gib entweder eine Adresse in das Suchfeld ein oder nutze
+                die
+                <span style="white-space: nowrap">
+                  Ortungsfunktion
+                  <QIcon :name="matGpsNotFixed" flat round />
+                </span>
+                um die Position dieses Standorts auf der Karte festzulegen.
+              </template>
+              <template v-else v-slot:hintText>
+                Bitte geben Sie entweder eine Adresse in das Suchfeld ein oder
+                verschieben Sie den rot hervorgehobenen Pin auf der Karte, um
+                die Position dieses Standorts auf der Karte festzulegen.
+              </template>
+            </LocationSelect>
+          </div>
+          <Map :bounding-box="initialBBox" ref="map" class="flex-fill">
+            <template v-slot:top-right>
+              <div class="flex column q-gutter-y-sm">
+                <GeolocationControl
+                  @position="location = $event"
+                  :locator-icon-fixed="locatePosterLocation"
+                />
+                <ResetRotateControl />
+              </div>
+            </template>
+            <AreaFeatureLayer :features="areaFeatures" />
+            <PosterMarkerLayer
+              :posters="posters"
+              :editable="false"
+              :opacity="0.2"
+            />
+            <PosterMarkerLayer
+              :posters="newPoster"
+              :editable="true"
+              :active-poster-index="0"
+              @update:posters="onPosterMove"
+              :opacity="1"
+            />
+            <div class="accept-overlay">
+              <QBtn
+                v-if="location"
+                class="accept-button"
+                label="Plakat erstellen"
+                color="primary"
+                @click="createPoster"
+              />
+            </div>
+          </Map>
+        </div>
+      </QCardSection>
+    </QCard>
+  </QDialog>
+</template>
+
 <style lang="scss" scoped>
 .location-select {
   margin-top: -1.5rem;
