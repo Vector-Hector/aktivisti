@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 import LocationSelect from 'components/LocationSelect.vue'
 import Map from 'src/map/Map.vue'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
@@ -60,6 +60,30 @@ const newPoster = computed(() => {
   ]
 })
 
+watch(
+  () => location.value,
+  () => {
+    const map = mapRef.value?.map
+    const bounds = map?.getBounds()
+    if (bounds && location.value) {
+      const boundsGeometry = polygon([
+        [
+          [bounds.getNorthWest().lng, bounds.getNorthWest().lat],
+          [bounds.getNorthEast().lng, bounds.getNorthEast().lat],
+          [bounds.getSouthEast().lng, bounds.getSouthEast().lat],
+          [bounds.getSouthWest().lng, bounds.getSouthWest().lat],
+          [bounds.getNorthWest().lng, bounds.getNorthWest().lat]
+        ]
+      ])
+      const { lat, lng } = location.value
+      if (!booleanPointInPolygon([lng, lat], boundsGeometry)) {
+        map?.fitBounds(bbox(circle([lng, lat], 0.5)) as BBox2d)
+      }
+    }
+  },
+  { deep: true }
+)
+
 export default defineComponent({
   name: 'SelectPosterLocation',
   components: {
@@ -110,30 +134,6 @@ export default defineComponent({
     onPosterMove(posters: PosterDto[]) {
       const poster = posters[0]!
       this.location = poster.location
-    }
-  },
-  watch: {
-    location: {
-      handler() {
-        const map = this.mapRef?.map
-        const bounds = map?.getBounds()
-        if (bounds && this.location) {
-          const boundsGeometry = polygon([
-            [
-              [bounds.getNorthWest().lng, bounds.getNorthWest().lat],
-              [bounds.getNorthEast().lng, bounds.getNorthEast().lat],
-              [bounds.getSouthEast().lng, bounds.getSouthEast().lat],
-              [bounds.getSouthWest().lng, bounds.getSouthWest().lat],
-              [bounds.getNorthWest().lng, bounds.getNorthWest().lat]
-            ]
-          ])
-          const { lat, lng } = this.location
-          if (!booleanPointInPolygon([lng, lat], boundsGeometry)) {
-            map?.fitBounds(bbox(circle([lng, lat], 0.5)) as BBox2d)
-          }
-        }
-      },
-      deep: true
     }
   }
 })
