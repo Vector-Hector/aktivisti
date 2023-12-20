@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import EventAreaStreetMap from 'pages/event-map/detail/area/street/EventAreaStreetMap.vue'
-import InjectMapMixin from 'pages/event-detail/InjectMapMixin'
+import { useInjectMapMixin } from 'pages/event-detail/InjectMapMixin'
 import { useEventAreaMetricsComposable } from 'pages/event-map/detail/area/metrics/EventAreaMetricsMixin'
 import { PropType } from 'vue/dist/vue'
 import { useEventAreaStreetComposable } from 'pages/event-map/detail/area/street/EventAreaStreetMixin'
@@ -9,7 +9,6 @@ import { useEventAreaStreetComposable } from 'pages/event-map/detail/area/street
 export default defineComponent({
   name: 'EventAreaMetricsMap',
   extends: EventAreaStreetMap,
-  mixins: [InjectMapMixin],
   props: {
     houseNumber: {
       type: String as PropType<string>,
@@ -29,7 +28,8 @@ export default defineComponent({
     //  as this file is extending it
     const { addresses } = useEventAreaStreetComposable(props)
     const { bbox } = useEventAreaMetricsComposable(props)
-    return { bbox, addresses }
+    const { map } = useInjectMapMixin()
+    return { bbox, addresses, map }
   },
   mounted() {
     this.map?.fitBounds(this.bbox as BBox2d)

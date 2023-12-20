@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import InjectMapMixin from 'src/pages/event-detail/InjectMapMixin'
+import { useInjectMapMixin } from 'src/pages/event-detail/InjectMapMixin'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { Geometry } from 'geojson'
 import { center as turfCenter } from '@turf/turf'
@@ -33,10 +33,10 @@ export default defineComponent({
     }
   },
   components: { AddressMarker },
-  mixins: [InjectMapMixin],
   setup(props) {
     const { addresses, bbox } = useEventAreaStreetComposable(props)
-    return { addresses, bbox }
+    const { map } = useInjectMapMixin()
+    return { addresses, bbox, map }
   },
   mounted() {
     this.map?.fitBounds(this.bbox as BBox2d)
