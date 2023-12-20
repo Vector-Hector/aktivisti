@@ -305,7 +305,6 @@ import EventInvitePeopleModal from 'src/components/modals/EventInvitePeopleModal
 import EventParticipantsModal from 'src/components/modals/EventParticipantsModal.vue'
 import { apiClient } from 'src/api/ApiClient'
 import EventAreaItem from 'src/components/EventAreaItem.vue'
-import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import {
   ionBarChart,
   ionLogoFacebook,
@@ -325,6 +324,7 @@ import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 import Share from 'components/Share.vue'
 import LabeledBtn from 'components/LabeledBtn.vue'
 import { openDeleteEventDialog } from 'src/utils/dialog'
+import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 
 const PREFIX_HANG_DOWN_POSTERS = '[Abhängen] '
 const pollIntervalMs = 5000
@@ -332,7 +332,30 @@ const authStore = getAuthStore()
 
 export default defineComponent({
   name: 'EventDetailOverview',
-  mixins: [EventDetailMixin],
+  setup() {
+    const {
+      event,
+      eventAreas,
+      isTeamCaptainOrCoordinator,
+      isCoordinator,
+      participations,
+      personalParticipation,
+      postersWithoutArea,
+      posters,
+      refreshParticipants
+    } = useEventDetailStore()
+    return {
+      event,
+      eventAreas,
+      isTeamCaptainOrCoordinator,
+      isCoordinator,
+      participations,
+      personalParticipation,
+      postersWithoutArea,
+      posters,
+      refreshParticipants
+    }
+  },
   components: {
     LabeledBtn,
     Share,

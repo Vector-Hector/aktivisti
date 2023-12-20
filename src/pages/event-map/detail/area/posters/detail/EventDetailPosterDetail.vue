@@ -20,7 +20,7 @@
   </div>
 </template>
 <script lang="ts">
-import EventDetailPosterMixin from 'pages/event-map/detail/area/posters/EventDetailPosterMixin'
+import { useEventDetailPosterMixin } from 'pages/event-map/detail/area/posters/EventDetailPosterMixin'
 import { defineComponent } from 'vue'
 import EditPoster from 'components/EditPoster.vue'
 import { PosterDto } from 'src/api/model/PosterDto'
@@ -32,6 +32,7 @@ import { ionTrash } from '@quasar/extras/ionicons-v5'
 import { QBtn } from 'quasar'
 import { uiStore } from 'src/store/UiStore'
 import SidebarBottomBackNavigation from 'components/SidebarBottomBackNavigation.vue'
+import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 
 // If a poster is not assigned to an event area, the event area is 'undefined'
 // e.g. a path /event/<event_id>/area/undefined/... will show all posters that
@@ -75,7 +76,11 @@ function updateRoute(
 export default defineComponent({
   name: 'EventDetailPosterDetail',
   components: { SidebarBottomBackNavigation, EditPoster, QBtn },
-  mixins: [EventDetailPosterMixin],
+  setup() {
+    const { event, deletePostersByIds } = useEventDetailStore()
+    const { poster } = useEventDetailPosterMixin()
+    return { event, deletePostersByIds, poster }
+  },
   beforeRouteEnter: updateRoute,
   beforeRouteUpdate: updateRoute,
   beforeRouteLeave() {

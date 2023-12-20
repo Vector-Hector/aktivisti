@@ -25,10 +25,10 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { userStore } from 'src/store/UserStore'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { QBtn, QSelect } from 'quasar'
+import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 
 export default defineComponent({
   name: 'AssignAreaParticipants',
@@ -36,7 +36,24 @@ export default defineComponent({
     QSelect,
     QBtn
   },
-  mixins: [EventDetailStoreMixin],
+  setup() {
+    const {
+      eventArea,
+      isTeamCaptainOrCoordinator,
+      personalParticipationPermissions,
+      personalParticipation,
+      participations,
+      refreshParticipants
+    } = useEventDetailStore()
+    return {
+      eventArea,
+      isTeamCaptainOrCoordinator,
+      personalParticipationPermissions,
+      personalParticipation,
+      participations,
+      refreshParticipants
+    }
+  },
   computed: {
     user() {
       return userStore.getState().user
