@@ -8,17 +8,20 @@ import { apiClient } from 'src/api/ApiClient'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { uiStore } from 'src/store/UiStore'
 import { eventDetailStore } from 'src/store/EventDetailStore'
-import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { getAuthStore } from 'src/store/AuthStore'
 import { ObjectPermissions } from 'src/api/model/ObjectPermissionDto'
 import { includesOneOf } from 'src/utils/array'
 import { EventTypes } from 'src/api/model/EventTypes'
+import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 
 const authStore = getAuthStore()
 
 export default defineComponent({
   name: 'EventDetail',
-  mixins: [EventDetailMixin],
+  setup() {
+    const { event } = useEventDetailStore()
+    return { event }
+  },
   async beforeRouteEnter(to, from, next) {
     const { eventId } = to.params
     try {

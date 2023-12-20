@@ -8,9 +8,9 @@ import { defineComponent } from 'vue'
 import FeatureLayer from 'src/map/AreaFeatureLayer'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import InjectMapMixin from 'src/pages/event-detail/InjectMapMixin'
-import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import EventMarker from 'components/EventMarker.vue'
 import { cloneDeep, isEqual } from 'lodash-es'
+import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 
 export default defineComponent({
   name: 'EventDetailOverviewMap',
@@ -18,7 +18,11 @@ export default defineComponent({
     EventMarker,
     FeatureLayer
   },
-  mixins: [InjectMapMixin, EventDetailMixin],
+  setup() {
+    const { event, areaFeatures, zoomBox } = useEventDetailStore()
+    return { event, areaFeatures, zoomBox }
+  },
+  mixins: [InjectMapMixin],
   mounted() {
     this.map?.fitBounds(this.zoomBox as BBox2d, { animate: false })
   },

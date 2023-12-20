@@ -25,9 +25,8 @@
 </template>
 <script lang="ts">
 import PosterTable from 'components/PosterTable.vue'
-import EventDetailPosterMixin from 'pages/event-map/detail/area/posters/EventDetailPosterMixin'
+import { useEventDetailPosterMixin } from 'pages/event-map/detail/area/posters/EventDetailPosterMixin'
 import { defineComponent } from 'vue'
-import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { ionLocationSharp } from '@quasar/extras/ionicons-v5'
 import { QBtn } from 'quasar'
 import SelectPosterLocation from 'components/modals/SelectPosterLocation.vue'
@@ -37,6 +36,7 @@ import { userStore } from 'src/store/UserStore'
 import { uiStore } from 'src/store/UiStore'
 import { NavigationGuardNext, RouteLocation } from 'vue-router'
 import AssignAreaParticipants from 'pages/event-map/detail/area/AssignAreaParticipants.vue'
+import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 
 function updateRoute(
   to: RouteLocation,
@@ -56,7 +56,26 @@ export default defineComponent({
     AssignAreaParticipants,
     QBtn
   },
-  mixins: [EventDetailPosterMixin, EventDetailStoreMixin],
+  setup() {
+    const {
+      event,
+      eventArea,
+      currentAreaFeature,
+      posters,
+      postersInArea,
+      mergePosters
+    } = useEventDetailStore()
+    const { selectPoster } = useEventDetailPosterMixin()
+    return {
+      event,
+      eventArea,
+      currentAreaFeature,
+      posters,
+      postersInArea,
+      selectPoster,
+      mergePosters
+    }
+  },
   beforeRouteEnter: updateRoute,
   beforeRouteUpdate: updateRoute,
   data() {

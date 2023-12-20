@@ -7,13 +7,17 @@ import { defineComponent } from 'vue'
 import AreaFeatureLayer from 'src/map/AreaFeatureLayer'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox } from '@turf/turf'
-import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import InjectMapMixin from 'pages/event-detail/InjectMapMixin'
+import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 
 export default defineComponent({
   name: 'EventAreaOverviewMap',
   components: { AreaFeatureLayer },
-  mixins: [EventDetailStoreMixin, InjectMapMixin],
+  setup() {
+    const { currentAreaFeature } = useEventDetailStore()
+    return { currentAreaFeature }
+  },
+  mixins: [InjectMapMixin],
   mounted() {
     this.map?.fitBounds(this.bbox as BBox2d)
   },

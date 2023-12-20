@@ -31,11 +31,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { uiStore } from 'src/store/UiStore'
 import Timeout = NodeJS.Timeout
-import EventAreaStreetMixin from 'pages/event-map/detail/area/street/EventAreaStreetMixin'
 import {
   ionCheckmarkCircle,
   ionChevronForward
@@ -48,6 +47,7 @@ import {
   QList,
   QScrollArea
 } from 'quasar'
+import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 
 export default defineComponent({
   name: 'EventAreaStreet',
@@ -59,7 +59,16 @@ export default defineComponent({
     QIcon,
     QScrollArea
   },
-  mixins: [EventAreaStreetMixin],
+  props: {
+    street: {
+      type: String as PropType<string>,
+      required: true
+    }
+  },
+  setup() {
+    const { completedTargetIds, eventArea } = useEventDetailStore()
+    return { completedTargetIds, eventArea }
+  },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       uiStore.updateActiveElements({

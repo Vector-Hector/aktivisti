@@ -1,32 +1,27 @@
-import { defineComponent, PropType } from 'vue'
-import { Feature, Point } from 'geojson'
-import { bbox, center, circle } from '@turf/turf'
-import { AddressDetails } from 'src/api/model/AreaDetailsDto'
+import { computed } from 'vue'
+import { bbox as bboxTurf, center, circle } from '@turf/turf'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
-import EventAreaStreetMixin from 'pages/event-map/detail/area/street/EventAreaStreetMixin'
+import { useEventAreaStreetComposable } from 'pages/event-map/detail/area/street/EventAreaStreetMixin'
 
-export default defineComponent({
-  mixins: [EventAreaStreetMixin],
-  props: {
-    houseNumber: {
-      type: String as PropType<string>,
-      required: true
-    }
-  },
-  computed: {
-    address(): AddressDetails | undefined {
-      return this.addresses?.find(
-        ({ house_number }) => house_number === this.houseNumber
-      )
-    },
-    location(): Feature<Point> | undefined {
-      if (!this.address?.geometry) return
-      //@ts-ignore
-      return center(this.address.geometry)
-    },
-    bbox(): BBox2d | undefined {
-      if (!this.location) return
-      return bbox(circle(this.location, 0.05)) as BBox2d
-    }
-  }
-})
+export function useEventAreaMetricsComposable(props) {
+  const { addresses } = useEventAreaStreetComposable(props)
+
+  const address = computed(() => {
+    return addresses.value?.find(
+      ({ house_number }) => house_number === props.houseNumber
+    )
+  })
+
+  const location = computed(() => {
+    if (!address.value?.geometry) return
+    //@ts-ignore
+    return center(address.value.geometry)
+  })
+
+  const bbox = computed(() => {
+    if (!location.value) return
+    return bboxTurf(circle(location.value, 0.05)) as BBox2d
+  })
+
+  return { address, location, bbox }
+}

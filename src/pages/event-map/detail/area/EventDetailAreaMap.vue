@@ -4,11 +4,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 
 export default defineComponent({
-  name: 'EventDetailAreaMap',
-  mixins: [EventDetailStoreMixin]
+  name: 'EventDetailAreaMap'
 })
 </script>
 

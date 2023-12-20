@@ -37,7 +37,7 @@
               <QItemLabel>
                 {{ street.name }}
               </QItemLabel>
-              <QItemLabel> {{ street.addresses.length }} Adressen </QItemLabel>
+              <QItemLabel> {{ street.addresses.length }} Adressen</QItemLabel>
             </QItemSection>
 
             <QItemSection side>
@@ -60,7 +60,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { uiStore } from 'src/store/UiStore'
-import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import {
   QBtn,
   QIcon,
@@ -79,6 +78,7 @@ import { StreetDetails } from 'src/api/model/AreaDetailsDto'
 import { difference } from 'lodash-es'
 import { eventDetailStore } from 'src/store/EventDetailStore'
 import AssignAreaParticipants from 'pages/event-map/detail/area/AssignAreaParticipants.vue'
+import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 
 export default defineComponent({
   name: 'EventAreaOverview',
@@ -92,7 +92,11 @@ export default defineComponent({
     QBtn,
     QScrollArea
   },
-  mixins: [EventDetailStoreMixin],
+  setup() {
+    const { eventArea, eventAreaPermissions, completedTargetIds } =
+      useEventDetailStore()
+    return { eventArea, eventAreaPermissions, completedTargetIds }
+  },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       uiStore.updateActiveElements({

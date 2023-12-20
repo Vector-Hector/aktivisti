@@ -5,13 +5,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { apiClient } from 'src/api/ApiClient'
-import EventDetailMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { eventDetailStore } from 'src/store/EventDetailStore'
 import Timeout = NodeJS.Timeout
 import { EventTypes } from 'src/api/model/EventTypes'
 import { NavigationGuardNext, RouteLocation } from 'vue-router'
 import { uiStore } from 'src/store/UiStore'
 import { UNDEFINED_POSTER_AREA } from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetail.vue'
+import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 
 async function updateRoute(
   to: RouteLocation,
@@ -44,9 +44,12 @@ async function updateRoute(
 
 export default defineComponent({
   name: 'EventDetailArea',
-  mixins: [EventDetailMixin],
   beforeRouteEnter: updateRoute,
   beforeRouteUpdate: updateRoute,
+  setup() {
+    const { event, eventArea } = useEventDetailStore()
+    return { event, eventArea }
+  },
   data() {
     return {
       nextPoll: null as Timeout | null

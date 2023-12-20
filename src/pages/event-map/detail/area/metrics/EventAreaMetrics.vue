@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import {
@@ -30,17 +30,36 @@ import {
 } from 'src/store/TrackingSessionStore'
 import MetricsRow from 'src/components/MetricsRow.vue'
 import { uiStore } from 'src/store/UiStore'
-import EventAreaMetricsMixin from 'pages/event-map/detail/area/metrics/EventAreaMetricsMixin'
 import { QBtn, QScrollArea } from 'quasar'
+import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
+import { useEventAreaMetricsComposable } from 'pages/event-map/detail/area/metrics/EventAreaMetricsMixin'
 
 export default defineComponent({
   name: 'EventAreaMetrics',
+  props: {
+    houseNumber: {
+      type: String as PropType<string>,
+      required: true
+    },
+    street: {
+      type: String as PropType<string>,
+      required: true
+    },
+    areaId: {
+      type: String as PropType<string>,
+      required: true
+    }
+  },
   components: {
     MetricsRow,
     QBtn,
     QScrollArea
   },
-  mixins: [EventAreaMetricsMixin],
+  setup(props) {
+    const { eventArea } = useEventDetailStore()
+    const { address } = useEventAreaMetricsComposable(props)
+    return { eventArea, address }
+  },
   data() {
     return {
       metricRecords: [] as EventMetricRecordDto[],
