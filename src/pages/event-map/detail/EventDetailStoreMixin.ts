@@ -2,7 +2,6 @@ import { computed } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { PermissionHintsDto } from 'src/api/model/APIEnvelope'
-import { CampaignDto } from 'src/api/model/CampaignDto'
 import { eventDetailStore } from 'src/store/EventDetailStore'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import {
@@ -139,10 +138,6 @@ export function useEventDetailStore() {
     return eventDetailStore.getState().personalParticipationPermissions
   })
 
-  const completionNotes = computed(() => {
-    return eventDetailStore.getState().completionNotes
-  })
-
   const completedTargetIds = computed(() => {
     return eventDetailStore
       .getState()
@@ -192,15 +187,6 @@ export function useEventDetailStore() {
     },
     set: (value: PermissionHintsDto | null) => {
       eventDetailStore.setEventAreaPermissions(value)
-    }
-  })
-
-  const campaigns = computed({
-    get: () => {
-      return eventDetailStore.getState().campaigns
-    },
-    set: (value: CampaignDto[]) => {
-      eventDetailStore.setCampaigns(value)
     }
   })
 
