@@ -1,17 +1,16 @@
-import { defineComponent } from 'vue'
+import { computed } from 'vue'
 import { officeDetailStore } from 'src/store/OfficeDetailStore'
 import { OfficeDto } from 'src/api/model/OfficeDto'
 
-export default defineComponent({
-  name: 'OfficeDetailMixin',
-  computed: {
-    office: {
-      get() {
-        return officeDetailStore.office
-      },
-      set(office: OfficeDto) {
-        officeDetailStore.office = office
-      }
+export function useOfficeDetailMixin() {
+  const office = computed({
+    get(): OfficeDto | null {
+      return officeDetailStore.office
+    },
+    set(office: OfficeDto | null) {
+      officeDetailStore.office = office
     }
-  }
-})
+  })
+
+  return { office }
+}
