@@ -31,7 +31,6 @@ import { defineComponent, inject } from 'vue'
 import { QBtn } from 'quasar'
 import { ionLocationSharp } from '@quasar/extras/ionicons-v5'
 import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
-import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
 import { posterStatusOptions } from 'src/api/model/PosterDto'
 import { StepControls } from 'pages/EditEvent.vue'
 import EditPosterListMixin from 'pages/edit-event/posters/EditPosterListMixin'
@@ -45,7 +44,7 @@ export default defineComponent({
     SidebarBottomStepNavigation,
     QBtn
   },
-  mixins: [EditPosterListMixin, EditEventAutoSaveMixin],
+  mixins: [EditPosterListMixin],
   setup() {
     const { event } = useEditEventMixin()
     return {
@@ -65,15 +64,12 @@ export default defineComponent({
   },
   methods: {
     async back() {
-      await this.saveDebouncer.waitForSettle()
       this.stepControls.previous()
     },
     async next() {
-      await this.saveDebouncer.waitForSettle()
       this.stepControls.next()
     },
     async abort() {
-      await this.saveDebouncer.waitForSettle()
       this.stepControls.abort()
     },
     async editPoster(posterId: number) {
