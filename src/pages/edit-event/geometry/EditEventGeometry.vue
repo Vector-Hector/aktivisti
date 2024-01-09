@@ -195,7 +195,7 @@ import {
 } from '@quasar/extras/ionicons-v5'
 import { useEditEventGeometryMixin } from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
-import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
+import { useEditEventAutoSaveMixin } from 'pages/edit-event/EditEventAutoSaveMixin'
 import {
   EditEventBus,
   PAN_TO_BBOX,
@@ -230,7 +230,6 @@ export default defineComponent({
     QTr,
     QTh
   },
-  mixins: [EditEventAutoSaveMixin],
   setup() {
     const {
       updatingAreaFeatureIds,
@@ -241,6 +240,7 @@ export default defineComponent({
       eventAreas
     } = useEditEventMixin()
     const { updateArea, deleteAreaByFeatureId } = useEditEventGeometryMixin()
+    const { errors, saveDebouncer } = useEditEventAutoSaveMixin()
     return {
       event,
       eventAreas,
@@ -250,7 +250,9 @@ export default defineComponent({
       updatingAreaFeatureIds,
       updateArea,
       deleteAreaByFeatureId,
-      stepControls: inject('stepControls') as StepControls
+      stepControls: inject('stepControls') as StepControls,
+      errors,
+      saveDebouncer
     }
   },
   data() {

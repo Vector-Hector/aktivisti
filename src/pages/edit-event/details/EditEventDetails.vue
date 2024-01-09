@@ -122,9 +122,9 @@ import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.
 import { editEventStore } from 'src/store/EditEventStore'
 import { SettleDebouncer } from 'src/utils/debounce'
 import { cloneDeep, isEqual } from 'lodash-es'
-import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
 import { dateMaskMatches } from 'src/utils/date'
 import { StepControls } from 'pages/EditEvent.vue'
+import { useEditEventAutoSaveMixin } from 'pages/edit-event/EditEventAutoSaveMixin'
 
 export default defineComponent({
   name: 'EditEventDetails',
@@ -137,7 +137,6 @@ export default defineComponent({
     QCheckbox,
     QScrollArea
   },
-  mixins: [EditEventAutoSaveMixin],
   emits: ['update:eventMetricRecords'],
   data() {
     return {
@@ -284,11 +283,14 @@ export default defineComponent({
   },
   setup() {
     const { metricRecords, campaigns, event } = useEditEventMixin()
+    const { errors, saveDebouncer } = useEditEventAutoSaveMixin()
     return {
       metricRecords,
       campaigns,
       event,
-      stepControls: inject('stepControls') as StepControls
+      stepControls: inject('stepControls') as StepControls,
+      errors,
+      saveDebouncer
     }
   },
   async created() {
