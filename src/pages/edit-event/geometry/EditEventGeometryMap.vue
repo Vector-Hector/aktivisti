@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from 'vue'
+import { defineComponent } from 'vue'
 import Marker from 'src/map/Marker.vue'
 import DrawControl from 'src/map/DrawControl.vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
@@ -36,8 +36,6 @@ import {
   circle,
   polygon
 } from '@turf/turf'
-
-import { MapInject } from 'src/map/Map.vue'
 import {
   EditEventBus,
   PAN_TO_BBOX,
@@ -46,7 +44,7 @@ import {
 import { noop } from 'lodash-es'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { LocationDto } from 'src/api/model/LocationDto'
-import InjectMapMixin from 'pages/event-detail/InjectMapMixin'
+import { useInjectMapMixin } from 'pages/event-detail/InjectMapMixin'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import AddressMarkerLayer from 'src/map/AddressMarkerLayer'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
@@ -77,7 +75,7 @@ export default defineComponent({
     const { event, eventAreas, posters } = useEditEventMixin()
     const { updateArea, deleteAreaByFeatureId, features } =
       useEditEventGeometryMixin()
-    const map = inject(MapInject)
+    const { map } = useInjectMapMixin()
     return {
       event,
       eventAreas,
@@ -88,7 +86,6 @@ export default defineComponent({
       map
     }
   },
-  mixins: [InjectMapMixin],
   data() {
     return {
       routePlannerStyles: routePlannerStyles('#000000'),
