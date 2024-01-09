@@ -72,7 +72,7 @@ import {
 } from '@quasar/extras/ionicons-v5'
 import EditSinglePosterMixin from 'pages/edit-event/posters/edit-single/EditSinglePosterMixin'
 import { posterListStore } from 'src/store/PosterListStore'
-import EditPosterListMixin from 'pages/edit-event/posters/EditPosterListMixin'
+import { useEditPosterListMixin } from 'pages/edit-event/posters/EditPosterListMixin'
 
 const defaultPoster: Partial<PosterDto> = {
   status: PosterStatus.ABSENT,
@@ -92,7 +92,7 @@ export default defineComponent({
     QScrollArea,
     QBtn
   },
-  mixins: [EditSinglePosterMixin, EditPosterListMixin],
+  mixins: [EditSinglePosterMixin],
   async beforeRouteEnter(to, from, next) {
     let initialPoster: Partial<PosterDto>
     const { posterId, eventId } = to.params
@@ -123,8 +123,10 @@ export default defineComponent({
     posterListStore.state.activePosterIndex = null
   },
   setup() {
+    const { deletePoster } = useEditPosterListMixin()
     return {
-      stepControls: inject('stepControls') as StepControls
+      stepControls: inject('stepControls') as StepControls,
+      deletePoster
     }
   },
   data() {
