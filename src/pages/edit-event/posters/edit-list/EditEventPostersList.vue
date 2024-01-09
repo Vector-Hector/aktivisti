@@ -30,13 +30,13 @@ import { defineComponent, inject } from 'vue'
 
 import { QBtn } from 'quasar'
 import { ionLocationSharp } from '@quasar/extras/ionicons-v5'
-import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
 import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
 import { posterStatusOptions } from 'src/api/model/PosterDto'
 import { StepControls } from 'pages/EditEvent.vue'
 import EditPosterListMixin from 'pages/edit-event/posters/EditPosterListMixin'
 import PosterTable from 'components/PosterTable.vue'
+import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 
 export default defineComponent({
   name: 'EditEventPostersList',
@@ -45,9 +45,11 @@ export default defineComponent({
     SidebarBottomStepNavigation,
     QBtn
   },
-  mixins: [EditEventGeometryMixin, EditPosterListMixin, EditEventAutoSaveMixin],
+  mixins: [EditPosterListMixin, EditEventAutoSaveMixin],
   setup() {
+    const { event } = useEditEventMixin()
     return {
+      event,
       stepControls: inject('stepControls') as StepControls
     }
   },

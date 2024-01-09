@@ -2,11 +2,14 @@ import { defineComponent } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { cloneDeep, isEqual } from 'lodash-es'
 import { SettleDebouncer } from 'src/utils/debounce'
-import EditEventMixin from 'pages/edit-event/EditEventMixin'
+import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 
 export default defineComponent({
   name: 'EditEventAutoSaveMixin',
-  mixins: [EditEventMixin],
+  setup() {
+    const { event } = useEditEventMixin()
+    return { event }
+  },
   created() {
     this.lastSavedEvent = this.normalizedEventCopy(this.event)
   },

@@ -175,8 +175,8 @@ import { defineComponent, inject } from 'vue'
 import {
   QBtn,
   QColor,
-  QInput,
   QIcon,
+  QInput,
   QPopupEdit,
   QPopupProxy,
   QSpinnerPuff,
@@ -187,13 +187,13 @@ import {
   QTr
 } from 'quasar'
 import {
+  ionAlertCircleOutline,
   ionCopyOutline,
   ionCreateOutline,
   ionPencil,
-  ionTrash,
-  ionAlertCircleOutline
+  ionTrash
 } from '@quasar/extras/ionicons-v5'
-import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
+import { useEditEventGeometryMixin } from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
 import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
 import {
@@ -210,6 +210,7 @@ import { apiClient } from 'src/api/ApiClient'
 import { bbox } from '@turf/turf'
 import { posterListStore } from 'src/store/PosterListStore'
 import { PosterStatus } from 'src/api/model/PosterDto'
+import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 
 export default defineComponent({
   name: 'EditEventGeometry',
@@ -229,9 +230,26 @@ export default defineComponent({
     QTr,
     QTh
   },
-  mixins: [EditEventGeometryMixin, EditEventAutoSaveMixin],
+  mixins: [EditEventAutoSaveMixin],
   setup() {
+    const {
+      updatingAreaFeatureIds,
+      deletingAreaIds,
+      eventAreasWithError,
+      campaigns,
+      event,
+      eventAreas
+    } = useEditEventMixin()
+    const { updateArea, deleteAreaByFeatureId } = useEditEventGeometryMixin()
     return {
+      event,
+      eventAreas,
+      campaigns,
+      eventAreasWithError,
+      deletingAreaIds,
+      updatingAreaFeatureIds,
+      updateArea,
+      deleteAreaByFeatureId,
       stepControls: inject('stepControls') as StepControls
     }
   },

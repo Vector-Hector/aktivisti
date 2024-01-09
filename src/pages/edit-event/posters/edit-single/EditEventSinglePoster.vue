@@ -58,7 +58,6 @@
 <script lang="ts">
 import { defineComponent, inject, PropType } from 'vue'
 
-import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import { PosterDto, PosterMount, PosterStatus } from 'src/api/model/PosterDto'
 import { StepControls } from 'pages/EditEvent.vue'
 import EditPoster from 'components/EditPoster.vue'
@@ -93,7 +92,7 @@ export default defineComponent({
     QScrollArea,
     QBtn
   },
-  mixins: [EditEventGeometryMixin, EditSinglePosterMixin, EditPosterListMixin],
+  mixins: [EditSinglePosterMixin, EditPosterListMixin],
   async beforeRouteEnter(to, from, next) {
     let initialPoster: Partial<PosterDto>
     const { posterId, eventId } = to.params
@@ -191,6 +190,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
 }
+
 .buttons {
   display: flex;
   flex-direction: row;

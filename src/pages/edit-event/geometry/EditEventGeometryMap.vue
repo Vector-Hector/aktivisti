@@ -28,7 +28,7 @@ import DrawControl from 'src/map/DrawControl.vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { routePlannerStyles } from './route-planner.styles'
 import { Feature, Geometry } from 'geojson'
-import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
+import { useEditEventGeometryMixin } from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import {
   bbox,
   booleanPointInPolygon,
@@ -50,6 +50,7 @@ import InjectMapMixin from 'pages/event-detail/InjectMapMixin'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import AddressMarkerLayer from 'src/map/AddressMarkerLayer'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
+import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 
 const defaultColors = [
   '#E22A3A',
@@ -73,12 +74,21 @@ export default defineComponent({
     Marker
   },
   setup() {
+    const { event, eventAreas, posters } = useEditEventMixin()
+    const { updateArea, deleteAreaByFeatureId, features } =
+      useEditEventGeometryMixin()
     const map = inject(MapInject)
     return {
+      event,
+      eventAreas,
+      posters,
+      updateArea,
+      deleteAreaByFeatureId,
+      features,
       map
     }
   },
-  mixins: [EditEventGeometryMixin, InjectMapMixin],
+  mixins: [InjectMapMixin],
   data() {
     return {
       routePlannerStyles: routePlannerStyles('#000000'),

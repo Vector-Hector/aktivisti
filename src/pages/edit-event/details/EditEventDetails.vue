@@ -112,7 +112,7 @@
 import { defineComponent, inject } from 'vue'
 
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
-import EditEventMixin from 'src/pages/edit-event/EditEventMixin'
+import { useEditEventMixin } from 'src/pages/edit-event/EditEventMixin'
 import { VisibilityLabels, VisibilityOptions } from 'src/api/model/EventDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
@@ -137,7 +137,7 @@ export default defineComponent({
     QCheckbox,
     QScrollArea
   },
-  mixins: [EditEventMixin, EditEventAutoSaveMixin],
+  mixins: [EditEventAutoSaveMixin],
   emits: ['update:eventMetricRecords'],
   data() {
     return {
@@ -283,7 +283,11 @@ export default defineComponent({
     }
   },
   setup() {
+    const { metricRecords, campaigns, event } = useEditEventMixin()
     return {
+      metricRecords,
+      campaigns,
+      event,
       stepControls: inject('stepControls') as StepControls
     }
   },
