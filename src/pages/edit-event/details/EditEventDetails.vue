@@ -137,7 +137,6 @@ export default defineComponent({
     QCheckbox,
     QScrollArea
   },
-  emits: ['update:eventMetricRecords'],
   data() {
     return {
       EventTypes,
