@@ -15,7 +15,6 @@ import {
   QSelect,
   useQuasar
 } from 'quasar'
-import { editEventStore } from 'src/store/EditEventStore'
 import { SettleDebouncer } from 'src/utils/debounce'
 import { cloneDeep, isEqual } from 'lodash-es'
 import { dateMaskMatches } from 'src/utils/date'
@@ -32,7 +31,6 @@ const stepControls = inject('stepControls') as StepControls
 
 const metricsSaveDebouncer = new SettleDebouncer()
 const metrics = ref<EventMetricDto[]>([])
-const isSubmitting = ref(false)
 const lastSavedMetricRecords = ref<EventMetricRecordDto[] | null>(null)
 const startDate = ref<string>('')
 const endDate = ref<string>('')
@@ -40,42 +38,6 @@ const mask = ref<string>('DD.MM.YYYY HH:mm')
 
 const currentYearMonth = computed(() => date.formatDate(new Date(), 'YYYY/MM'))
 const eventTypes = computed(() => eventTypeOptions)
-const availableMetricOptions = computed(() =>
-  // do not offer mandatory metrics that already are selected in the select dialog, so they can't be delselected
-  metrics.value.filter(
-    (item) =>
-      !item.mandatory_for_types.includes(event.value.event_type) ||
-      !selectedMetrics.value.find(({ id }) => id === item.id)
-  )
-)
-const selectedMetrics = computed({
-  get(): EventMetricDto[] {
-    const metricRecordMetricIds = metricRecords.value.map(
-      ({ metric }) => metric
-    )
-    return metrics.value.filter(({ id }) => metricRecordMetricIds.includes(id))
-  },
-  set(metrics: EventMetricDto[]) {
-    editEventStore.setMetricRecords(
-      metrics.map((metricItem) => {
-        const existingRecord = metricRecords.value.find(
-          ({ metric }) => metric == metricItem.id
-        )
-        return (
-          existingRecord ??
-          ({
-            metric: metricItem.id,
-            event: event.value.id
-          } as EventMetricRecordDto)
-        )
-      })
-    )
-  }
-})
-const selectedMetricsIds = computed(() =>
-  selectedMetrics.value.map(({ id }) => id)
-)
-const currentMetricRecords = computed(() => cloneDeep(metricRecords.value))
 
 onMounted(async () => {
   await getMetrics()
@@ -182,16 +144,6 @@ async function updateMetrics() {
   }
 }
 
-function toggleMetric(enable: boolean, metric: EventMetricDto) {
-  if (enable && !selectedMetrics.value.find(({ id }) => id === metric.id)) {
-    selectedMetrics.value = [...selectedMetrics.value, metric]
-  } else {
-    selectedMetrics.value = selectedMetrics.value.filter(
-      ({ id }) => id !== metric.id
-    )
-  }
-}
-
 async function getMetrics() {
   const metricsRequest = await apiClient.eventMetrics.list({
     available_for_types: event.value.event_type
@@ -212,21 +164,6 @@ async function next() {
 async function abort() {
   await saveDebouncer.waitForSettle()
   stepControls.abort()
-}
-
-function metricForMetricRecord(record: EventMetricRecordDto) {
-  return metrics.value.find(({ id }) => record.metric === id)
-}
-
-function metricRecordForMetricId(metricId: number) {
-  return metricRecords.value.find(({ metric }) => metricId === metric)
-}
-
-function isRequired(value: string) {
-  if (!value) {
-    return 'Bitte fülle dieses Feld aus'
-  }
-  return true
 }
 </script>
 
