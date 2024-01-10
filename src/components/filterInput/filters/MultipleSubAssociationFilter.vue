@@ -1,9 +1,55 @@
+<script setup lang="ts">
+import { ref, watch } from 'vue'
+import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
+import FilterInput from 'components/filterInput/FilterInput.vue'
+
+interface Props {
+  options: SubAssociationDto[]
+  modelValue?: number[]
+  multiple?: boolean
+}
+
+interface Emits {
+  (e: 'update:modelValue', value: number[] | undefined): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  multiple: true
+})
+const emit = defineEmits<Emits>()
+
+const suggestedOptions = ref<SubAssociationDto[]>([])
+suggestedOptions.value = props.options
+
+function filterOptions(value: string, update: any) {
+  if (!value) {
+    update(() => {
+      suggestedOptions.value = props.options
+    })
+    return
+  }
+  update(() => {
+    const lowercasedValue = value.toLowerCase()
+    suggestedOptions.value = props.options.filter(({ name }) =>
+      name.toLowerCase().includes(lowercasedValue)
+    )
+  })
+}
+
+watch(
+  () => props.options,
+  () => {
+    suggestedOptions.value = props.options
+  }
+)
+</script>
+
 <template>
   <FilterInput
     label="Bezirks/Kreisverband"
     :multiple="multiple"
     :model-value="modelValue"
-    @update:model-value="(value) => this.$emit('update:modelValue', value)"
+    @update:model-value="(value) => emit('update:modelValue', value)"
     use-input
     :use-chips="multiple"
     emit-value
@@ -24,58 +70,3 @@
     </template>
   </FilterInput>
 </template>
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
-import FilterInput from 'components/filterInput/FilterInput.vue'
-
-export default defineComponent({
-  name: 'MultipleSubAssociationFilter',
-  components: {
-    FilterInput
-  },
-  props: {
-    options: {
-      type: Array as PropType<SubAssociationDto[]>,
-      required: true
-    },
-    modelValue: {
-      type: Array as PropType<number[]>
-    },
-    multiple: {
-      type: Boolean as PropType<boolean>,
-      default: true
-    }
-  },
-  created() {
-    this.suggestedOptions = this.options
-  },
-  data() {
-    return {
-      suggestedOptions: [] as SubAssociationDto[]
-    }
-  },
-  emits: ['update:modelValue'],
-  methods: {
-    filterOptions(value: string, update: any) {
-      if (!value) {
-        update(() => {
-          this.suggestedOptions = this.options
-        })
-        return
-      }
-      update(() => {
-        const lowercasedValue = value.toLowerCase()
-        this.suggestedOptions = this.options.filter(({ name }) =>
-          name.toLowerCase().includes(lowercasedValue)
-        )
-      })
-    }
-  },
-  watch: {
-    options() {
-      this.suggestedOptions = this.options
-    }
-  }
-})
-</script>
