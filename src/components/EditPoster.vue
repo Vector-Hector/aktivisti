@@ -1,3 +1,58 @@
+<script setup lang="ts">
+import { ref, watch } from 'vue'
+import {
+  PosterDto,
+  posterMountOptions,
+  posterStatusOptions
+} from 'src/api/model/PosterDto'
+import { QInput, QSelect } from 'quasar'
+import { GeocodeResult } from 'src/types/GeocodeResult'
+import { cloneDeep } from 'lodash-es'
+import LocationSelect from 'components/LocationSelect.vue'
+
+interface Props {
+  poster: Partial<PosterDto>
+  new?: boolean
+  errors?: Record<string, string[]>
+  editLocation?: boolean
+}
+
+interface Emits {
+  (e: 'update:poster', poster: Partial<PosterDto>): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  new: true,
+  errors: () => {
+    return {}
+  },
+  editLocation: false
+})
+const emit = defineEmits<Emits>()
+
+const currentResult = ref<Partial<GeocodeResult> | null>(null)
+const geocodeResult = ref<GeocodeResult | null>(null)
+const localPoster = ref<Partial<PosterDto>>({})
+const lastOriginalGeocodedResult = ref<null | GeocodeResult>(null)
+
+localPoster.value = cloneDeep(props.poster)
+
+watch(
+  () => props.poster.location,
+  (newValue) => {
+    if (newValue !== localPoster.value.location) {
+      localPoster.value.location = cloneDeep(newValue)
+    }
+  },
+  { deep: true, immediate: true }
+)
+
+function updatePoster(poster: Partial<PosterDto>) {
+  localPoster.value = { ...localPoster.value, ...poster }
+  emit('update:poster', localPoster.value)
+}
+</script>
+
 <template>
   <LocationSelect
     v-if="editLocation"
@@ -46,75 +101,3 @@
     :error="!!errors.mounted_on?.length"
   />
 </template>
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import {
-  PosterDto,
-  posterMountOptions,
-  posterStatusOptions
-} from 'src/api/model/PosterDto'
-import { QInput, QSelect } from 'quasar'
-import { GeocodeResult } from 'src/types/GeocodeResult'
-import { cloneDeep } from 'lodash-es'
-import LocationSelect from 'components/LocationSelect.vue'
-
-export default defineComponent({
-  name: 'EditPoster',
-  components: {
-    LocationSelect,
-    QSelect,
-    QInput
-  },
-  props: {
-    poster: {
-      type: Object as PropType<Partial<PosterDto>>,
-      required: true
-    },
-    new: {
-      type: Boolean as PropType<boolean>,
-      default: true
-    },
-    errors: {
-      type: Object as PropType<Record<string, string[]>>,
-      default: () => {
-        return {}
-      }
-    },
-    editLocation: {
-      type: Boolean as PropType<boolean>,
-      default: false
-    }
-  },
-  emits: ['update:poster'],
-  data() {
-    return {
-      currentResult: null as Partial<GeocodeResult> | null,
-      geocodeResult: null as GeocodeResult | null,
-      posterStatusOptions,
-      posterMountOptions,
-      localPoster: {} as Partial<PosterDto>,
-      lastOriginalGeocodedResult: null as null | GeocodeResult
-    }
-  },
-  created() {
-    this.localPoster = cloneDeep(this.poster)
-  },
-  watch: {
-    'poster.location': {
-      handler(newValue) {
-        if (newValue !== this.localPoster.location) {
-          this.localPoster.location = cloneDeep(newValue)
-        }
-      },
-      deep: true,
-      immediate: true
-    }
-  },
-  methods: {
-    updatePoster(poster: Partial<PosterDto>) {
-      this.localPoster = { ...this.localPoster, ...poster }
-      this.$emit('update:poster', this.localPoster)
-    }
-  }
-})
-</script>
