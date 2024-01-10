@@ -29,6 +29,10 @@ const { metricRecords, campaigns, event } = useEditEventMixin()
 const { errors, saveDebouncer } = useEditEventAutoSaveMixin()
 const stepControls = inject('stepControls') as StepControls
 
+// Fixme(peter) Check what of the metrics functionality is still needed here
+//  in the past it was possible for the user to customize the metrics set
+//  this functionality was removed on the UI, but it seems like that this file
+//  still contains remnants of this functionality.
 const metricsSaveDebouncer = new SettleDebouncer()
 const metrics = ref<EventMetricDto[]>([])
 const lastSavedMetricRecords = ref<EventMetricRecordDto[] | null>(null)
