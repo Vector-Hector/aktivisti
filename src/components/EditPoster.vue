@@ -6,7 +6,6 @@ import {
   posterStatusOptions
 } from 'src/api/model/PosterDto'
 import { QInput, QSelect } from 'quasar'
-import { GeocodeResult } from 'src/types/GeocodeResult'
 import { cloneDeep } from 'lodash-es'
 import LocationSelect from 'components/LocationSelect.vue'
 
@@ -30,10 +29,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const emit = defineEmits<Emits>()
 
-const currentResult = ref<Partial<GeocodeResult> | null>(null)
-const geocodeResult = ref<GeocodeResult | null>(null)
 const localPoster = ref<Partial<PosterDto>>({})
-const lastOriginalGeocodedResult = ref<null | GeocodeResult>(null)
 
 localPoster.value = cloneDeep(props.poster)
 
