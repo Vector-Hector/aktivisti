@@ -11,14 +11,20 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import EditPosterListMixin from 'pages/edit-event/posters/EditPosterListMixin'
+import { useEditPosterListMixin } from 'pages/edit-event/posters/EditPosterListMixin'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
-import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
+import { useEditEventGeometryMixin } from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import AreaFeatureLayer from 'src/map/AreaFeatureLayer'
+import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 
 export default defineComponent({
   name: 'EditEventPostersMap',
-  mixins: [EditPosterListMixin, EditEventGeometryMixin],
+  setup() {
+    const { eventAreas } = useEditEventMixin()
+    const { features } = useEditEventGeometryMixin()
+    const { posters, activePosterIndex } = useEditPosterListMixin()
+    return { eventAreas, features, posters, activePosterIndex }
+  },
   components: {
     PosterMarkerLayer,
     AreaFeatureLayer

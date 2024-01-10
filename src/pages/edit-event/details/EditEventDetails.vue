@@ -112,7 +112,7 @@
 import { defineComponent, inject } from 'vue'
 
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
-import EditEventMixin from 'src/pages/edit-event/EditEventMixin'
+import { useEditEventMixin } from 'src/pages/edit-event/EditEventMixin'
 import { VisibilityLabels, VisibilityOptions } from 'src/api/model/EventDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
@@ -122,9 +122,9 @@ import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.
 import { editEventStore } from 'src/store/EditEventStore'
 import { SettleDebouncer } from 'src/utils/debounce'
 import { cloneDeep, isEqual } from 'lodash-es'
-import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
 import { dateMaskMatches } from 'src/utils/date'
 import { StepControls } from 'pages/EditEvent.vue'
+import { useEditEventAutoSaveMixin } from 'pages/edit-event/EditEventAutoSaveMixin'
 
 export default defineComponent({
   name: 'EditEventDetails',
@@ -137,7 +137,6 @@ export default defineComponent({
     QCheckbox,
     QScrollArea
   },
-  mixins: [EditEventMixin, EditEventAutoSaveMixin],
   emits: ['update:eventMetricRecords'],
   data() {
     return {
@@ -283,8 +282,15 @@ export default defineComponent({
     }
   },
   setup() {
+    const { metricRecords, campaigns, event } = useEditEventMixin()
+    const { errors, saveDebouncer } = useEditEventAutoSaveMixin()
     return {
-      stepControls: inject('stepControls') as StepControls
+      metricRecords,
+      campaigns,
+      event,
+      stepControls: inject('stepControls') as StepControls,
+      errors,
+      saveDebouncer
     }
   },
   async created() {

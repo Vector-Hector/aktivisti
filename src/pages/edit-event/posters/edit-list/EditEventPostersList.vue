@@ -30,13 +30,12 @@ import { defineComponent, inject } from 'vue'
 
 import { QBtn } from 'quasar'
 import { ionLocationSharp } from '@quasar/extras/ionicons-v5'
-import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
-import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
 import { posterStatusOptions } from 'src/api/model/PosterDto'
 import { StepControls } from 'pages/EditEvent.vue'
-import EditPosterListMixin from 'pages/edit-event/posters/EditPosterListMixin'
+import { useEditPosterListMixin } from 'pages/edit-event/posters/EditPosterListMixin'
 import PosterTable from 'components/PosterTable.vue'
+import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 
 export default defineComponent({
   name: 'EditEventPostersList',
@@ -45,10 +44,14 @@ export default defineComponent({
     SidebarBottomStepNavigation,
     QBtn
   },
-  mixins: [EditEventGeometryMixin, EditPosterListMixin, EditEventAutoSaveMixin],
   setup() {
+    const { event } = useEditEventMixin()
+    const { posters, deletePoster } = useEditPosterListMixin()
     return {
-      stepControls: inject('stepControls') as StepControls
+      event,
+      stepControls: inject('stepControls') as StepControls,
+      posters,
+      deletePoster
     }
   },
   data() {
@@ -63,15 +66,12 @@ export default defineComponent({
   },
   methods: {
     async back() {
-      await this.saveDebouncer.waitForSettle()
       this.stepControls.previous()
     },
     async next() {
-      await this.saveDebouncer.waitForSettle()
       this.stepControls.next()
     },
     async abort() {
-      await this.saveDebouncer.waitForSettle()
       this.stepControls.abort()
     },
     async editPoster(posterId: number) {

@@ -1,20 +1,19 @@
 import { PosterDto } from 'src/api/model/PosterDto'
-import { defineComponent } from 'vue'
+import { computed } from 'vue'
 import { posterListStore } from 'src/store/PosterListStore'
 
-export default defineComponent({
-  computed: {
-    poster: {
-      set(poster: Partial<PosterDto>) {
-        posterListStore.state.posters[
-          posterListStore.state.activePosterIndex!
-        ] = poster
-      },
-      get() {
-        return posterListStore.state.posters[
-          posterListStore.state.activePosterIndex!
-        ]
-      }
+export function useEditSinglePosterMixin() {
+  const poster = computed({
+    get(): Partial<PosterDto> {
+      return posterListStore.state.posters[
+        posterListStore.state.activePosterIndex!
+      ]
+    },
+    set(poster: Partial<PosterDto>) {
+      posterListStore.state.posters[posterListStore.state.activePosterIndex!] =
+        poster
     }
-  }
-})
+  })
+
+  return { poster }
+}

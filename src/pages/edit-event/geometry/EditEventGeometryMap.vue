@@ -22,13 +22,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from 'vue'
+import { defineComponent } from 'vue'
 import Marker from 'src/map/Marker.vue'
 import DrawControl from 'src/map/DrawControl.vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { routePlannerStyles } from './route-planner.styles'
 import { Feature, Geometry } from 'geojson'
-import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
+import { useEditEventGeometryMixin } from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import {
   bbox,
   booleanPointInPolygon,
@@ -36,8 +36,6 @@ import {
   circle,
   polygon
 } from '@turf/turf'
-
-import { MapInject } from 'src/map/Map.vue'
 import {
   EditEventBus,
   PAN_TO_BBOX,
@@ -46,10 +44,11 @@ import {
 import { noop } from 'lodash-es'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { LocationDto } from 'src/api/model/LocationDto'
-import InjectMapMixin from 'pages/event-detail/InjectMapMixin'
+import { useInjectMapMixin } from 'pages/event-detail/InjectMapMixin'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import AddressMarkerLayer from 'src/map/AddressMarkerLayer'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
+import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 
 const defaultColors = [
   '#E22A3A',
@@ -73,12 +72,20 @@ export default defineComponent({
     Marker
   },
   setup() {
-    const map = inject(MapInject)
+    const { event, eventAreas, posters } = useEditEventMixin()
+    const { updateArea, deleteAreaByFeatureId, features } =
+      useEditEventGeometryMixin()
+    const { map } = useInjectMapMixin()
     return {
+      event,
+      eventAreas,
+      posters,
+      updateArea,
+      deleteAreaByFeatureId,
+      features,
       map
     }
   },
-  mixins: [EditEventGeometryMixin, InjectMapMixin],
   data() {
     return {
       routePlannerStyles: routePlannerStyles('#000000'),

@@ -8,9 +8,8 @@
 <script lang="ts">
 import { defineComponent, inject } from 'vue'
 import { Geometry } from 'geojson'
-import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
+import { useEditEventGeometryMixin } from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import { center as turfCenter } from '@turf/turf'
-import InjectMapMixin from 'pages/event-detail/InjectMapMixin'
 import { MapInject } from 'src/map/Map.vue'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { LocationDto } from 'src/api/model/LocationDto'
@@ -18,6 +17,7 @@ import AreaFeatureLayer from 'src/map/AreaFeatureLayer'
 import AddressMarkerLayer from 'src/map/AddressMarkerLayer'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
 import EventMarker from 'components/EventMarker.vue'
+import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 
 export default defineComponent({
   name: 'EditEventDetailsMap',
@@ -28,12 +28,17 @@ export default defineComponent({
     AreaFeatureLayer
   },
   setup() {
+    const { posters, event, eventAreas } = useEditEventMixin()
+    const { features } = useEditEventGeometryMixin()
     const map = inject(MapInject)
     return {
+      posters,
+      event,
+      eventAreas,
+      features,
       map
     }
   },
-  mixins: [EditEventGeometryMixin, InjectMapMixin],
   computed: {
     addresses(): AddressDetails[] | undefined {
       return this.eventAreas

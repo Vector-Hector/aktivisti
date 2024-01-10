@@ -58,7 +58,6 @@
 <script lang="ts">
 import { defineComponent, inject, PropType } from 'vue'
 
-import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import { PosterDto, PosterMount, PosterStatus } from 'src/api/model/PosterDto'
 import { StepControls } from 'pages/EditEvent.vue'
 import EditPoster from 'components/EditPoster.vue'
@@ -71,9 +70,9 @@ import {
   ionSave,
   ionTrash
 } from '@quasar/extras/ionicons-v5'
-import EditSinglePosterMixin from 'pages/edit-event/posters/edit-single/EditSinglePosterMixin'
+import { useEditSinglePosterMixin } from 'pages/edit-event/posters/edit-single/EditSinglePosterMixin'
 import { posterListStore } from 'src/store/PosterListStore'
-import EditPosterListMixin from 'pages/edit-event/posters/EditPosterListMixin'
+import { useEditPosterListMixin } from 'pages/edit-event/posters/EditPosterListMixin'
 
 const defaultPoster: Partial<PosterDto> = {
   status: PosterStatus.ABSENT,
@@ -93,7 +92,6 @@ export default defineComponent({
     QScrollArea,
     QBtn
   },
-  mixins: [EditEventGeometryMixin, EditSinglePosterMixin, EditPosterListMixin],
   async beforeRouteEnter(to, from, next) {
     let initialPoster: Partial<PosterDto>
     const { posterId, eventId } = to.params
@@ -124,8 +122,12 @@ export default defineComponent({
     posterListStore.state.activePosterIndex = null
   },
   setup() {
+    const { poster } = useEditSinglePosterMixin()
+    const { deletePoster } = useEditPosterListMixin()
     return {
-      stepControls: inject('stepControls') as StepControls
+      stepControls: inject('stepControls') as StepControls,
+      poster,
+      deletePoster
     }
   },
   data() {
@@ -191,6 +193,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
 }
+
 .buttons {
   display: flex;
   flex-direction: row;
