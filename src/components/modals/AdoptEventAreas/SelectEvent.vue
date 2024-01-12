@@ -1,3 +1,97 @@
+<script setup lang="ts">
+import { computed, onMounted, ref, watch } from 'vue'
+
+import { CampaignDto } from 'src/api/model/CampaignDto'
+import EventList from 'components/EventList.vue'
+import { Pagination } from 'src/api/model/APIEnvelope'
+import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
+import { EventDto } from 'src/api/model/EventDto'
+import EventFilter from 'components/EventFilter.vue'
+import { isEqual } from 'lodash-es'
+import { EventTypes as EventTypesModel } from 'src/api/model/EventTypes'
+import { EventFilterParams } from 'src/api/params/EventFilterParams'
+import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
+import { editEventStore } from 'src/store/EditEventStore'
+import { QScrollArea, useQuasar } from 'quasar'
+import { apiClient } from 'src/api/ApiClient'
+
+const $q = useQuasar()
+
+const _defaultPagination = {
+  limit: EVENT_LIST_CHUNK_SIZE
+}
+
+interface Emits {
+  (e: 'clickOnEvent', event: EventDto): void
+}
+
+const emit = defineEmits<Emits>()
+
+const campaigns = ref<CampaignDto[]>([])
+const subAssociations = ref<SubAssociationDto[]>([])
+const filterParams = ref<EventFilterParams>({
+  event_type: editEventStore.state.event?.event_type
+})
+const pagination = ref<Pagination | null>(_defaultPagination)
+const shownEvents = ref<EventDto[]>([])
+
+const eventList = ref<InstanceType<typeof EventList> | null>(null)
+
+onMounted(async () => {
+  await updateShownEvents()
+  await updateCampaigns()
+  await updateSubAssociations()
+})
+
+const EventTypes = computed(() => EventTypesModel)
+
+watch(
+  filterParams,
+  async (newValue, oldValue) => {
+    if (isEqual(newValue, oldValue)) return
+    eventList.value?.resetScrollPosition()
+    resetPagination()
+    await updateShownEvents()
+  },
+  {
+    deep: true,
+    immediate: true
+  }
+)
+
+function handleClickOnEvent(event: EventDto) {
+  emit('clickOnEvent', event)
+}
+function resetPagination() {
+  pagination.value = _defaultPagination as Pagination
+}
+async function updateCampaigns() {
+  campaigns.value = (
+    await apiClient.campaigns.list({ include_expired: true })
+  ).payload.data
+}
+async function updateSubAssociations() {
+  subAssociations.value = (await apiClient.subAssociations.list()).payload.data
+}
+async function updateShownEvents() {
+  try {
+    const { data: events, pagination: newPagination } = (
+      await apiClient.events.list({
+        ...pagination.value,
+        ...filterParams.value
+      })
+    ).payload
+    pagination.value = newPagination!
+    shownEvents.value = events
+  } catch {
+    $q.notify({
+      message: 'Etwas ging schief beim Abrufen der Aktionen',
+      color: 'negative'
+    })
+  }
+}
+</script>
+
 <template>
   <div class="select-events">
     <QScrollArea class="scroll-area">
@@ -31,110 +125,6 @@
     </QScrollArea>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue'
-import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
-
-import { CampaignDto } from 'src/api/model/CampaignDto'
-import EventList from 'components/EventList.vue'
-import { Pagination } from 'src/api/model/APIEnvelope'
-import { EVENT_LIST_CHUNK_SIZE } from 'src/constants'
-import { EventDto } from 'src/api/model/EventDto'
-import EventFilter from 'components/EventFilter.vue'
-import { isEqual } from 'lodash-es'
-import { EventTypes } from 'src/api/model/EventTypes'
-import { EventFilterParams } from 'src/api/params/EventFilterParams'
-import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
-import { editEventStore } from 'src/store/EditEventStore'
-import { QScrollArea } from 'quasar'
-
-const _defaultPagination = {
-  limit: EVENT_LIST_CHUNK_SIZE
-}
-
-export default defineComponent({
-  name: 'SelectEvent',
-  computed: {
-    EventTypes() {
-      return EventTypes
-    }
-  },
-  components: {
-    QScrollArea,
-    EventFilter,
-    EventList
-  },
-  async created() {
-    await this.updateShownEvents()
-    await this.updateCampaigns()
-    await this.updateSubAssociations()
-  },
-  emits: ['clickOnEvent'],
-  data() {
-    return {
-      campaigns: [] as CampaignDto[],
-      subAssociations: [] as SubAssociationDto[],
-      filterParams: {
-        event_type: editEventStore.state.event?.event_type
-      } as EventFilterParams,
-      ionChevronDown,
-      ionClose,
-      pagination: _defaultPagination as Pagination | null,
-      shownEvents: [] as EventDto[]
-    }
-  },
-  methods: {
-    handleClickOnEvent(event: EventDto) {
-      this.$emit('clickOnEvent', event)
-    },
-    resetPagination() {
-      this.pagination = _defaultPagination as Pagination
-    },
-    async updateCampaigns() {
-      this.campaigns = (
-        await this.$apiClient.campaigns.list({ include_expired: true })
-      ).payload.data
-    },
-    async updateSubAssociations() {
-      this.subAssociations = (
-        await this.$apiClient.subAssociations.list()
-      ).payload.data
-    },
-    async updateShownEvents() {
-      try {
-        const { data: events, pagination } = (
-          await this.$apiClient.events.list({
-            ...this.pagination,
-            ...this.filterParams
-          })
-        ).payload
-        this.pagination = pagination!
-        this.shownEvents = events
-      } catch {
-        this.$q.notify({
-          message: 'Etwas ging schief beim Abrufen der Aktionen',
-          color: 'negative'
-        })
-      }
-    }
-  },
-  watch: {
-    filterParams: {
-      async handler(newValue, oldValue) {
-        if (isEqual(newValue, oldValue)) return
-        // @ts-ignore
-        this.$refs.eventList?.resetScrollPosition()
-        this.resetPagination()
-        await this.updateShownEvents()
-      },
-      deep: true,
-      immediate: true
-    }
-  }
-})
-</script>
-
 <style lang="scss" scoped>
 @import 'src/css/variables.scss';
 
