@@ -1,33 +1,17 @@
 <script setup lang="ts">
-import {
-  computed,
-  defineComponent,
-  onMounted,
-  onUnmounted,
-  ref,
-  watch
-} from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import Marker from 'src/map/Marker.vue'
 import DrawControl from 'src/map/DrawControl.vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { routePlannerStyles as routePlannerStylesFunction } from './route-planner.styles'
-import { Feature, Geometry } from 'geojson'
 import { useEditEventGeometryMixin } from 'pages/edit-event/geometry/EditEventGeometryMixin'
-import {
-  bbox,
-  booleanPointInPolygon,
-  center as turfCenter,
-  circle,
-  polygon
-} from '@turf/turf'
+import { bbox, booleanPointInPolygon, circle, polygon } from '@turf/turf'
 import {
   EditEventBus,
   PAN_TO_BBOX,
   START_DRAW_AREA
 } from 'src/store/EditEventStore'
 import { noop } from 'lodash-es'
-import { AddressDetails } from 'src/api/model/AreaDetailsDto'
-import { LocationDto } from 'src/api/model/LocationDto'
 import { useInjectMapMixin } from 'pages/event-detail/InjectMapMixin'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import AddressMarkerLayer from 'src/map/AddressMarkerLayer'
@@ -123,14 +107,6 @@ onUnmounted(() => {
   EditEventBus.off(PAN_TO_BBOX, panToBBoxListener.value)
 })
 
-function center(geometry: Geometry): LocationDto {
-  //@ts-ignore
-  const point = turfCenter(geometry)
-  return {
-    lat: point.geometry.coordinates[1],
-    lng: point.geometry.coordinates[0]
-  }
-}
 async function handleCreatedFeatures(e: any) {
   for (const feature of e.features) {
     const existingArea = eventAreas.value.find(
@@ -168,9 +144,6 @@ function handleDeletedFeatures(event: any) {
   for (const featureId of deletedFeatureIds) {
     void deleteAreaByFeatureId(featureId)
   }
-}
-function drawArea() {
-  draw.value?.changeMode('draw_polygon')
 }
 </script>
 
