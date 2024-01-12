@@ -35,8 +35,6 @@ const filterParams = ref<EventFilterParams>({
 const pagination = ref<Pagination | null>(_defaultPagination)
 const shownEvents = ref<EventDto[]>([])
 
-const eventList = ref<InstanceType<typeof EventList> | null>(null)
-
 onMounted(async () => {
   await updateShownEvents()
   await updateCampaigns()
@@ -49,7 +47,6 @@ watch(
   filterParams,
   async (newValue, oldValue) => {
     if (isEqual(newValue, oldValue)) return
-    eventList.value?.resetScrollPosition()
     resetPagination()
     await updateShownEvents()
   },
@@ -119,7 +116,6 @@ async function updateShownEvents() {
         :filter-params="filterParams"
         :campaigns="campaigns"
         class="event-list"
-        ref="eventList"
         @clickOnEvent="handleClickOnEvent"
       />
     </QScrollArea>
