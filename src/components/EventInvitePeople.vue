@@ -1,3 +1,217 @@
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
+import { userStore } from 'src/store/UserStore'
+import { ionClose, ionPersonAddSharp } from '@quasar/extras/ionicons-v5'
+import {
+  QBtn,
+  QIcon,
+  QInput,
+  QItem,
+  QItemLabel,
+  QItemSection,
+  QList,
+  useQuasar
+} from 'quasar'
+import { apiClient } from 'src/api/ApiClient'
+
+interface Props {
+  eventId: number
+}
+
+interface UserSuggestionItem {
+  id: number
+  username: string
+  email?: string
+}
+
+const props = defineProps<Props>()
+
+const $q = useQuasar()
+
+const isLoading = ref(false)
+const usernameToInvite = ref('')
+const participations = ref<EventParticipationDto[]>([])
+
+onMounted(async () => {
+  participations.value = (
+    await apiClient.eventParticipations.list({
+      event: props.eventId,
+      is_pending_invitation: true
+    })
+  ).payload.data
+})
+
+const pendingUsersWithoutVisibleEmailAddresses = computed(() => {
+  return participations.value.filter(
+    (item) => !item.user_is_member && item.user_email === null
+  ).length
+})
+const displayedParticipations = computed(() => {
+  return participations.value
+    .filter((item) => item.user_is_member || item.user_email !== null)
+    .filter((item) => {
+      return item.user != userStore.getState().user?.id
+    })
+    .sort((a, b) => {
+      return a.user_username.localeCompare(b.user_username)
+    })
+})
+
+function userLabel(item: UserSuggestionItem) {
+  return `${item.username} ${item.email ?? ''}`
+}
+function appendParticipations(newParticipations: EventParticipationDto[]) {
+  for (const participation of newParticipations) {
+    if (!participations.value.find(({ id }) => id === participation.id)) {
+      participations.value.push(participation)
+    }
+  }
+}
+async function inviteUser(username: string) {
+  const inviteRequestBody = {
+    users: [username]
+  }
+  try {
+    isLoading.value = true
+    const response = await apiClient.events.invite(
+      props.eventId.toString(),
+      inviteRequestBody
+    )
+    for (const item of response.payload.data) {
+      if (!participations.value.find(({ id }) => id === item.id)) {
+        participations.value.push(item)
+      }
+    }
+  } catch (error) {
+    if (apiClient.isApiClientError(error) && error.response?.status === 400) {
+      $q.notify({
+        color: 'negative',
+        message: 'Der Benutzer*innenname existiert nicht'
+      })
+    } else {
+      $q.notify({
+        color: 'negative',
+        message: 'Etwas ging schief beim Einladen des*der Benutzer*in'
+      })
+    }
+  } finally {
+    isLoading.value = false
+  }
+}
+// TODO(peter) Remove code duplication
+function handleInviteAllCoordinators() {
+  $q.dialog({
+    title: 'Alle Koordinator*innen einladen',
+    message: 'Möchtest du alle Koordinator*innen des Kreisverbandes einladen?',
+    cancel: true
+  })
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    .onOk(() => inviteCoordinators())
+}
+async function inviteCoordinators() {
+  const response = await apiClient.events.inviteCoordinators(
+    props.eventId.toString()
+  )
+  const newParticipations = response.payload.data
+  if (newParticipations.length > 0) {
+    let areCoordinatorsAlreadyInvited = true
+    for (const participation of response.payload.data) {
+      if (!participations.value.find(({ id }) => id === participation.id)) {
+        areCoordinatorsAlreadyInvited = false
+        participations.value.push(participation)
+      }
+    }
+    if (areCoordinatorsAlreadyInvited) {
+      $q.notify({
+        color: 'warning',
+        message: 'Es wurden bereits alle Koordinator*innen eingeladen.'
+      })
+    }
+  } else {
+    $q.notify({
+      color: 'info',
+      message: 'In diesem Eventgebiet gibt es keine Koordinator*innen.'
+    })
+  }
+}
+function handleInviteAllTeamCaptains() {
+  $q.dialog({
+    title: 'Alle Teamcaptains einladen',
+    message: 'Möchtest du alle Teamcaptains des Kreisverbandes einladen?',
+    cancel: true
+  })
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    .onOk(() => inviteTeamCaptains())
+}
+async function inviteTeamCaptains() {
+  const response = await apiClient.events.inviteTeamCaptains(
+    props.eventId.toString()
+  )
+  const newParticipations = response.payload.data
+  if (newParticipations.length > 0) {
+    let areTeamCaptainsAlreadyInvited = true
+    for (const participation of response.payload.data) {
+      if (!participations.value.find(({ id }) => id === participation.id)) {
+        areTeamCaptainsAlreadyInvited = false
+        participations.value.push(participation)
+      }
+    }
+    if (areTeamCaptainsAlreadyInvited) {
+      $q.notify({
+        color: 'warning',
+        message: 'Es wurden bereits alle Teamcaptains eingeladen.'
+      })
+    }
+  } else {
+    $q.notify({
+      color: 'info',
+      message: 'In diesem Eventgebiet gibt es keine Teamcaptains.'
+    })
+  }
+}
+function handleInviteAllUsers() {
+  $q.dialog({
+    title: 'Alle Benutzer*innen einladen',
+    message: 'Möchtest du alle Benutzer*innen des Kreisverbandes einladen?',
+    cancel: true
+  })
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    .onOk(() => inviteUsers())
+}
+async function inviteUsers() {
+  const response = await apiClient.events.inviteUsers(props.eventId.toString())
+  const newParticipations = response.payload.data
+  if (newParticipations.length > 0) {
+    let areUsersAlreadyInvited = true
+    for (const participation of response.payload.data) {
+      if (!participations.value.find(({ id }) => id === participation.id)) {
+        areUsersAlreadyInvited = false
+        participations.value.push(participation)
+      }
+    }
+    if (areUsersAlreadyInvited) {
+      $q.notify({
+        color: 'warning',
+        message: 'Es wurden bereits alle Benutzer*innen eingeladen.'
+      })
+    }
+  } else {
+    $q.notify({
+      color: 'info',
+      message:
+        'In dem zugehörigen Kreisverband gibt es keine angemeldeten Benutzer*innen.'
+    })
+  }
+}
+async function deleteParticipation(deleteId: number) {
+  participations.value = participations.value.filter(
+    ({ id }) => deleteId !== id
+  )
+  await apiClient.eventParticipations.delete(deleteId.toString())
+}
+</script>
+
 <template>
   <div class="q-qa-sm">
     <div class="row">
@@ -87,250 +301,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { userStore } from 'src/store/UserStore'
-import {
-  ionClose,
-  ionMail,
-  ionPersonAddSharp
-} from '@quasar/extras/ionicons-v5'
-import {
-  QBtn,
-  QIcon,
-  QInput,
-  QItem,
-  QItemLabel,
-  QItemSection,
-  QList
-} from 'quasar'
-
-interface UserSuggestionItem {
-  id: number
-  username: string
-  email?: string
-}
-
-export default defineComponent({
-  name: 'EventInvitePeople',
-  components: {
-    QBtn,
-    QInput,
-    QList,
-    QItem,
-    QItemLabel,
-    QItemSection,
-    QIcon
-  },
-  props: {
-    eventId: {
-      type: Number as PropType<number>,
-      required: true
-    }
-  },
-  data() {
-    return {
-      isLoading: false,
-      usernameToInvite: '',
-      participations: [] as EventParticipationDto[],
-      ionMail,
-      ionClose,
-      ionPersonAddSharp
-    }
-  },
-  computed: {
-    pendingUsersWithoutVisibleEmailAddresses(): number {
-      return this.participations.filter(
-        (item) => !item.user_is_member && item.user_email === null
-      ).length
-    },
-    displayedParticipations(): EventParticipationDto[] {
-      return this.participations
-        .filter((item) => item.user_is_member || item.user_email !== null)
-        .filter((item) => {
-          return item.user != userStore.getState().user?.id
-        })
-        .sort((a, b) => {
-          return a.user_username.localeCompare(b.user_username)
-        })
-    }
-  },
-  async created() {
-    this.participations = (
-      await this.$apiClient.eventParticipations.list({
-        event: this.eventId,
-        is_pending_invitation: true
-      })
-    ).payload.data
-  },
-  methods: {
-    userLabel(item: UserSuggestionItem) {
-      return `${item.username} ${item.email ?? ''}`
-    },
-    appendParticipations(participations: EventParticipationDto[]) {
-      for (const participation of participations) {
-        if (!this.participations.find(({ id }) => id === participation.id)) {
-          this.participations.push(participation)
-        }
-      }
-    },
-    async inviteUser(username: string) {
-      const inviteRequestBody = {
-        users: [username]
-      }
-      try {
-        this.isLoading = true
-        const response = await this.$apiClient.events.invite(
-          this.eventId.toString(),
-          inviteRequestBody
-        )
-        for (const item of response.payload.data) {
-          if (!this.participations.find(({ id }) => id === item.id)) {
-            this.participations.push(item)
-          }
-        }
-      } catch (error) {
-        if (
-          this.$apiClient.isApiClientError(error) &&
-          error.response?.status === 400
-        ) {
-          this.$q.notify({
-            color: 'negative',
-            message: 'Der Benutzer*innenname existiert nicht'
-          })
-        } else {
-          this.$q.notify({
-            color: 'negative',
-            message: 'Etwas ging schief beim Einladen des*der Benutzer*in'
-          })
-        }
-      } finally {
-        this.isLoading = false
-      }
-    },
-    // TODO(peter) Remove code duplication
-    handleInviteAllCoordinators() {
-      this.$q
-        .dialog({
-          title: 'Alle Koordinator*innen einladen',
-          message:
-            'Möchtest du alle Koordinator*innen des Kreisverbandes einladen?',
-          cancel: true
-        })
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        .onOk(() => this.inviteCoordinators())
-    },
-    async inviteCoordinators() {
-      const response = await this.$apiClient.events.inviteCoordinators(
-        this.eventId.toString()
-      )
-      const newParticipations = response.payload.data
-      if (newParticipations.length > 0) {
-        let areCoordinatorsAlreadyInvited = true
-        for (const participation of response.payload.data) {
-          if (!this.participations.find(({ id }) => id === participation.id)) {
-            areCoordinatorsAlreadyInvited = false
-            this.participations.push(participation)
-          }
-        }
-        if (areCoordinatorsAlreadyInvited) {
-          this.$q.notify({
-            color: 'warning',
-            message: 'Es wurden bereits alle Koordinator*innen eingeladen.'
-          })
-        }
-      } else {
-        this.$q.notify({
-          color: 'info',
-          message: 'In diesem Eventgebiet gibt es keine Koordinator*innen.'
-        })
-      }
-    },
-    handleInviteAllTeamCaptains() {
-      this.$q
-        .dialog({
-          title: 'Alle Teamcaptains einladen',
-          message: 'Möchtest du alle Teamcaptains des Kreisverbandes einladen?',
-          cancel: true
-        })
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        .onOk(() => this.inviteTeamCaptains())
-    },
-    async inviteTeamCaptains() {
-      const response = await this.$apiClient.events.inviteTeamCaptains(
-        this.eventId.toString()
-      )
-      const newParticipations = response.payload.data
-      if (newParticipations.length > 0) {
-        let areTeamCaptainsAlreadyInvited = true
-        for (const participation of response.payload.data) {
-          if (!this.participations.find(({ id }) => id === participation.id)) {
-            areTeamCaptainsAlreadyInvited = false
-            this.participations.push(participation)
-          }
-        }
-        if (areTeamCaptainsAlreadyInvited) {
-          this.$q.notify({
-            color: 'warning',
-            message: 'Es wurden bereits alle Teamcaptains eingeladen.'
-          })
-        }
-      } else {
-        this.$q.notify({
-          color: 'info',
-          message: 'In diesem Eventgebiet gibt es keine Teamcaptains.'
-        })
-      }
-    },
-    handleInviteAllUsers() {
-      this.$q
-        .dialog({
-          title: 'Alle Benutzer*innen einladen',
-          message:
-            'Möchtest du alle Benutzer*innen des Kreisverbandes einladen?',
-          cancel: true
-        })
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        .onOk(() => this.inviteUsers())
-    },
-    async inviteUsers() {
-      const response = await this.$apiClient.events.inviteUsers(
-        this.eventId.toString()
-      )
-      const newParticipations = response.payload.data
-      if (newParticipations.length > 0) {
-        let areUsersAlreadyInvited = true
-        for (const participation of response.payload.data) {
-          if (!this.participations.find(({ id }) => id === participation.id)) {
-            areUsersAlreadyInvited = false
-            this.participations.push(participation)
-          }
-        }
-        if (areUsersAlreadyInvited) {
-          this.$q.notify({
-            color: 'warning',
-            message: 'Es wurden bereits alle Benutzer*innen eingeladen.'
-          })
-        }
-      } else {
-        this.$q.notify({
-          color: 'info',
-          message:
-            'In dem zugehörigen Kreisverband gibt es keine angemeldeten Benutzer*innen.'
-        })
-      }
-    },
-    async deleteParticipation(deleteId: number) {
-      this.participations = this.participations.filter(
-        ({ id }) => deleteId !== id
-      )
-      await this.$apiClient.eventParticipations.delete(deleteId.toString())
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 @import 'src/css/utils';
