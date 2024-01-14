@@ -1,11 +1,48 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { EventDto } from 'src/api/model/EventDto'
+import { QBtn, QItem, QItemLabel, QItemSection, useQuasar } from 'quasar'
+import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
+import { CampaignDto } from 'src/api/model/CampaignDto'
+import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { openDeleteEventDialog } from 'src/utils/dialog'
+
+interface Props {
+  event: EventDto
+  campaigns: CampaignDto[]
+  showManagementControlButtons?: boolean
+}
+const props = defineProps<Props>()
+
+interface Emits {
+  // Fixme(peter@ctrl.alt.coop): click doesn't need to emit the event,
+  // since it's part of the props the outer component should already
+  // know what event it is.
+  (e: 'click', event: EventDto): void
+  (e: 'delete'): void
+}
+const emit = defineEmits<Emits>()
+
+const $q = useQuasar()
+
+const eventTypeLabel = computed(() => {
+  return eventTypeOptions.find(({ key }) => key === props.event.event_type)
+    ?.label
+})
+
+function campaignsByIds(findIds: number[]): CampaignDto[] {
+  return props.campaigns.filter(({ id }) => findIds.includes(id))
+}
+function openDeleteModal() {
+  openDeleteEventDialog($q, props.event)
+    .then(() => emit('delete'))
+    .catch(console.error)
+}
+</script>
+
 <template>
   <QItem tabindex="-1">
-    <QItemSection
-      clickable
-      v-ripple
-      tabindex="0"
-      @click="$emit('click', event)"
-    >
+    <QItemSection clickable v-ripple tabindex="0" @click="emit('click', event)">
       <QItemLabel>
         <b>{{ event.name }}</b>
       </QItemLabel>
@@ -41,57 +78,4 @@
     </QItemSection>
   </QItem>
 </template>
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { EventDto } from 'src/api/model/EventDto'
-import { QBtn, QItem, QItemLabel, QItemSection } from 'quasar'
-import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
-import { CampaignDto } from 'src/api/model/CampaignDto'
-import { eventTypeOptions } from 'src/api/model/EventTypes'
-import { openDeleteEventDialog } from 'src/utils/dialog'
-
-export default defineComponent({
-  name: 'EventListItem',
-  components: {
-    QBtn,
-    QItem,
-    QItemLabel,
-    QItemSection
-  },
-  data() {
-    return {
-      ionPencil,
-      ionTrash
-    }
-  },
-  emits: ['click', 'delete'],
-  props: {
-    event: {
-      type: Object as PropType<EventDto>,
-      required: true
-    },
-    campaigns: {
-      type: Array as PropType<CampaignDto[]>,
-      required: true
-    },
-    showManagementControlButtons: Boolean
-  },
-  computed: {
-    eventTypeLabel(): string | undefined {
-      return eventTypeOptions.find(({ key }) => key === this.event.event_type)
-        ?.label
-    }
-  },
-  methods: {
-    campaignsByIds(findIds: number[]): CampaignDto[] {
-      return this.campaigns.filter(({ id }) => findIds.includes(id))
-    },
-    openDeleteModal() {
-      openDeleteEventDialog(this.$q, this.event)
-        .then(() => this.$emit('delete'))
-        .catch(console.error)
-    }
-  }
-})
-</script>
 <style lang="scss" scoped></style>
