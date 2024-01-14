@@ -1,3 +1,170 @@
+<script setup lang="ts">
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { MapEventBus } from './Map.vue'
+import { FitBoundsOptions, LngLat, PositionOptions } from 'maplibre-gl'
+import { ionLocation, ionRadioButtonOnSharp } from '@quasar/extras/ionicons-v5'
+import { Geolocation, Position } from '@capacitor/geolocation'
+import {
+  matGpsFixed,
+  matGpsNotFixed,
+  matGpsOff
+} from '@quasar/extras/material-icons'
+import { QFab, QFabAction, QIcon } from 'quasar'
+import Marker from 'src/map/Marker.vue'
+import { MAP_GEOLOCATE_STOP_TRACKING, useMap } from 'src/map/Map.vue'
+import { LocationDto } from 'src/api/model/LocationDto'
+
+interface GeolocateControlOptions {
+  positionOptions?: PositionOptions
+  fitBoundsOptions?: FitBoundsOptions
+  trackUserLocation?: boolean
+  showAccuracyCircle?: boolean
+  showUserLocation?: boolean
+}
+
+enum GeolocateState {
+  TRACKING,
+  ENABLED,
+  DISABLED,
+  UNAVAILABLE
+}
+
+interface Props {
+  showMarker?: boolean
+  poiLocation: LocationDto
+  options?: GeolocateControlOptions
+  locatorIconFixed?: string
+  locatorIconNotFixed?: string
+  locatorIconOff?: string
+}
+
+interface Emits {
+  (e: 'position', position: LocationDto | undefined): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showMarker: true,
+  options: () => {
+    return {}
+  },
+  locatorIconFixed: matGpsFixed,
+  locatorIconNotFixed: matGpsNotFixed,
+  locatorIconOff: matGpsOff
+})
+const emit = defineEmits<Emits>()
+
+const locatorState = ref<GeolocateState>(GeolocateState.DISABLED)
+const locationWatcher = ref<null | string>(null)
+const userPosition = ref<LngLat | null>(null)
+const touchListener = ref<(() => void) | null>(null)
+
+const map = useMap()
+
+onMounted(() => {
+  touchListener.value = () => {
+    if (locatorState.value === GeolocateState.TRACKING) {
+      locatorState.value = GeolocateState.ENABLED
+    }
+  }
+  MapEventBus.on(MAP_GEOLOCATE_STOP_TRACKING, touchListener.value)
+  map.value.on('dragstart', touchListener.value)
+})
+
+const isGeolocationServiceUnavailable = computed(
+  () => GeolocateState.UNAVAILABLE === locatorState.value
+)
+const locatorIcon = computed(() => {
+  switch (locatorState.value) {
+    case GeolocateState.ENABLED:
+      return props.locatorIconNotFixed
+    case GeolocateState.DISABLED:
+      return props.locatorIconNotFixed
+    case GeolocateState.TRACKING:
+      return props.locatorIconFixed
+    case GeolocateState.UNAVAILABLE:
+    default:
+      return props.locatorIconOff
+  }
+})
+
+const locatorColor = computed(() => {
+  switch (locatorState.value) {
+    case GeolocateState.TRACKING:
+    case GeolocateState.ENABLED:
+      return 'primary'
+    case GeolocateState.UNAVAILABLE:
+      return 'grey-8'
+    case GeolocateState.DISABLED:
+    default:
+      return '#000000'
+  }
+})
+
+watch(locatorState, (newState) => {
+  switch (newState) {
+    case GeolocateState.ENABLED:
+    case GeolocateState.TRACKING:
+      void startWatch()
+      break
+  }
+})
+
+onUnmounted(() => {
+  if (touchListener.value) {
+    MapEventBus.off(MAP_GEOLOCATE_STOP_TRACKING, touchListener.value)
+    map.value.off('dragstart', touchListener.value)
+  }
+  stopWatch()
+})
+
+function onLocateClicked(position: LocationDto | undefined, tracking = false) {
+  if (tracking) {
+    switch (locatorState.value) {
+      case GeolocateState.ENABLED:
+      case GeolocateState.DISABLED:
+        locatorState.value = GeolocateState.TRACKING
+        break
+    }
+  } else {
+    MapEventBus.emit(MAP_GEOLOCATE_STOP_TRACKING)
+  }
+  if (position) {
+    map.value.panTo(position)
+    emit('position', position)
+  }
+}
+async function startWatch() {
+  if (!locationWatcher.value) {
+    locationWatcher.value = await Geolocation.watchPosition(
+      {},
+      (position, err) => updatePosition(position, err)
+    )
+  }
+}
+function stopWatch() {
+  if (locationWatcher.value) {
+    void Geolocation.clearWatch({ id: locationWatcher.value })
+  }
+}
+function updatePosition(position: Position | null, error: any) {
+  if (error) {
+    locatorState.value = GeolocateState.UNAVAILABLE
+    return
+  }
+  if (position?.coords === undefined) {
+    return
+  }
+  userPosition.value = new LngLat(
+    position.coords.longitude,
+    position.coords.latitude
+  )
+
+  if (locatorState.value === GeolocateState.TRACKING) {
+    map.value.panTo(userPosition.value)
+    emit('position', userPosition.value)
+  }
+}
+</script>
 <template>
   <Marker v-if="showMarker && userPosition" :location="userPosition">
     <template v-slot:marker>
@@ -41,207 +208,6 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { MapEventBus } from './Map.vue'
-import { FitBoundsOptions, LngLat, PositionOptions } from 'maplibre-gl'
-import {
-  ionLocateOutline,
-  ionLocation,
-  ionRadioButtonOnSharp
-} from '@quasar/extras/ionicons-v5'
-import { Geolocation, Position } from '@capacitor/geolocation'
-import {
-  matGpsFixed,
-  matGpsNotFixed,
-  matGpsOff
-} from '@quasar/extras/material-icons'
-import { QFab, QFabAction, QIcon } from 'quasar'
-import Marker from 'src/map/Marker.vue'
-import { MAP_GEOLOCATE_STOP_TRACKING, useMap } from 'src/map/Map.vue'
-import { LocationDto } from 'src/api/model/LocationDto'
-
-interface GeolocateControlOptions {
-  positionOptions?: PositionOptions
-  fitBoundsOptions?: FitBoundsOptions
-  trackUserLocation?: boolean
-  showAccuracyCircle?: boolean
-  showUserLocation?: boolean
-}
-
-enum GeolocateState {
-  TRACKING,
-  ENABLED,
-  DISABLED,
-  UNAVAILABLE
-}
-
-export default defineComponent({
-  name: 'GeolocationControl',
-  components: {
-    Marker,
-    QIcon,
-    QFab,
-    QFabAction
-  },
-  props: {
-    showMarker: {
-      type: Boolean as PropType<boolean>,
-      default: true
-    },
-    poiLocation: {
-      type: Object as PropType<LocationDto>,
-      required: false
-    },
-    options: {
-      type: Object as PropType<GeolocateControlOptions>,
-      default: function () {
-        return {}
-      }
-    },
-    locatorIconFixed: {
-      type: String as PropType<string>,
-      default: matGpsFixed
-    },
-    locatorIconNotFixed: {
-      type: String as PropType<string>,
-      default: matGpsNotFixed
-    },
-    locatorIconOff: {
-      type: String as PropType<string>,
-      default: matGpsOff
-    }
-  },
-  emits: ['position'],
-  setup() {
-    const map = useMap()
-    return {
-      map
-    }
-  },
-  data() {
-    return {
-      ionLocation,
-      ionLocateOutline,
-      locatorState: GeolocateState.DISABLED as GeolocateState,
-      locationWatcher: null as null | string,
-      userPosition: null as LngLat | null,
-      touchListener: null as (() => void) | null,
-      ionRadioButtonOnSharp
-    }
-  },
-
-  computed: {
-    isGeolocationServiceUnavailable(): boolean {
-      return GeolocateState.UNAVAILABLE === this.locatorState
-    },
-    locatorIcon(): string {
-      switch (this.locatorState) {
-        case GeolocateState.ENABLED:
-          // @ts-ignore type inference broken
-          return this.locatorIconNotFixed
-        case GeolocateState.DISABLED:
-          // @ts-ignore type inference broken
-          return this.locatorIconNotFixed
-        case GeolocateState.TRACKING:
-          // @ts-ignore type inference broken
-          return this.locatorIconFixed
-        case GeolocateState.UNAVAILABLE:
-        default:
-          // @ts-ignore type inference broken
-          return this.locatorIconOff
-      }
-    },
-    locatorColor(): string {
-      switch (this.locatorState) {
-        case GeolocateState.TRACKING:
-        case GeolocateState.ENABLED:
-          return 'primary'
-        case GeolocateState.UNAVAILABLE:
-          return 'grey-8'
-        case GeolocateState.DISABLED:
-        default:
-          return '#000000'
-      }
-    }
-  },
-  methods: {
-    onLocateClicked(position: LocationDto | undefined, tracking = false) {
-      if (tracking) {
-        switch (this.locatorState) {
-          case GeolocateState.ENABLED:
-          case GeolocateState.DISABLED:
-            this.locatorState = GeolocateState.TRACKING
-            break
-        }
-      } else {
-        MapEventBus.emit(MAP_GEOLOCATE_STOP_TRACKING)
-      }
-      if (position) {
-        this.map.panTo(position)
-        this.$emit('position', position)
-      }
-    },
-    async startWatch() {
-      if (!this.locationWatcher) {
-        this.locationWatcher = await Geolocation.watchPosition(
-          {},
-          (position, err) => this.updatePosition(position, err)
-        )
-      }
-    },
-    stopWatch() {
-      if (this.locationWatcher) {
-        void Geolocation.clearWatch({ id: this.locationWatcher })
-      }
-    },
-    updatePosition(position: Position | null, error: any) {
-      if (error) {
-        this.locatorState = GeolocateState.UNAVAILABLE
-        return
-      }
-      if (position?.coords === undefined) {
-        return
-      }
-      this.userPosition = new LngLat(
-        position.coords.longitude,
-        position.coords.latitude
-      )
-
-      if (this.locatorState === GeolocateState.TRACKING) {
-        this.map.panTo(this.userPosition)
-        this.$emit('position', this.userPosition)
-      }
-    }
-  },
-  mounted() {
-    this.touchListener = () => {
-      if (this.locatorState === GeolocateState.TRACKING) {
-        this.locatorState = GeolocateState.ENABLED
-      }
-    }
-    MapEventBus.on(MAP_GEOLOCATE_STOP_TRACKING, this.touchListener)
-    this.map.on('dragstart', this.touchListener)
-  },
-  unmounted() {
-    if (this.touchListener) {
-      MapEventBus.off(MAP_GEOLOCATE_STOP_TRACKING, this.touchListener)
-      this.map.off('dragstart', this.touchListener)
-    }
-    this.stopWatch()
-  },
-  watch: {
-    locatorState(newState) {
-      switch (newState) {
-        case GeolocateState.ENABLED:
-        case GeolocateState.TRACKING:
-          void this.startWatch()
-          break
-      }
-    }
-  }
-})
-</script>
 <style lang="scss">
 .pulse {
   font-size: 24px;
