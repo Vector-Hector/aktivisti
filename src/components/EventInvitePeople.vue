@@ -19,12 +19,6 @@ interface Props {
   eventId: number
 }
 
-interface UserSuggestionItem {
-  id: number
-  username: string
-  email?: string
-}
-
 const props = defineProps<Props>()
 
 const $q = useQuasar()
@@ -58,16 +52,6 @@ const displayedParticipations = computed(() => {
     })
 })
 
-function userLabel(item: UserSuggestionItem) {
-  return `${item.username} ${item.email ?? ''}`
-}
-function appendParticipations(newParticipations: EventParticipationDto[]) {
-  for (const participation of newParticipations) {
-    if (!participations.value.find(({ id }) => id === participation.id)) {
-      participations.value.push(participation)
-    }
-  }
-}
 async function inviteUser(username: string) {
   const inviteRequestBody = {
     users: [username]
