@@ -1,3 +1,45 @@
+<script setup lang="ts">
+import { computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
+
+export interface Step {
+  label: string
+  routeName: string
+}
+
+interface Props {
+  steps?: Step[]
+  modelValue: number
+}
+const props = withDefaults(defineProps<Props>(), {
+  steps: () => []
+})
+
+interface Emits {
+  (e: 'update:modelValue', index: number | undefined): void
+}
+const emit = defineEmits<Emits>()
+
+const $route = useRoute()
+
+const activeIndex = computed(() => {
+  return props.steps.findIndex(({ routeName }) => isActiveRoute(routeName))
+})
+
+watch(
+  activeIndex,
+  (newValue, oldValue) => {
+    if (newValue !== oldValue) {
+      emit('update:modelValue', newValue)
+    }
+  },
+  { immediate: true }
+)
+
+function isActiveRoute(routeName: string): boolean {
+  return $route.matched.some(({ name }) => name === routeName)
+}
+</script>
 <template>
   <div class="stepper-shadow-box">
     <div class="stepper">
@@ -22,51 +64,6 @@
     </div>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-
-export interface Step {
-  label: string
-  routeName: string
-}
-
-export default defineComponent({
-  name: 'RouteStepper',
-  props: {
-    steps: {
-      type: Array as PropType<Step[]>,
-      default: () => []
-    },
-    modelValue: {
-      type: Number as PropType<number>,
-      required: true
-    }
-  },
-  emits: ['update:modelValue'],
-  computed: {
-    activeIndex(): number | undefined {
-      return this.steps.findIndex(({ routeName }) =>
-        this.isActiveRoute(routeName)
-      )
-    }
-  },
-  watch: {
-    activeIndex: {
-      handler(newValue, oldValue) {
-        if (newValue !== oldValue) {
-          this.$emit('update:modelValue', newValue)
-        }
-      },
-      immediate: true
-    }
-  },
-  methods: {
-    isActiveRoute(routeName: string): boolean {
-      return this.$route.matched.some(({ name }) => name === routeName)
-    }
-  }
-})
-</script>
 <style lang="scss" scoped>
 @import 'src/css/variables';
 
