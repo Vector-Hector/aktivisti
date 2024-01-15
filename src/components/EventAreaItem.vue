@@ -2,7 +2,6 @@
 import { computed } from 'vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { userStore } from 'src/store/UserStore'
 import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
 import { QBadge, QIcon, QItem, QItemLabel, QItemSection } from 'quasar'
 import {
