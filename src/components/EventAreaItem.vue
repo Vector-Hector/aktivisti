@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { RouteLocationRaw } from 'vue-router'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { UserDto } from 'src/api/model/UserDto'
 import { userStore } from 'src/store/UserStore'
 import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
 import { QBadge, QIcon, QItem, QItemLabel, QItemSection } from 'quasar'
@@ -50,9 +48,6 @@ const participationsOfArea = computed(() => {
   return props.participations.filter(({ assigned_event_areas }) =>
     assigned_event_areas.includes(props.area.id!)
   )
-})
-const user = computed(() => {
-  return userStore.getState().user
 })
 
 function countAddresses(areaDetails: AreaDetailsDto) {
