@@ -370,7 +370,6 @@ export default defineComponent({
   beforeRouteEnter(from, to, next) {
     next()
   },
-  inject: ['scrollArea'],
   data() {
     return {
       ionSettingsSharp,
@@ -527,10 +526,6 @@ export default defineComponent({
       } finally {
         this.joinLoading = false
       }
-      setTimeout(() => {
-        // @ts-ignore
-        this.scrollArea?.value?.setScrollPercentage('vertical', 1, 300)
-      }, 300)
     },
     async updateParticipationAndLoadAreas() {
       this.personalParticipation = (
