@@ -39,7 +39,6 @@ const authStore = getAuthStore()
 const $router = useRouter()
 const $q = useQuasar()
 
-const loading = ref(true)
 const joinLoading = ref(false)
 const dateOptions: Intl.DateTimeFormatOptions = {
   year: 'numeric',
@@ -135,9 +134,6 @@ const isHangDownEvent = computed(() => {
 })
 const isInvited = computed(() => {
   return personalParticipation.value?.is_pending_invitation === true
-})
-const isCampaignAdmin = computed(() => {
-  return userStore.isCampaignAdmin()
 })
 const isPrintableEvent = computed(() => {
   const { event_type } = event.value
