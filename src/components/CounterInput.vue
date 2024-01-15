@@ -1,3 +1,32 @@
+<script setup lang="ts">
+import { uiStore } from 'src/store/UiStore'
+import { ionAdd, ionRemove } from '@quasar/extras/ionicons-v5'
+import { QBtn, QInput } from 'quasar'
+
+interface Props {
+  modelValue?: number
+  showSidebar?: boolean
+}
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: 0,
+  showSidebar: true
+})
+
+interface Emits {
+  (e: 'update:modelValue', value: number): void
+}
+const emit = defineEmits<Emits>()
+
+function toggleSidebar() {
+  uiStore.toggleSidebar()
+}
+function updateValue(value: any) {
+  const parsedValue = parseInt(value)
+  if (!isNaN(parsedValue) && parsedValue >= 0) {
+    emit('update:modelValue', parsedValue)
+  }
+}
+</script>
 <template>
   <div class="counter-input">
     <QBtn
@@ -5,8 +34,8 @@
       :icon="ionRemove"
       color="primary"
       class="counter-button"
-      :disabled="modelValue <= 0"
-      @click="$emit('update:modelValue', modelValue - 1)"
+      :disabled="props.modelValue <= 0"
+      @click="emit('update:modelValue', props.modelValue - 1)"
     />
     <QInput
       class="counter-input-field"
@@ -14,7 +43,7 @@
       dense
       outlined
       :counter="false"
-      :model-value="modelValue"
+      :model-value="props.modelValue"
       min="0"
       type="number"
       @update:model-value="updateValue($event)"
@@ -24,53 +53,10 @@
       :icon="ionAdd"
       color="primary"
       class="counter-button"
-      @click="$emit('update:modelValue', modelValue + 1)"
+      @click="emit('update:modelValue', modelValue + 1)"
     />
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { uiStore } from 'src/store/UiStore'
-import { ionAdd, ionRemove } from '@quasar/extras/ionicons-v5'
-import { QBtn, QInput } from 'quasar'
-
-export default defineComponent({
-  name: 'CounterInput',
-  components: {
-    QBtn,
-    QInput
-  },
-  props: {
-    modelValue: {
-      type: Number as PropType<number>,
-      default: 0
-    },
-    showSidebar: {
-      type: Boolean as PropType<boolean>,
-      default: true
-    }
-  },
-  emits: ['update:modelValue'],
-  data() {
-    return {
-      ionRemove,
-      ionAdd
-    }
-  },
-  methods: {
-    toggleSidebar() {
-      uiStore.toggleSidebar()
-    },
-    updateValue(value: any) {
-      const parsedValue = parseInt(value)
-      if (!isNaN(parsedValue) && parsedValue >= 0) {
-        this.$emit('update:modelValue', parsedValue)
-      }
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 .counter-input {
