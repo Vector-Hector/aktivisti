@@ -1,3 +1,342 @@
+<script setup lang="ts">
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { EventAreaDto } from 'src/api/model/EventAreaDto'
+import { getAuthStore } from 'src/store/AuthStore'
+import { userStore } from 'src/store/UserStore'
+import EventInvitePeopleModal from 'src/components/modals/EventInvitePeopleModal.vue'
+import EventParticipantsModal from 'src/components/modals/EventParticipantsModal.vue'
+import { apiClient } from 'src/api/ApiClient'
+import EventAreaItem from 'src/components/EventAreaItem.vue'
+import {
+  ionBarChart,
+  ionPencil,
+  ionPerson,
+  ionPrint,
+  ionReceipt,
+  ionSettingsSharp,
+  ionTrash
+} from '@quasar/extras/ionicons-v5'
+import {
+  QBtn,
+  QIcon,
+  QFab,
+  QFabAction,
+  QList,
+  QScrollArea,
+  useQuasar
+} from 'quasar'
+import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import Share from 'components/Share.vue'
+import LabeledBtn from 'components/LabeledBtn.vue'
+import { openDeleteEventDialog } from 'src/utils/dialog'
+import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
+import { useRouter } from 'vue-router'
+
+const PREFIX_HANG_DOWN_POSTERS = '[Abhängen] '
+const pollIntervalMs = 5000
+const authStore = getAuthStore()
+
+const $router = useRouter()
+const $q = useQuasar()
+
+const loading = ref(true)
+const joinLoading = ref(false)
+const dateOptions: Intl.DateTimeFormatOptions = {
+  year: 'numeric',
+  month: '2-digit',
+  day: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit'
+}
+const verficationPollTimeout = ref<null | NodeJS.Timeout>(null)
+const adminMenuOpen = ref(false)
+
+const {
+  event,
+  eventAreas,
+  isTeamCaptainOrCoordinator,
+  isCoordinator,
+  participations,
+  personalParticipation,
+  postersWithoutArea,
+  posters,
+  refreshParticipants
+} = useEventDetailStore()
+
+const shareUrl = computed(() => {
+  const shareUrl = process.env.APP_SHARE_URL as string
+  return (
+    shareUrl +
+    $router.resolve({
+      name: 'event-detail',
+      params: {
+        eventId: event.value.id
+      }
+    }).path
+  )
+})
+const shareTitle = computed(() => {
+  return event.value.name
+})
+const shareDescription = computed(() => {
+  if (event.value.description) {
+    return `\n\n${event.value.description}`
+  } else {
+    return ''
+  }
+})
+const shareText = computed(() => {
+  const formattedDate = new Date(event.value.start_date).toLocaleString([], {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  })
+  const formattedTime = new Date(event.value.start_date).toLocaleString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+  return `${event.value.name}\n${eventTypeLabel.value}${shareDescription.value}\n\nam: ${formattedDate}\num: ${formattedTime}\n`
+})
+const eventId = computed(() => {
+  return event.value.id.toString()
+})
+const noAreaPosters = computed(() => {
+  return {
+    id: undefined,
+    name: 'Ohne Gebiet',
+    color: '#FFFFFF',
+    event: parseInt(eventId.value),
+    is_completed: false,
+    poster_count: postersWithoutArea.value.length
+  } as Partial<EventAreaDto>
+})
+const eventAreasSorted = computed(() => {
+  const collator = new Intl.Collator('de', { caseFirst: 'upper' })
+  return [...eventAreas.value].sort((a, b) => {
+    if (a.is_completed) {
+      return 1
+    } else {
+      return collator.compare(a.name, b.name)
+    }
+  })
+})
+const eventTypeLabel = computed(() => {
+  return eventTypeOptions.find(({ key }) => key === event.value.event_type)
+    ?.label
+})
+const isLoggedIn = computed(() => {
+  return authStore.isLoggedIn()
+})
+const isMember = computed(() => {
+  return personalParticipation.value?.is_pending_invitation === false
+})
+const isHangDownEvent = computed(() => {
+  return event.value.name.startsWith(PREFIX_HANG_DOWN_POSTERS)
+})
+const isInvited = computed(() => {
+  return personalParticipation.value?.is_pending_invitation === true
+})
+const isCampaignAdmin = computed(() => {
+  return userStore.isCampaignAdmin()
+})
+const isPrintableEvent = computed(() => {
+  const { event_type } = event.value
+  return [
+    EventTypes.DOOR_TO_DOOR,
+    EventTypes.POSTERS,
+    EventTypes.FLYERS
+  ].includes(event_type)
+})
+const needsVerification = computed(() => {
+  return (
+    personalParticipation.value?.is_verified === false &&
+    event.value.event_type !== EventTypes.GENERIC
+  )
+})
+
+watch(
+  () => personalParticipation.value?.is_verified,
+  (newValue) => {
+    if (newValue === false) {
+      void pollForVerification()
+    } else if (newValue === true && verficationPollTimeout.value !== null) {
+      clearTimeout(verficationPollTimeout.value)
+    }
+  },
+  { immediate: true }
+)
+
+async function join() {
+  const generalJoinError =
+    'Ein unerwarteter Fehler trat auf beim versuch der Aktion beizutreten'
+  try {
+    joinLoading.value = true
+    event.value = (await apiClient.events.join(eventId.value)).payload.data
+    await updateParticipationAndLoadAreas()
+    if (!personalParticipation.value) {
+      $q.notify({
+        color: 'negative',
+        message: generalJoinError
+      })
+    }
+  } catch (e) {
+    $q.notify({
+      color: 'negative',
+      message: generalJoinError
+    })
+  } finally {
+    joinLoading.value = false
+  }
+}
+async function updateParticipationAndLoadAreas() {
+  personalParticipation.value = (
+    await apiClient.eventParticipations.list({
+      event: eventId.value,
+      user: userStore.getState().user?.id
+    })
+  ).payload.data?.[0]
+  if (
+    personalParticipation.value?.is_verified ||
+    isTeamCaptainOrCoordinator.value
+  ) {
+    eventAreas.value = (
+      await apiClient.eventAreas.list({ event: event.value.id })
+    ).payload.data
+    if (event.value.event_type === EventTypes.POSTERS) {
+      posters.value = (
+        await apiClient.posters.list({ event: event.value.id })
+      ).payload.data
+    }
+  } else {
+    eventAreas.value = []
+  }
+}
+async function leave() {
+  const generalLeaveError =
+    'Ein unerwarteter Fehler trat auf beim versuch die Aktion zu verlassen'
+  try {
+    joinLoading.value = true
+    event.value = (await apiClient.events.leave(eventId.value)).payload.data
+    personalParticipation.value = null
+  } catch (e) {
+    $q.notify({
+      color: 'negative',
+      message: generalLeaveError
+    })
+  } finally {
+    joinLoading.value = false
+  }
+}
+async function acceptInvite() {
+  try {
+    joinLoading.value = true
+    const response = await apiClient.eventParticipations.accept(
+      personalParticipation.value!.id.toString()
+    )
+    personalParticipation.value = response.payload.data
+  } catch (e) {
+    $q.notify({
+      color: 'negative',
+      message:
+        'Ein unerwarteter Fehler trat auf beim versuch der Aktion beizutreten'
+    })
+  } finally {
+    joinLoading.value = false
+  }
+}
+async function refreshEvent() {
+  event.value = (await apiClient.events.get(eventId.value)).payload.data
+}
+function openInviteModal() {
+  if (isTeamCaptainOrCoordinator.value) {
+    $q.dialog({
+      component: EventInvitePeopleModal,
+      componentProps: {
+        eventId: event.value.id
+      }
+    }).onDismiss(() => {
+      void refreshEvent()
+    })
+  }
+}
+async function pollForVerification() {
+  if (verficationPollTimeout.value !== null || !personalParticipation) {
+    // polling already started
+    return
+  }
+  if (personalParticipation.value?.is_verified) {
+    // if we are finally verified we can stop polling
+    return
+  }
+  await updateParticipationAndLoadAreas()
+  verficationPollTimeout.value = setTimeout(() => {
+    verficationPollTimeout.value = null
+    void pollForVerification()
+  }, pollIntervalMs)
+}
+function openParticipantsModal() {
+  $q.dialog({
+    component: EventParticipantsModal,
+    maximized: true,
+    componentProps: {
+      eventId: event.value.id,
+      eventSubAssociation: event.value.sub_association
+    }
+  }).onDismiss(() => {
+    void refreshEvent()
+    void refreshParticipants()
+  })
+}
+function openDeleteModal() {
+  openDeleteEventDialog($q, event.value).catch(console.error)
+}
+function openAdminMenu() {
+  adminMenuOpen.value = true
+}
+function hideAdminMenu() {
+  adminMenuOpen.value = false
+}
+function openPosterTakeDownModal() {
+  $q.dialog({
+    title: 'Willst Du Plakate abhängen?',
+    message: `Das Event <b>"${event.value.name}"</b> wird in eine Aktion zum Abhängen von Plakaten umgewandelt.`,
+    html: true,
+    cancel: true
+  })
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    .onOk(async () => {
+      const newStartDate = new Date()
+      newStartDate.setHours(
+        newStartDate.getHours() + Math.round(newStartDate.getMinutes() / 60) + 1
+      )
+      newStartDate.setMinutes(0, 0, 0)
+      const newEndDate = new Date(newStartDate)
+      newEndDate.setDate(newEndDate.getDate() + 14)
+      try {
+        await apiClient.events.update(event.value.id.toString(), {
+          ...event.value,
+          name: PREFIX_HANG_DOWN_POSTERS + event.value.name,
+          start_date: newStartDate.toISOString(),
+          end_date: newEndDate.toISOString()
+        })
+        $router.go(0)
+      } catch (error) {
+        $q.notify({
+          color: 'negative',
+          message:
+            'Die Aktion konnte nicht in eine Plakate-Abhängaktion umgewandelt werden'
+        })
+      }
+    })
+}
+
+onBeforeUnmount(() => {
+  if (verficationPollTimeout.value !== null) {
+    clearTimeout(verficationPollTimeout.value)
+  }
+})
+</script>
+
 <template>
   <QScrollArea
     class="d-flex flex-fill"
@@ -295,396 +634,6 @@
   </QScrollArea>
   <div class="backdrop" :class="{ 'q-dialog__backdrop': adminMenuOpen }"></div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue'
-import { EventAreaDto } from 'src/api/model/EventAreaDto'
-import { getAuthStore } from 'src/store/AuthStore'
-import { userStore } from 'src/store/UserStore'
-import EventInvitePeopleModal from 'src/components/modals/EventInvitePeopleModal.vue'
-import EventParticipantsModal from 'src/components/modals/EventParticipantsModal.vue'
-import { apiClient } from 'src/api/ApiClient'
-import EventAreaItem from 'src/components/EventAreaItem.vue'
-import {
-  ionBarChart,
-  ionLogoFacebook,
-  ionLogoTwitter,
-  ionLogoWhatsapp,
-  ionMail,
-  ionPencil,
-  ionPerson,
-  ionPersonOutline,
-  ionPrint,
-  ionReceipt,
-  ionSettingsSharp,
-  ionTrash
-} from '@quasar/extras/ionicons-v5'
-import { QBtn, QIcon, QFab, QFabAction, QList, QScrollArea } from 'quasar'
-import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
-import Share from 'components/Share.vue'
-import LabeledBtn from 'components/LabeledBtn.vue'
-import { openDeleteEventDialog } from 'src/utils/dialog'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
-
-const PREFIX_HANG_DOWN_POSTERS = '[Abhängen] '
-const pollIntervalMs = 5000
-const authStore = getAuthStore()
-
-export default defineComponent({
-  name: 'EventDetailOverview',
-  setup() {
-    const {
-      event,
-      eventAreas,
-      isTeamCaptainOrCoordinator,
-      isCoordinator,
-      participations,
-      personalParticipation,
-      postersWithoutArea,
-      posters,
-      refreshParticipants
-    } = useEventDetailStore()
-    return {
-      event,
-      eventAreas,
-      isTeamCaptainOrCoordinator,
-      isCoordinator,
-      participations,
-      personalParticipation,
-      postersWithoutArea,
-      posters,
-      refreshParticipants
-    }
-  },
-  components: {
-    LabeledBtn,
-    Share,
-    EventAreaItem,
-    QScrollArea,
-    QBtn,
-    QIcon,
-    QList,
-    QFab,
-    QFabAction
-  },
-  beforeRouteEnter(from, to, next) {
-    next()
-  },
-  data() {
-    return {
-      ionSettingsSharp,
-      loading: true,
-      joinLoading: false,
-      dateOptions: {
-        year: 'numeric',
-        month: '2-digit',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      },
-      verficationPollTimeout: null as null | NodeJS.Timeout,
-      EventTypes,
-      ionPrint,
-      ionLogoFacebook,
-      ionLogoTwitter,
-      ionLogoWhatsapp,
-      ionMail,
-      ionBarChart,
-      ionPencil,
-      ionPersonOutline,
-      ionPerson,
-      ionReceipt,
-      ionTrash,
-      adminMenuOpen: false
-    }
-  },
-  watch: {
-    'personalParticipation.is_verified': {
-      handler(newValue) {
-        if (newValue === false) {
-          void this.pollForVerification()
-        } else if (newValue === true && this.verficationPollTimeout !== null) {
-          clearTimeout(this.verficationPollTimeout)
-        }
-      },
-      immediate: true
-    }
-  },
-  computed: {
-    shareUrl(): string {
-      const shareUrl = process.env.APP_SHARE_URL as string
-      return (
-        shareUrl +
-        this.$router.resolve({
-          name: 'event-detail',
-          params: {
-            eventId: this.event.id
-          }
-        }).path
-      )
-    },
-    shareTitle(): string {
-      return this.event.name
-    },
-    shareDescription() {
-      if (this.event.description) {
-        return `\n\n${this.event.description}`
-      } else {
-        return ''
-      }
-    },
-    shareText(): string {
-      const formattedDate = new Date(this.event.start_date).toLocaleString([], {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      })
-      const formattedTime = new Date(this.event.start_date).toLocaleString([], {
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-      return `${this.event.name}\n${this.eventTypeLabel}${this.shareDescription}\n\nam: ${formattedDate}\num: ${formattedTime}\n`
-    },
-    eventId(): string {
-      return this.event.id.toString()
-    },
-    noAreaPosters(): Partial<EventAreaDto> {
-      return {
-        id: undefined,
-        name: 'Ohne Gebiet',
-        color: '#FFFFFF',
-        event: parseInt(this.eventId),
-        is_completed: false,
-        poster_count: this.postersWithoutArea.length
-      } as Partial<EventAreaDto>
-    },
-    eventAreasSorted(): EventAreaDto[] {
-      const collator = new Intl.Collator('de', { caseFirst: 'upper' })
-      return [...this.eventAreas].sort((a, b) => {
-        if (a.is_completed) {
-          return 1
-        } else {
-          return collator.compare(a.name, b.name)
-        }
-      })
-    },
-    eventTypeLabel(): string | undefined {
-      return eventTypeOptions.find(({ key }) => key === this.event.event_type)
-        ?.label
-    },
-    isLoggedIn(): boolean {
-      return authStore.isLoggedIn()
-    },
-    isMember(): boolean {
-      return this.personalParticipation?.is_pending_invitation === false
-    },
-    isHangDownEvent(): boolean {
-      return this.event.name.startsWith(PREFIX_HANG_DOWN_POSTERS)
-    },
-    isInvited(): boolean {
-      return this.personalParticipation?.is_pending_invitation === true
-    },
-    isCampaignAdmin(): boolean {
-      return userStore.isCampaignAdmin()
-    },
-    isPrintableEvent(): boolean {
-      const { event_type } = this.event
-      return [
-        EventTypes.DOOR_TO_DOOR,
-        EventTypes.POSTERS,
-        EventTypes.FLYERS
-      ].includes(event_type)
-    },
-    needsVerification(): boolean {
-      return (
-        this.personalParticipation?.is_verified === false &&
-        this.event.event_type !== EventTypes.GENERIC
-      )
-    }
-  },
-  methods: {
-    async join() {
-      const generalJoinError =
-        'Ein unerwarteter Fehler trat auf beim versuch der Aktion beizutreten'
-      try {
-        this.joinLoading = true
-        this.event = (
-          await this.$apiClient.events.join(this.eventId)
-        ).payload.data
-        await this.updateParticipationAndLoadAreas()
-        if (!this.personalParticipation) {
-          this.$q.notify({
-            color: 'negative',
-            message: generalJoinError
-          })
-        }
-      } catch (e) {
-        this.$q.notify({
-          color: 'negative',
-          message: generalJoinError
-        })
-      } finally {
-        this.joinLoading = false
-      }
-    },
-    async updateParticipationAndLoadAreas() {
-      this.personalParticipation = (
-        await this.$apiClient.eventParticipations.list({
-          event: this.eventId,
-          user: userStore.getState().user?.id
-        })
-      ).payload.data?.[0]
-      if (
-        this.personalParticipation?.is_verified ||
-        this.isTeamCaptainOrCoordinator
-      ) {
-        this.eventAreas = (
-          await this.$apiClient.eventAreas.list({ event: this.event.id })
-        ).payload.data
-        if (this.event.event_type === EventTypes.POSTERS) {
-          this.posters = (
-            await this.$apiClient.posters.list({ event: this.event.id })
-          ).payload.data
-        }
-      } else {
-        this.eventAreas = []
-      }
-    },
-    async leave() {
-      const generalLeaveError =
-        'Ein unerwarteter Fehler trat auf beim versuch die Aktion zu verlassen'
-      try {
-        this.joinLoading = true
-        this.event = (
-          await this.$apiClient.events.leave(this.eventId)
-        ).payload.data
-        this.personalParticipation = null
-      } catch (e) {
-        this.$q.notify({
-          color: 'negative',
-          message: generalLeaveError
-        })
-      } finally {
-        this.joinLoading = false
-      }
-    },
-    async acceptInvite() {
-      try {
-        this.joinLoading = true
-        const response = await this.$apiClient.eventParticipations.accept(
-          this.personalParticipation!.id.toString()
-        )
-        this.personalParticipation = response.payload.data
-      } catch (e) {
-        this.$q.notify({
-          color: 'negative',
-          message:
-            'Ein unerwarteter Fehler trat auf beim versuch der Aktion beizutreten'
-        })
-      } finally {
-        this.joinLoading = false
-      }
-    },
-    async refreshEvent() {
-      this.event = (await apiClient.events.get(this.eventId)).payload.data
-    },
-    openInviteModal() {
-      if (this.isTeamCaptainOrCoordinator) {
-        this.$q
-          .dialog({
-            component: EventInvitePeopleModal,
-            componentProps: {
-              eventId: this.event.id
-            }
-          })
-          .onDismiss(() => {
-            void this.refreshEvent()
-          })
-      }
-    },
-    async pollForVerification() {
-      if (this.verficationPollTimeout !== null || !this.personalParticipation) {
-        // polling already started
-        return
-      }
-      if (this.personalParticipation?.is_verified) {
-        // if we are finally verified we can stop polling
-        return
-      }
-      await this.updateParticipationAndLoadAreas()
-      this.verficationPollTimeout = setTimeout(() => {
-        this.verficationPollTimeout = null
-        void this.pollForVerification()
-      }, pollIntervalMs)
-    },
-    openParticipantsModal() {
-      this.$q
-        .dialog({
-          component: EventParticipantsModal,
-          maximized: true,
-          componentProps: {
-            eventId: this.event.id,
-            eventSubAssociation: this.event.sub_association
-          }
-        })
-        .onDismiss(() => {
-          void this.refreshEvent()
-          void this.refreshParticipants()
-        })
-    },
-    openDeleteModal() {
-      openDeleteEventDialog(this.$q, this.event).catch(console.error)
-    },
-    openAdminMenu() {
-      this.adminMenuOpen = true
-    },
-    hideAdminMenu() {
-      this.adminMenuOpen = false
-    },
-    openPosterTakeDownModal() {
-      this.$q
-        .dialog({
-          title: 'Willst Du Plakate abhängen?',
-          message: `Das Event <b>"${this.event.name}"</b> wird in eine Aktion zum Abhängen von Plakaten umgewandelt.`,
-          html: true,
-          cancel: true
-        })
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        .onOk(async () => {
-          const newStartDate = new Date()
-          newStartDate.setHours(
-            newStartDate.getHours() +
-              Math.round(newStartDate.getMinutes() / 60) +
-              1
-          )
-          newStartDate.setMinutes(0, 0, 0)
-          const newEndDate = new Date(newStartDate)
-          newEndDate.setDate(newEndDate.getDate() + 14)
-          try {
-            await this.$apiClient.events.update(this.event.id.toString(), {
-              ...this.event,
-              name: PREFIX_HANG_DOWN_POSTERS + this.event.name,
-              start_date: newStartDate.toISOString(),
-              end_date: newEndDate.toISOString()
-            })
-            this.$router.go(0)
-          } catch (error) {
-            this.$q.notify({
-              color: 'negative',
-              message:
-                'Die Aktion konnte nicht in eine Plakate-Abhängaktion umgewandelt werden'
-            })
-          }
-        })
-    }
-  },
-  beforeUnmount() {
-    if (this.verficationPollTimeout !== null) {
-      clearTimeout(this.verficationPollTimeout)
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 @import 'src/css/utils.scss';
