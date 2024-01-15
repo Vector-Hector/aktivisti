@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import { uiStore } from 'src/store/UiStore'
 import { ionAdd, ionRemove } from '@quasar/extras/ionicons-v5'
 import { QBtn, QInput } from 'quasar'
 
 interface Props {
   modelValue?: number
-  showSidebar?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: 0,
-  showSidebar: true
+  modelValue: 0
 })
 
 interface Emits {
@@ -17,9 +14,6 @@ interface Emits {
 }
 const emit = defineEmits<Emits>()
 
-function toggleSidebar() {
-  uiStore.toggleSidebar()
-}
 function updateValue(value: any) {
   const parsedValue = parseInt(value)
   if (!isNaN(parsedValue) && parsedValue >= 0) {
