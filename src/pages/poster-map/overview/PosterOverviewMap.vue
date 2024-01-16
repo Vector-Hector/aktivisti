@@ -1,8 +1,3 @@
-<template>
-  <Geocoder :collapsed="true" position="top-left" :countries="['de']" />
-  <PosterPopup ref="posterPopup" />
-  <PosterMarkerLayer :posters="posters" @posterClick="handlePosterClick" />
-</template>
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { useMap } from 'src/map/Map.vue'
@@ -57,3 +52,9 @@ watch(bounds, async (newBound) => {
   await updateWithinFilter(newBound)
 })
 </script>
+
+<template>
+  <Geocoder :collapsed="true" position="top-left" :countries="['de']" />
+  <PosterPopup ref="posterPopup" />
+  <PosterMarkerLayer :posters="posters" @posterClick="handlePosterClick" />
+</template>
