@@ -1,3 +1,80 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { EventDto } from 'src/api/model/EventDto'
+import Map from 'src/map/Map.vue'
+import { EventAreaDto, eventAreaToFeature } from 'src/api/model/EventAreaDto'
+import FeatureLayer from 'src/map/AreaFeatureLayer'
+import { bbox, circle } from '@turf/turf'
+import { QBtn, QIcon } from 'quasar'
+import { eventTypeOptions } from 'src/api/model/EventTypes'
+import {
+  ionArrowBack,
+  ionEllipse,
+  ionPrint,
+  ionSquareOutline
+} from '@quasar/extras/ionicons-v5'
+import EventMarker from 'components/EventMarker.vue'
+import {
+  PosterDto,
+  PosterMountUtil,
+  PosterStatus,
+  PosterStatusUtil
+} from 'src/api/model/PosterDto'
+import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
+
+interface Props {
+  event: EventDto
+  eventAreas: EventAreaDto[]
+  posters: PosterDto[]
+}
+const props = defineProps<Props>()
+
+const areaFeatures = computed(() => {
+  return props.eventAreas.map(eventAreaToFeature)
+})
+const zoomBox = computed(() => {
+  const meetingPoint = circle(
+    [props.event.location.lng, props.event.location.lat],
+    0.2
+  )
+  return areaFeatures.value.length > 0
+    ? bbox({
+        type: 'FeatureCollection',
+        features: [...areaFeatures.value, meetingPoint]
+      })
+    : bbox(meetingPoint)
+})
+const parsedPoster = computed(() => {
+  return props.posters
+    .map(({ poster_id, area, location_description, status, mounted_on }) => ({
+      poster_id: poster_id,
+      area: area,
+      location_description: location_description,
+      status: PosterStatusUtil.getLabel(status),
+      mounted_on: PosterMountUtil.getLabel(mounted_on)
+    }))
+    .sort((a, b) => a.poster_id - b.poster_id)
+})
+const posterStates = computed(() => {
+  return Object.keys(PosterStatus).map((key) =>
+    PosterStatusUtil.getLabel(key as PosterStatus)
+  )
+})
+const arePostersOutsideArea = computed(() => {
+  return props.posters.some(({ area }) => area === null)
+})
+
+function boundingBoxOfArea(area: EventAreaDto) {
+  return bbox({
+    type: 'FeatureCollection',
+    features: [eventAreaToFeature(area)]
+  })
+}
+function print() {
+  window.print()
+}
+</script>
+
 <template>
   <div class="posters-printout">
     <QBtn
@@ -173,83 +250,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed } from 'vue'
-import { EventDto } from 'src/api/model/EventDto'
-import Map from 'src/map/Map.vue'
-import { EventAreaDto, eventAreaToFeature } from 'src/api/model/EventAreaDto'
-import FeatureLayer from 'src/map/AreaFeatureLayer'
-import { bbox, circle } from '@turf/turf'
-import { QBtn, QIcon } from 'quasar'
-import { eventTypeOptions } from 'src/api/model/EventTypes'
-import {
-  ionArrowBack,
-  ionEllipse,
-  ionPrint,
-  ionSquareOutline
-} from '@quasar/extras/ionicons-v5'
-import EventMarker from 'components/EventMarker.vue'
-import {
-  PosterDto,
-  PosterMountUtil,
-  PosterStatus,
-  PosterStatusUtil
-} from 'src/api/model/PosterDto'
-import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
-
-interface Props {
-  event: EventDto
-  eventAreas: EventAreaDto[]
-  posters: PosterDto[]
-}
-const props = defineProps<Props>()
-
-const areaFeatures = computed(() => {
-  return props.eventAreas.map(eventAreaToFeature)
-})
-const zoomBox = computed(() => {
-  const meetingPoint = circle(
-    [props.event.location.lng, props.event.location.lat],
-    0.2
-  )
-  return areaFeatures.value.length > 0
-    ? bbox({
-        type: 'FeatureCollection',
-        features: [...areaFeatures.value, meetingPoint]
-      })
-    : bbox(meetingPoint)
-})
-const parsedPoster = computed(() => {
-  return props.posters
-    .map(({ poster_id, area, location_description, status, mounted_on }) => ({
-      poster_id: poster_id,
-      area: area,
-      location_description: location_description,
-      status: PosterStatusUtil.getLabel(status),
-      mounted_on: PosterMountUtil.getLabel(mounted_on)
-    }))
-    .sort((a, b) => a.poster_id - b.poster_id)
-})
-const posterStates = computed(() => {
-  return Object.keys(PosterStatus).map((key) =>
-    PosterStatusUtil.getLabel(key as PosterStatus)
-  )
-})
-const arePostersOutsideArea = computed(() => {
-  return props.posters.some(({ area }) => area === null)
-})
-
-function boundingBoxOfArea(area: EventAreaDto) {
-  return bbox({
-    type: 'FeatureCollection',
-    features: [eventAreaToFeature(area)]
-  })
-}
-function print() {
-  window.print()
-}
-</script>
 
 <style lang="scss" scoped>
 .posters-printout {
