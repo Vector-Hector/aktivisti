@@ -22,10 +22,8 @@ import PosterPopup from 'src/map/popup/layerPopups/PosterPopup.vue'
 const posterPopup = ref<InstanceType<typeof PosterPopup> | null>(null)
 
 const map = useMap()
-const clickedPoster = ref<PosterDto | null>(null)
 let bounds = ref(userStore.getState().bbox)
 const popup = ref<Popup | null>(null)
-const popupElement = ref<HTMLElement | null>(null)
 const updateBounds = () => {
   bounds.value = map.value?.getBounds().toArray().flat() as BBox2d
 }
@@ -37,15 +35,10 @@ onUnmounted(() => {
   popup?.value?.remove()
 })
 updateBounds()
-const {
-  filterParams,
-  itemHoveredOver: posterHoveredOver,
-  items: posters,
-  updateFilterParams
-} = useOverviewMixin<PosterDto, PosterFilterParams>(
-  posterOverviewStore,
-  apiClient.posters
-)
+const { items: posters, updateFilterParams } = useOverviewMixin<
+  PosterDto,
+  PosterFilterParams
+>(posterOverviewStore, apiClient.posters)
 
 async function updateWithinFilter(polygon: BBox2d) {
   await updateFilterParams({
