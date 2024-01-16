@@ -1,3 +1,122 @@
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import { EventDto } from 'src/api/model/EventDto'
+import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
+import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { UserDto } from 'src/api/model/UserDto'
+import {
+  QBtn,
+  QItem,
+  QItemLabel,
+  QItemSection,
+  QList,
+  QPage,
+  QScrollArea,
+  QSeparator
+} from 'quasar'
+import { CampaignDto } from 'src/api/model/CampaignDto'
+import { ionCheckmark, ionClose } from '@quasar/extras/ionicons-v5'
+import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
+import { myParticipationsStore } from 'src/store/MyParticipationsStore'
+import { userStore } from 'src/store/UserStore'
+import { EventStatus } from 'src/api/model/EventStatus'
+import { apiClient } from 'src/api/ApiClient'
+
+const participatedEvents = ref<EventDto[]>([])
+const invitingUsers = ref<UserDto[]>([])
+const campaigns = ref<CampaignDto[]>([])
+const loading = ref(true)
+
+onMounted(async () => {
+  await Promise.all([getParticipatedEvents(), getCampaigns()])
+  loading.value = false
+})
+
+const eventParticipations = computed({
+  get(): EventParticipationDto[] {
+    return myParticipationsStore.getState().eventParticipations
+  },
+  set(value: EventParticipationDto[]) {
+    myParticipationsStore.setEventParticipations(value)
+  }
+})
+const acceptedEvents = computed(() => {
+  return eventParticipations.value
+    .filter((item) => !item.is_pending_invitation)
+    .map((participation) => {
+      return {
+        participation,
+        event: eventForParticipation(participation)
+      }
+    })
+    .sort((a, b) => {
+      if (a.event && b.event) {
+        return a.event?.start_date > b.event.start_date ? -1 : 1
+      } else {
+        return 0
+      }
+    })
+})
+const pendingEvents = computed(() => {
+  return eventParticipations.value
+    .filter((item) => item.is_pending_invitation)
+    .map((participation) => {
+      return {
+        participation,
+        event: eventForParticipation(participation)
+      }
+    })
+    .sort((a, b) => {
+      if (a.event && b.event) {
+        return a.event?.start_date > b.event.start_date ? -1 : 1
+      } else {
+        return 0
+      }
+    })
+})
+
+async function getCampaigns() {
+  const response = await apiClient.campaigns.list()
+  campaigns.value = response.payload.data
+}
+async function getParticipatedEvents() {
+  const responseData = (
+    await apiClient.eventParticipations.list(
+      {
+        user: userStore.getState().user?.id,
+        status: EventStatus.ACTIVE
+      },
+      ['event', 'inviting_users']
+    )
+  ).payload
+  participatedEvents.value = responseData.embedded.event
+  invitingUsers.value = responseData.embedded.inviting_users
+  myParticipationsStore.setEventParticipations(responseData.data)
+}
+function accept(eventParticipation: EventParticipationDto) {
+  eventParticipation.is_pending_invitation = false
+  void apiClient.eventParticipations.accept(eventParticipation.id.toString())
+}
+function reject(eventParticipation: EventParticipationDto) {
+  eventParticipations.value = eventParticipations.value.filter(
+    ({ id }) => id !== eventParticipation.id
+  )
+  void apiClient.eventParticipations.reject(eventParticipation.id.toString())
+}
+function eventForParticipation(participation: EventParticipationDto) {
+  return participatedEvents.value.find(({ id }) => participation.event === id)
+}
+function eventTypeLabel(event_type: string) {
+  return eventTypeOptions.find(({ key }) => key === event_type)?.label
+}
+function campaignsByIds(findIds: number[]): CampaignDto[] {
+  return campaigns.value.filter(({ id }) => findIds.includes(id))
+}
+function findInvitingUsers(findIds: number[]): UserDto[] {
+  return invitingUsers.value.filter(({ id }) => findIds.includes(id))
+}
+</script>
+
 <template>
   <QPage class="flex column col-grow">
     <QScrollArea class="flex col-grow">
@@ -123,125 +242,6 @@
     </QScrollArea>
   </QPage>
 </template>
-
-<script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { EventDto } from 'src/api/model/EventDto'
-import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { eventTypeOptions } from 'src/api/model/EventTypes'
-import { UserDto } from 'src/api/model/UserDto'
-import {
-  QBtn,
-  QItem,
-  QItemLabel,
-  QItemSection,
-  QList,
-  QPage,
-  QScrollArea,
-  QSeparator
-} from 'quasar'
-import { CampaignDto } from 'src/api/model/CampaignDto'
-import { ionCheckmark, ionClose } from '@quasar/extras/ionicons-v5'
-import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
-import { myParticipationsStore } from 'src/store/MyParticipationsStore'
-import { userStore } from 'src/store/UserStore'
-import { EventStatus } from 'src/api/model/EventStatus'
-import { apiClient } from 'src/api/ApiClient'
-
-const participatedEvents = ref<EventDto[]>([])
-const invitingUsers = ref<UserDto[]>([])
-const campaigns = ref<CampaignDto[]>([])
-const loading = ref(true)
-
-onMounted(async () => {
-  await Promise.all([getParticipatedEvents(), getCampaigns()])
-  loading.value = false
-})
-
-const eventParticipations = computed({
-  get(): EventParticipationDto[] {
-    return myParticipationsStore.getState().eventParticipations
-  },
-  set(value: EventParticipationDto[]) {
-    myParticipationsStore.setEventParticipations(value)
-  }
-})
-const acceptedEvents = computed(() => {
-  return eventParticipations.value
-    .filter((item) => !item.is_pending_invitation)
-    .map((participation) => {
-      return {
-        participation,
-        event: eventForParticipation(participation)
-      }
-    })
-    .sort((a, b) => {
-      if (a.event && b.event) {
-        return a.event?.start_date > b.event.start_date ? -1 : 1
-      } else {
-        return 0
-      }
-    })
-})
-const pendingEvents = computed(() => {
-  return eventParticipations.value
-    .filter((item) => item.is_pending_invitation)
-    .map((participation) => {
-      return {
-        participation,
-        event: eventForParticipation(participation)
-      }
-    })
-    .sort((a, b) => {
-      if (a.event && b.event) {
-        return a.event?.start_date > b.event.start_date ? -1 : 1
-      } else {
-        return 0
-      }
-    })
-})
-
-async function getCampaigns() {
-  const response = await apiClient.campaigns.list()
-  campaigns.value = response.payload.data
-}
-async function getParticipatedEvents() {
-  const responseData = (
-    await apiClient.eventParticipations.list(
-      {
-        user: userStore.getState().user?.id,
-        status: EventStatus.ACTIVE
-      },
-      ['event', 'inviting_users']
-    )
-  ).payload
-  participatedEvents.value = responseData.embedded.event
-  invitingUsers.value = responseData.embedded.inviting_users
-  myParticipationsStore.setEventParticipations(responseData.data)
-}
-function accept(eventParticipation: EventParticipationDto) {
-  eventParticipation.is_pending_invitation = false
-  void apiClient.eventParticipations.accept(eventParticipation.id.toString())
-}
-function reject(eventParticipation: EventParticipationDto) {
-  eventParticipations.value = eventParticipations.value.filter(
-    ({ id }) => id !== eventParticipation.id
-  )
-  void apiClient.eventParticipations.reject(eventParticipation.id.toString())
-}
-function eventForParticipation(participation: EventParticipationDto) {
-  return participatedEvents.value.find(({ id }) => participation.event === id)
-}
-function eventTypeLabel(event_type: string) {
-  return eventTypeOptions.find(({ key }) => key === event_type)?.label
-}
-function campaignsByIds(findIds: number[]): CampaignDto[] {
-  return campaigns.value.filter(({ id }) => findIds.includes(id))
-}
-function findInvitingUsers(findIds: number[]): UserDto[] {
-  return invitingUsers.value.filter(({ id }) => findIds.includes(id))
-}
-</script>
 
 <style lang="scss" scoped>
 @import 'src/css/variables.scss';
