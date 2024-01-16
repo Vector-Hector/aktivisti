@@ -1,3 +1,45 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import FilterInput from 'components/filterInput/FilterInput.vue'
+import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
+
+interface Props {
+  options: SubAssociationDto[]
+  modelValue?: number
+  showAllCampaigns?: boolean
+  disable?: boolean
+  label?: string
+}
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: 0,
+  showAllCampaigns: true,
+  disable: false,
+  label: 'Bezirks/Kreisverband'
+})
+
+interface Emits {
+  (e: 'update:modelValue', value: number | undefined): void
+}
+const emit = defineEmits<Emits>()
+
+const extendedOptions = computed(() => {
+  if (props.showAllCampaigns) {
+    return [
+      {
+        id: 0,
+        name: 'Alle Bezirks/Kreisverbände'
+      },
+      ...props.options
+    ]
+  } else {
+    return props.options
+  }
+})
+
+function updateModelValue(value: number) {
+  emit('update:modelValue', value > 0 ? value : undefined)
+}
+</script>
 <template>
   <FilterInput
     :label="label"
@@ -11,58 +53,3 @@
     :disable="disable"
   />
 </template>
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import FilterInput from 'components/filterInput/FilterInput.vue'
-import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
-
-export default defineComponent({
-  name: 'SubAssociationFilter',
-  components: {
-    FilterInput
-  },
-  props: {
-    options: {
-      type: Array as PropType<SubAssociationDto[]>,
-      required: true
-    },
-    modelValue: {
-      type: Number as PropType<number>,
-      default: 0
-    },
-    showAllCampaigns: {
-      type: Boolean,
-      default: true
-    },
-    disable: {
-      type: Boolean,
-      default: false
-    },
-    label: {
-      type: String,
-      default: 'Bezirks/Kreisverband'
-    }
-  },
-  emits: ['update:modelValue'],
-  computed: {
-    extendedOptions(): Partial<SubAssociationDto>[] {
-      if (this.showAllCampaigns) {
-        return [
-          {
-            id: 0,
-            name: 'Alle Bezirks/Kreisverbände'
-          },
-          ...this.options
-        ]
-      } else {
-        return this.options
-      }
-    }
-  },
-  methods: {
-    updateModelValue(value: number) {
-      this.$emit('update:modelValue', value > 0 ? value : undefined)
-    }
-  }
-})
-</script>
