@@ -12,6 +12,9 @@
       // To properly reflect changes after HMR with Vite
       "enableContentValidation": false,
       "webRoot": "${workspaceFolder}/src",
+      // If you're using chromium instead of chrome uncomment the following line
+      // and set the path to your chromium executable
+      // "runtimeExecutable": "/usr/bin/chromium",
       // No need to configure sourcemap explicitly for vite.
       "sourceMapPathOverrides": {
         "webpack://wk-frontend/./src/*": "${webRoot}/*"
@@ -26,6 +29,9 @@
       // To properly reflect changes after HMR with Vite
       "enableContentValidation": false,
       "webRoot": "${workspaceFolder}/src",
+      // If you're using chromium instead of chrome uncomment the following line
+      // and set the path to your chromium executable
+      // "runtimeExecutable": "/usr/bin/chromium",
       // No need to configure sourcemap explicitly for vite.
       "sourceMapPathOverrides": {
         "webpack://wk-frontend/./src/*": "${webRoot}/*"
