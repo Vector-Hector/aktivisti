@@ -1,16 +1,3 @@
-<template>
-  <FilterInput
-    :label="label"
-    :model-value="modelValue"
-    @update:model-value="updateModelValue"
-    :options="extendedOptions"
-    emit-value
-    map-options
-    option-value="id"
-    option-label="name"
-    :disable="disable"
-  />
-</template>
 <script setup lang="ts">
 import { computed } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
@@ -53,3 +40,17 @@ function updateModelValue(value: number) {
   emit('update:modelValue', value > 0 ? value : undefined)
 }
 </script>
+
+<template>
+  <FilterInput
+    :label="label"
+    :model-value="modelValue"
+    @update:model-value="updateModelValue"
+    :options="extendedOptions"
+    emit-value
+    map-options
+    option-value="id"
+    option-label="name"
+    :disable="disable"
+  />
+</template>
