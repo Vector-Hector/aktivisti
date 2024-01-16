@@ -121,10 +121,10 @@
   </QPage>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
 import { QItem, QItemSection, QPage, QSelect } from 'quasar'
-import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
+import { ionChevronDown } from '@quasar/extras/ionicons-v5'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { StateAssociationDto } from 'src/api/model/StateAssociationDto'
 import { userStore } from 'src/store/UserStore'
@@ -138,6 +138,7 @@ import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 import { ContentTypeNaturalKey } from 'src/api/model/ContentTypeDto'
 import UserPermissionAdding from 'components/UserPermissionAdding.vue'
 import UserPermissionList from 'components/UserPermissionList.vue'
+import { apiClient } from 'src/api/ApiClient'
 
 enum ContentTypesDisplayNames {
   SUB_ASSOCIATION = 'Kreisverband',
@@ -156,288 +157,266 @@ export interface ExtendedPermissionTypeOption {
   inactive: boolean
 }
 
-export default defineComponent({
-  name: 'ManageUsers',
-  components: {
-    UserPermissionList,
-    UserPermissionAdding,
-    PageLoadingSpinner,
-    QSelect,
-    QPage,
-    QItem,
-    QItemSection
-  },
-  data() {
-    return {
-      ContentTypesDisplayNames,
-      ContentTypeNaturalKey,
-      ionChevronDown,
-      ionClose,
-      mySubAssociations: [] as SubAssociationDto[],
-      myStateAssociations: [] as StateAssociationDto[],
-      suggestedSubAssociations: [] as SubAssociationDto[],
-      suggestedStateAssociations: [] as StateAssociationDto[],
-      loading: true,
-      permissionTypeOptions,
-      PermissionCodename,
-      contentTypeOptions: null as ContentTypeOption[] | null,
-      selectedContentType: null as ContentTypeOption | null,
-      selectedState: null as StateAssociationDto | null,
-      selectedSubAssociation: null as SubAssociationDto | null,
-      myExplicitPermissionForSelectedSubAssociation:
-        null as UserObjectPermissionDto | null,
-      isAbleToManageStateAssociations: true
-    }
-  },
-  async created() {
-    this.contentTypeOptions = await this.getContentTypeCodes()
+const userPermissionList = ref<InstanceType<typeof UserPermissionList> | null>(
+  null
+)
 
-    this.mySubAssociations = await this.getMySubAssociations()
-    this.myStateAssociations = await this.getMyStateAssociations()
+const mySubAssociations = ref<SubAssociationDto[]>([])
+const myStateAssociations = ref<StateAssociationDto[]>([])
+const suggestedSubAssociations = ref<SubAssociationDto[]>([])
+const suggestedStateAssociations = ref<StateAssociationDto[]>([])
+const loading = ref(true)
+const contentTypeOptions = ref<ContentTypeOption[] | null>(null)
+const selectedContentType = ref<ContentTypeOption | null>(null)
+const selectedState = ref<StateAssociationDto | null>(null)
+const selectedSubAssociation = ref<SubAssociationDto | null>(null)
+const myExplicitPermissionForSelectedSubAssociation =
+  ref<UserObjectPermissionDto | null>(null)
+const isAbleToManageStateAssociations = ref(true)
 
-    if (!this.isUserAdminOrGlobalCoordinator) {
-      if (this.myStateAssociations.length === 0) {
-        this.selectedContentType = this.contentTypeOptions!.find(
-          ({ natural_key }) =>
-            natural_key === ContentTypeNaturalKey.SUB_ASSOCIATION
-        ) as ContentTypeOption
-        this.isAbleToManageStateAssociations = false
-      }
-      if (this.mySubAssociations.length === 1) {
-        this.selectSubAssociation(this.mySubAssociations[0])
-      }
-      if (this.myStateAssociations.length === 1) {
-        this.selectStateAssociation(this.myStateAssociations[0])
-      }
-    }
+onMounted(async () => {
+  contentTypeOptions.value = await getContentTypeCodes()
 
-    this.suggestedSubAssociations = this.mySubAssociations
-    this.suggestedStateAssociations = this.myStateAssociations
-    this.loading = false
-  },
-  computed: {
-    userManagementPermissions(): UserObjectPermissionDto[] {
-      return userStore.getMyTeamCaptainOrCoordinatorPermissions()
-    },
-    isUserAdminOrGlobalCoordinator(): boolean {
-      return userStore.isAdminOrGlobalCoordinator()
-    },
-    isManagingState(): boolean {
-      return Boolean(
-        this.selectedContentType?.natural_key ===
-          ContentTypeNaturalKey.STATE_ASSOCIATION
-      )
-    },
-    isManagingSubAssociation(): boolean {
-      return Boolean(
-        this.selectedContentType?.natural_key ===
-          ContentTypeNaturalKey.SUB_ASSOCIATION
-      )
-    },
-    myPermissions(): UserObjectPermissionDto[] {
-      return userStore.getMyPermissions()
-    },
-    permissionOptionsForNewUsers(): ExtendedPermissionTypeOption[] {
-      const permissionOptionsForNewUsers = [
-        permissionTypeOptions.find(
-          ({ key }) => key === PermissionCodename.MANAGE_EVENTS
-        ) as PermissionTypeOption
-      ]
-      if (this.isManagingSubAssociation) {
-        permissionOptionsForNewUsers.push(
-          permissionTypeOptions.find(
-            ({ key }) => key === PermissionCodename.TEAM_CAPTAIN
-          ) as PermissionTypeOption
-        )
-      }
-      return permissionOptionsForNewUsers.map((option) =>
-        Object.assign(option, {
-          inactive: !this.isAllowedToManagePermissions(option)
-        })
-      )
-    },
-    permissionOptionsForExistingUsers(): ExtendedPermissionTypeOption[] {
-      const noPermission = permissionTypeOptions.find(
-        ({ key }) => key === PermissionCodename.NONE
-      ) as ExtendedPermissionTypeOption
-      noPermission.inactive = false
-      return this.permissionOptionsForNewUsers.concat([noPermission])
-    }
-  },
-  methods: {
-    userSubmitted() {
-      // @ts-ignore
-      this.$refs.userPermissionList.getUsersWithPermissionsForEntity()
-    },
-    async getSubAssociations(stateAssociationId?: number) {
-      return (
-        await this.$apiClient.subAssociations.list({
-          state_association: stateAssociationId
-        })
-      ).payload.data
-    },
-    async getStateAssociations() {
-      return (await this.$apiClient.stateAssociations.list()).payload.data
-    },
-    async getContentTypeCodes(): Promise<ContentTypeOption[] | null> {
-      const contentTypes = (await this.$apiClient.contentTypes.list()).payload
-        .data
+  mySubAssociations.value = await getMySubAssociations()
+  myStateAssociations.value = await getMyStateAssociations()
 
-      let contentTypeOptions = [] as ContentTypeOption[]
-      for (const natural_key of [
-        ContentTypeNaturalKey.SUB_ASSOCIATION,
-        ContentTypeNaturalKey.STATE_ASSOCIATION
-      ]) {
-        const contentType = contentTypes.find(
-          (ct) => natural_key === ct.natural_key
-        )
-        if (!contentType) {
-          throw Error('Natural key seams to be unknown to content-type service')
-        }
-        const label =
+  if (!isUserAdminOrGlobalCoordinator.value) {
+    if (myStateAssociations.value.length === 0) {
+      selectedContentType.value = contentTypeOptions.value!.find(
+        ({ natural_key }) =>
           natural_key === ContentTypeNaturalKey.SUB_ASSOCIATION
-            ? ContentTypesDisplayNames.SUB_ASSOCIATION
-            : ContentTypesDisplayNames.STATE_ASSOCIATION
-        contentTypeOptions.push({
-          id: contentType.id,
-          label: label,
-          natural_key: natural_key
-        })
-      }
-      return contentTypeOptions
-    },
-    async getMySubAssociations() {
-      const allSubAssociations = await this.getSubAssociations()
-      if (this.isUserAdminOrGlobalCoordinator) {
-        return allSubAssociations
-      } else {
-        //Sub association I have direct permissions for
-        const mySubAssociationsIds = this.myPermissions
-          .filter(
-            (permission) =>
-              permission.content_type_natural_key ===
-              ContentTypeNaturalKey.SUB_ASSOCIATION
-          )
-          .map((permission) => permission.object_pk)
-        const mySubAssociations = allSubAssociations.filter(({ id }) =>
-          mySubAssociationsIds.includes(id.toString())
-        )
-        // take care of corresponding subassociations if I have state association permission
-        const myStateAssociationIds = this.myPermissions
-          .filter(
-            (permission) =>
-              permission.content_type_natural_key ===
-              ContentTypeNaturalKey.STATE_ASSOCIATION
-          )
-          .map((permission) => permission.object_pk)
-        const subAssociationsInMyStateAssociations = [] as SubAssociationDto[]
-        for (const stateAssociationId of myStateAssociationIds) {
-          const newSubAssociations = await this.getSubAssociations(
-            parseInt(stateAssociationId)
-          )
-          subAssociationsInMyStateAssociations.push(...newSubAssociations)
-        }
-        for (const subAssociation of subAssociationsInMyStateAssociations) {
-          if (!mySubAssociationsIds.includes(subAssociation.id.toString())) {
-            mySubAssociations.push(subAssociation)
-          }
-        }
-        return mySubAssociations
-      }
-    },
-    async getMyStateAssociations(): Promise<StateAssociationDto[]> {
-      if (this.isUserAdminOrGlobalCoordinator) {
-        return await this.getStateAssociations()
-      } else {
-        return this.myPermissions
-          .filter(
-            ({ content_type_natural_key }) =>
-              content_type_natural_key ===
-              ContentTypeNaturalKey.STATE_ASSOCIATION
-          )
-          .map(({ object_pk, content_object_name }) => {
-            return {
-              id: parseInt(object_pk),
-              name: content_object_name
-            }
-          })
-      }
-    },
-    filterSubAssociations(value: string, update: any) {
-      if (!value) {
-        update(() => {
-          this.suggestedSubAssociations = this.mySubAssociations
-        })
-        return
-      }
-      update(() => {
-        const lowercasedValue = value.toLowerCase()
-        this.suggestedSubAssociations = this.mySubAssociations.filter(
-          ({ name }) => name.toLowerCase().includes(lowercasedValue)
-        )
-      })
-    },
-    filterStateAssociations(value: string, update: any) {
-      if (!value) {
-        update(() => {
-          this.suggestedStateAssociations = this.myStateAssociations
-        })
-        return
-      }
-      update(() => {
-        const lowercasedValue = value.toLowerCase()
-        this.suggestedStateAssociations = this.myStateAssociations.filter(
-          ({ name }) => name.toLowerCase().includes(lowercasedValue)
-        )
-      })
-    },
-    handleContentTypeSelect(ct: ContentTypeOption) {
-      this.selectedContentType = ct
-    },
-    selectStateAssociation(state: StateAssociationDto) {
-      this.selectedState = state
-    },
-    selectSubAssociation(subAssociation: SubAssociationDto) {
-      this.selectedSubAssociation = subAssociation
-      this.myExplicitPermissionForSelectedSubAssociation =
-        this.userManagementPermissions.find(
-          (permission) => permission.object_pk === subAssociation.id.toString()
-        ) || null
-    },
-    isAllowedToManagePermissions(permissionType: PermissionTypeOption) {
-      if (this.isManagingSubAssociation) {
-        // if I don't have direct permissions for the sub association I'm state association or global coordinator,
-        // so I'm allowed to manage everything
-        if (!this.myExplicitPermissionForSelectedSubAssociation) {
-          return true
-        }
-        // if I am sub association coordinator I can manage all types of permissions
-        if (
-          this.myExplicitPermissionForSelectedSubAssociation
-            .permission_codename === PermissionCodename.MANAGE_EVENTS
-        ) {
-          return true
-        }
-        // If I am team captain I can only manage Team captain (or None) permissions
-        else if (
-          this.myExplicitPermissionForSelectedSubAssociation
-            .permission_codename === PermissionCodename.TEAM_CAPTAIN &&
-          (permissionType.key === PermissionCodename.TEAM_CAPTAIN ||
-            permissionType.key === PermissionCodename.NONE)
-        ) {
-          //and only for users who are not coordinators which is handled in the template!
-          return true
-        } else {
-          return false
-        }
-      } else {
-        //managementLevel === 'Landesverband'
-        // If there is anything to manage at all I must have coordinator permissions for the selected state association
-        return true
-      }
+      ) as ContentTypeOption
+      isAbleToManageStateAssociations.value = false
+    }
+    if (mySubAssociations.value.length === 1) {
+      selectSubAssociation(mySubAssociations.value[0])
+    }
+    if (myStateAssociations.value.length === 1) {
+      selectStateAssociation(myStateAssociations.value[0])
     }
   }
+
+  suggestedSubAssociations.value = mySubAssociations.value
+  suggestedStateAssociations.value = myStateAssociations.value
+  loading.value = false
 })
+
+const userManagementPermissions = computed(() => {
+  return userStore.getMyTeamCaptainOrCoordinatorPermissions()
+})
+const isUserAdminOrGlobalCoordinator = computed(() => {
+  return userStore.isAdminOrGlobalCoordinator()
+})
+const isManagingState = computed(() => {
+  return Boolean(
+    selectedContentType.value?.natural_key ===
+      ContentTypeNaturalKey.STATE_ASSOCIATION
+  )
+})
+const isManagingSubAssociation = computed(() => {
+  return Boolean(
+    selectedContentType.value?.natural_key ===
+      ContentTypeNaturalKey.SUB_ASSOCIATION
+  )
+})
+const myPermissions = computed(() => {
+  return userStore.getMyPermissions()
+})
+const permissionOptionsForNewUsers = computed(() => {
+  const permissionOptionsForNewUsers = [
+    permissionTypeOptions.find(
+      ({ key }) => key === PermissionCodename.MANAGE_EVENTS
+    ) as PermissionTypeOption
+  ]
+  if (isManagingSubAssociation.value) {
+    permissionOptionsForNewUsers.push(
+      permissionTypeOptions.find(
+        ({ key }) => key === PermissionCodename.TEAM_CAPTAIN
+      ) as PermissionTypeOption
+    )
+  }
+  return permissionOptionsForNewUsers.map((option) =>
+    Object.assign(option, {
+      inactive: !isAllowedToManagePermissions(option)
+    })
+  )
+})
+const permissionOptionsForExistingUsers = computed(() => {
+  const noPermission = permissionTypeOptions.find(
+    ({ key }) => key === PermissionCodename.NONE
+  ) as ExtendedPermissionTypeOption
+  noPermission.inactive = false
+  return permissionOptionsForNewUsers.value.concat([noPermission])
+})
+
+function userSubmitted() {
+  userPermissionList.value?.getUsersWithPermissionsForEntity()
+}
+async function getSubAssociations(stateAssociationId?: number) {
+  return (
+    await apiClient.subAssociations.list({
+      state_association: stateAssociationId
+    })
+  ).payload.data
+}
+async function getStateAssociations() {
+  return (await apiClient.stateAssociations.list()).payload.data
+}
+async function getContentTypeCodes(): Promise<ContentTypeOption[] | null> {
+  const contentTypes = (await apiClient.contentTypes.list()).payload.data
+
+  let contentTypeOptions = [] as ContentTypeOption[]
+  for (const natural_key of [
+    ContentTypeNaturalKey.SUB_ASSOCIATION,
+    ContentTypeNaturalKey.STATE_ASSOCIATION
+  ]) {
+    const contentType = contentTypes.find(
+      (ct) => natural_key === ct.natural_key
+    )
+    if (!contentType) {
+      throw Error('Natural key seams to be unknown to content-type service')
+    }
+    const label =
+      natural_key === ContentTypeNaturalKey.SUB_ASSOCIATION
+        ? ContentTypesDisplayNames.SUB_ASSOCIATION
+        : ContentTypesDisplayNames.STATE_ASSOCIATION
+    contentTypeOptions.push({
+      id: contentType.id,
+      label: label,
+      natural_key: natural_key
+    })
+  }
+  return contentTypeOptions
+}
+async function getMySubAssociations() {
+  const allSubAssociations = await getSubAssociations()
+  if (isUserAdminOrGlobalCoordinator.value) {
+    return allSubAssociations
+  } else {
+    //Sub association I have direct permissions for
+    const mySubAssociationsIds = myPermissions.value
+      .filter(
+        (permission) =>
+          permission.content_type_natural_key ===
+          ContentTypeNaturalKey.SUB_ASSOCIATION
+      )
+      .map((permission) => permission.object_pk)
+    const mySubAssociations = allSubAssociations.filter(({ id }) =>
+      mySubAssociationsIds.includes(id.toString())
+    )
+    // take care of corresponding subassociations if I have state association permission
+    const myStateAssociationIds = myPermissions.value
+      .filter(
+        (permission) =>
+          permission.content_type_natural_key ===
+          ContentTypeNaturalKey.STATE_ASSOCIATION
+      )
+      .map((permission) => permission.object_pk)
+    const subAssociationsInMyStateAssociations = [] as SubAssociationDto[]
+    for (const stateAssociationId of myStateAssociationIds) {
+      const newSubAssociations = await getSubAssociations(
+        parseInt(stateAssociationId)
+      )
+      subAssociationsInMyStateAssociations.push(...newSubAssociations)
+    }
+    for (const subAssociation of subAssociationsInMyStateAssociations) {
+      if (!mySubAssociationsIds.includes(subAssociation.id.toString())) {
+        mySubAssociations.push(subAssociation)
+      }
+    }
+    return mySubAssociations
+  }
+}
+async function getMyStateAssociations(): Promise<StateAssociationDto[]> {
+  if (isUserAdminOrGlobalCoordinator.value) {
+    return await getStateAssociations()
+  } else {
+    return myPermissions.value
+      .filter(
+        ({ content_type_natural_key }) =>
+          content_type_natural_key === ContentTypeNaturalKey.STATE_ASSOCIATION
+      )
+      .map(({ object_pk, content_object_name }) => {
+        return {
+          id: parseInt(object_pk),
+          name: content_object_name
+        }
+      })
+  }
+}
+function filterSubAssociations(value: string, update: any) {
+  if (!value) {
+    update(() => {
+      suggestedSubAssociations.value = mySubAssociations.value
+    })
+    return
+  }
+  update(() => {
+    const lowercasedValue = value.toLowerCase()
+    suggestedSubAssociations.value = mySubAssociations.value.filter(
+      ({ name }) => name.toLowerCase().includes(lowercasedValue)
+    )
+  })
+}
+function filterStateAssociations(value: string, update: any) {
+  if (!value) {
+    update(() => {
+      suggestedStateAssociations.value = myStateAssociations.value
+    })
+    return
+  }
+  update(() => {
+    const lowercasedValue = value.toLowerCase()
+    suggestedStateAssociations.value = myStateAssociations.value.filter(
+      ({ name }) => name.toLowerCase().includes(lowercasedValue)
+    )
+  })
+}
+function handleContentTypeSelect(ct: ContentTypeOption) {
+  selectedContentType.value = ct
+}
+function selectStateAssociation(state: StateAssociationDto) {
+  selectedState.value = state
+}
+function selectSubAssociation(subAssociation: SubAssociationDto) {
+  selectedSubAssociation.value = subAssociation
+  myExplicitPermissionForSelectedSubAssociation.value =
+    userManagementPermissions.value.find(
+      (permission) => permission.object_pk === subAssociation.id.toString()
+    ) || null
+}
+function isAllowedToManagePermissions(permissionType: PermissionTypeOption) {
+  if (isManagingSubAssociation.value) {
+    // if I don't have direct permissions for the sub association I'm state association or global coordinator,
+    // so I'm allowed to manage everything
+    if (!myExplicitPermissionForSelectedSubAssociation.value) {
+      return true
+    }
+    // if I am sub association coordinator I can manage all types of permissions
+    if (
+      myExplicitPermissionForSelectedSubAssociation.value
+        .permission_codename === PermissionCodename.MANAGE_EVENTS
+    ) {
+      return true
+    }
+    // If I am team captain I can only manage Team captain (or None) permissions
+    else if (
+      myExplicitPermissionForSelectedSubAssociation.value
+        .permission_codename === PermissionCodename.TEAM_CAPTAIN &&
+      (permissionType.key === PermissionCodename.TEAM_CAPTAIN ||
+        permissionType.key === PermissionCodename.NONE)
+    ) {
+      //and only for users who are not coordinators which is handled in the template!
+      return true
+    } else {
+      return false
+    }
+  } else {
+    //managementLevel === 'Landesverband'
+    // If there is anything to manage at all I must have coordinator permissions for the selected state association
+    return true
+  }
+}
 </script>
 
 <style lang="scss" scoped>
