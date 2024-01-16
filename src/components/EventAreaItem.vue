@@ -1,3 +1,60 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { EventAreaDto } from 'src/api/model/EventAreaDto'
+import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
+import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
+import { QBadge, QIcon, QItem, QItemLabel, QItemSection } from 'quasar'
+import {
+  ionCheckmarkCircleOutline,
+  ionChevronForward,
+  ionEllipse,
+  ionPersonCircleOutline
+} from '@quasar/extras/ionicons-v5'
+import { EventTypes } from 'src/api/model/EventTypes'
+import { UNDEFINED_POSTER_AREA } from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetail.vue'
+
+interface Props {
+  area: EventAreaDto
+  participations: EventParticipationDto[]
+  personalParticipation?: EventParticipationDto | null
+  showParticipationCount?: boolean
+  eventType?: EventTypes
+}
+const props = withDefaults(defineProps<Props>(), {
+  personalParticipation: null,
+  showParticipationCount: false,
+  eventType: EventTypes.DOOR_TO_DOOR
+})
+
+const targetRoute = computed(() => {
+  switch (props.eventType) {
+    case EventTypes.POSTERS:
+      return {
+        name: 'event-detail-poster',
+        params: {
+          areaId: props.area.id ? props.area.id : UNDEFINED_POSTER_AREA
+        }
+      }
+    case EventTypes.DOOR_TO_DOOR:
+    default:
+      return {
+        name: 'event-detail-area',
+        params: { areaId: props.area.id! }
+      }
+  }
+})
+const participationsOfArea = computed(() => {
+  return props.participations.filter(({ assigned_event_areas }) =>
+    assigned_event_areas.includes(props.area.id!)
+  )
+})
+
+function countAddresses(areaDetails: AreaDetailsDto) {
+  return areaDetails.streets.reduce((acc, street) => {
+    return acc + street.addresses.length
+  }, 0)
+}
+</script>
 <template>
   <QItem
     :clickable="true"
@@ -50,100 +107,6 @@
     </QItemSection>
   </QItem>
 </template>
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { RouteLocationRaw } from 'vue-router'
-import { EventAreaDto } from 'src/api/model/EventAreaDto'
-import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { UserDto } from 'src/api/model/UserDto'
-import { userStore } from 'src/store/UserStore'
-import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
-import { QBadge, QIcon, QItem, QItemLabel, QItemSection } from 'quasar'
-import {
-  ionCheckmarkCircleOutline,
-  ionChevronForward,
-  ionEllipse,
-  ionPersonCircleOutline
-} from '@quasar/extras/ionicons-v5'
-import { EventTypes } from 'src/api/model/EventTypes'
-import { UNDEFINED_POSTER_AREA } from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetail.vue'
-
-export default defineComponent({
-  name: 'EventAreaItem',
-  components: {
-    QIcon,
-    QItem,
-    QItemSection,
-    QItemLabel,
-    QBadge
-  },
-  props: {
-    area: {
-      type: Object as PropType<EventAreaDto>,
-      required: true
-    },
-    participations: {
-      type: Object as PropType<EventParticipationDto[]>,
-      required: true
-    },
-    personalParticipation: {
-      type: Object as PropType<EventParticipationDto | null>,
-      default: null
-    },
-    showParticipationCount: {
-      type: Boolean as PropType<boolean>,
-      default: false
-    },
-    eventType: {
-      type: String as PropType<EventTypes>,
-      default: EventTypes.DOOR_TO_DOOR
-    }
-  },
-  data() {
-    return {
-      ionPersonCircleOutline,
-      ionCheckmarkCircleOutline,
-      ionEllipse,
-      ionChevronForward,
-      EventTypes
-    }
-  },
-  computed: {
-    targetRoute(): RouteLocationRaw {
-      switch (this.eventType) {
-        case EventTypes.POSTERS:
-          return {
-            name: 'event-detail-poster',
-            params: {
-              areaId: this.area.id ? this.area.id : UNDEFINED_POSTER_AREA
-            }
-          }
-        case EventTypes.DOOR_TO_DOOR:
-        default:
-          return {
-            name: 'event-detail-area',
-            params: { areaId: this.area.id! }
-          }
-      }
-    },
-    participationsOfArea(): EventParticipationDto[] {
-      return this.participations.filter(({ assigned_event_areas }) =>
-        assigned_event_areas.includes(this.area.id!)
-      )
-    },
-    user(): UserDto | null {
-      return userStore.getState().user
-    }
-  },
-  methods: {
-    countAddresses(areaDetails: AreaDetailsDto) {
-      return areaDetails.streets.reduce((acc, street) => {
-        return acc + street.addresses.length
-      }, 0)
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 .chevron {

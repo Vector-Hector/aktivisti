@@ -1,3 +1,52 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import CollapsibleFilters from 'components/CollapsibleFilters.vue'
+import PosterStatusFilter from 'components/filterInput/filters/PosterStatusFilter.vue'
+import { PosterFilterParams } from 'src/api/params/PosterFilterParams'
+import { PosterStatus } from 'src/api/model/PosterDto'
+import { CampaignDto } from 'src/api/model/CampaignDto'
+import CampaignFilter from 'components/filterInput/filters/CampaignFilter.vue'
+import MultipleSubAssociationFilter from 'components/filterInput/filters/MultipleSubAssociationFilter.vue'
+import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
+
+interface Props {
+  filterParams: PosterFilterParams
+  campaigns?: CampaignDto[]
+  subAssociations?: SubAssociationDto[]
+}
+
+const props = defineProps<Props>()
+
+interface Emits {
+  (e: 'update:filterParams', filterParams: PosterFilterParams): void
+}
+
+const emit = defineEmits<Emits>()
+
+const activatedFilterCount = computed(() => {
+  let active = 0
+  if (props.filterParams.status) {
+    active++
+  }
+  return active
+})
+
+function updateFilterParams(value: PosterFilterParams) {
+  emit('update:filterParams', {
+    ...props.filterParams,
+    ...value
+  })
+}
+function updatePosterStatus(value: PosterStatus) {
+  updateFilterParams({ status: value })
+}
+function updateCampaign(value: number) {
+  updateFilterParams({ campaigns: value ? [value] : undefined })
+}
+function updateSubAssociations(value: number[]) {
+  updateFilterParams({ sub_association: value })
+}
+</script>
 <template>
   <CollapsibleFilters
     class="collapsible-filters"
@@ -21,75 +70,7 @@
     </div>
   </CollapsibleFilters>
 </template>
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import CollapsibleFilters from 'components/CollapsibleFilters.vue'
-import PosterStatusFilter from 'components/filterInput/filters/PosterStatusFilter.vue'
-import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
-import { PosterFilterParams } from 'src/api/params/PosterFilterParams'
-import { PosterStatus } from 'src/api/model/PosterDto'
-import { CampaignDto } from 'src/api/model/CampaignDto'
-import CampaignFilter from 'components/filterInput/filters/CampaignFilter.vue'
-import MultipleSubAssociationFilter from 'components/filterInput/filters/MultipleSubAssociationFilter.vue'
-import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 
-export default defineComponent({
-  name: 'PosterFilter',
-  components: {
-    MultipleSubAssociationFilter,
-    PosterStatusFilter,
-    CollapsibleFilters,
-    CampaignFilter
-  },
-  emits: ['update:filterParams'],
-  props: {
-    filterParams: {
-      type: Object as PropType<PosterFilterParams>,
-      required: true
-    },
-    campaigns: {
-      type: Array as PropType<CampaignDto[]>,
-      required: false
-    },
-    subAssociations: {
-      type: Array as PropType<SubAssociationDto[]>,
-      required: false
-    }
-  },
-  data() {
-    return {
-      ionChevronDown,
-      ionClose
-    }
-  },
-  computed: {
-    activatedFilterCount(): number {
-      let active = 0
-      if (this.filterParams.status) {
-        active++
-      }
-      return active
-    }
-  },
-  methods: {
-    updateFilterParams(value: PosterFilterParams) {
-      this.$emit('update:filterParams', {
-        ...this.filterParams,
-        ...value
-      })
-    },
-    updatePosterStatus(value: PosterStatus) {
-      this.updateFilterParams({ status: value })
-    },
-    updateCampaign(value: number) {
-      this.updateFilterParams({ campaigns: value ? [value] : undefined })
-    },
-    updateSubAssociations(value: number[]) {
-      this.updateFilterParams({ sub_association: value })
-    }
-  }
-})
-</script>
 <style lang="scss" scoped>
 .filter-content {
   padding: 1rem;
