@@ -44,3 +44,4 @@ src-capacitor/ios/App/fastlane/report.xml
 android-signing.properties
 
 .vscode/vscode-chrome-debug-userdatadir
+.vscode/launch.json
