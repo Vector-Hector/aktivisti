@@ -1,12 +1,12 @@
-<script lang="ts">
-import { defineComponent, inject, PropType } from 'vue'
+<script setup lang="ts">
+import { inject, onMounted, ref } from 'vue'
 
 import { PosterDto, PosterMount, PosterStatus } from 'src/api/model/PosterDto'
 import { StepControls } from 'pages/EditEvent.vue'
 import EditPoster from 'components/EditPoster.vue'
 import { cloneDeep } from 'lodash-es'
 import { apiClient } from 'src/api/ApiClient'
-import { QBtn, QScrollArea } from 'quasar'
+import { QBtn, QScrollArea, useQuasar } from 'quasar'
 import {
   ionClose,
   ionLocationSharp,
@@ -16,119 +16,100 @@ import {
 import { useEditSinglePosterMixin } from 'pages/edit-event/posters/edit-single/EditSinglePosterMixin'
 import { posterListStore } from 'src/store/PosterListStore'
 import { useEditPosterListMixin } from 'pages/edit-event/posters/EditPosterListMixin'
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 
 const defaultPoster: Partial<PosterDto> = {
   status: PosterStatus.ABSENT,
   mounted_on: PosterMount.LAMPPOST
 }
 
-export default defineComponent({
-  name: 'EditEventSinglePoster',
-  props: {
-    posterId: {
-      type: String as PropType<string | undefined>,
-      required: false
-    }
-  },
-  components: {
-    EditPoster,
-    QScrollArea,
-    QBtn
-  },
-  async beforeRouteEnter(to, from, next) {
-    let initialPoster: Partial<PosterDto>
-    const { posterId, eventId } = to.params
-    if (posterId) {
-      initialPoster = (await apiClient.posters.get(posterId.toString())).payload
-        .data
-      posterListStore.state.activePosterIndex =
-        posterListStore.state.posters.findIndex(
-          ({ id }) => initialPoster.id === id
-        )
-    } else {
-      initialPoster = {
-        ...cloneDeep(defaultPoster),
-        event: parseInt(eventId as string)
-      }
-      posterListStore.state.activePosterIndex =
-        posterListStore.state.posters.push(initialPoster) - 1
-    }
-    next()
-  },
-  beforeRouteLeave() {
-    if (!this.poster.id) {
-      // poster wasn't save so remove it from the list
-      posterListStore.state.posters = posterListStore.state.posters.filter(
-        (_, index) => index !== posterListStore.state.activePosterIndex
+interface Props {
+  posterId?: string | undefined
+}
+const props = defineProps<Props>()
+
+const $q = useQuasar()
+const $route = useRoute()
+const $router = useRouter()
+
+onMounted(async () => {
+  let initialPoster: Partial<PosterDto>
+  const { posterId, eventId } = $route.params
+  if (posterId) {
+    initialPoster = (await apiClient.posters.get(posterId.toString())).payload
+      .data
+    posterListStore.state.activePosterIndex =
+      posterListStore.state.posters.findIndex(
+        ({ id }) => initialPoster.id === id
       )
+  } else {
+    initialPoster = {
+      ...cloneDeep(defaultPoster),
+      event: parseInt(eventId as string)
     }
-    posterListStore.state.activePosterIndex = null
-  },
-  setup() {
-    const { poster } = useEditSinglePosterMixin()
-    const { deletePoster } = useEditPosterListMixin()
-    return {
-      stepControls: inject('stepControls') as StepControls,
-      poster,
-      deletePoster
-    }
-  },
-  data() {
-    return {
-      ionLocationSharp,
-      ionClose,
-      ionTrash,
-      ionSave,
-      errors: {}
-    }
-  },
-  methods: {
-    async save() {
-      try {
-        if (this.posterId) {
-          this.poster = (
-            await this.$apiClient.posters.update(
-              this.posterId,
-              this.poster as PosterDto
-            )
-          ).payload.data
-        } else {
-          this.poster = (
-            await this.$apiClient.posters.create(this.poster)
-          ).payload.data
-        }
-        await this.$router.push({ name: 'edit-event-posters-list' })
-      } catch (e) {
-        if (this.$apiClient.isApiClientError(e) && e.response?.status === 400) {
-          this.errors = e.response?.data
-        } else {
-          this.$q.notify({
-            message: 'Das Plakat konnte nicht gespeichert werden',
-            color: 'negative'
-          })
-        }
-      }
-    },
-    async abort() {
-      await this.$router.push({ name: 'edit-event-posters-list' })
-    },
-    onDeleteClicked() {
-      if (!this.posterId) return
-      this.$q
-        .dialog({
-          title: 'Plakat löschen',
-          message: 'Möchtest dieses Plakat wirklich löschen?',
-          cancel: true
-        })
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        .onOk(async () => {
-          const poster = this.poster
-          await this.$router.push({ name: 'edit-event-posters-list' })
-          await this.deletePoster(poster as PosterDto)
-        })
-    }
+    posterListStore.state.activePosterIndex =
+      posterListStore.state.posters.push(initialPoster) - 1
   }
 })
+
+onBeforeRouteLeave(() => {
+  if (!poster.value.id) {
+    // poster wasn't save so remove it from the list
+    posterListStore.state.posters = posterListStore.state.posters.filter(
+      (_, index) => index !== posterListStore.state.activePosterIndex
+    )
+  }
+  posterListStore.state.activePosterIndex = null
+})
+const { poster } = useEditSinglePosterMixin()
+const { deletePoster } = useEditPosterListMixin()
+const stepControls = inject('stepControls') as StepControls
+
+const errors = ref<Record<string, unknown>>({})
+
+async function save() {
+  try {
+    if (props.posterId) {
+      poster.value = (
+        await apiClient.posters.update(
+          props.posterId,
+          poster.value as PosterDto
+        )
+      ).payload.data
+    } else {
+      poster.value = (await apiClient.posters.create(poster.value)).payload.data
+    }
+    await $router.push({ name: 'edit-event-posters-list' })
+  } catch (e) {
+    if (apiClient.isApiClientError(e) && e.response?.status === 400) {
+      errors.value = e.response?.data
+    } else {
+      $q.notify({
+        message: 'Das Plakat konnte nicht gespeichert werden',
+        color: 'negative'
+      })
+    }
+  }
+}
+
+async function abort() {
+  await $router.push({ name: 'edit-event-posters-list' })
+}
+
+function onDeleteClicked() {
+  if (!props.posterId) return
+  $q.dialog({
+    title: 'Plakat löschen',
+    message: 'Möchtest dieses Plakat wirklich löschen?',
+    cancel: true
+  })
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    .onOk(async () => {
+      const posterToDelete = poster.value
+      await $router.push({ name: 'edit-event-posters-list' })
+      await deletePoster(posterToDelete as PosterDto)
+    })
+}
 </script>
 
 <template>
