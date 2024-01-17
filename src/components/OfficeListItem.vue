@@ -1,3 +1,15 @@
+<script setup lang="ts">
+import { QBtn, QItem, QItemLabel, QItemSection } from 'quasar'
+import { ionEarthOutline } from '@quasar/extras/ionicons-v5'
+import { OfficeGeoJsonFeature } from 'src/api/model/OfficeGeoJsonDto'
+
+interface Props {
+  office: OfficeGeoJsonFeature
+}
+
+const props = defineProps<Props>()
+</script>
+
 <template>
   <QItem clickable v-ripple>
     <QItemSection>
@@ -26,15 +38,5 @@
     </QItemSection>
   </QItem>
 </template>
-<script setup lang="ts">
-import { QBtn, QItem, QItemLabel, QItemSection } from 'quasar'
-import { ionEarthOutline } from '@quasar/extras/ionicons-v5'
-import { OfficeGeoJsonFeature } from 'src/api/model/OfficeGeoJsonDto'
 
-interface Props {
-  office: OfficeGeoJsonFeature
-}
-
-const props = defineProps<Props>()
-</script>
 <style lang="scss" scoped></style>
