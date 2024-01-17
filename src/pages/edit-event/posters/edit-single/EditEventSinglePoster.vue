@@ -1,60 +1,3 @@
-<template>
-  <div class="edit-event-single-poster flex column flex-fill">
-    <QScrollArea class="col-grow full-width">
-      <div class="container">
-        <EditPoster
-          :new="!!posterId"
-          v-if="poster"
-          v-model:poster="poster"
-          :errors="errors"
-          :edit-location="true"
-        />
-        <div class="buttons">
-          <div v-if="posterId" class="button delete-button">
-            <QBtn
-              dense
-              flat
-              label="Löschen"
-              :icon="ionTrash"
-              @click="onDeleteClicked"
-              color="primary"
-            />
-          </div>
-
-          <div class="button close-button">
-            <QBtn
-              dense
-              outline
-              label="Abbrechen"
-              :icon="ionClose"
-              @click="abort"
-              color="primary"
-            />
-          </div>
-          <div class="button save-button">
-            <QBtn
-              dense
-              v-if="posterId"
-              color="primary"
-              label="Speichern"
-              :icon="ionSave"
-              @click="save"
-            />
-            <QBtn
-              v-else
-              dense
-              color="primary"
-              label="Erstellen"
-              :icon="ionLocationSharp"
-              @click="save"
-            />
-          </div>
-        </div>
-      </div>
-    </QScrollArea>
-  </div>
-</template>
-
 <script lang="ts">
 import { defineComponent, inject, PropType } from 'vue'
 
@@ -187,6 +130,63 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <div class="edit-event-single-poster flex column flex-fill">
+    <QScrollArea class="col-grow full-width">
+      <div class="container">
+        <EditPoster
+          :new="!!posterId"
+          v-if="poster"
+          v-model:poster="poster"
+          :errors="errors"
+          :edit-location="true"
+        />
+        <div class="buttons">
+          <div v-if="posterId" class="button delete-button">
+            <QBtn
+              dense
+              flat
+              label="Löschen"
+              :icon="ionTrash"
+              @click="onDeleteClicked"
+              color="primary"
+            />
+          </div>
+
+          <div class="button close-button">
+            <QBtn
+              dense
+              outline
+              label="Abbrechen"
+              :icon="ionClose"
+              @click="abort"
+              color="primary"
+            />
+          </div>
+          <div class="button save-button">
+            <QBtn
+              dense
+              v-if="posterId"
+              color="primary"
+              label="Speichern"
+              :icon="ionSave"
+              @click="save"
+            />
+            <QBtn
+              v-else
+              dense
+              color="primary"
+              label="Erstellen"
+              :icon="ionLocationSharp"
+              @click="save"
+            />
+          </div>
+        </div>
+      </div>
+    </QScrollArea>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .edit-event-single-poster {
