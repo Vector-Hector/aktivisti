@@ -1,7 +1,3 @@
-<template>
-  <router-view />
-</template>
-
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { apiClient } from 'src/api/ApiClient'
@@ -81,6 +77,10 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <router-view />
+</template>
 
 <style lang="scss" scoped>
 label {
