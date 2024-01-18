@@ -116,7 +116,10 @@ export default defineComponent({
     streetCompleted(street: StreetDetails) {
       return (
         difference(
-          street.addresses.map(({ osm_id }) => osm_id),
+          // FIXME(peter) Logicalwise the osm_id and completedTargetIds should have
+          //  the same time, it seems that the BE is communicating the wrong type
+          //  for one of them.
+          street.addresses.map(({ osm_id }) => osm_id.toString()),
           this.completedTargetIds
         ).length === 0
       )
