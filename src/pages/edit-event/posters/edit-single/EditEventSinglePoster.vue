@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { inject, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 import { PosterDto, PosterMount, PosterStatus } from 'src/api/model/PosterDto'
-import { StepControls } from 'pages/EditEvent.vue'
 import EditPoster from 'components/EditPoster.vue'
 import { cloneDeep } from 'lodash-es'
 import { apiClient } from 'src/api/ApiClient'
@@ -63,7 +62,6 @@ onBeforeRouteLeave(() => {
 })
 const { poster } = useEditSinglePosterMixin()
 const { deletePoster } = useEditPosterListMixin()
-const stepControls = inject('stepControls') as StepControls
 
 const errors = ref<Record<string, unknown>>({})
 
