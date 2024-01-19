@@ -1,37 +1,3 @@
-<template>
-  <QPage class="event-map">
-    <MapContainer v-if="isMapDefined">
-      <Map
-        class="map"
-        :bounding-box="bbox"
-        ref="map"
-        @update:boundingBox="setBbox($event)"
-      >
-        <template v-slot:top-right>
-          <div class="flex column q-gutter-y-sm">
-            <GeolocationControl :poi-location="poiLocation" />
-            <CampaignCollectionOverlayControl v-if="isLoggedIn" />
-            <ResetRotateControl />
-          </div>
-        </template>
-        <router-view v-slot="{ Component }" name="map">
-          <component :is="Component" />
-        </router-view>
-      </Map>
-      <MapOverlayProxy
-        :title="$route.meta.title?.()"
-        @changed-size="resizeMap"
-        :showCreateButton="showCreateButton"
-      >
-        <div class="overlay-content">
-          <router-view />
-        </div>
-      </MapOverlayProxy>
-    </MapContainer>
-    <router-view v-else />
-  </QPage>
-</template>
-
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import MapOverlayProxy from 'components/MapOverlayProxy.vue'
@@ -119,6 +85,40 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <QPage class="event-map">
+    <MapContainer v-if="isMapDefined">
+      <Map
+        class="map"
+        :bounding-box="bbox"
+        ref="map"
+        @update:boundingBox="setBbox($event)"
+      >
+        <template v-slot:top-right>
+          <div class="flex column q-gutter-y-sm">
+            <GeolocationControl :poi-location="poiLocation" />
+            <CampaignCollectionOverlayControl v-if="isLoggedIn" />
+            <ResetRotateControl />
+          </div>
+        </template>
+        <router-view v-slot="{ Component }" name="map">
+          <component :is="Component" />
+        </router-view>
+      </Map>
+      <MapOverlayProxy
+        :title="$route.meta.title?.()"
+        @changed-size="resizeMap"
+        :showCreateButton="showCreateButton"
+      >
+        <div class="overlay-content">
+          <router-view />
+        </div>
+      </MapOverlayProxy>
+    </MapContainer>
+    <router-view v-else />
+  </QPage>
+</template>
 
 <style lang="scss" scoped>
 .overlay-content {
