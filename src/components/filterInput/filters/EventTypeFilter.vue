@@ -1,17 +1,3 @@
-<template>
-  <FilterInput
-    :model-value="modelValue"
-    @update:model-value="(value) => this.$emit('update:modelValue', value)"
-    input-debounce="0"
-    label="Aktionstyp"
-    :options="eventTypeOptions"
-    emit-value
-    map-options
-    option-value="key"
-    option-label="label"
-    clearable
-  />
-</template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
@@ -41,3 +27,18 @@ export default defineComponent({
   emits: ['update:modelValue']
 })
 </script>
+
+<template>
+  <FilterInput
+    :model-value="modelValue"
+    @update:model-value="(value) => this.$emit('update:modelValue', value)"
+    input-debounce="0"
+    label="Aktionstyp"
+    :options="eventTypeOptions"
+    emit-value
+    map-options
+    option-value="key"
+    option-label="label"
+    clearable
+  />
+</template>
