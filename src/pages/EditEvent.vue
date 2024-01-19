@@ -1,22 +1,3 @@
-<template>
-  <QPage class="edit-event">
-    <RouteStepper :steps="steps" v-model="activeStep" />
-
-    <MapContainer class="map-container">
-      <Map :bounding-box="bbox">
-        <template v-slot:top-right>
-          <div class="flex column q-gutter-y-sm">
-            <CampaignCollectionOverlayControl />
-            <router-view name="map" />
-          </div>
-        </template>
-      </Map>
-      <MapOverlayProxy :title="title">
-        <router-view />
-      </MapOverlayProxy>
-    </MapContainer>
-  </QPage>
-</template>
 <script lang="ts">
 import { computed, defineComponent, ComputedRef } from 'vue'
 
@@ -241,6 +222,25 @@ export default defineComponent({
 })
 </script>
 
+<template>
+  <QPage class="edit-event">
+    <RouteStepper :steps="steps" v-model="activeStep" />
+
+    <MapContainer class="map-container">
+      <Map :bounding-box="bbox">
+        <template v-slot:top-right>
+          <div class="flex column q-gutter-y-sm">
+            <CampaignCollectionOverlayControl />
+            <router-view name="map" />
+          </div>
+        </template>
+      </Map>
+      <MapOverlayProxy :title="title">
+        <router-view />
+      </MapOverlayProxy>
+    </MapContainer>
+  </QPage>
+</template>
 <style lang="scss" scoped>
 .edit-event {
   display: flex;
