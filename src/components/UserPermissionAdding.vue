@@ -1,35 +1,3 @@
-<template>
-  <div class="row new-user-group">
-    <div class="col-grow">
-      <QInput
-        class="w-100 d-flex flex-col"
-        label="Benutzer*in wählen"
-        use-input
-        v-model="username"
-        @keydown.enter="handleSubmission"
-      />
-    </div>
-    <QSelect
-      class="new-user-select permission-dropdown"
-      :dropdownIcon="ionChevronDown"
-      filled
-      v-model="selectedPermissionType"
-      :options="permissionTypeConditionalOptions"
-      :option-disable="(opt) => (Object(opt) === opt ? opt.inactive : true)"
-      option-value="key"
-      map-options
-    >
-    </QSelect>
-    <QBtn
-      class="new-user-add-btn full-width"
-      label="Hinzufügen"
-      unelevated
-      outline
-      :icon-right="ionChevronDown"
-      @click="handleSubmission"
-    />
-  </div>
-</template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import {
@@ -115,6 +83,40 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <div class="row new-user-group">
+    <div class="col-grow">
+      <QInput
+        class="w-100 d-flex flex-col"
+        label="Benutzer*in wählen"
+        use-input
+        v-model="username"
+        @keydown.enter="handleSubmission"
+      />
+    </div>
+    <QSelect
+      class="new-user-select permission-dropdown"
+      :dropdownIcon="ionChevronDown"
+      filled
+      v-model="selectedPermissionType"
+      :options="permissionTypeConditionalOptions"
+      :option-disable="(opt) => (Object(opt) === opt ? opt.inactive : true)"
+      option-value="key"
+      map-options
+    >
+    </QSelect>
+    <QBtn
+      class="new-user-add-btn full-width"
+      label="Hinzufügen"
+      unelevated
+      outline
+      :icon-right="ionChevronDown"
+      @click="handleSubmission"
+    />
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .new-user-group {
   margin: 0 0 0.5rem 0;
