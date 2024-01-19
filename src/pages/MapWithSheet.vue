@@ -1,5 +1,23 @@
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+interface IInstance extends ComponentPublicInstance {
+  setIsMapDefined(value: boolean): void
+}
+export default {
+  beforeRouteEnter(to, from, next) {
+    const componentsOfMostPrecisePath =
+      to.matched[to.matched.length - 1].components
+    const isMapDefined =
+      componentsOfMostPrecisePath && 'map' in componentsOfMostPrecisePath
+    uiStore.setBottomSheetStateAtLeast(BottomSheetState.HALF)
+    next((vm) => {
+      ;(vm as IInstance).setIsMapDefined(isMapDefined || false)
+    })
+  }
+}
+</script>
+
+<script setup lang="ts">
+import { ComponentPublicInstance, computed, ref } from 'vue'
 import MapOverlayProxy from 'components/MapOverlayProxy.vue'
 import Map from 'src/map/Map.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
@@ -9,81 +27,59 @@ import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import GeolocationControl from 'src/map/GeolocationControl.vue'
 import MapContainer from 'components/MapContainer.vue'
 import { eventDetailStore } from 'src/store/EventDetailStore'
-import { LocationDto } from 'src/api/model/LocationDto'
 import ResetRotateControl from 'src/map/ResetRotateControl.vue'
 import CampaignCollectionOverlayControl from 'src/map/CampaignCollectionOverlayControl.vue'
 import { getAuthStore } from 'src/store/AuthStore'
-import EventLayer from 'src/map/EventLayer'
 import { OfficeGeoJsonDto } from 'src/api/model/OfficeGeoJsonDto'
+import { onBeforeRouteUpdate } from 'vue-router'
 
-export default defineComponent({
-  name: 'MapWithSheet',
-  components: {
-    EventLayer,
-    CampaignCollectionOverlayControl,
-    ResetRotateControl,
-    GeolocationControl,
-    MapContainer,
-    Map,
-    MapOverlayProxy,
-    QPage
-  },
-  props: {
-    showCreateButton: {
-      type: Boolean as PropType<boolean>,
-      default: false
-    }
-  },
-  data() {
-    return {
-      offices: null as OfficeGeoJsonDto | null,
-      bbox: userStore.getState().bbox,
-      BottomSheetState,
-      isMapDefined: true,
-      isLoggedIn: getAuthStore().isLoggedIn()
-    }
-  },
-  beforeRouteEnter(to, from, next) {
-    const componentsOfMostPrecisePath =
-      to.matched[to.matched.length - 1].components
-    const isMapDefined =
-      componentsOfMostPrecisePath && 'map' in componentsOfMostPrecisePath
-    uiStore.setBottomSheetStateAtLeast(BottomSheetState.HALF)
-    next((vm) => {
-      // @ts-ignore
-      vm.isMapDefined = isMapDefined || false
-    })
-  },
-  beforeRouteUpdate(to, from, next) {
-    const componentsOfMostPrecisePath =
-      to.matched[to.matched.length - 1].components
-    this.isMapDefined =
-      (componentsOfMostPrecisePath && 'map' in componentsOfMostPrecisePath) ||
-      false
-    next()
-  },
-  computed: {
-    poiLocation(): LocationDto | undefined {
-      return eventDetailStore.state.event?.location
-    },
-    mapRef(): InstanceType<typeof Map> | undefined {
-      return this.$refs.map as InstanceType<typeof Map> | undefined
-    },
-    bottomSheetState(): BottomSheetState {
-      return uiStore.getState().bottomSheetState
-    }
-  },
-  methods: {
-    resizeMap(newSheetSize: BottomSheetState) {
-      if (newSheetSize !== BottomSheetState.EXPANDED) {
-        this.mapRef?.map?.resize()
-      }
-    },
-    setBbox(value: BBox2d) {
-      userStore.setBbox(value)
-    }
-  }
+interface Props {
+  showCreateButton?: boolean
+}
+const props = withDefaults(defineProps<Props>(), {
+  showCreateButton: false
 })
+
+const map = ref<InstanceType<typeof Map> | null>(null)
+
+const offices = ref<OfficeGeoJsonDto | null>(null)
+const bbox = ref(userStore.getState().bbox)
+const isMapDefined = ref(true)
+const isLoggedIn = ref(getAuthStore().isLoggedIn())
+
+onBeforeRouteUpdate((to, from, next) => {
+  const componentsOfMostPrecisePath =
+    to.matched[to.matched.length - 1].components
+  isMapDefined.value =
+    (componentsOfMostPrecisePath && 'map' in componentsOfMostPrecisePath) ||
+    false
+  next()
+})
+
+const poiLocation = computed(() => {
+  return eventDetailStore.state.event?.location
+})
+const mapRef = computed(() => {
+  return map.value as InstanceType<typeof Map> | undefined
+})
+const bottomSheetState = computed(() => {
+  return uiStore.getState().bottomSheetState
+})
+
+function resizeMap(newSheetSize: BottomSheetState) {
+  if (newSheetSize !== BottomSheetState.EXPANDED) {
+    mapRef.value?.map?.resize()
+  }
+}
+function setBbox(value: BBox2d) {
+  userStore.setBbox(value)
+}
+
+function setIsMapDefined(value: boolean) {
+  isMapDefined.value = value
+}
+
+defineExpose({ setIsMapDefined })
 </script>
 
 <template>
@@ -109,7 +105,7 @@ export default defineComponent({
       <MapOverlayProxy
         :title="$route.meta.title?.()"
         @changed-size="resizeMap"
-        :showCreateButton="showCreateButton"
+        :showCreateButton="props.showCreateButton"
       >
         <div class="overlay-content">
           <router-view />
