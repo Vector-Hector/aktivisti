@@ -1,16 +1,3 @@
-<template>
-  <QDialog ref="dialog" @hide="onDialogHide">
-    <QCard class="invite-modal">
-      <QToolbar>
-        <QToolbarTitle>Leute einladen</QToolbarTitle>
-      </QToolbar>
-      <QCardSection>
-        <EventInvitePeople :event-id="eventId" />
-      </QCardSection>
-    </QCard>
-  </QDialog>
-</template>
-
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import EventInvitePeople from 'src/components/EventInvitePeople.vue'
@@ -52,6 +39,19 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <QDialog ref="dialog" @hide="onDialogHide">
+    <QCard class="invite-modal">
+      <QToolbar>
+        <QToolbarTitle>Leute einladen</QToolbarTitle>
+      </QToolbar>
+      <QCardSection>
+        <EventInvitePeople :event-id="eventId" />
+      </QCardSection>
+    </QCard>
+  </QDialog>
+</template>
 
 <style lang="scss" scoped>
 .invite-modal {
