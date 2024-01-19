@@ -1,31 +1,3 @@
-<template>
-  <QPage class="splash-page">
-    <div class="splash">
-      <img src="../assets/logo_dielinke.png" class="logo-splash" />
-      <h2 class="splash-message">Finde Aktionen in deiner Nähe</h2>
-      <Geocoder
-        class="geocoder"
-        :countries="['de']"
-        :standalone="true"
-        @result="locate"
-      />
-      <div v-if="!isLoggedIn" class="signin-buttons">
-        <QBtn to="/login" color="primary"> Anmelden </QBtn>
-
-        <QBtn
-          to="/register"
-          outline
-          flat
-          class="register-button"
-          color="primary"
-        >
-          Registrieren
-        </QBtn>
-      </div>
-    </div>
-  </QPage>
-</template>
-
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
@@ -80,6 +52,34 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <QPage class="splash-page">
+    <div class="splash">
+      <img src="../assets/logo_dielinke.png" class="logo-splash" />
+      <h2 class="splash-message">Finde Aktionen in deiner Nähe</h2>
+      <Geocoder
+        class="geocoder"
+        :countries="['de']"
+        :standalone="true"
+        @result="locate"
+      />
+      <div v-if="!isLoggedIn" class="signin-buttons">
+        <QBtn to="/login" color="primary"> Anmelden </QBtn>
+
+        <QBtn
+          to="/register"
+          outline
+          flat
+          class="register-button"
+          color="primary"
+        >
+          Registrieren
+        </QBtn>
+      </div>
+    </div>
+  </QPage>
+</template>
 
 <style lang="scss" scoped>
 .splash-page {
