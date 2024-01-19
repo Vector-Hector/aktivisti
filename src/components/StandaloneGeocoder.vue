@@ -17,13 +17,11 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 interface Emits {
-  (e: 'update:description'): void
   (e: 'update:result', result: Partial<GeocodeResult>): void
   (e: 'newResult', result: GeocodeResult): void
 }
 const emit = defineEmits<Emits>()
 
-const selectedGeocode = ref<GeocodeResult | null>(null)
 const filteredPlaces = ref<GeocodeResult[]>([])
 
 async function filterFn(val: any, update: any, abort: any) {
