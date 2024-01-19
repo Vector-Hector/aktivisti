@@ -1,50 +1,3 @@
-<template>
-  <div class="container">
-    <QForm @submit="login">
-      <QInput
-        label="Benutzer*innenname"
-        v-model="username"
-        :rules="[$validationRules.isRequired]"
-        type="text"
-      />
-      <PasswordInput
-        label="Passwort"
-        v-model="password"
-        :rules="[$validationRules.isRequired]"
-      />
-      <div class="forgot-password-link">
-        Passwort
-        <a @click="openResetPasswordModal" class="primary-link">
-          zurücksetzen
-        </a>
-      </div>
-
-      <div class="control-buttons">
-        <QCheckbox
-          v-model="longSession"
-          label="Angemeldet bleiben"
-          class="checkbox-margin-right"
-        />
-        <FormError :error="nonFieldError" />
-        <QBtn
-          color="primary"
-          class="submit-button"
-          type="submit"
-          :disabled="submitting"
-        >
-          Anmelden
-        </QBtn>
-      </div>
-    </QForm>
-    <div class="sign-in-link">
-      Noch kein Konto?
-      <router-link to="/register" class="primary-link">
-        Hier registrieren
-      </router-link>
-    </div>
-  </div>
-</template>
-
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { QBtn, QCheckbox, QForm, QInput } from 'quasar'
@@ -155,6 +108,53 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <div class="container">
+    <QForm @submit="login">
+      <QInput
+        label="Benutzer*innenname"
+        v-model="username"
+        :rules="[$validationRules.isRequired]"
+        type="text"
+      />
+      <PasswordInput
+        label="Passwort"
+        v-model="password"
+        :rules="[$validationRules.isRequired]"
+      />
+      <div class="forgot-password-link">
+        Passwort
+        <a @click="openResetPasswordModal" class="primary-link">
+          zurücksetzen
+        </a>
+      </div>
+
+      <div class="control-buttons">
+        <QCheckbox
+          v-model="longSession"
+          label="Angemeldet bleiben"
+          class="checkbox-margin-right"
+        />
+        <FormError :error="nonFieldError" />
+        <QBtn
+          color="primary"
+          class="submit-button"
+          type="submit"
+          :disabled="submitting"
+        >
+          Anmelden
+        </QBtn>
+      </div>
+    </QForm>
+    <div class="sign-in-link">
+      Noch kein Konto?
+      <router-link to="/register" class="primary-link">
+        Hier registrieren
+      </router-link>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 @import 'src/css/variables.scss';
