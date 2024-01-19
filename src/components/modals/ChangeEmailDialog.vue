@@ -1,55 +1,3 @@
-<template>
-  <QDialog ref="dialog" @hide="onDialogHide">
-    <QCard class="change-email-dialog">
-      <QToolbar>
-        <QToolbarTitle>E-Mail Adresse ändern</QToolbarTitle>
-      </QToolbar>
-      <QForm @submit="onOk">
-        <QCardSection>
-          <p>
-            Hier kannst du eine neue E-Mail Adresse festlegen. Dazu brauchen wir
-            noch einmal dein aktuelles Passwort. Die E-Mail Adresse wird erst in
-            deinem Profil übernommen, wenn du den Bestätigungslink anklickst,
-            den wir an deine neue E-Mail Adresse schicken.
-          </p>
-          <QInput
-            label="Passwort"
-            v-model="password"
-            type="password"
-            :minlength="8"
-            :rules="[$validationRules.isRequired]"
-            :error-message="errors.password?.[0]"
-            :error="!!errors.password?.length"
-          />
-          <QInput
-            label="Neue E-Mail Adresse"
-            v-model="newEmail"
-            :rules="[$validationRules.email]"
-            :error-message="errors.new_email?.[0]"
-            :error="!!errors.new_email?.length"
-          />
-        </QCardSection>
-        <QCardActions align="right">
-          <QBtn
-            flat
-            :disabled="isSubmitting"
-            color="primary"
-            label="Abbrechen"
-            @click="onDialogHide"
-          />
-          <QBtn
-            flat
-            :disabled="isSubmitting"
-            color="primary"
-            label="OK"
-            type="submit"
-          />
-        </QCardActions>
-      </QForm>
-    </QCard>
-  </QDialog>
-</template>
-
 <script lang="ts">
 import { defineComponent } from 'vue'
 import {
@@ -134,5 +82,57 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <QDialog ref="dialog" @hide="onDialogHide">
+    <QCard class="change-email-dialog">
+      <QToolbar>
+        <QToolbarTitle>E-Mail Adresse ändern</QToolbarTitle>
+      </QToolbar>
+      <QForm @submit="onOk">
+        <QCardSection>
+          <p>
+            Hier kannst du eine neue E-Mail Adresse festlegen. Dazu brauchen wir
+            noch einmal dein aktuelles Passwort. Die E-Mail Adresse wird erst in
+            deinem Profil übernommen, wenn du den Bestätigungslink anklickst,
+            den wir an deine neue E-Mail Adresse schicken.
+          </p>
+          <QInput
+            label="Passwort"
+            v-model="password"
+            type="password"
+            :minlength="8"
+            :rules="[$validationRules.isRequired]"
+            :error-message="errors.password?.[0]"
+            :error="!!errors.password?.length"
+          />
+          <QInput
+            label="Neue E-Mail Adresse"
+            v-model="newEmail"
+            :rules="[$validationRules.email]"
+            :error-message="errors.new_email?.[0]"
+            :error="!!errors.new_email?.length"
+          />
+        </QCardSection>
+        <QCardActions align="right">
+          <QBtn
+            flat
+            :disabled="isSubmitting"
+            color="primary"
+            label="Abbrechen"
+            @click="onDialogHide"
+          />
+          <QBtn
+            flat
+            :disabled="isSubmitting"
+            color="primary"
+            label="OK"
+            type="submit"
+          />
+        </QCardActions>
+      </QForm>
+    </QCard>
+  </QDialog>
+</template>
 
 <style lang="scss" scoped></style>
