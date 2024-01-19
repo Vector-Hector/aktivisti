@@ -19,18 +19,9 @@ export default defineComponent({
       default: false
     }
   },
-  emits: ['load'],
-  methods: {
-    resetScrollPosition() {
-      // FIXIME(peter@ctrl.alt.coop) Since qScrollArea doesn't exist anymore this isn't
-      //  working correctly.
-      // @ts-ignore
-      this.$refs.qScrollArea.setScrollPosition('vertical', 0)
-    }
-  }
+  emits: ['load']
 })
 </script>
-
 <template>
   <QInfiniteScroll
     v-if="items.length > 0"

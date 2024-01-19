@@ -84,23 +84,9 @@ async function loadData(index: number, done: () => void) {
   emit('update:events', consolidatedEvents)
   done()
 }
-
-function resetScrollPosition() {
-  // @ts-ignore
-  this.$refs.infiniteList.resetScrollPosition()
-}
-
-defineExpose({
-  resetScrollPosition
-})
 </script>
 <template>
-  <InfiniteList
-    :items="events"
-    :disable="isDisabled"
-    @load="loadData"
-    ref="infiniteList"
-  >
+  <InfiniteList :items="events" :disable="isDisabled" @load="loadData">
     <template v-slot:item="{ item }">
       <EventListItem
         clickable
