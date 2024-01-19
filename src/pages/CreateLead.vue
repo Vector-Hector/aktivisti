@@ -1,5 +1,31 @@
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+interface IInstance extends ComponentPublicInstance {
+  setpreviousBottomSheetState(value: BottomSheetState): void
+}
+export default {
+  beforeRouteEnter(to, from, next) {
+    if (
+      !userStore.isTeamCaptainOrLocalCoordinator() &&
+      !userStore.isAdminOrGlobalCoordinator()
+    ) {
+      ErrorBus.emit(
+        NOT_AUTHORIZED,
+        'Um einen Kontakt zu registrieren, benötigst du eine Teamcaptain- oder Koordinator*innen-Berechtigung'
+      )
+      next({ name: 'login' })
+    } else {
+      const previousBottomSheetState = uiStore.getState().bottomSheetState
+      next((vm) => {
+        // @ts-ignore
+        ;(vm as IInstance).previousBottomSheetState = previousBottomSheetState
+        uiStore.setBottomSheetStateAtLeast(BottomSheetState.EXPANDED)
+      })
+    }
+  }
+}
+</script>
+<script setup lang="ts">
+import { ComponentPublicInstance, ref } from 'vue'
 import { LeadDto } from 'src/api/model/LeadDto'
 import {
   QBtn,
@@ -19,122 +45,83 @@ import { ionClose } from '@quasar/extras/ionicons-v5'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import { userStore } from 'src/store/UserStore'
 import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
+import { onBeforeRouteLeave, useRouter } from 'vue-router'
+import { apiClient } from 'src/api/ApiClient'
 
-export default defineComponent({
-  name: 'CreateLead',
-  props: {
-    areaId: {
-      type: String as PropType<string>
+interface Props {
+  areaId?: string
+}
+const props = defineProps<Props>()
+
+const $router = useRouter()
+const form = ref<InstanceType<typeof QForm> | null>(null)
+
+const previousBottomSheetState = ref(BottomSheetState.HALF)
+const qrCodeOpen = ref(false)
+const confirmOpen = ref(false)
+const lead = ref<Partial<LeadDto>>({
+  is_party_member: false,
+  want_to_become_member: false
+})
+const isSubmitting = ref(false)
+const errors = ref<any>({})
+const genders = [
+  {
+    value: 'm',
+    label: 'männlich'
+  },
+  {
+    value: 'w',
+    label: 'weiblich'
+  },
+  {
+    value: 'd',
+    label: 'divers'
+  }
+]
+
+onBeforeRouteLeave(() => {
+  uiStore.setBottomSheetState(previousBottomSheetState.value)
+})
+
+async function saveLead() {
+  isSubmitting.value = true
+  errors.value = {}
+  try {
+    await apiClient.leads.create({
+      ...lead.value,
+      event_area: props.areaId ? parseInt(props.areaId) : undefined,
+      // The form will register the lead on the behalf of someone else - therefor a double opt in is necessary
+      // The first opt in here is implicit by offering the data in a person to person talk at the door
+      privacy_opt_in: true
+    })
+    // TODO: maybe add an explicit back route
+    lead.value = {
+      is_party_member: false,
+      want_to_become_member: false
     }
-  },
-  components: {
-    FormError,
-    QForm,
-    QInput,
-    QSelect,
-    QCheckbox,
-    QBtn,
-    QDialog,
-    QToolbarTitle,
-    QToolbar,
-    QPage,
-    QCard,
-    QScrollArea
-  },
-  beforeRouteEnter(from, to, next) {
-    if (
-      !userStore.isTeamCaptainOrLocalCoordinator() &&
-      !userStore.isAdminOrGlobalCoordinator()
-    ) {
-      ErrorBus.emit(
-        NOT_AUTHORIZED,
-        'Um einen Kontakt zu registrieren, benötigst du eine Teamcaptain- oder Koordinator*innen-Berechtigung'
-      )
-      next({ name: 'login' })
+    form.value?.reset()
+    $router.go(-1)
+  } catch (error) {
+    if (apiClient.isApiClientError(error) && error.response?.status === 400) {
+      errors.value = error.response.data
     } else {
-      const previousBottomSheetState = uiStore.getState().bottomSheetState
-      next((vm) => {
-        // @ts-ignore
-        vm.previousBottomSheetState = previousBottomSheetState
-        uiStore.setBottomSheetStateAtLeast(BottomSheetState.EXPANDED)
-      })
-    }
-  },
-  beforeRouteLeave() {
-    uiStore.setBottomSheetState(this.previousBottomSheetState)
-  },
-  data() {
-    return {
-      previousBottomSheetState: BottomSheetState.HALF,
-      qrCodeOpen: false,
-      confirmOpen: false,
-      lead: {
-        is_party_member: false,
-        want_to_become_member: false
-      } as Partial<LeadDto>,
-      isSubmitting: false,
-      errors: {},
-      genders: [
-        {
-          value: 'm',
-          label: 'männlich'
-        },
-        {
-          value: 'w',
-          label: 'weiblich'
-        },
-        {
-          value: 'd',
-          label: 'divers'
-        }
-      ],
-      ionClose
-    }
-  },
-  methods: {
-    async saveLead() {
-      this.isSubmitting = true
-      this.errors = {}
-      try {
-        await this.$apiClient.leads.create({
-          ...this.lead,
-          event_area: this.areaId ? parseInt(this.areaId) : undefined,
-          // The form will register the lead on the behalf of someone else - therefor a double opt in is necessary
-          // The first opt in here is implicit by offering the data in a person to person talk at the door
-          privacy_opt_in: true
-        })
-        // TODO: maybe add an explicit back route
-        this.lead = {
-          is_party_member: false,
-          want_to_become_member: false
-        }
-        ;(this.$refs.form as QForm).reset()
-        this.$router.go(-1)
-      } catch (error) {
-        if (
-          this.$apiClient.isApiClientError(error) &&
-          error.response?.status === 400
-        ) {
-          this.errors = error.response.data
-        } else {
-          this.errors = {
-            non_field_error: ['Ein unerwarteter Fehler ist aufgetreten']
-          }
-        }
+      errors.value = {
+        non_field_error: ['Ein unerwarteter Fehler ist aufgetreten']
       }
-      this.isSubmitting = false
-    },
-    isRequired(value: string) {
-      if (!value) {
-        return 'Bitte fülle dieses Feld aus'
-      }
-      return true
-    },
-    openQRCode() {
-      this.qrCodeOpen = true
     }
   }
-})
+  isSubmitting.value = false
+}
+function isRequired(value: string) {
+  if (!value) {
+    return 'Bitte fülle dieses Feld aus'
+  }
+  return true
+}
+function openQRCode() {
+  qrCodeOpen.value = true
+}
 </script>
 
 <template>
