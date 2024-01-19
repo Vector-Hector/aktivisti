@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { date, QBtn, QDate, QIcon, QInput, QPopupProxy, QTime } from 'quasar'
+import { QBtn, QDate, QIcon, QInput, QPopupProxy, QTime } from 'quasar'
 import { ionCalendarOutline, ionTimeOutline } from '@quasar/extras/ionicons-v5'
 
 interface Props {
@@ -19,20 +19,12 @@ interface Emits {
 }
 const emit = defineEmits<Emits>()
 
-const dateValid = computed(() => date.isValid(props.modelValue))
 const dateTime = computed({
   get(): string {
     return props.modelValue
   },
   set(value: string) {
     emit('update:modelValue', value)
-  }
-})
-const passthroughProps = computed(() => {
-  return {
-    ...props,
-    modelValue: undefined,
-    mask: undefined
   }
 })
 </script>
