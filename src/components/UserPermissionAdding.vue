@@ -26,17 +26,17 @@ interface Props {
 }
 const props = defineProps<Props>()
 
+interface Emits {
+  (e: 'submit'): void
+}
+const emit = defineEmits<Emits>()
+
 const $q = useQuasar()
 
 const username = ref('')
 const selectedPermissionType = ref(
   props.permissionTypeConditionalOptions.find(({ inactive }) => !inactive)
 )
-
-interface Emits {
-  (e: 'submit'): void
-}
-const emit = defineEmits<Emits>()
 
 async function handleSubmission() {
   const newUserObjectPermissions = {
