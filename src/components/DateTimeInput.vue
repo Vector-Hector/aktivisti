@@ -1,63 +1,38 @@
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 import { date, QBtn, QDate, QIcon, QInput, QPopupProxy, QTime } from 'quasar'
 import { ionCalendarOutline, ionTimeOutline } from '@quasar/extras/ionicons-v5'
 
-export default defineComponent({
-  name: 'DateTimeInput',
-  props: {
-    modelValue: {
-      type: String as PropType<string>,
-      required: true
-    },
-    mask: {
-      type: String as PropType<string>,
-      default: 'DD.MM.YYYY HH:mm'
-    },
-    inputProps: {
-      type: Object as PropType<typeof QInput.$props>
-    },
-    dateProps: {
-      type: Object as PropType<typeof QDate.$props>
-    },
-    timeProps: {
-      type: Object as PropType<typeof QTime.$props>
-    }
+interface Props {
+  modelValue: string
+  mask?: string
+  inputProps?: typeof QInput.$props
+  dateProps?: typeof QDate.$props
+  timeProps?: typeof QTime.$props
+}
+const props = withDefaults(defineProps<Props>(), {
+  mask: 'DD.MM.YYYY HH:mm'
+})
+
+interface Emits {
+  (e: 'update:modelValue', datetime: string): void
+}
+const emit = defineEmits<Emits>()
+
+const dateValid = computed(() => date.isValid(props.modelValue))
+const dateTime = computed({
+  get(): string {
+    return props.modelValue
   },
-  emits: ['update:modelValue'],
-  components: {
-    QIcon,
-    QDate,
-    QTime,
-    QPopupProxy,
-    QInput,
-    QBtn
-  },
-  computed: {
-    dateValid(): boolean {
-      return date.isValid(this.modelValue)
-    },
-    dateTime: {
-      get(): string {
-        return this.modelValue
-      },
-      set(value: string) {
-        this.$emit('update:modelValue', value)
-      }
-    },
-    passthroughProps(): any {
-      return {
-        ...this.$props,
-        modelValue: undefined,
-        mask: undefined
-      }
-    }
-  },
-  data() {
-    return {
-      ionCalendarOutline,
-      ionTimeOutline
-    }
+  set(value: string) {
+    emit('update:modelValue', value)
+  }
+})
+const passthroughProps = computed(() => {
+  return {
+    ...props,
+    modelValue: undefined,
+    mask: undefined
   }
 })
 </script>
