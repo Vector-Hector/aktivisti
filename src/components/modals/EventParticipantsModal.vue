@@ -1,3 +1,36 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { QCard, QCardSection, QDialog, QToolbar, QToolbarTitle } from 'quasar'
+import EventParticipantsList from 'src/components/EventParticipantsList.vue'
+
+interface Emits {
+  // REQUIRED
+  (e: 'ok'): void
+  (e: 'hide'): void
+}
+const emit = defineEmits<Emits>()
+
+interface Props {
+  eventId: number
+  eventSubAssociation?: number
+}
+const props = defineProps<Props>()
+
+const dialog = ref<InstanceType<typeof QDialog> | null>(null)
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function show() {
+  dialog.value?.show()
+}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function hide() {
+  dialog.value?.hide()
+}
+function onDialogHide() {
+  emit('hide')
+}
+</script>
+
 <template>
   <QDialog ref="dialog" @hide="onDialogHide">
     <QCard class="participants-modal">
@@ -6,59 +39,13 @@
       </QToolbar>
       <QCardSection>
         <EventParticipantsList
-          :event-id="eventId"
-          :event-sub-association="eventSubAssociation"
+          :event-id="props.eventId"
+          :event-sub-association="props.eventSubAssociation"
         />
       </QCardSection>
     </QCard>
   </QDialog>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { QCard, QCardSection, QDialog, QToolbar, QToolbarTitle } from 'quasar'
-import EventParticipantsList from 'src/components/EventParticipantsList.vue'
-
-export default defineComponent({
-  name: 'EventParticipantsModal',
-  components: {
-    EventParticipantsList,
-    QDialog,
-    QCard,
-    QCardSection,
-    QToolbar,
-    QToolbarTitle
-  },
-  emits: [
-    // REQUIRED
-    'ok',
-    'hide'
-  ],
-  props: {
-    eventId: {
-      type: Number as PropType<number>,
-      required: true
-    },
-    eventSubAssociation: {
-      type: Number as PropType<number>,
-      required: false
-    }
-  },
-  methods: {
-    show() {
-      // @ts-ignore
-      this.$refs.dialog.show()
-    },
-    hide() {
-      // @ts-ignore
-      this.$refs.dialog.hide()
-    },
-    onDialogHide() {
-      this.$emit('hide')
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 .participants-modal {
