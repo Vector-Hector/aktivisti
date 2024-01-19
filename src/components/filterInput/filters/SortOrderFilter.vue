@@ -12,12 +12,12 @@ interface Props {
 }
 const props = defineProps<Props>()
 
-const sortOptions = ref(Object.values(SortOption))
-
 interface Emits {
   (e: 'update:modelValue', string): void
 }
 const emit = defineEmits<Emits>()
+
+const sortOptions = ref(Object.values(SortOption))
 </script>
 
 <template>
