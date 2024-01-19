@@ -1,49 +1,3 @@
-<template>
-  <div class="counter-input">
-    <div class="p-fluid">
-      <div class="p-field">
-        <div @mousedown="stopTracking" @touchstart="stopTracking">
-          <QSelect
-            id="queryValue"
-            :model-value="result"
-            class="search-place"
-            hide-dropdown-icon
-            @filter="filterFn"
-            dense
-            filled
-            label="Adresse eingeben"
-            :fill-input="customPlaceName"
-            use-input
-            hide-selected
-            @input-value="updatePlaceName"
-            option-label="place_name"
-            :options="filteredPlaces"
-            :error-message="error"
-            :error="!!error"
-            @update:model-value="emitResult($event)"
-          >
-            <template v-slot:append>
-              <QIcon :name="ionSearch" />
-            </template>
-            <template v-slot:option="slotProps">
-              <QItem v-bind="slotProps.itemProps">
-                <QItemSection>
-                  <QItemLabel>{{
-                    slotProps.opt.place_name.split(',')[0]
-                  }}</QItemLabel>
-                  <QItemLabel caption>{{
-                    slotProps.opt.place_name.split(',').slice(1).join(', ')
-                  }}</QItemLabel>
-                </QItemSection>
-              </QItem>
-            </template>
-          </QSelect>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { forwardGeocode } from 'src/utils/map'
@@ -116,6 +70,53 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <div class="counter-input">
+    <div class="p-fluid">
+      <div class="p-field">
+        <div @mousedown="stopTracking" @touchstart="stopTracking">
+          <QSelect
+            id="queryValue"
+            :model-value="result"
+            class="search-place"
+            hide-dropdown-icon
+            @filter="filterFn"
+            dense
+            filled
+            label="Adresse eingeben"
+            :fill-input="customPlaceName"
+            use-input
+            hide-selected
+            @input-value="updatePlaceName"
+            option-label="place_name"
+            :options="filteredPlaces"
+            :error-message="error"
+            :error="!!error"
+            @update:model-value="emitResult($event)"
+          >
+            <template v-slot:append>
+              <QIcon :name="ionSearch" />
+            </template>
+            <template v-slot:option="slotProps">
+              <QItem v-bind="slotProps.itemProps">
+                <QItemSection>
+                  <QItemLabel>{{
+                    slotProps.opt.place_name.split(',')[0]
+                  }}</QItemLabel>
+                  <QItemLabel caption>{{
+                    slotProps.opt.place_name.split(',').slice(1).join(', ')
+                  }}</QItemLabel>
+                </QItemSection>
+              </QItem>
+            </template>
+          </QSelect>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .search-place {
   width: 100%;
