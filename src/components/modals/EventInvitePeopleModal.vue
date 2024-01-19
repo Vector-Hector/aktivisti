@@ -1,43 +1,33 @@
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 import EventInvitePeople from 'src/components/EventInvitePeople.vue'
 import { QCard, QCardSection, QDialog, QToolbar, QToolbarTitle } from 'quasar'
 
-export default defineComponent({
-  name: 'EventInvitePeopleModal',
-  components: {
-    QDialog,
-    QCard,
-    QCardSection,
-    QToolbar,
-    QToolbarTitle,
-    EventInvitePeople
-  },
-  emits: [
-    // REQUIRED
-    'ok',
-    'hide'
-  ],
-  props: {
-    eventId: {
-      type: Number as PropType<number>,
-      required: true
-    }
-  },
-  methods: {
-    show() {
-      // @ts-ignore
-      this.$refs.dialog.show()
-    },
-    hide() {
-      // @ts-ignore
-      this.$refs.dialog.hide()
-    },
-    onDialogHide() {
-      this.$emit('hide')
-    }
-  }
-})
+interface Props {
+  eventId: number
+}
+const props = defineProps<Props>()
+
+interface Emits {
+  // REQUIRED
+  (e: 'ok'): void
+  (e: 'hide'): void
+}
+const emit = defineEmits<Emits>()
+
+const dialog = ref<InstanceType<typeof QDialog> | null>(null)
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function show() {
+  dialog.value?.show()
+}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function hide() {
+  dialog.value?.hide()
+}
+function onDialogHide() {
+  emit('hide')
+}
 </script>
 
 <template>
@@ -47,7 +37,7 @@ export default defineComponent({
         <QToolbarTitle>Leute einladen</QToolbarTitle>
       </QToolbar>
       <QCardSection>
-        <EventInvitePeople :event-id="eventId" />
+        <EventInvitePeople :event-id="props.eventId" />
       </QCardSection>
     </QCard>
   </QDialog>
