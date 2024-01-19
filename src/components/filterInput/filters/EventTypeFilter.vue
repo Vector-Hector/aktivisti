@@ -11,16 +11,16 @@ const props = withDefaults(defineProps<Props>(), {
   availableEventTypes: () => Object.values(EventTypes)
 })
 
+interface Emits {
+  (e: 'update:modelValue', value: any): void
+}
+const emit = defineEmits<Emits>()
+
 const possibleEventTypeOptions = computed(() => {
   return eventTypeOptions.filter((item) =>
     props.availableEventTypes.includes(item.key)
   )
 })
-
-interface Emits {
-  (e: 'update:modelValue', value: any): void
-}
-const emit = defineEmits<Emits>()
 </script>
 
 <template>
