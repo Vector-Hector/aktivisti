@@ -30,7 +30,6 @@ import { eventDetailStore } from 'src/store/EventDetailStore'
 import ResetRotateControl from 'src/map/ResetRotateControl.vue'
 import CampaignCollectionOverlayControl from 'src/map/CampaignCollectionOverlayControl.vue'
 import { getAuthStore } from 'src/store/AuthStore'
-import { OfficeGeoJsonDto } from 'src/api/model/OfficeGeoJsonDto'
 import { onBeforeRouteUpdate } from 'vue-router'
 
 interface Props {
@@ -42,7 +41,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const map = ref<InstanceType<typeof Map> | null>(null)
 
-const offices = ref<OfficeGeoJsonDto | null>(null)
 const bbox = ref(userStore.getState().bbox)
 const isMapDefined = ref(true)
 const isLoggedIn = ref(getAuthStore().isLoggedIn())
@@ -61,9 +59,6 @@ const poiLocation = computed(() => {
 })
 const mapRef = computed(() => {
   return map.value as InstanceType<typeof Map> | undefined
-})
-const bottomSheetState = computed(() => {
-  return uiStore.getState().bottomSheetState
 })
 
 function resizeMap(newSheetSize: BottomSheetState) {
