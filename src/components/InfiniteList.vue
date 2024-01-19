@@ -1,38 +1,32 @@
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
+<script setup lang="ts">
 import { QInfiniteScroll, QList, QSpinnerDots } from 'quasar'
 
-export default defineComponent({
-  name: 'InfiniteList',
-  components: {
-    QInfiniteScroll,
-    QList,
-    QSpinnerDots
-  },
-  props: {
-    items: {
-      type: Array as PropType<any[]>,
-      default: () => []
-    },
-    disable: {
-      type: Boolean as PropType<boolean>,
-      default: false
-    }
-  },
-  emits: ['load']
+interface Props {
+  items?: any[]
+  disable?: boolean
+}
+const props = withDefaults(defineProps<Props>(), {
+  items: () => [],
+  disable: false
 })
+
+interface Emits {
+  (e: 'load', index: number, done: (stop?: boolean | undefined) => void): void
+}
+const emit = defineEmits<Emits>()
 </script>
+
 <template>
   <QInfiniteScroll
-    v-if="items.length > 0"
-    @load="(index, done) => $emit('load', index, done)"
-    :disable="disable"
+    v-if="props.items.length > 0"
+    @load="(index, done) => emit('load', index, done)"
+    :disable="props.disable"
   >
     <QList>
       <slot
         name="item"
         :item="item"
-        v-for="(item, index) in items"
+        v-for="(item, index) in props.items"
         :key="index"
       >
         {{ item }}
