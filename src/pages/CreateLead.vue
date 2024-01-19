@@ -58,7 +58,6 @@ const form = ref<InstanceType<typeof QForm> | null>(null)
 
 const previousBottomSheetState = ref(BottomSheetState.HALF)
 const qrCodeOpen = ref(false)
-const confirmOpen = ref(false)
 const lead = ref<Partial<LeadDto>>({
   is_party_member: false,
   want_to_become_member: false
@@ -112,12 +111,6 @@ async function saveLead() {
     }
   }
   isSubmitting.value = false
-}
-function isRequired(value: string) {
-  if (!value) {
-    return 'Bitte fülle dieses Feld aus'
-  }
-  return true
 }
 function openQRCode() {
   qrCodeOpen.value = true
