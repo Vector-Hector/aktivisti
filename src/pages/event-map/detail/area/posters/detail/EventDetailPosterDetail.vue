@@ -1,24 +1,3 @@
-<template>
-  <div class="flex column full-width">
-    <div class="container q-py-sm col-grow full-width">
-      <EditPoster :key="poster.id" v-if="poster" v-model:poster="poster" />
-      <div class="row">
-        <div class="col-grow d-flex justify-center">
-          <QBtn
-            v-if="event.poster_creation_allowed"
-            class="delete-button"
-            flat
-            :icon="ionTrash"
-            label="Löschen"
-            color="primary"
-            @click="onDeleteClicked"
-          />
-        </div>
-      </div>
-    </div>
-    <SidebarBottomBackNavigation @back="$router.go(-1)" />
-  </div>
-</template>
 <script lang="ts">
 import { useEventDetailPosterMixin } from 'pages/event-map/detail/area/posters/EventDetailPosterMixin'
 import { defineComponent } from 'vue'
@@ -159,4 +138,25 @@ export default defineComponent({
   }
 })
 </script>
+<template>
+  <div class="flex column full-width">
+    <div class="container q-py-sm col-grow full-width">
+      <EditPoster :key="poster.id" v-if="poster" v-model:poster="poster" />
+      <div class="row">
+        <div class="col-grow d-flex justify-center">
+          <QBtn
+            v-if="event.poster_creation_allowed"
+            class="delete-button"
+            flat
+            :icon="ionTrash"
+            label="Löschen"
+            color="primary"
+            @click="onDeleteClicked"
+          />
+        </div>
+      </div>
+    </div>
+    <SidebarBottomBackNavigation @back="$router.go(-1)" />
+  </div>
+</template>
 <style lang="scss" scoped></style>
