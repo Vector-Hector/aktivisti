@@ -1,5 +1,41 @@
+<!--FIXME(peter) 2023/12/12 The composition API doesn't support `beforeRouteEnter` so far so this a workaround
+      see https://github.com/vuejs/rfcs/discussions/302-->
 <script lang="ts">
-import { defineComponent } from 'vue'
+interface IInstance extends ComponentPublicInstance {
+  setEmailNotificationSettings(
+    value: Partial<EmailNotificationSettingsDto>
+  ): void
+  setPermissions(value: UserObjectPermissionDto[]): void
+}
+export default {
+  beforeRouteEnter: async (to, from, next) => {
+    const userResponse = await apiClient.user.get('me', [
+      'sub_association',
+      'email_notification_settings'
+    ])
+    userStore.setUser(userResponse.payload.data)
+    userStore.setHomeAssociation(
+      userResponse.payload.embedded.sub_association?.[0]
+    )
+
+    const userPermissionResponse = await apiClient.userPermissions.list({
+      user: userResponse.payload.data.id
+    })
+    const userPermissions = userPermissionResponse.payload.data
+    const initialEmailNotificationSettings =
+      userResponse.payload.embedded.email_notification_settings?.[0]
+    next((vm) => {
+      const instance = vm as IInstance
+      if (initialEmailNotificationSettings) {
+        instance.setEmailNotificationSettings(initialEmailNotificationSettings)
+      }
+      instance.setPermissions(userPermissions)
+    })
+  }
+}
+</script>
+<script setup lang="ts">
+import { ComponentPublicInstance, computed, ref } from 'vue'
 import {
   QAvatar,
   QBtn,
@@ -11,7 +47,8 @@ import {
   QScrollArea,
   QSeparator,
   QToggle,
-  QVueGlobals
+  QVueGlobals,
+  useQuasar
 } from 'quasar'
 import {
   ionCheckmark,
@@ -34,305 +71,250 @@ import AppSessions from 'components/AppSessions.vue'
 import ChangeUsernameDialog from 'components/modals/ChangeUsernameDialog.vue'
 import PersonalMetrics from 'components/PersonalMetrics.vue'
 import { deregisterDevice, registerDevice } from 'src/utils/push-notification'
+import { useRouter } from 'vue-router'
 
 const authStore = getAuthStore()
+const $q = useQuasar()
+const $router = useRouter()
 
-export default defineComponent({
-  name: 'Profile',
-  components: {
-    PersonalMetrics,
-    AppSessions,
-    QAvatar,
-    QInput,
-    QBtn,
-    QSeparator,
-    QToggle,
-    QList,
-    QPage,
-    QItem,
-    QItemSection,
-    QScrollArea
-  },
-  async beforeRouteEnter(from, to, next) {
-    const userResponse = await apiClient.user.get('me', [
-      'sub_association',
-      'email_notification_settings'
-    ])
-    userStore.setUser(userResponse.payload.data)
-    userStore.setHomeAssociation(
-      userResponse.payload.embedded.sub_association?.[0]
-    )
-
-    const userPermissionResponse = await apiClient.userPermissions.list({
-      user: userResponse.payload.data.id
-    })
-    const userPermissions = userPermissionResponse.payload.data
-    const initialEmailNotificationSettings =
-      userResponse.payload.embedded.email_notification_settings?.[0]
-    next((vm) => {
-      if (initialEmailNotificationSettings) {
-        // @ts-ignore
-        vm.emailNotificationSettings = initialEmailNotificationSettings
-      }
-      // @ts-ignore
-      vm.permissions = userPermissions
-    })
-  },
-  computed: {
-    hasAtLeastOneManagePermission(): boolean {
-      return userStore.hasAtLeastOneManagePermission()
-    },
-    hasAnyPermission(): boolean {
-      return (
-        this.permissions.length > 0 ||
-        this.user?.is_superuser === true ||
-        this.user?.roles?.includes(CAMPAIGN_ADMIN) === true
-      )
-    },
-    realName(): string | null {
-      if (this.user === null) {
-        return null
-      }
-      if (this.user.first_name !== null && this.user.last_name === null) {
-        return `${this.user.first_name}`
-      } else if (
-        this.user.last_name !== null &&
-        this.user.first_name === null
-      ) {
-        return `${this.user.last_name}`
-      } else if (
-        this.user.first_name !== null &&
-        this.user.last_name !== null
-      ) {
-        return `${this.user.first_name} ${this.user.last_name}`
-      } else {
-        return null
-      }
-    },
-    user: {
-      get(): UserDto | null {
-        return userStore.getState().user
-      },
-      set(value: UserDto) {
-        userStore.setUser(value)
-      }
-    },
-    homeAssociation: {
-      get(): SubAssociationDto | null {
-        return userStore.getState().homeAssociation
-      },
-      set(value: SubAssociationDto) {
-        userStore.setHomeAssociation(value)
-      }
-    },
-    homeAssociationName(): string | undefined {
-      return this.homeAssociation?.name
-    }
-  },
-  data() {
-    return {
-      ionPersonCircleOutline,
-      profileSaveDebouncer: new SettleDebouncer(),
-      emailNotificationSettingsSaveDebouncer: new SettleDebouncer(),
-      localUser: cloneDeep(userStore.getState().user),
-      ionPencil,
-      errors: {},
-      CAMPAIGN_ADMIN,
-      emailNotificationSettings: {
-        on_invitation: true,
-        on_new_volunteers: true
-      } as Partial<EmailNotificationSettingsDto>,
-      pushNotificationSettings: {
-        pushNotifications: userStore.state.pushNotifications
-      },
-      permissions: [] as UserObjectPermissionDto[]
-    }
-  },
-  methods: {
-    saveEmailNotificationSettingsDebounced() {
-      void this.emailNotificationSettingsSaveDebouncer.executeDebounced(() => {
-        return this.saveEmailNotificationSettings()
-      })
-    },
-    async savePushNotificationSettings() {
-      const newValue = !this.pushNotificationSettings.pushNotifications
-
-      const action = newValue === true ? registerDevice : deregisterDevice
-
-      const notification = this.notifySavingInProgress()
-      try {
-        await action()
-        this.notifySuccess(
-          notification,
-          'Deine Einstellungen wurden gespeichert'
-        )
-
-        userStore.setPushNotificationPreferences(newValue)
-        this.pushNotificationSettings.pushNotifications = newValue
-      } catch (e) {
-        this.notifyFailure(
-          notification,
-          'Beim speichern des Profils trat ein Fehler auf'
-        )
-        this.pushNotificationSettings.pushNotifications = !newValue
-      }
-    },
-    saveProfileDebounced() {
-      if (isEqual(this.user, this.localUser)) {
-        this.errors = {}
-        return
-      }
-      void this.profileSaveDebouncer.executeDebounced(() => {
-        return this.saveProfile()
-      })
-    },
-    openChangeUsernameDialog() {
-      this.$q
-        .dialog({
-          component: ChangeUsernameDialog
-        })
-        .onOk((new_username: string) => {
-          this.localUser!.username = new_username
-          this.user!.username = new_username
-        })
-    },
-    openChangeEmailDialog() {
-      this.$q.dialog({
-        component: ChangeEmailDialog
-      })
-    },
-    openChangePasswordDialog() {
-      this.$q.dialog({
-        component: ChangePasswordDialog
-      })
-    },
-    async saveEmailNotificationSettings() {
-      const notification = this.notifySavingInProgress()
-
-      try {
-        let response
-        if (!this.emailNotificationSettings?.id) {
-          response = await this.$apiClient.emailNotificationSettings.create(
-            this.emailNotificationSettings
-          )
-        } else {
-          response = await this.$apiClient.emailNotificationSettings.update(
-            this.emailNotificationSettings.id.toString(),
-            {
-              ...this.emailNotificationSettings,
-              user: this.localUser!.id
-            } as EmailNotificationSettingsDto
-          )
-        }
-        this.emailNotificationSettings = response.payload.data
-        this.notifySuccess(
-          notification,
-          'Deine Einstellungen wurden gespeichert'
-        )
-      } catch (e) {
-        if (this.$apiClient.isApiClientError(e) || e instanceof Error) {
-          this.notifyFailure(
-            notification,
-            `Beim speichern des Profils trat ein Fehler auf: ${e.message}`
-          )
-        }
-      }
-    },
-    async saveProfile(): Promise<void> {
-      if (this.user === null) return
-      this.errors = {}
-      const notification = this.notifySavingInProgress()
-      try {
-        const response = await this.$apiClient.user.update(
-          'me',
-          this.localUser!,
-          ['sub_association']
-        )
-        this.user = cloneDeep(response.payload.data)
-        this.homeAssociation =
-          response.payload.embedded.sub_association?.find(
-            (item: SubAssociationDto) => item.id === this.user?.sub_association
-          ) ?? null
-
-        this.notifySuccess(notification, 'Dein Profil wurde gespeichert')
-      } catch (e) {
-        if (this.$apiClient.isApiClientError(e) && e.response?.status === 400) {
-          this.errors = e.response.data
-          this.notifyFailure(
-            notification,
-            'Dein Profil konnte nicht gespeichert werden, bitte prüfe deine Angaben'
-          )
-        } else if (this.$apiClient.isApiClientError(e) || e instanceof Error) {
-          this.notifyFailure(
-            notification,
-            `Beim speichern des Profils trat ein Fehler auf: ${e.message}`
-          )
-        }
-      }
-    },
-    openDeleteAccountPrompt() {
-      this.$q
-        .dialog({
-          title: 'Account löschen',
-          message: 'Möchtest du wirklich deinen Account löschen?',
-          ok: 'Account löschen',
-          cancel: 'Abbrechen'
-        })
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        .onOk(async () => {
-          try {
-            await this.$apiClient.user.delete('me')
-            this.$q.notify({
-              message: 'Dein Account wurde gelöscht',
-              color: 'positive'
-            })
-            await this.$router.push({ name: 'splash' })
-            authStore.deleteSessionData()
-          } catch (e) {
-            this.$q.notify({
-              message: 'Beim löschen deines Accounts trat ein Fehler auf',
-              color: 'negative'
-            })
-          }
-        })
-    },
-    notifySavingInProgress() {
-      const notification = this.$q.notify({
-        group: false,
-        spinner: true,
-        message: 'Wird gespeichert',
-        // Fixme(Peter): Should be reseted to 0, but leads to problem when
-        //  requesting notification permission on android see also wk-frontend#364
-        timeout: 5000
-      })
-      return notification
-    },
-    notifySuccess(
-      notification: ReturnType<QVueGlobals['notify']>,
-      message: string
-    ) {
-      notification({
-        spinner: false,
-        icon: ionCheckmark,
-        message,
-        color: 'positive',
-        timeout: 1500
-      })
-    },
-    notifyFailure(
-      notification: ReturnType<QVueGlobals['notify']>,
-      message: string
-    ) {
-      notification({
-        spinner: false,
-        icon: ionClose,
-        message,
-        color: 'negative',
-        timeout: 1500
-      })
-    }
+const hasAtLeastOneManagePermission = computed(() => {
+  return userStore.hasAtLeastOneManagePermission()
+})
+const hasAnyPermission = computed(() => {
+  return (
+    permissions.value.length > 0 ||
+    user.value?.is_superuser === true ||
+    user.value?.roles?.includes(CAMPAIGN_ADMIN) === true
+  )
+})
+const realName = computed(() => {
+  if (user.value === null) {
+    return null
+  }
+  if (user.value.first_name !== null && user.value.last_name === null) {
+    return `${user.value.first_name}`
+  } else if (user.value.last_name !== null && user.value.first_name === null) {
+    return `${user.value.last_name}`
+  } else if (user.value.first_name !== null && user.value.last_name !== null) {
+    return `${user.value.first_name} ${user.value.last_name}`
+  } else {
+    return null
   }
 })
+const user = computed({
+  get() {
+    return userStore.getState().user
+  },
+  set(value: UserDto | null) {
+    userStore.setUser(value!)
+  }
+})
+const homeAssociation = computed({
+  get() {
+    return userStore.getState().homeAssociation
+  },
+  set(value: SubAssociationDto | null) {
+    userStore.setHomeAssociation(value)
+  }
+})
+const homeAssociationName = computed(() => {
+  return homeAssociation.value?.name
+})
+
+const profileSaveDebouncer = new SettleDebouncer()
+const emailNotificationSettingsSaveDebouncer = new SettleDebouncer()
+const localUser = ref(cloneDeep(userStore.getState().user))
+const errors = ref<any>({})
+const emailNotificationSettings = ref<Partial<EmailNotificationSettingsDto>>({
+  on_invitation: true,
+  on_new_volunteers: true
+})
+const pushNotificationSettings = ref({
+  pushNotifications: userStore.state.pushNotifications
+})
+const permissions = ref<UserObjectPermissionDto[]>([])
+
+function saveEmailNotificationSettingsDebounced() {
+  void emailNotificationSettingsSaveDebouncer.executeDebounced(() => {
+    return saveEmailNotificationSettings()
+  })
+}
+async function savePushNotificationSettings() {
+  const newValue = !pushNotificationSettings.value.pushNotifications
+
+  const action = newValue === true ? registerDevice : deregisterDevice
+
+  const notification = notifySavingInProgress()
+  try {
+    await action()
+    notifySuccess(notification, 'Deine Einstellungen wurden gespeichert')
+
+    userStore.setPushNotificationPreferences(newValue)
+    pushNotificationSettings.value.pushNotifications = newValue
+  } catch (e) {
+    notifyFailure(
+      notification,
+      'Beim speichern des Profils trat ein Fehler auf'
+    )
+    pushNotificationSettings.value.pushNotifications = !newValue
+  }
+}
+function saveProfileDebounced() {
+  if (isEqual(user.value, localUser.value)) {
+    errors.value = {}
+    return
+  }
+  void profileSaveDebouncer.executeDebounced(() => {
+    return saveProfile()
+  })
+}
+function openChangeUsernameDialog() {
+  $q.dialog({
+    component: ChangeUsernameDialog
+  }).onOk((new_username: string) => {
+    localUser.value!.username = new_username
+    user.value!.username = new_username
+  })
+}
+function openChangeEmailDialog() {
+  $q.dialog({
+    component: ChangeEmailDialog
+  })
+}
+function openChangePasswordDialog() {
+  $q.dialog({
+    component: ChangePasswordDialog
+  })
+}
+async function saveEmailNotificationSettings() {
+  const notification = notifySavingInProgress()
+
+  try {
+    let response
+    if (!emailNotificationSettings.value?.id) {
+      response = await apiClient.emailNotificationSettings.create(
+        emailNotificationSettings.value
+      )
+    } else {
+      response = await apiClient.emailNotificationSettings.update(
+        emailNotificationSettings.value.id.toString(),
+        {
+          ...emailNotificationSettings.value,
+          user: localUser.value!.id
+        } as EmailNotificationSettingsDto
+      )
+    }
+    emailNotificationSettings.value = response.payload.data
+    notifySuccess(notification, 'Deine Einstellungen wurden gespeichert')
+  } catch (e) {
+    if (apiClient.isApiClientError(e) || e instanceof Error) {
+      notifyFailure(
+        notification,
+        `Beim speichern des Profils trat ein Fehler auf: ${e.message}`
+      )
+    }
+  }
+}
+async function saveProfile(): Promise<void> {
+  if (user.value === null) return
+  errors.value = {}
+  const notification = notifySavingInProgress()
+  try {
+    const response = await apiClient.user.update('me', localUser.value!, [
+      'sub_association'
+    ])
+    user.value = cloneDeep(response.payload.data)
+    homeAssociation.value =
+      response.payload.embedded.sub_association?.find(
+        (item: SubAssociationDto) => item.id === user.value?.sub_association
+      ) ?? null
+
+    notifySuccess(notification, 'Dein Profil wurde gespeichert')
+  } catch (e) {
+    if (apiClient.isApiClientError(e) && e.response?.status === 400) {
+      errors.value = e.response.data
+      notifyFailure(
+        notification,
+        'Dein Profil konnte nicht gespeichert werden, bitte prüfe deine Angaben'
+      )
+    } else if (apiClient.isApiClientError(e) || e instanceof Error) {
+      notifyFailure(
+        notification,
+        `Beim speichern des Profils trat ein Fehler auf: ${e.message}`
+      )
+    }
+  }
+}
+function openDeleteAccountPrompt() {
+  $q.dialog({
+    title: 'Account löschen',
+    message: 'Möchtest du wirklich deinen Account löschen?',
+    ok: 'Account löschen',
+    cancel: 'Abbrechen'
+  })
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    .onOk(async () => {
+      try {
+        await apiClient.user.delete('me')
+        $q.notify({
+          message: 'Dein Account wurde gelöscht',
+          color: 'positive'
+        })
+        await $router.push({ name: 'splash' })
+        authStore.deleteSessionData()
+      } catch (e) {
+        $q.notify({
+          message: 'Beim löschen deines Accounts trat ein Fehler auf',
+          color: 'negative'
+        })
+      }
+    })
+}
+function notifySavingInProgress() {
+  const notification = $q.notify({
+    group: false,
+    spinner: true,
+    message: 'Wird gespeichert',
+    // Fixme(Peter): Should be reseted to 0, but leads to problem when
+    //  requesting notification permission on android see also wk-frontend#364
+    timeout: 5000
+  })
+  return notification
+}
+function notifySuccess(
+  notification: ReturnType<QVueGlobals['notify']>,
+  message: string
+) {
+  notification({
+    spinner: false,
+    icon: ionCheckmark,
+    message,
+    color: 'positive',
+    timeout: 1500
+  })
+}
+function notifyFailure(
+  notification: ReturnType<QVueGlobals['notify']>,
+  message: string
+) {
+  notification({
+    spinner: false,
+    icon: ionClose,
+    message,
+    color: 'negative',
+    timeout: 1500
+  })
+}
+function setEmailNotificationSettings(
+  value: Partial<EmailNotificationSettingsDto>
+) {
+  emailNotificationSettings.value = value
+}
+function setPermissions(value: UserObjectPermissionDto[]) {
+  permissions.value = value
+}
+
+defineExpose({ setEmailNotificationSettings, setPermissions })
 </script>
 
 <template>
