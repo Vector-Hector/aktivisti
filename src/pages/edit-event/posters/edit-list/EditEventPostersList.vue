@@ -1,30 +1,3 @@
-<template>
-  <div class="edit-event-posters container">
-    <div class="row">
-      <div class="col buttons">
-        <QBtn
-          color="primary"
-          label="Erstellen"
-          :icon="ionLocationSharp"
-          :to="{ name: 'edit-event-single-poster-new' }"
-        />
-      </div>
-    </div>
-    <PosterTable
-      :show-actions="true"
-      :posters="posters"
-      @row-click="editPoster($event.id)"
-      @row-deleted="deletePoster"
-    />
-  </div>
-  <SidebarBottomStepNavigation
-    @close="abort"
-    @forward="next"
-    @back="back"
-    :last="stepControls.isLastStep.value"
-  />
-</template>
-
 <script lang="ts">
 import { defineComponent, inject } from 'vue'
 
@@ -85,6 +58,33 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <div class="edit-event-posters container">
+    <div class="row">
+      <div class="col buttons">
+        <QBtn
+          color="primary"
+          label="Erstellen"
+          :icon="ionLocationSharp"
+          :to="{ name: 'edit-event-single-poster-new' }"
+        />
+      </div>
+    </div>
+    <PosterTable
+      :show-actions="true"
+      :posters="posters"
+      @row-click="editPoster($event.id)"
+      @row-deleted="deletePoster"
+    />
+  </div>
+  <SidebarBottomStepNavigation
+    @close="abort"
+    @forward="next"
+    @back="back"
+    :last="stepControls.isLastStep.value"
+  />
+</template>
 
 <style lang="scss" scoped>
 .edit-event-posters {
