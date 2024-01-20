@@ -1,10 +1,3 @@
-<template>
-  <AreaFeatureLayer :features="features" />
-  <AddressMarkerLayer :addresses="addresses" />
-  <PosterMarkerLayer :posters="posters" :editable="false" :opacity="0.5" />
-  <EventMarker v-if="event?.location" :event="event" />
-</template>
-
 <script lang="ts">
 import { defineComponent, inject } from 'vue'
 import { Geometry } from 'geojson'
@@ -60,3 +53,10 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <AreaFeatureLayer :features="features" />
+  <AddressMarkerLayer :addresses="addresses" />
+  <PosterMarkerLayer :posters="posters" :editable="false" :opacity="0.5" />
+  <EventMarker v-if="event?.location" :event="event" />
+</template>
