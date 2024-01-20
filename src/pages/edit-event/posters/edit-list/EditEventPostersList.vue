@@ -4,7 +4,6 @@ import { defineComponent, inject, ref } from 'vue'
 import { QBtn } from 'quasar'
 import { ionLocationSharp } from '@quasar/extras/ionicons-v5'
 import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
-import { posterStatusOptions } from 'src/api/model/PosterDto'
 import { StepControls } from 'pages/EditEvent.vue'
 import { useEditPosterListMixin } from 'pages/edit-event/posters/EditPosterListMixin'
 import PosterTable from 'components/PosterTable.vue'
@@ -13,14 +12,8 @@ import { useRouter } from 'vue-router'
 
 const $router = useRouter()
 
-const { event } = useEditEventMixin()
 const { posters, deletePoster } = useEditPosterListMixin()
 const stepControls = inject('stepControls') as StepControls
-
-const confirmDelete = ref(true)
-const filters = ref({
-  status: null
-})
 
 async function back() {
   stepControls.previous()
