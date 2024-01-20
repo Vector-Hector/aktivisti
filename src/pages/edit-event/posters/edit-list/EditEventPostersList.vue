@@ -1,5 +1,5 @@
-<script lang="ts">
-import { defineComponent, inject } from 'vue'
+<script setup lang="ts">
+import { defineComponent, inject, ref } from 'vue'
 
 import { QBtn } from 'quasar'
 import { ionLocationSharp } from '@quasar/extras/ionicons-v5'
@@ -9,54 +9,36 @@ import { StepControls } from 'pages/EditEvent.vue'
 import { useEditPosterListMixin } from 'pages/edit-event/posters/EditPosterListMixin'
 import PosterTable from 'components/PosterTable.vue'
 import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
+import { useRouter } from 'vue-router'
 
-export default defineComponent({
-  name: 'EditEventPostersList',
-  components: {
-    PosterTable,
-    SidebarBottomStepNavigation,
-    QBtn
-  },
-  setup() {
-    const { event } = useEditEventMixin()
-    const { posters, deletePoster } = useEditPosterListMixin()
-    return {
-      event,
-      stepControls: inject('stepControls') as StepControls,
-      posters,
-      deletePoster
-    }
-  },
-  data() {
-    return {
-      ionLocationSharp,
-      posterStatusOptions,
-      confirmDelete: true,
-      filters: {
-        status: null
-      }
-    }
-  },
-  methods: {
-    async back() {
-      this.stepControls.previous()
-    },
-    async next() {
-      this.stepControls.next()
-    },
-    async abort() {
-      this.stepControls.abort()
-    },
-    async editPoster(posterId: number) {
-      await this.$router.push({
-        name: 'edit-event-single-poster-edit',
-        params: {
-          posterId
-        }
-      })
-    }
-  }
+const $router = useRouter()
+
+const { event } = useEditEventMixin()
+const { posters, deletePoster } = useEditPosterListMixin()
+const stepControls = inject('stepControls') as StepControls
+
+const confirmDelete = ref(true)
+const filters = ref({
+  status: null
 })
+
+async function back() {
+  stepControls.previous()
+}
+async function next() {
+  stepControls.next()
+}
+async function abort() {
+  stepControls.abort()
+}
+async function editPoster(posterId: number) {
+  await $router.push({
+    name: 'edit-event-single-poster-edit',
+    params: {
+      posterId
+    }
+  })
+}
 </script>
 
 <template>
