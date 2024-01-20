@@ -1,28 +1,3 @@
-<template>
-  <QSelect
-    v-if="isTeamCaptainOrCoordinator"
-    :model-value="eventAreaParticipants"
-    @update:model-value="updateAreaParticipations($event)"
-    :multiple="true"
-    label="Teilnehmer*innen"
-    :options="onlyMemberParticipants"
-    option-label="user_username"
-    :display-value="
-      eventAreaParticipants.map(({ user_username }) => user_username).join(',')
-    "
-  />
-  <div
-    v-else-if="personalParticipationPermissions?.assign_event_area?.POST"
-    class="join-buttons"
-  >
-    <QBtn v-if="isUserEventAreaParticipant" @click="leaveArea" flat>
-      Doch nicht hier mitmachen
-    </QBtn>
-    <QBtn v-else color="primary" @click="joinArea">
-      In diesem Gebiet mitmachen
-    </QBtn>
-  </div>
-</template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { userStore } from 'src/store/UserStore'
@@ -172,4 +147,29 @@ export default defineComponent({
   }
 })
 </script>
+<template>
+  <QSelect
+    v-if="isTeamCaptainOrCoordinator"
+    :model-value="eventAreaParticipants"
+    @update:model-value="updateAreaParticipations($event)"
+    :multiple="true"
+    label="Teilnehmer*innen"
+    :options="onlyMemberParticipants"
+    option-label="user_username"
+    :display-value="
+      eventAreaParticipants.map(({ user_username }) => user_username).join(',')
+    "
+  />
+  <div
+    v-else-if="personalParticipationPermissions?.assign_event_area?.POST"
+    class="join-buttons"
+  >
+    <QBtn v-if="isUserEventAreaParticipant" @click="leaveArea" flat>
+      Doch nicht hier mitmachen
+    </QBtn>
+    <QBtn v-else color="primary" @click="joinArea">
+      In diesem Gebiet mitmachen
+    </QBtn>
+  </div>
+</template>
 <style lang="scss" scoped></style>
