@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import { computed, inject } from 'vue'
-import { Geometry } from 'geojson'
+import { computed } from 'vue'
 import { useEditEventGeometryMixin } from 'pages/edit-event/geometry/EditEventGeometryMixin'
-import { center as turfCenter } from '@turf/turf'
-import { MapInject } from 'src/map/Map.vue'
-import { LocationDto } from 'src/api/model/LocationDto'
 import AreaFeatureLayer from 'src/map/AreaFeatureLayer'
 import AddressMarkerLayer from 'src/map/AddressMarkerLayer'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
