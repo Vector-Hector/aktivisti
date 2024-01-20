@@ -13,7 +13,6 @@ import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 
 const { posters, event, eventAreas } = useEditEventMixin()
 const { features } = useEditEventGeometryMixin()
-const map = inject(MapInject)
 
 const addresses = computed(() => {
   return eventAreas.value
@@ -22,14 +21,6 @@ const addresses = computed(() => {
     .map(({ addresses }) => addresses)
     .flat()
 })
-function center(geometry: Geometry): LocationDto {
-  //@ts-ignore
-  const point = turfCenter(geometry)
-  return {
-    lat: point.geometry.coordinates[1],
-    lng: point.geometry.coordinates[0]
-  }
-}
 </script>
 
 <template>
