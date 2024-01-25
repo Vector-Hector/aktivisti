@@ -1,3 +1,20 @@
+<script setup lang="ts">
+import CounterInput from 'src/components/CounterInput.vue'
+
+interface Props {
+  modelValue?: number
+  label: string
+}
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: 0
+})
+
+interface Emits {
+  (e: 'update:modelValue', value: number): void
+}
+const emit = defineEmits<Emits>()
+</script>
+
 <template>
   <div class="row q-col-gutter-y-sm">
     <div class="col-12 col-sm-4 col-md-3 label-col">
@@ -5,35 +22,12 @@
     </div>
     <div class="col-12 col-sm-4 col-md-6">
       <CounterInput
-        :model-value="modelValue"
-        @update:model-value="$emit('update:modelValue', $event)"
+        :model-value="props.modelValue"
+        @update:model-value="emit('update:modelValue', $event)"
       />
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import CounterInput from 'src/components/CounterInput.vue'
-
-export default defineComponent({
-  name: 'MetricsRow',
-  components: {
-    CounterInput
-  },
-  props: {
-    modelValue: {
-      type: Number as PropType<number>,
-      default: 0
-    },
-    label: {
-      type: String as PropType<string>,
-      required: true
-    }
-  },
-  emits: ['update:modelValue']
-})
-</script>
 
 <style lang="scss" scoped>
 @import 'src/css/_variables.scss';
