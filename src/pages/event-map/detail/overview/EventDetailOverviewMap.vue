@@ -1,8 +1,3 @@
-<template>
-  <EventMarker v-if="event?.location" :event="event" />
-  <FeatureLayer :features="areaFeatures" />
-</template>
-
 <script lang="ts">
 import { defineComponent } from 'vue'
 import FeatureLayer from 'src/map/AreaFeatureLayer'
@@ -43,5 +38,10 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <EventMarker v-if="event?.location" :event="event" />
+  <FeatureLayer :features="areaFeatures" />
+</template>
 
 <style lang="scss" scoped></style>
