@@ -1,5 +1,5 @@
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 import { QIcon, QItem, QItemLabel, QItemSection } from 'quasar'
 import {
   PosterDto,
@@ -12,49 +12,37 @@ import {
   ionCloseCircle
 } from '@quasar/extras/ionicons-v5'
 
-export default defineComponent({
-  name: 'PosterListItem',
-  components: {
-    QIcon,
-    QItem,
-    QItemLabel,
-    QItemSection
-  },
-  props: {
-    poster: {
-      type: Object as PropType<PosterDto>,
-      required: true
-    }
-  },
-  computed: {
-    statusLabel(): string {
-      return (
-        posterStatusOptions.find(({ key }) => key === this.poster.status)
-          ?.label ?? ''
-      )
-    },
-    statusIcon(): string {
-      switch (this.poster.status) {
-        case PosterStatus.MOUNTED:
-          return ionCheckmarkCircle
-        case PosterStatus.DAMAGED:
-          return ionAlertCircle
-        case PosterStatus.ABSENT:
-        default:
-          return ionCloseCircle
-      }
-    },
-    statusClass(): string {
-      switch (this.poster.status) {
-        case PosterStatus.MOUNTED:
-          return 'mounted'
-        case PosterStatus.DAMAGED:
-          return 'damaged'
-        case PosterStatus.ABSENT:
-        default:
-          return 'absent'
-      }
-    }
+interface Props {
+  poster: PosterDto
+}
+const props = defineProps<Props>()
+
+const statusLabel = computed(() => {
+  return (
+    posterStatusOptions.find(({ key }) => key === props.poster.status)?.label ??
+    ''
+  )
+})
+const statusIcon = computed(() => {
+  switch (props.poster.status) {
+    case PosterStatus.MOUNTED:
+      return ionCheckmarkCircle
+    case PosterStatus.DAMAGED:
+      return ionAlertCircle
+    case PosterStatus.ABSENT:
+    default:
+      return ionCloseCircle
+  }
+})
+const statusClass = computed(() => {
+  switch (props.poster.status) {
+    case PosterStatus.MOUNTED:
+      return 'mounted'
+    case PosterStatus.DAMAGED:
+      return 'damaged'
+    case PosterStatus.ABSENT:
+    default:
+      return 'absent'
   }
 })
 </script>
