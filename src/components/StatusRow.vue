@@ -1,11 +1,3 @@
-<template>
-  <div class="status-row" :class="statusClass">
-    <span class="label">
-      {{ statusLabel }}
-    </span>
-    <QIcon class="icon" :name="statusIcon"> </QIcon>
-  </div>
-</template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { PosterStatus, posterStatusOptions } from 'src/api/model/PosterDto'
@@ -57,6 +49,16 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <div class="status-row" :class="statusClass">
+    <span class="label">
+      {{ statusLabel }}
+    </span>
+    <QIcon class="icon" :name="statusIcon"> </QIcon>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .status-row {
   display: flex;
