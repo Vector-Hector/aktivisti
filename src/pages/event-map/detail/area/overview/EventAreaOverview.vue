@@ -1,62 +1,3 @@
-<template>
-  <QScrollArea class="d-flex flex-fill">
-    <div class="container q-gutter-y-md">
-      <div class="row q-col-gutter-x-md">
-        <div class="col">
-          <AssignAreaParticipants />
-        </div>
-        <div
-          class="col-grow complete-button"
-          v-if="eventAreaPermissions?.self?.PATCH"
-        >
-          <QBtn
-            outline
-            dense
-            round
-            flat
-            :class="{
-              'button-success': eventArea.is_completed
-            }"
-            @click="openCompletionModal"
-            :icon="ionCheckmarkCircleOutline"
-          />
-        </div>
-      </div>
-      <div class="row">
-        <QList class="address-list">
-          <QItem
-            v-for="street in eventArea.area_details?.streets"
-            :key="street.name"
-            :clickable="true"
-            :to="{
-              name: 'event-detail-area-street',
-              params: { street: street.name }
-            }"
-          >
-            <QItemSection>
-              <QItemLabel>
-                {{ street.name }}
-              </QItemLabel>
-              <QItemLabel> {{ street.addresses.length }} Adressen</QItemLabel>
-            </QItemSection>
-
-            <QItemSection side>
-              <div class="row">
-                <QIcon
-                  v-if="streetCompleted(street)"
-                  class="col finished-icon item-icon"
-                  :name="ionCheckmarkCircle"
-                />
-                <QIcon class="col item-icon" :name="ionChevronForward" />
-              </div>
-            </QItemSection>
-          </QItem>
-        </QList>
-      </div>
-    </div>
-  </QScrollArea>
-</template>
-
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { uiStore } from 'src/store/UiStore'
@@ -158,6 +99,65 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <QScrollArea class="d-flex flex-fill">
+    <div class="container q-gutter-y-md">
+      <div class="row q-col-gutter-x-md">
+        <div class="col">
+          <AssignAreaParticipants />
+        </div>
+        <div
+          class="col-grow complete-button"
+          v-if="eventAreaPermissions?.self?.PATCH"
+        >
+          <QBtn
+            outline
+            dense
+            round
+            flat
+            :class="{
+              'button-success': eventArea.is_completed
+            }"
+            @click="openCompletionModal"
+            :icon="ionCheckmarkCircleOutline"
+          />
+        </div>
+      </div>
+      <div class="row">
+        <QList class="address-list">
+          <QItem
+            v-for="street in eventArea.area_details?.streets"
+            :key="street.name"
+            :clickable="true"
+            :to="{
+              name: 'event-detail-area-street',
+              params: { street: street.name }
+            }"
+          >
+            <QItemSection>
+              <QItemLabel>
+                {{ street.name }}
+              </QItemLabel>
+              <QItemLabel> {{ street.addresses.length }} Adressen</QItemLabel>
+            </QItemSection>
+
+            <QItemSection side>
+              <div class="row">
+                <QIcon
+                  v-if="streetCompleted(street)"
+                  class="col finished-icon item-icon"
+                  :name="ionCheckmarkCircle"
+                />
+                <QIcon class="col item-icon" :name="ionChevronForward" />
+              </div>
+            </QItemSection>
+          </QItem>
+        </QList>
+      </div>
+    </div>
+  </QScrollArea>
+</template>
 
 <style lang="scss" scoped>
 label {
