@@ -1,12 +1,3 @@
-<template>
-  <Marker :location="location">
-    <template v-slot:marker>
-      <QIcon :name="icon" class="clickable-marker" size="lg" />
-    </template>
-    <slot />
-  </Marker>
-</template>
-
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { LocationDto } from 'src/api/model/LocationDto'
@@ -35,3 +26,12 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <Marker :location="location">
+    <template v-slot:marker>
+      <QIcon :name="icon" class="clickable-marker" size="lg" />
+    </template>
+    <slot />
+  </Marker>
+</template>
