@@ -1,28 +1,3 @@
-<template>
-  <div class="container q-py-sm">
-    <div class="row">
-      <div class="col">
-        <AssignAreaParticipants v-if="eventArea" />
-      </div>
-    </div>
-    <div class="row q-py-sm">
-      <div class="col-grow buttons">
-        <QBtn
-          v-if="event.poster_creation_allowed"
-          color="primary"
-          label="Erstellen"
-          :icon="ionLocationSharp"
-          @click="openCreatePosterDialog"
-        />
-      </div>
-    </div>
-    <PosterTable
-      :posters="postersInArea"
-      :show-actions="false"
-      @row-click="selectPoster($event.id)"
-    />
-  </div>
-</template>
 <script lang="ts">
 import PosterTable from 'components/PosterTable.vue'
 import { useEventDetailPosterMixin } from 'pages/event-map/detail/area/posters/EventDetailPosterMixin'
@@ -136,6 +111,33 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <div class="container q-py-sm">
+    <div class="row">
+      <div class="col">
+        <AssignAreaParticipants v-if="eventArea" />
+      </div>
+    </div>
+    <div class="row q-py-sm">
+      <div class="col-grow buttons">
+        <QBtn
+          v-if="event.poster_creation_allowed"
+          color="primary"
+          label="Erstellen"
+          :icon="ionLocationSharp"
+          @click="openCreatePosterDialog"
+        />
+      </div>
+    </div>
+    <PosterTable
+      :posters="postersInArea"
+      :show-actions="false"
+      @row-click="selectPoster($event.id)"
+    />
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .buttons {
   display: flex;
