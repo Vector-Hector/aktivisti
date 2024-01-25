@@ -1,3 +1,29 @@
+<script setup lang="ts">
+import Marker from '../map/Marker.vue'
+import { computed } from 'vue'
+import { EventDto } from '../api/model/EventDto'
+import { EventTypes } from '../api/model/EventTypes'
+import { QIcon } from 'quasar'
+
+interface Props {
+  event: EventDto
+}
+const props = defineProps<Props>()
+
+const icon = computed(() => {
+  switch (props.event.event_type) {
+    case EventTypes.POSTERS:
+      return 'img:/static/icons/map-pin-poster.svg'
+    case EventTypes.DOOR_TO_DOOR:
+      return 'img:/static/icons/map-pin-door.svg'
+    case EventTypes.FLYERS:
+      return 'img:/static/icons/map-pin-flyer.svg'
+    default:
+      return 'img:/static/icons/map-pin-generic.svg'
+  }
+})
+</script>
+
 <template>
   <Marker :location="event.location">
     <template v-slot:marker>
@@ -6,34 +32,3 @@
     <slot />
   </Marker>
 </template>
-<script lang="ts">
-import Marker from '../map/Marker.vue'
-import { defineComponent, PropType } from 'vue'
-import { EventDto } from '../api/model/EventDto'
-import { EventTypes } from '../api/model/EventTypes'
-import { QIcon } from 'quasar'
-
-export default defineComponent({
-  components: { Marker, QIcon },
-  props: {
-    event: {
-      type: Object as PropType<EventDto>,
-      required: true
-    }
-  },
-  computed: {
-    icon(): string {
-      switch (this.event.event_type) {
-        case EventTypes.POSTERS:
-          return 'img:/static/icons/map-pin-poster.svg'
-        case EventTypes.DOOR_TO_DOOR:
-          return 'img:/static/icons/map-pin-door.svg'
-        case EventTypes.FLYERS:
-          return 'img:/static/icons/map-pin-flyer.svg'
-        default:
-          return 'img:/static/icons/map-pin-generic.svg'
-      }
-    }
-  }
-})
-</script>
