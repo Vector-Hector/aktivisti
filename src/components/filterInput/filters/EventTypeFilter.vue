@@ -1,10 +1,35 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import FilterInput from 'components/filterInput/FilterInput.vue'
+import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+
+interface Props {
+  modelValue?: EventTypes
+  availableEventTypes?: EventTypes[]
+}
+const props = withDefaults(defineProps<Props>(), {
+  availableEventTypes: () => Object.values(EventTypes)
+})
+
+interface Emits {
+  (e: 'update:modelValue', value: any): void
+}
+const emit = defineEmits<Emits>()
+
+const possibleEventTypeOptions = computed(() => {
+  return eventTypeOptions.filter((item) =>
+    props.availableEventTypes.includes(item.key)
+  )
+})
+</script>
+
 <template>
   <FilterInput
     :model-value="modelValue"
-    @update:model-value="(value) => this.$emit('update:modelValue', value)"
+    @update:model-value="(value) => emit('update:modelValue', value)"
     input-debounce="0"
     label="Aktionstyp"
-    :options="eventTypeOptions"
+    :options="possibleEventTypeOptions"
     emit-value
     map-options
     option-value="key"
@@ -12,32 +37,3 @@
     clearable
   />
 </template>
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import FilterInput from 'components/filterInput/FilterInput.vue'
-import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
-
-export default defineComponent({
-  name: 'EventTypeFilter',
-  components: {
-    FilterInput
-  },
-  props: {
-    modelValue: {
-      type: String as PropType<EventTypes>
-    },
-    availableEventTypes: {
-      type: Array as PropType<EventTypes[]>,
-      default: () => Object.values(EventTypes)
-    }
-  },
-  computed: {
-    eventTypeOptions() {
-      return eventTypeOptions.filter((item) =>
-        this.availableEventTypes.includes(item.key)
-      )
-    }
-  },
-  emits: ['update:modelValue']
-})
-</script>

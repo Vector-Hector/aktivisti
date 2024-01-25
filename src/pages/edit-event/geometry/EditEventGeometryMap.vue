@@ -14,8 +14,8 @@ import {
 import { noop } from 'lodash-es'
 import { useInjectMapMixin } from 'pages/event-detail/InjectMapMixin'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
-import AddressMarkerLayer from 'src/map/AddressMarkerLayer'
-import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
+import AddressMarkerLayer from 'src/map/AddressMarkerLayer.vue'
+import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
 import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 import { IMapboxDrawControls } from '@mapbox/mapbox-gl-draw'
 

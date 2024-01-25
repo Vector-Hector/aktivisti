@@ -1,3 +1,81 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import {
+  QBtn,
+  QCard,
+  QCardActions,
+  QCardSection,
+  QDialog,
+  QForm,
+  QToolbar,
+  QToolbarTitle,
+  useQuasar
+} from 'quasar'
+import PasswordInput from 'components/PasswordInput.vue'
+import { apiClient } from 'src/api/ApiClient'
+
+interface Emits {
+  // REQUIRED
+  (e: 'ok'): void
+  (e: 'hide'): void
+}
+const emit = defineEmits<Emits>()
+
+const $q = useQuasar()
+const dialog = ref<InstanceType<typeof QDialog> | null>(null)
+
+const oldPassword = ref('')
+const newPassword = ref('')
+const newPasswordConfirm = ref('')
+const errors = ref<any>({})
+const isSubmitting = ref(false)
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function show() {
+  dialog.value?.show()
+}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function hide() {
+  dialog.value?.hide()
+}
+async function onOk() {
+  errors.value = {}
+  isSubmitting.value = true
+  try {
+    await apiClient.account.changePassword({
+      old_password: oldPassword.value,
+      new_password: newPassword.value
+    })
+    $q.notify({
+      message: 'Passwort wurde geändert',
+      color: 'positive'
+    })
+    emit('ok')
+    emit('hide')
+  } catch (e) {
+    if (apiClient.isApiClientError(e) && e.response?.status === 400) {
+      errors.value = e.response.data
+    }
+    $q.notify({
+      message: 'Etwas ging schief beim Ändern des Passworts',
+      color: 'negative'
+    })
+  } finally {
+    isSubmitting.value = false
+  }
+}
+function onDialogHide() {
+  emit('hide')
+}
+function passwordMatch(value: string) {
+  if (newPassword.value === value) {
+    return true
+  } else {
+    return 'Die Passwörter müssen übereinstimmen'
+  }
+}
+</script>
+
 <template>
   <QDialog ref="dialog" @hide="onDialogHide">
     <QCard class="change-email-dialog">
@@ -53,95 +131,5 @@
     </QCard>
   </QDialog>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue'
-import {
-  QBtn,
-  QCard,
-  QCardActions,
-  QCardSection,
-  QDialog,
-  QForm,
-  QToolbar,
-  QToolbarTitle
-} from 'quasar'
-import PasswordInput from 'components/PasswordInput.vue'
-
-export default defineComponent({
-  name: 'ChangeEmailDialog',
-  components: {
-    PasswordInput,
-    QDialog,
-    QCard,
-    QCardSection,
-    QToolbar,
-    QToolbarTitle,
-    QCardActions,
-    QBtn,
-    QForm
-  },
-  emits: [
-    // REQUIRED
-    'ok',
-    'hide'
-  ],
-  data() {
-    return {
-      oldPassword: '',
-      newPassword: '',
-      newPasswordConfirm: '',
-      errors: {},
-      isSubmitting: false
-    }
-  },
-  methods: {
-    show() {
-      // @ts-ignore
-      this.$refs.dialog.show()
-    },
-    hide() {
-      // @ts-ignore
-      this.$refs.dialog.hide()
-    },
-    async onOk() {
-      this.errors = {}
-      this.isSubmitting = true
-      try {
-        await this.$apiClient.account.changePassword({
-          old_password: this.oldPassword,
-          new_password: this.newPassword
-        })
-        this.$q.notify({
-          message: 'Passwort wurde geändert',
-          color: 'positive'
-        })
-        this.$emit('ok')
-        this.$emit('hide')
-      } catch (e) {
-        if (this.$apiClient.isApiClientError(e) && e.response?.status === 400) {
-          this.errors = e.response.data
-        }
-        this.$q.notify({
-          message: 'Etwas ging schief beim Ändern des Passworts',
-          color: 'negative'
-        })
-      } finally {
-        this.isSubmitting = false
-      }
-    },
-    onDialogHide() {
-      this.$emit('hide')
-    },
-    passwordMatch(value: string) {
-      if (this.newPassword === value) {
-        return true
-      } else {
-        return 'Die Passwörter müssen übereinstimmen'
-      }
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped></style>

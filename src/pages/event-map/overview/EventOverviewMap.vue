@@ -10,7 +10,7 @@ import CoordinatesPopup from 'src/map/popup/CoordinatesPopup.vue'
 import EventPopupContents from 'src/map/popup/EventPopupContents.vue'
 import { loadImageIfNonExistent } from 'src/utils/map'
 import { EventTypes } from 'src/api/model/EventTypes'
-import EventLayer from 'src/map/EventLayer'
+import EventLayer from 'src/map/EventLayer.vue'
 import { apiClient } from 'src/api/ApiClient'
 import {
   OfficeGeoJsonDto,

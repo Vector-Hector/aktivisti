@@ -10,7 +10,7 @@ import { PosterDto } from 'src/api/model/PosterDto'
 import { PosterFilterParams } from 'src/api/params/PosterFilterParams'
 import { posterOverviewStore } from 'src/store/PosterOverviewStore'
 import { apiClient } from 'src/api/ApiClient'
-import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
+import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
 import { Popup } from 'maplibre-gl'
 import PosterPopup from 'src/map/popup/layerPopups/PosterPopup.vue'
 

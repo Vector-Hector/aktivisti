@@ -1,15 +1,14 @@
-import {
-  defineComponent,
-  inject,
-  onMounted,
-  PropType,
-  h,
-  watch,
-  onUnmounted
-} from 'vue'
+<script setup lang="ts">
+import { inject, onMounted, watch, onUnmounted } from 'vue'
 import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
-import { Feature, FeatureCollection, Point } from 'geojson'
+import {
+  Feature,
+  FeatureCollection,
+  GeoJsonProperties,
+  Geometry,
+  Point
+} from 'geojson'
 import maplibregl, {
   Expression,
   GeoJSONSource,
@@ -172,55 +171,47 @@ class EventLayer {
   }
 }
 
-export default defineComponent({
-  name: 'EventLayer',
-  props: {
-    featureCollection: {
-      type: Object as PropType<FeatureCollection>,
-      required: true
-    },
-    iconImageValue: {
-      type: [Array, String] as PropType<string | StyleFunction | Expression>,
-      required: true
-    },
-    iconName: {
-      type: String
-    },
-    clusterize: {
-      type: Boolean,
-      default: true
-    }
-  },
-  emits: ['update:location', 'featureClicked'],
-  setup(props, { emit }) {
-    const map = inject(MapInject)!
-    let activeOverlay: EventLayer | null = null
-
-    onMounted(() => {
-      watch(
-        () => props.featureCollection,
-        () => {
-          activeOverlay?.remove()
-          activeOverlay = new EventLayer(
-            map.value!,
-            props.featureCollection,
-            props.iconImageValue,
-            (eventFeature) => {
-              emit('featureClicked', eventFeature)
-            },
-            props.clusterize
-          )
-          activeOverlay.add()
-        },
-        { deep: true, immediate: true }
-      )
-    })
-
-    onUnmounted(() => {
-      activeOverlay?.remove()
-    })
-  },
-  render() {
-    return h('span')
-  }
+interface Props {
+  featureCollection: FeatureCollection
+  iconImageValue: string | StyleFunction | Expression
+  iconName?: string
+  clusterize?: boolean
+}
+const props = withDefaults(defineProps<Props>(), {
+  clusterize: true
 })
+
+interface Emits {
+  (e: 'update:location'): void
+  (e: 'featureClicked', feature: Feature<Geometry, GeoJsonProperties>): void
+}
+const emit = defineEmits<Emits>()
+
+const map = inject(MapInject)!
+let activeOverlay: EventLayer | null = null
+
+onMounted(() => {
+  watch(
+    () => props.featureCollection,
+    () => {
+      activeOverlay?.remove()
+      activeOverlay = new EventLayer(
+        map.value!,
+        props.featureCollection,
+        props.iconImageValue,
+        (eventFeature) => {
+          emit('featureClicked', eventFeature)
+        },
+        props.clusterize
+      )
+      activeOverlay.add()
+    },
+    { deep: true, immediate: true }
+  )
+})
+
+onUnmounted(() => {
+  activeOverlay?.remove()
+})
+</script>
+<template><span></span></template>

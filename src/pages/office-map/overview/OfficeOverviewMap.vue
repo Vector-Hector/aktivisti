@@ -13,7 +13,7 @@ import {
 import { loadImageIfNonExistent } from 'src/utils/map'
 import CoordinatesPopup from 'src/map/popup/CoordinatesPopup.vue'
 import OfficePopupContents from 'src/map/popup/OfficePopupContents.vue'
-import EventLayer from 'src/map/EventLayer'
+import EventLayer from 'src/map/EventLayer.vue'
 
 const activeOffice = ref<null | OfficeGeoJsonFeature>()
 const map = useMap()

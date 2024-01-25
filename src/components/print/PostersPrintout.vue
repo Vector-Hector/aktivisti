@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import Map from 'src/map/Map.vue'
 import { EventAreaDto, eventAreaToFeature } from 'src/api/model/EventAreaDto'
-import FeatureLayer from 'src/map/AreaFeatureLayer'
+import FeatureLayer from 'src/map/AreaFeatureLayer.vue'
 import { bbox, circle } from '@turf/turf'
 import { QBtn, QIcon } from 'quasar'
 import { eventTypeOptions } from 'src/api/model/EventTypes'
@@ -20,7 +20,7 @@ import {
   PosterStatus,
   PosterStatusUtil
 } from 'src/api/model/PosterDto'
-import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
+import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
 
 interface Props {
   event: EventDto

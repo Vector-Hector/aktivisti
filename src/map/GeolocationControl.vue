@@ -31,7 +31,7 @@ enum GeolocateState {
 
 interface Props {
   showMarker?: boolean
-  poiLocation: LocationDto
+  poiLocation?: LocationDto
   options?: GeolocateControlOptions
   locatorIconFixed?: string
   locatorIconNotFixed?: string

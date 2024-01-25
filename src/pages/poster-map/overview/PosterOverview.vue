@@ -11,7 +11,6 @@
       :disable="true"
       @load="loadData"
       class="poster-list"
-      ref="infiniteList"
     >
       <template v-slot:item="{ item: poster }">
         <PosterListItem
@@ -94,14 +93,6 @@ export default defineComponent({
           areaId: poster.area ?? 'undefined'
         }
       })
-    }
-  },
-  watch: {
-    filterParams() {
-      if (this.$refs.infiniteList) {
-        // @ts-ignore
-        this.$refs.infiniteList.resetScrollPosition()
-      }
     }
   }
 })

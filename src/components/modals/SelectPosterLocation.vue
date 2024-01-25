@@ -75,7 +75,7 @@
 import { defineComponent, PropType } from 'vue'
 import LocationSelect from 'components/LocationSelect.vue'
 import Map from 'src/map/Map.vue'
-import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
+import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { PosterDto, PosterMount, PosterStatus } from 'src/api/model/PosterDto'
 import {
@@ -92,7 +92,7 @@ import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox, booleanPointInPolygon, circle, polygon } from '@turf/turf'
 import GeolocationControl from 'src/map/GeolocationControl.vue'
 import { Feature } from 'geojson'
-import AreaFeatureLayer from 'src/map/AreaFeatureLayer'
+import AreaFeatureLayer from 'src/map/AreaFeatureLayer.vue'
 import ResetRotateControl from 'src/map/ResetRotateControl.vue'
 
 const locatePosterLocation =

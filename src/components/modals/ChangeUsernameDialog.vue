@@ -1,3 +1,74 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import {
+  QBtn,
+  QCard,
+  QCardActions,
+  QCardSection,
+  QDialog,
+  QForm,
+  QInput,
+  QToolbar,
+  QToolbarTitle,
+  useQuasar
+} from 'quasar'
+import PasswordInput from 'components/PasswordInput.vue'
+import { apiClient } from 'src/api/ApiClient'
+
+interface Emits {
+  // REQUIRED
+  (e: 'ok', newUsername: string): void
+  (e: 'hide'): void
+}
+const emit = defineEmits<Emits>()
+
+const $q = useQuasar()
+const dialog = ref<InstanceType<typeof QDialog> | null>(null)
+
+const newUsername = ref('')
+const password = ref('')
+const errors = ref<any>({})
+const isSubmitting = ref(false)
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function show() {
+  dialog.value?.show()
+}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function hide() {
+  dialog.value?.hide()
+}
+async function onOk() {
+  errors.value = {}
+  isSubmitting.value = true
+  try {
+    await apiClient.account.changeUsername({
+      password: password.value,
+      new_username: newUsername.value
+    })
+    $q.notify({
+      message: 'Benutzer*innenname wurde geändert',
+      color: 'positive'
+    })
+    emit('ok', newUsername.value)
+    emit('hide')
+  } catch (e) {
+    if (apiClient.isApiClientError(e) && e.response?.status === 400) {
+      errors.value = e.response.data
+    }
+    $q.notify({
+      message: 'Etwas ging schief beim Ändern des Benutzer*innenname',
+      color: 'negative'
+    })
+  } finally {
+    isSubmitting.value = false
+  }
+}
+function onDialogHide() {
+  emit('hide')
+}
+</script>
+
 <template>
   <QDialog ref="dialog">
     <QCard class="change-username-dialog">
@@ -48,86 +119,3 @@
     </QCard>
   </QDialog>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
-import {
-  QBtn,
-  QCard,
-  QCardActions,
-  QCardSection,
-  QDialog,
-  QForm,
-  QInput,
-  QToolbar,
-  QToolbarTitle
-} from 'quasar'
-import PasswordInput from 'components/PasswordInput.vue'
-
-export default defineComponent({
-  name: 'ChangeUsernameDialog',
-  components: {
-    PasswordInput,
-    QDialog,
-    QCard,
-    QCardSection,
-    QToolbar,
-    QToolbarTitle,
-    QInput,
-    QCardActions,
-    QBtn,
-    QForm
-  },
-  emits: [
-    // REQUIRED
-    'ok',
-    'hide'
-  ],
-  data() {
-    return {
-      newUsername: '',
-      password: '',
-      errors: {},
-      isSubmitting: false
-    }
-  },
-  methods: {
-    show() {
-      // @ts-ignore
-      this.$refs.dialog.show()
-    },
-    hide() {
-      // @ts-ignore
-      this.$refs.dialog.hide()
-    },
-    async onOk() {
-      this.errors = {}
-      this.isSubmitting = true
-      try {
-        await this.$apiClient.account.changeUsername({
-          password: this.password,
-          new_username: this.newUsername
-        })
-        this.$q.notify({
-          message: 'Benutzer*innenname wurde geändert',
-          color: 'positive'
-        })
-        this.$emit('ok', this.newUsername)
-        this.$emit('hide')
-      } catch (e) {
-        if (this.$apiClient.isApiClientError(e) && e.response?.status === 400) {
-          this.errors = e.response.data
-        }
-        this.$q.notify({
-          message: 'Etwas ging schief beim Ändern des Benutzer*innenname',
-          color: 'negative'
-        })
-      } finally {
-        this.isSubmitting = false
-      }
-    },
-    onDialogHide() {
-      this.$emit('hide')
-    }
-  }
-})
-</script>
