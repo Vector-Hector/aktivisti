@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineComponent, inject, ref } from 'vue'
+import { inject } from 'vue'
 
 import { QBtn } from 'quasar'
 import { ionLocationSharp } from '@quasar/extras/ionicons-v5'
@@ -7,7 +7,6 @@ import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.
 import { StepControls } from 'pages/EditEvent.vue'
 import { useEditPosterListMixin } from 'pages/edit-event/posters/EditPosterListMixin'
 import PosterTable from 'components/PosterTable.vue'
-import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 import { useRouter } from 'vue-router'
 
 const $router = useRouter()

@@ -11,11 +11,6 @@ interface Props {
 }
 const props = defineProps<Props>()
 
-interface Emits {
-  (e: 'update:location'): void
-}
-const emit = defineEmits<Emits>()
-
 const uuid = uuidv4()
 const map = useMap()
 

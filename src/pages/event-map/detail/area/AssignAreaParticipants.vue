@@ -25,9 +25,6 @@ const eventAreaParticipants = computed(() => {
     return assigned_event_areas.includes(eventArea.value.id!)
   })
 })
-const isCampaignAdmin = computed(() => {
-  return userStore.isCampaignAdmin()
-})
 const isUserEventAreaParticipant = computed(() => {
   return (
     (user.value !== null &&
