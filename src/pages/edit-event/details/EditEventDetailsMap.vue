@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useEditEventGeometryMixin } from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import AreaFeatureLayer from 'src/map/AreaFeatureLayer.vue'
-import AddressMarkerLayer from 'src/map/AddressMarkerLayer'
+import AddressMarkerLayer from 'src/map/AddressMarkerLayer.vue'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
 import EventMarker from 'components/EventMarker.vue'
 import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
