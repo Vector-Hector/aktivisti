@@ -92,7 +92,7 @@ import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox, booleanPointInPolygon, circle, polygon } from '@turf/turf'
 import GeolocationControl from 'src/map/GeolocationControl.vue'
 import { Feature } from 'geojson'
-import AreaFeatureLayer from 'src/map/AreaFeatureLayer'
+import AreaFeatureLayer from 'src/map/AreaFeatureLayer.vue'
 import ResetRotateControl from 'src/map/ResetRotateControl.vue'
 
 const locatePosterLocation =

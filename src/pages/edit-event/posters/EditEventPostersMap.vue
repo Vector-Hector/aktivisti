@@ -14,7 +14,7 @@ import { defineComponent } from 'vue'
 import { useEditPosterListMixin } from 'pages/edit-event/posters/EditPosterListMixin'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
 import { useEditEventGeometryMixin } from 'pages/edit-event/geometry/EditEventGeometryMixin'
-import AreaFeatureLayer from 'src/map/AreaFeatureLayer'
+import AreaFeatureLayer from 'src/map/AreaFeatureLayer.vue'
 import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 
 export default defineComponent({

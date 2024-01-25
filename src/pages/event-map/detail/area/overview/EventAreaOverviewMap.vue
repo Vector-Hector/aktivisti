@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import AreaFeatureLayer from 'src/map/AreaFeatureLayer'
+import AreaFeatureLayer from 'src/map/AreaFeatureLayer.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox } from '@turf/turf'
 import { useInjectMapMixin } from 'pages/event-detail/InjectMapMixin'
