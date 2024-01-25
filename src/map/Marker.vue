@@ -1,11 +1,8 @@
 <script lang="ts">
 import {
   defineComponent,
-  provide,
-  InjectionKey,
   onMounted,
   PropType,
-  Ref,
   ref,
   watch,
   onUnmounted
@@ -15,8 +12,6 @@ import { LocationDto } from 'src/api/model/LocationDto'
 import { ionLocationSharp } from '@quasar/extras/ionicons-v5'
 import { QIcon } from 'quasar'
 import { useMap } from 'src/map/Map.vue'
-
-export const MarkerInject: InjectionKey<Ref<Marker | null>> = Symbol()
 
 export default defineComponent({
   name: 'Marker',
@@ -39,7 +34,6 @@ export default defineComponent({
     const initialized = ref(false)
     const markerElement = ref<HTMLElement | null>(null)
     const marker = ref<Marker | null>(null)
-    provide(MarkerInject, marker)
 
     watch(
       () => props.location,
