@@ -1,15 +1,3 @@
-<template>
-  <QBtn
-    v-if="visible"
-    class="overlay-shadow bg-white"
-    icon="img:/static/icons/north.svg"
-    @click="onResetClicked"
-    color="black"
-    flat
-    round
-  />
-</template>
-
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { QBtn } from 'quasar'
@@ -58,4 +46,17 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <QBtn
+    v-if="visible"
+    class="overlay-shadow bg-white"
+    icon="img:/static/icons/north.svg"
+    @click="onResetClicked"
+    color="black"
+    flat
+    round
+  />
+</template>
+
 <style lang="scss" scoped></style>
