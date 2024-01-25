@@ -12,7 +12,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useEditPosterListMixin } from 'pages/edit-event/posters/EditPosterListMixin'
-import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
+import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
 import { useEditEventGeometryMixin } from 'pages/edit-event/geometry/EditEventGeometryMixin'
 import AreaFeatureLayer from 'src/map/AreaFeatureLayer.vue'
 import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'

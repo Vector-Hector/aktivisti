@@ -75,7 +75,7 @@
 import { defineComponent, PropType } from 'vue'
 import LocationSelect from 'components/LocationSelect.vue'
 import Map from 'src/map/Map.vue'
-import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
+import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { PosterDto, PosterMount, PosterStatus } from 'src/api/model/PosterDto'
 import {

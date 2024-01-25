@@ -20,7 +20,7 @@ import {
   PosterStatus,
   PosterStatusUtil
 } from 'src/api/model/PosterDto'
-import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
+import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
 
 interface Props {
   event: EventDto
