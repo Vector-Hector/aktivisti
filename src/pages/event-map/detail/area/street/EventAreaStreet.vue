@@ -15,9 +15,8 @@ export default {
 }
 </script>
 <script setup lang="ts">
-import { ComponentPublicInstance, computed, ref } from 'vue'
+import { ComponentPublicInstance, computed } from 'vue'
 import { uiStore } from 'src/store/UiStore'
-import Timeout = NodeJS.Timeout
 import {
   ionCheckmarkCircle,
   ionChevronForward
@@ -38,8 +37,6 @@ interface Props {
 const props = defineProps<Props>()
 
 const { completedTargetIds, eventArea } = useEventDetailStore()
-
-const nextPoll = ref<Timeout | null>(null)
 
 const sortedAddresses = computed(() => {
   const collator = new Intl.Collator(undefined, {
