@@ -1,6 +1,21 @@
+<!--FIXME(peter) 2023/12/12 The composition API doesn't support `beforeRouteEnter` so far so this a workaround
+see https://github.com/vuejs/rfcs/discussions/302-->
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { AddressDetails } from 'src/api/model/AreaDetailsDto'
+interface IInstance extends ComponentPublicInstance {
+  street: string
+}
+export default {
+  beforeRouteEnter: (to, from, next) => {
+    next((vm) => {
+      uiStore.updateActiveElements({
+        street: (vm as IInstance).street
+      })
+    })
+  }
+}
+</script>
+<script setup lang="ts">
+import { ComponentPublicInstance, computed, ref } from 'vue'
 import { uiStore } from 'src/store/UiStore'
 import Timeout = NodeJS.Timeout
 import {
@@ -17,60 +32,33 @@ import {
 } from 'quasar'
 import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 
-export default defineComponent({
-  name: 'EventAreaStreet',
-  components: {
-    QList,
-    QItemLabel,
-    QItem,
-    QItemSection,
-    QIcon,
-    QScrollArea
-  },
-  props: {
-    street: {
-      type: String as PropType<string>,
-      required: true
-    }
-  },
-  setup() {
-    const { completedTargetIds, eventArea } = useEventDetailStore()
-    return { completedTargetIds, eventArea }
-  },
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      uiStore.updateActiveElements({
-        // @ts-ignore
-        street: vm.street
-      })
+interface Props {
+  street: string
+}
+const props = defineProps<Props>()
+
+const { completedTargetIds, eventArea } = useEventDetailStore()
+
+const nextPoll = ref<Timeout | null>(null)
+
+const sortedAddresses = computed(() => {
+  const collator = new Intl.Collator(undefined, {
+    numeric: true,
+    sensitivity: 'base'
+  })
+  const street = eventArea.value?.area_details?.streets.find(
+    ({ name }) => name === props.street
+  )
+  if (street) {
+    return [...street.addresses].sort((a, b) => {
+      return collator.compare(a.house_number, b.house_number)
     })
-  },
-  data() {
-    return {
-      nextPoll: null as Timeout | null,
-      ionChevronForward,
-      ionCheckmarkCircle
-    }
-  },
-  computed: {
-    sortedAddresses(): AddressDetails[] {
-      const collator = new Intl.Collator(undefined, {
-        numeric: true,
-        sensitivity: 'base'
-      })
-      const street = this.eventArea?.area_details?.streets.find(
-        ({ name }) => name === this.street
-      )
-      if (street) {
-        return [...street.addresses].sort((a, b) => {
-          return collator.compare(a.house_number, b.house_number)
-        })
-      } else {
-        return []
-      }
-    }
+  } else {
+    return []
   }
 })
+
+defineExpose({ street: props.street })
 </script>
 
 <template>
