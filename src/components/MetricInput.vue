@@ -1,10 +1,3 @@
-<template>
-  <QCheckbox
-    :model-value="checked"
-    @update:model-value="$emit('update:checked', $event)"
-    :label="name"
-  />
-</template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { QCheckbox } from 'quasar'
@@ -27,6 +20,15 @@ export default defineComponent({
   emits: ['update:checked']
 })
 </script>
+
+<template>
+  <QCheckbox
+    :model-value="checked"
+    @update:model-value="$emit('update:checked', $event)"
+    :label="name"
+  />
+</template>
+
 <style lang="scss" scoped>
 .guideline {
   margin: -0.1rem 0.5rem 0 0.2rem;
