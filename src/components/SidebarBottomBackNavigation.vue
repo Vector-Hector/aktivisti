@@ -1,3 +1,13 @@
+<script setup lang="ts">
+import { ionChevronBack } from '@quasar/extras/ionicons-v5'
+import { QBtn } from 'quasar'
+
+interface Emits {
+  (e: 'back'): void
+}
+const emit = defineEmits<Emits>()
+</script>
+
 <template>
   <div class="sidebar-bottom-navigation row">
     <div class="col right">
@@ -9,35 +19,12 @@
         style="background: white !important"
         label="Zurück"
         :icon="ionChevronBack"
-        @click="$emit('back')"
+        @click="emit('back')"
       />
     </div>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
-import {
-  ionCheckmark,
-  ionChevronBack,
-  ionChevronForward
-} from '@quasar/extras/ionicons-v5'
-import { QBtn } from 'quasar'
 
-export default defineComponent({
-  name: 'SidebarBottomBackNavigation',
-  components: {
-    QBtn
-  },
-  emits: ['back'],
-  data() {
-    return {
-      ionChevronBack,
-      ionChevronForward,
-      ionCheckmark
-    }
-  }
-})
-</script>
 <style lang="scss" scoped>
 .sidebar-bottom-navigation {
   background: $grey-3;
