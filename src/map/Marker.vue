@@ -1,11 +1,3 @@
-<template>
-  <div ref="markerElement" class="marker">
-    <slot name="marker">
-      <QIcon class="marker-icon" :name="ionLocationSharp" />
-    </slot>
-    <slot v-if="initialized" />
-  </div>
-</template>
 <script lang="ts">
 import {
   defineComponent,
@@ -86,6 +78,16 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <div ref="markerElement" class="marker">
+    <slot name="marker">
+      <QIcon class="marker-icon" :name="ionLocationSharp" />
+    </slot>
+    <slot v-if="initialized" />
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .marker-icon {
   width: 32px;
