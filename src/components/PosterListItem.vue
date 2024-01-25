@@ -1,20 +1,3 @@
-<template>
-  <QItem clickable v-ripple>
-    <QItemSection>
-      <QItemLabel>
-        <b>{{ poster.location_description }}</b>
-      </QItemLabel>
-    </QItemSection>
-    <QItemSection side>
-      <QItemLabel :class="statusClass">
-        {{ statusLabel }}
-      </QItemLabel>
-    </QItemSection>
-    <QItemSection side>
-      <QIcon :name="statusIcon" :class="statusClass" />
-    </QItemSection>
-  </QItem>
-</template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { QIcon, QItem, QItemLabel, QItemSection } from 'quasar'
@@ -75,6 +58,25 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <QItem clickable v-ripple>
+    <QItemSection>
+      <QItemLabel>
+        <b>{{ poster.location_description }}</b>
+      </QItemLabel>
+    </QItemSection>
+    <QItemSection side>
+      <QItemLabel :class="statusClass">
+        {{ statusLabel }}
+      </QItemLabel>
+    </QItemSection>
+    <QItemSection side>
+      <QIcon :name="statusIcon" :class="statusClass" />
+    </QItemSection>
+  </QItem>
+</template>
+
 <style lang="scss" scoped>
 .mounted {
   color: $positive;
