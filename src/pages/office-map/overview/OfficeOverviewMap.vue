@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref } from 'vue'
-import { useMap } from 'src/map/Map.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import Geocoder from 'src/map/Geocoder.vue'
 import { userStore } from 'src/store/UserStore'
@@ -14,6 +13,7 @@ import { loadImageIfNonExistent } from 'src/utils/map'
 import CoordinatesPopup from 'src/map/popup/CoordinatesPopup.vue'
 import OfficePopupContents from 'src/map/popup/OfficePopupContents.vue'
 import EventLayer from 'src/map/EventLayer.vue'
+import { useMap } from 'src/map/MapUtils'
 
 const activeOffice = ref<null | OfficeGeoJsonFeature>()
 const map = useMap()

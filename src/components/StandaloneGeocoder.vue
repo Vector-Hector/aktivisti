@@ -4,7 +4,7 @@ import { forwardGeocode } from 'src/utils/map'
 import { GeocodeResult } from 'src/types/GeocodeResult'
 import { QItem, QItemSection, QItemLabel, QSelect, QIcon } from 'quasar'
 import { ionSearch } from '@quasar/extras/ionicons-v5'
-import { MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/map/Map.vue'
+import { MAP_GEOLOCATE_STOP_TRACKING, MapEventBus } from 'src/map/MapUtils'
 
 interface Props {
   result?: Partial<GeocodeResult>

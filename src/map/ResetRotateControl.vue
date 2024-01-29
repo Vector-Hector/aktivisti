@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { QBtn } from 'quasar'
-import { useMap } from 'src/map/Map.vue'
+import { useMap } from 'src/map/MapUtils'
 
 const map = useMap()
 

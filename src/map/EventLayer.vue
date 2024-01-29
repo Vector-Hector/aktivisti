@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { inject, onMounted, watch, onUnmounted } from 'vue'
-import { MapInject } from './Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import {
   Feature,
@@ -16,6 +15,7 @@ import maplibregl, {
 } from 'maplibre-gl'
 import { SpiderifyFeatures } from 'src/map/SpiderifyLayer'
 import { CLUSTER_COLOR } from 'src/constants'
+import { MapKey } from 'src/types/keys'
 
 const TRANSITION_DURATION = 500
 
@@ -187,7 +187,7 @@ interface Emits {
 }
 const emit = defineEmits<Emits>()
 
-const map = inject(MapInject)!
+const map = inject(MapKey)!
 let activeOverlay: EventLayer | null = null
 
 onMounted(() => {

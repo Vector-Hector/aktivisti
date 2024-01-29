@@ -2,13 +2,13 @@
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { CampaignGeometriesDto } from 'src/api/model/CampaignGeometriesDto'
 import { Feature, FeatureCollection, Geometry } from 'geojson'
-import { useMap } from 'src/map/Map.vue'
 import { apiClient } from 'src/api/ApiClient'
 import { CampaignGeometryCollectionsDto } from 'src/api/model/CampaignGeometryCollectionsDto'
 import { uuidv4 } from 'src/utils/uuid'
 import { bbox } from '@turf/turf'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import GeometryPopup from 'src/map/popup/layerPopups/GeometryPopup.vue'
+import { useMap } from 'src/map/MapUtils'
 
 interface Props {
   /**

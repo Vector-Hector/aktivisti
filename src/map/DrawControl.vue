@@ -3,7 +3,7 @@ import { onUnmounted, watch } from 'vue'
 import MapboxDraw, { IMapboxDrawControls } from '@mapbox/mapbox-gl-draw'
 import { Feature } from 'geojson'
 import { difference, isEqual } from 'lodash-es'
-import { useMap } from 'src/map/Map.vue'
+import { useMap } from 'src/map/MapUtils'
 
 type ForwardedEvents =
   | 'draw:create'

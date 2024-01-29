@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from 'vue'
-import { useMap } from 'src/map/Map.vue'
 import { userStore } from 'src/store/UserStore'
 import Geocoder from 'src/map/Geocoder.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
@@ -13,6 +12,7 @@ import { apiClient } from 'src/api/ApiClient'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
 import { Popup } from 'maplibre-gl'
 import PosterPopup from 'src/map/popup/layerPopups/PosterPopup.vue'
+import { useMap } from 'src/map/MapUtils'
 
 const posterPopup = ref<InstanceType<typeof PosterPopup> | null>(null)
 

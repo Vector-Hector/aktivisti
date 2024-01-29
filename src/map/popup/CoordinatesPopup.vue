@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref } from 'vue'
 import { Popup } from 'maplibre-gl'
-import { useMap } from 'src/map/Map.vue'
+import { useMap } from 'src/map/MapUtils'
 
 interface Props {
   coordinates: Array<number>

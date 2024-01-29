@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MapEventBus } from 'src/map/Map.vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { QIcon } from 'quasar'
+import { MapEventBus } from 'src/map/MapUtils'
 
 interface Emits {
   (

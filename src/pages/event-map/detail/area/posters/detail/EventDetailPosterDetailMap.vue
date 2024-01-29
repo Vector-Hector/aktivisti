@@ -4,13 +4,13 @@
 <script lang="ts">
 import { useEventDetailPosterMixin } from 'pages/event-map/detail/area/posters/EventDetailPosterMixin'
 import { defineComponent, inject } from 'vue'
-import { MapInject } from 'src/map/Map.vue'
+import { MapKey } from 'src/types/keys'
 
 export default defineComponent({
   name: 'EventDetailPosterDetailMap',
   setup() {
     const { poster } = useEventDetailPosterMixin()
-    const map = inject(MapInject)!
+    const map = inject(MapKey)!
     return { map, poster }
   },
   created() {

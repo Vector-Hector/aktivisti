@@ -4,7 +4,7 @@ import { uuidv4 } from 'src/utils/uuid'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { AllGeoJSON, center } from '@turf/turf'
 import { GeoJSONSource } from 'maplibre-gl'
-import { useMap } from 'src/map/Map.vue'
+import { useMap } from 'src/map/MapUtils'
 
 interface Props {
   addresses: AddressDetails[]

@@ -10,7 +10,7 @@ import {
   MAP_GEOLOCATE_STOP_TRACKING,
   MapEventBus,
   useMap
-} from 'src/map/Map.vue'
+} from 'src/map/MapUtils'
 
 const ABSENT_IMAGE_NAME = 'absent-icon'
 const POSITIVE_IMAGE_NAME = 'positive-icon'

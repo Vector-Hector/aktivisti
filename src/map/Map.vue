@@ -1,39 +1,21 @@
 <script lang="ts">
 import {
   defineComponent,
-  inject,
-  InjectionKey,
   onMounted,
   onUnmounted,
   PropType,
   provide,
-  Ref,
   ref,
   watch
 } from 'vue'
 import maplibregl, { LngLat, Point } from 'maplibre-gl'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
-import { TinyEmitter } from 'tiny-emitter'
 import { isEqual } from 'lodash-es'
 import { uuidv4 } from 'src/utils/uuid'
 import { SettleDebouncer } from 'src/utils/debounce'
-
-export const MapInject: InjectionKey<Ref<maplibregl.Map | null>> = Symbol()
-
-export function useMap(): Ref<maplibregl.Map> {
-  const map = inject(MapInject)
-  if (!map?.value) {
-    throw new Error('useMap is only allowed in map contexts')
-  } else {
-    return map as Ref<maplibregl.Map>
-  }
-}
-
-export const MapEventBus = new TinyEmitter()
-
-export const MAP_PAN_TO = 'MAP_PAN_TO'
-export const MAP_GEOLOCATE_STOP_TRACKING = 'MAP_GEOLOCATE_STOP_TRACKING'
+import { MAP_PAN_TO, MapEventBus } from 'src/map/MapUtils'
+import { MapKey } from 'src/types/keys'
 
 export default defineComponent({
   name: 'Map',
@@ -80,7 +62,7 @@ export default defineComponent({
     const map = ref<maplibregl.Map | null>(null)
     const mapContainer = ref<HTMLElement | null>(null)
     const initialized = ref(false)
-    provide(MapInject, map)
+    provide(MapKey, map)
 
     const fitBounds = (...args: any) => {
       map.value?.fitBounds(args, { animate: props.animate })
