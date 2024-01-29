@@ -1,17 +1,3 @@
-<template>
-  <div
-    class="drop-container"
-    @drop.prevent.stop="onDrop"
-    @dragover.prevent.stop
-  >
-    <div :id="mapUuid" ref="mapContainer" class="map">
-      <div class="top-right-overlay">
-        <slot v-if="initialized" name="top-right" />
-      </div>
-      <slot v-if="initialized" />
-    </div>
-  </div>
-</template>
 <script lang="ts">
 import {
   defineComponent,
@@ -220,6 +206,22 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <div
+    class="drop-container"
+    @drop.prevent.stop="onDrop"
+    @dragover.prevent.stop
+  >
+    <div :id="mapUuid" ref="mapContainer" class="map">
+      <div class="top-right-overlay">
+        <slot v-if="initialized" name="top-right" />
+      </div>
+      <slot v-if="initialized" />
+    </div>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .map {
   width: 100%;
