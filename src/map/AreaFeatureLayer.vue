@@ -4,7 +4,7 @@ import { uuidv4 } from 'src/utils/uuid'
 import { Feature } from 'geojson'
 import { getColorFromPropertiesWithDefault } from 'pages/edit-event/geometry/route-planner.styles'
 import { GeoJSONSource } from 'maplibre-gl'
-import { useMap } from 'src/map/Map.vue'
+import { useMap } from 'src/map/MapUtils'
 
 interface Props {
   features: Feature[]

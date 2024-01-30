@@ -15,8 +15,8 @@ import MaplibreGeocoder from '@maplibre/maplibre-gl-geocoder'
 import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css'
 import { forwardGeocode, reverseGeocode } from 'src/utils/map'
 import { GeocodeResult } from 'src/types/GeocodeResult'
-import { MapInject } from 'src/map/Map.vue'
 import maplibregl, { MarkerOptions } from 'maplibre-gl'
+import { MapKey } from 'src/types/keys'
 
 export default defineComponent({
   name: 'Geocoder',
@@ -75,7 +75,7 @@ export default defineComponent({
 
     onMounted(() => {
       if (!props.standalone) {
-        const map = inject(MapInject)
+        const map = inject(MapKey)
         if (!map?.value) {
           throw Error(
             'Either mount the Geocoder as a child of Map or set standalone=true'
@@ -89,7 +89,7 @@ export default defineComponent({
 
     onUnmounted(() => {
       if (!props.standalone) {
-        const map = inject(MapInject)
+        const map = inject(MapKey)
         map?.value?.removeControl(geocodeControl)
       }
     })

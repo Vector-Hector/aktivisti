@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onBeforeMount, onUnmounted, onBeforeUnmount, ref } from 'vue'
-import { useMap } from 'src/map/Map.vue'
 import { eventOverviewStore } from 'src/store/EventOverviewStore'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import Geocoder from 'src/map/Geocoder.vue'
@@ -17,6 +16,7 @@ import {
   OfficeGeoJsonFeature
 } from 'src/api/model/OfficeGeoJsonDto'
 import OfficePopupContents from 'src/map/popup/OfficePopupContents.vue'
+import { useMap } from 'src/map/MapUtils'
 
 const POSTER_SYMBOL_NAME = EventTypes.POSTERS
 const DOOR_TO_DOOR_SYMBOL_NAME = EventTypes.DOOR_TO_DOOR

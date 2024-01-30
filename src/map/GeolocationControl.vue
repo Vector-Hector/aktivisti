@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
-import { MapEventBus } from './Map.vue'
 import { FitBoundsOptions, LngLat, PositionOptions } from 'maplibre-gl'
 import { ionLocation, ionRadioButtonOnSharp } from '@quasar/extras/ionicons-v5'
 import { Geolocation, Position } from '@capacitor/geolocation'
@@ -11,8 +10,12 @@ import {
 } from '@quasar/extras/material-icons'
 import { QFab, QFabAction, QIcon } from 'quasar'
 import Marker from 'src/map/Marker.vue'
-import { MAP_GEOLOCATE_STOP_TRACKING, useMap } from 'src/map/Map.vue'
 import { LocationDto } from 'src/api/model/LocationDto'
+import {
+  MAP_GEOLOCATE_STOP_TRACKING,
+  MapEventBus,
+  useMap
+} from 'src/map/MapUtils'
 
 interface GeolocateControlOptions {
   positionOptions?: PositionOptions

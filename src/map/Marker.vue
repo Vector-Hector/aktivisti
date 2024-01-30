@@ -4,7 +4,7 @@ import { Marker } from 'maplibre-gl'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { ionLocationSharp } from '@quasar/extras/ionicons-v5'
 import { QIcon } from 'quasar'
-import { useMap } from 'src/map/Map.vue'
+import { useMap } from 'src/map/MapUtils'
 
 interface Props {
   location: LocationDto

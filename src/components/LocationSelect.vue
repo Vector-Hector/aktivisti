@@ -1,56 +1,3 @@
-<template>
-  <div class="row">
-    <div class="col-12">
-      <span class="description-text">
-        <slot name="hintText">
-          Bitte gib entweder eine Adresse in das Suchfeld ein oder verschiebe
-          den rot hervorgehobenen Pin auf der Karte, um die Position dieses
-          Standorts auf der Karte festzulegen.
-        </slot>
-      </span>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-grow">
-      <StandaloneGeocoder
-        :result="currentGeocodeResult"
-        @update:result="handleTextInput"
-        @new-result="handleLocationSelect"
-        :custom-place-name="true"
-        :error="error"
-      />
-      <QPopupProxy no-parent-event ref="suggestionPopup">
-        <QCard>
-          <QCardSection>
-            <span>
-              Willst du die Beschreibung für diesen Ort übernehmen?
-              <br />
-              <b>{{ suggestion }}</b>
-            </span>
-          </QCardSection>
-          <QCardActions align="right">
-            <QBtn v-close-popup flat color="primary" label="Nein" />
-            <QBtn
-              v-close-popup
-              flat
-              color="primary"
-              label="Ja"
-              @click="acceptSuggestedPlace"
-            />
-          </QCardActions>
-        </QCard>
-      </QPopupProxy>
-    </div>
-    <div v-if="isDraggableMarkerShown" class="col-shrink marker-column">
-      <DraggableMarker
-        v-if="!location"
-        class="draggable-marker"
-        @dropped="handleDropped"
-      />
-    </div>
-  </div>
-</template>
-
 <script lang="ts">
 import { defineComponent, PropType, nextTick } from 'vue'
 import StandaloneGeocoder from 'components/StandaloneGeocoder.vue'
@@ -181,6 +128,60 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <div class="row">
+    <div class="col-12">
+      <span class="description-text">
+        <slot name="hintText">
+          Bitte gib entweder eine Adresse in das Suchfeld ein oder verschiebe
+          den rot hervorgehobenen Pin auf der Karte, um die Position dieses
+          Standorts auf der Karte festzulegen.
+        </slot>
+      </span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-grow">
+      <StandaloneGeocoder
+        :result="currentGeocodeResult"
+        @update:result="handleTextInput"
+        @new-result="handleLocationSelect"
+        :custom-place-name="true"
+        :error="error"
+      />
+      <QPopupProxy no-parent-event ref="suggestionPopup">
+        <QCard>
+          <QCardSection>
+            <span>
+              Willst du die Beschreibung für diesen Ort übernehmen?
+              <br />
+              <b>{{ suggestion }}</b>
+            </span>
+          </QCardSection>
+          <QCardActions align="right">
+            <QBtn v-close-popup flat color="primary" label="Nein" />
+            <QBtn
+              v-close-popup
+              flat
+              color="primary"
+              label="Ja"
+              @click="acceptSuggestedPlace"
+            />
+          </QCardActions>
+        </QCard>
+      </QPopupProxy>
+    </div>
+    <div v-if="isDraggableMarkerShown" class="col-shrink marker-column">
+      <DraggableMarker
+        v-if="!location"
+        class="draggable-marker"
+        @dropped="handleDropped"
+      />
+    </div>
+  </div>
+</template>
+
 <style lang="scss">
 .marker-column {
   display: flex;
