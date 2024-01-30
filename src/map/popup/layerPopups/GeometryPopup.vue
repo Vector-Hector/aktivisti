@@ -1,22 +1,3 @@
-<template>
-  <LayerPopup ref="layerPopup" :show-close-button="false" :offset="[0, 0]">
-    <template v-slot:content="{ passedObject: metadata }">
-      <div class="popup-contents">
-        <table>
-          <tr
-            v-for="[index, [key, value]] in Object.entries(
-              Object.entries(metadata)
-            )"
-            :key="index"
-          >
-            <td>{{ key }}</td>
-            <td>{{ value }}</td>
-          </tr>
-        </table>
-      </div>
-    </template>
-  </LayerPopup>
-</template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import LayerPopup from 'src/map/popup/LayerPopup.vue'
@@ -45,6 +26,27 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <LayerPopup ref="layerPopup" :show-close-button="false" :offset="[0, 0]">
+    <template v-slot:content="{ passedObject: metadata }">
+      <div class="popup-contents">
+        <table>
+          <tr
+            v-for="[index, [key, value]] in Object.entries(
+              Object.entries(metadata)
+            )"
+            :key="index"
+          >
+            <td>{{ key }}</td>
+            <td>{{ value }}</td>
+          </tr>
+        </table>
+      </div>
+    </template>
+  </LayerPopup>
+</template>
+
 <style lang="scss" scoped>
 .popup-contents {
   display: flex;
