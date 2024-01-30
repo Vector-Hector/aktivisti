@@ -1,13 +1,5 @@
-<script lang="ts">
-import {
-  defineComponent,
-  onMounted,
-  onUnmounted,
-  PropType,
-  provide,
-  ref,
-  watch
-} from 'vue'
+<script setup lang="ts">
+import { onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import maplibregl, { LngLat, Point } from 'maplibre-gl'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
@@ -17,176 +9,159 @@ import { SettleDebouncer } from 'src/utils/debounce'
 import { MAP_PAN_TO, MapEventBus } from 'src/map/MapUtils'
 import { MapKey } from 'src/types/keys'
 
-export default defineComponent({
-  name: 'Map',
-  props: {
-    center: {
-      type: Object as PropType<LocationDto | undefined>,
-      required: false,
-      default: () => {
-        return { lng: 10.727275, lat: 51.109919 } // center of germany
-      }
-    },
-    animate: {
-      type: Boolean as PropType<boolean>,
-      required: false,
-      default: true
-    },
-    zoom: {
-      type: Number as PropType<number>,
-      default: 5
-    },
-    zoomBox: {
-      type: Array as unknown as PropType<BBox2d>,
-      required: false,
-      default: undefined
-    },
-    boundingBox: {
-      type: Array as unknown as PropType<BBox2d>,
-      default: () => [5.98865807458, 47.3024876979, 15.0169958839, 54.983104153] // bbox germany
-    },
-    interactive: {
-      type: Boolean as PropType<boolean>,
-      default: true
-    }
+interface Props {
+  center?: LocationDto | undefined
+  animate?: boolean
+  zoom?: number
+  zoomBox?: BBox2d
+  boundingBox?: BBox2d
+  interactive?: boolean
+}
+const props = withDefaults(defineProps<Props>(), {
+  center: () => {
+    // center of germany
+    return { lng: 10.727275, lat: 51.109919 }
   },
-  emits: [
-    'update:zoom',
-    'update:center',
-    'update:zoom',
-    'drop',
-    'update:boundingBox'
+  animate: true,
+  zoom: 5,
+  zoomBox: undefined,
+  // bbox germany
+  boundingBox: () => [
+    5.98865807458, 47.3024876979, 15.0169958839, 54.983104153
   ],
-  setup(props, { emit }) {
-    const mapUuid = `map-${uuidv4()}`
-    const map = ref<maplibregl.Map | null>(null)
-    const mapContainer = ref<HTMLElement | null>(null)
-    const initialized = ref(false)
-    provide(MapKey, map)
-
-    const fitBounds = (...args: any) => {
-      map.value?.fitBounds(args, { animate: props.animate })
-    }
-
-    const getBoundingBox = () => {
-      return map.value!.getBounds().toArray().flat()
-    }
-
-    const emitWithBus = (type: string, event: any) => {
-      // @ts-ignore
-      emit(type, event)
-      MapEventBus.emit(type, event)
-    }
-
-    const resizeDebouncer = new SettleDebouncer()
-
-    const resizeMap = () => {
-      void resizeDebouncer.executeDebounced(() => {
-        map.value?.resize()
-        return Promise.resolve()
-      }, 100)
-    }
-
-    onMounted(() => {
-      window.addEventListener('resize', resizeMap)
-      map.value = new maplibregl.Map({
-        container: mapUuid,
-        style: process.env.APP_MAP_STYLE,
-        zoom: props.zoom,
-        center: props.center,
-        bounds: props.boundingBox,
-        interactive: props.interactive,
-        // for now we are disabling any rotating and pitching interaction
-        touchPitch: false,
-        dragRotate: false,
-        pitchWithRotate: false
-      })
-      map.value.on('load', () => {
-        map.value?.resize()
-        if (props.zoomBox) {
-          map.value?.fitBounds(props.zoomBox, { padding: 10 })
-        }
-        initialized.value = true
-
-        watch(
-          () => props.center,
-          (newCenter, oldCenter) => {
-            if (!newCenter || isEqual(newCenter, oldCenter)) return
-            map.value?.setCenter([newCenter.lng, newCenter.lat])
-          }
-        )
-
-        watch(
-          () => props.zoom,
-          (newZoom) => {
-            map.value?.setZoom(newZoom, { animate: props.animate })
-          }
-        )
-
-        watch(
-          () => props.zoomBox,
-          (newBox) => {
-            if (newBox) {
-              map.value?.fitBounds(newBox, {
-                padding: 20,
-                animate: props.animate
-              })
-            }
-          },
-          { immediate: true }
-        )
-
-        watch(
-          () => props.boundingBox,
-          (newBox) => {
-            if (newBox) {
-              map.value?.fitBounds(newBox, { animate: props.animate })
-            }
-          }
-        )
-
-        MapEventBus.on(MAP_PAN_TO, (location: LngLat) => {
-          map.value?.panTo(location)
-        })
-      })
-      map.value.on('moveend', () => {
-        emitWithBus('update:center', map.value?.getCenter())
-        emitWithBus('update:boundingBox', getBoundingBox())
-      })
-
-      map.value.on('zoomend', () => {
-        emitWithBus('update:zoom', map.value?.getZoom())
-        emitWithBus('update:boundingBox', getBoundingBox())
-      })
-    })
-
-    onUnmounted(() => {
-      window.removeEventListener('resize', resizeMap)
-    })
-
-    const onDrop = (event: any) => {
-      const rect = mapContainer.value!.getBoundingClientRect()
-      const cursorPosition = new Point(
-        event.clientX - rect.left - mapContainer.value!.clientLeft,
-        event.clientY - rect.top - mapContainer.value!.clientTop
-      )
-      emitWithBus('drop', {
-        originalEvent: event,
-        coordinates: map.value!.unproject(cursorPosition)
-      })
-    }
-
-    return {
-      map,
-      mapUuid,
-      onDrop,
-      initialized,
-      mapContainer,
-      fitBounds,
-      getBoundingBox
-    }
-  }
+  interactive: true
 })
+
+interface Emits {
+  (e: 'update:zoom', zoom: number): void
+  (e: 'update:center', center: maplibregl.LngLat): void
+  (
+    e: 'drop',
+    event: { originalEvent: any; coordinates: maplibregl.LngLat }
+  ): void
+  (e: 'update:boundingBox', boundingBox: number[]): void
+}
+const emit = defineEmits<Emits>()
+
+const mapUuid = `map-${uuidv4()}`
+const map = ref<maplibregl.Map | null>(null)
+const mapContainer = ref<HTMLElement | null>(null)
+const initialized = ref(false)
+provide(MapKey, map)
+
+const fitBounds = (...args: any) => {
+  map.value?.fitBounds(args, { animate: props.animate })
+}
+
+const getBoundingBox = () => {
+  return map.value!.getBounds().toArray().flat()
+}
+
+const emitWithBus = (type: string, event: any) => {
+  // @ts-ignore
+  emit(type, event)
+  MapEventBus.emit(type, event)
+}
+
+const resizeDebouncer = new SettleDebouncer()
+
+const resizeMap = () => {
+  void resizeDebouncer.executeDebounced(() => {
+    map.value?.resize()
+    return Promise.resolve()
+  }, 100)
+}
+
+onMounted(() => {
+  window.addEventListener('resize', resizeMap)
+  map.value = new maplibregl.Map({
+    container: mapUuid,
+    style: process.env.APP_MAP_STYLE,
+    zoom: props.zoom,
+    center: props.center,
+    bounds: props.boundingBox,
+    interactive: props.interactive,
+    // for now we are disabling any rotating and pitching interaction
+    touchPitch: false,
+    dragRotate: false,
+    pitchWithRotate: false
+  })
+  map.value.on('load', () => {
+    map.value?.resize()
+    if (props.zoomBox) {
+      map.value?.fitBounds(props.zoomBox, { padding: 10 })
+    }
+    initialized.value = true
+
+    watch(
+      () => props.center,
+      (newCenter, oldCenter) => {
+        if (!newCenter || isEqual(newCenter, oldCenter)) return
+        map.value?.setCenter([newCenter.lng, newCenter.lat])
+      }
+    )
+
+    watch(
+      () => props.zoom,
+      (newZoom) => {
+        map.value?.setZoom(newZoom, { animate: props.animate })
+      }
+    )
+
+    watch(
+      () => props.zoomBox,
+      (newBox) => {
+        if (newBox) {
+          map.value?.fitBounds(newBox, {
+            padding: 20,
+            animate: props.animate
+          })
+        }
+      },
+      { immediate: true }
+    )
+
+    watch(
+      () => props.boundingBox,
+      (newBox) => {
+        if (newBox) {
+          map.value?.fitBounds(newBox, { animate: props.animate })
+        }
+      }
+    )
+
+    MapEventBus.on(MAP_PAN_TO, (location: LngLat) => {
+      map.value?.panTo(location)
+    })
+  })
+  map.value.on('moveend', () => {
+    emitWithBus('update:center', map.value?.getCenter())
+    emitWithBus('update:boundingBox', getBoundingBox())
+  })
+
+  map.value.on('zoomend', () => {
+    emitWithBus('update:zoom', map.value?.getZoom())
+    emitWithBus('update:boundingBox', getBoundingBox())
+  })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', resizeMap)
+})
+
+const onDrop = (event: any) => {
+  const rect = mapContainer.value!.getBoundingClientRect()
+  const cursorPosition = new Point(
+    event.clientX - rect.left - mapContainer.value!.clientLeft,
+    event.clientY - rect.top - mapContainer.value!.clientTop
+  )
+  emitWithBus('drop', {
+    originalEvent: event,
+    coordinates: map.value!.unproject(cursorPosition)
+  })
+}
+
+defineExpose({ map })
 </script>
 
 <template>
