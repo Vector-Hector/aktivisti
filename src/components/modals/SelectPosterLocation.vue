@@ -50,7 +50,7 @@ const $q = useQuasar()
 const location = ref<LocationDto | null>(null)
 const location_description = ref<string>('')
 const map = ref<InstanceType<typeof Map> | undefined | null>(null)
-const dialog = ref(null)
+const dialog = ref<InstanceType<typeof QDialog> | null>(null)
 
 const mapRef = computed(() => {
   return map.value
@@ -107,8 +107,7 @@ const createPoster = async () => {
   }
 }
 const hide = () => {
-  // @ts-ignore
-  dialog.value.hide()
+  dialog.value?.hide()
 }
 const onDialogHide = () => {
   emit('hide')
