@@ -26,6 +26,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
+const suggestionPopup = ref<InstanceType<typeof QPopupProxy> | null>(null)
 const currentGeocodeResult = ref<Partial<GeocodeResult>>({ place_name: '' })
 const suggestion = ref<string>('')
 const touched = ref<boolean>(false)
@@ -104,8 +105,7 @@ const handleDropped = (value: any) => {
 
 const suggestPlace = () => {
   if (touched.value && suggestion.value !== props.locationDescription) {
-    //@ts-ignore
-    this.$refs.suggestionPopup?.show()
+    suggestionPopup.value?.show()
   } else {
     acceptSuggestedPlace()
   }
