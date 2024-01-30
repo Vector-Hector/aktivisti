@@ -49,10 +49,6 @@ const mapContainer = ref<HTMLElement | null>(null)
 const initialized = ref(false)
 provide(MapKey, map)
 
-const fitBounds = (...args: any) => {
-  map.value?.fitBounds(args, { animate: props.animate })
-}
-
 const getBoundingBox = () => {
   return map.value!.getBounds().toArray().flat()
 }
