@@ -1,14 +1,3 @@
-<template>
-  <AddressMarker
-    v-for="address in addresses"
-    :key="address.house_number"
-    :location="center(address.geometry)"
-    :text="address.house_number"
-    :selected="$route.params.houseNumber === address.house_number"
-    @click="jumpToAddress(address)"
-  />
-</template>
-
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { useInjectMapMixin } from 'src/pages/event-detail/InjectMapMixin'
@@ -63,3 +52,14 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <AddressMarker
+    v-for="address in addresses"
+    :key="address.house_number"
+    :location="center(address.geometry)"
+    :text="address.house_number"
+    :selected="$route.params.houseNumber === address.house_number"
+    @click="jumpToAddress(address)"
+  />
+</template>
