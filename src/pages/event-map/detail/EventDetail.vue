@@ -1,25 +1,10 @@
+<!--FIXME(peter) 2023/12/12 The composition API doesn't support `beforeRouteEnter` so far so this a workaround
+      see https://github.com/vuejs/rfcs/discussions/302-->
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { apiClient } from 'src/api/ApiClient'
-import { CampaignDto } from 'src/api/model/CampaignDto'
-import { uiStore } from 'src/store/UiStore'
-import { eventDetailStore } from 'src/store/EventDetailStore'
-import { getAuthStore } from 'src/store/AuthStore'
-import { ObjectPermissions } from 'src/api/model/ObjectPermissionDto'
-import { includesOneOf } from 'src/utils/array'
-import { EventTypes } from 'src/api/model/EventTypes'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
-
-const authStore = getAuthStore()
-
-export default defineComponent({
-  name: 'EventDetail',
-  setup() {
-    const { event } = useEventDetailStore()
-    return { event }
-  },
+export default {
   async beforeRouteEnter(to, from, next) {
     const { eventId } = to.params
+    const authStore = getAuthStore()
     try {
       const [eventRequest, eventPermissionsRequest] = await Promise.all([
         apiClient.events.get(eventId.toString(), ['campaigns']),
@@ -106,10 +91,25 @@ export default defineComponent({
         next({ name: 'login' })
       }
     }
-  },
-  beforeRouteLeave() {
-    eventDetailStore.reset()
   }
+}
+</script>
+<script setup lang="ts">
+import { apiClient } from 'src/api/ApiClient'
+import { CampaignDto } from 'src/api/model/CampaignDto'
+import { uiStore } from 'src/store/UiStore'
+import { eventDetailStore } from 'src/store/EventDetailStore'
+import { getAuthStore } from 'src/store/AuthStore'
+import { ObjectPermissions } from 'src/api/model/ObjectPermissionDto'
+import { includesOneOf } from 'src/utils/array'
+import { EventTypes } from 'src/api/model/EventTypes'
+import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
+import { onBeforeRouteLeave } from 'vue-router'
+
+const { event } = useEventDetailStore()
+
+onBeforeRouteLeave(() => {
+  eventDetailStore.reset()
 })
 </script>
 
