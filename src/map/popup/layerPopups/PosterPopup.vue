@@ -1,20 +1,3 @@
-<template>
-  <LayerPopup ref="layerPopup">
-    <template v-slot:content="{ passedObject: poster }">
-      <div class="popup-contents">
-        <span class="popup-title">Poster</span>
-        <span class="popup-address">{{ poster.location_description }}</span>
-        <QBtn
-          label="Zum Plakat"
-          color="primary"
-          :to="`/events/${poster.event}/area/${
-            poster.area ? poster.area : UNDEFINED_POSTER_AREA
-          }/posters/${poster.id}`"
-        />
-      </div>
-    </template>
-  </LayerPopup>
-</template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import LayerPopup from 'src/map/popup/LayerPopup.vue'
@@ -39,6 +22,25 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <LayerPopup ref="layerPopup">
+    <template v-slot:content="{ passedObject: poster }">
+      <div class="popup-contents">
+        <span class="popup-title">Poster</span>
+        <span class="popup-address">{{ poster.location_description }}</span>
+        <QBtn
+          label="Zum Plakat"
+          color="primary"
+          :to="`/events/${poster.event}/area/${
+            poster.area ? poster.area : UNDEFINED_POSTER_AREA
+          }/posters/${poster.id}`"
+        />
+      </div>
+    </template>
+  </LayerPopup>
+</template>
+
 <style lang="scss" scoped>
 .popup-contents {
   display: flex;
