@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import LayerPopup from 'src/map/popup/LayerPopup.vue'
 
 const layerPopup = ref<InstanceType<typeof LayerPopup> | null>(null)
-const popup = ref<any>(null)
 function showPopup(
   metadata: Record<string, string | number>,
   location: { lng: number; lat: number }
