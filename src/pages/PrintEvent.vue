@@ -1,20 +1,3 @@
-<template>
-  <MetricBasedPrintout
-    v-if="
-      event && [EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(eventType)
-    "
-    :event="event"
-    :event-areas="eventAreas"
-    :metric-records="metricRecords"
-    :metrics="metrics"
-  />
-  <PostersPrintout
-    v-if="event && eventType === EventTypes.POSTERS"
-    :event="event"
-    :event-areas="eventAreas"
-    :posters="posters"
-  />
-</template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
@@ -89,3 +72,21 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <MetricBasedPrintout
+    v-if="
+      event && [EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(eventType)
+    "
+    :event="event"
+    :event-areas="eventAreas"
+    :metric-records="metricRecords"
+    :metrics="metrics"
+  />
+  <PostersPrintout
+    v-if="event && eventType === EventTypes.POSTERS"
+    :event="event"
+    :event-areas="eventAreas"
+    :posters="posters"
+  />
+</template>
