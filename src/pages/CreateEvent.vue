@@ -1,62 +1,3 @@
-<template>
-  <QScrollArea class="flex-fill d-flex">
-    <QPage>
-      <div class="container">
-        <div class="create-event">
-          <h3>Neue Aktion erstellen</h3>
-          <FormError :error="errors.non_field_error" />
-          <QInput
-            filled
-            class="create-event-input"
-            v-model="event.name"
-            label="Name der Aktion"
-            :error-message="errors.name?.[0]"
-            :error="!!errors.name?.length"
-            :rules="[$validationRules.isRequired]"
-          />
-          <QSelect
-            filled
-            class="create-event-input"
-            v-model="event.event_type"
-            label="Aktionstyp"
-            :options="eventTypeOptions"
-            option-label="label"
-            option-value="key"
-            emit-value
-            map-options
-            :error-message="errors.event_type?.[0]"
-            :error="!!errors.event_type?.length"
-          />
-
-          <QSelect
-            filled
-            class="create-event-input"
-            v-model="event.campaigns"
-            label="Kampagnen"
-            placeholder="Wähle eine Kampagne aus"
-            :multiple="true"
-            :options="campaigns"
-            option-label="name"
-            option-value="id"
-            map-options
-            emit-value
-            :error-message="errors.campaigns?.[0]"
-            :error="!!errors.campaigns?.length"
-          />
-          <div class="buttons">
-            <QBtn
-              outline
-              color="primary"
-              label="Abbrechen"
-              @click="$router.go(-1)"
-            />
-            <QBtn color="primary" label="Erstellen" @click="saveAndProceed()" />
-          </div>
-        </div>
-      </div>
-    </QPage>
-  </QScrollArea>
-</template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
@@ -163,6 +104,67 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <QScrollArea class="flex-fill d-flex">
+    <QPage>
+      <div class="container">
+        <div class="create-event">
+          <h3>Neue Aktion erstellen</h3>
+          <FormError :error="errors.non_field_error" />
+          <QInput
+            filled
+            class="create-event-input"
+            v-model="event.name"
+            label="Name der Aktion"
+            :error-message="errors.name?.[0]"
+            :error="!!errors.name?.length"
+            :rules="[$validationRules.isRequired]"
+          />
+          <QSelect
+            filled
+            class="create-event-input"
+            v-model="event.event_type"
+            label="Aktionstyp"
+            :options="eventTypeOptions"
+            option-label="label"
+            option-value="key"
+            emit-value
+            map-options
+            :error-message="errors.event_type?.[0]"
+            :error="!!errors.event_type?.length"
+          />
+
+          <QSelect
+            filled
+            class="create-event-input"
+            v-model="event.campaigns"
+            label="Kampagnen"
+            placeholder="Wähle eine Kampagne aus"
+            :multiple="true"
+            :options="campaigns"
+            option-label="name"
+            option-value="id"
+            map-options
+            emit-value
+            :error-message="errors.campaigns?.[0]"
+            :error="!!errors.campaigns?.length"
+          />
+          <div class="buttons">
+            <QBtn
+              outline
+              color="primary"
+              label="Abbrechen"
+              @click="$router.go(-1)"
+            />
+            <QBtn color="primary" label="Erstellen" @click="saveAndProceed()" />
+          </div>
+        </div>
+      </div>
+    </QPage>
+  </QScrollArea>
+</template>
+
 <style lang="scss" scoped>
 .create-event {
   margin: 0 auto;
