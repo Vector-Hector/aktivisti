@@ -9,8 +9,10 @@ import AddressMarker from 'src/map/AddressMarker.vue'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { useEventAreaStreetComposable } from 'pages/event-map/detail/area/street/EventAreaStreetMixin'
 import { useRoute, useRouter } from 'vue-router'
+import { useEventAreaMetricsComposable } from './EventAreaMetricsMixin'
 
 interface Props {
+  houseNumber: string
   street: string
   areaId: string
 }
@@ -19,7 +21,8 @@ const props = defineProps<Props>()
 const $router = useRouter()
 const $route = useRoute()
 
-const { addresses, bbox } = useEventAreaStreetComposable(props)
+const { addresses } = useEventAreaStreetComposable(props)
+const { bbox } = useEventAreaMetricsComposable(props)
 const { map } = useInjectMapMixin()
 
 onMounted(() => {
@@ -45,7 +48,6 @@ async function jumpToAddress(address: AddressDetails) {
   })
 }
 </script>
-
 <template>
   <AddressMarker
     v-for="address in addresses"
