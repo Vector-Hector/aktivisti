@@ -1,30 +1,20 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 import LayerPopup from 'src/map/popup/LayerPopup.vue'
 
-export default defineComponent({
-  name: 'GeometryPopup',
-  components: { LayerPopup },
-  data() {
-    return {
-      popup: null as any
-    }
-  },
-  methods: {
-    showPopup(
-      metadata: Record<string, string | number>,
-      location: { lng: number; lat: number }
-    ) {
-      const { lng, lat } = location
-      // @ts-ignore
-      this.$refs.layerPopup.showPopup(lng, lat, metadata)
-    },
-    remove() {
-      // @ts-ignore
-      this.$refs.layerPopup.remove()
-    }
-  }
-})
+const layerPopup = ref<InstanceType<typeof LayerPopup> | null>(null)
+const popup = ref<any>(null)
+function showPopup(
+  metadata: Record<string, string | number>,
+  location: { lng: number; lat: number }
+) {
+  const { lng, lat } = location
+  layerPopup.value?.showPopup(lng, lat, metadata)
+}
+function remove() {
+  layerPopup.value?.remove()
+}
+defineExpose({ showPopup, remove })
 </script>
 
 <template>
