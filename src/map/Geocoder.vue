@@ -1,6 +1,3 @@
-<template>
-  <div v-if="standalone" ref="geocodeWrapper" class="geocode-wrapper" />
-</template>
 <script lang="ts">
 import {
   defineComponent,
@@ -101,6 +98,11 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <div v-if="standalone" ref="geocodeWrapper" class="geocode-wrapper" />
+</template>
+
 <style lang="scss" scoped>
 @import 'src/css/variables.scss';
 
