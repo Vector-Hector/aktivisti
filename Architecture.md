@@ -9,7 +9,7 @@ the Vue3, Typescript, and Vite template.
 
 See this commented dirtree for reference:
 
-```
+```bash
 .
 ├── conf                # Configuration files needed for deployment
 ├── dist                # Folder for builds, should never be in version control
@@ -31,7 +31,7 @@ See this commented dirtree for reference:
 
 And here the commented file tree of the `src/` folder:
 
-```
+```bash
 src                             # Sources root
 ├── api                         # Helpers and classes for interfacing with our REST API
 │   ├── model                   # Data formats (DTO-Data Transfer Objects) for data formats used in our REST API
