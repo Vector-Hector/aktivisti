@@ -36,7 +36,7 @@ word or kebab-case, if needed.
 
 ```
   fix/250-user-translation
-  fix/wk-frontend-250-user-translation
+  fix/die-linke-app-service-250-user-translation
   feat/31-new-thing
 ```
 

@@ -1,5 +1,5 @@
 
-# wk-frontend
+# die-linke-app-frontend
 
 This project is the frontend application for the "DIE LINKE. App". It's a responsive Progressive Web App.
 
