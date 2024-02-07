@@ -25,7 +25,7 @@ See this commented dirtree for reference:
 ├── package-lock.json   # https://docs.npmjs.com/cli/v8/configuring-npm/package-json
 ├── README.md           # General information how to get started with this project
 ├── tsconfig.json       # Typescript compiler configuration parameters: https://www.typescriptlang.org/tsconfig/
-└── vue.config.js       # Vue CLI configuration: https://cli.vuejs.org/config/
+└── quasar.config.js    # Quasar CLI configuration: https://quasar.dev/quasar-cli-vite/quasar-config-file
 
 ```
 
