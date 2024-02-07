@@ -4,8 +4,8 @@ This file should describe high level concepts and organization of this applicati
 
 ## Folder structure
 
-The structure is scaffolded and therefore mostly matches the blueprint created by [vue cli](https://cli.vuejs.org/)using
-the Vue3 with typescript template.
+The structure is scaffolded and therefore mostly matches the blueprint created by [quasar cli](https://quasar.dev/start/quick-start#step-1-create-a-project) using
+the Vue3, Typescript, and Vite template.
 
 See this commented dirtree for reference:
 
