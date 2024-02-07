@@ -30,7 +30,7 @@ Name branches according to following schema:
 it there.
 
 `<scope>` describes the affected code. The descriptor may be a route, component, feature, utility, etc. It should be one
-word or camelCased, if needed.
+word or kebab-case, if needed.
 
   Examples:
 
