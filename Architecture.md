@@ -62,5 +62,5 @@ src                             # Sources root
 
 Representational State Transfer is a paradigm that has
 some [ground rules](https://en.wikipedia.org/wiki/Representational_state_transfer), but does leave much room in endpoint
-and data format design. For the API in this App we made some design decisions that are to be found in the [backend documentation of wk-service](https://gitlab.alt.coop/wahlkampf-app/wk-service/-/blob/master/REST.md)
+and data format design. For the API in this App we made some design decisions that are to be found in the [backend documentation of die-linke-app-service](https://gitlab.die-linke.de/die-linke-app/die-linke-app-service/-/blob/main/REST.md)
 
