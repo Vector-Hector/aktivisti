@@ -13,7 +13,6 @@ See this commented dirtree for reference:
 .
 ├── conf                # Configuration files needed for deployment
 ├── dist                # Folder for builds, should never be in version control
-├── mocks               # Code related to mocking (mock server, mock-fixtures)
 ├── node_modules        # Dependendencies, not part of version control
 ├── public              # public folder as per https://cli.vuejs.org/guide/html-and-static-assets.html#the-public-folder
 ├── src                 # Sources root of the actual application (see below)
@@ -22,8 +21,8 @@ See this commented dirtree for reference:
 ├── CONTRIBUTING.md     # Instructions for contributers
 ├── Dockerfile          # Dockerfile to containerize this application (i.e. for production)
 ├── LICENSE             # License
-├── package.json        # https://docs.npmjs.com/cli/v6/configuring-npm/package-json/
-├── package-lock.json   # https://docs.npmjs.com/cli/v6/configuring-npm/package-lock-json
+├── package.json        # https://docs.npmjs.com/cli/v8/configuring-npm/package-json
+├── package-lock.json   # https://docs.npmjs.com/cli/v8/configuring-npm/package-json
 ├── README.md           # General information how to get started with this project
 ├── tsconfig.json       # Typescript compiler configuration parameters: https://www.typescriptlang.org/tsconfig/
 └── vue.config.js       # Vue CLI configuration: https://cli.vuejs.org/config/
