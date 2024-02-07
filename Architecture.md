@@ -58,15 +58,6 @@ src                             # Sources root
 └── shims-vue.d.ts              # Vue shim
 ```
 
-## Mocking during test / development
-
-We are using [MirageJS](https://miragejs.com/) during development and testing to mock the REST endpoints, enabling us to
-run tests without actually running the backend system. We decided that we used a partial feature set of mirage which are
-the
-[route handlers](https://miragejs.com/docs/main-concepts/route-handlers/) - Mocking databases and serializers would
-raise the effort of mocking to an unreasonable level so mocks shall remain static responses defined in our fixtures
-folder to test out specific use-cases instead of replicating actual app behavior.
-
 ## REST
 
 Representational State Transfer is a paradigm that has
