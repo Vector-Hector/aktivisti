@@ -34,7 +34,7 @@ And here the commented file tree of the `src/` folder:
 ```
 src                             # Sources root
 ├── api                         # Helpers and classes for interfacing with our REST API
-│   ├── model                   # Data formats for data formats used in our REST API
+│   ├── model                   # Data formats (DTO-Data Transfer Objects) for data formats used in our REST API
 │   ├── ApiClient.ts            # An api client abstracting response parsing and request facilitation
 │   ├── ApiRoute.ts             # A helper class providing a general CRUD interface to REST endpoints, used in ApiClient.ts
 │   ├── EventRoute.ts           # A specific implementation extending APIRoute to provide extra operations on event endpoint
@@ -43,21 +43,18 @@ src                             # Sources root
 ├── assets                      # Folder for bundled assets (fonts, images etc.)
 │   └── [...]
 ├── components                  # Reusable Vue components
-├── lib                         # Reusable components that provide a most generic feature (like wrapping a library)
-│   └── map                     # Maplibre GL JS specific components that also might be usable in a later different project
-├── router                      # Vue-router definitions
-│   └── index.ts
-├── scss                        # global or shared scss files
-│   └── [...]
-├── store                       #
+├── map                         # Maplibre GL JS specific components
+├── router
 │   └── [...]                   # Files managing central app-state
-├── types                       # Type definitions
-│   └── [...]
-├── views                       # Views are just vue components, that are connected to a route
-│   └── [...]
+├── css
+│   └── [...]                   # global or shared scss files
+├── store
+│   └── [...]                   # Files managing central app-state
+├── types
+│   └── [...]                   # Type definitions
+├── pages
+│   └── [...]                   # Pages are just vue components, that are connected to a route
 ├── App.vue                     # Root component
-├── main.ts                     # Entrypoint
-├── registerServiceWorker.ts    # https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers
 └── shims-vue.d.ts              # Vue shim
 ```
 
