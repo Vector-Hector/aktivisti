@@ -36,7 +36,7 @@
     "@quasar/extras": "^1.16.9",
     "@turf/turf": "^6.3.0",
     "apexcharts": "^3.33.1",
-    "axios": "^0.21.1",
+    "axios": "^1.6.7",
     "geojson": "^0.5.0",
     "hat": "^0.0.3",
     "lodash-es": "^4.17.20",
