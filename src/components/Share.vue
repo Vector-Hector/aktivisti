@@ -23,7 +23,7 @@ interface Props {
   title: string
   text: string
   url: string
-  dialogTitle: string
+  dialogTitle?: string
 }
 
 const props = defineProps<Props>()
