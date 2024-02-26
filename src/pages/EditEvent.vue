@@ -236,7 +236,7 @@ bbox.value =
   position: relative;
   overflow: hidden;
   // TODO(peter@ctrl.alt.coop): Don't show/render the html element instead of hiding it.
-  ::v-deep .q-stepper__step-inner {
+  ::v-deep(.q-stepper__step-inner) {
     display: none;
   }
 
