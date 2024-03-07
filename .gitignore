@@ -48,3 +48,7 @@ android-signing.properties
 
 # Ignore local history folder created by VSCode extensions when making git commits
 .history
+
+# Ignore gitlab-ci-local files
+.gitlab-ci-local
+.gitlab-ci-local-variables.yml

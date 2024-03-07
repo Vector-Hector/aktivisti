@@ -1,43 +1,52 @@
 stages:
   - test
-  - bundle
   - build
-  - deploy
-  - cleanup
 
-include:
-  - template: Jobs/Build.gitlab-ci.yml
+workflow:
+  auto_cancel:
+    on_new_commit: interruptible
 
-variables:
-  KUBE_NAMESPACE: "wk-frontend-$CI_ENVIRONMENT_SLUG"
+default:
+  interruptible: true
 
-.deploy-template:
-  image: registry.gitlab.alt.coop/ctrlaltcoop/deployment-toolchain:v0.0.7
-  before_script:
-    - kubectl config get-contexts
-    - kubectl config use-context wahlkampf-app/wk-frontend:do-wk-frontend
-    - kubectl create namespace $KUBE_NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
-    - kubectl create secret docker-registry gitlab-registry -n $KUBE_NAMESPACE --docker-server="$CI_REGISTRY" --docker-username="$CI_DEPLOY_USER" --docker-password="$CI_DEPLOY_PASSWORD" --docker-email="$GITLAB_USER_EMAIL" -o yaml --dry-run=client | kubectl apply -f -
-    - cd kustomize/base
-    - envsubst < add-gitlab-annotations.template.yaml > add-gitlab-annotations.yaml
-    - cd ../../
+.development_env: &development_env
+  environment:
+    action: prepare
+    name: development
+  only:
+    - branches
+  except:
+    - /^release/(\d+\.)(\d+\.)(\d+)$/
+    - tags
+    - main
+
+.staging_env: &staging_env
+  environment:
+    action: prepare
+    name: staging
+  only:
+    - /^release/(\d+\.)(\d+\.)(\d+)$/
+    - tags
+    - main
 
 lint:
-  image: node:16-alpine
+  image: node:20-alpine
   stage: test
   script:
+    - npm --version
     - npm ci
     - npm run lint
   cache:
     paths:
       - node_modules/
 
-.bundle:
-  image: node:16-alpine
-  stage: bundle
+.pwa:
+  image: node:20-alpine
+  stage: build
   before_script:
     - apk update && apk add git
   script:
+    - npm --version
     - npm ci
     - mkdir -p public/.well-known
     - cp $ANDROID_ASSOCIATION_FILE public/.well-known/assetlinks.json
@@ -45,188 +54,44 @@ lint:
   cache:
     paths:
       - node_modules/
-  environment:
-    action: prepare
-    name: staging
   artifacts:
+    name: 'artifacts_pwa_$CI_COMMIT_REF_NAME'
     paths:
       - dist/
 
-bundle-staging:
-  extends: .bundle
-  environment:
-    action: prepare
-    name: staging
-  only:
-    - /^release/(\d+\.)(\d+\.)(\d+)$/
-    - main
-
-bundle-development:
-  extends: .bundle
-  environment:
-    action: prepare
-    name: development
-  only:
-    - develop
-
-bundle-review:
-  extends: .bundle
-  environment:
-    action: prepare
-    name: review/$CI_COMMIT_REF_SLUG
-  except:
-    - /^release/(\d+\.)(\d+\.)(\d+)$/
-    - main
-    - develop
-
 .android:
-  image: cimg/android:2023.06-node
-  stage: bundle
+  image: cimg/android:2024.01.1-node
+  stage: build
   before_script:
-    - sudo npm install -g npm@^9
+    - sudo npm install -g npm@^10
     - echo $APP_ANDROID_KEYSTORE_B64 | base64 -d > my.keystore
     - echo "keystorePath=my.keystore" > android-signing.properties
     - echo "keystorePassword=$APP_ANDROID_KEYSTORE_PASSWORD" >> android-signing.properties
     - echo "keyAlias=$APP_ANDROID_KEYSTORE_ALIAS" >> android-signing.properties
-    - echo "keyPassword=$APP_ANDROID_KEYSTORE_KEY_PASSWORD" >> android-signing.properties
+    - echo "keyPassword=$APP_ANDROID_KEYSTORE_PASSWORD" >> android-signing.properties
     - cp "$GOOGLE_SERVICES_FILE" src-capacitor/android/app/google-services.json
   script:
-    - sudo npm ci
     - npx quasar build -m capacitor -T android
   cache:
     paths:
       - node_modules/
   artifacts:
+    name: 'artifacts_android_$CI_COMMIT_REF_NAME'
     paths:
       - src-capacitor/android/app/build/
 
 android-development:
   extends: .android
-  environment:
-    action: prepare
-    name: development
-  only:
-    - branches
-  except:
-    - /^release/(\d+\.)(\d+\.)(\d+)$/
-    - tags
-    - main
+  <<: *development_env
 
 android-staging:
   extends: .android
-  environment:
-    action: prepare
-    name: staging
-  only:
-    - /^release/(\d+\.)(\d+\.)(\d+)$/
-    - main
+  <<: *staging_env
 
-android-production:
-  extends: .android
-  environment:
-    action: prepare
-    name: production
-  only:
-    - /^(\d+\.)(\d+\.)(\d+)$/
-  except:
-    - branches
+pwa-development:
+  extends: .pwa
+  <<: *development_env
 
-.ios:
-  stage: bundle
-  before_script:
-    - npm ci
-    - npx quasar build -m capacitor -T ios --skip-pkg
-  tags:
-    - macos
-  cache:
-    paths:
-      - node_modules/
-  artifacts:
-    paths:
-      - src-capacitor/ios/App/App.ipa
-      - src-capacitor/ios/App/App.app.dSYM.zip
-
-ios-production:
-  extends: .ios
-  environment:
-    action: prepare
-    name: production-ios
-  script:
-    - cd src-capacitor/ios/App/
-    - fastlane beta
-  only:
-    - /^(\d+\.)(\d+\.)(\d+)$/
-  except:
-    - branches
-
-staging:
-  extends: .deploy-template
-  stage: deploy
-  script:
-    - cd kustomize/staging
-    - kustomize edit set image $CI_REGISTRY_IMAGE=$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
-    - kustomize edit set namespace $KUBE_NAMESPACE
-    - kustomize build | kubectl apply -f -
-  only:
-    - /^release/(\d+\.)(\d+\.)(\d+)$/
-  environment:
-    name: staging
-    url: https://staging.wk-frontend.haze.alt.coop
-
-development:
-  extends: .deploy-template
-  stage: deploy
-  script:
-    - cd kustomize/development
-    - kustomize edit set image $CI_REGISTRY_IMAGE=$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
-    - kustomize edit set namespace $KUBE_NAMESPACE
-    - kustomize build | kubectl apply -f -
-  only:
-    - develop
-  environment:
-    name: development
-    url: https://development.wk-frontend.haze.alt.coop
-
-review:
-  extends: .deploy-template
-  stage: deploy
-  script:
-    - cd kustomize/review
-    - export INGRESS_HOST=$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
-    - envsubst < ingress-override.template.yaml > ingress-override.yaml
-    - kustomize edit set image $CI_REGISTRY_IMAGE=$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
-    - kustomize edit set namespace $KUBE_NAMESPACE
-    - kustomize build # print to stdout to debug
-    - kustomize build > out.yaml
-    - kubectl apply -f out.yaml
-  except:
-    - /^release/(\d+\.)(\d+\.)(\d+)$/
-    - main
-    - develop
-    - tags
-  environment:
-    name: review/$CI_COMMIT_REF_SLUG
-    url: https://$CI_ENVIRONMENT_SLUG.$KUBE_INGRESS_BASE_DOMAIN
-    on_stop: stop_review
-  artifacts:
-    paths: [ kustomize/review/out.yaml ]
-
-stop_review:
-  stage: cleanup
-  image: registry.gitlab.alt.coop/ctrlaltcoop/deployment-toolchain:v0.0.7
-  script:
-    - kubectl config get-contexts
-    - kubectl config use-context wahlkampf-app/wk-frontend:do-wk-frontend
-    - kubectl delete -f ./kustomize/review/out.yaml
-  when: manual
-  variables:
-    GIT_STRATEGY: none
-  except:
-    - /^release/(\d+\.)(\d+\.)(\d+)$/
-    - main
-    - develop
-    - tags
-  environment:
-    name: review/$CI_COMMIT_REF_SLUG
-    action: stop
-
+pwa-staging:
+  extends: .pwa
+  <<: *staging_env
