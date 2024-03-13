@@ -1,4 +1,3 @@
-
 # die-linke-app-frontend
 
 This project is the frontend application for the "DIE LINKE. App". It's a responsive Progressive Web App.
@@ -10,9 +9,9 @@ This project uses Vue3 with Typescript and VueCLI for bootstrapping, building an
 
 Documentation resources for the used tools:
 
-* Quasar (and Quasar CLI): https://quasar.dev/
-* Vue (3): https://v3.vuejs.org/api/
-* Typescript: https://www.typescriptlang.org/
+- Quasar (and Quasar CLI): https://quasar.dev/
+- Vue (3): https://v3.vuejs.org/api/
+- Typescript: https://www.typescriptlang.org/
 
 ## Development
 
@@ -122,4 +121,4 @@ git tag -a 1.1.1-alpha-1 # ✗
 git tag -a testtag # ✗
 ```
 
-*Tip: Take a look on [npm-version](https://docs.npmjs.com/cli/v6/commands/npm-version) to update the version*
+_Tip: Take a look on [npm-version](https://docs.npmjs.com/cli/v6/commands/npm-version) to update the version_
