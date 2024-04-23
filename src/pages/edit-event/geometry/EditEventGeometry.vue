@@ -1,3 +1,204 @@
+<script setup lang="ts">
+import { computed, inject, ref } from 'vue'
+import {
+  QBtn,
+  QColor,
+  QIcon,
+  QInput,
+  QPopupEdit,
+  QPopupProxy,
+  QSpinnerPuff,
+  QTable,
+  QTd,
+  QTh,
+  QTooltip,
+  QTr,
+  useQuasar
+} from 'quasar'
+import {
+  ionAlertCircleOutline,
+  ionCopyOutline,
+  ionCreateOutline,
+  ionPencil,
+  ionTrash
+} from '@quasar/extras/ionicons-v5'
+import { useEditEventGeometryMixin } from 'pages/edit-event/geometry/EditEventGeometryMixin'
+import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
+import { useEditEventAutoSaveMixin } from 'pages/edit-event/EditEventAutoSaveMixin'
+import {
+  EditEventBus,
+  PAN_TO_BBOX,
+  START_DRAW_AREA
+} from 'src/store/EditEventStore'
+import { StepControls } from 'pages/EditEvent.vue'
+import LocationSelect from 'components/LocationSelect.vue'
+import { EventTypes } from 'src/api/model/EventTypes'
+import AdoptEventAreas from 'components/modals/AdoptEventAreas/AdoptEventAreas.vue'
+import { EventAreaDto, eventAreaToFeature } from 'src/api/model/EventAreaDto'
+import { apiClient } from 'src/api/ApiClient'
+import { bbox } from '@turf/turf'
+import { posterListStore } from 'src/store/PosterListStore'
+import { PosterStatus } from 'src/api/model/PosterDto'
+import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
+
+const $q = useQuasar()
+
+const {
+  updatingAreaFeatureIds,
+  deletingAreaIds,
+  eventAreasWithError,
+  campaigns,
+  event,
+  eventAreas
+} = useEditEventMixin()
+const { updateArea, deleteAreaByFeatureId } = useEditEventGeometryMixin()
+const { errors, saveDebouncer } = useEditEventAutoSaveMixin()
+
+const stepControls = inject('stepControls') as StepControls
+
+const isLoading = ref(false)
+const showing = ref(false)
+
+const locationHeadline = computed(() => {
+  if (event.value.event_type === EventTypes.GENERIC) {
+    return 'Veranstaltungsort'
+  } else {
+    return 'Treffpunkt'
+  }
+})
+const columns = computed(() => {
+  return [
+    {
+      name: 'color',
+      label: 'Farbe',
+      field: 'color',
+      align: 'left',
+      required: true
+    },
+    {
+      name: 'name',
+      label: 'Name',
+      field: 'name',
+      align: 'left'
+    },
+    {
+      name: 'details',
+      label:
+        event.value.event_type === EventTypes.POSTERS ? 'Plakate' : 'Adressen'
+    },
+    {
+      name: 'actions',
+      label: '',
+      field: null,
+      required: true
+    }
+  ]
+})
+
+function startDrawArea() {
+  EditEventBus.emit(START_DRAW_AREA)
+}
+async function back() {
+  await saveDebouncer.waitForSettle()
+  stepControls.previous()
+}
+async function next() {
+  await saveDebouncer.waitForSettle()
+  if (!event.value.location) {
+    $q.notify({
+      color: 'negative',
+      message: 'Bitte gebe einen gültigen Treffpunkt an.'
+    })
+  } else {
+    stepControls.next()
+  }
+}
+async function abort() {
+  await saveDebouncer.waitForSettle()
+  stepControls.abort()
+}
+function handleUpdateColor(row: EventAreaDto, color: string) {
+  row.color = `${color}`
+  void updateArea(row)
+}
+function openAdoptAreasModal() {
+  $q.dialog({
+    component: AdoptEventAreas,
+    componentProps: {
+      campaigns: campaigns.value.filter(({ id }) =>
+        event.value.campaigns.includes(id)
+      ),
+      showAdoptPosters: event.value.event_type === EventTypes.POSTERS
+    }
+  }).onOk(
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    async ({
+      eventAreas: eventAreasToAdopt,
+      adoptPosters
+    }: {
+      eventAreas: EventAreaDto[]
+      adoptPosters: boolean
+    }) => {
+      isLoading.value = true
+      const events = new Set(eventAreasToAdopt.map(({ event }) => event))
+
+      if (event.value.event_type === EventTypes.POSTERS && adoptPosters) {
+        for (const posterEvent of events) {
+          const posterResponse = await apiClient.posters.list({
+            event: posterEvent
+          })
+          const importedPostersResponse =
+            await apiClient.events.batchImportPosters(
+              event.value.id.toString(),
+              posterResponse.payload.data.map((poster) => ({
+                location_description: poster.location_description,
+                location: poster.location,
+                status: PosterStatus.ABSENT,
+                mounted_on: poster.mounted_on
+              }))
+            )
+          posterListStore.state.posters.push(
+            ...importedPostersResponse.payload.data
+          )
+        }
+      }
+
+      const newEventAreas = eventAreasToAdopt.map((area) => ({
+        ...area,
+        event: event.value.id
+      }))
+
+      const eventAreaCreationPromise = newEventAreas.map((area) =>
+        apiClient.eventAreas.create(area)
+      )
+
+      const eventAreaResponses = await Promise.all(eventAreaCreationPromise)
+      for (const area of eventAreaResponses.map(
+        (response) => response.payload.data
+      )) {
+        eventAreas.value.push(area)
+      }
+
+      const featureCollection = {
+        type: 'FeatureCollection',
+        features: eventAreaResponses.map((response) =>
+          eventAreaToFeature(response.payload.data)
+        )
+      }
+      if (featureCollection.features.length > 0) {
+        EditEventBus.emit(PAN_TO_BBOX, bbox(featureCollection))
+      } else {
+        $q.notify({
+          color: 'warning',
+          message: 'Dieses Event hat keine Gebiete'
+        })
+      }
+      isLoading.value = false
+    }
+  )
+}
+</script>
+
 <template>
   <div class="edit-event-geometry container">
     <div class="location-select">
@@ -169,234 +370,6 @@
     :last="stepControls.isLastStep.value"
   />
 </template>
-
-<script lang="ts">
-import { defineComponent, inject } from 'vue'
-import {
-  QBtn,
-  QColor,
-  QInput,
-  QIcon,
-  QPopupEdit,
-  QPopupProxy,
-  QSpinnerPuff,
-  QTable,
-  QTd,
-  QTh,
-  QTooltip,
-  QTr
-} from 'quasar'
-import {
-  ionCopyOutline,
-  ionCreateOutline,
-  ionPencil,
-  ionTrash,
-  ionAlertCircleOutline
-} from '@quasar/extras/ionicons-v5'
-import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
-import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
-import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
-import {
-  EditEventBus,
-  PAN_TO_BBOX,
-  START_DRAW_AREA
-} from 'src/store/EditEventStore'
-import { StepControls } from 'pages/EditEvent.vue'
-import LocationSelect from 'components/LocationSelect.vue'
-import { EventTypes } from 'src/api/model/EventTypes'
-import AdoptEventAreas from 'components/modals/AdoptEventAreas/AdoptEventAreas.vue'
-import { EventAreaDto, eventAreaToFeature } from 'src/api/model/EventAreaDto'
-import { apiClient } from 'src/api/ApiClient'
-import { bbox } from '@turf/turf'
-import { posterListStore } from 'src/store/PosterListStore'
-import { PosterStatus } from 'src/api/model/PosterDto'
-
-export default defineComponent({
-  name: 'EditEventGeometry',
-  components: {
-    LocationSelect,
-    SidebarBottomStepNavigation,
-    QPopupEdit,
-    QColor,
-    QSpinnerPuff,
-    QPopupProxy,
-    QIcon,
-    QBtn,
-    QTooltip,
-    QInput,
-    QTable,
-    QTd,
-    QTr,
-    QTh
-  },
-  mixins: [EditEventGeometryMixin, EditEventAutoSaveMixin],
-  setup() {
-    return {
-      stepControls: inject('stepControls') as StepControls
-    }
-  },
-  data() {
-    return {
-      isLoading: false,
-      showing: false,
-      ionAlertCircleOutline,
-      ionCopyOutline,
-      ionCreateOutline,
-      ionTrash,
-      ionPencil,
-      EventTypes
-    }
-  },
-  computed: {
-    locationHeadline(): string {
-      if (this.event.event_type === EventTypes.GENERIC) {
-        return 'Veranstaltungsort'
-      } else {
-        return 'Treffpunkt'
-      }
-    },
-    columns() {
-      return [
-        {
-          name: 'color',
-          label: 'Farbe',
-          field: 'color',
-          align: 'left',
-          required: true
-        },
-        {
-          name: 'name',
-          label: 'Name',
-          field: 'name',
-          align: 'left'
-        },
-        {
-          name: 'details',
-          label:
-            this.event.event_type === EventTypes.POSTERS
-              ? 'Plakate'
-              : 'Adressen'
-        },
-        {
-          name: 'actions',
-          label: '',
-          field: null,
-          required: true
-        }
-      ]
-    }
-  },
-  methods: {
-    startDrawArea() {
-      EditEventBus.emit(START_DRAW_AREA)
-    },
-    async back() {
-      await this.saveDebouncer.waitForSettle()
-      this.stepControls.previous()
-    },
-    async next() {
-      await this.saveDebouncer.waitForSettle()
-      if (!this.event.location) {
-        this.$q.notify({
-          color: 'negative',
-          message: 'Bitte gebe einen gültigen Treffpunkt an.'
-        })
-      } else {
-        this.stepControls.next()
-      }
-    },
-    async abort() {
-      await this.saveDebouncer.waitForSettle()
-      this.stepControls.abort()
-    },
-    handleUpdateColor(row: EventAreaDto, color: string) {
-      row.color = `${color}`
-      void this.updateArea(row)
-    },
-    openAdoptAreasModal() {
-      this.$q
-        .dialog({
-          component: AdoptEventAreas,
-          componentProps: {
-            campaigns: this.campaigns.filter(({ id }) =>
-              this.event.campaigns.includes(id)
-            ),
-            showAdoptPosters: this.event.event_type === EventTypes.POSTERS
-          }
-        })
-        .onOk(
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          async ({
-            eventAreas,
-            adoptPosters
-          }: {
-            eventAreas: EventAreaDto[]
-            adoptPosters: boolean
-          }) => {
-            this.isLoading = true
-
-            const events = new Set(eventAreas.map(({ event }) => event))
-
-            if (this.event.event_type === EventTypes.POSTERS && adoptPosters) {
-              for (const event of events) {
-                const posterResponse = await apiClient.posters.list({
-                  event: event
-                })
-                const importedPostersResponse =
-                  await apiClient.events.batchImportPosters(
-                    this.event.id.toString(),
-                    posterResponse.payload.data.map((poster) => ({
-                      location_description: poster.location_description,
-                      location: poster.location,
-                      status: PosterStatus.ABSENT,
-                      mounted_on: poster.mounted_on
-                    }))
-                  )
-                posterListStore.state.posters.push(
-                  ...importedPostersResponse.payload.data
-                )
-              }
-            }
-
-            const newEventAreas = eventAreas.map((area) => ({
-              ...area,
-              event: this.event.id
-            }))
-
-            const eventAreaCreationPromise = newEventAreas.map((area) =>
-              apiClient.eventAreas.create(area)
-            )
-
-            const eventAreaResponses = await Promise.all(
-              eventAreaCreationPromise
-            )
-            for (const area of eventAreaResponses.map(
-              (response) => response.payload.data
-            )) {
-              this.eventAreas.push(area)
-            }
-
-            const featureCollection = {
-              type: 'FeatureCollection',
-              features: eventAreaResponses.map((response) =>
-                eventAreaToFeature(response.payload.data)
-              )
-            }
-            if (featureCollection.features.length > 0) {
-              EditEventBus.emit(PAN_TO_BBOX, bbox(featureCollection))
-            } else {
-              this.$q.notify({
-                color: 'warning',
-                message: 'Dieses Event hat keine Gebiete'
-              })
-            }
-            this.isLoading = false
-          }
-        )
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 @import 'src/css/quasar.variables';

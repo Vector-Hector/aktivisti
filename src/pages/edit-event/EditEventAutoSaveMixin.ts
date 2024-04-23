@@ -1,81 +1,83 @@
-import { defineComponent } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { cloneDeep, isEqual } from 'lodash-es'
 import { SettleDebouncer } from 'src/utils/debounce'
-import EditEventMixin from 'pages/edit-event/EditEventMixin'
+import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
+import { useQuasar } from 'quasar'
+import { apiClient } from 'src/api/ApiClient'
 
-export default defineComponent({
-  name: 'EditEventAutoSaveMixin',
-  mixins: [EditEventMixin],
-  created() {
-    this.lastSavedEvent = this.normalizedEventCopy(this.event)
-  },
-  data() {
-    return {
-      saveDebouncer: new SettleDebouncer(),
-      lastSavedEvent: null as EventDto | null,
-      errors: {} as Record<string, unknown>
-    }
-  },
-  computed: {
-    currentEvent(): EventDto {
-      // a deep copy of the event so we can track nested changes
-      return this.normalizedEventCopy(this.event)
-    }
-  },
-  watch: {
-    currentEvent: {
-      handler(newValue) {
-        void this.saveDebouncer.executeDebounced(async () => {
-          if (!isEqual(this.lastSavedEvent, newValue)) {
-            await this.saveEvent()
-          } else {
-            this.errors = {}
-          }
+export function useEditEventAutoSaveMixin() {
+  const $q = useQuasar()
+
+  const { event } = useEditEventMixin()
+  const lastSavedEvent = ref<EventDto | null>(null)
+  const errors = ref<Record<string, unknown>>({})
+
+  const saveDebouncer = new SettleDebouncer()
+
+  const normalizedEventCopy = (newEvent: EventDto) => {
+    return cloneDeep({
+      ...newEvent,
+      // normalize the date format
+      start_date: new Date(event.value.start_date).toISOString(),
+      end_date: new Date(event.value.end_date).toISOString()
+    })
+  }
+  const saveEvent = async () => {
+    errors.value = {}
+    try {
+      const updatedEvent = (
+        await apiClient.events.update(event.value.id.toString(), {
+          ...event.value
         })
-      },
-      deep: true
-    }
-  },
-  methods: {
-    normalizedEventCopy(event: EventDto) {
-      return cloneDeep({
-        ...event,
-        // normalize the date format
-        start_date: new Date(this.event.start_date).toISOString(),
-        end_date: new Date(this.event.end_date).toISOString()
+      ).payload.data
+      lastSavedEvent.value = normalizedEventCopy(updatedEvent)
+      $q.notify({
+        color: 'positive',
+        message: 'Gespeichert'
       })
-    },
-    async saveEvent(): Promise<void> {
-      this.errors = {}
-      try {
-        const event = (
-          await this.$apiClient.events.update(this.event.id.toString(), {
-            ...this.event
-          })
-        ).payload.data
-        this.lastSavedEvent = this.normalizedEventCopy(event)
-        this.$q.notify({
-          color: 'positive',
-          message: 'Gespeichert'
+    } catch (e) {
+      if (apiClient.isApiClientError(e) && e.response?.status === 400) {
+        errors.value = e.response.data
+        $q.notify({
+          color: 'negative',
+          message: 'Bitte korrigiere die Fehler im Formular'
         })
-      } catch (e) {
-        if (this.$apiClient.isApiClientError(e) && e.response?.status === 400) {
-          this.errors = e.response.data
-          this.$q.notify({
-            color: 'negative',
-            message: 'Bitte korrigiere die Fehler im Formular'
-          })
-        } else {
-          this.errors = {
-            'non-field-error': 'Ein unbekannter Fehler ist aufgetreten'
-          }
-          this.$q.notify({
-            color: 'negative',
-            message: 'Beim speichern des events ist etwas schiefgegangen'
-          })
+      } else {
+        errors.value = {
+          'non-field-error': 'Ein unbekannter Fehler ist aufgetreten'
         }
+        $q.notify({
+          color: 'negative',
+          message: 'Beim speichern des events ist etwas schiefgegangen'
+        })
       }
     }
   }
-})
+
+  lastSavedEvent.value = normalizedEventCopy(event.value)
+
+  const currentEvent = computed(() => {
+    // a deep copy of the event so we can track nested changes
+    return normalizedEventCopy(event.value)
+  })
+
+  watch(
+    () => currentEvent.value,
+    (newValue) => {
+      void saveDebouncer.executeDebounced(async () => {
+        if (!isEqual(lastSavedEvent.value, newValue)) {
+          await saveEvent()
+        } else {
+          errors.value = {}
+        }
+      })
+    },
+    { deep: true }
+  )
+
+  return {
+    errors,
+    saveDebouncer
+  }
+}

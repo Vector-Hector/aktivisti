@@ -1,3 +1,51 @@
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import { useInjectMapMixin } from 'src/pages/event-detail/InjectMapMixin'
+import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import { Geometry } from 'geojson'
+import { center as turfCenter } from '@turf/turf'
+import { LocationDto } from 'src/api/model/LocationDto'
+import AddressMarker from 'src/map/AddressMarker.vue'
+import { AddressDetails } from 'src/api/model/AreaDetailsDto'
+import { useEventAreaStreetComposable } from 'pages/event-map/detail/area/street/EventAreaStreetMixin'
+import { useRoute, useRouter } from 'vue-router'
+
+interface Props {
+  street: string
+  areaId: string
+}
+const props = defineProps<Props>()
+
+const $router = useRouter()
+const $route = useRoute()
+
+const { addresses, bbox } = useEventAreaStreetComposable(props)
+const { map } = useInjectMapMixin()
+
+onMounted(() => {
+  map.value?.fitBounds(bbox.value as BBox2d)
+})
+
+function center(geometry: Geometry): LocationDto {
+  //@ts-ignore
+  const point = turfCenter(geometry)
+  return {
+    lat: point.geometry.coordinates[1],
+    lng: point.geometry.coordinates[0]
+  }
+}
+
+async function jumpToAddress(address: AddressDetails) {
+  await $router.replace({
+    name: 'event-detail-area-metrics',
+    params: {
+      houseNumber: address.house_number,
+      street: props.street
+    }
+  })
+}
+</script>
+
 <template>
   <AddressMarker
     v-for="address in addresses"
@@ -8,44 +56,3 @@
     @click="jumpToAddress(address)"
   />
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue'
-import InjectMapMixin from 'src/pages/event-detail/InjectMapMixin'
-import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
-import { Geometry } from 'geojson'
-import { center as turfCenter } from '@turf/turf'
-import { LocationDto } from 'src/api/model/LocationDto'
-import AddressMarker from 'src/map/AddressMarker.vue'
-import { AddressDetails } from 'src/api/model/AreaDetailsDto'
-import EventAreaStreetMixin from 'pages/event-map/detail/area/street/EventAreaStreetMixin'
-
-export default defineComponent({
-  name: 'EventAreaStreetMap',
-  components: { AddressMarker },
-  mixins: [InjectMapMixin, EventAreaStreetMixin],
-  mounted() {
-    this.map?.fitBounds(this.bbox as BBox2d)
-  },
-
-  methods: {
-    center(geometry: Geometry): LocationDto {
-      //@ts-ignore
-      const point = turfCenter(geometry)
-      return {
-        lat: point.geometry.coordinates[1],
-        lng: point.geometry.coordinates[0]
-      }
-    },
-    async jumpToAddress(address: AddressDetails) {
-      await this.$router.replace({
-        name: 'event-detail-area-metrics',
-        params: {
-          houseNumber: address.house_number,
-          street: this.street
-        }
-      })
-    }
-  }
-})
-</script>

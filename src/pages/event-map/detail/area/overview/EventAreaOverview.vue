@@ -1,3 +1,95 @@
+<!--FIXME(peter) 2023/12/12 The composition API doesn't support `beforeRouteEnter` so far so this a workaround
+see https://github.com/vuejs/rfcs/discussions/302-->
+<script lang="ts">
+interface IInstance extends ComponentPublicInstance {
+  eventArea: EventAreaDto
+}
+export default {
+  beforeRouteEnter: (to, from, next) => {
+    next((vm) => {
+      uiStore.updateActiveElements({
+        eventArea: (vm as IInstance).eventArea.name
+      })
+    })
+  }
+}
+</script>
+<script setup lang="ts">
+import { uiStore } from 'src/store/UiStore'
+import {
+  QBtn,
+  QIcon,
+  QItem,
+  QItemLabel,
+  QItemSection,
+  QList,
+  QScrollArea,
+  useQuasar
+} from 'quasar'
+import {
+  ionCheckmarkCircle,
+  ionCheckmarkCircleOutline,
+  ionChevronForward
+} from '@quasar/extras/ionicons-v5'
+import { StreetDetails } from 'src/api/model/AreaDetailsDto'
+import { difference } from 'lodash-es'
+import { eventDetailStore } from 'src/store/EventDetailStore'
+import AssignAreaParticipants from 'pages/event-map/detail/area/AssignAreaParticipants.vue'
+import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
+import { apiClient } from 'src/api/ApiClient'
+import { EventAreaDto } from 'src/api/model/EventAreaDto'
+import { ComponentPublicInstance } from 'vue'
+
+const $q = useQuasar()
+
+const { eventArea, eventAreaPermissions, completedTargetIds } =
+  useEventDetailStore()
+
+function streetCompleted(street: StreetDetails) {
+  return (
+    difference(
+      // FIXME(peter) Logicalwise the osm_id and completedTargetIds should have
+      //  the same time, it seems that the BE is communicating the wrong type
+      //  for one of them.
+      street.addresses.map(({ osm_id }) => osm_id.toString()),
+      completedTargetIds.value
+    ).length === 0
+  )
+}
+function openCompletionModal() {
+  $q.dialog({
+    title: 'Aktionsgebiet erledigt',
+    message: eventArea.value.is_completed
+      ? `Das Aktionsgebiet <b>${eventArea.value.name}</b> als <b>offen</b> markieren?`
+      : `Das Aktionsgebiet <b>${eventArea.value.name}</b> als <b>erledigt</b> markieren?`,
+    html: true,
+    cancel: true,
+    persistent: true
+  })
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    .onOk(async () => {
+      try {
+        const response = await apiClient.eventAreas.patch(
+          eventArea.value.id!.toString(),
+          {
+            is_completed: !eventArea.value.is_completed
+          }
+        )
+        eventDetailStore.updateEventArea(response.payload.data)
+      } catch (error) {
+        void $q.notify({
+          position: 'bottom',
+          message: 'Das Aktionsgebiet konnte nicht aktualisiert werden',
+          color: 'negative',
+          timeout: 2000
+        })
+      }
+    })
+}
+
+defineExpose({ eventArea })
+</script>
+
 <template>
   <QScrollArea class="d-flex flex-fill">
     <div class="container q-gutter-y-md">
@@ -37,7 +129,7 @@
               <QItemLabel>
                 {{ street.name }}
               </QItemLabel>
-              <QItemLabel> {{ street.addresses.length }} Adressen </QItemLabel>
+              <QItemLabel> {{ street.addresses.length }} Adressen</QItemLabel>
             </QItemSection>
 
             <QItemSection side>
@@ -56,101 +148,6 @@
     </div>
   </QScrollArea>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue'
-import { uiStore } from 'src/store/UiStore'
-import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
-import {
-  QBtn,
-  QIcon,
-  QItem,
-  QItemLabel,
-  QItemSection,
-  QList,
-  QScrollArea
-} from 'quasar'
-import {
-  ionCheckmarkCircle,
-  ionCheckmarkCircleOutline,
-  ionChevronForward
-} from '@quasar/extras/ionicons-v5'
-import { StreetDetails } from 'src/api/model/AreaDetailsDto'
-import { difference } from 'lodash-es'
-import { eventDetailStore } from 'src/store/EventDetailStore'
-import AssignAreaParticipants from 'pages/event-map/detail/area/AssignAreaParticipants.vue'
-
-export default defineComponent({
-  name: 'EventAreaOverview',
-  components: {
-    AssignAreaParticipants,
-    QList,
-    QItem,
-    QItemSection,
-    QItemLabel,
-    QIcon,
-    QBtn,
-    QScrollArea
-  },
-  mixins: [EventDetailStoreMixin],
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      uiStore.updateActiveElements({
-        // @ts-ignore
-        eventArea: vm.eventArea.name
-      })
-    })
-  },
-  data() {
-    return {
-      ionChevronForward,
-      ionCheckmarkCircleOutline,
-      ionCheckmarkCircle
-    }
-  },
-  methods: {
-    streetCompleted(street: StreetDetails) {
-      return (
-        difference(
-          street.addresses.map(({ osm_id }) => osm_id),
-          this.completedTargetIds
-        ).length === 0
-      )
-    },
-    openCompletionModal() {
-      this.$q
-        .dialog({
-          title: 'Aktionsgebiet erledigt',
-          message: this.eventArea.is_completed
-            ? `Das Aktionsgebiet <b>${this.eventArea.name}</b> als <b>offen</b> markieren?`
-            : `Das Aktionsgebiet <b>${this.eventArea.name}</b> als <b>erledigt</b> markieren?`,
-          html: true,
-          cancel: true,
-          persistent: true
-        })
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        .onOk(async () => {
-          try {
-            const response = await this.$apiClient.eventAreas.patch(
-              this.eventArea.id!.toString(),
-              {
-                is_completed: !this.eventArea.is_completed
-              }
-            )
-            eventDetailStore.updateEventArea(response.payload.data)
-          } catch (error) {
-            void this.$q.notify({
-              position: 'bottom',
-              message: 'Das Aktionsgebiet konnte nicht aktualisiert werden',
-              color: 'negative',
-              timeout: 2000
-            })
-          }
-        })
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 label {

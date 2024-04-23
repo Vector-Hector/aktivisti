@@ -6,7 +6,7 @@
 <script lang="ts">
 import { defineComponent, onUnmounted, ref } from 'vue'
 import { Offset, Popup } from 'maplibre-gl'
-import { useMap } from 'src/map/Map.vue'
+import { useMap } from 'src/map/MapUtils'
 
 export default defineComponent({
   name: 'LayerPopup',

@@ -1,13 +1,5 @@
-<template>
-  <div class="status-row" :class="statusClass">
-    <span class="label">
-      {{ statusLabel }}
-    </span>
-    <QIcon class="icon" :name="statusIcon"> </QIcon>
-  </div>
-</template>
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 import { PosterStatus, posterStatusOptions } from 'src/api/model/PosterDto'
 import {
   ionAlertCircle,
@@ -16,47 +8,49 @@ import {
 } from '@quasar/extras/ionicons-v5'
 import { QIcon } from 'quasar'
 
-export default defineComponent({
-  name: 'StatusRow',
-  components: {
-    QIcon
-  },
-  props: {
-    status: {
-      type: String as PropType<PosterStatus>
-    }
-  },
-  computed: {
-    statusLabel(): string {
-      return (
-        posterStatusOptions.find(({ key }) => key === this.status)?.label ?? ''
-      )
-    },
-    statusIcon(): string {
-      switch (this.status) {
-        case PosterStatus.MOUNTED:
-          return ionCheckmarkCircle
-        case PosterStatus.DAMAGED:
-          return ionAlertCircle
-        case PosterStatus.ABSENT:
-        default:
-          return ionCloseCircle
-      }
-    },
-    statusClass(): string {
-      switch (this.status) {
-        case PosterStatus.MOUNTED:
-          return 'mounted'
-        case PosterStatus.DAMAGED:
-          return 'damaged'
-        case PosterStatus.ABSENT:
-        default:
-          return 'absent'
-      }
-    }
+interface Props {
+  status: PosterStatus
+}
+const props = defineProps<Props>()
+
+const statusLabel = computed(() => {
+  return (
+    posterStatusOptions.find(({ key }) => key === props.status)?.label ?? ''
+  )
+})
+const statusIcon = computed(() => {
+  switch (props.status) {
+    case PosterStatus.MOUNTED:
+      return ionCheckmarkCircle
+    case PosterStatus.DAMAGED:
+      return ionAlertCircle
+    case PosterStatus.ABSENT:
+    default:
+      return ionCloseCircle
+  }
+})
+const statusClass = computed(() => {
+  switch (props.status) {
+    case PosterStatus.MOUNTED:
+      return 'mounted'
+    case PosterStatus.DAMAGED:
+      return 'damaged'
+    case PosterStatus.ABSENT:
+    default:
+      return 'absent'
   }
 })
 </script>
+
+<template>
+  <div class="status-row" :class="statusClass">
+    <span class="label">
+      {{ statusLabel }}
+    </span>
+    <QIcon class="icon" :name="statusIcon"> </QIcon>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .status-row {
   display: flex;

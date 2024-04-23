@@ -1,3 +1,82 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import {
+  QBtn,
+  QCard,
+  QCardActions,
+  QCardSection,
+  QDialog,
+  QForm,
+  QInput,
+  QToolbar,
+  QToolbarTitle,
+  useQuasar
+} from 'quasar'
+import { apiClient } from 'src/api/ApiClient'
+
+interface Emits {
+  // REQUIRED
+  (
+    e: 'ok',
+    newCrendetials: {
+      password: string
+      email: string
+    }
+  ): void
+  (e: 'hide'): void
+}
+const emit = defineEmits<Emits>()
+
+const $q = useQuasar()
+const dialog = ref<InstanceType<typeof QDialog> | null>(null)
+
+const newEmail = ref('')
+const password = ref('')
+const errors = ref<any>({})
+const isSubmitting = ref(false)
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function show() {
+  dialog.value?.show()
+}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function hide() {
+  dialog.value?.hide()
+}
+async function onOk() {
+  errors.value = {}
+  isSubmitting.value = true
+  try {
+    await apiClient.account.changeEmail({
+      password: password.value,
+      new_email: newEmail.value
+    })
+    $q.notify({
+      message: 'Bestätigungsmail wurde verschickt',
+      color: 'positive'
+    })
+    emit('ok', {
+      password: password.value,
+      email: newEmail.value
+    })
+    emit('hide')
+  } catch (e) {
+    if (apiClient.isApiClientError(e) && e.response?.status === 400) {
+      errors.value = e.response.data
+    }
+    $q.notify({
+      message: 'Etwas ging schief beim Ändern der E-Mail Adresse',
+      color: 'negative'
+    })
+  } finally {
+    isSubmitting.value = false
+  }
+}
+function onDialogHide() {
+  emit('hide')
+}
+</script>
+
 <template>
   <QDialog ref="dialog" @hide="onDialogHide">
     <QCard class="change-email-dialog">
@@ -49,90 +128,5 @@
     </QCard>
   </QDialog>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue'
-import {
-  QBtn,
-  QCard,
-  QCardActions,
-  QCardSection,
-  QDialog,
-  QForm,
-  QInput,
-  QToolbar,
-  QToolbarTitle
-} from 'quasar'
-
-export default defineComponent({
-  name: 'ChangeEmailDialog',
-  components: {
-    QDialog,
-    QCard,
-    QCardSection,
-    QToolbar,
-    QToolbarTitle,
-    QInput,
-    QCardActions,
-    QBtn,
-    QForm
-  },
-  emits: [
-    // REQUIRED
-    'ok',
-    'hide'
-  ],
-  data() {
-    return {
-      newEmail: '',
-      password: '',
-      errors: {},
-      isSubmitting: false
-    }
-  },
-  methods: {
-    show() {
-      // @ts-ignore
-      this.$refs.dialog.show()
-    },
-    hide() {
-      // @ts-ignore
-      this.$refs.dialog.hide()
-    },
-    async onOk() {
-      this.errors = {}
-      this.isSubmitting = true
-      try {
-        await this.$apiClient.account.changeEmail({
-          password: this.password,
-          new_email: this.newEmail
-        })
-        this.$q.notify({
-          message: 'Bestätigungsmail wurde verschickt',
-          color: 'positive'
-        })
-        this.$emit('ok', {
-          password: this.password,
-          email: this.newEmail
-        })
-        this.$emit('hide')
-      } catch (e) {
-        if (this.$apiClient.isApiClientError(e) && e.response?.status === 400) {
-          this.errors = e.response.data
-        }
-        this.$q.notify({
-          message: 'Etwas ging schief beim Ändern der E-Mail Adresse',
-          color: 'negative'
-        })
-      } finally {
-        this.isSubmitting = false
-      }
-    },
-    onDialogHide() {
-      this.$emit('hide')
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped></style>

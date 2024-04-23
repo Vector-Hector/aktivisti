@@ -1,3 +1,129 @@
+<script setup lang="ts">
+import { getCurrentInstance, nextTick, ref, watch } from 'vue'
+import StandaloneGeocoder from 'components/StandaloneGeocoder.vue'
+import { QBtn, QCard, QCardActions, QCardSection, QPopupProxy } from 'quasar'
+import { GeocodeResult } from 'src/types/GeocodeResult'
+import DraggableMarker from 'components/DraggableMarker.vue'
+import { LocationDto } from 'src/api/model/LocationDto'
+import { reverseGeocode } from 'src/utils/map'
+
+interface Props {
+  location?: LocationDto
+  locationDescription?: string
+  error?: string
+  isDraggableMarkerShown: boolean
+}
+
+interface Emits {
+  (e: 'update:location', LocationDto): void
+  (e: 'update:locationDescription', string): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  error: () => '',
+  isDraggableMarkerShown: () => true
+})
+
+const emit = defineEmits<Emits>()
+
+const suggestionPopup = ref<InstanceType<typeof QPopupProxy> | null>(null)
+const currentGeocodeResult = ref<Partial<GeocodeResult>>({ place_name: '' })
+const suggestion = ref<string>('')
+const touched = ref<boolean>(false)
+const lastOriginalPlaceName = ref<null | string>(null)
+
+touched.value = !!props.locationDescription
+
+watch(
+  () => props.locationDescription,
+  (newValue) => {
+    currentGeocodeResult.value = {
+      ...currentGeocodeResult.value,
+      place_name: newValue
+    }
+  },
+  { immediate: true }
+)
+
+watch(
+  () => props.location,
+  async (newValue) => {
+    // By checking if the new location is equal to the last geocoded
+    // location we can determine if the location change comes from outside
+    const sameLocation =
+      newValue?.lng === currentGeocodeResult.value?.center?.[0] &&
+      newValue?.lat === currentGeocodeResult.value?.center?.[1]
+    if (!sameLocation) {
+      handleLocationChange(await reverseLocation(newValue))
+    }
+  }
+)
+
+const setLastOriginalPlaceName = (placeName: string) => {
+  lastOriginalPlaceName.value = placeName
+}
+
+const setGeocodeResult = (geocoderResult: Partial<GeocodeResult>) => {
+  currentGeocodeResult.value = geocoderResult
+  const instance = getCurrentInstance()
+  void nextTick(() => instance?.proxy?.$forceUpdate)
+}
+
+const handleLocationSelect = (geocoderResult: GeocodeResult) => {
+  setLastOriginalPlaceName(geocoderResult.place_name)
+  setGeocodeResult(geocoderResult)
+  emit('update:location', {
+    lng: geocoderResult.center[0],
+    lat: geocoderResult.center[1]
+  })
+  emit('update:locationDescription', geocoderResult.place_name)
+}
+
+const handleLocationChange = (geocoderResult: GeocodeResult) => {
+  setLastOriginalPlaceName(geocoderResult.place_name)
+  // when retrieving reversed result preserve the location until the user confirms it
+  setGeocodeResult({
+    ...geocoderResult,
+    place_name:
+      currentGeocodeResult.value?.place_name ?? props.locationDescription
+  })
+  suggestion.value = geocoderResult?.place_name ?? ''
+  suggestPlace()
+}
+
+const handleTextInput = (geocoderResult: Partial<GeocodeResult>) => {
+  touched.value = geocoderResult?.place_name !== lastOriginalPlaceName.value
+  if (props.locationDescription !== geocoderResult.place_name) {
+    // if the result id doesn't change the geocoder widget had some custom input we immediately propagate
+    emit('update:locationDescription', geocoderResult.place_name)
+  }
+}
+
+const handleDropped = (value: any) => {
+  emit('update:location', value.coordinates)
+}
+
+const suggestPlace = () => {
+  if (touched.value && suggestion.value !== props.locationDescription) {
+    suggestionPopup.value?.show()
+  } else {
+    acceptSuggestedPlace()
+  }
+}
+
+const acceptSuggestedPlace = () => {
+  emit('update:locationDescription', suggestion.value)
+}
+
+const reverseLocation = async (location: LocationDto) => {
+  return await reverseGeocode({
+    lng: location.lng,
+    lat: location.lat,
+    language: ['de']
+  })
+}
+</script>
+
 <template>
   <div class="row">
     <div class="col-12">
@@ -51,136 +177,6 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType, nextTick } from 'vue'
-import StandaloneGeocoder from 'components/StandaloneGeocoder.vue'
-import { QBtn, QCard, QCardActions, QCardSection, QPopupProxy } from 'quasar'
-import { GeocodeResult } from 'src/types/GeocodeResult'
-import DraggableMarker from 'components/DraggableMarker.vue'
-import { LocationDto } from 'src/api/model/LocationDto'
-import { reverseGeocode } from 'src/utils/map'
-
-export default defineComponent({
-  name: 'LocationSelect',
-  components: {
-    DraggableMarker,
-    StandaloneGeocoder,
-    QPopupProxy,
-    QBtn,
-    QCard,
-    QCardActions,
-    QCardSection
-  },
-  props: {
-    location: {
-      type: Object as PropType<LocationDto>,
-      required: false
-    },
-    locationDescription: {
-      type: String as PropType<string>,
-      required: false
-    },
-    error: {
-      type: String as PropType<string>,
-      default: ''
-    },
-    isDraggableMarkerShown: {
-      type: Boolean as PropType<boolean>,
-      default: true
-    }
-  },
-  emits: ['update:location', 'update:locationDescription'],
-  data() {
-    return {
-      currentGeocodeResult: { place_name: '' } as Partial<GeocodeResult>,
-      suggestion: '',
-      touched: false,
-      lastOriginalPlaceName: null as null | string
-    }
-  },
-  created() {
-    this.touched = !!this.locationDescription
-  },
-  watch: {
-    locationDescription: {
-      handler(newValue) {
-        this.currentGeocodeResult = {
-          ...this.currentGeocodeResult,
-          place_name: newValue
-        }
-      },
-      immediate: true
-    },
-    async location(newValue) {
-      // By checking if the new location is equal to the last geocoded
-      // location we can determine if the location change comes from outside
-      const sameLocation =
-        newValue?.lng === this.currentGeocodeResult?.center?.[0] &&
-        newValue?.lat === this.currentGeocodeResult?.center?.[1]
-      if (!sameLocation) {
-        this.handleLocationChange(await this.reverseLocation(newValue))
-      }
-    }
-  },
-  methods: {
-    setLastOriginalPlaceName(placeName: string) {
-      this.lastOriginalPlaceName = placeName
-    },
-    setGeocodeResult(geocoderResult: Partial<GeocodeResult>) {
-      this.currentGeocodeResult = geocoderResult
-      void nextTick(() => this.$forceUpdate())
-    },
-    handleLocationSelect(geocoderResult: GeocodeResult) {
-      this.setLastOriginalPlaceName(geocoderResult.place_name)
-      this.setGeocodeResult(geocoderResult)
-      this.$emit('update:location', {
-        lng: geocoderResult.center[0],
-        lat: geocoderResult.center[1]
-      })
-      this.$emit('update:locationDescription', geocoderResult.place_name)
-    },
-    handleLocationChange(geocoderResult: GeocodeResult) {
-      this.setLastOriginalPlaceName(geocoderResult.place_name)
-      // when retrieving reversed result preserve the location until the user confirms it
-      this.setGeocodeResult({
-        ...geocoderResult,
-        place_name:
-          this.currentGeocodeResult?.place_name ?? this.locationDescription
-      })
-      this.suggestion = geocoderResult?.place_name ?? ''
-      this.suggestPlace()
-    },
-    handleTextInput(geocoderResult: Partial<GeocodeResult>) {
-      this.touched = geocoderResult?.place_name !== this.lastOriginalPlaceName
-      if (this.locationDescription !== geocoderResult.place_name) {
-        // if the result id doesn't change the geocoder widget had some custom input we immediately propagate
-        this.$emit('update:locationDescription', geocoderResult.place_name)
-      }
-    },
-    handleDropped(value: any) {
-      this.$emit('update:location', value.coordinates)
-    },
-    suggestPlace() {
-      if (this.touched && this.suggestion !== this.locationDescription) {
-        //@ts-ignore
-        this.$refs.suggestionPopup?.show()
-      } else {
-        this.acceptSuggestedPlace()
-      }
-    },
-    acceptSuggestedPlace() {
-      this.$emit('update:locationDescription', this.suggestion)
-    },
-    async reverseLocation(location: LocationDto) {
-      return await reverseGeocode({
-        lng: location.lng,
-        lat: location.lat,
-        language: ['de']
-      })
-    }
-  }
-})
-</script>
 <style lang="scss">
 .marker-column {
   display: flex;

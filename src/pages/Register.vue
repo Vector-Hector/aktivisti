@@ -1,3 +1,55 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+
+import { UserRegistrationDto } from 'src/api/model/UserRegistrationDto'
+import { QBtn, QForm, QInput, QPage, QScrollArea, useQuasar } from 'quasar'
+import FormError from 'components/FormError.vue'
+import { configStore } from 'src/store/ConfigStore'
+import PasswordInput from 'components/PasswordInput.vue'
+import { apiClient } from 'src/api/ApiClient'
+import { useRouter } from 'vue-router'
+
+const $q = useQuasar()
+const $router = useRouter()
+
+const registrationData = ref<Partial<UserRegistrationDto>>({})
+const errors = ref<any>({})
+const submitting = ref(false)
+
+if (configStore.getState().service_config.registration_disabled) {
+  $q.dialog({
+    title: 'Geschlossene Beta',
+    message:
+      'Schön, dass du dich für die LINKE Wahlkampf-App interessierst. Derzeit befinden wir uns in einer ' +
+      'geschlossenen Beta-Phase. Registrierungen sind erst ab der nächsten Phase möglich. ' +
+      'Um jetzt schon mitzumachen, muss eine Genoss*in dich einladen.'
+  })
+}
+
+async function register() {
+  submitting.value = true
+  try {
+    await apiClient.userRegistration.create(registrationData.value)
+    await $router.push({ name: 'register-success' })
+  } catch (error) {
+    if (apiClient.isApiClientError(error)) {
+      if (error.response?.status === 400) {
+        errors.value = error.response.data
+      } else if (error.response?.status === 503) {
+        errors.value = {
+          non_field_error: 'Diese Funktion steht derzeit nicht zur Verfügung'
+        }
+      }
+    } else {
+      errors.value = {
+        non_field_error: 'Ein unerwarteter Fehler ist aufgetreten'
+      }
+    }
+  }
+  submitting.value = false
+}
+</script>
+
 <template>
   <QScrollArea class="flex flex-fill">
     <QPage>
@@ -99,72 +151,6 @@
     </QPage>
   </QScrollArea>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-import { UserRegistrationDto } from 'src/api/model/UserRegistrationDto'
-import { QBtn, QForm, QInput, QPage, QScrollArea } from 'quasar'
-import FormError from 'components/FormError.vue'
-import { configStore } from 'src/store/ConfigStore'
-import PasswordInput from 'components/PasswordInput.vue'
-
-export default defineComponent({
-  name: 'Register',
-  components: {
-    FormError,
-    PasswordInput,
-    QInput,
-    QBtn,
-    QForm,
-    QPage,
-    QScrollArea
-  },
-  data() {
-    return {
-      registrationData: {} as Partial<UserRegistrationDto>,
-      errors: {},
-      submitting: false
-    }
-  },
-  created() {
-    if (configStore.getState().service_config.registration_disabled) {
-      this.$q.dialog({
-        title: 'Geschlossene Beta',
-        message:
-          'Schön, dass du dich für die LINKE Wahlkampf-App interessierst. Derzeit befinden wir uns in einer ' +
-          'geschlossenen Beta-Phase. Registrierungen sind erst ab der nächsten Phase möglich. ' +
-          'Um jetzt schon mitzumachen, muss eine Genoss*in dich einladen.'
-      })
-    }
-  },
-  methods: {
-    async register() {
-      this.submitting = true
-      try {
-        await this.$apiClient.userRegistration.create(this.registrationData)
-        await this.$router.push({ name: 'register-success' })
-      } catch (error) {
-        if (this.$apiClient.isApiClientError(error)) {
-          if (error.response?.status === 400) {
-            this.errors = error.response.data
-          } else if (error.response?.status === 503) {
-            this.errors = {
-              non_field_error:
-                'Diese Funktion steht derzeit nicht zur Verfügung'
-            }
-          }
-        } else {
-          this.errors = {
-            non_field_error: 'Ein unerwarteter Fehler ist aufgetreten'
-          }
-        }
-      }
-      this.submitting = false
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 .control-buttons {

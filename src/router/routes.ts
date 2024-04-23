@@ -21,7 +21,7 @@ import EventAreaOverviewMap from 'pages/event-map/detail/area/overview/EventArea
 import EventAreaStreet from 'pages/event-map/detail/area/street/EventAreaStreet.vue'
 import EventAreaStreetMap from 'pages/event-map/detail/area/street/EventAreaStreetMap.vue'
 import EventAreaMetrics from 'pages/event-map/detail/area/metrics/EventAreaMetrics.vue'
-import EventAreaMetricsMap from 'pages/event-map/detail/area/metrics/EventAreaMetricsMap'
+import EventAreaMetricsMap from 'pages/event-map/detail/area/metrics/EventAreaMetricsMap.vue'
 import CreateLead from 'pages/CreateLead.vue'
 import Profile from 'pages/Profile.vue'
 import EditEventGeometry from 'pages/edit-event/geometry/EditEventGeometry.vue'

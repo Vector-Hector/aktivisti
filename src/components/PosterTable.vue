@@ -1,7 +1,98 @@
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import { ellipsis } from 'src/utils/string'
+import { PosterDto } from 'src/api/model/PosterDto'
+import StatusRow from 'components/StatusRow.vue'
+import { QBtn, QTable, QTd, QTh, QTr, useQuasar } from 'quasar'
+import { ionTrash } from '@quasar/extras/ionicons-v5'
+
+interface Props {
+  posters: PosterDto[]
+  showActions?: boolean
+}
+
+interface Emits {
+  (e: 'rowClick', poster: PosterDto): void
+  (e: 'rowDeleted', poster: PosterDto): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showActions: () => false
+})
+const emit = defineEmits<Emits>()
+
+const $q = useQuasar()
+
+const confirmDelete = ref(true)
+
+const posterColumns = computed(() => {
+  const columns: any[] = [
+    {
+      name: 'poster_id',
+      label: '#',
+      field: 'poster_id',
+      align: 'right',
+      required: true
+    },
+    {
+      name: 'location_description',
+      label: 'Ort',
+      field: 'location_description',
+      align: 'left',
+      required: true,
+      format: (value: string) =>
+        value ? ellipsis(value, 25) : 'Unbenannter Ort'
+    },
+    {
+      name: 'status',
+      label: 'Status',
+      field: 'status',
+      align: 'right'
+    }
+  ]
+  if (props.showActions) {
+    columns.push({
+      name: 'actions',
+      label: '',
+      field: null,
+      required: true
+    })
+  }
+  return columns
+})
+
+function onDeleteClicked(poster: PosterDto) {
+  if (confirmDelete.value) {
+    $q.dialog({
+      title: 'Plakat löschen',
+      message: `Möchtest du Plakat #${poster.poster_id} wirklich löschen?`,
+      options: {
+        type: 'checkbox',
+        model: [],
+        items: [
+          {
+            label: 'Beim nächsten mal nicht mehr fragen',
+            value: 'skipConfirm'
+          }
+        ]
+      },
+      cancel: true
+    }).onOk((data: any) => {
+      if (data.includes('skipConfirm')) {
+        confirmDelete.value = false
+      }
+      emit('rowDeleted', poster)
+    })
+  } else {
+    emit('rowDeleted', poster)
+  }
+}
+</script>
+
 <template>
   <QTable
     :auto-layout="true"
-    @row-click="(event, row, _) => $emit('rowClick', row)"
+    @row-click="(event, row, _) => emit('rowClick', row)"
     flat
     dense
     :columns="posterColumns"
@@ -45,110 +136,7 @@
     </template>
   </QTable>
 </template>
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { ellipsis } from 'src/utils/string'
-import { PosterDto } from 'src/api/model/PosterDto'
-import StatusRow from 'components/StatusRow.vue'
-import { QBtn, QTable, QTd, QTh, QTr } from 'quasar'
-import { ionTrash } from '@quasar/extras/ionicons-v5'
 
-export default defineComponent({
-  name: 'PosterTable',
-  components: {
-    StatusRow,
-    QTable,
-    QBtn,
-    QTr,
-    QTh,
-    QTd
-  },
-  props: {
-    posters: {
-      type: Array as PropType<PosterDto[]>,
-      required: true
-    },
-    showActions: {
-      type: Boolean as PropType<boolean>,
-      default: false
-    }
-  },
-  emits: ['rowClick', 'rowDeleted'],
-  computed: {
-    posterColumns(): any[] {
-      const columns: any[] = [
-        {
-          name: 'poster_id',
-          label: '#',
-          field: 'poster_id',
-          align: 'right',
-          required: true
-        },
-        {
-          name: 'location_description',
-          label: 'Ort',
-          field: 'location_description',
-          align: 'left',
-          required: true,
-          format: (value: string) =>
-            value ? ellipsis(value, 25) : 'Unbenannter Ort'
-        },
-        {
-          name: 'status',
-          label: 'Status',
-          field: 'status',
-          align: 'right'
-        }
-      ]
-      if (this.showActions) {
-        columns.push({
-          name: 'actions',
-          label: '',
-          field: null,
-          required: true
-        })
-      }
-      return columns
-    }
-  },
-  data() {
-    return {
-      ionTrash,
-      confirmDelete: true
-    }
-  },
-  methods: {
-    onDeleteClicked(poster: PosterDto) {
-      if (this.confirmDelete) {
-        this.$q
-          .dialog({
-            title: 'Plakat löschen',
-            message: `Möchtest du Plakat #${poster.poster_id} wirklich löschen?`,
-            options: {
-              type: 'checkbox',
-              model: [],
-              items: [
-                {
-                  label: 'Beim nächsten mal nicht mehr fragen',
-                  value: 'skipConfirm'
-                }
-              ]
-            },
-            cancel: true
-          })
-          .onOk((data: any) => {
-            if (data.includes('skipConfirm')) {
-              this.confirmDelete = false
-            }
-            this.$emit('rowDeleted', poster)
-          })
-      } else {
-        this.$emit('rowDeleted', poster)
-      }
-    }
-  }
-})
-</script>
 <style lang="scss" scoped>
 .table-header {
   background: $grey-3;

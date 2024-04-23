@@ -5,6 +5,7 @@ node_modules
 # Quasar core related directories
 .quasar
 /dist
+/quasar.config.*.temporary.compiled*
 
 # Cordova related directories and files
 /src-cordova/node_modules
@@ -41,3 +42,13 @@ src-capacitor/ios/App/App.app.*
 src-capacitor/ios/App/fastlane/report.xml
 *.keystore
 android-signing.properties
+
+.vscode/vscode-chrome-debug-userdatadir
+.vscode/launch.json
+
+# Ignore local history folder created by VSCode extensions when making git commits
+.history
+
+# Ignore gitlab-ci-local files
+.gitlab-ci-local
+.gitlab-ci-local-variables.yml

@@ -1,11 +1,32 @@
+<script setup lang="ts">
+import { getCurrentInstance, ref } from 'vue'
+import { ionChevronDown, ionFunnel } from '@quasar/extras/ionicons-v5'
+import { QBadge, QIcon, QSlideTransition } from 'quasar'
+
+interface Props {
+  activatedFilterCount: number
+}
+const props = withDefaults(defineProps<Props>(), {
+  activatedFilterCount: 0
+})
+
+const collapsed = ref(true)
+
+function toggle() {
+  collapsed.value = !collapsed.value
+  const instance = getCurrentInstance()
+  instance?.proxy?.$forceUpdate()
+}
+</script>
+
 <template>
   <div class="collapsible-filters">
     <div class="headline" @click="toggle">
       <QIcon :name="ionFunnel" class="filter-icon" />
       <div class="headline-caption">
         <h4 class="filter-title">Filter</h4>
-        <QBadge v-if="activatedFilterCount > 0">
-          {{ activatedFilterCount }} gesetzt
+        <QBadge v-if="props.activatedFilterCount > 0">
+          {{ props.activatedFilterCount }} gesetzt
         </QBadge>
       </div>
       <span class="chevron-icon" :class="{ rotated: !collapsed }">
@@ -19,41 +40,6 @@
     </QSlideTransition>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { ionChevronDown, ionFunnel } from '@quasar/extras/ionicons-v5'
-import { QBadge, QIcon, QSlideTransition } from 'quasar'
-
-export default defineComponent({
-  name: 'CollapsibleFilters',
-  components: {
-    QIcon,
-    QBadge,
-    QSlideTransition
-  },
-  props: {
-    activatedFilterCount: {
-      type: Number as PropType<number>,
-      default: 0
-    }
-  },
-  emits: ['update:collapsed'],
-  data() {
-    return {
-      collapsed: true,
-      ionFunnel,
-      ionChevronDown
-    }
-  },
-  methods: {
-    toggle() {
-      this.collapsed = !this.collapsed
-      this.$forceUpdate()
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 @import 'src/css/_variables.scss';

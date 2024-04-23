@@ -1,38 +1,40 @@
-import { defineComponent } from 'vue'
+import { computed } from 'vue'
 import { posterListStore } from 'src/store/PosterListStore'
 import { PosterDto } from 'src/api/model/PosterDto'
+import { apiClient } from 'src/api/ApiClient'
+import { useQuasar } from 'quasar'
 
-export default defineComponent({
-  name: 'EditPosterListMixin',
-  computed: {
-    posters: {
-      get() {
-        return posterListStore.state.posters
-      },
-      set(posters: PosterDto[]) {
-        posterListStore.state.posters = posters
-      }
+export function useEditPosterListMixin() {
+  const $q = useQuasar()
+  const posters = computed({
+    get(): Partial<PosterDto>[] {
+      return posterListStore.state.posters
     },
-    activePosterIndex: {
-      get() {
-        return posterListStore.state.activePosterIndex
-      },
-      set(index: number) {
-        posterListStore.state.activePosterIndex = index
-      }
+    set(posters: Partial<PosterDto>[]) {
+      posterListStore.state.posters = posters
     }
-  },
-  methods: {
-    async deletePoster(poster: PosterDto) {
-      try {
-        await this.$apiClient.posters.delete(poster.id.toString())
-        this.posters = this.posters.filter(({ id }) => id !== poster.id)
-      } catch (e) {
-        this.$q.notify({
-          color: 'negative',
-          message: 'Beim löschen des Posters ist ein Fehler aufgetreten'
-        })
-      }
+  })
+
+  const activePosterIndex = computed({
+    get(): number | null {
+      return posterListStore.state.activePosterIndex
+    },
+    set(index: number | null) {
+      posterListStore.state.activePosterIndex = index
+    }
+  })
+
+  const deletePoster = async (poster: PosterDto) => {
+    try {
+      await apiClient.posters.delete(poster.id.toString())
+      posters.value = posters.value.filter(({ id }) => id !== poster.id)
+    } catch (e) {
+      $q.notify({
+        color: 'negative',
+        message: 'Beim löschen des Posters ist ein Fehler aufgetreten'
+      })
     }
   }
-})
+
+  return { posters, activePosterIndex, deletePoster }
+}

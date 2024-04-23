@@ -1,3 +1,38 @@
+<script setup lang="ts">
+import { inject } from 'vue'
+
+import { QBtn } from 'quasar'
+import { ionLocationSharp } from '@quasar/extras/ionicons-v5'
+import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
+import { StepControls } from 'pages/EditEvent.vue'
+import { useEditPosterListMixin } from 'pages/edit-event/posters/EditPosterListMixin'
+import PosterTable from 'components/PosterTable.vue'
+import { useRouter } from 'vue-router'
+
+const $router = useRouter()
+
+const { posters, deletePoster } = useEditPosterListMixin()
+const stepControls = inject('stepControls') as StepControls
+
+async function back() {
+  stepControls.previous()
+}
+async function next() {
+  stepControls.next()
+}
+async function abort() {
+  stepControls.abort()
+}
+async function editPoster(posterId: number) {
+  await $router.push({
+    name: 'edit-event-single-poster-edit',
+    params: {
+      posterId
+    }
+  })
+}
+</script>
+
 <template>
   <div class="edit-event-posters container">
     <div class="row">
@@ -24,67 +59,6 @@
     :last="stepControls.isLastStep.value"
   />
 </template>
-
-<script lang="ts">
-import { defineComponent, inject } from 'vue'
-
-import { QBtn } from 'quasar'
-import { ionLocationSharp } from '@quasar/extras/ionicons-v5'
-import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
-import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
-import EditEventAutoSaveMixin from 'pages/edit-event/EditEventAutoSaveMixin'
-import { posterStatusOptions } from 'src/api/model/PosterDto'
-import { StepControls } from 'pages/EditEvent.vue'
-import EditPosterListMixin from 'pages/edit-event/posters/EditPosterListMixin'
-import PosterTable from 'components/PosterTable.vue'
-
-export default defineComponent({
-  name: 'EditEventPostersList',
-  components: {
-    PosterTable,
-    SidebarBottomStepNavigation,
-    QBtn
-  },
-  mixins: [EditEventGeometryMixin, EditPosterListMixin, EditEventAutoSaveMixin],
-  setup() {
-    return {
-      stepControls: inject('stepControls') as StepControls
-    }
-  },
-  data() {
-    return {
-      ionLocationSharp,
-      posterStatusOptions,
-      confirmDelete: true,
-      filters: {
-        status: null
-      }
-    }
-  },
-  methods: {
-    async back() {
-      await this.saveDebouncer.waitForSettle()
-      this.stepControls.previous()
-    },
-    async next() {
-      await this.saveDebouncer.waitForSettle()
-      this.stepControls.next()
-    },
-    async abort() {
-      await this.saveDebouncer.waitForSettle()
-      this.stepControls.abort()
-    },
-    async editPoster(posterId: number) {
-      await this.$router.push({
-        name: 'edit-event-single-poster-edit',
-        params: {
-          posterId
-        }
-      })
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 .edit-event-posters {

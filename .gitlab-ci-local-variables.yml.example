@@ -1,0 +1,21 @@
+ANDROID_ASSOCIATION_FILE:
+  type: file
+  values:
+    '*': |
+      <ANDROID_ASSOCIATION_FILE>
+APP_ANDROID_KEYSTORE_B64: <APP_ANDROID_KEYSTORE_B64>
+APP_ANDROID_KEYSTORE_PASSWORD: <APP_ANDROID_KEYSTORE_PASSWORD>,
+APP_ANDROID_KEYSTORE_ALIAS: <APP_ANDROID_KEYSTORE_ALIAS>
+GOOGLE_SERVICES_FILE:
+  type: file
+  values:
+    '*': |
+      <GOOGLE_SERVICE_FILE>
+APP_BASE_URL: http://localhost:8000/api/v1
+APP_AUTH_URL: http://localhost:8000/oauth2
+APP_SHARE_URL: https://localhost:8080
+APP_HELP_URL: https://www.die-linke.app/hilfe/
+APP_CLIENT_ID: sFqF8AeMrAetBWvj1Sis2OyWr1c0nNiMh5DW6ZhQ
+APP_MAP_STYLE: https://map.die-linke.app/styles/basic/style.json
+APP_MAP_NOMINATIM: https://map.die-linke.app/nominatim/
+APP_HOST: localhost

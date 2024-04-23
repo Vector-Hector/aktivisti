@@ -1,20 +1,17 @@
-
-# wk-frontend
+# die-linke-app-frontend
 
 This project is the frontend application for the "DIE LINKE. App". It's a responsive Progressive Web App.
 
 ## General
 
-This project is based on the [quasar framework (v2)](https://next.quasar.dev/), meaning it uses Vue3 and Typescript
+This project is based on the [quasar framework (v2)](https://quasar.dev/), meaning it uses Vue3 and Typescript
 This project uses Vue3 with Typescript and VueCLI for bootstrapping, building and serving during development.
 
 Documentation resources for the used tools:
 
-* Quasar (and Quasar CLI): https://next.quasar.dev/
-* Vue (3): https://v3.vuejs.org/api/
-* Typescript: https://www.typescriptlang.org/
-
-⚠️ Lots of resources out there still refer to Vue2 while we use Vue3
+- Quasar (and Quasar CLI): https://quasar.dev/
+- Vue (3): https://v3.vuejs.org/api/
+- Typescript: https://www.typescriptlang.org/
 
 ## Development
 
@@ -82,13 +79,6 @@ Find contribution guidelines [here](./CONTRIBUTING.md)
 
 ## Testing
 
-### Mock backend during testing or development
-
-While running the application in development or especially during automated e2e-tests we like to introduce a mocked API
-environment, to be independent of a backend to be running. For that matter [mirageJS](https://miragejs.com/) is
-utilized. It hooks into `fetch` calls effectively simulating a backend response according the configuration that lives
-in [server.ts](./src/server.js)
-
 ## Releasing / Versioning
 
 The release is done as follows. Create a branch coming from `develop`. It must be named according to the following scheme:
@@ -131,4 +121,4 @@ git tag -a 1.1.1-alpha-1 # ✗
 git tag -a testtag # ✗
 ```
 
-*Tip: Take a look on [npm-version](https://docs.npmjs.com/cli/v6/commands/npm-version) to update the version*
+_Tip: Take a look on [npm-version](https://docs.npmjs.com/cli/v6/commands/npm-version) to update the version_

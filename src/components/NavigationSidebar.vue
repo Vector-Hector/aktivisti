@@ -1,140 +1,3 @@
-<template>
-  <QDrawer
-    side="right"
-    overlay
-    class="navigation-sidebar overlay-shadow"
-    v-model="sidebarExpanded"
-  >
-    <QBtn
-      :icon="sidebarIcon"
-      @click="sidebarExpanded = !sidebarExpanded"
-      class="menu-button"
-      :class="{
-        'navbar-expanded': sidebarExpanded
-      }"
-      round
-    />
-    <div class="menu">
-      <div v-if="isLoggedIn" class="menu-group highlighted">
-        <div class="user-widget">
-          <MenuLink to="/profile">
-            <div class="user-widget-avatar">
-              <QIcon
-                :name="ionPersonCircleOutline"
-                class="avatar-placeholder"
-              />
-            </div>
-            <div class="user-widget-details">
-              <span v-if="userFullname.length > 0" class="name">{{
-                userFullname
-              }}</span>
-              <span class="username">{{ userName }}</span>
-            </div>
-          </MenuLink>
-        </div>
-      </div>
-      <div v-if="!isLoggedIn" class="menu-group highlighted">
-        <QBtn
-          :icon="ionClose"
-          @click="sidebarExpanded = false"
-          class="close-sidebar-button"
-          flat
-          round
-        />
-        <div class="menu-item">
-          <MenuLink to="/login">
-            <QIcon :name="ionLogIn" />
-            <span class="menu-item-link-text">Anmelden</span>
-          </MenuLink>
-        </div>
-        <hr class="menu-divider" />
-        <div class="menu-item">
-          <MenuLink to="/register">
-            <QIcon :name="farIdCard" />
-            <span class="menu-item-link-text">Registrieren</span>
-          </MenuLink>
-        </div>
-      </div>
-      <QScrollArea class="scroll-area">
-        <div class="menu-group">
-          <div v-if="isLoggedIn" class="menu-item">
-            <MenuLink :to="{ name: 'my-participations' }">
-              <QIcon :name="ionCalendarOutline" />
-              <span class="menu-item-link-text">Meine Teilnahmen</span>
-              <OpenInvitationsBadge />
-            </MenuLink>
-          </div>
-          <div class="menu-item">
-            <MenuLink to="/events">
-              <QIcon :name="ionCalendarClearOutline" />
-              <span class="menu-item-link-text">Alle Aktionen</span>
-            </MenuLink>
-          </div>
-          <div class="menu-item">
-            <MenuLink to="/offices">
-              <QIcon :name="ionHomeOutline" />
-              <span class="menu-item-link-text">DIE LINKE vor Ort</span>
-            </MenuLink>
-          </div>
-          <div v-if="hasManagePermission" class="menu-item">
-            <MenuLink to="/posters">
-              <QIcon name="img:static/icons/poster.svg" />
-              <span class="menu-item-link-text">Plakate</span>
-            </MenuLink>
-          </div>
-          <div v-if="hasManagePermission" class="menu-item">
-            <MenuLink :to="{ name: 'reports' }">
-              <QIcon :name="ionStatsChartOutline" />
-              <span class="menu-item-link-text">Statistiken</span>
-            </MenuLink>
-          </div>
-          <div
-            v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
-            class="menu-item"
-          >
-            <MenuLink :to="{ name: 'manage-users' }">
-              <QIcon :name="ionPeopleOutline" />
-              <span class="menu-item-link-text">Benutzer*innen verwalten</span>
-            </MenuLink>
-          </div>
-          <div
-            v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
-            class="menu-item"
-          >
-            <MenuLink :to="{ name: 'create-lead-general' }">
-              <QIcon :name="ionPersonAddOutline" />
-              <span class="menu-item-link-text">Kontakt registrieren</span>
-            </MenuLink>
-          </div>
-        </div>
-
-        <div class="menu-group menu-bottom">
-          <div class="version">Version: {{ version }}</div>
-          <hr class="menu-divider" />
-          <div class="menu-item">
-            <a class="menu-item-link" :href="helpUrl" target="_blank">
-              <QIcon :name="ionHelpCircleOutline" />
-              <span class="menu-item-link-text">Hilfe</span>
-            </a>
-          </div>
-          <div class="menu-item">
-            <MenuLink to="/imprint">
-              <span class="paragraph-icon">§</span>
-              <span class="menu-item-link-text">Impressum / Datenschutz</span>
-            </MenuLink>
-          </div>
-          <div v-if="isLoggedIn" class="menu-item">
-            <div class="menu-item-link" @click="logout()">
-              <QIcon :name="ionExitOutline" />
-              <span class="menu-item-link-text">Abmelden</span>
-            </div>
-          </div>
-        </div>
-      </QScrollArea>
-    </div>
-  </QDrawer>
-</template>
-
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { uiStore } from 'src/store/UiStore'
@@ -240,6 +103,143 @@ export default defineComponent({
   }
 })
 </script>
+
+<template>
+  <QDrawer
+    side="right"
+    overlay
+    class="navigation-sidebar overlay-shadow"
+    v-model="sidebarExpanded"
+  >
+    <QBtn
+      :icon="sidebarIcon"
+      @click="sidebarExpanded = !sidebarExpanded"
+      class="menu-button"
+      :class="{
+        'navbar-expanded': sidebarExpanded
+      }"
+      round
+    />
+    <div class="menu">
+      <div v-if="isLoggedIn" class="menu-group highlighted">
+        <div class="user-widget">
+          <MenuLink to="/profile">
+            <div class="user-widget-avatar">
+              <QIcon
+                :name="ionPersonCircleOutline"
+                class="avatar-placeholder"
+              />
+            </div>
+            <div class="user-widget-details">
+              <span v-if="userFullname.length > 0" class="name">{{
+                userFullname
+              }}</span>
+              <span class="username">{{ userName }}</span>
+            </div>
+          </MenuLink>
+        </div>
+      </div>
+      <div v-if="!isLoggedIn" class="menu-group highlighted">
+        <QBtn
+          :icon="ionClose"
+          @click="sidebarExpanded = false"
+          class="close-sidebar-button"
+          flat
+          round
+        />
+        <div class="menu-item">
+          <MenuLink to="/login">
+            <QIcon :name="ionLogIn" />
+            <span class="menu-item-link-text">Anmelden</span>
+          </MenuLink>
+        </div>
+        <hr class="menu-divider" />
+        <div class="menu-item">
+          <MenuLink to="/register">
+            <QIcon :name="farIdCard" />
+            <span class="menu-item-link-text">Registrieren</span>
+          </MenuLink>
+        </div>
+      </div>
+      <QScrollArea class="scroll-area">
+        <div class="menu-group">
+          <div v-if="isLoggedIn" class="menu-item">
+            <MenuLink :to="{ name: 'my-participations' }">
+              <QIcon :name="ionCalendarOutline" />
+              <span class="menu-item-link-text">Meine Teilnahmen</span>
+              <OpenInvitationsBadge />
+            </MenuLink>
+          </div>
+          <div class="menu-item">
+            <MenuLink to="/events">
+              <QIcon :name="ionCalendarClearOutline" />
+              <span class="menu-item-link-text">Alle Aktionen</span>
+            </MenuLink>
+          </div>
+          <div class="menu-item">
+            <MenuLink to="/offices">
+              <QIcon :name="ionHomeOutline" />
+              <span class="menu-item-link-text">DIE LINKE vor Ort</span>
+            </MenuLink>
+          </div>
+          <div v-if="hasManagePermission" class="menu-item">
+            <MenuLink to="/posters">
+              <QIcon name="img:/static/icons/poster.svg" />
+              <span class="menu-item-link-text">Plakate</span>
+            </MenuLink>
+          </div>
+          <div v-if="hasManagePermission" class="menu-item">
+            <MenuLink :to="{ name: 'reports' }">
+              <QIcon :name="ionStatsChartOutline" />
+              <span class="menu-item-link-text">Statistiken</span>
+            </MenuLink>
+          </div>
+          <div
+            v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
+            class="menu-item"
+          >
+            <MenuLink :to="{ name: 'manage-users' }">
+              <QIcon :name="ionPeopleOutline" />
+              <span class="menu-item-link-text">Benutzer*innen verwalten</span>
+            </MenuLink>
+          </div>
+          <div
+            v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
+            class="menu-item"
+          >
+            <MenuLink :to="{ name: 'create-lead-general' }">
+              <QIcon :name="ionPersonAddOutline" />
+              <span class="menu-item-link-text">Kontakt registrieren</span>
+            </MenuLink>
+          </div>
+        </div>
+
+        <div class="menu-group menu-bottom">
+          <div class="version">Version: {{ version }}</div>
+          <hr class="menu-divider" />
+          <div class="menu-item">
+            <a class="menu-item-link" :href="helpUrl" target="_blank">
+              <QIcon :name="ionHelpCircleOutline" />
+              <span class="menu-item-link-text">Hilfe</span>
+            </a>
+          </div>
+          <div class="menu-item">
+            <MenuLink to="/imprint">
+              <span class="paragraph-icon">§</span>
+              <span class="menu-item-link-text">Impressum / Datenschutz</span>
+            </MenuLink>
+          </div>
+          <div v-if="isLoggedIn" class="menu-item">
+            <div class="menu-item-link" @click="logout()">
+              <QIcon :name="ionExitOutline" />
+              <span class="menu-item-link-text">Abmelden</span>
+            </div>
+          </div>
+        </div>
+      </QScrollArea>
+    </div>
+  </QDrawer>
+</template>
 
 <style lang="scss" scoped>
 .scroll-area {

@@ -36,8 +36,8 @@ import { EventMetricReportDto } from 'src/api/model/EventMetricReportDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { ionEllipse } from '@quasar/extras/ionicons-v5'
-import EventDetailStoreMixin from 'pages/event-map/detail/EventDetailStoreMixin'
 import { QIcon, QPage, QScrollArea, QTable, QTd } from 'quasar'
+import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 
 export default defineComponent({
   name: 'EventDetailReport',
@@ -48,7 +48,10 @@ export default defineComponent({
     QTable,
     QTd
   },
-  mixins: [EventDetailStoreMixin],
+  setup() {
+    const { event, eventAreas } = useEventDetailStore()
+    return { event, eventAreas }
+  },
   data() {
     return {
       ionEllipse,

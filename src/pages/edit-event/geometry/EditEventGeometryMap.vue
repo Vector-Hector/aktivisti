@@ -1,3 +1,152 @@
+<script setup lang="ts">
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import Marker from 'src/map/Marker.vue'
+import DrawControl from 'src/map/DrawControl.vue'
+import { EventAreaDto } from 'src/api/model/EventAreaDto'
+import { routePlannerStyles as routePlannerStylesFunction } from './route-planner.styles'
+import { useEditEventGeometryMixin } from 'pages/edit-event/geometry/EditEventGeometryMixin'
+import { bbox, booleanPointInPolygon, circle, polygon } from '@turf/turf'
+import {
+  EditEventBus,
+  PAN_TO_BBOX,
+  START_DRAW_AREA
+} from 'src/store/EditEventStore'
+import { noop } from 'lodash-es'
+import { useInjectMapMixin } from 'pages/event-detail/InjectMapMixin'
+import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import AddressMarkerLayer from 'src/map/AddressMarkerLayer.vue'
+import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
+import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
+import { IMapboxDrawControls } from '@mapbox/mapbox-gl-draw'
+
+const defaultColors = [
+  '#E22A3A',
+  '#37FFFF',
+  '#91BF77',
+  '#F8AC60',
+  '#8E197C',
+  '#9E2B25',
+  '#266DD3',
+  '#FDE74C',
+  '#55DBCB',
+  '#495D63'
+]
+
+const { event, eventAreas, posters } = useEditEventMixin()
+const { updateArea, deleteAreaByFeatureId, features } =
+  useEditEventGeometryMixin()
+const { map } = useInjectMapMixin()
+
+const routePlannerStyles = ref<any[]>(routePlannerStylesFunction('#000000'))
+const drawControls = ref<IMapboxDrawControls>({
+  polygon: true,
+  trash: true
+})
+const zoomLevel = ref<number>(0)
+const zoomListener = ref(noop)
+const startDrawListener = ref(noop)
+const panToBBoxListener = ref(noop)
+const draw = ref<InstanceType<typeof DrawControl> | null>(null)
+
+zoomLevel.value = map.value?.getZoom() ?? 0
+
+const addresses = computed(() =>
+  eventAreas.value
+    .map(({ area_details }) => area_details?.streets ?? [])
+    .flat()
+    .map(({ addresses }) => addresses)
+    .flat()
+)
+
+watch(
+  () => event.value.location,
+  (newLocation, oldLocation) => {
+    const bounds = map.value?.getBounds()
+    if (bounds) {
+      const boundsGeometry = polygon([
+        [
+          [bounds.getNorthWest().lng, bounds.getNorthWest().lat],
+          [bounds.getNorthEast().lng, bounds.getNorthEast().lat],
+          [bounds.getSouthEast().lng, bounds.getSouthEast().lat],
+          [bounds.getSouthWest().lng, bounds.getSouthWest().lat],
+          [bounds.getNorthWest().lng, bounds.getNorthWest().lat]
+        ]
+      ])
+      const { lat, lng } = newLocation
+      if (
+        oldLocation === null ||
+        !booleanPointInPolygon([lng, lat], boundsGeometry)
+      ) {
+        map.value?.fitBounds(bbox(circle([lng, lat], 2)) as BBox2d)
+      }
+    }
+  },
+  { deep: true }
+)
+
+onMounted(() => {
+  startDrawListener.value = () => {
+    draw.value?.changeMode('draw_polygon')
+  }
+  panToBBoxListener.value = (bbox: BBox2d) => {
+    map.value?.fitBounds(bbox)
+  }
+
+  EditEventBus.on(START_DRAW_AREA, startDrawListener.value)
+  EditEventBus.on(PAN_TO_BBOX, panToBBoxListener.value)
+
+  zoomListener.value = () => {
+    zoomLevel.value = map.value?.getZoom() ?? Infinity
+  }
+  map.value?.on('zoomend', zoomListener.value)
+})
+
+onUnmounted(() => {
+  map.value?.off('zoomend', zoomListener.value)
+  EditEventBus.off(START_DRAW_AREA, startDrawListener.value)
+  EditEventBus.off(PAN_TO_BBOX, panToBBoxListener.value)
+})
+
+async function handleCreatedFeatures(e: any) {
+  for (const feature of e.features) {
+    const existingArea = eventAreas.value.find(
+      (area) => area.feature_id === feature.id
+    )
+    const updatedArea = Object.assign(
+      {
+        name: `Gebiet ${eventAreas.value.length + 1}`,
+        color: defaultColors[eventAreas.value.length] ?? defaultColors[0],
+        event: event.value.id
+      },
+      existingArea ?? {},
+      {
+        feature_id: feature.id,
+        geometry: feature.geometry
+      }
+    )
+    if (existingArea) {
+      eventAreas.value = eventAreas.value.map((area) => {
+        if (area.feature_id === updatedArea.feature_id) {
+          return updatedArea as EventAreaDto
+        } else {
+          return area
+        }
+      })
+      await updateArea(updatedArea)
+    } else {
+      eventAreas.value.push(updatedArea as EventAreaDto)
+      await updateArea(updatedArea)
+    }
+  }
+}
+function handleDeletedFeatures(event: any) {
+  const deletedFeatureIds = event.features.map(({ id }: { id: string }) => id)
+  for (const featureId of deletedFeatureIds) {
+    void deleteAreaByFeatureId(featureId)
+  }
+}
+</script>
+
 <template>
   <DrawControl
     ref="draw"
@@ -21,205 +170,6 @@
   />
 </template>
 
-<script lang="ts">
-import { defineComponent, inject } from 'vue'
-import Marker from 'src/map/Marker.vue'
-import DrawControl from 'src/map/DrawControl.vue'
-import { EventAreaDto } from 'src/api/model/EventAreaDto'
-import { routePlannerStyles } from './route-planner.styles'
-import { Feature, Geometry } from 'geojson'
-import EditEventGeometryMixin from 'pages/edit-event/geometry/EditEventGeometryMixin'
-import {
-  bbox,
-  booleanPointInPolygon,
-  center as turfCenter,
-  circle,
-  polygon
-} from '@turf/turf'
-
-import { MapInject } from 'src/map/Map.vue'
-import {
-  EditEventBus,
-  PAN_TO_BBOX,
-  START_DRAW_AREA
-} from 'src/store/EditEventStore'
-import { noop } from 'lodash-es'
-import { AddressDetails } from 'src/api/model/AreaDetailsDto'
-import { LocationDto } from 'src/api/model/LocationDto'
-import InjectMapMixin from 'pages/event-detail/InjectMapMixin'
-import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
-import AddressMarkerLayer from 'src/map/AddressMarkerLayer'
-import PosterMarkerLayer from 'src/map/PosterMarkerLayer'
-
-const defaultColors = [
-  '#E22A3A',
-  '#37FFFF',
-  '#91BF77',
-  '#F8AC60',
-  '#8E197C',
-  '#9E2B25',
-  '#266DD3',
-  '#FDE74C',
-  '#55DBCB',
-  '#495D63'
-]
-
-export default defineComponent({
-  name: 'EditEventGeometryMap',
-  components: {
-    AddressMarkerLayer,
-    DrawControl,
-    PosterMarkerLayer,
-    Marker
-  },
-  setup() {
-    const map = inject(MapInject)
-    return {
-      map
-    }
-  },
-  mixins: [EditEventGeometryMixin, InjectMapMixin],
-  data() {
-    return {
-      routePlannerStyles: routePlannerStyles('#000000'),
-      drawControls: {
-        polygon: true,
-        trash: true
-      },
-      zoomLevel: 0,
-      zoomListener: noop,
-      startDrawListener: noop,
-      panToBBoxListener: noop
-    }
-  },
-  computed: {
-    features(): Feature[] {
-      return this.eventAreas.map((area) => {
-        return {
-          type: 'Feature',
-          geometry: area.geometry,
-          id: area.feature_id,
-          properties: {
-            // find the corresponding area and copy the color
-            color: area.color
-          }
-        }
-      })
-    },
-    addresses(): AddressDetails[] | undefined {
-      return this.eventAreas
-        .map(({ area_details }) => area_details?.streets ?? [])
-        .flat()
-        .map(({ addresses }) => addresses)
-        .flat()
-    }
-  },
-  created() {
-    this.zoomLevel = this.map?.getZoom() ?? 0
-  },
-  mounted() {
-    this.startDrawListener = () => {
-      ;(this.$refs.draw as typeof DrawControl).changeMode('draw_polygon')
-    }
-    this.panToBBoxListener = (bbox: BBox2d) => {
-      this.map?.fitBounds(bbox)
-    }
-
-    EditEventBus.on(START_DRAW_AREA, this.startDrawListener)
-
-    EditEventBus.on(PAN_TO_BBOX, this.panToBBoxListener)
-
-    this.zoomListener = () => {
-      this.zoomLevel = this.map?.getZoom() ?? Infinity
-    }
-    this.map?.on('zoomend', this.zoomListener)
-  },
-  unmounted() {
-    this.map?.off('zoomend', this.zoomListener)
-    EditEventBus.off(START_DRAW_AREA, this.startDrawListener)
-    EditEventBus.off(PAN_TO_BBOX, this.panToBBoxListener)
-  },
-  watch: {
-    'event.location': {
-      handler(newLocation, oldLocation) {
-        const bounds = this.map?.getBounds()
-        if (bounds) {
-          const boundsGeometry = polygon([
-            [
-              [bounds.getNorthWest().lng, bounds.getNorthWest().lat],
-              [bounds.getNorthEast().lng, bounds.getNorthEast().lat],
-              [bounds.getSouthEast().lng, bounds.getSouthEast().lat],
-              [bounds.getSouthWest().lng, bounds.getSouthWest().lat],
-              [bounds.getNorthWest().lng, bounds.getNorthWest().lat]
-            ]
-          ])
-          const { lat, lng } = newLocation
-          if (
-            oldLocation === null ||
-            !booleanPointInPolygon([lng, lat], boundsGeometry)
-          ) {
-            this.map?.fitBounds(bbox(circle([lng, lat], 2)) as BBox2d)
-          }
-        }
-      },
-      deep: true
-    }
-  },
-  methods: {
-    center(geometry: Geometry): LocationDto {
-      //@ts-ignore
-      const point = turfCenter(geometry)
-      return {
-        lat: point.geometry.coordinates[1],
-        lng: point.geometry.coordinates[0]
-      }
-    },
-    async handleCreatedFeatures(event: any) {
-      for (const feature of event.features) {
-        const existingArea = this.eventAreas.find(
-          (area) => area.feature_id === feature.id
-        )
-        const updatedArea = Object.assign(
-          {
-            name: `Gebiet ${this.eventAreas.length + 1}`,
-            color: defaultColors[this.eventAreas.length] ?? defaultColors[0],
-            event: this.event.id
-          },
-          existingArea ?? {},
-          {
-            feature_id: feature.id,
-            geometry: feature.geometry
-          }
-        )
-        if (existingArea) {
-          this.eventAreas = this.eventAreas.map((area) => {
-            if (area.feature_id === updatedArea.feature_id) {
-              return updatedArea as EventAreaDto
-            } else {
-              return area
-            }
-          })
-          await this.updateArea(updatedArea)
-        } else {
-          this.eventAreas.push(updatedArea as EventAreaDto)
-          await this.updateArea(updatedArea)
-        }
-      }
-    },
-    handleDeletedFeatures(event: any) {
-      const deletedFeatureIds = event.features.map(
-        ({ id }: { id: string }) => id
-      )
-      for (const featureId of deletedFeatureIds) {
-        void this.deleteAreaByFeatureId(featureId)
-      }
-    },
-    drawArea() {
-      ;(this.$refs.draw as typeof DrawControl).changeMode('draw_polygon')
-    }
-  }
-})
-</script>
 <style lang="scss">
 .mapbox-gl-draw_ctrl-draw-btn {
   display: none !important;

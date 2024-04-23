@@ -1,17 +1,29 @@
+<script setup lang="ts">
+import { QBtn, QItem, QItemLabel, QItemSection } from 'quasar'
+import { ionEarthOutline } from '@quasar/extras/ionicons-v5'
+import { OfficeGeoJsonFeature } from 'src/api/model/OfficeGeoJsonDto'
+
+interface Props {
+  office: OfficeGeoJsonFeature
+}
+
+const props = defineProps<Props>()
+</script>
+
 <template>
   <QItem clickable v-ripple>
     <QItemSection>
       <QItemLabel>
-        <b>{{ office.properties.name }}</b>
+        <b>{{ props.office.properties.name }}</b>
       </QItemLabel>
       <QItemLabel>
-        {{ office.properties.location_description }}
+        {{ props.office.properties.location_description }}
       </QItemLabel>
-      <QItemLabel v-if="office.properties.phone_number">
-        {{ office.properties.phone_number }}
+      <QItemLabel v-if="props.office.properties.phone_number">
+        {{ props.office.properties.phone_number }}
       </QItemLabel>
-      <QItemLabel v-if="office.properties.description">
-        {{ office.properties.description }}
+      <QItemLabel v-if="props.office.properties.description">
+        {{ props.office.properties.description }}
       </QItemLabel>
     </QItemSection>
     <QItemSection side v-if="office.properties.link">
@@ -26,32 +38,5 @@
     </QItemSection>
   </QItem>
 </template>
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { QBtn, QItem, QItemLabel, QItemSection } from 'quasar'
-import { ionEarthOutline } from '@quasar/extras/ionicons-v5'
-import { OfficeGeoJsonFeature } from 'src/api/model/OfficeGeoJsonDto'
 
-export default defineComponent({
-  name: 'OfficeListItem',
-  components: {
-    QBtn,
-    QItem,
-    QItemLabel,
-    QItemSection
-  },
-  props: {
-    office: {
-      type: Object as PropType<OfficeGeoJsonFeature>,
-      required: true
-    }
-  },
-  emits: [''],
-  data() {
-    return {
-      ionEarthOutline
-    }
-  }
-})
-</script>
 <style lang="scss" scoped></style>

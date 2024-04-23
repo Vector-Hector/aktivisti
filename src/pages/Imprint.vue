@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import { QPage, QScrollArea } from 'quasar'
+</script>
+
 <template>
   <QScrollArea class="flex flex-fill">
     <QPage>
@@ -54,18 +58,6 @@
     </QPage>
   </QScrollArea>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
-import { QPage, QScrollArea } from 'quasar'
-
-export default defineComponent({
-  name: 'Imprint',
-  components: {
-    QPage,
-    QScrollArea
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 h2 {

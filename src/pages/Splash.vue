@@ -1,3 +1,38 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { BottomSheetState, uiStore } from 'src/store/UiStore'
+import Geocoder from 'src/map/Geocoder.vue'
+import { userStore } from 'src/store/UserStore'
+import { GeocodeResult } from 'src/types/GeocodeResult'
+import { bbox as tbbox, circle } from '@turf/turf'
+import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import { QBtn, QPage } from 'quasar'
+import { useRouter } from 'vue-router'
+
+const $router = useRouter()
+if (userStore.getState().bbox !== null) {
+  $router.replace({ name: 'events' })
+}
+
+const bbox = computed({
+  get() {
+    return userStore.getState().bbox
+  },
+  set(bbox: BBox2d | null) {
+    userStore.setBbox(bbox)
+  }
+})
+const isLoggedIn = computed(() => {
+  return userStore.getState().user
+})
+
+async function locate(result: GeocodeResult) {
+  bbox.value = tbbox(circle([result.center[0], result.center[1]], 2)) as BBox2d
+  uiStore.setBottomSheetState(BottomSheetState.COLLAPSED)
+  await $router.push({ name: 'events' })
+}
+</script>
+
 <template>
   <QPage class="splash-page">
     <div class="splash">
@@ -25,61 +60,6 @@
     </div>
   </QPage>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue'
-import { BottomSheetState, uiStore } from 'src/store/UiStore'
-import Geocoder from 'src/map/Geocoder.vue'
-import { userStore } from 'src/store/UserStore'
-import { GeocodeResult } from 'src/types/GeocodeResult'
-import { bbox, circle } from '@turf/turf'
-import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
-import { QBtn, QPage } from 'quasar'
-
-export default defineComponent({
-  name: 'Splash',
-  components: {
-    Geocoder,
-    QBtn,
-    QPage
-  },
-  beforeRouteEnter(to, from, next) {
-    if (userStore.getState().bbox !== null) {
-      next({ name: 'events' })
-    } else {
-      next()
-    }
-  },
-  beforeRouteLeave(to, from, next) {
-    next()
-  },
-  data() {
-    return {}
-  },
-  computed: {
-    bbox: {
-      get() {
-        return userStore.getState().bbox
-      },
-      set(bbox: BBox2d | null) {
-        userStore.setBbox(bbox)
-      }
-    },
-    isLoggedIn() {
-      return userStore.getState().user
-    }
-  },
-  methods: {
-    async locate(result: GeocodeResult) {
-      this.bbox = bbox(
-        circle([result.center[0], result.center[1]], 2)
-      ) as BBox2d
-      uiStore.setBottomSheetState(BottomSheetState.COLLAPSED)
-      await this.$router.push({ name: 'events' })
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 .splash-page {

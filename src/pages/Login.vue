@@ -1,3 +1,92 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { QBtn, QCheckbox, QForm, QInput, useQuasar } from 'quasar'
+import FormError from 'components/FormError.vue'
+import { AuthType, getAuthStore, getAuthType } from 'src/store/AuthStore'
+import PasswordInput from 'components/PasswordInput.vue'
+import { apiClient } from 'src/api/ApiClient'
+import { emailRegex } from 'boot/validation-rules'
+import { useRouter } from 'vue-router'
+
+const authStore = getAuthStore()
+
+const $q = useQuasar()
+const $router = useRouter()
+
+if (authStore.isLoggedIn()) {
+  $router.replace({ name: 'events' })
+}
+
+interface Props {
+  next?: string
+}
+const props = withDefaults(defineProps<Props>(), {
+  next: '/events'
+})
+
+const submitting = ref(false)
+const username = ref('')
+const password = ref('')
+const nonFieldError = ref<string | null>(null)
+const longSession = ref(true)
+
+async function login() {
+  submitting.value = true
+  nonFieldError.value = null
+  try {
+    await authStore.login(username.value, password.value, longSession.value)
+    await $router.push(props.next)
+  } catch (error) {
+    if (apiClient.isApiClientError(error) && error.response?.status == 400) {
+      const authType = getAuthType()
+      if (authType === AuthType.SESSION) {
+        nonFieldError.value = error.response?.data?.non_field_errors?.[0]
+      } else {
+        nonFieldError.value = 'Die eingegebenen Zugangsdaten sind ungültig'
+      }
+    }
+  }
+  submitting.value = false
+}
+function openResetPasswordModal() {
+  $q.dialog({
+    title: 'Passwort zurücksetzen',
+    message:
+      'Gib hier deine E-Mail Adresse ein. Wir schicken dir eine E-Mail mit Anweisungen, wie du dein Passwort zurücksetzen kannst.',
+    prompt: {
+      model: '',
+      isValid: (val: string) => !!val && emailRegex.test(val),
+      type: 'email'
+    },
+    cancel: true,
+    persistent: true
+  })
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    .onOk(async (value: string) => {
+      try {
+        await apiClient.forgotPassword.create({
+          email: value
+        })
+        $q.notify({
+          color: 'positive',
+          message:
+            'Bitte sieh nun in deinem Postfach nach. Wir haben dir eine E-Mail mit weiteren Anweisungen geschickt.'
+        })
+      } catch (e) {
+        let error =
+          'Beim versuch dein Passwort zurückzusetzen trat ein Fehler auf'
+        if (apiClient.isApiClientError(e) && e.response?.data?.email) {
+          error = e.response?.data?.email
+        }
+        $q.notify({
+          color: 'negative',
+          message: error
+        })
+      }
+    })
+}
+</script>
+
 <template>
   <div class="container">
     <QForm @submit="login">
@@ -44,117 +133,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { QBtn, QCheckbox, QForm, QInput } from 'quasar'
-import FormError from 'components/FormError.vue'
-import { AuthType, getAuthStore, getAuthType } from 'src/store/AuthStore'
-import PasswordInput from 'components/PasswordInput.vue'
-import { apiClient } from 'src/api/ApiClient'
-import { emailRegex } from 'boot/validation-rules'
-
-const authStore = getAuthStore()
-
-export default defineComponent({
-  name: 'Login',
-  components: {
-    FormError,
-    PasswordInput,
-    QForm,
-    QBtn,
-    QInput,
-    QCheckbox
-  },
-  beforeRouteEnter(to, from, next) {
-    if (authStore.isLoggedIn()) {
-      next({ name: 'events' })
-    } else {
-      next()
-    }
-  },
-  props: {
-    next: {
-      type: String as PropType<string>,
-      required: false,
-      default: '/events'
-    }
-  },
-  data() {
-    return {
-      submitting: false,
-      username: '',
-      password: '',
-      nonFieldError: null as string | null,
-      longSession: true
-    }
-  },
-  methods: {
-    async login() {
-      this.submitting = true
-      this.nonFieldError = null
-      try {
-        await authStore.login(this.username, this.password, this.longSession)
-        await this.$router.push(this.next)
-      } catch (error) {
-        if (
-          apiClient.isApiClientError(error) &&
-          error.response?.status == 400
-        ) {
-          const authType = getAuthType()
-          if (authType === AuthType.SESSION) {
-            this.nonFieldError = error.response?.data?.non_field_errors?.[0]
-          } else {
-            this.nonFieldError = 'Die eingegebenen Zugangsdaten sind ungültig'
-          }
-        }
-      }
-      this.submitting = false
-    },
-    openResetPasswordModal() {
-      this.$q
-        .dialog({
-          title: 'Passwort zurücksetzen',
-          message:
-            'Gib hier deine E-Mail Adresse ein. Wir schicken dir eine E-Mail mit Anweisungen, wie du dein Passwort zurücksetzen kannst.',
-          prompt: {
-            model: '',
-            isValid: (val: string) => !!val && emailRegex.test(val),
-            type: 'email'
-          },
-          cancel: true,
-          persistent: true
-        })
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        .onOk(async (value: string) => {
-          try {
-            await this.$apiClient.forgotPassword.create({
-              email: value
-            })
-            this.$q.notify({
-              color: 'positive',
-              message:
-                'Bitte sieh nun in deinem Postfach nach. Wir haben dir eine E-Mail mit weiteren Anweisungen geschickt.'
-            })
-          } catch (e) {
-            let error =
-              'Beim versuch dein Passwort zurückzusetzen trat ein Fehler auf'
-            if (
-              this.$apiClient.isApiClientError(e) &&
-              e.response?.data?.email
-            ) {
-              error = e.response?.data?.email
-            }
-            this.$q.notify({
-              color: 'negative',
-              message: error
-            })
-          }
-        })
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 @import 'src/css/variables.scss';

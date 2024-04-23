@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onBeforeMount, onUnmounted, onBeforeUnmount, ref } from 'vue'
-import { useMap } from 'src/map/Map.vue'
 import { eventOverviewStore } from 'src/store/EventOverviewStore'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import Geocoder from 'src/map/Geocoder.vue'
@@ -10,13 +9,14 @@ import CoordinatesPopup from 'src/map/popup/CoordinatesPopup.vue'
 import EventPopupContents from 'src/map/popup/EventPopupContents.vue'
 import { loadImageIfNonExistent } from 'src/utils/map'
 import { EventTypes } from 'src/api/model/EventTypes'
-import EventLayer from 'src/map/EventLayer'
+import EventLayer from 'src/map/EventLayer.vue'
 import { apiClient } from 'src/api/ApiClient'
 import {
   OfficeGeoJsonDto,
   OfficeGeoJsonFeature
 } from 'src/api/model/OfficeGeoJsonDto'
 import OfficePopupContents from 'src/map/popup/OfficePopupContents.vue'
+import { useMap } from 'src/map/MapUtils'
 
 const POSTER_SYMBOL_NAME = EventTypes.POSTERS
 const DOOR_TO_DOOR_SYMBOL_NAME = EventTypes.DOOR_TO_DOOR

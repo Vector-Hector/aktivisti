@@ -1,3 +1,21 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import LayerPopup from 'src/map/popup/LayerPopup.vue'
+
+const layerPopup = ref<InstanceType<typeof LayerPopup> | null>(null)
+function showPopup(
+  metadata: Record<string, string | number>,
+  location: { lng: number; lat: number }
+) {
+  const { lng, lat } = location
+  layerPopup.value?.showPopup(lng, lat, metadata)
+}
+function remove() {
+  layerPopup.value?.remove()
+}
+defineExpose({ showPopup, remove })
+</script>
+
 <template>
   <LayerPopup ref="layerPopup" :show-close-button="false" :offset="[0, 0]">
     <template v-slot:content="{ passedObject: metadata }">
@@ -17,34 +35,7 @@
     </template>
   </LayerPopup>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
-import LayerPopup from 'src/map/popup/LayerPopup.vue'
 
-export default defineComponent({
-  name: 'GeometryPopup',
-  components: { LayerPopup },
-  data() {
-    return {
-      popup: null as any
-    }
-  },
-  methods: {
-    showPopup(
-      metadata: Record<string, string | number>,
-      location: { lng: number; lat: number }
-    ) {
-      const { lng, lat } = location
-      // @ts-ignore
-      this.$refs.layerPopup.showPopup(lng, lat, metadata)
-    },
-    remove() {
-      // @ts-ignore
-      this.$refs.layerPopup.remove()
-    }
-  }
-})
-</script>
 <style lang="scss" scoped>
 .popup-contents {
   display: flex;

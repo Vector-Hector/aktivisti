@@ -1,9 +1,7 @@
-import { defineComponent, inject } from 'vue'
-import { MapInject } from 'src/map/Map.vue'
+import { computed, inject } from 'vue'
+import { MapKey } from 'src/types/keys'
 
-export default defineComponent({
-  name: 'InjectMapMixin',
-  computed: {
-    map: () => inject(MapInject)?.value
-  }
-})
+export function useInjectMapMixin() {
+  const map = computed(() => inject(MapKey)?.value)
+  return { map }
+}

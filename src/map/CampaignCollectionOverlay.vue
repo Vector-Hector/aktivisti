@@ -2,13 +2,13 @@
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { CampaignGeometriesDto } from 'src/api/model/CampaignGeometriesDto'
 import { Feature, FeatureCollection, Geometry } from 'geojson'
-import { useMap } from 'src/map/Map.vue'
 import { apiClient } from 'src/api/ApiClient'
 import { CampaignGeometryCollectionsDto } from 'src/api/model/CampaignGeometryCollectionsDto'
 import { uuidv4 } from 'src/utils/uuid'
 import { bbox } from '@turf/turf'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import GeometryPopup from 'src/map/popup/layerPopups/GeometryPopup.vue'
+import { useMap } from 'src/map/MapUtils'
 
 interface Props {
   /**
@@ -39,7 +39,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const map = useMap()
-const geometryPopup = ref(null)
+const geometryPopup = ref<InstanceType<typeof GeometryPopup> | null>(null)
 let overlayIds: string[] = []
 let hoveredGeometry = {
   layerId: null as string | null,
@@ -239,10 +239,8 @@ function handleGeometryMouseOver(e: any): void {
   if (e.features?.length > 0) {
     const { properties, id: layerId, source: sourceId } = e.features?.[0]
     const metadata = JSON.parse(properties?.raw_metadata)
-    // @ts-ignore
-    geometryPopup.value.remove()
-    // @ts-ignore
-    geometryPopup.value.showPopup(metadata, e.lngLat)
+    geometryPopup.value?.remove()
+    geometryPopup.value?.showPopup(metadata, e.lngLat)
     if (hoveredGeometry.sourceId !== null && hoveredGeometry.layerId !== null) {
       map.value.setFeatureState(
         { source: hoveredGeometry.sourceId, id: hoveredGeometry.layerId },
@@ -276,8 +274,7 @@ function handleGeometryLeave(): void {
     layerId: null,
     sourceId: null
   }
-  // @ts-ignore
-  geometryPopup.value.remove()
+  geometryPopup.value?.remove()
 }
 
 /**

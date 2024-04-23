@@ -1,3 +1,39 @@
+<!--FIXME(peter) 2023/12/12 The composition API doesn't support `beforeRouteEnter` so far so this a workaround
+      see https://github.com/vuejs/rfcs/discussions/302-->
+<script lang="ts">
+import { apiClient } from 'src/api/ApiClient'
+import { uiStore } from 'src/store/UiStore'
+
+export default {
+  async beforeRouteEnter(to, from, next) {
+    const { officeId } = to.params
+    const officeResponse = await apiClient.offices.get(officeId.toString())
+    next((vm) => {
+      const office = officeResponse.payload.data
+      vm.setOffice(office)
+
+      uiStore.updateActiveElements({
+        office: office.name
+      })
+    })
+  }
+}
+</script>
+
+<script setup lang="ts">
+import { useOfficeDetailMixin } from 'pages/office-map/detail/OfficeDetailMixin'
+import { QScrollArea } from 'quasar'
+import { OfficeDto } from 'src/api/model/OfficeDto'
+
+const { office } = useOfficeDetailMixin()
+
+const setOffice = (officeNew: OfficeDto) => {
+  office.value = officeNew
+}
+
+defineExpose({ setOffice })
+</script>
+
 <template>
   <QScrollArea class="d-flex flex-fill" v-if="office">
     <div class="container q-gutter-y-md q-py-sm">
@@ -57,34 +93,6 @@
     </div>
   </QScrollArea>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
-import { apiClient } from 'src/api/ApiClient'
-import OfficeDetailMixin from 'pages/office-map/detail/OfficeDetailMixin'
-import { uiStore } from 'src/store/UiStore'
-import { QScrollArea } from 'quasar'
-
-export default defineComponent({
-  name: 'OfficeDetail',
-  components: {
-    QScrollArea
-  },
-  mixins: [OfficeDetailMixin],
-  async beforeRouteEnter(to, from, next) {
-    const { officeId } = to.params
-    const officeResponse = await apiClient.offices.get(officeId.toString())
-    next((vm) => {
-      const office = officeResponse.payload.data
-      // @ts-ignore
-      vm.office = office
-
-      uiStore.updateActiveElements({
-        office: office.name
-      })
-    })
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 .office-details {
