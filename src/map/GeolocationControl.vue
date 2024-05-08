@@ -139,7 +139,9 @@ function onLocateClicked(position: LocationDto | undefined, tracking = false) {
 async function startWatch() {
   if (!locationWatcher.value) {
     locationWatcher.value = await Geolocation.watchPosition(
-      {},
+      {
+        enableHighAccuracy: true
+      },
       (position, err) => updatePosition(position, err)
     )
   }
