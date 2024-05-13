@@ -1,5 +1,5 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 import { uiStore } from 'src/store/UiStore'
 import { userStore } from 'src/store/UserStore'
 import { getAuthStore } from 'src/store/AuthStore'
@@ -9,12 +9,10 @@ import {
   ionCalendarClearOutline,
   ionCalendarOutline,
   ionClose,
-  ionCreateOutline,
   ionExitOutline,
   ionLogIn,
   ionMenu,
   ionPersonCircleOutline,
-  ionPersonOutline,
   ionPeopleOutline,
   ionHomeOutline,
   ionPersonAddOutline,
@@ -22,86 +20,55 @@ import {
   ionStatsChartOutline
 } from '@quasar/extras/ionicons-v5'
 import { QBtn, QDrawer, QIcon, QScrollArea } from 'quasar'
-import { farCalendarPlus, farIdCard } from '@quasar/extras/fontawesome-v5'
+import { farIdCard } from '@quasar/extras/fontawesome-v5'
+import { useRouter } from 'vue-router'
 
+const $router = useRouter()
 const authStore = getAuthStore()
 
-export default defineComponent({
-  name: 'NavigationSidebar',
-  components: {
-    OpenInvitationsBadge,
-    MenuLink,
-    QBtn,
-    QDrawer,
-    QIcon,
-    QScrollArea
+const version = computed(() => {
+  return process.env.APP_VERSION!
+})
+const sidebarIcon = computed(() => {
+  return sidebarExpanded.value ? ionClose : ionMenu
+})
+const isLoggedIn = computed(() => {
+  return authStore.isLoggedIn()
+})
+const hasManagePermission = computed(() => {
+  return userStore.hasAtLeastOneManagePermission()
+})
+const isTeamCaptainOrLocalCoordinator = computed(() => {
+  return userStore.isTeamCaptainOrLocalCoordinator()
+})
+const isAdminOrGlobalCoordinator = computed(() => {
+  return userStore.isAdminOrGlobalCoordinator()
+})
+const userName = computed(() => {
+  return userStore.getState().user?.username
+})
+const userFullname = computed(() => {
+  const first_name = userStore.getState().user?.first_name
+  const last_name = userStore.getState().user?.last_name
+  return [first_name, last_name].filter(Boolean).join(' ')
+})
+const sidebarExpanded = computed({
+  get(): boolean {
+    return uiStore.getState().sidebarExpanded
   },
-  data() {
-    return {
-      farCalendarPlus,
-      farIdCard,
-      ionCalendarOutline,
-      ionCalendarClearOutline,
-      ionClose,
-      ionCreateOutline,
-      ionExitOutline,
-      ionHelpCircleOutline,
-      ionHomeOutline,
-      ionLogIn,
-      ionPersonCircleOutline,
-      ionPersonOutline,
-      ionPeopleOutline,
-      ionPersonAddOutline,
-      ionStatsChartOutline
-    }
-  },
-  computed: {
-    version(): string {
-      return process.env.APP_VERSION!
-    },
-    sidebarIcon(): string {
-      return this.sidebarExpanded ? ionClose : ionMenu
-    },
-    isLoggedIn() {
-      return authStore.isLoggedIn()
-    },
-    hasManagePermission() {
-      return userStore.hasAtLeastOneManagePermission()
-    },
-    isTeamCaptainOrLocalCoordinator() {
-      return userStore.isTeamCaptainOrLocalCoordinator()
-    },
-    isAdminOrGlobalCoordinator() {
-      return userStore.isAdminOrGlobalCoordinator()
-    },
-    userName() {
-      return userStore.getState().user?.username
-    },
-    userFullname() {
-      const first_name = userStore.getState().user?.first_name
-      const last_name = userStore.getState().user?.last_name
-      return [first_name, last_name].filter(Boolean).join(' ')
-    },
-    sidebarExpanded: {
-      get(): boolean {
-        return uiStore.getState().sidebarExpanded
-      },
-      set(value: boolean) {
-        uiStore.toggleSidebar(value)
-      }
-    },
-    helpUrl(): string {
-      return process.env.APP_HELP_URL as string
-    }
-  },
-  methods: {
-    logout() {
-      void authStore.logout()
-      void userStore.reset()
-      void this.$router.push('/')
-    }
+  set(value: boolean) {
+    uiStore.toggleSidebar(value)
   }
 })
+const helpUrl = computed(() => {
+  return process.env.APP_HELP_URL as string
+})
+
+function logout() {
+  void authStore.logout()
+  void userStore.reset()
+  void $router.push('/')
+}
 </script>
 
 <template>
