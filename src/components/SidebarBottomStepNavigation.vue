@@ -1,3 +1,25 @@
+<script setup lang="ts">
+import {
+  ionCheckmark,
+  ionChevronBack,
+  ionChevronForward
+} from '@quasar/extras/ionicons-v5'
+import { QBtn } from 'quasar'
+
+interface Props {
+  last?: boolean
+}
+const props = withDefaults(defineProps<Props>(), {
+  last: () => false
+})
+
+interface Emits {
+  (e: 'forward'): void
+  (e: 'back'): void
+  (e: 'close'): void
+}
+const emit = defineEmits<Emits>()
+</script>
 <template>
   <div class="sidebar-bottom-navigation row">
     <div class="col left">
@@ -8,7 +30,7 @@
         color="primary"
         label="Zurück"
         :icon="ionChevronBack"
-        @click="$emit('back')"
+        @click="emit('back')"
       />
     </div>
     <div class="col middle">
@@ -18,7 +40,7 @@
         dense
         color="primary"
         label="Schließen"
-        @click="$emit('close')"
+        @click="emit('close')"
       />
     </div>
     <div class="col right">
@@ -26,43 +48,13 @@
         class="button"
         dense
         color="primary"
-        :label="last ? 'Fertig' : 'Weiter'"
-        :icon-right="last ? ionCheckmark : ionChevronForward"
-        @click="$emit('forward')"
+        :label="props.last ? 'Fertig' : 'Weiter'"
+        :icon-right="props.last ? ionCheckmark : ionChevronForward"
+        @click="emit('forward')"
       />
     </div>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import {
-  ionCheckmark,
-  ionChevronBack,
-  ionChevronForward
-} from '@quasar/extras/ionicons-v5'
-import { QBtn } from 'quasar'
-
-export default defineComponent({
-  name: 'SidebarBottomStepNavigation',
-  components: {
-    QBtn
-  },
-  props: {
-    last: {
-      type: Boolean as PropType<boolean>,
-      default: false
-    }
-  },
-  emits: ['forward', 'back', 'close'],
-  data() {
-    return {
-      ionChevronBack,
-      ionChevronForward,
-      ionCheckmark
-    }
-  }
-})
-</script>
 <style lang="scss" scoped>
 .sidebar-bottom-navigation {
   background: $grey-3;
