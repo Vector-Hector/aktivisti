@@ -1,3 +1,115 @@
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { EventMetricReportDto } from 'src/api/model/EventMetricReportDto'
+import { EventMetricDto } from 'src/api/model/EventMetricDto'
+import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
+import { ionEllipse } from '@quasar/extras/ionicons-v5'
+import { QIcon, QPage, QScrollArea, QTable, QTd } from 'quasar'
+import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
+import { apiClient } from 'src/api/ApiClient'
+
+const { event, eventAreas } = useEventDetailStore()
+
+const columns = ref<any[]>([
+  {
+    name: 'areaName',
+    field: 'areaName',
+    label: 'Gebiet',
+    align: 'left'
+  }
+])
+
+const rows = ref<any[]>([])
+
+onMounted(async () => {
+  const { metrics, records } = await fetchMetricRecords()
+  //Only create report columns for metrics available for the event
+  const eventMetricIds = records.map(({ metric }) => metric)
+  for (const { id: metricId, name } of metrics.filter(({ id }) =>
+    eventMetricIds.includes(id)
+  )) {
+    columns.value.push({
+      name: metricId,
+      field: metricId,
+      label: name
+    })
+  }
+  columns.value.push(
+    {
+      name: 'completedAddresses',
+      field: 'completedAddresses',
+      label: 'Besuchte Adressen'
+    },
+    {
+      name: 'overallAddresses',
+      field: 'overallAddresses',
+      label: 'Adressen im Gebiet'
+    },
+    {
+      name: 'createdLeads',
+      field: 'createdLeads',
+      label: 'Gewonnene Kontakte'
+    }
+  )
+
+  const summarizedCountsRow: any = {
+    areaName: 'Gesamt',
+    overallAddresses: 0,
+    completedAddresses: 0,
+    createdLeads: 0
+  }
+  for (const { id, color, name } of eventAreas.value) {
+    if (id) {
+      const {
+        completed_addresses,
+        overall_addresses,
+        counts_per_metric,
+        created_leads
+      } = await fetchAreaMetricsReports(id)
+      const row: any = {
+        areaName: name,
+        areaColor: color,
+        overallAddresses: overall_addresses,
+        completedAddresses: completed_addresses,
+        createdLeads: created_leads
+      }
+      summarizedCountsRow.overallAddresses += overall_addresses
+      summarizedCountsRow.completedAddresses += completed_addresses
+      summarizedCountsRow.createdLeads += created_leads
+      for (const { id: metricId } of metrics) {
+        const countOfMetric =
+          counts_per_metric.find(({ metric }) => metric === metricId)?.count ||
+          0
+        row[metricId] = countOfMetric
+        summarizedCountsRow[metricId] =
+          (summarizedCountsRow[metricId] | 0) + countOfMetric
+      }
+      rows.value.push(row)
+    }
+  }
+  rows.value.push(summarizedCountsRow)
+})
+
+async function fetchAreaMetricsReports(
+  areaId: number
+): Promise<EventMetricReportDto> {
+  const response = await apiClient.eventAreas.report(areaId)
+  return response.payload.data
+}
+async function fetchMetricRecords(): Promise<{
+  records: EventMetricRecordDto[]
+  metrics: EventMetricDto[]
+}> {
+  const response = await apiClient.eventMetricRecords.list(
+    { event: event.value.id },
+    ['metric']
+  )
+  return {
+    records: response.payload.data,
+    metrics: response.payload.embedded.metric
+  }
+}
+</script>
 <template>
   <QScrollArea class="flex flex-fill">
     <QPage>
@@ -29,135 +141,6 @@
     </QPage>
   </QScrollArea>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue'
-import { EventMetricReportDto } from 'src/api/model/EventMetricReportDto'
-import { EventMetricDto } from 'src/api/model/EventMetricDto'
-import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
-import { ionEllipse } from '@quasar/extras/ionicons-v5'
-import { QIcon, QPage, QScrollArea, QTable, QTd } from 'quasar'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
-
-export default defineComponent({
-  name: 'EventDetailReport',
-  components: {
-    QIcon,
-    QPage,
-    QScrollArea,
-    QTable,
-    QTd
-  },
-  setup() {
-    const { event, eventAreas } = useEventDetailStore()
-    return { event, eventAreas }
-  },
-  data() {
-    return {
-      ionEllipse,
-      filter: '',
-      columns: [
-        {
-          name: 'areaName',
-          field: 'areaName',
-          label: 'Gebiet',
-          align: 'left'
-        }
-      ] as any[],
-      rows: [] as any
-    }
-  },
-  async created() {
-    const { metrics, records } = await this.fetchMetricRecords()
-    //Only create report columns for metrics available for the event
-    const eventMetricIds = records.map(({ metric }) => metric)
-    for (const { id: metricId, name } of metrics.filter(({ id }) =>
-      eventMetricIds.includes(id)
-    )) {
-      this.columns.push({
-        name: metricId,
-        field: metricId,
-        label: name
-      })
-    }
-    this.columns.push(
-      {
-        name: 'completedAddresses',
-        field: 'completedAddresses',
-        label: 'Besuchte Adressen'
-      },
-      {
-        name: 'overallAddresses',
-        field: 'overallAddresses',
-        label: 'Adressen im Gebiet'
-      },
-      {
-        name: 'createdLeads',
-        field: 'createdLeads',
-        label: 'Gewonnene Kontakte'
-      }
-    )
-
-    const summarizedCountsRow: any = {
-      areaName: 'Gesamt',
-      overallAddresses: 0,
-      completedAddresses: 0,
-      createdLeads: 0
-    }
-    for (const { id, color, name } of this.eventAreas) {
-      if (id) {
-        const {
-          completed_addresses,
-          overall_addresses,
-          counts_per_metric,
-          created_leads
-        } = await this.fetchAreaMetricsReports(id)
-        const row: any = {
-          areaName: name,
-          areaColor: color,
-          overallAddresses: overall_addresses,
-          completedAddresses: completed_addresses,
-          createdLeads: created_leads
-        }
-        summarizedCountsRow.overallAddresses += overall_addresses
-        summarizedCountsRow.completedAddresses += completed_addresses
-        summarizedCountsRow.createdLeads += created_leads
-        for (const { id: metricId } of metrics) {
-          const countOfMetric =
-            counts_per_metric.find(({ metric }) => metric === metricId)
-              ?.count || 0
-          row[metricId] = countOfMetric
-          summarizedCountsRow[metricId] =
-            (summarizedCountsRow[metricId] | 0) + countOfMetric
-        }
-        this.rows.push(row)
-      }
-    }
-    this.rows.push(summarizedCountsRow)
-  },
-  methods: {
-    async fetchAreaMetricsReports(
-      areaId: number
-    ): Promise<EventMetricReportDto> {
-      const response = await this.$apiClient.eventAreas.report(areaId)
-      return response.payload.data
-    },
-    async fetchMetricRecords(): Promise<{
-      records: EventMetricRecordDto[]
-      metrics: EventMetricDto[]
-    }> {
-      const response = await this.$apiClient.eventMetricRecords.list(
-        { event: this.event.id },
-        ['metric']
-      )
-      return {
-        records: response.payload.data,
-        metrics: response.payload.embedded.metric
-      }
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 @import 'src/css/_utils.scss';
