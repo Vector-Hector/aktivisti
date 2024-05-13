@@ -1,3 +1,63 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { EventDto } from 'src/api/model/EventDto'
+import Map from 'src/map/Map.vue'
+import { EventAreaDto, eventAreaToFeature } from 'src/api/model/EventAreaDto'
+import FeatureLayer from 'src/map/AreaFeatureLayer.vue'
+import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import { bbox, circle } from '@turf/turf'
+import { QBtn, QIcon } from 'quasar'
+import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { ionArrowBack, ionEllipse, ionPrint } from '@quasar/extras/ionicons-v5'
+import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
+import { EventMetricDto } from 'src/api/model/EventMetricDto'
+import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
+import EventMarker from 'components/EventMarker.vue'
+import { useRouter } from 'vue-router'
+
+interface Props {
+  event: EventDto
+  eventAreas: EventAreaDto[]
+  metrics: EventMetricDto[]
+  metricRecords: EventMetricRecordDto[]
+}
+const props = defineProps<Props>()
+
+const $router = useRouter()
+
+const areaFeatures = computed(() => {
+  return props.eventAreas.map(eventAreaToFeature)
+})
+const zoomBox = computed(() => {
+  const meetingPoint = circle(
+    [props.event.location.lng, props.event.location.lat],
+    0.2
+  )
+  return (
+    areaFeatures.value.length > 0
+      ? bbox({
+          type: 'FeatureCollection',
+          features: [...areaFeatures.value, meetingPoint]
+        })
+      : bbox(meetingPoint)
+  ) as BBox2d
+})
+
+function countAddresses(areaDetails: AreaDetailsDto) {
+  return areaDetails.streets.reduce((acc, street) => {
+    return acc + street.addresses.length
+  }, 0)
+}
+function boundingBoxOfArea(area: EventAreaDto): BBox2d {
+  return bbox({
+    type: 'FeatureCollection',
+    features: [eventAreaToFeature(area)]
+  }) as BBox2d
+}
+function print() {
+  window.print()
+}
+</script>
 <template>
   <div class="d2d-event-printout">
     <QBtn
@@ -40,7 +100,9 @@
           />
           <div class="area-label">
             <div>{{ area.name }}</div>
-            <div>{{ countAddresses(area.area_details) }} Adressen</div>
+            <div v-if="area.area_details">
+              {{ countAddresses(area.area_details) }} Adressen
+            </div>
           </div>
         </div>
       </div>
@@ -59,7 +121,9 @@
             }}<br />
             Einsatzname: {{ event.name }}<br />
             Datum: {{ $utils.dateFormat(event.start_date) }}<br />
-            Anzahl Adressen: {{ countAddresses(area.area_details) }}
+            <template v-if="area.area_details">
+              Anzahl Adressen: {{ countAddresses(area.area_details) }}
+            </template>
           </p>
           <Map
             class="area-map"
@@ -112,99 +176,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { EventDto } from 'src/api/model/EventDto'
-import Map from 'src/map/Map.vue'
-import { Feature } from 'geojson'
-import { EventAreaDto, eventAreaToFeature } from 'src/api/model/EventAreaDto'
-import FeatureLayer from 'src/map/AreaFeatureLayer.vue'
-import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
-import { bbox, circle } from '@turf/turf'
-import { QBtn, QIcon } from 'quasar'
-import { eventTypeOptions } from 'src/api/model/EventTypes'
-import { ionArrowBack, ionEllipse, ionPrint } from '@quasar/extras/ionicons-v5'
-import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
-import { EventMetricDto } from 'src/api/model/EventMetricDto'
-import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
-import EventMarker from 'components/EventMarker.vue'
-
-export default defineComponent({
-  name: 'MetricBasedPrintout',
-  components: {
-    EventMarker,
-    Map,
-    FeatureLayer,
-    QIcon,
-    QBtn
-  },
-  props: {
-    event: {
-      type: Object as PropType<EventDto>,
-      required: true
-    },
-    eventAreas: {
-      type: Array as PropType<EventAreaDto[]>,
-      required: true
-    },
-    metrics: {
-      type: Array as PropType<EventMetricDto[]>,
-      required: true
-    },
-    metricRecords: {
-      type: Array as PropType<EventMetricRecordDto[]>,
-      required: true
-    }
-  },
-  data() {
-    return {
-      eventTypeOptions,
-      ionEllipse,
-      ionArrowBack,
-      ionPrint
-    }
-  },
-  computed: {
-    areaFeatures(): Feature[] {
-      return this.eventAreas.map(eventAreaToFeature)
-    },
-    zoomBox(): BBox2d {
-      const meetingPoint = circle(
-        [this.event.location.lng, this.event.location.lat],
-        0.2
-      )
-      return (
-        this.areaFeatures.length > 0
-          ? bbox({
-              type: 'FeatureCollection',
-              features: [...this.areaFeatures, meetingPoint]
-            })
-          : bbox(meetingPoint)
-      ) as BBox2d
-    }
-  },
-  methods: {
-    countAddresses(areaDetails: AreaDetailsDto) {
-      return areaDetails.streets.reduce((acc, street) => {
-        return acc + street.addresses.length
-      }, 0)
-    },
-    eventAreaToFeature(area: EventAreaDto) {
-      return eventAreaToFeature(area)
-    },
-    boundingBoxOfArea(area: EventAreaDto): BBox2d {
-      return bbox({
-        type: 'FeatureCollection',
-        features: [eventAreaToFeature(area)]
-      }) as BBox2d
-    },
-    print() {
-      window.print()
-    }
-  }
-})
-</script>
 
 <style lang="scss" scoped>
 .d2d-event-printout {

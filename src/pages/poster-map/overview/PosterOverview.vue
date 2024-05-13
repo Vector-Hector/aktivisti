@@ -1,3 +1,62 @@
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import InfiniteList from 'components/InfiniteList.vue'
+import { PosterDto } from 'src/api/model/PosterDto'
+import PosterListItem from 'components/PosterListItem.vue'
+import useOverviewMixin from 'src/utils/useOverviewMixin'
+import { apiClient } from 'src/api/ApiClient'
+import { posterOverviewStore } from 'src/store/PosterOverviewStore'
+import { PosterFilterParams } from 'src/api/params/PosterFilterParams'
+import PosterFilter from 'components/PosterFilter.vue'
+import { CampaignDto } from 'src/api/model/CampaignDto'
+import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
+import { useRouter } from 'vue-router'
+
+const campaigns = ref<CampaignDto[]>([])
+const subAssociations = ref<SubAssociationDto[]>([])
+
+const $router = useRouter()
+const {
+  fetchMoreItems: fetchMorePosters,
+  filterParams,
+  itemHoveredOver: posterHoveredOver,
+  items: posters,
+  updateFilterParams
+} = useOverviewMixin<PosterDto, PosterFilterParams>(
+  posterOverviewStore,
+  apiClient.posters
+)
+
+onMounted(async () => {
+  await getCampaigns()
+  await getSubAssociations()
+})
+
+async function loadData(index: number, done: () => void) {
+  await fetchMorePosters()
+  done()
+}
+function handleMouseOver(poster: PosterDto) {
+  posterHoveredOver.value = poster
+}
+async function getCampaigns() {
+  const response = await apiClient.campaigns.list()
+  campaigns.value = response.payload.data
+}
+async function getSubAssociations() {
+  subAssociations.value = (await apiClient.subAssociations.list()).payload.data
+}
+function goToPoster(poster: PosterDto) {
+  void $router.push({
+    name: 'event-detail-poster-detail',
+    params: {
+      posterId: poster.id,
+      eventId: poster.event,
+      areaId: poster.area ?? 'undefined'
+    }
+  })
+}
+</script>
 <template>
   <div class="container poster-overview">
     <PosterFilter
@@ -22,81 +81,6 @@
     </InfiniteList>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
-import InfiniteList from 'components/InfiniteList.vue'
-import { PosterDto } from 'src/api/model/PosterDto'
-import PosterListItem from 'components/PosterListItem.vue'
-import useOverviewMixin from 'src/utils/useOverviewMixin'
-import { apiClient } from 'src/api/ApiClient'
-import { posterOverviewStore } from 'src/store/PosterOverviewStore'
-import { PosterFilterParams } from 'src/api/params/PosterFilterParams'
-import PosterFilter from 'components/PosterFilter.vue'
-import { CampaignDto } from 'src/api/model/CampaignDto'
-import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
-
-export default defineComponent({
-  name: 'PosterOverview',
-  components: { PosterListItem, InfiniteList, PosterFilter },
-  setup() {
-    const {
-      fetchMoreItems: fetchMorePosters,
-      filterParams,
-      itemHoveredOver: posterHoveredOver,
-      items: posters,
-      updateFilterParams
-    } = useOverviewMixin<PosterDto, PosterFilterParams>(
-      posterOverviewStore,
-      apiClient.posters
-    )
-    return {
-      fetchMorePosters,
-      filterParams,
-      posterHoveredOver,
-      posters,
-      updateFilterParams
-    }
-  },
-  async created() {
-    await this.getCampaigns()
-    await this.getSubAssociations()
-  },
-  data() {
-    return {
-      campaigns: [] as CampaignDto[],
-      subAssociations: [] as SubAssociationDto[]
-    }
-  },
-  methods: {
-    async loadData(index: number, done: () => void) {
-      await this.fetchMorePosters()
-      done()
-    },
-    handleMouseOver(poster: PosterDto) {
-      this.posterHoveredOver = poster
-    },
-    async getCampaigns() {
-      const response = await this.$apiClient.campaigns.list()
-      this.campaigns = response.payload.data
-    },
-    async getSubAssociations() {
-      this.subAssociations = (
-        await this.$apiClient.subAssociations.list()
-      ).payload.data
-    },
-    goToPoster(poster: PosterDto) {
-      void this.$router.push({
-        name: 'event-detail-poster-detail',
-        params: {
-          posterId: poster.id,
-          eventId: poster.event,
-          areaId: poster.area ?? 'undefined'
-        }
-      })
-    }
-  }
-})
-</script>
 <style lang="scss" scoped>
 .poster-overview {
   height: 100%;

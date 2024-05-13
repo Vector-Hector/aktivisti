@@ -1,3 +1,26 @@
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { AppSessionDto, AppSessionType } from 'src/api/model/AppSessionDto'
+import { QBtn, QIcon, QItem, QItemLabel, QItemSection, QList } from 'quasar'
+import {
+  ionDesktopOutline,
+  ionPhonePortraitOutline
+} from '@quasar/extras/ionicons-v5'
+import { apiClient } from 'src/api/ApiClient'
+
+const sessions = ref<AppSessionDto[]>([])
+
+onMounted(async () => {
+  await refreshSessions()
+})
+async function revokeSession(sessionId: string) {
+  await apiClient.appSessions.delete(sessionId.toString())
+  await refreshSessions()
+}
+async function refreshSessions() {
+  sessions.value = (await apiClient.appSessions.list()).payload.data
+}
+</script>
 <template>
   <QList separator>
     <QItem v-for="session in sessions" :key="session.id">
@@ -38,47 +61,6 @@
     </QItem>
   </QList>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
-import { AppSessionDto, AppSessionType } from 'src/api/model/AppSessionDto'
-import { QBtn, QIcon, QItem, QItemLabel, QItemSection, QList } from 'quasar'
-import {
-  ionDesktopOutline,
-  ionPhonePortraitOutline
-} from '@quasar/extras/ionicons-v5'
-
-export default defineComponent({
-  name: 'AppSessions',
-  components: {
-    QBtn,
-    QIcon,
-    QItem,
-    QItemLabel,
-    QItemSection,
-    QList
-  },
-  data() {
-    return {
-      AppSessionType,
-      ionPhonePortraitOutline,
-      ionDesktopOutline,
-      sessions: [] as AppSessionDto[]
-    }
-  },
-  async created() {
-    await this.refreshSessions()
-  },
-  methods: {
-    async revokeSession(sessionId: number) {
-      await this.$apiClient.appSessions.delete(sessionId.toString())
-      await this.refreshSessions()
-    },
-    async refreshSessions() {
-      this.sessions = (await this.$apiClient.appSessions.list()).payload.data
-    }
-  }
-})
-</script>
 <style lang="scss" scoped>
 .current-session-info {
   color: #6ab173;

@@ -1,17 +1,14 @@
-<template>
-  <div class="error row inline no-outline" v-if="error">
-    {{ error }}
-  </div>
-</template>
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
+<script setup lang="ts">
+interface Props {
+  error?: string
+}
 
-export default defineComponent({
-  props: {
-    error: {
-      type: String as PropType<string>,
-      default: ''
-    }
-  }
+const props = withDefaults(defineProps<Props>(), {
+  error: () => ''
 })
 </script>
+<template>
+  <div class="error row inline no-outline" v-if="props.error">
+    {{ props.error }}
+  </div>
+</template>
