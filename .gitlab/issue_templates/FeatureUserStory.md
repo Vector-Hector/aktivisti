@@ -1,4 +1,4 @@
-<!-- ⛔ blocked by: -->
+<!-- :no_entry_sign: blocked by: -->
 
 ---
 
