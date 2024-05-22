@@ -10,6 +10,7 @@ import { PosterFilterParams } from 'src/api/params/PosterFilterParams'
 import PosterFilter from 'components/PosterFilter.vue'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
+import { QScrollArea } from 'quasar'
 import { useRouter } from 'vue-router'
 
 const campaigns = ref<CampaignDto[]>([])
@@ -59,26 +60,28 @@ function goToPoster(poster: PosterDto) {
 </script>
 <template>
   <div class="container poster-overview">
-    <PosterFilter
-      :filter-params="filterParams"
-      @update:filter-params="updateFilterParams"
-      :campaigns="campaigns"
-      :sub-associations="subAssociations"
-    />
-    <InfiniteList
-      :items="posters"
-      :disable="true"
-      @load="loadData"
-      class="poster-list"
-    >
-      <template v-slot:item="{ item: poster }">
-        <PosterListItem
-          :poster="poster"
-          @mouseover="() => handleMouseOver(poster)"
-          @click="goToPoster(poster)"
-        />
-      </template>
-    </InfiniteList>
+    <QScrollArea class="scroll-area">
+      <PosterFilter
+        :filter-params="filterParams"
+        @update:filter-params="updateFilterParams"
+        :campaigns="campaigns"
+        :sub-associations="subAssociations"
+      />
+      <InfiniteList
+        :items="posters"
+        :disable="true"
+        @load="loadData"
+        class="poster-list"
+      >
+        <template v-slot:item="{ item: poster }">
+          <PosterListItem
+            :poster="poster"
+            @mouseover="() => handleMouseOver(poster)"
+            @click="goToPoster(poster)"
+          />
+        </template>
+      </InfiniteList>
+    </QScrollArea>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -87,6 +90,10 @@ function goToPoster(poster: PosterDto) {
   display: flex;
   flex-direction: column;
   margin-top: 1rem;
+}
+
+.scroll-area {
+  height: 100%;
 }
 
 .poster-list {
