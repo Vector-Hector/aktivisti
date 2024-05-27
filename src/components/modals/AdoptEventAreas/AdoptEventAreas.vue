@@ -98,7 +98,10 @@ function handleAreaClick(eventAreas: EventAreaDto[]) {
 }
 
 const qCardClass = computed(() => {
-  if (page.value === Page.RECENT_EVENT_AREAS) {
+  if (
+    page.value === Page.RECENT_EVENT_AREAS ||
+    page.value === Page.SELECT_AREA_SET
+  ) {
     return 'higher-content'
   }
   if (page.value === Page.CAMPAIGN_COLLECTIONS) {

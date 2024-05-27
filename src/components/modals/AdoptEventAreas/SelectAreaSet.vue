@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { CampaignGeometryCollectionsDto } from 'src/api/model/CampaignGeometryCollectionsDto'
 import { CampaignDto } from 'src/api/model/CampaignDto'
-import { QList, QItem, QItemLabel, QItemSection, QCardSection } from 'quasar'
+import {
+  QList,
+  QItem,
+  QItemLabel,
+  QItemSection,
+  QCardSection,
+  QScrollArea
+} from 'quasar'
 
 interface Props {
   collections: CampaignGeometryCollectionsDto[] | null
@@ -38,39 +45,42 @@ function handleCampaignCollectionClick(
     <span class="description"> Von wo möchtest du Gebiete übernehmen? </span>
   </QCardSection>
   <QCardSection class="section">
-    <QList>
-      <QItem clickable @click="handleSearchEventAreaClick">
-        <QItemSection>
-          <QItemLabel>
-            <b>Nach Gebietsnamen suchen</b>
-          </QItemLabel>
-        </QItemSection>
-      </QItem>
-      <QItem clickable @click="handleRecentEventAreasClick">
-        <QItemSection>
-          <QItemLabel>
-            <b>Aus vergangenen Aktionen</b>
-          </QItemLabel>
-        </QItemSection>
-      </QItem>
-      <QItem
-        clickable
-        v-for="collection in props.collections"
-        :key="collection.id"
-        @click="() => handleCampaignCollectionClick(collection)"
-      >
-        <QItemSection>
-          <QItemLabel>
-            <b>{{ collection.name }}</b>
-          </QItemLabel>
-          <QItemLabel>
-            {{
-              props.campaigns.find(({ id }) => id === collection.campaign).name
-            }}
-          </QItemLabel>
-        </QItemSection>
-      </QItem>
-    </QList>
+    <QScrollArea class="scroll-area">
+      <QList>
+        <QItem clickable @click="handleSearchEventAreaClick">
+          <QItemSection>
+            <QItemLabel>
+              <b>Nach Gebietsnamen suchen</b>
+            </QItemLabel>
+          </QItemSection>
+        </QItem>
+        <QItem clickable @click="handleRecentEventAreasClick">
+          <QItemSection>
+            <QItemLabel>
+              <b>Aus vergangenen Aktionen</b>
+            </QItemLabel>
+          </QItemSection>
+        </QItem>
+        <QItem
+          clickable
+          v-for="collection in props.collections"
+          :key="collection.id"
+          @click="() => handleCampaignCollectionClick(collection)"
+        >
+          <QItemSection>
+            <QItemLabel>
+              <b>{{ collection.name }}</b>
+            </QItemLabel>
+            <QItemLabel>
+              {{
+                props.campaigns.find(({ id }) => id === collection.campaign)
+                  .name
+              }}
+            </QItemLabel>
+          </QItemSection>
+        </QItem>
+      </QList>
+    </QScrollArea>
   </QCardSection>
 </template>
 
@@ -81,8 +91,12 @@ function handleCampaignCollectionClick(
   // TODO(peter): Find a better solution
   //  This seams to be kind of a bug of quasar see https://github.com/quasarframework/quasar/issues/5926
   //  The scroll area is not displayed the right way in combination with QDialog
-  //height: 0;
+  height: 0;
   flex-grow: 1;
+}
+
+.scroll-area {
+  height: 100%;
 }
 
 .description {
