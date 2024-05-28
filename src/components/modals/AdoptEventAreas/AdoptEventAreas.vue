@@ -66,16 +66,11 @@ onMounted(async () => {
 async function fetchCollections(
   campaignIds: number[]
 ): Promise<CampaignGeometryCollectionsDto[]> {
-  const collections: CampaignGeometryCollectionsDto[] = []
-  for (const id of campaignIds) {
-    const campaignCollections = (
+  return (
       await apiClient.campaignGeometryCollections.list({
-        campaign: id
+      campaign: campaignIds
       })
     ).payload.data
-    collections.push(...campaignCollections)
-  }
-  return collections
 }
 
 function handleSearchEventAreasClick() {

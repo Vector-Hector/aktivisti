@@ -49,16 +49,11 @@ onMounted(async () => {
 async function fetchCollections(
   campaignIds: number[]
 ): Promise<CampaignGeometryCollectionsDto[]> {
-  const collections = []
-  for (const id of campaignIds) {
-    const campaignCollections = (
-      await apiClient.campaignGeometryCollections.list({
-        campaign: id
-      })
-    ).payload.data
-    collections.push(...campaignCollections)
-  }
-  return collections
+  return (
+    await apiClient.campaignGeometryCollections.list({
+      campaign: campaignIds
+    })
+  ).payload.data
 }
 
 defineExpose({
