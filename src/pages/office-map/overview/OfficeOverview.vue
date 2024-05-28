@@ -8,6 +8,7 @@ import { useRouter } from 'vue-router'
 import { inside } from '@turf/turf'
 import { polygonFromBBox } from 'src/utils/geometry'
 import { OfficeGeoJsonFeature } from 'src/api/model/OfficeGeoJsonDto'
+import { QScrollArea } from 'quasar'
 
 const router = useRouter()
 
@@ -51,18 +52,22 @@ function goToOffice(office: OfficeGeoJsonFeature) {
 </script>
 <template>
   <div class="container office-overview">
-    <InfiniteList
-      v-if="visibleItems.length > 0"
-      :items="visibleItems"
-      :disable="maxVisibleItems >= offices.length"
-      @load="addToVisibile"
-      class="office-list"
-    >
-      <template v-slot:item="{ item }">
-        <OfficeListItem :office="item" @click="goToOffice(item)" />
-      </template>
-      <template v-slot:emptyList> Keine DIE LINKE im Gebiet gefunden</template>
-    </InfiniteList>
+    <QScrollArea class="scroll-area">
+      <InfiniteList
+        v-if="visibleItems.length > 0"
+        :items="visibleItems"
+        :disable="maxVisibleItems >= offices.length"
+        @load="addToVisibile"
+        class="office-list"
+      >
+        <template v-slot:item="{ item }">
+          <OfficeListItem :office="item" @click="goToOffice(item)" />
+        </template>
+        <template v-slot:emptyList>
+          Keine DIE LINKE im Gebiet gefunden</template
+        >
+      </InfiniteList>
+    </QScrollArea>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -71,6 +76,10 @@ function goToOffice(office: OfficeGeoJsonFeature) {
   display: flex;
   flex-direction: column;
   margin-top: 1rem;
+}
+
+.scroll-area {
+  height: 100%;
 }
 
 .office-list {
