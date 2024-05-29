@@ -729,6 +729,6 @@ label {
 }
 
 .contain-none {
-  contain: none;
+  contain: none !important;
 }
 </style>
