@@ -3,6 +3,7 @@ export const FACEBOOK_SHARE_URL = 'https://www.facebook.com/sharer/sharer.php'
 export const WHATSAPP_SHARE_URL = 'https://wa.me/'
 export const MAIL_SHARE_URL = 'mailto:'
 export const EVENT_LIST_CHUNK_SIZE = 25
+export const CAMPAIGN_GEOMETRY_COLLECTIONS_CHUNK_SIZE = 25
 export const OFFICE_LIST_CHUNK_SIZE = 35
 export const POLL_INVITATIONS_MS = 20000
 export const CLUSTER_COLOR = '#DF0303'
