@@ -7,12 +7,15 @@ import {
   QItemLabel,
   QItemSection,
   QCardSection,
-  QScrollArea
+  QScrollArea,
+  QInfiniteScroll,
+  QSpinnerDots
 } from 'quasar'
 
 interface Props {
   collections: CampaignGeometryCollectionsDto[] | null
   campaigns: CampaignDto[]
+  disabledCollectionLoading: boolean
 }
 
 interface Emits {
@@ -21,6 +24,11 @@ interface Emits {
   (
     e: 'onCampaignCollectionClick',
     collection: CampaignGeometryCollectionsDto
+  ): void
+  (
+    e: 'loadCollections',
+    index: number,
+    done: (stop?: boolean | undefined) => void
   ): void
 }
 
@@ -46,40 +54,50 @@ function handleCampaignCollectionClick(
   </QCardSection>
   <QCardSection class="section">
     <QScrollArea class="scroll-area">
-      <QList>
-        <QItem clickable @click="handleSearchEventAreaClick">
-          <QItemSection>
-            <QItemLabel>
-              <b>Nach Gebietsnamen suchen</b>
-            </QItemLabel>
-          </QItemSection>
-        </QItem>
-        <QItem clickable @click="handleRecentEventAreasClick">
-          <QItemSection>
-            <QItemLabel>
-              <b>Aus vergangenen Aktionen</b>
-            </QItemLabel>
-          </QItemSection>
-        </QItem>
-        <QItem
-          clickable
-          v-for="collection in props.collections"
-          :key="collection.id"
-          @click="() => handleCampaignCollectionClick(collection)"
-        >
-          <QItemSection>
-            <QItemLabel>
-              <b>{{ collection.name }}</b>
-            </QItemLabel>
-            <QItemLabel>
-              {{
-                props.campaigns.find(({ id }) => id === collection.campaign)
-                  .name
-              }}
-            </QItemLabel>
-          </QItemSection>
-        </QItem>
-      </QList>
+      <QInfiniteScroll
+        :disable="props.disabledCollectionLoading"
+        @load="(index, done) => emit('loadCollections', index, done)"
+      >
+        <template v-slot:loading>
+          <div class="row justify-center q-my-md">
+            <QSpinnerDots color="primary" size="40px" />
+          </div>
+        </template>
+        <QList>
+          <QItem clickable @click="handleSearchEventAreaClick">
+            <QItemSection>
+              <QItemLabel>
+                <b>Nach Gebietsnamen suchen</b>
+              </QItemLabel>
+            </QItemSection>
+          </QItem>
+          <QItem clickable @click="handleRecentEventAreasClick">
+            <QItemSection>
+              <QItemLabel>
+                <b>Aus vergangenen Aktionen</b>
+              </QItemLabel>
+            </QItemSection>
+          </QItem>
+          <QItem
+            clickable
+            v-for="collection in props.collections"
+            :key="collection.id"
+            @click="() => handleCampaignCollectionClick(collection)"
+          >
+            <QItemSection>
+              <QItemLabel>
+                <b>{{ collection.name }}</b>
+              </QItemLabel>
+              <QItemLabel>
+                {{
+                  props.campaigns.find(({ id }) => id === collection.campaign)
+                    .name
+                }}
+              </QItemLabel>
+            </QItemSection>
+          </QItem>
+        </QList>
+      </QInfiniteScroll>
     </QScrollArea>
   </QCardSection>
 </template>
