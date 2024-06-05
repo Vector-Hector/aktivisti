@@ -36,7 +36,7 @@ async function locate(result: GeocodeResult) {
 <template>
   <QPage class="splash-page">
     <div class="splash">
-      <img src="../assets/logo_dielinke.png" class="logo-splash" />
+      <img src="../assets/logo_dielinke.svg" class="q-mt-xl logo-splash" />
       <h2 class="splash-message">Finde Aktionen in deiner Nähe</h2>
       <Geocoder
         class="geocoder"
@@ -100,7 +100,6 @@ async function locate(result: GeocodeResult) {
 
 .logo-splash {
   width: 50%;
-  margin: 1rem 0;
 }
 
 .signin-buttons {
@@ -114,5 +113,11 @@ async function locate(result: GeocodeResult) {
 
 .register-button {
   margin-top: 1rem;
+}
+
+@media (min-width: $breakpoint-sm-min) {
+  .logo-splash {
+    width: 30%;
+  }
 }
 </style>
