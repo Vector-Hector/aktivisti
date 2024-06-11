@@ -28,6 +28,12 @@ const activatedFilterCount = computed(() => {
   if (props.filterParams.status) {
     active++
   }
+  if ((props.filterParams.sub_association?.length ?? 0) > 0) {
+    active++
+  }
+  if ((props.filterParams.campaigns?.length ?? 0) > 0) {
+    active++
+  }
   return active
 })
 
