@@ -5,7 +5,10 @@ import { PosterDto } from 'src/api/model/PosterDto'
 import PosterListItem from 'components/PosterListItem.vue'
 import useOverviewMixin from 'src/utils/useOverviewMixin'
 import { apiClient } from 'src/api/ApiClient'
-import { posterOverviewStore } from 'src/store/PosterOverviewStore'
+import {
+  DEFAULT_POSTER_FILTER_PREFERENCES,
+  posterOverviewStore
+} from 'src/store/PosterOverviewStore'
 import { PosterFilterParams } from 'src/api/params/PosterFilterParams'
 import PosterFilter from 'components/PosterFilter.vue'
 import { CampaignDto } from 'src/api/model/CampaignDto'
@@ -57,6 +60,9 @@ function goToPoster(poster: PosterDto) {
     }
   })
 }
+function handleResetClick() {
+  updateFilterParams(DEFAULT_POSTER_FILTER_PREFERENCES)
+}
 </script>
 <template>
   <div class="container poster-overview">
@@ -66,6 +72,7 @@ function goToPoster(poster: PosterDto) {
         @update:filter-params="updateFilterParams"
         :campaigns="campaigns"
         :sub-associations="subAssociations"
+        @on-reset-click="() => handleResetClick()"
       />
       <InfiniteList
         :items="posters"
