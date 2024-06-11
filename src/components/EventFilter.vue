@@ -25,6 +25,7 @@ interface Props {
 
 interface Emits {
   (e: 'update:filterParams', filterParams: EventFilterParams): void
+  (e: 'onResetClick'): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -77,6 +78,7 @@ function updateFilterParams(value: EventFilterParams) {
   <CollapsibleFilters
     class="collapsible-filters"
     :activated-filter-count="activatedFilterCount"
+    @on-reset-click="emit('onResetClick')"
     v-if="isCollapsible"
   >
     <div class="filter-content">
