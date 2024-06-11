@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ionChevronDown, ionClose } from '@quasar/extras/ionicons-v5'
+import { ionChevronDown, ionRefresh } from '@quasar/extras/ionicons-v5'
 import { QSelect } from 'quasar'
 
 interface Props {
@@ -13,7 +13,7 @@ const props = defineProps<Props>()
 <template>
   <QSelect
     :dropdownIcon="ionChevronDown"
-    :clearIcon="ionClose"
+    :clearIcon="ionRefresh"
     filled
     :model-value="props.modelValue"
     v-bind="$attrs"
