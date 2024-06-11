@@ -19,6 +19,7 @@ const props = defineProps<Props>()
 
 interface Emits {
   (e: 'update:filterParams', filterParams: PosterFilterParams): void
+  (e: 'onResetClick'): void
 }
 
 const emit = defineEmits<Emits>()
@@ -57,6 +58,7 @@ function updateSubAssociations(value: number[]) {
   <CollapsibleFilters
     class="collapsible-filters"
     :activated-filter-count="activatedFilterCount"
+    @on-reset-click="emit('onResetClick')"
   >
     <div class="filter-content">
       <PosterStatusFilter
