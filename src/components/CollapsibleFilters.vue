@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { getCurrentInstance, ref } from 'vue'
-import { ionChevronDown, ionFunnel } from '@quasar/extras/ionicons-v5'
+import { computed, getCurrentInstance, ref } from 'vue'
+import {
+  ionRefresh,
+  ionChevronDown,
+  ionFunnel
+} from '@quasar/extras/ionicons-v5'
 import { QBadge, QIcon, QSlideTransition } from 'quasar'
 
 interface Props {
@@ -9,6 +13,13 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   activatedFilterCount: 0
 })
+
+interface Emits {
+  (e: 'onResetClick'): void
+}
+const emit = defineEmits<Emits>()
+
+const isFilterActive = computed(() => props.activatedFilterCount > 0)
 
 const collapsed = ref(true)
 
@@ -25,9 +36,17 @@ function toggle() {
       <QIcon :name="ionFunnel" class="filter-icon" />
       <div class="headline-caption">
         <h4 class="filter-title">Filter</h4>
-        <QBadge v-if="props.activatedFilterCount > 0">
+        <QBadge v-if="isFilterActive">
           {{ props.activatedFilterCount }} gesetzt
         </QBadge>
+      </div>
+      <div
+        v-show="isFilterActive"
+        class="reset"
+        @click.stop="emit('onResetClick')"
+      >
+        <QIcon class="reset-icon" :name="ionRefresh" />
+        <span class="reset-text">Alles zurückstellen</span>
       </div>
       <span class="chevron-icon" :class="{ rotated: !collapsed }">
         <QIcon :name="ionChevronDown" />
@@ -77,6 +96,19 @@ function toggle() {
   .chevron-icon {
     font-size: 1.4rem;
     padding: 0.8rem 1rem 0.9rem 1rem;
+  }
+
+  .reset {
+    color: $primary;
+    font-weight: bold;
+  }
+
+  .reset-text {
+    vertical-align: middle;
+  }
+
+  .reset-icon {
+    font-size: 16px;
   }
 
   .filter-title {
