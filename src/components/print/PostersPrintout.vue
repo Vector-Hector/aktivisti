@@ -100,7 +100,7 @@ function print() {
         Datum: {{ $utils.dateFormat(event.start_date) }}
       </p>
       <p>{{ event.description }}</p>
-      <img class="linke-logo" src="../../assets/logo_dielinke.png" />
+      <img class="linke-logo" src="../../assets/logo_dielinke.svg" />
       <Map class="map" :interactive="false" :bounding-box="zoomBox">
         <EventMarker v-if="event?.location" :event="event" />
         <FeatureLayer :features="areaFeatures" />
@@ -123,7 +123,7 @@ function print() {
     </div>
 
     <div class="print-page" v-for="area in eventAreas" :key="area.id">
-      <img class="linke-logo" src="../../assets/logo_dielinke.png" />
+      <img class="linke-logo" src="../../assets/logo_dielinke.svg" />
       <h1 class="headline">Erfassungsbogen für Gebiet: {{ area.name }}</h1>
       <div class="row q-col-gutter-x-sm">
         <div class="col-8">
@@ -188,7 +188,7 @@ function print() {
       </div>
     </div>
     <div class="print-page" v-if="arePostersOutsideArea">
-      <img class="linke-logo" src="../../assets/logo_dielinke.png" />
+      <img class="linke-logo" src="../../assets/logo_dielinke.svg" />
       <h1 class="headline">Erfassungsbogen für Plakate ohne Gebiet</h1>
       <div class="row q-col-gutter-x-sm">
         <div class="col-8">
@@ -279,7 +279,7 @@ function print() {
   position: absolute;
   top: 0.5cm;
   right: 0.5cm;
-  width: 5cm;
+  width: 3cm;
 }
 
 .print-page {
