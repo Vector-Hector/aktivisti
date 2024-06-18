@@ -19,6 +19,7 @@ const props = defineProps<Props>()
 
 interface Emits {
   (e: 'update:filterParams', filterParams: PosterFilterParams): void
+  (e: 'onResetClick'): void
 }
 
 const emit = defineEmits<Emits>()
@@ -26,6 +27,12 @@ const emit = defineEmits<Emits>()
 const activatedFilterCount = computed(() => {
   let active = 0
   if (props.filterParams.status) {
+    active++
+  }
+  if ((props.filterParams.sub_association?.length ?? 0) > 0) {
+    active++
+  }
+  if ((props.filterParams.campaigns?.length ?? 0) > 0) {
     active++
   }
   return active
@@ -51,6 +58,7 @@ function updateSubAssociations(value: number[]) {
   <CollapsibleFilters
     class="collapsible-filters"
     :activated-filter-count="activatedFilterCount"
+    @on-reset-click="emit('onResetClick')"
   >
     <div class="filter-content">
       <PosterStatusFilter

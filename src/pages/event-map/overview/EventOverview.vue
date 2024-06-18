@@ -125,6 +125,7 @@ onUnmounted(() => {
         :sub-associations="subAssociations"
         :is-editable-filterable="userStore.hasAtLeastOneManagePermission()"
         :is-ownership-filterable="userStore.hasAtLeastOneManagePermission()"
+        @on-reset-click="() => userStore.clearFilterPreferences()"
       />
       <EventOverviewList
         v-if="!eventOverviewStore.state.isLoading || shownEvents.length > 0"

@@ -40,6 +40,15 @@ const KEY_BBOX = 'KEY_BBOX'
 const KEY_FILTERPREFERENCES = 'KEY_FILTERPREFERENCES'
 const KEY_REPORT_CHARTS = 'KEY_REPORT_CHARTS'
 const KEY_PUSH_NOTIFICATIONS = 'KEY_PUSH_NOTIFICATIONS'
+export const DEFAULT_FILTER_PREFERENCES = {
+  subAssociations: [],
+  campaign: undefined,
+  sorting: SortOption.START_DATE,
+  eventType: undefined,
+  status: EventStatus.ACTIVE,
+  is_owner: undefined,
+  management_permission: false
+}
 
 class UserStore extends Store<UserState> {
   protected data(): UserState {
@@ -48,15 +57,7 @@ class UserStore extends Store<UserState> {
       permissions: [],
       bbox: null,
       homeAssociation: null,
-      filterPreferences: {
-        subAssociations: [],
-        campaign: undefined,
-        sorting: SortOption.START_DATE,
-        eventType: undefined,
-        status: EventStatus.ACTIVE,
-        is_owner: undefined,
-        management_permission: undefined
-      },
+      filterPreferences: DEFAULT_FILTER_PREFERENCES,
       reportCharts: [],
       pushNotifications: false
     }
@@ -96,6 +97,13 @@ class UserStore extends Store<UserState> {
       KEY_FILTERPREFERENCES,
       JSON.stringify(filterPreferences)
     )
+  }
+
+  /**
+   * Resets the filter preferences to the default state.
+   */
+  public clearFilterPreferences() {
+    this.setFilterPreferences(DEFAULT_FILTER_PREFERENCES)
   }
 
   public setHomeAssociation(value: SubAssociationDto | null) {
