@@ -46,7 +46,7 @@ function toggle() {
         @click.stop="emit('onResetClick')"
       >
         <QIcon class="reset-icon" :name="ionRefresh" />
-        <span class="reset-text">Alles zurückstellen</span>
+        <span class="reset-text">Reset</span>
       </div>
       <span class="chevron-icon" :class="{ rotated: !collapsed }">
         <QIcon :name="ionChevronDown" />
