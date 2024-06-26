@@ -18,6 +18,7 @@ import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import CampaignCollections from 'components/modals/AdoptEventAreas/CampaignCollections.vue'
 import { apiClient } from 'src/api/ApiClient'
 import SearchEventArea from 'components/modals/AdoptEventAreas/SearchEventArea.vue'
+import { CAMPAIGN_GEOMETRY_COLLECTIONS_CHUNK_SIZE } from 'src/constants'
 
 interface Props {
   campaigns: CampaignDto[]
@@ -43,16 +44,25 @@ const { dialogRef, onDialogHide, onDialogCancel, onDialogOK } =
   useDialogPluginComponent()
 
 const page = ref<Page>(Page.SELECT_AREA_SET)
-const collections = ref<CampaignGeometryCollectionsDto[] | null>(null)
-const isCollectionExisting = ref<boolean>(false)
+
+const campaignIds = computed(() => props.campaigns.map(({ id }) => id))
+const campaignCollections = ref<CampaignGeometryCollectionsDto[]>([])
+const isCollectionExisting = computed(
+  () => campaignCollections.value.length > 0
+)
+
 const campaignCollection = ref<CampaignGeometryCollectionsDto | null>(null)
 const adoptPosters = ref(false)
 
+const offsetCampaignCollections = ref(0)
+const totalCampaignCollections = ref(CAMPAIGN_GEOMETRY_COLLECTIONS_CHUNK_SIZE)
+const areAllCollectionsLoaded = computed(
+  () => offsetCampaignCollections.value >= totalCampaignCollections.value
+)
+
 onMounted(async () => {
-  collections.value = await fetchCollections(
-    props.campaigns.map(({ id }) => id)
-  )
-  isCollectionExisting.value = collections.value.length > 0
+  await fetchMoreCollections()
+
   // if no collections can be found, directly go to recent event areas
   if (!isCollectionExisting.value) {
     page.value = Page.RECENT_EVENT_AREAS
@@ -61,21 +71,23 @@ onMounted(async () => {
 
 /**
  * Fetch Campaign Geometry Collection
- * @param campaignIds - List of Campaign IDs
  */
-async function fetchCollections(
-  campaignIds: number[]
-): Promise<CampaignGeometryCollectionsDto[]> {
-  const collections: CampaignGeometryCollectionsDto[] = []
-  for (const id of campaignIds) {
-    const campaignCollections = (
+async function fetchMoreCollections() {
+  if (!areAllCollectionsLoaded.value) {
+    const response = (
       await apiClient.campaignGeometryCollections.list({
-        campaign: id
+        campaign: campaignIds.value,
+        limit: CAMPAIGN_GEOMETRY_COLLECTIONS_CHUNK_SIZE,
+        offset: offsetCampaignCollections.value,
+        order_by: 'name'
       })
-    ).payload.data
-    collections.push(...campaignCollections)
+    ).payload
+    const { data, pagination } = response
+    totalCampaignCollections.value = pagination?.total ?? 0
+    campaignCollections.value = campaignCollections.value.concat(data)
+    offsetCampaignCollections.value =
+      offsetCampaignCollections.value + CAMPAIGN_GEOMETRY_COLLECTIONS_CHUNK_SIZE
   }
-  return collections
 }
 
 function handleSearchEventAreasClick() {
@@ -97,8 +109,16 @@ function handleAreaClick(eventAreas: EventAreaDto[]) {
   onDialogOK({ eventAreas: eventAreas, adoptPosters: adoptPosters.value })
 }
 
+async function loadMoreCollections(index: number, done: () => void) {
+  await fetchMoreCollections()
+  done()
+}
+
 const qCardClass = computed(() => {
-  if (page.value === Page.RECENT_EVENT_AREAS) {
+  if (
+    page.value === Page.RECENT_EVENT_AREAS ||
+    page.value === Page.SELECT_AREA_SET
+  ) {
     return 'higher-content'
   }
   if (page.value === Page.CAMPAIGN_COLLECTIONS) {
@@ -136,7 +156,9 @@ defineExpose({
       <SelectAreaSet
         v-if="page === Page.SELECT_AREA_SET"
         :campaigns="props.campaigns"
-        :collections="collections"
+        :collections="campaignCollections"
+        :disabledCollectionLoading="areAllCollectionsLoaded"
+        @loadCollections="loadMoreCollections"
         @onSearchEventAreaClick="handleSearchEventAreasClick"
         @onRecentEventAreasClick="handleRecentEventAreasClick"
         @onCampaignCollectionClick="handleCampaignCollectionClick"
