@@ -154,40 +154,6 @@ async function inviteTeamCaptains() {
     })
   }
 }
-function handleInviteAllUsers() {
-  $q.dialog({
-    title: 'Alle Benutzer*innen einladen',
-    message: 'Möchtest du alle Benutzer*innen des Kreisverbandes einladen?',
-    cancel: true
-  })
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    .onOk(() => inviteUsers())
-}
-async function inviteUsers() {
-  const response = await apiClient.events.inviteUsers(props.eventId.toString())
-  const newParticipations = response.payload.data
-  if (newParticipations.length > 0) {
-    let areUsersAlreadyInvited = true
-    for (const participation of response.payload.data) {
-      if (!participations.value.find(({ id }) => id === participation.id)) {
-        areUsersAlreadyInvited = false
-        participations.value.push(participation)
-      }
-    }
-    if (areUsersAlreadyInvited) {
-      $q.notify({
-        color: 'warning',
-        message: 'Es wurden bereits alle Benutzer*innen eingeladen.'
-      })
-    }
-  } else {
-    $q.notify({
-      color: 'info',
-      message:
-        'In dem zugehörigen Kreisverband gibt es keine angemeldeten Benutzer*innen.'
-    })
-  }
-}
 async function deleteParticipation(deleteId: number) {
   participations.value = participations.value.filter(
     ({ id }) => deleteId !== id
@@ -276,11 +242,6 @@ async function deleteParticipation(deleteId: number) {
     <div class="row invite-users">
       <QBtn class="full-width" @click="handleInviteAllTeamCaptains">
         Alle Teamcaptains einladen
-      </QBtn>
-    </div>
-    <div class="row invite-users">
-      <QBtn class="full-width" @click="handleInviteAllUsers">
-        Alle Benutzer*innen einladen
       </QBtn>
     </div>
   </div>
