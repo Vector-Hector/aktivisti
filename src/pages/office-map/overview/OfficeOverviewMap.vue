@@ -1,5 +1,11 @@
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref } from 'vue'
+import {
+  onBeforeMount,
+  onBeforeUnmount,
+  onMounted,
+  onUnmounted,
+  ref
+} from 'vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import Geocoder from 'src/map/Geocoder.vue'
 import { userStore } from 'src/store/UserStore'
@@ -14,11 +20,20 @@ import CoordinatesPopup from 'src/map/popup/CoordinatesPopup.vue'
 import OfficePopupContents from 'src/map/popup/OfficePopupContents.vue'
 import EventLayer from 'src/map/EventLayer.vue'
 import { useMap } from 'src/map/MapUtils'
+import { uiStore } from 'src/store/UiStore'
 
 const activeOffice = ref<null | OfficeGeoJsonFeature>()
 const map = useMap()
 const bounds = ref(userStore.getState().bbox)
 const officeFeatureCollection = ref<OfficeGeoJsonDto | null>(null)
+
+onBeforeMount(() => {
+  const previousZoom = uiStore.getState().mapZoom
+  if (previousZoom != null) {
+    map.value.setZoom(previousZoom, {})
+  }
+  uiStore.setMapZoom(null)
+})
 
 onMounted(() => {
   void apiClient.officeGeometry.list().then((offices) => {
@@ -40,6 +55,10 @@ void loadImageIfNonExistent(
   'office',
   '/static/icons/map-pin-office.png'
 )
+
+onBeforeUnmount(() => {
+  uiStore.setMapZoom(map.value.getZoom())
+})
 
 onUnmounted(() => {
   map.value.off('zoomend', updateBounds)
