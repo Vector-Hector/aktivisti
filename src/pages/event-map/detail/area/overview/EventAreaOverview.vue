@@ -29,7 +29,8 @@ import {
 import {
   ionCheckmarkCircle,
   ionCheckmarkCircleOutline,
-  ionChevronForward
+  ionChevronForward,
+  ionPlayCircle
 } from '@quasar/extras/ionicons-v5'
 import { StreetDetails } from 'src/api/model/AreaDetailsDto'
 import { difference } from 'lodash-es'
@@ -45,6 +46,17 @@ const $q = useQuasar()
 const { eventArea, eventAreaPermissions, completedTargetIds } =
   useEventDetailStore()
 
+/**
+ * Check if the street has been started by checking if any of the addresses
+ * have been completed.
+ *
+ * @param street The street to check
+ */
+function streetStarted(street: StreetDetails) {
+  return street.addresses.some(({ osm_id }) =>
+    completedTargetIds.value.includes(osm_id.toString())
+  )
+}
 function streetCompleted(street: StreetDetails) {
   return (
     difference(
@@ -136,8 +148,13 @@ defineExpose({ eventArea })
               <div class="row">
                 <QIcon
                   v-if="streetCompleted(street)"
-                  class="col finished-icon item-icon"
+                  class="col finished-icon item-icon progress-icon"
                   :name="ionCheckmarkCircle"
+                />
+                <QIcon
+                  v-else-if="streetStarted(street)"
+                  class="col started-icon item-icon progress-icon"
+                  :name="ionPlayCircle"
                 />
                 <QIcon class="col item-icon" :name="ionChevronForward" />
               </div>
@@ -205,9 +222,16 @@ label {
   align-items: center;
 }
 
-.finished-icon {
+.progress-icon {
   margin-right: 1rem;
+}
+
+.finished-icon {
   color: #4caf50;
+}
+
+.started-icon {
+  color: #ff9800;
 }
 
 .item-icon {
