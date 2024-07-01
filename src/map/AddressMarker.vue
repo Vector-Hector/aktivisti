@@ -6,11 +6,13 @@ interface Props {
   text?: string
   selected?: boolean
   location: LocationDto
+  done: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   text: () => '',
-  selected: () => false
+  selected: () => false,
+  done: () => false
 })
 </script>
 <template>
@@ -19,7 +21,8 @@ const props = withDefaults(defineProps<Props>(), {
       <i
         :class="{
           'marker-icon': true,
-          selected: props.selected
+          selected: props.selected,
+          done: props.done
         }"
         >{{ props.text }}</i
       >
@@ -35,6 +38,11 @@ const props = withDefaults(defineProps<Props>(), {
   line-height: 2;
   display: block;
   background: white;
+
+  &.done {
+    background: #4caf50;
+    color: white;
+  }
 
   &.selected {
     border: 1px solid red;
