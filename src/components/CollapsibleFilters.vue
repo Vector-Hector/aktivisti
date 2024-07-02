@@ -5,7 +5,7 @@ import {
   ionChevronDown,
   ionFunnel
 } from '@quasar/extras/ionicons-v5'
-import { QBadge, QIcon, QSlideTransition } from 'quasar'
+import { QBtn, QBadge, QIcon, QSlideTransition } from 'quasar'
 
 interface Props {
   activatedFilterCount: number
@@ -40,14 +40,18 @@ function toggle() {
           {{ props.activatedFilterCount }} gesetzt
         </QBadge>
       </div>
-      <div
+      <QBtn
         v-show="isFilterActive"
         class="reset"
         @click.stop="emit('onResetClick')"
+        flat
+        rounded
+        size="md"
+        no-caps
       >
-        <QIcon class="reset-icon" :name="ionRefresh" />
-        <span class="reset-text">Alles zurückstellen</span>
-      </div>
+        <QIcon left :name="ionRefresh" class="q-mr-sm reset-icon" />
+        <div class="text-center">Reset</div>
+      </QBtn>
       <span class="chevron-icon" :class="{ rotated: !collapsed }">
         <QIcon :name="ionChevronDown" />
       </span>
@@ -101,10 +105,6 @@ function toggle() {
   .reset {
     color: $primary;
     font-weight: bold;
-  }
-
-  .reset-text {
-    vertical-align: middle;
   }
 
   .reset-icon {
