@@ -62,6 +62,12 @@ const {
   refreshParticipants
 } = useEventDetailStore()
 
+const isVerficationRequired = computed(() => {
+  return participations.value.some(
+    ({ is_verified, is_team_captain }) => !is_team_captain && !is_verified
+  )
+})
+
 const shareUrl = computed(() => {
   const shareUrl = process.env.APP_SHARE_URL as string
   return (
@@ -404,6 +410,7 @@ onBeforeUnmount(() => {
             :icon="ionPerson"
             @click="openParticipantsModal"
             external-label="Teilnahmen"
+            :has-notification="isVerficationRequired"
           />
           <Share :title="shareTitle" :text="shareText" :url="shareUrl" />
           <LabeledBtn
