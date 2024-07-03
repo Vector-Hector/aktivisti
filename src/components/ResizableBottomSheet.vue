@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import { QIcon } from 'quasar'
 import { ionChevronDown, ionChevronUp } from '@quasar/extras/ionicons-v5'
@@ -20,6 +20,25 @@ const emit = defineEmits<Emits>()
 
 const transitionListener = ref<EventListener | null>(null)
 const bottomSheet = ref<HTMLElement | null>(null)
+const overlayTitleRef = ref<HTMLElement | null>(null)
+const titleHeight = ref(0)
+
+onMounted(() => {
+  getOverlayTitleHeight()
+})
+
+function getOverlayTitleHeight() {
+  if (overlayTitleRef.value) {
+    titleHeight.value = overlayTitleRef.value.clientHeight
+  }
+}
+
+// Dynamically adjust the height of the overlay content based on the title height
+const ovlerlayContentStyleHeight = computed(() => {
+  return {
+    height: `calc(100% - ${titleHeight.value}px)`
+  }
+})
 
 const state = computed({
   get() {
@@ -95,7 +114,7 @@ onBeforeUnmount(() => {
       'absolute-sheet': state === BottomSheetState.EXPANDED
     }"
   >
-    <h3 v-if="props.title" class="overlay-title">
+    <h3 v-if="props.title" class="overlay-title" ref="overlayTitleRef">
       {{ props.title }}
     </h3>
     <div class="control-button-group">
@@ -117,7 +136,7 @@ onBeforeUnmount(() => {
       </div>
     </div>
     <div class="overlay-content" :style="ovlerlayContentStyleHeight">
-    <slot />
+      <slot />
     </div>
   </div>
 </template>
