@@ -1,6 +1,6 @@
-# die-linke-app-frontend
+# Aktivisti-frontend
 
-This project is the frontend application for the "DIE LINKE. App". It's a responsive Progressive Web App.
+This project is the frontend application for the "Aktivisti". It's a responsive Progressive Web App.
 
 ## General
 
@@ -69,7 +69,7 @@ npm run lint
 
 [GPLv3](./LICENSE.md) with [Apple app store exception](./COPYING.iOS).
 
-DIE LINKE. doesn't require a CLA (Contributor License Agreement). The copyright belongs to all the individual contributors. Therefore we recommend that every contributor adds following line to the header of a file, if they changed it substantially:
+Die Linke doesn't require a CLA (Contributor License Agreement). The copyright belongs to all the individual contributors. Therefore we recommend that every contributor adds following line to the header of a file, if they changed it substantially:
 
 ```text
 @copyright Copyright (c) <year>, <your name> (<your email address>)
