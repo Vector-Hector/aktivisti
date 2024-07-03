@@ -38,7 +38,7 @@ if (process.env.MODE !== 'ssr' || process.env.PROD) {
 
 self.addEventListener('push', (event) => {
   event.waitUntil(
-    self.registration.showNotification('DIE LINKE Wahlkampf App', {
+    self.registration.showNotification('Aktivisti', {
       body: event.data?.json().message
     })
   )
