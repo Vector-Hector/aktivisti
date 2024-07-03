@@ -116,7 +116,9 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </div>
+    <div class="overlay-content" :style="ovlerlayContentStyleHeight">
     <slot />
+    </div>
   </div>
 </template>
 
@@ -250,5 +252,9 @@ onBeforeUnmount(() => {
 
 .absolute-sheet {
   position: absolute;
+}
+
+.overlay-content {
+  display: flex;
 }
 </style>

@@ -28,7 +28,9 @@ function handleCreateEvent() {
       @click="handleCreateEvent"
     />
     <div class="map-sidebar-content">
+      <div class="overlay-content">
       <slot />
+      </div>
     </div>
   </div>
 </template>
@@ -53,5 +55,10 @@ function handleCreateEvent() {
 
 .create-button {
   margin: 1rem 10px 0 10px;
+}
+
+.overlay-content {
+  height: 100%;
+  display: flex;
 }
 </style>
