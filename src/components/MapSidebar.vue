@@ -29,7 +29,7 @@ function handleCreateEvent() {
     />
     <div class="map-sidebar-content">
       <div class="overlay-content">
-      <slot />
+        <slot />
       </div>
     </div>
   </div>
@@ -60,5 +60,14 @@ function handleCreateEvent() {
 .overlay-content {
   height: 100%;
   display: flex;
+}
+
+.overlay-title {
+  background: $grey-1;
+  border-bottom: 1px solid $red;
+  margin: 0;
+  padding: 0.5rem 1rem;
+  font-size: 1.5rem;
+  line-height: 1.5rem;
 }
 </style>

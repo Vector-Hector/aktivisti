@@ -40,14 +40,3 @@ async function handleCreateEvent() {
     <slot />
   </component>
 </template>
-
-<style lang="scss" scoped>
-::v-deep(.overlay-title) {
-  background: $grey-1;
-  border-bottom: 1px solid $red;
-  margin: 0;
-  padding: 0.5rem 1rem;
-  font-size: 1.5rem;
-  line-height: 1.5rem;
-}
-</style>
