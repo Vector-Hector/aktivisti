@@ -396,6 +396,17 @@ onBeforeUnmount(() => {
         <div class="col-auto column">
           <LabeledBtn
             v-if="
+              isTeamCaptainOrCoordinator &&
+              event.event_type !== EventTypes.GENERIC
+            "
+            round
+            outline
+            :icon="ionPerson"
+            @click="openParticipantsModal"
+            external-label="Teilnahmen"
+          />
+          <LabeledBtn
+            v-if="
               isPrintableEvent &&
               (personalParticipation?.is_verified || isTeamCaptainOrCoordinator)
             "
@@ -485,22 +496,6 @@ onBeforeUnmount(() => {
                   class="bg-white admin-fab"
                   stacked
                   label="Abhängen"
-                  outline
-                  label-class="bg-grey-2 text-primary"
-                  external-label
-                  label-position="bottom"
-                />
-                <QFabAction
-                  v-if="
-                    isTeamCaptainOrCoordinator &&
-                    event.event_type !== EventTypes.GENERIC
-                  "
-                  @click="openParticipantsModal"
-                  color="primary"
-                  :icon="ionPerson"
-                  class="bg-white admin-fab"
-                  stacked
-                  label="Teilnahmen"
                   outline
                   label-class="bg-grey-2 text-primary"
                   external-label
