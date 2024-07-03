@@ -701,8 +701,8 @@ label {
 }
 
 .admin-fab {
-  margin-left: 20px !important;
-  margin-right: 20px !important;
+  margin-left: 15px !important;
+  margin-right: 15px !important;
 }
 
 .verification-indicator {
