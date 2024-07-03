@@ -146,7 +146,7 @@ function logout() {
           <div class="menu-item">
             <MenuLink to="/offices">
               <QIcon :name="ionHomeOutline" />
-              <span class="menu-item-link-text">DIE LINKE vor Ort</span>
+              <span class="menu-item-link-text">Die Linke vor Ort</span>
             </MenuLink>
           </div>
           <div v-if="hasManagePermission" class="menu-item">
