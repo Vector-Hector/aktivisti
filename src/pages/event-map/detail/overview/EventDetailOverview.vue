@@ -405,17 +405,6 @@ onBeforeUnmount(() => {
             @click="openParticipantsModal"
             external-label="Teilnahmen"
           />
-          <LabeledBtn
-            v-if="
-              isPrintableEvent &&
-              (personalParticipation?.is_verified || isTeamCaptainOrCoordinator)
-            "
-            round
-            outline
-            :icon="ionPrint"
-            :to="{ name: 'print-event', params: { eventId: event.id } }"
-            external-label="Drucken"
-          />
           <Share :title="shareTitle" :text="shareText" :url="shareUrl" />
           <LabeledBtn
             v-if="isTeamCaptainOrCoordinator"
@@ -496,6 +485,19 @@ onBeforeUnmount(() => {
                   class="bg-white admin-fab"
                   stacked
                   label="Abhängen"
+                  outline
+                  label-class="bg-grey-2 text-primary"
+                  external-label
+                  label-position="bottom"
+                />
+                <QFabAction
+                  v-if="isPrintableEvent && isTeamCaptainOrCoordinator"
+                  :to="{ name: 'print-event', params: { eventId: event.id } }"
+                  color="primary"
+                  :icon="ionPrint"
+                  class="bg-white admin-fab"
+                  stacked
+                  label="Drucken"
                   outline
                   label-class="bg-grey-2 text-primary"
                   external-label
