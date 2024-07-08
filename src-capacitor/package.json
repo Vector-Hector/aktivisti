@@ -15,5 +15,5 @@
     "@capacitor/share": "^5.0.0",
     "@capacitor/splash-screen": "^5.0.0"
   },
-  "version": "2.3.0"
+  "version": "2.4.0"
 }
