@@ -1,5 +1,16 @@
+<script setup lang="ts">
+import Marker from 'src/map/Marker.vue'
+import { QIcon } from 'quasar'
+import { LocationDto } from 'src/api/model/LocationDto'
+
+interface Props {
+  location: LocationDto
+}
+
+const props = defineProps<Props>()
+</script>
 <template>
-  <Marker :location="location">
+  <Marker :location="props.location">
     <template v-slot:marker>
       <QIcon
         name="img:/static/icons/map-pin-selected.svg"
@@ -9,20 +20,3 @@
     </template>
   </Marker>
 </template>
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import Marker from 'src/map/Marker.vue'
-import { QIcon } from 'quasar'
-import { LocationDto } from 'src/api/model/LocationDto'
-
-export default defineComponent({
-  name: 'SelectedMarker',
-  components: { Marker, QIcon },
-  props: {
-    location: {
-      type: Object as PropType<LocationDto>,
-      required: true
-    }
-  }
-})
-</script>

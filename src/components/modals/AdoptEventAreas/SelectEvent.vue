@@ -14,6 +14,7 @@ import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { editEventStore } from 'src/store/EditEventStore'
 import { QScrollArea, useQuasar } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
+import { DEFAULT_FILTER_PREFERENCES } from 'src/store/UserStore'
 
 const $q = useQuasar()
 
@@ -30,6 +31,7 @@ const emit = defineEmits<Emits>()
 const campaigns = ref<CampaignDto[]>([])
 const subAssociations = ref<SubAssociationDto[]>([])
 const filterParams = ref<EventFilterParams>({
+  ...DEFAULT_FILTER_PREFERENCES,
   event_type: editEventStore.state.event?.event_type
 })
 const pagination = ref<Pagination | null>(_defaultPagination)
@@ -87,6 +89,10 @@ async function updateShownEvents() {
     })
   }
 }
+
+function handleResetClick() {
+  filterParams.value = DEFAULT_FILTER_PREFERENCES
+}
 </script>
 
 <template>
@@ -108,6 +114,7 @@ async function updateShownEvents() {
             EventTypes.FLYERS,
             EventTypes.POSTERS
           ]"
+          @on-reset-click="() => handleResetClick()"
         />
       </div>
       <EventList

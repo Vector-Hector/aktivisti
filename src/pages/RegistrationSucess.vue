@@ -1,3 +1,4 @@
+<script setup lang="ts"></script>
 <template>
   <div class="container">
     <h1>Vielen Dank</h1>
@@ -7,14 +8,5 @@
     </p>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'RegistrationSuccess',
-  components: {}
-})
-</script>
 
 <style lang="scss" scoped></style>

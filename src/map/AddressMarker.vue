@@ -1,42 +1,34 @@
+<script setup lang="ts">
+import Marker from 'src/map/Marker.vue'
+import { LocationDto } from 'src/api/model/LocationDto'
+
+interface Props {
+  text?: string
+  selected?: boolean
+  location: LocationDto
+  done: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  text: () => '',
+  selected: () => false,
+  done: () => false
+})
+</script>
 <template>
-  <Marker :location="location">
+  <Marker :location="props.location">
     <template #marker>
       <i
         :class="{
           'marker-icon': true,
-          selected: selected
+          selected: props.selected,
+          done: props.done
         }"
-        >{{ text }}</i
+        >{{ props.text }}</i
       >
     </template>
   </Marker>
 </template>
-<script lang="ts">
-import Marker from 'src/map/Marker.vue'
-import { defineComponent, PropType } from 'vue'
-import { LocationDto } from 'src/api/model/LocationDto'
-
-export default defineComponent({
-  name: 'AddressMarker',
-  components: { Marker },
-  props: {
-    text: {
-      type: String as PropType<string>,
-      required: false,
-      default: ''
-    },
-    selected: {
-      type: Boolean as PropType<boolean>,
-      required: false,
-      default: false
-    },
-    location: {
-      type: Object as PropType<LocationDto>,
-      required: true
-    }
-  }
-})
-</script>
 <style lang="scss" scoped>
 .marker-icon {
   border-radius: 999px;
@@ -46,6 +38,11 @@ export default defineComponent({
   line-height: 2;
   display: block;
   background: white;
+
+  &.done {
+    background: #4caf50;
+    color: white;
+  }
 
   &.selected {
     border: 1px solid red;

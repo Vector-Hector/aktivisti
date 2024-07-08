@@ -334,10 +334,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <QScrollArea
-    class="d-flex flex-fill"
-    :class="{ 'contain-none': adminMenuOpen }"
-  >
+  <QScrollArea class="d-flex flex-fill">
     <div class="container q-gutter-y-md q-py-sm">
       <div class="row q-gutter-sm">
         <div class="col">
@@ -627,8 +624,11 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </div>
+    <div
+      class="backdrop"
+      :class="{ 'q-dialog__backdrop': adminMenuOpen }"
+    ></div>
   </QScrollArea>
-  <div class="backdrop" :class="{ 'q-dialog__backdrop': adminMenuOpen }"></div>
 </template>
 
 <style lang="scss" scoped>
@@ -726,9 +726,5 @@ label {
   &:not(.q-dialog__backdrop) {
     display: none;
   }
-}
-
-.contain-none {
-  contain: none;
 }
 </style>
