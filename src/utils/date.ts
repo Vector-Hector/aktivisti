@@ -1,6 +1,3 @@
-// @ts-ignore
-import lang from 'quasar/src/lang'
-
 interface LocaleOptions {
   days?: string[]
   daysShort?: string[]
