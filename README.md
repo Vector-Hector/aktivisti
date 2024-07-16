@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://gitlab.die-linke.de/uploads/-/system/project/avatar/5/Die-Linke-aktivisti-frontend_Logo-ohne-Flaeche-RGB.png" width="250">
+</p>
+
 # Aktivisti-frontend
 
 This project is the frontend application for the "Aktivisti". It's a responsive Progressive Web App.
