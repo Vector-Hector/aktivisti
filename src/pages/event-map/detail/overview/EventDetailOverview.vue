@@ -396,14 +396,14 @@ onBeforeUnmount(() => {
         <div class="col-auto column">
           <LabeledBtn
             v-if="
-              isPrintableEvent &&
-              (personalParticipation?.is_verified || isTeamCaptainOrCoordinator)
+              isTeamCaptainOrCoordinator &&
+              event.event_type !== EventTypes.GENERIC
             "
             round
             outline
-            :icon="ionPrint"
-            :to="{ name: 'print-event', params: { eventId: event.id } }"
-            external-label="Drucken"
+            :icon="ionPerson"
+            @click="openParticipantsModal"
+            external-label="Teilnahmen"
           />
           <Share :title="shareTitle" :text="shareText" :url="shareUrl" />
           <LabeledBtn
@@ -491,16 +491,13 @@ onBeforeUnmount(() => {
                   label-position="bottom"
                 />
                 <QFabAction
-                  v-if="
-                    isTeamCaptainOrCoordinator &&
-                    event.event_type !== EventTypes.GENERIC
-                  "
-                  @click="openParticipantsModal"
+                  v-if="isPrintableEvent && isTeamCaptainOrCoordinator"
+                  :to="{ name: 'print-event', params: { eventId: event.id } }"
                   color="primary"
-                  :icon="ionPerson"
+                  :icon="ionPrint"
                   class="bg-white admin-fab"
                   stacked
-                  label="Teilnahmen"
+                  label="Drucken"
                   outline
                   label-class="bg-grey-2 text-primary"
                   external-label
@@ -704,8 +701,8 @@ label {
 }
 
 .admin-fab {
-  margin-left: 20px !important;
-  margin-right: 20px !important;
+  margin-left: 15px !important;
+  margin-right: 15px !important;
 }
 
 .verification-indicator {
