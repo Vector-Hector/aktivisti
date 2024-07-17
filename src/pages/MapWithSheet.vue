@@ -102,9 +102,7 @@ defineExpose({ setIsMapDefined })
         @changed-size="resizeMap"
         :showCreateButton="props.showCreateButton"
       >
-        <div class="overlay-content">
-          <router-view />
-        </div>
+        <router-view />
       </MapOverlayProxy>
     </MapContainer>
     <router-view v-else />
@@ -112,11 +110,6 @@ defineExpose({ setIsMapDefined })
 </template>
 
 <style lang="scss" scoped>
-.overlay-content {
-  height: 100%;
-  display: flex;
-}
-
 .event-map {
   display: flex;
   flex-direction: column;
