@@ -212,11 +212,11 @@ function openQRCode() {
             />
 
             <QCheckbox
-              label="Ich bin DIE LINKE Mitglied"
+              label="Ich bin Die Linke-Mitglied"
               v-model="lead.is_party_member"
             />
             <QCheckbox
-              label="Ich möchte DIE LINKE Mitglied werden"
+              label="Ich möchte Die Linke-Mitglied werden"
               v-model="lead.want_to_become_member"
             />
             <div class="control-buttons">

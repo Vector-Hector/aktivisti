@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">DIE LINKE. App</string>
-    <string name="title_activity_main">DIE LINKE. App</string>
+    <string name="app_name">Aktivisti</string>
+    <string name="title_activity_main">Aktivisti</string>
     <string name="package_name">app.dielinke.wahlkampf</string>
     <string name="custom_url_scheme">app.dielinke.wahlkampf</string>
 </resources>
