@@ -1,5 +1,5 @@
 // @ts-ignore
-import lang from 'quasar/src/lang'
+import { defaultLang } from 'quasar/src/plugins/lang/Lang.js'
 
 interface LocaleOptions {
   days?: string[]
@@ -165,6 +165,6 @@ export function dateMaskMatches(
   mask: string,
   dateLocale?: LocaleOptions
 ) {
-  const { regex } = getRegexData(mask, dateLocale ?? lang.props.date)
+  const { regex } = getRegexData(mask, dateLocale ?? defaultLang.date)
   return regex.exec(dateString) !== null
 }
