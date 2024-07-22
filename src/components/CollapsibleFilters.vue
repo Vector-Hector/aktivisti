@@ -76,15 +76,15 @@ function toggle() {
   align-items: center;
 
   .headline-caption {
-    h3 {
-      display: inline-block;
-      margin: 0 1rem 0 0;
-    }
-
     flex: 1;
     display: flex;
     flex-direction: row;
     align-items: center;
+
+    h3 {
+      display: inline-block;
+      margin: 0 1rem 0 0;
+    }
   }
 
   .filter-icon,
