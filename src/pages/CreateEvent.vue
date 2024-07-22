@@ -201,7 +201,7 @@ defineExpose({
   flex-direction: row;
   justify-content: flex-end;
 
-  * {
+  > * {
     margin-left: 1rem;
   }
 }

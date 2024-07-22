@@ -48,16 +48,6 @@ function getEventTypeLabel(eventType: EventTypes): string | undefined {
   font-size: 0.9rem;
 }
 
-.join-link {
-  align-self: flex-end;
-
-  Button {
-    padding: 3px 6px;
-  }
-
-  margin-top: 6px;
-}
-
 .popup-contents {
   display: flex;
   flex-direction: column;

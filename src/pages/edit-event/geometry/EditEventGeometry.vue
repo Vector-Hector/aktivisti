@@ -379,7 +379,7 @@ function openAdoptAreasModal() {
   flex-direction: row;
   justify-content: center;
 
-  * {
+  > * {
     margin-left: 1rem;
     flex-grow: 1;
   }
