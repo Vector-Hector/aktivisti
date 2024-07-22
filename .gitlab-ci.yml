@@ -60,7 +60,7 @@ lint:
       - dist/
 
 .android:
-  image: cimg/android:2024.07-node
+  image: cimg/android:2024.01.1-node
   stage: build
   before_script:
     - sudo npm install -g npm@^10
