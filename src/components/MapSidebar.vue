@@ -60,6 +60,7 @@ function handleCreateEvent() {
 .overlay-content {
   height: 100%;
   display: flex;
+  flex-direction: column;
 }
 
 .overlay-title {

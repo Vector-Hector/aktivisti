@@ -275,6 +275,7 @@ onBeforeUnmount(() => {
 
 .overlay-content {
   display: flex;
+  flex-direction: column;
 }
 
 .overlay-title {
