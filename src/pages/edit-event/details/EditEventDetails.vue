@@ -246,13 +246,56 @@ async function abort() {
         />
         <QInput
           filled
+          v-if="
+            [
+              EventTypes.DOOR_TO_DOOR,
+              EventTypes.POSTERS,
+              EventTypes.FLYERS
+            ].includes(event.event_type)
+          "
+          v-model.number="event.messenger_url"
+          label="Messenger URL"
+          :error-message="errors.messenger_url?.[0]"
+          :error="!!errors.messenger_url?.length"
+          type="url"
+        />
+        <QInput
+          filled
+          v-if="
+            [EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(
+              event.event_type
+            )
+          "
+          label="Link für externe Umfrage"
+          v-model.number="event.external_url_door"
+          :error-message="errors.external_url_door?.[0]"
+          :error="!!errors.external_url_door?.length"
+          label-slot
+        />
+        <QInput
+          filled
           type="textarea"
-          label="Beschreibung"
+          label="Öffentliche Beschreibung"
           v-model="event.description"
           :error-message="errors.description?.[0]"
           :error="!!errors.description?.length"
         />
-
+        <QInput
+          v-if="
+            [
+              EventTypes.DOOR_TO_DOOR,
+              EventTypes.POSTERS,
+              EventTypes.FLYERS
+            ].includes(event.event_type)
+          "
+          filled
+          type="textarea"
+          label="Interne Informationen"
+          hint="Diese Beschreibung kann nur von Teilnehmer*innen eingesehen werden"
+          v-model="event.internal_description"
+          :error-message="errors.internal_description?.[0]"
+          :error="!!errors.internal_description?.length"
+        />
         <QSelect
           filled
           v-if="event.event_type !== EventTypes.GENERIC"
