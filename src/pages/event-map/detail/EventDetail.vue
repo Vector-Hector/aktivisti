@@ -68,7 +68,13 @@ export default {
           apiClient.eventAreas.list({ event: eventId })
         ]
         if (eventRequest.payload.data.event_type === EventTypes.POSTERS) {
-          promises.push(apiClient.posters.list({ event: eventId }))
+          promises.push(
+            apiClient.posters.list({
+              event: eventId,
+              include_expired_events: true,
+              include_expired_campaigns: true
+            })
+          )
         }
         const [eventAreaRequest, posterRequest] = await Promise.all(promises)
         eventDetailStore.setEventAreas(eventAreaRequest.payload.data)
