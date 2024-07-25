@@ -23,7 +23,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const $route = useRoute()
-const { eventArea } = useEventDetailStore()
+const { event, eventArea } = useEventDetailStore()
 const { address } = useEventAreaMetricsComposable(props)
 
 const metricRecords = ref<EventMetricRecordDto[]>([])
@@ -105,6 +105,16 @@ function updateMetricValue(metricRecordId: number, value: string) {
       />
     </div>
     <p v-else>Für diese Aktion wurden keine Ergebnisse definiert</p>
+    <div v-if="event.external_url_door" class="external-url">
+      <QBtn
+        :href="event.external_url_door"
+        target="_blank"
+        outline
+        color="primary"
+      >
+        externe Umfrage öffnen
+      </QBtn>
+    </div>
   </QScrollArea>
 </template>
 
@@ -145,6 +155,12 @@ label {
   font-size: 1rem;
   font-weight: bold;
   margin: 0;
+}
+
+.external-url {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
 }
 
 .create-lead {
