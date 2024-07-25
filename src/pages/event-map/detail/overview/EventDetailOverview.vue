@@ -374,13 +374,24 @@ onBeforeUnmount(() => {
               }}
             </div>
             <template v-if="event.external_url">
-              <div class="col-4">Link:</div>
+              <div class="col-4"><b>Link:</b></div>
               <div class="col-8">
                 <a
                   target="_blank"
                   class="primary-link"
                   :href="event.external_url"
                   >{{ event.external_url }}</a
+                >
+              </div>
+            </template>
+            <template v-if="event.messenger_url">
+              <div class="col-4"><b>Messenger:</b></div>
+              <div class="col-8">
+                <a
+                  target="_blank"
+                  class="primary-link"
+                  :href="event.messenger_url"
+                  >{{ event.messenger_url }}</a
                 >
               </div>
             </template>
@@ -517,8 +528,14 @@ onBeforeUnmount(() => {
       </div>
       <div class="row">
         <div class="col-12 event-description">
-          <b>Beschreibung</b><br />
+          <b>Öffentliche Beschreibung</b><br />
           {{ event.description }}
+        </div>
+      </div>
+      <div v-if="event.internal_description" class="row">
+        <div class="col-12 event-description">
+          <b>Interne Informationen</b><br />
+          {{ event.internal_description }}
         </div>
       </div>
       <div class="areas row q-col-gutter-y-md" v-if="isMember">
