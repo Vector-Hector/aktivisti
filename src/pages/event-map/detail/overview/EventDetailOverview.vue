@@ -206,7 +206,11 @@ async function updateParticipationAndLoadAreas() {
     ).payload.data
     if (event.value.event_type === EventTypes.POSTERS) {
       posters.value = (
-        await apiClient.posters.list({ event: event.value.id })
+        await apiClient.posters.list({
+          event: event.value.id,
+          include_expired_events: true,
+          include_expired_campaigns: true
+        })
       ).payload.data
     }
   } else {

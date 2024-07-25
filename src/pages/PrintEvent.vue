@@ -36,7 +36,11 @@ export default {
     if (event_type === EventTypes.POSTERS) {
       const [eventAreasRequest, postersRequest] = await Promise.all([
         apiClient.eventAreas.list({ event: eventId.toString() }),
-        apiClient.posters.list({ event: eventId })
+        apiClient.posters.list({
+          event: eventId,
+          include_expired_events: true,
+          include_expired_campaigns: true
+        })
       ])
       next((vm) => {
         const instance = vm as IInstance
