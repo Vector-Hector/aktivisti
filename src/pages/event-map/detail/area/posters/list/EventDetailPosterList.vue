@@ -130,6 +130,9 @@ function openCreatePosterDialog() {
 </template>
 
 <style lang="scss" scoped>
+.container {
+  height: 100%;
+}
 .buttons {
   display: flex;
   justify-content: flex-end;
