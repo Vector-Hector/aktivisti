@@ -4,7 +4,7 @@
 
 # Aktivisti-frontend
 
-This project is the frontend application for the "Aktivisti". It's a responsive Progressive Web App.
+This project is the frontend application for "Aktivisti". It's a responsive Progressive Web App.
 
 ## General
 
