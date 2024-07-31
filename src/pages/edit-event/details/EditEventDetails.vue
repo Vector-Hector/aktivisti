@@ -290,8 +290,7 @@ async function abort() {
           "
           filled
           type="textarea"
-          label="Interne Informationen"
-          hint="Diese Beschreibung kann nur von Teilnehmer*innen eingesehen werden"
+          label="Interne Informationen (nur für Teilnehmer*innen sichtbar)"
           v-model="event.internal_description"
           :error-message="errors.internal_description?.[0]"
           :error="!!errors.internal_description?.length"
