@@ -63,6 +63,9 @@ const routes = [
     component: App,
     name: 'app',
     redirect: { name: 'splash' },
+    meta: {
+      requiresAuth: false
+    },
     children: [
       {
         path: '/',
@@ -74,7 +77,6 @@ const routes = [
         component: Profile,
         name: 'profile',
         meta: {
-          requiresAuth: true,
           title: () => 'Mein Profil'
         }
       },
@@ -83,7 +85,6 @@ const routes = [
         component: MyParticipations,
         name: 'my-participations',
         meta: {
-          requiresAuth: true,
           title: () => 'Meine Teilnahmen'
         }
       },
@@ -92,7 +93,6 @@ const routes = [
         component: Reports,
         name: 'reports',
         meta: {
-          requiresAuth: true,
           title: () => 'Statistiken'
         }
       },
@@ -155,8 +155,7 @@ const routes = [
         name: 'create-lead-general',
         component: CreateLead,
         meta: {
-          title: () => 'Bei Linksaktiv anmelden',
-          requiresAuth: true
+          title: () => 'Bei Linksaktiv anmelden'
         }
       },
       {
@@ -212,8 +211,7 @@ const routes = [
                 name: 'event-detail-report',
                 meta: {
                   title: () => 'Ergebnisse',
-                  subtitle: () => uiStore.getState().activeTitleElements.event,
-                  requiresAuth: true
+                  subtitle: () => uiStore.getState().activeTitleElements.event
                 }
               },
               {
@@ -261,8 +259,7 @@ const routes = [
                     meta: {
                       title: () =>
                         uiStore.getState().activeTitleElements.houseNumber,
-                      subtitle: () => 'Ergebnisse aufnehmen',
-                      requiresAuth: true
+                      subtitle: () => 'Ergebnisse aufnehmen'
                     },
                     props: true,
                     name: 'event-detail-area-metrics'
@@ -273,8 +270,7 @@ const routes = [
                     component: CreateLead,
                     props: true,
                     meta: {
-                      title: () => 'Bei Linksaktiv anmelden',
-                      requiresAuth: true
+                      title: () => 'Bei Linksaktiv anmelden'
                     }
                   },
                   {
@@ -320,8 +316,7 @@ const routes = [
         component: CreateEvent,
         name: 'create-event',
         meta: {
-          title: () => 'Aktion erstellen',
-          requiresAuth: true
+          title: () => 'Aktion erstellen'
         }
       },
       {
@@ -329,8 +324,7 @@ const routes = [
         component: CreateEventRequestPermissions,
         name: 'create-event-request-permissions',
         meta: {
-          title: () => 'Koordinator*innen-Rechte beantragen',
-          requiresAuth: true
+          title: () => 'Koordinator*innen-Rechte beantragen'
         }
       },
       {
@@ -340,8 +334,7 @@ const routes = [
         redirect: { name: 'edit-event-details' },
         meta: {
           subtitle: () => uiStore.getState().activeTitleElements.event,
-          title: () => 'Aktion bearbeiten',
-          requiresAuth: true
+          title: () => 'Aktion bearbeiten'
         },
         children: [
           {
@@ -409,6 +402,7 @@ const routes = [
           next: route.query.next
         }),
         meta: {
+          requiresAuth: false,
           title: () => 'Anmelden'
         }
       },
@@ -416,6 +410,7 @@ const routes = [
         path: '/register',
         component: Register,
         meta: {
+          requiresAuth: false,
           title: () => 'Registrieren'
         }
       },
@@ -424,6 +419,7 @@ const routes = [
         component: RegistrationSucess,
         name: 'register-success',
         meta: {
+          requiresAuth: false,
           title: () => 'Registrierung erfolgreich'
         }
       },
@@ -431,6 +427,7 @@ const routes = [
         path: '/imprint',
         component: Imprint,
         meta: {
+          requiresAuth: false,
           title: () => 'Impressum'
         }
       },
