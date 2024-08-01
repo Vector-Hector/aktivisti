@@ -137,13 +137,13 @@ function logout() {
               <OpenInvitationsBadge />
             </MenuLink>
           </div>
-          <div class="menu-item">
+          <div v-if="isLoggedIn" class="menu-item">
             <MenuLink to="/events">
               <QIcon class="menu-item-icon" :name="ionCalendarClearOutline" />
               <span class="menu-item-link-text">Alle Aktionen</span>
             </MenuLink>
           </div>
-          <div class="menu-item">
+          <div v-if="isLoggedIn" class="menu-item">
             <MenuLink to="/offices">
               <QIcon class="menu-item-icon" :name="ionHomeOutline" />
               <span class="menu-item-link-text">Die Linke vor Ort</span>
