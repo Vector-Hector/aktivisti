@@ -22,6 +22,7 @@ export interface EventDto {
   location: LocationDto
   location_description: string
   description: string
+  internal_description: string
   participants: number
   max_participants: number
   visibility: VisibilityOptions
@@ -29,4 +30,6 @@ export interface EventDto {
   sub_association: number
   poster_creation_allowed: boolean
   external_url: string
+  external_url_door: string
+  messenger_url: string
 }

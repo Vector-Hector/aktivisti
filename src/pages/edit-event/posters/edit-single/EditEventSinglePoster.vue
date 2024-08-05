@@ -184,7 +184,7 @@ function onDeleteClicked() {
     flex-direction: row;
     justify-content: center;
 
-    * {
+    > * {
       padding-left: 0.5rem;
       padding-right: 0.5rem;
     }

@@ -20,7 +20,7 @@ if (configStore.getState().service_config.registration_disabled) {
   $q.dialog({
     title: 'Geschlossene Beta',
     message:
-      'Schön, dass du dich für die LINKE Wahlkampf-App interessierst. Derzeit befinden wir uns in einer ' +
+      'Schön, dass du dich für Aktivisti interessierst. Derzeit befinden wir uns in einer ' +
       'geschlossenen Beta-Phase. Registrierungen sind erst ab der nächsten Phase möglich. ' +
       'Um jetzt schon mitzumachen, muss eine Genoss*in dich einladen.'
   })
@@ -107,10 +107,10 @@ async function register() {
 
           <div class="privacy-disclaimer">
             <p>
-              Als Benutzer*in der LINKEN App nimmst Du zur Kenntnis und stimmst
+              Als Benutzer*in von Aktivisti nimmst Du zur Kenntnis und stimmst
               zu, dass Du die per App erhaltenen und übermittelten Daten zu
               keinem anderen Zweck als der Organisation von Aktionen der Partei
-              DIE LINKE nutzt, insbesondere diese weder speicherst, noch
+              Die Linke nutzt, insbesondere diese weder speicherst, noch
               kopierst oder Dritten für andere Zwecke übermittelst. Du stimmst
               zu, dass Passwort stets vertraulich zu behandeln und jeden Verlust
               des Gerätes oder jede mögliche Offenbarung des Passwortes oder

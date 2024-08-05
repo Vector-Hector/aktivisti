@@ -145,7 +145,9 @@ function openAdoptAreasModal() {
       if (event.value.event_type === EventTypes.POSTERS && adoptPosters) {
         for (const posterEvent of events) {
           const posterResponse = await apiClient.posters.list({
-            event: posterEvent
+            event: posterEvent,
+            include_expired_events: true,
+            include_expired_campaigns: true
           })
           const importedPostersResponse =
             await apiClient.events.batchImportPosters(
@@ -379,7 +381,7 @@ function openAdoptAreasModal() {
   flex-direction: row;
   justify-content: center;
 
-  * {
+  > * {
     margin-left: 1rem;
     flex-grow: 1;
   }

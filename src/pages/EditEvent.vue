@@ -25,7 +25,9 @@ export default {
         ])
       if (eventRequest.payload.data.event_type === EventTypes.POSTERS) {
         const posters = await apiClient.posters.list({
-          event: to.params.eventId
+          event: to.params.eventId,
+          include_expired_events: true,
+          include_expired_campaigns: true
         })
         posterListStore.state.posters = posters.payload.data
       }

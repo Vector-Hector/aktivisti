@@ -62,6 +62,12 @@ const {
   refreshParticipants
 } = useEventDetailStore()
 
+const isVerficationRequired = computed(() => {
+  return participations.value.some(
+    ({ is_verified, is_team_captain }) => !is_team_captain && !is_verified
+  )
+})
+
 const shareUrl = computed(() => {
   const shareUrl = process.env.APP_SHARE_URL as string
   return (
@@ -200,7 +206,11 @@ async function updateParticipationAndLoadAreas() {
     ).payload.data
     if (event.value.event_type === EventTypes.POSTERS) {
       posters.value = (
-        await apiClient.posters.list({ event: event.value.id })
+        await apiClient.posters.list({
+          event: event.value.id,
+          include_expired_events: true,
+          include_expired_campaigns: true
+        })
       ).payload.data
     }
   } else {
@@ -368,13 +378,24 @@ onBeforeUnmount(() => {
               }}
             </div>
             <template v-if="event.external_url">
-              <div class="col-4">Link:</div>
+              <div class="col-4"><b>Link:</b></div>
               <div class="col-8">
                 <a
                   target="_blank"
                   class="primary-link"
                   :href="event.external_url"
                   >{{ event.external_url }}</a
+                >
+              </div>
+            </template>
+            <template v-if="event.messenger_url">
+              <div class="col-4"><b>Messenger:</b></div>
+              <div class="col-8">
+                <a
+                  target="_blank"
+                  class="primary-link"
+                  :href="event.messenger_url"
+                  >{{ event.messenger_url }}</a
                 >
               </div>
             </template>
@@ -396,14 +417,15 @@ onBeforeUnmount(() => {
         <div class="col-auto column">
           <LabeledBtn
             v-if="
-              isPrintableEvent &&
-              (personalParticipation?.is_verified || isTeamCaptainOrCoordinator)
+              isTeamCaptainOrCoordinator &&
+              event.event_type !== EventTypes.GENERIC
             "
             round
             outline
-            :icon="ionPrint"
-            :to="{ name: 'print-event', params: { eventId: event.id } }"
-            external-label="Drucken"
+            :icon="ionPerson"
+            @click="openParticipantsModal"
+            external-label="Teilnahmen"
+            :has-notification="isVerficationRequired"
           />
           <Share :title="shareTitle" :text="shareText" :url="shareUrl" />
           <LabeledBtn
@@ -491,16 +513,13 @@ onBeforeUnmount(() => {
                   label-position="bottom"
                 />
                 <QFabAction
-                  v-if="
-                    isTeamCaptainOrCoordinator &&
-                    event.event_type !== EventTypes.GENERIC
-                  "
-                  @click="openParticipantsModal"
+                  v-if="isPrintableEvent && isTeamCaptainOrCoordinator"
+                  :to="{ name: 'print-event', params: { eventId: event.id } }"
                   color="primary"
-                  :icon="ionPerson"
+                  :icon="ionPrint"
                   class="bg-white admin-fab"
                   stacked
-                  label="Teilnahmen"
+                  label="Drucken"
                   outline
                   label-class="bg-grey-2 text-primary"
                   external-label
@@ -513,8 +532,14 @@ onBeforeUnmount(() => {
       </div>
       <div class="row">
         <div class="col-12 event-description">
-          <b>Beschreibung</b><br />
+          <b>Öffentliche Beschreibung</b><br />
           {{ event.description }}
+        </div>
+      </div>
+      <div v-if="event.internal_description" class="row">
+        <div class="col-12 event-description">
+          <b>Interne Informationen</b><br />
+          {{ event.internal_description }}
         </div>
       </div>
       <div class="areas row q-col-gutter-y-md" v-if="isMember">
@@ -704,8 +729,8 @@ label {
 }
 
 .admin-fab {
-  margin-left: 20px !important;
-  margin-right: 20px !important;
+  margin-left: 15px !important;
+  margin-right: 15px !important;
 }
 
 .verification-indicator {
