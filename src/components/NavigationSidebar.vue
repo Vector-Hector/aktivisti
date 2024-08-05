@@ -64,8 +64,8 @@ const helpUrl = computed(() => {
   return process.env.APP_HELP_URL as string
 })
 
-function logout() {
-  void authStore.logout()
+async function logout() {
+  await authStore.logout()
   void userStore.reset()
   void $router.push('/')
 }
