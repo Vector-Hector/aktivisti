@@ -101,7 +101,7 @@ function logout() {
               <span v-if="userFullname.length > 0" class="name">{{
                 userFullname
               }}</span>
-              <span class="username">{{ userName }}</span>
+              <span class="username">@{{ userName }}</span>
             </div>
           </MenuLink>
         </div>
@@ -116,14 +116,14 @@ function logout() {
         />
         <div class="menu-item">
           <MenuLink to="/login">
-            <QIcon :name="ionLogIn" />
+            <QIcon class="menu-item-icon" :name="ionLogIn" />
             <span class="menu-item-link-text">Anmelden</span>
           </MenuLink>
         </div>
         <hr class="menu-divider" />
         <div class="menu-item">
           <MenuLink to="/register">
-            <QIcon :name="farIdCard" />
+            <QIcon class="menu-item-icon" :name="farIdCard" />
             <span class="menu-item-link-text">Registrieren</span>
           </MenuLink>
         </div>
@@ -132,32 +132,35 @@ function logout() {
         <div class="menu-group">
           <div v-if="isLoggedIn" class="menu-item">
             <MenuLink :to="{ name: 'my-participations' }">
-              <QIcon :name="ionCalendarOutline" />
+              <QIcon class="menu-item-icon" :name="ionCalendarOutline" />
               <span class="menu-item-link-text">Meine Teilnahmen</span>
               <OpenInvitationsBadge />
             </MenuLink>
           </div>
           <div class="menu-item">
             <MenuLink to="/events">
-              <QIcon :name="ionCalendarClearOutline" />
+              <QIcon class="menu-item-icon" :name="ionCalendarClearOutline" />
               <span class="menu-item-link-text">Alle Aktionen</span>
             </MenuLink>
           </div>
           <div class="menu-item">
             <MenuLink to="/offices">
-              <QIcon :name="ionHomeOutline" />
+              <QIcon class="menu-item-icon" :name="ionHomeOutline" />
               <span class="menu-item-link-text">Die Linke vor Ort</span>
             </MenuLink>
           </div>
           <div v-if="hasManagePermission" class="menu-item">
             <MenuLink to="/posters">
-              <QIcon name="img:/static/icons/poster.svg" />
+              <QIcon
+                class="menu-item-icon"
+                name="img:/static/icons/poster.svg"
+              />
               <span class="menu-item-link-text">Plakate</span>
             </MenuLink>
           </div>
           <div v-if="hasManagePermission" class="menu-item">
             <MenuLink :to="{ name: 'reports' }">
-              <QIcon :name="ionStatsChartOutline" />
+              <QIcon class="menu-item-icon" :name="ionStatsChartOutline" />
               <span class="menu-item-link-text">Statistiken</span>
             </MenuLink>
           </div>
@@ -166,7 +169,7 @@ function logout() {
             class="menu-item"
           >
             <MenuLink :to="{ name: 'manage-users' }">
-              <QIcon :name="ionPeopleOutline" />
+              <QIcon class="menu-item-icon" :name="ionPeopleOutline" />
               <span class="menu-item-link-text">Benutzer*innen verwalten</span>
             </MenuLink>
           </div>
@@ -175,7 +178,7 @@ function logout() {
             class="menu-item"
           >
             <MenuLink :to="{ name: 'create-lead-general' }">
-              <QIcon :name="ionPersonAddOutline" />
+              <QIcon class="menu-item-icon" :name="ionPersonAddOutline" />
               <span class="menu-item-link-text">Kontakt registrieren</span>
             </MenuLink>
           </div>
@@ -186,19 +189,19 @@ function logout() {
           <hr class="menu-divider" />
           <div class="menu-item">
             <a class="menu-item-link" :href="helpUrl" target="_blank">
-              <QIcon :name="ionHelpCircleOutline" />
+              <QIcon class="menu-item-icon" :name="ionHelpCircleOutline" />
               <span class="menu-item-link-text">Hilfe</span>
             </a>
           </div>
           <div class="menu-item">
             <MenuLink to="/imprint">
-              <span class="paragraph-icon">§</span>
+              <span class="menu-item-icon paragraph-icon">§</span>
               <span class="menu-item-link-text">Impressum / Datenschutz</span>
             </MenuLink>
           </div>
           <div v-if="isLoggedIn" class="menu-item">
             <div class="menu-item-link" @click="logout()">
-              <QIcon :name="ionExitOutline" />
+              <QIcon class="menu-item-icon" :name="ionExitOutline" />
               <span class="menu-item-link-text">Abmelden</span>
             </div>
           </div>
@@ -277,7 +280,7 @@ body.platform-ios {
     cursor: pointer;
     color: $text-primary;
 
-    :first-child {
+    .menu-item-icon {
       width: 1rem;
     }
   }
