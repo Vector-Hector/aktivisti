@@ -101,7 +101,7 @@ function logout() {
               <span v-if="userFullname.length > 0" class="name">{{
                 userFullname
               }}</span>
-              <span class="username">{{ userName }}</span>
+              <span class="username">@{{ userName }}</span>
             </div>
           </MenuLink>
         </div>
