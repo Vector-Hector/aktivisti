@@ -19,7 +19,7 @@ import { useGlobalLoadingState } from 'src/utils/app'
 const router = useRouter()
 
 if (userStore.getState().bbox === null) {
-  void router.replace({ name: 'splash' })
+  void router.replace({ name: 'home' })
 }
 
 const campaigns = ref<CampaignDto[]>([])

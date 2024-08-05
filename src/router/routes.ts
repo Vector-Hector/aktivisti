@@ -5,7 +5,6 @@ import { uiStore } from 'src/store/UiStore'
 import RegistrationSucess from 'src/pages/RegistrationSucess.vue'
 import MapWithSheet from 'pages/MapWithSheet.vue'
 import Imprint from 'src/pages/Imprint.vue'
-import Splash from 'src/pages/Splash.vue'
 import EventOverview from 'pages/event-map/overview/EventOverview.vue'
 import EventOverviewMap from 'pages/event-map/overview/EventOverviewMap.vue'
 import EventDetailOverview from 'pages/event-map/detail/overview/EventDetailOverview.vue'
@@ -62,15 +61,20 @@ const routes = [
     path: '',
     component: App,
     name: 'app',
-    redirect: { name: 'splash' },
+    redirect: { name: 'home' },
     meta: {
       requiresAuth: false
     },
     children: [
       {
         path: '/',
-        component: Splash,
-        name: 'splash'
+        name: 'home',
+        redirect: () => {
+          if (authStore.isLoggedIn()) {
+            return { name: 'events' }
+          }
+          return { name: 'login' }
+        }
       },
       {
         path: '/profile',
