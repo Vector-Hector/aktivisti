@@ -9,6 +9,7 @@ import routes from './routes'
 import { getAuthStore } from 'src/store/AuthStore'
 
 const authStore = getAuthStore()
+const DEFAULT_REQUIRES_AUTH = true
 
 /*
  * If not building with SSR mode, you can
@@ -38,7 +39,13 @@ export default route(function (/* { store, ssrContext } */) {
   Router.beforeEach((to, from, next) => {
     if (
       !authStore.isLoggedIn() &&
-      to.matched.some((record) => record.meta.requiresAuth)
+      to.matched.some((record) => {
+        const requiresAuth =
+          record.meta.requiresAuth !== undefined
+            ? record.meta.requiresAuth
+            : DEFAULT_REQUIRES_AUTH
+        return requiresAuth
+      })
     ) {
       next({
         name: 'login',

@@ -260,7 +260,7 @@ function openDeleteAccountPrompt() {
           message: 'Dein Account wurde gelöscht',
           color: 'positive'
         })
-        await $router.push({ name: 'splash' })
+        await $router.push({ name: 'home' })
         authStore.deleteSessionData()
       } catch (e) {
         $q.notify({

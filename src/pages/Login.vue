@@ -89,6 +89,9 @@ function openResetPasswordModal() {
 
 <template>
   <div class="container">
+    <div class="logo-splash-container">
+      <img src="../assets/logo_aktivisti.svg" class="q-my-md logo-splash" />
+    </div>
     <QForm @submit="login">
       <QInput
         label="Benutzer*innenname"
@@ -170,5 +173,20 @@ function openResetPasswordModal() {
 
 .label-floating.sc-ion-label-md-h {
   margin-bottom: 8px;
+}
+
+.logo-splash-container {
+  display: flex;
+  justify-content: center;
+}
+
+.logo-splash {
+  width: 50%;
+}
+
+@media (min-width: $breakpoint-sm-min) {
+  .logo-splash {
+    width: 30%;
+  }
 }
 </style>
