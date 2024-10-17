@@ -17,7 +17,6 @@ import { ionLocationSharp } from '@quasar/extras/ionicons-v5'
 import { QBtn, useQuasar } from 'quasar'
 import SelectPosterLocation from 'components/modals/SelectPosterLocation.vue'
 import { PosterDto } from 'src/api/model/PosterDto'
-import { bbox, circle, point } from '@turf/turf'
 import { userStore } from 'src/store/UserStore'
 import { uiStore } from 'src/store/UiStore'
 import {
@@ -55,32 +54,12 @@ const { selectPoster } = useEventDetailPosterMixin()
 onBeforeRouteUpdate(updateRoute)
 
 function openCreatePosterDialog() {
-  let initialBoundingBox =
-    postersInArea.value.length > 0
-      ? bbox({
-          type: 'FeatureCollection',
-          features: postersInArea.value.map(({ location }) =>
-            circle(point([location.lng, location.lat]), 1)
-          )
-        })
-      : null
-  if (!initialBoundingBox) {
-    initialBoundingBox = eventArea.value?.geometry
-      ? bbox({
-          type: 'Feature',
-          geometry: eventArea.value.geometry
-        })
-      : null
-  }
-  if (!initialBoundingBox) {
-    initialBoundingBox = userStore.state.bbox ?? null
-  }
   $q.dialog({
     component: SelectPosterLocation,
     componentProps: {
       eventId: event.value.id,
       posters: posters.value,
-      initialBBox: initialBoundingBox,
+      initialBBox: userStore.state.bbox,
       areaFeatures: [currentAreaFeature.value]
     }
   }).onOk((poster: PosterDto) => {
