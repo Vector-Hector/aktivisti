@@ -41,7 +41,7 @@ import {
   QToolbarTitle
 } from 'quasar'
 import FormError from 'components/FormError.vue'
-import { ionClose } from '@quasar/extras/ionicons-v5'
+import { ionClose, ionChevronDown } from '@quasar/extras/ionicons-v5'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import { userStore } from 'src/store/UserStore'
 import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
@@ -155,6 +155,7 @@ function openQRCode() {
           <QForm ref="form" @submit="saveLead">
             <QSelect
               label="Geschlecht *"
+              :dropdownIcon="ionChevronDown"
               v-model="lead.gender"
               emit-value
               :rules="[$validationRules.isRequired]"
