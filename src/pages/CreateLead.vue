@@ -25,7 +25,7 @@ export default {
 }
 </script>
 <script setup lang="ts">
-import { ComponentPublicInstance, ref } from 'vue'
+import { ComponentPublicInstance, onMounted, ref } from 'vue'
 import { LeadDto } from 'src/api/model/LeadDto'
 import {
   QBtn,
@@ -47,6 +47,9 @@ import { userStore } from 'src/store/UserStore'
 import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 import { onBeforeRouteLeave, useRouter } from 'vue-router'
 import { apiClient } from 'src/api/ApiClient'
+import { useEventDetailStore } from './event-map/detail/EventDetailStoreMixin'
+import { SubOrganizationDto } from 'src/api/model/SubOrganizationDto'
+import { OrganizationDto } from 'src/api/model/OrganizationDto'
 
 interface Props {
   areaId?: string
@@ -55,6 +58,10 @@ const props = defineProps<Props>()
 
 const $router = useRouter()
 const form = ref<InstanceType<typeof QForm> | null>(null)
+const { event } = useEventDetailStore()
+const subOrganizations = ref<SubOrganizationDto[]>([])
+const suggestedSubOrganizations = ref<SubOrganizationDto[]>([])
+const organizations = ref<OrganizationDto[]>([])
 
 const previousBottomSheetState = ref(BottomSheetState.HALF)
 const qrCodeOpen = ref(false)
@@ -78,6 +85,25 @@ const genders = [
     label: 'divers'
   }
 ]
+
+onMounted(async () => {
+  const subOrgRequest = await apiClient.zetkinSubOrganizations.list({}, [
+    'organization'
+  ])
+  if (event.value && event.value.sub_association) {
+    const subOrgOfSubAssociationRequest =
+      await apiClient.zetkinSubOrganizations.list({
+        sub_association: event.value.sub_association
+      })
+
+    lead.value.sub_organization =
+      subOrgOfSubAssociationRequest.payload.data[0].id
+  }
+
+  subOrganizations.value = subOrgRequest.payload.data
+  suggestedSubOrganizations.value = subOrganizations.value
+  organizations.value = subOrgRequest.payload.embedded.organization
+})
 
 onBeforeRouteLeave(() => {
   uiStore.setBottomSheetState(previousBottomSheetState.value)
@@ -114,6 +140,41 @@ async function saveLead() {
 }
 function openQRCode() {
   qrCodeOpen.value = true
+}
+
+function filterSubOrganizations(subOrgTitle: string, update: any) {
+  if (!subOrgTitle) {
+    update(() => {
+      suggestedSubOrganizations.value = subOrganizations.value
+    })
+    return
+  }
+
+  const lowercasedValue = subOrgTitle.toLowerCase()
+
+  update(() => {
+    suggestedSubOrganizations.value = subOrganizations.value.filter(
+      (subOrg) => {
+        const subOrgTitleMatches = subOrg.title
+          .toLowerCase()
+          .includes(lowercasedValue)
+        const organizationTitleMatches = organizations.value
+          .find(({ id }) => id === subOrg.organization)
+          ?.title.toLowerCase()
+          .includes(lowercasedValue)
+        return subOrgTitleMatches || organizationTitleMatches
+      }
+    )
+  })
+}
+
+function formatSubOrganization(subOrganization: SubOrganizationDto) {
+  const titleSubOrg = subOrganization.title
+  const titleOrg = organizations.value.find(
+    ({ id }) => id === subOrganization.organization
+  )?.title
+
+  return `${titleSubOrg} (${titleOrg})`
 }
 </script>
 
@@ -210,6 +271,21 @@ function openQRCode() {
               v-model="lead.city"
               :error-message="errors.city?.[0]"
               :error="!!errors.city?.length"
+            />
+            <QSelect
+              label="Organisation *"
+              :dropdownIcon="ionChevronDown"
+              v-model="lead.sub_organization"
+              :rules="[$validationRules.isRequired]"
+              :options="suggestedSubOrganizations"
+              option-value="id"
+              :option-label="formatSubOrganization"
+              emit-value
+              map-options
+              use-input
+              fill-input
+              hide-selected
+              @filter="filterSubOrganizations"
             />
 
             <QCheckbox
