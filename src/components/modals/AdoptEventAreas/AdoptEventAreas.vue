@@ -112,7 +112,7 @@ async function loadMoreCollections(index: number, done: () => void) {
 const qCardClass = computed(() => {
   if (
     page.value === Page.RECENT_EVENT_AREAS ||
-    page.value === Page.SELECT_AREA_SET
+    (page.value === Page.SELECT_AREA_SET && isCollectionExisting.value)
   ) {
     return 'higher-content'
   }
@@ -208,6 +208,7 @@ defineExpose({
 </template>
 <style lang="scss" scoped>
 .adopt-events-modal {
+  min-height: 250px;
   min-width: 320px;
   display: flex;
   flex-direction: column;
