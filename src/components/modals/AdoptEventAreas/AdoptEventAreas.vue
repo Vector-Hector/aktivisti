@@ -62,11 +62,6 @@ const areAllCollectionsLoaded = computed(
 
 onMounted(async () => {
   await fetchMoreCollections()
-
-  // if no collections can be found, directly go to recent event areas
-  if (!isCollectionExisting.value) {
-    page.value = Page.RECENT_EVENT_AREAS
-  }
 })
 
 /**
