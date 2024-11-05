@@ -51,13 +51,15 @@ async function jumpToAddress(address: AddressDetails) {
 }
 </script>
 <template>
-  <AddressMarker
-    v-for="address in addresses"
-    :key="address.house_number"
-    :location="center(address.geometry)"
-    :text="address.house_number"
-    :selected="$route.params.houseNumber === address.house_number"
-    :done="completedTargetIds.includes(address.osm_id.toString())"
-    @click="jumpToAddress(address)"
-  />
+  <div>
+    <AddressMarker
+      v-for="address in addresses"
+      :key="address.house_number"
+      :location="center(address.geometry)"
+      :text="address.house_number"
+      :selected="$route.params.houseNumber === address.house_number"
+      :done="completedTargetIds.includes(address.osm_id.toString())"
+      @click="jumpToAddress(address)"
+    />
+  </div>
 </template>
