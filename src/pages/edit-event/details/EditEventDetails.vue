@@ -164,11 +164,6 @@ async function next() {
   await saveDebouncer.waitForSettle()
   stepControls.next()
 }
-
-async function abort() {
-  await saveDebouncer.waitForSettle()
-  stepControls.abort()
-}
 </script>
 
 <template>
@@ -316,7 +311,6 @@ async function abort() {
   </div>
   <SidebarBottomStepNavigation
     class="navigation"
-    @close="abort"
     @forward="next"
     @back="back"
     :last="stepControls.isLastStep.value"
