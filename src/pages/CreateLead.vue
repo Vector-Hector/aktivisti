@@ -67,7 +67,7 @@ const previousBottomSheetState = ref(BottomSheetState.HALF)
 const qrCodeOpen = ref(false)
 const lead = ref<Partial<LeadDto>>({
   is_party_member: false,
-  want_to_become_member: false
+  wants_to_become_member: false
 })
 const isSubmitting = ref(false)
 const errors = ref<any>({})
@@ -123,7 +123,7 @@ async function saveLead() {
     // TODO: maybe add an explicit back route
     lead.value = {
       is_party_member: false,
-      want_to_become_member: false
+      wants_to_become_member: false
     }
     form.value?.reset()
     $router.go(-1)
@@ -294,7 +294,7 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
             />
             <QCheckbox
               label="Ich möchte Die Linke-Mitglied werden"
-              v-model="lead.want_to_become_member"
+              v-model="lead.wants_to_become_member"
             />
             <div class="control-buttons">
               <FormError :error="errors.non_field_error" />

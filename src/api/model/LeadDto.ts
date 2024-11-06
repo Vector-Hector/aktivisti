@@ -8,7 +8,7 @@ export interface LeadDto {
   city: string
   state: string
   is_party_member: boolean
-  want_to_become_member: boolean
+  wants_to_become_member: boolean
   privacy_opt_in: boolean
   event_area: null | number
   sub_organization: number
