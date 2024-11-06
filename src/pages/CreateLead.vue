@@ -38,7 +38,8 @@ import {
   QScrollArea,
   QSelect,
   QToolbar,
-  QToolbarTitle
+  QToolbarTitle,
+  useQuasar
 } from 'quasar'
 import FormError from 'components/FormError.vue'
 import { ionClose, ionChevronDown } from '@quasar/extras/ionicons-v5'
@@ -56,6 +57,7 @@ interface Props {
 }
 const props = defineProps<Props>()
 
+const $q = useQuasar()
 const $router = useRouter()
 const form = ref<InstanceType<typeof QForm> | null>(null)
 const { event } = useEventDetailStore()
@@ -115,6 +117,10 @@ async function saveLead() {
     await apiClient.leads.create({
       ...lead.value,
       event_area: props.areaId
+    })
+    $q.notify({
+      color: 'positive',
+      message: 'Kontakt wurde registriert'
     })
     // TODO: maybe add an explicit back route
     lead.value = {
