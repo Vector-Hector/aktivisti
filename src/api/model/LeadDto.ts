@@ -1,15 +1,13 @@
 export interface LeadDto {
-  gender: 'm' | 'w' | 'd'
-  last_name: string
+  gender?: 'm' | 'f' | 'o'
   first_name: string
+  last_name: string
   email: string
-  phone_number: string
-  plz: string
-  city: string
-  state: string
-  is_party_member: boolean
-  wants_to_become_member: boolean
-  privacy_opt_in: boolean
-  event_area: null | number
+  phone?: string
+  zip_code: string
+  city?: string
   sub_organization: number
+  note?: string
+  wants_to_become_member?: boolean
+  event_area: number
 }

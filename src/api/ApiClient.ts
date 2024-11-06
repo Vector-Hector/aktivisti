@@ -115,7 +115,11 @@ export class ApiClient {
     'tracking-session/',
     this.axiosInstance
   )
-  leads = new ApiRoute<LeadDto>(this.baseURL, 'leads/', this.axiosInstance)
+  leads = new ApiRoute<LeadDto>(
+    this.baseURL,
+    'zetkin/leads/',
+    this.axiosInstance
+  )
   eventParticipations = new EventParticipationRoute(
     this.baseURL,
     'event-participations/',

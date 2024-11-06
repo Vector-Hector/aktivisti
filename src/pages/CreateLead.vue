@@ -52,7 +52,7 @@ import { SubOrganizationDto } from 'src/api/model/SubOrganizationDto'
 import { OrganizationDto } from 'src/api/model/OrganizationDto'
 
 interface Props {
-  areaId?: string
+  areaId: number
 }
 const props = defineProps<Props>()
 
@@ -66,7 +66,6 @@ const organizations = ref<OrganizationDto[]>([])
 const previousBottomSheetState = ref(BottomSheetState.HALF)
 const qrCodeOpen = ref(false)
 const lead = ref<Partial<LeadDto>>({
-  is_party_member: false,
   wants_to_become_member: false
 })
 const isSubmitting = ref(false)
@@ -77,11 +76,11 @@ const genders = [
     label: 'männlich'
   },
   {
-    value: 'w',
+    value: 'f',
     label: 'weiblich'
   },
   {
-    value: 'd',
+    value: 'o',
     label: 'divers'
   }
 ]
@@ -115,14 +114,10 @@ async function saveLead() {
   try {
     await apiClient.leads.create({
       ...lead.value,
-      event_area: props.areaId ? parseInt(props.areaId) : undefined,
-      // The form will register the lead on the behalf of someone else - therefor a double opt in is necessary
-      // The first opt in here is implicit by offering the data in a person to person talk at the door
-      privacy_opt_in: true
+      event_area: props.areaId
     })
     // TODO: maybe add an explicit back route
     lead.value = {
-      is_party_member: false,
       wants_to_become_member: false
     }
     form.value?.reset()
@@ -215,11 +210,10 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
           </div>
           <QForm ref="form" @submit="saveLead">
             <QSelect
-              label="Geschlecht *"
+              label="Geschlecht"
               :dropdownIcon="ionChevronDown"
               v-model="lead.gender"
               emit-value
-              :rules="[$validationRules.isRequired]"
               :options="genders"
               option-value="value"
               option-label="label"
@@ -252,18 +246,18 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
             />
             <QInput
               label="Telefonnummer"
-              v-model="lead.phone_number"
-              :error-message="errors.phone_number?.[0]"
-              :error="!!errors.phone_number?.length"
+              v-model="lead.phone"
+              :error-message="errors.phone?.[0]"
+              :error="!!errors.phone?.length"
             />
             <QInput
               label="Postleitzahl *"
-              v-model="lead.plz"
+              v-model="lead.zip_code"
               :minlength="5"
               :maxlength="5"
               :rules="[$validationRules.isRequired]"
-              :error-message="errors.plz?.[0]"
-              :error="!!errors.plz?.length"
+              :error-message="errors.zip_code?.[0]"
+              :error="!!errors.zip_code?.length"
             />
 
             <QInput
@@ -286,11 +280,16 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
               fill-input
               hide-selected
               @filter="filterSubOrganizations"
+              :error-message="errors.sub_organization?.[0]"
+              :error="!!errors.sub_organization?.length"
             />
-
-            <QCheckbox
-              label="Ich bin Die Linke-Mitglied"
-              v-model="lead.is_party_member"
+            <QInput
+              label="Bemerkung"
+              v-model="lead.note"
+              :maxlength="400"
+              :error-message="errors.note?.[0]"
+              :error="!!errors.note?.length"
+              type="textarea"
             />
             <QCheckbox
               label="Ich möchte Die Linke-Mitglied werden"
