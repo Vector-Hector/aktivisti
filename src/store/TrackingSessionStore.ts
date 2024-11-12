@@ -160,7 +160,10 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
     }
     const metricsToUpdate: { metricRecordId: string; value: number }[] = []
     // set a flag indicating that before this update no metrics were recorded
-    let fromIncompleteState = true
+
+    const storedCompletionNote = eventDetailStore
+      .getState()
+      .completionNotes.find(({ target_id }) => target_id == address.osm_id)
 
     const oldMetrics =
       this.state.sessions[this.state.trackingSessionId!]?.eventAreas[
@@ -168,10 +171,6 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
       ]?.[address.osm_id]
     if (oldMetrics) {
       for (const [metricId, value] of Object.entries(oldMetrics)) {
-        if (value > 0) {
-          // if any value before this update was >0 this address was indicated as completed already
-          fromIncompleteState = false
-        }
         if (metricValueMap[metricId] !== value) {
           metricsToUpdate.push({
             metricRecordId: metricId,
@@ -220,15 +219,27 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
       )
     }
     // If we updated this address to only record zeroes that means we mark this address as incomplete
-    const toIncompleteState =
-      metricsToUpdate.reduce((acc, item) => item.value + acc, 0) == 0
-    if (fromIncompleteState || toIncompleteState) {
+
+    const metricsSum = Object.values(metricValueMap).reduce(
+      (acc, item) => item + acc,
+      0
+    )
+
+    const isAtLeastOneMetricRecorded = metricsSum > 0
+    const wasNotStoredAsCompleted =
+      !storedCompletionNote || storedCompletionNote.completed === false
+
+    const hasBecomeCompleted =
+      isAtLeastOneMetricRecorded && wasNotStoredAsCompleted
+    const hasBecomeIncompleted =
+      !isAtLeastOneMetricRecorded && !wasNotStoredAsCompleted
+
+    if (hasBecomeCompleted || hasBecomeIncompleted) {
       // If there is any metric recorded for this address indicate completion to the backend, if not indicate incompletion
-      const completed = metricsToUpdate.some(({ value }) => value > 0)
       const completionNotePromise = apiClient.completionNotes
         .create({
           target_id: address.osm_id,
-          completed: completed,
+          completed: metricsSum > 0,
           event_area: eventArea
         })
         .then((response) => {
