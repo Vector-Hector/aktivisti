@@ -16,7 +16,6 @@ const props = withDefaults(defineProps<Props>(), {
 interface Emits {
   (e: 'forward'): void
   (e: 'back'): void
-  (e: 'close'): void
 }
 const emit = defineEmits<Emits>()
 </script>
@@ -31,16 +30,6 @@ const emit = defineEmits<Emits>()
         label="Zurück"
         :icon="ionChevronBack"
         @click="emit('back')"
-      />
-    </div>
-    <div class="col middle">
-      <QBtn
-        class="button"
-        flat
-        dense
-        color="primary"
-        label="Schließen"
-        @click="emit('close')"
       />
     </div>
     <div class="col right">
@@ -64,12 +53,6 @@ const emit = defineEmits<Emits>()
   .button {
     padding-right: 0.7rem;
   }
-}
-
-.middle {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
 }
 
 .right {
