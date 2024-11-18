@@ -173,15 +173,6 @@ async function logout() {
               <span class="menu-item-link-text">Benutzer*innen verwalten</span>
             </MenuLink>
           </div>
-          <div
-            v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
-            class="menu-item"
-          >
-            <MenuLink :to="{ name: 'create-lead-general' }">
-              <QIcon class="menu-item-icon" :name="ionPersonAddOutline" />
-              <span class="menu-item-link-text">Kontakt registrieren</span>
-            </MenuLink>
-          </div>
         </div>
 
         <div class="menu-group menu-bottom">

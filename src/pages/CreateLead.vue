@@ -29,20 +29,16 @@ import { ComponentPublicInstance, onMounted, ref } from 'vue'
 import { LeadDto } from 'src/api/model/LeadDto'
 import {
   QBtn,
-  QCard,
   QCheckbox,
-  QDialog,
   QForm,
   QInput,
   QPage,
   QScrollArea,
   QSelect,
-  QToolbar,
-  QToolbarTitle,
   useQuasar
 } from 'quasar'
 import FormError from 'components/FormError.vue'
-import { ionClose, ionChevronDown } from '@quasar/extras/ionicons-v5'
+import { ionChevronDown } from '@quasar/extras/ionicons-v5'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import { userStore } from 'src/store/UserStore'
 import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
@@ -66,7 +62,6 @@ const suggestedSubOrganizations = ref<SubOrganizationDto[]>([])
 const organizations = ref<OrganizationDto[]>([])
 
 const previousBottomSheetState = ref(BottomSheetState.HALF)
-const qrCodeOpen = ref(false)
 const lead = ref<Partial<LeadDto>>({
   wants_to_become_member: false
 })
@@ -139,9 +134,6 @@ async function saveLead() {
   }
   isSubmitting.value = false
 }
-function openQRCode() {
-  qrCodeOpen.value = true
-}
 
 function filterSubOrganizations(subOrgTitle: string, update: any) {
   if (!subOrgTitle) {
@@ -184,36 +176,6 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
     <div class="container create-leads">
       <QScrollArea class="flex-fill d-flex">
         <div class="q-px-md q-pb-md">
-          <QDialog v-model="qrCodeOpen">
-            <QCard>
-              <QToolbar>
-                <QToolbarTitle>QR Code zu Linksaktiv</QToolbarTitle>
-                <QBtn flat round dense :icon="ionClose" v-close-popup />
-              </QToolbar>
-
-              <div class="qr-container">
-                <img
-                  src="../assets/img/create-lead-qr.png"
-                  alt="QR Code mit Link zu Linksaktiv"
-                />
-              </div>
-            </QCard>
-          </QDialog>
-          <div class="qr-link">
-            <QBtn
-              flat
-              color="primary"
-              label="QR-Link zu diesem Formular"
-              small
-              @click="openQRCode"
-            >
-              <img
-                class="qr-link-image"
-                src="../assets/img/create-lead-qr.png"
-                alt="QR Code zum Linksaktiv-Formular"
-              />
-            </QBtn>
-          </div>
           <QForm ref="form" @submit="saveLead">
             <QInput
               label="Vorname *"
@@ -320,34 +282,5 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
   height: 100%;
   display: flex;
   flex-direction: column;
-}
-
-.qr-link {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-
-.qr-link-caption {
-  color: $red;
-  opacity: 0.7;
-  font-size: 0.8rem;
-  margin-right: 0.5rem;
-}
-
-.qr-link-image {
-  width: 1rem;
-  height: 1rem;
-  margin-left: 1rem;
-}
-
-.qr-container {
-  width: 100%;
-  height: 100%;
-
-  img {
-    width: 100%;
-  }
 }
 </style>
