@@ -266,7 +266,7 @@ const routes = [
                     component: CreateLead,
                     props: true,
                     meta: {
-                      title: () => 'Bei Linksaktiv anmelden'
+                      title: () => 'Kontakt registrieren'
                     }
                   },
                   {
