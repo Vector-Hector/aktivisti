@@ -215,6 +215,33 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
             </QBtn>
           </div>
           <QForm ref="form" @submit="saveLead">
+            <QInput
+              label="Vorname *"
+              v-model="lead.first_name"
+              :rules="[$validationRules.isRequired]"
+              :error-message="errors.first_name?.[0]"
+              :error="!!errors.first_name?.length"
+            />
+            <QInput
+              label="Nachname *"
+              v-model="lead.last_name"
+              :rules="[$validationRules.isRequired]"
+              :error-message="errors.last_name?.[0]"
+              :error="!!errors.last_name?.length"
+            />
+            <QInput
+              label="E-Mail *"
+              v-model="lead.email"
+              :rules="[$validationRules.isRequired, $validationRules.email]"
+              :error-message="errors.email?.[0]"
+              :error="!!errors.email?.length"
+            />
+            <QInput
+              label="Telefonnummer"
+              v-model="lead.phone"
+              :error-message="errors.phone?.[0]"
+              :error="!!errors.phone?.length"
+            />
             <QSelect
               label="Geschlecht"
               :dropdownIcon="ionChevronDown"
@@ -230,33 +257,6 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
               :error="!!errors.gender?.length"
             />
             <QInput
-              label="Nachname *"
-              v-model="lead.last_name"
-              :rules="[$validationRules.isRequired]"
-              :error-message="errors.last_name?.[0]"
-              :error="!!errors.last_name?.length"
-            />
-            <QInput
-              label="Vorname *"
-              v-model="lead.first_name"
-              :rules="[$validationRules.isRequired]"
-              :error-message="errors.first_name?.[0]"
-              :error="!!errors.first_name?.length"
-            />
-            <QInput
-              label="E-Mail *"
-              v-model="lead.email"
-              :rules="[$validationRules.isRequired, $validationRules.email]"
-              :error-message="errors.email?.[0]"
-              :error="!!errors.email?.length"
-            />
-            <QInput
-              label="Telefonnummer"
-              v-model="lead.phone"
-              :error-message="errors.phone?.[0]"
-              :error="!!errors.phone?.length"
-            />
-            <QInput
               label="Postleitzahl *"
               v-model="lead.zip_code"
               :minlength="5"
@@ -265,7 +265,6 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
               :error-message="errors.zip_code?.[0]"
               :error="!!errors.zip_code?.length"
             />
-
             <QInput
               label="Stadt"
               v-model="lead.city"
