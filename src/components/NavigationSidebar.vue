@@ -15,7 +15,6 @@ import {
   ionPersonCircleOutline,
   ionPeopleOutline,
   ionHomeOutline,
-  ionPersonAddOutline,
   ionHelpCircleOutline,
   ionStatsChartOutline
 } from '@quasar/extras/ionicons-v5'
