@@ -183,6 +183,7 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
               :rules="[$validationRules.isRequired]"
               :error-message="errors.first_name?.[0]"
               :error="!!errors.first_name?.length"
+              :required="true"
             />
             <QInput
               label="Nachname *"
@@ -190,6 +191,7 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
               :rules="[$validationRules.isRequired]"
               :error-message="errors.last_name?.[0]"
               :error="!!errors.last_name?.length"
+              :required="true"
             />
             <QInput
               label="E-Mail *"
@@ -198,6 +200,7 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
               :error-message="errors.email?.[0]"
               :error="!!errors.email?.length"
               type="email"
+              :required="true"
             />
             <QInput
               label="Telefonnummer"
@@ -228,6 +231,7 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
               :rules="[$validationRules.isRequired]"
               :error-message="errors.zip_code?.[0]"
               :error="!!errors.zip_code?.length"
+              :required="true"
             />
             <QInput
               label="Stadt"
@@ -251,6 +255,7 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
               @filter="filterSubOrganizations"
               :error-message="errors.sub_organization?.[0]"
               :error="!!errors.sub_organization?.length"
+              :required="true"
             />
             <QInput
               label="Bemerkung"
