@@ -197,12 +197,14 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
               :rules="[$validationRules.isRequired, $validationRules.email]"
               :error-message="errors.email?.[0]"
               :error="!!errors.email?.length"
+              type="email"
             />
             <QInput
               label="Telefonnummer"
               v-model="lead.phone"
               :error-message="errors.phone?.[0]"
               :error="!!errors.phone?.length"
+              type="tel"
             />
             <QSelect
               label="Geschlecht"
