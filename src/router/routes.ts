@@ -155,14 +155,6 @@ const routes = [
         ]
       },
       {
-        path: '/create-lead',
-        name: 'create-lead-general',
-        component: CreateLead,
-        meta: {
-          title: () => 'Bei Linksaktiv anmelden'
-        }
-      },
-      {
         path: '/events',
         redirect: { name: 'map-events-overview' },
         component: MapWithSheet,
@@ -274,7 +266,7 @@ const routes = [
                     component: CreateLead,
                     props: true,
                     meta: {
-                      title: () => 'Bei Linksaktiv anmelden'
+                      title: () => 'Kontakt registrieren'
                     }
                   },
                   {

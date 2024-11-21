@@ -15,7 +15,6 @@ import {
   ionPersonCircleOutline,
   ionPeopleOutline,
   ionHomeOutline,
-  ionPersonAddOutline,
   ionHelpCircleOutline,
   ionStatsChartOutline
 } from '@quasar/extras/ionicons-v5'
@@ -171,15 +170,6 @@ async function logout() {
             <MenuLink :to="{ name: 'manage-users' }">
               <QIcon class="menu-item-icon" :name="ionPeopleOutline" />
               <span class="menu-item-link-text">Benutzer*innen verwalten</span>
-            </MenuLink>
-          </div>
-          <div
-            v-if="isTeamCaptainOrLocalCoordinator || isAdminOrGlobalCoordinator"
-            class="menu-item"
-          >
-            <MenuLink :to="{ name: 'create-lead-general' }">
-              <QIcon class="menu-item-icon" :name="ionPersonAddOutline" />
-              <span class="menu-item-link-text">Kontakt registrieren</span>
             </MenuLink>
           </div>
         </div>

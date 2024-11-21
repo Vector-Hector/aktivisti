@@ -25,42 +25,45 @@ export default {
 }
 </script>
 <script setup lang="ts">
-import { ComponentPublicInstance, ref } from 'vue'
+import { ComponentPublicInstance, onMounted, ref } from 'vue'
 import { LeadDto } from 'src/api/model/LeadDto'
 import {
   QBtn,
-  QCard,
   QCheckbox,
-  QDialog,
   QForm,
   QInput,
   QPage,
   QScrollArea,
   QSelect,
-  QToolbar,
-  QToolbarTitle
+  useQuasar
 } from 'quasar'
 import FormError from 'components/FormError.vue'
-import { ionClose } from '@quasar/extras/ionicons-v5'
+import { ionChevronDown } from '@quasar/extras/ionicons-v5'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import { userStore } from 'src/store/UserStore'
 import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 import { onBeforeRouteLeave, useRouter } from 'vue-router'
 import { apiClient } from 'src/api/ApiClient'
+import { useEventDetailStore } from './event-map/detail/EventDetailStoreMixin'
+import { SubOrganizationDto } from 'src/api/model/SubOrganizationDto'
+import { OrganizationDto } from 'src/api/model/OrganizationDto'
 
 interface Props {
-  areaId?: string
+  areaId: number
 }
 const props = defineProps<Props>()
 
+const $q = useQuasar()
 const $router = useRouter()
 const form = ref<InstanceType<typeof QForm> | null>(null)
+const { event } = useEventDetailStore()
+const subOrganizations = ref<SubOrganizationDto[]>([])
+const suggestedSubOrganizations = ref<SubOrganizationDto[]>([])
+const organizations = ref<OrganizationDto[]>([])
 
 const previousBottomSheetState = ref(BottomSheetState.HALF)
-const qrCodeOpen = ref(false)
 const lead = ref<Partial<LeadDto>>({
-  is_party_member: false,
-  want_to_become_member: false
+  wants_to_become_member: false
 })
 const isSubmitting = ref(false)
 const errors = ref<any>({})
@@ -70,14 +73,33 @@ const genders = [
     label: 'männlich'
   },
   {
-    value: 'w',
+    value: 'f',
     label: 'weiblich'
   },
   {
-    value: 'd',
+    value: 'o',
     label: 'divers'
   }
 ]
+
+onMounted(async () => {
+  const subOrgRequest = await apiClient.zetkinSubOrganizations.list({}, [
+    'organization'
+  ])
+  if (event.value && event.value.sub_association) {
+    const subOrgOfSubAssociationRequest =
+      await apiClient.zetkinSubOrganizations.list({
+        sub_association: event.value.sub_association
+      })
+
+    lead.value.sub_organization =
+      subOrgOfSubAssociationRequest.payload.data[0].id
+  }
+
+  subOrganizations.value = subOrgRequest.payload.data
+  suggestedSubOrganizations.value = subOrganizations.value
+  organizations.value = subOrgRequest.payload.embedded.organization
+})
 
 onBeforeRouteLeave(() => {
   uiStore.setBottomSheetState(previousBottomSheetState.value)
@@ -89,15 +111,15 @@ async function saveLead() {
   try {
     await apiClient.leads.create({
       ...lead.value,
-      event_area: props.areaId ? parseInt(props.areaId) : undefined,
-      // The form will register the lead on the behalf of someone else - therefor a double opt in is necessary
-      // The first opt in here is implicit by offering the data in a person to person talk at the door
-      privacy_opt_in: true
+      event_area: props.areaId
+    })
+    $q.notify({
+      color: 'positive',
+      message: 'Kontakt wurde registriert'
     })
     // TODO: maybe add an explicit back route
     lead.value = {
-      is_party_member: false,
-      want_to_become_member: false
+      wants_to_become_member: false
     }
     form.value?.reset()
     $router.go(-1)
@@ -112,8 +134,40 @@ async function saveLead() {
   }
   isSubmitting.value = false
 }
-function openQRCode() {
-  qrCodeOpen.value = true
+
+function filterSubOrganizations(subOrgTitle: string, update: any) {
+  if (!subOrgTitle) {
+    update(() => {
+      suggestedSubOrganizations.value = subOrganizations.value
+    })
+    return
+  }
+
+  const lowercasedValue = subOrgTitle.toLowerCase()
+
+  update(() => {
+    suggestedSubOrganizations.value = subOrganizations.value.filter(
+      (subOrg) => {
+        const subOrgTitleMatches = subOrg.title
+          .toLowerCase()
+          .includes(lowercasedValue)
+        const organizationTitleMatches = organizations.value
+          .find(({ id }) => id === subOrg.organization)
+          ?.title.toLowerCase()
+          .includes(lowercasedValue)
+        return subOrgTitleMatches || organizationTitleMatches
+      }
+    )
+  })
+}
+
+function formatSubOrganization(subOrganization: SubOrganizationDto) {
+  const titleSubOrg = subOrganization.title
+  const titleOrg = organizations.value.find(
+    ({ id }) => id === subOrganization.organization
+  )?.title
+
+  return `${titleSubOrg} (${titleOrg})`
 }
 </script>
 
@@ -122,42 +176,44 @@ function openQRCode() {
     <div class="container create-leads">
       <QScrollArea class="flex-fill d-flex">
         <div class="q-px-md q-pb-md">
-          <QDialog v-model="qrCodeOpen">
-            <QCard>
-              <QToolbar>
-                <QToolbarTitle>QR Code zu Linksaktiv</QToolbarTitle>
-                <QBtn flat round dense :icon="ionClose" v-close-popup />
-              </QToolbar>
-
-              <div class="qr-container">
-                <img
-                  src="../assets/img/create-lead-qr.png"
-                  alt="QR Code mit Link zu Linksaktiv"
-                />
-              </div>
-            </QCard>
-          </QDialog>
-          <div class="qr-link">
-            <QBtn
-              flat
-              color="primary"
-              label="QR-Link zu diesem Formular"
-              small
-              @click="openQRCode"
-            >
-              <img
-                class="qr-link-image"
-                src="../assets/img/create-lead-qr.png"
-                alt="QR Code zum Linksaktiv-Formular"
-              />
-            </QBtn>
-          </div>
           <QForm ref="form" @submit="saveLead">
+            <QInput
+              label="Vorname *"
+              v-model="lead.first_name"
+              :rules="[$validationRules.isRequired]"
+              :error-message="errors.first_name?.[0]"
+              :error="!!errors.first_name?.length"
+              :required="true"
+            />
+            <QInput
+              label="Nachname *"
+              v-model="lead.last_name"
+              :rules="[$validationRules.isRequired]"
+              :error-message="errors.last_name?.[0]"
+              :error="!!errors.last_name?.length"
+              :required="true"
+            />
+            <QInput
+              label="E-Mail *"
+              v-model="lead.email"
+              :rules="[$validationRules.isRequired, $validationRules.email]"
+              :error-message="errors.email?.[0]"
+              :error="!!errors.email?.length"
+              type="email"
+              :required="true"
+            />
+            <QInput
+              label="Telefonnummer"
+              v-model="lead.phone"
+              :error-message="errors.phone?.[0]"
+              :error="!!errors.phone?.length"
+              type="tel"
+            />
             <QSelect
-              label="Geschlecht *"
+              label="Geschlecht"
+              :dropdownIcon="ionChevronDown"
               v-model="lead.gender"
               emit-value
-              :rules="[$validationRules.isRequired]"
               :options="genders"
               option-value="value"
               option-label="label"
@@ -168,56 +224,50 @@ function openQRCode() {
               :error="!!errors.gender?.length"
             />
             <QInput
-              label="Nachname *"
-              v-model="lead.last_name"
-              :rules="[$validationRules.isRequired]"
-              :error-message="errors.last_name?.[0]"
-              :error="!!errors.last_name?.length"
-            />
-            <QInput
-              label="Vorname *"
-              v-model="lead.first_name"
-              :rules="[$validationRules.isRequired]"
-              :error-message="errors.first_name?.[0]"
-              :error="!!errors.first_name?.length"
-            />
-            <QInput
-              label="E-Mail *"
-              v-model="lead.email"
-              :rules="[$validationRules.isRequired, $validationRules.email]"
-              :error-message="errors.email?.[0]"
-              :error="!!errors.email?.length"
-            />
-            <QInput
-              label="Telefonnummer"
-              v-model="lead.phone_number"
-              :error-message="errors.phone_number?.[0]"
-              :error="!!errors.phone_number?.length"
-            />
-            <QInput
               label="Postleitzahl *"
-              v-model="lead.plz"
+              v-model="lead.zip_code"
               :minlength="5"
               :maxlength="5"
               :rules="[$validationRules.isRequired]"
-              :error-message="errors.plz?.[0]"
-              :error="!!errors.plz?.length"
+              :error-message="errors.zip_code?.[0]"
+              :error="!!errors.zip_code?.length"
+              :required="true"
             />
-
             <QInput
               label="Stadt"
               v-model="lead.city"
               :error-message="errors.city?.[0]"
               :error="!!errors.city?.length"
             />
-
-            <QCheckbox
-              label="Ich bin Die Linke-Mitglied"
-              v-model="lead.is_party_member"
+            <QSelect
+              label="Organisation *"
+              :dropdownIcon="ionChevronDown"
+              v-model="lead.sub_organization"
+              :rules="[$validationRules.isRequired]"
+              :options="suggestedSubOrganizations"
+              option-value="id"
+              :option-label="formatSubOrganization"
+              emit-value
+              map-options
+              use-input
+              fill-input
+              hide-selected
+              @filter="filterSubOrganizations"
+              :error-message="errors.sub_organization?.[0]"
+              :error="!!errors.sub_organization?.length"
+              :required="true"
+            />
+            <QInput
+              label="Bemerkung"
+              v-model="lead.note"
+              :maxlength="400"
+              :error-message="errors.note?.[0]"
+              :error="!!errors.note?.length"
+              type="textarea"
             />
             <QCheckbox
               label="Ich möchte Die Linke-Mitglied werden"
-              v-model="lead.want_to_become_member"
+              v-model="lead.wants_to_become_member"
             />
             <div class="control-buttons">
               <FormError :error="errors.non_field_error" />
@@ -239,34 +289,5 @@ function openQRCode() {
   height: 100%;
   display: flex;
   flex-direction: column;
-}
-
-.qr-link {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-
-.qr-link-caption {
-  color: $red;
-  opacity: 0.7;
-  font-size: 0.8rem;
-  margin-right: 0.5rem;
-}
-
-.qr-link-image {
-  width: 1rem;
-  height: 1rem;
-  margin-left: 1rem;
-}
-
-.qr-container {
-  width: 100%;
-  height: 100%;
-
-  img {
-    width: 100%;
-  }
 }
 </style>
