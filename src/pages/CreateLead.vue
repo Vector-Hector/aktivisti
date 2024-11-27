@@ -93,7 +93,7 @@ onMounted(async () => {
       })
 
     lead.value.sub_organization =
-      subOrgOfSubAssociationRequest.payload.data[0].id
+      subOrgOfSubAssociationRequest.payload.data[0]?.id
   }
 
   subOrganizations.value = subOrgRequest.payload.data
