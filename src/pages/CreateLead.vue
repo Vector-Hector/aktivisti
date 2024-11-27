@@ -49,7 +49,7 @@ import { SubOrganizationDto } from 'src/api/model/SubOrganizationDto'
 import { OrganizationDto } from 'src/api/model/OrganizationDto'
 
 interface Props {
-  areaId: number
+  areaId: string
 }
 const props = defineProps<Props>()
 
