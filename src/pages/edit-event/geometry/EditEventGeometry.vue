@@ -113,10 +113,6 @@ async function next() {
     stepControls.next()
   }
 }
-async function abort() {
-  await saveDebouncer.waitForSettle()
-  stepControls.abort()
-}
 function handleUpdateColor(row: EventAreaDto, color: string) {
   row.color = `${color}`
   void updateArea(row)
@@ -366,7 +362,6 @@ function openAdoptAreasModal() {
     </template>
   </div>
   <SidebarBottomStepNavigation
-    @close="abort"
     @forward="next"
     @back="back"
     :last="stepControls.isLastStep.value"

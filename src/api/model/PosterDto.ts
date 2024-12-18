@@ -7,7 +7,7 @@ export enum PosterStatus {
 }
 
 enum _PosterStatusString {
-  ABSENT = 'fehlt',
+  ABSENT = 'hängt nicht',
   MOUNTED = 'hängt',
   DAMAGED = 'beschädigt'
 }

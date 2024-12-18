@@ -20,9 +20,6 @@ async function back() {
 async function next() {
   stepControls.next()
 }
-async function abort() {
-  stepControls.abort()
-}
 async function editPoster(posterId: number) {
   await $router.push({
     name: 'edit-event-single-poster-edit',
@@ -53,7 +50,6 @@ async function editPoster(posterId: number) {
     />
   </div>
   <SidebarBottomStepNavigation
-    @close="abort"
     @forward="next"
     @back="back"
     :last="stepControls.isLastStep.value"

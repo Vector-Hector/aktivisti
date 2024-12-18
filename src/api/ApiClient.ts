@@ -37,6 +37,7 @@ import { ReportActiveUsersRoute } from 'src/api/ReportActiveUsersRoute'
 import { PosterRoute } from 'src/api/PosterRoute'
 import { EventGeometryRoute } from 'src/api/EventGeometryRoute'
 import { OfficeGeometryRoute } from 'src/api/OfficeGeometryRoute'
+import { ZetkinSubOrganizationsRoute } from './ZetkinSubOrganizationsRoute'
 
 /**
  * A collection of {@link ApiRoute}s to reflect the whole functioniality of the REST API
@@ -114,7 +115,11 @@ export class ApiClient {
     'tracking-session/',
     this.axiosInstance
   )
-  leads = new ApiRoute<LeadDto>(this.baseURL, 'leads/', this.axiosInstance)
+  leads = new ApiRoute<LeadDto>(
+    this.baseURL,
+    'zetkin/leads/',
+    this.axiosInstance
+  )
   eventParticipations = new EventParticipationRoute(
     this.baseURL,
     'event-participations/',
@@ -203,6 +208,11 @@ export class ApiClient {
   reportActiveUsers = new ReportActiveUsersRoute(
     this.baseURL,
     'report/active-users/',
+    this.axiosInstance
+  )
+  zetkinSubOrganizations = new ZetkinSubOrganizationsRoute(
+    this.baseURL,
+    'zetkin/sub-organization',
     this.axiosInstance
   )
 }

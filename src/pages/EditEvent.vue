@@ -1,7 +1,6 @@
 <script lang="ts">
 export interface StepControls {
   isLastStep: ComputedRef<boolean>
-  abort: () => void
   next: () => void
   previous: () => void
 }
@@ -116,14 +115,6 @@ const $router = useRouter()
 
 provide('stepControls', {
   isLastStep: computed(() => activeStep.value >= steps.value.length - 1),
-  abort: () => {
-    void $router.push({
-      name: 'event-detail',
-      params: {
-        eventId: event.value!.id
-      }
-    })
-  },
   next: () => {
     const nextRouteName = steps.value[activeStep.value + 1]?.routeName
     if (nextRouteName) {
