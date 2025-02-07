@@ -8,7 +8,7 @@ import {
 } from 'src/store/TrackingSessionStore'
 import MetricsRow from 'src/components/MetricsRow.vue'
 import { uiStore } from 'src/store/UiStore'
-import { QBtn, QScrollArea } from 'quasar'
+import { QBtn, QScrollArea, useQuasar } from 'quasar'
 import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 import { useEventAreaMetricsComposable } from 'pages/event-map/detail/area/metrics/EventAreaMetricsMixin'
 import { useRoute } from 'vue-router'
@@ -22,6 +22,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
+const $q = useQuasar()
 const $route = useRoute()
 const { event, eventArea } = useEventDetailStore()
 const { address } = useEventAreaMetricsComposable(props)
@@ -55,11 +56,24 @@ const metricValues = computed({
     }
   },
   async set(newMetrics: MetricValueMap) {
-    await trackingSessionStore.updateMetricsForAddress(
-      eventArea.value.id!,
-      address.value!,
-      newMetrics
-    )
+    try {
+      await trackingSessionStore.updateMetricsForAddress(
+        eventArea.value.id!,
+        address.value!,
+        newMetrics
+      )
+    } catch (e) {
+      if (apiClient.isApiClientError(e) && e.response) {
+        const { status, data } = e.response
+        if (status === 400 && data.event_area) {
+          $q.notify({
+            color: 'negative',
+            message: 'Das Gebiet scheint nicht mehr zu existieren.'
+          })
+        }
+        // TODO(peter) Handle other errors
+      }
+    }
   }
 })
 
