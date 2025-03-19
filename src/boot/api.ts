@@ -75,6 +75,7 @@ export default boot(async ({ app }) => {
         ) {
           // If the request is not authenticated our session expired
           authStore.setUserId(null)
+          authStore.deleteSessionData()
           ErrorBus.emit(
             SESSION_INVALID,
             'Deine Sitzung ist abgelaufen, bitte melde dich erneut an'
