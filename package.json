@@ -4,6 +4,7 @@
   "description": "Finde Aktionen und mach mit!",
   "productName": "Aktivisti",
   "author": "control.alt.coop eG <kontakt@ctrl.alt.coop>",
+  "type": "module",
   "license": "GPL-3.0-or-later",
   "contributors": [
     "Jonatan Zint (https://github.com/l0rn)",
