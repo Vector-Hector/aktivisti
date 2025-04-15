@@ -2,8 +2,9 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
 import { defineConfig } from '#q-app/wrappers'
-const fs = require('fs')
-const execSync = require('child_process').execSync
+import fs from 'fs'
+import path from 'path'
+import { execSync } from 'child_process'
 
 const filterAppEnvVariables = (envObject) => {
   return Object.fromEntries(
@@ -23,8 +24,13 @@ console.info('=================')
 console.dir(env)
 
 let localConfigure = {}
-if (fs.existsSync('./quasar.conf.local.js')) {
-  localConfigure = require('./quasar.conf.local.js')()
+const localConfigPathJs = path.resolve('./quasar.conf.local.js')
+if (fs.existsSync(localConfigPathJs)) {
+  const localModule = await import(localConfigPathJs)
+  localConfigure =
+    typeof localModule.default === 'function'
+      ? await localModule.default()
+      : localModule.default
 }
 
 export default defineConfig(function (ctx) {
