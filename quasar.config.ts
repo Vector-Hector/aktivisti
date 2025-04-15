@@ -5,24 +5,6 @@ import { defineConfig } from '#q-app/wrappers'
 import fs from 'fs'
 import path from 'path'
 import { execSync } from 'child_process'
-import dotenv from 'dotenv'
-
-const filterAppEnvVariables = (envObject) => {
-  return Object.fromEntries(
-    Object.entries(envObject).filter(([key]) => key.startsWith('APP'))
-  )
-}
-
-// Read .env file and let process env ovewrite it if set
-const env = {
-  ...filterAppEnvVariables(dotenv.config().parsed ?? {}),
-  ...filterAppEnvVariables(process.env),
-  APP_VERSION: execSync('git describe --tags').toString().trim()
-}
-
-console.info('Build environment')
-console.info('=================')
-console.dir(env)
 
 let localConfigure = {}
 const localConfigPathJs = path.resolve('./quasar.conf.local.js')
@@ -77,7 +59,22 @@ export default defineConfig(function (ctx) {
       },
 
       vueRouterMode: 'history', // available values: 'hash', 'history',
-      env
+      envFilter(originalEnv) {
+        const newEnv = {}
+        for (const key in originalEnv) {
+          if (key.startsWith('APP')) {
+            newEnv[key] = originalEnv[key]
+          }
+        }
+        newEnv['APP_VERSION'] = execSync('git describe --tags')
+          .toString()
+          .trim()
+
+        console.info('Build environment')
+        console.info('=================')
+        console.table(newEnv)
+        return newEnv
+      }
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
