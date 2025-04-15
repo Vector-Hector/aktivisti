@@ -74,7 +74,7 @@ export default defineConfig(function (ctx) {
         console.info('=================')
         console.table(newEnv)
         return newEnv
-      }
+      },
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
@@ -92,10 +92,20 @@ export default defineConfig(function (ctx) {
 
       // extendViteConf (viteConf) {},
       // viteVuePluginOptions: {},
-
-      // vitePlugins: [
-      //   [ 'package-name', { ..options.. } ]
-      // ]
+      vitePlugins: [
+        [
+          'vite-plugin-checker',
+          {
+            vueTsc: true,
+            eslint: {
+              lintCommand:
+                'eslint -c ./eslint.config.js "./src*/**/*.{ts,js,mjs,cjs,vue}"',
+              useFlatConfig: true
+            }
+          },
+          { server: false }
+        ]
+      ]
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
