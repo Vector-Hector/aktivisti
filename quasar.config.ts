@@ -5,6 +5,7 @@ import { defineConfig } from '#q-app/wrappers'
 import fs from 'fs'
 import path from 'path'
 import { execSync } from 'child_process'
+import dotenv from 'dotenv'
 
 const filterAppEnvVariables = (envObject) => {
   return Object.fromEntries(
@@ -14,7 +15,7 @@ const filterAppEnvVariables = (envObject) => {
 
 // Read .env file and let process env ovewrite it if set
 const env = {
-  ...filterAppEnvVariables(require('dotenv').config().parsed ?? {}),
+  ...filterAppEnvVariables(dotenv.config().parsed ?? {}),
   ...filterAppEnvVariables(process.env),
   APP_VERSION: execSync('git describe --tags').toString().trim()
 }
