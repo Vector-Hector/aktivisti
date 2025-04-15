@@ -51,7 +51,6 @@
     "vue3-apexcharts": "^1.4.1"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.13.14",
     "@capacitor/cli": "^6.0.0",
     "@quasar/app-vite": "^2.2.0",
     "@quasar/app-webpack": "^3.13.2",
@@ -59,14 +58,7 @@
     "@types/hat": "^0.0.1",
     "@types/lodash-es": "^4.17.4",
     "@types/node": "^15.12.4",
-    "@typescript-eslint/eslint-plugin": "^5.10.0",
-    "@typescript-eslint/parser": "^5.10.0",
     "autoprefixer": "^10.4.2",
-    "eslint": "^8.10.0",
-    "eslint-config-prettier": "^8.1.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-vue": "^9.0.0",
-    "prettier": "^2.5.1",
     "typescript": "~5.5.3",
     "workbox-build": "^7.0.0",
     "workbox-cacheable-response": "^7.0.0",
