@@ -1,17 +1,8 @@
-/* eslint-env node */
-
-/*
- * This file runs in a Node context (it's NOT transpiled by Babel), so use only
- * the ES6 features that are supported by your Node version. https://node.green/
- */
-
 // Configuration for your app
-// https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
+// https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
-/* eslint-env node */
-/* eslint-disable @typescript-eslint/no-var-requires */
+import { defineConfig } from '#q-app/wrappers'
 const fs = require('fs')
-const { configure } = require('quasar/wrappers')
 const execSync = require('child_process').execSync
 
 const filterAppEnvVariables = (envObject) => {
@@ -36,7 +27,7 @@ if (fs.existsSync('./quasar.conf.local.js')) {
   localConfigure = require('./quasar.conf.local.js')()
 }
 
-module.exports = configure(function (ctx) {
+export default defineConfig(function (ctx) {
   return {
     eslint: {
       // fix: true,
@@ -179,8 +170,8 @@ module.exports = configure(function (ctx) {
       // extendManifestJson (json) {}
       // extendPWACustomSWConf (esbuildConf) {}
       workboxOptions: {
-        maximumFileSizeToCacheInBytes: 5000000,
-      },
+        maximumFileSizeToCacheInBytes: 5000000
+      }
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-cordova-apps/configuring-cordova
