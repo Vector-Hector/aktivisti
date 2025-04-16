@@ -140,7 +140,10 @@ export default defineConfig(function (ctx) {
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#sourcefiles
     sourceFiles: {
-      rootComponent: 'src/Entry.vue'
+      rootComponent: 'src/Entry.vue',
+      pwaRegisterServiceWorker: 'src-pwa/register-service-worker',
+      pwaServiceWorker: 'src-pwa/custom-service-worker',
+      pwaManifestFile: 'src-pwa/manifest.json'
       // rootComponent: 'src/App.vue',
       // router: 'src/router/index',
       // store: 'src/store/index',
@@ -174,12 +177,11 @@ export default defineConfig(function (ctx) {
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
     pwa: {
-      workboxMode: 'injectManifest', // or 'injectManifest'
+      workboxMode: 'InjectManifest', // or 'GenerateSW'
       injectPwaMetaTags: true,
       swFilename: 'service-worker.js',
       manifestFilename: 'manifest.json',
       useCredentialsForManifestTag: false,
-      // useFilenameHashes: true,
       // extendGenerateSWOptions (cfg) {}
       // extendInjectManifestOptions (cfg) {},
       // extendManifestJson (json) {}
