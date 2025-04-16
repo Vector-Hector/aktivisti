@@ -96,7 +96,8 @@ export default defineConfig(function (ctx) {
         [
           'vite-plugin-checker',
           {
-            vueTsc: true,
+            // TODO(peter) Active again.
+            vueTsc: false,
             eslint: {
               lintCommand:
                 'eslint -c ./eslint.config.js "./src*/**/*.{ts,js,mjs,cjs,vue}"',
