@@ -76,10 +76,7 @@ export default defineConfig(function (ctx) {
         return newEnv
       },
       // vueRouterBase,
-      // vueDevtools,
       // vueOptionsAPI: false,
-
-      // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
       // publicPath: '/',
       // analyze: true,
