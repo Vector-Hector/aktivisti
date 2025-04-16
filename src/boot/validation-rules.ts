@@ -11,7 +11,7 @@ export const emailRegex =
 
 const validationRules = {
   isRequired(value: string | number | null | undefined) {
-    if (!!value) {
+    if (value) {
       return true
     } else {
       return 'Dieses Feld ist erforderlich'

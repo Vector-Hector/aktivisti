@@ -14,7 +14,7 @@ const $q = useQuasar()
 const $router = useRouter()
 
 if (authStore.isLoggedIn()) {
-  $router.replace({ name: 'events' })
+  void $router.replace({ name: 'events' })
 }
 
 interface Props {

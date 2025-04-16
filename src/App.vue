@@ -59,7 +59,7 @@ onMounted(async () => {
   try {
     const configRequest = await apiClient.config.get()
     configStore.setServiceConfig(configRequest.payload.data)
-  } catch (e) {
+  } catch {
     ErrorBus.emit(NO_INTERNET)
   }
   // Check version health and show warnings / errors

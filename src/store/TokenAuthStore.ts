@@ -91,6 +91,7 @@ export class TokenAuthStore extends BaseAuthStore<TokenAuthStoreState> {
     ) {
       this.state.renewTokenPromise = this.renewToken()
     }
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     if (this.state.renewTokenPromise) {
       await this.state.renewTokenPromise
     }

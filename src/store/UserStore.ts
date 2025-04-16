@@ -140,8 +140,8 @@ class UserStore extends Store<UserState> {
   public getMyTeamCaptainOrCoordinatorPermissions() {
     return this.getMyPermissions().filter(
       (permission) =>
-        permission.permission_codename == 'team_captain' ||
-        permission.permission_codename == 'manages_events'
+        permission.permission_codename == PermissionCodename.TEAM_CAPTAIN ||
+        permission.permission_codename == PermissionCodename.MANAGE_EVENTS
     )
   }
 

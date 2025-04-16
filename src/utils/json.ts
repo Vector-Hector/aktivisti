@@ -6,7 +6,7 @@ export function parseIfPossible(
   }
   try {
     return JSON.parse(str)
-  } catch (e) {
+  } catch {
     return null
   }
 }

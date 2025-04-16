@@ -75,16 +75,16 @@ export function useEditEventGeometryMixin() {
     }
   }
 
-  const deleteAreaByFeatureId = (deleteId: string) => {
+  const deleteAreaByFeatureId = async (deleteId: string) => {
     const area = eventAreas.value.find(
       ({ feature_id }) => feature_id === deleteId
     )
     if (area?.id) {
       try {
         deletingAreaIds.value.add(deleteId)
-        apiClient.eventAreas.delete(area.id.toString())
+        await apiClient.eventAreas.delete(area.id.toString())
         eventAreas.value = eventAreas.value.filter(({ id }) => area?.id !== id)
-      } catch (e) {
+      } catch {
         $q.notify({
           message: 'Etwas ging schief beim löschen des Gebiets',
           color: 'negative',

@@ -102,7 +102,7 @@ const createPoster = async () => {
     })
     emit('ok', posterRequest.payload.data)
     hide()
-  } catch (e) {
+  } catch {
     $q.notify({
       color: 'negative',
       message: 'Das Plakat konnte nicht angelegt werden'

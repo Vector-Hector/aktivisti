@@ -39,7 +39,6 @@ onMounted(() => {
   })
   marker.value
     .setLngLat([props.location.lng, props.location.lat])
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     .addTo(map!.value)
   initialized.value = true
 

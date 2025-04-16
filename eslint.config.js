@@ -104,6 +104,11 @@ export default defineConfigWithVueTs(
       'vue/no-reserved-component-names': 'off',
       'vue/no-dupe-keys': 'off',
 
+      '@typescript-eslint/consistent-type-imports': 'off',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'off',
+      '@typescript-eslint/prefer-promise-reject-errors': 'off',
+      '@typescript-eslint/no-redundant-type-constituents': 'off',
+
       // allow debugger during development only
       'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
     }

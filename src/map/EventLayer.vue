@@ -31,7 +31,6 @@ class EventLayer {
     private map: maplibregl.Map,
     private featureCollection: FeatureCollection,
     private iconImageValue: string | StyleFunction | Expression,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     private eventClickCallback: (feature: Feature) => void = () => {},
     private clusterize = true,
     private spiderify = true

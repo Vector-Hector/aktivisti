@@ -17,7 +17,7 @@ import { useMap } from 'src/map/MapUtils'
 const posterPopup = ref<InstanceType<typeof PosterPopup> | null>(null)
 
 const map = useMap()
-let bounds = ref(userStore.getState().bbox)
+const bounds = ref(userStore.getState().bbox)
 const popup = ref<Popup | null>(null)
 const updateBounds = () => {
   bounds.value = map.value?.getBounds().toArray().flat() as BBox2d

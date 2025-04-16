@@ -51,7 +51,7 @@ const urlTextSnippet = computed(() => {
   return `\nMitmachen:\n${props.url}`
 })
 const mailShareUrl = computed(() => {
-  const subjectLine = `Mach\' mit bei der Aktion von Die Linke: ${props.title}`
+  const subjectLine = `Mach' mit bei der Aktion von Die Linke: ${props.title}`
   return `${MAIL_SHARE_URL}?subject=${subjectLine}&body=${encodeURIComponent(
     `${props.text}${urlTextSnippet.value}`
   )}`

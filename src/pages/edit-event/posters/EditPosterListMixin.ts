@@ -28,7 +28,7 @@ export function useEditPosterListMixin() {
     try {
       await apiClient.posters.delete(poster.id.toString())
       posters.value = posters.value.filter(({ id }) => id !== poster.id)
-    } catch (e) {
+    } catch {
       $q.notify({
         color: 'negative',
         message: 'Beim löschen des Posters ist ein Fehler aufgetreten'
