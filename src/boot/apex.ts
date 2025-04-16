@@ -1,4 +1,4 @@
-import { boot } from 'quasar/wrappers'
+import { defineBoot } from '#q-app/wrappers'
 import VueApexCharts from 'vue3-apexcharts'
 import de from 'apexcharts/dist/locales/de.json'
 import { ApexOptions } from 'apexcharts'
@@ -80,7 +80,7 @@ export const defaultApexChartOptions: ApexOptions = {
   }
 }
 
-export default boot(({ app }) => {
+export default defineBoot(({ app }) => {
   // @ts-ignore
   app.use(VueApexCharts)
   //@ts-ignore

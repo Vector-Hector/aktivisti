@@ -1,4 +1,4 @@
-import { boot } from 'quasar/wrappers'
+import { defineBoot } from '#q-app/wrappers'
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -27,6 +27,6 @@ const validationRules = {
   }
 }
 
-export default boot(({ app }) => {
+export default defineBoot(({ app }) => {
   app.config.globalProperties.$validationRules = validationRules
 })

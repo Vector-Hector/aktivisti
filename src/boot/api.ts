@@ -1,4 +1,4 @@
-import { boot } from 'quasar/wrappers'
+import { defineBoot } from '#q-app/wrappers'
 import { AxiosResponse } from 'axios'
 import { apiClient } from 'src/api/ApiClient'
 import { OAuth2Client } from 'src/api/OAuth2Client'
@@ -39,7 +39,7 @@ async function refreshOnErrorInterceptor(error: any) {
   }
 }
 
-export default boot(async ({ app }) => {
+export default defineBoot(async ({ app }) => {
   app.config.globalProperties.$apiClient = apiClient
   const authType = getAuthType()
   if (authType === AuthType.TOKEN) {
