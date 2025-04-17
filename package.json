@@ -22,7 +22,8 @@
     "build:android": "quasar build -m capacitor -T android",
     "format": "prettier --write \"./src/**/*.{ts,tsx,js,jsx,vue}\" --ignore-path .gitignore",
     "test": "echo \"No test specified\" && exit 0",
-    "version": "cd ./src-capacitor && npm version --no-git-tag-version $npm_package_version && git add -A"
+    "version": "cd ./src-capacitor && npm version --no-git-tag-version $npm_package_version && git add -A",
+    "postinstall": "quasar prepare"
   },
   "dependencies": {
     "@capacitor/app": "^6.0.0",
