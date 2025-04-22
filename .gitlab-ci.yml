@@ -32,6 +32,8 @@ default:
 lint:
   image: node:20-alpine
   stage: test
+  before_script:
+    - apk update && apk add git
   script:
     - npm --version
     - npm ci
