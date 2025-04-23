@@ -6,7 +6,6 @@ import { apiClient } from 'src/api/ApiClient'
 import VueApexCharts from 'vue3-apexcharts'
 import { ReportEventMetricsDto } from 'src/api/model/ReportEventMetricsDto'
 import { useReportScope } from 'components/reportCharts/reportChartScope'
-import { defaultApexChartOptions } from 'boot/apex'
 
 interface Props {
   title?: string
@@ -86,9 +85,7 @@ const chartOptions = computed(() => {
       }${subAssociation.value?.name ? ' > ' + subAssociation.value.name : ''}`
     },
     noData: {
-      text: isLoading.value
-        ? 'Lade Daten...'
-        : defaultApexChartOptions.noData?.text
+      text: isLoading.value ? 'Lade Daten...' : Apex.noData?.text
     }
   }
 })

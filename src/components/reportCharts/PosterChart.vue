@@ -6,7 +6,6 @@ import { PosterStatus, PosterStatusUtil } from 'src/api/model/PosterDto'
 import { ReportPosterDto } from 'src/api/model/ReportPosterDto'
 import { ApexDataUtil, ApexDatePoint } from 'src/api/model/ApexDatePoint'
 import { useReportScope } from 'components/reportCharts/reportChartScope'
-import { defaultApexChartOptions } from 'boot/apex'
 
 interface Props {
   campaignId: number
@@ -97,9 +96,7 @@ const chartOptions = computed(() => {
       }${subAssociation.value?.name ? ' > ' + subAssociation.value.name : ''}`
     },
     noData: {
-      text: isLoading.value
-        ? 'Lade Daten...'
-        : defaultApexChartOptions.noData?.text
+      text: isLoading.value ? 'Lade Daten...' : Apex.noData?.text
     }
   }
 })

@@ -7,7 +7,6 @@ import { eventTypeOptions } from 'src/api/model/EventTypes'
 import { ReportEventDto } from 'src/api/model/ReportEventDto'
 import { ApexDataUtil, ApexDatePoint } from 'src/api/model/ApexDatePoint'
 import { ReportType, ReportTypeUtil } from 'src/api/model/ReportType'
-import { defaultApexChartOptions } from 'boot/apex'
 
 interface Props {
   campaignId: number
@@ -90,9 +89,7 @@ const chartOptions = computed(() => {
       }${subAssociation.value?.name ? ' > ' + subAssociation.value.name : ''}`
     },
     noData: {
-      text: isLoading.value
-        ? 'Lade Daten...'
-        : defaultApexChartOptions.noData?.text
+      text: isLoading.value ? 'Lade Daten...' : Apex.noData?.text
     }
   }
 })

@@ -6,7 +6,6 @@ import VueApexCharts from 'vue3-apexcharts'
 import { apiClient } from 'src/api/ApiClient'
 import { ReportType, ReportTypeUtil } from 'src/api/model/ReportType'
 import { ReportActiveUsersDto } from 'src/api/model/ReportActiveUsersDto'
-import { defaultApexChartOptions } from 'boot/apex'
 import { EventTypes, EventTypesUtil } from 'src/api/model/EventTypes'
 
 interface Props {
@@ -118,9 +117,7 @@ const chartOptions = computed(() => {
       decimalsInFloat: 3
     },
     noData: {
-      text: isLoading.value
-        ? 'Lade Daten...'
-        : defaultApexChartOptions.noData?.text
+      text: isLoading.value ? 'Lade Daten...' : Apex.noData?.text
     }
   }
 })
