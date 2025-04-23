@@ -399,7 +399,7 @@ const routes = [
         }),
         meta: {
           requiresAuth: false,
-          title: () => 'Anmelden'
+          title: (t) => t('routes.login.title')
         }
       },
       {

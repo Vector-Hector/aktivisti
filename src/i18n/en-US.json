@@ -9,5 +9,28 @@
     "date": "Date",
     "count": "Count",
     "download": "Download"
+  },
+  "login": {
+    "reset_password": {
+      "message": "Enter your email address here. We will send you an email with instructions on how to reset your password.",
+      "success_message": "Please check your inbox. We have sent you an email with further instructions.",
+      "error_message": "An error occurred while trying to reset your password",
+      "title": "Reset Password"
+    },
+    "register": {
+      "no_account": "No account yet?",
+      "register_here": "Register here"
+    },
+    "invalid_credentials": "The entered credentials are invalid",
+    "username_label": "Username",
+    "password_label": "Password",
+    "remember_me": "Stay logged in",
+    "submit_button": "Login",
+    "forget_password": "Forgot Password?"
+  },
+  "routes": {
+    "login": {
+      "title": "Login"
+    }
   }
 }

@@ -28,11 +28,13 @@ import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 import { VersionHealth } from 'src/api/model/ConfigDto'
 import { useRoute, useRouter } from 'vue-router'
 import { GlobalLoadingInjectionKey } from 'src/utils/app'
+import { useI18n } from 'vue-i18n'
 
 const authStore = getAuthStore()
 const $route = useRoute()
 const $router = useRouter()
 const $q = useQuasar()
+const { t } = useI18n()
 
 const initialized = ref(false)
 const transitionDirection = ref<string | null>(null)
@@ -164,10 +166,10 @@ function backButton() {
         />
         <QToolbarTitle class="title-wrapper col">
           <span class="title">
-            {{ $route.meta.title?.() }}
+            {{ $route.meta.title?.(t) }}
           </span>
           <span class="subtitle">
-            {{ $route.meta.subtitle?.() }}
+            {{ $route.meta.subtitle?.(t) }}
           </span>
         </QToolbarTitle>
         <QToolbarTitle class="subtitle"></QToolbarTitle>

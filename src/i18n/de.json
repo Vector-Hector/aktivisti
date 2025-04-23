@@ -9,5 +9,28 @@
     "date": "Datum",
     "count": "Anzahl",
     "download": "Download"
+  },
+  "login": {
+    "reset_password": {
+      "message": "Gib hier deine E-Mail Adresse ein. Wir schicken dir eine E-Mail mit Anweisungen, wie du dein Passwort zurücksetzen kannst.",
+      "success_message": "Bitte sieh nun in deinem Postfach nach. Wir haben dir eine E-Mail mit weiteren Anweisungen geschickt.",
+      "error_message": "Beim versuch dein Passwort zurückzusetzen trat ein Fehler auf",
+      "title": "Passwort zurücksetzen"
+    },
+    "register": {
+      "no_account": "Noch kein Konto?",
+      "register_here": "Hier registrieren"
+    },
+    "invalid_credentials": "Die eingegebenen Zugangsdaten sind ungültig",
+    "username_label": "Benutzer*innenname",
+    "password_label": "Passwort",
+    "remember_me": "Angemeldet bleiben",
+    "submit_button": "Anmelden",
+    "forget_password": "Passwort vergessen?"
+  },
+  "routes": {
+    "login": {
+      "title": "Anmelden"
+    }
   }
 }
