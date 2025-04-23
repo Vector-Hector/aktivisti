@@ -1,0 +1,13 @@
+{
+  "config": {
+    "quasarLangIso": "en-US",
+    "apexLangIso": "en"
+  },
+  "apex": {
+    "noData": "No data available yet",
+    "title": "Statistics",
+    "date": "Date",
+    "count": "Count",
+    "download": "Download"
+  }
+}
