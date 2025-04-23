@@ -1,7 +1,7 @@
 {
   "config": {
-    "quasarLangIso": "en-US",
-    "apexLangIso": "en"
+    "quasarLangIso": "de",
+    "apexLangIso": "de"
   },
   "apex": {
     "noData": "Bisher liegen keine Daten vor",
