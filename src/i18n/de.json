@@ -31,6 +31,64 @@
   "routes": {
     "login": {
       "title": "Anmelden"
+    },
+    "profile": {
+      "title": "Mein Profil"
+    },
+    "my_participations": {
+      "title": "Meine Teilnahmen"
+    },
+    "statistics": {
+      "title": "Statistiken"
+    },
+    "offices": {
+      "title": "Die Linke vor Ort"
+    },
+    "posters": {
+      "title": "Plakate"
+    },
+    "events": {
+      "title": "Alle Aktionen",
+      "report": {
+        "title": "Ergebnisses"
+      },
+      "area": {
+        "street": {
+          "addresses": {
+            "title": "Adressen"
+          },
+          "record_results": {
+            "title": "Ergebnisse aufnehmen"
+          }
+        },
+        "create_lead": {
+          "title": "Kontakt registrieren"
+        }
+      },
+      "create_event": {
+        "title": "Aktion erstellen"
+      },
+      "request_permissions": {
+        "title": "Koordinator*innen-Rechte beantragen"
+      },
+      "edit": {
+        "title": "Aktion bearbeiten",
+        "posters": {
+          "title": "Plakat bearbeiten"
+        }
+      }
+    },
+    "register": {
+      "title": "Registrieren"
+    },
+    "register_success": {
+      "title": "Registrierung erfolgreich"
+    },
+    "imprint": {
+      "title": "Impressum"
+    },
+    "manage_users": {
+      "title": "Benutzer*innen verwalten"
     }
   }
 }

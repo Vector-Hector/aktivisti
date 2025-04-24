@@ -31,6 +31,7 @@ import ResetRotateControl from 'src/map/ResetRotateControl.vue'
 import CampaignCollectionOverlayControl from 'src/map/CampaignCollectionOverlayControl.vue'
 import { getAuthStore } from 'src/store/AuthStore'
 import { onBeforeRouteUpdate } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   showCreateButton?: boolean
@@ -40,6 +41,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const map = ref<InstanceType<typeof Map> | null>(null)
+const { t } = useI18n()
 
 const bbox = ref(userStore.getState().bbox)
 const isMapDefined = ref(true)
@@ -98,7 +100,7 @@ defineExpose({ setIsMapDefined })
         </router-view>
       </Map>
       <MapOverlayProxy
-        :title="$route.meta.title?.()"
+        :title="$route.meta.title?.(t)"
         @changed-size="resizeMap"
         :showCreateButton="props.showCreateButton"
       >
