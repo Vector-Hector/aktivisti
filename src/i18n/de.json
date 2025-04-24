@@ -90,5 +90,19 @@
     "manage_users": {
       "title": "Benutzer*innen verwalten"
     }
+  },
+  "sidebar": {
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "my_participations": "Meine Teilnahmen",
+    "events": "Alle Aktionen",
+    "offices": "Die Linke vor Ort",
+    "posters": "Plakate",
+    "reports": "Statistiken",
+    "manage_users": "Benutzer*innen verwalten",
+    "version": "Version",
+    "help": "Hilfe",
+    "imprint": "Impressum / Datenschutz",
+    "logout": "Abmelden"
   }
 }

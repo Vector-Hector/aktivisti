@@ -116,14 +116,16 @@ async function logout() {
         <div class="menu-item">
           <MenuLink to="/login">
             <QIcon class="menu-item-icon" :name="ionLogIn" />
-            <span class="menu-item-link-text">Anmelden</span>
+            <span class="menu-item-link-text">{{ $t('sidebar.login') }}</span>
           </MenuLink>
         </div>
         <hr class="menu-divider" />
         <div class="menu-item">
           <MenuLink to="/register">
             <QIcon class="menu-item-icon" :name="farIdCard" />
-            <span class="menu-item-link-text">Registrieren</span>
+            <span class="menu-item-link-text">{{
+              $t('sidebar.register')
+            }}</span>
           </MenuLink>
         </div>
       </div>
@@ -132,20 +134,26 @@ async function logout() {
           <div v-if="isLoggedIn" class="menu-item">
             <MenuLink :to="{ name: 'my-participations' }">
               <QIcon class="menu-item-icon" :name="ionCalendarOutline" />
-              <span class="menu-item-link-text">Meine Teilnahmen</span>
+              <span class="menu-item-link-text">{{
+                $t('sidebar.my_participations')
+              }}</span>
               <OpenInvitationsBadge />
             </MenuLink>
           </div>
           <div v-if="isLoggedIn" class="menu-item">
             <MenuLink to="/events">
               <QIcon class="menu-item-icon" :name="ionCalendarClearOutline" />
-              <span class="menu-item-link-text">Alle Aktionen</span>
+              <span class="menu-item-link-text">{{
+                $t('sidebar.events')
+              }}</span>
             </MenuLink>
           </div>
           <div v-if="isLoggedIn" class="menu-item">
             <MenuLink to="/offices">
               <QIcon class="menu-item-icon" :name="ionHomeOutline" />
-              <span class="menu-item-link-text">Die Linke vor Ort</span>
+              <span class="menu-item-link-text">{{
+                $t('sidebar.offices')
+              }}</span>
             </MenuLink>
           </div>
           <div v-if="hasManagePermission" class="menu-item">
@@ -154,13 +162,17 @@ async function logout() {
                 class="menu-item-icon"
                 name="img:/static/icons/poster.svg"
               />
-              <span class="menu-item-link-text">Plakate</span>
+              <span class="menu-item-link-text">{{
+                $t('sidebar.posters')
+              }}</span>
             </MenuLink>
           </div>
           <div v-if="hasManagePermission" class="menu-item">
             <MenuLink :to="{ name: 'reports' }">
               <QIcon class="menu-item-icon" :name="ionStatsChartOutline" />
-              <span class="menu-item-link-text">Statistiken</span>
+              <span class="menu-item-link-text">{{
+                $t('sidebar.reports')
+              }}</span>
             </MenuLink>
           </div>
           <div
@@ -169,30 +181,38 @@ async function logout() {
           >
             <MenuLink :to="{ name: 'manage-users' }">
               <QIcon class="menu-item-icon" :name="ionPeopleOutline" />
-              <span class="menu-item-link-text">Benutzer*innen verwalten</span>
+              <span class="menu-item-link-text">{{
+                $t('sidebar.manage_users')
+              }}</span>
             </MenuLink>
           </div>
         </div>
 
         <div class="menu-group menu-bottom">
-          <div class="version">Version: {{ version }}</div>
+          <div class="version">
+            {{ $t('sidebar.version') + ': ' + version }}
+          </div>
           <hr class="menu-divider" />
           <div class="menu-item">
             <a class="menu-item-link" :href="helpUrl" target="_blank">
               <QIcon class="menu-item-icon" :name="ionHelpCircleOutline" />
-              <span class="menu-item-link-text">Hilfe</span>
+              <span class="menu-item-link-text">{{ $t('sidebar.help') }}</span>
             </a>
           </div>
           <div class="menu-item">
             <MenuLink to="/imprint">
               <span class="menu-item-icon paragraph-icon">§</span>
-              <span class="menu-item-link-text">Impressum / Datenschutz</span>
+              <span class="menu-item-link-text">{{
+                $t('sidebar.imprint')
+              }}</span>
             </MenuLink>
           </div>
           <div v-if="isLoggedIn" class="menu-item">
             <div class="menu-item-link" @click="logout()">
               <QIcon class="menu-item-icon" :name="ionExitOutline" />
-              <span class="menu-item-link-text">Abmelden</span>
+              <span class="menu-item-link-text">{{
+                $t('sidebar.logout')
+              }}</span>
             </div>
           </div>
         </div>
