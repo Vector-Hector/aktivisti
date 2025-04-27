@@ -6,6 +6,7 @@ import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { eventTypeOptions } from 'src/api/model/EventTypes'
 import { openDeleteEventDialog } from 'src/utils/dialog'
+import { useDateFormat } from 'src/utils/dateFormat'
 
 interface Props {
   event: EventDto
@@ -23,6 +24,7 @@ interface Emits {
 }
 const emit = defineEmits<Emits>()
 
+const { dateFormat } = useDateFormat()
 const $q = useQuasar()
 
 const eventTypeLabel = computed(() => {
@@ -57,7 +59,7 @@ function openDeleteModal() {
         }}
       </QItemLabel>
       <QItemLabel>
-        {{ $utils.dateFormat(event.start_date) }}
+        {{ dateFormat(event.start_date, 'datetime') }}
       </QItemLabel>
     </QItemSection>
     <QItemSection side v-if="showManagementControlButtons">

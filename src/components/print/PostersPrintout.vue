@@ -21,6 +21,7 @@ import {
   PosterStatusUtil
 } from 'src/api/model/PosterDto'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
+import { useDateFormat } from 'src/utils/dateFormat'
 
 interface Props {
   event: EventDto
@@ -28,6 +29,8 @@ interface Props {
   posters: PosterDto[]
 }
 const props = defineProps<Props>()
+
+const { dateFormat } = useDateFormat()
 
 const areaFeatures = computed(() => {
   return props.eventAreas.map(eventAreaToFeature)
@@ -97,7 +100,7 @@ function print() {
         Einsatztyp:
         {{ eventTypeOptions.find(({ key }) => key === event.event_type)?.label
         }}<br />
-        Datum: {{ $utils.dateFormat(event.start_date) }}
+        Datum: {{ dateFormat(event.start_date, 'datetime') }}
       </p>
       <p>{{ event.description }}</p>
       <img class="linke-logo" src="../../assets/logo_dielinke.svg" />
@@ -134,7 +137,7 @@ function print() {
                 ?.label
             }}<br />
             Einsatzname: {{ event.name }}<br />
-            Datum: {{ $utils.dateFormat(event.start_date) }}<br />
+            Datum: {{ dateFormat(event.start_date, 'datetime') }}<br />
           </p>
           <Map
             class="area-map"
@@ -199,7 +202,7 @@ function print() {
                 ?.label
             }}<br />
             Einsatzname: {{ event.name }}<br />
-            Datum: {{ $utils.dateFormat(event.start_date) }}<br />
+            Datum: {{ dateFormat(event.start_date, 'datetime') }}<br />
           </p>
           <Map class="area-map" :interactive="false" :bounding-box="zoomBox">
             <FeatureLayer :features="areaFeatures" />

@@ -38,7 +38,6 @@ export default defineConfig(function (ctx) {
       'api',
       'validation-rules',
       'map',
-      'utils',
       'apex',
       'deep-links',
       'quasar-lang-pack'

@@ -5,7 +5,7 @@
       {{ getEventTypeLabel(event.properties.event_type) }}
     </span>
     <span class="popup-date">
-      {{ new Date(event.properties.start_date).toLocaleString() }}
+      {{ dateFormat(event.properties.start_date, 'datetime') }}
     </span>
     <QBtn label="Mitmachen/Infos" color="primary" :to="`/events/${event.id}`" />
   </div>
@@ -14,12 +14,15 @@
 import { EventGeoJsonFeature } from 'src/api/model/EventGeoJsonDto'
 import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 import { QBtn } from 'quasar'
+import { useDateFormat } from 'src/utils/dateFormat'
 
 interface Props {
   event: EventGeoJsonFeature
 }
 
 defineProps<Props>()
+
+const { dateFormat } = useDateFormat()
 
 function getEventTypeLabel(eventType: EventTypes): string | undefined {
   return eventTypeOptions.find(({ key }) => key === eventType)?.label

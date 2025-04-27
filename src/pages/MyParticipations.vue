@@ -21,11 +21,14 @@ import { myParticipationsStore } from 'src/store/MyParticipationsStore'
 import { userStore } from 'src/store/UserStore'
 import { EventStatus } from 'src/api/model/EventStatus'
 import { apiClient } from 'src/api/ApiClient'
+import { useDateFormat } from 'src/utils/dateFormat'
 
 const participatedEvents = ref<EventDto[]>([])
 const invitingUsers = ref<UserDto[]>([])
 const campaigns = ref<CampaignDto[]>([])
 const loading = ref(true)
+
+const { dateFormat } = useDateFormat()
 
 onMounted(async () => {
   await Promise.all([getParticipatedEvents(), getCampaigns()])
@@ -154,7 +157,7 @@ function findInvitingUsers(findIds: number[]): UserDto[] {
                     }}
                   </QItemLabel>
                   <QItemLabel>
-                    {{ $utils.dateFormat(event.start_date) }}
+                    {{ dateFormat(event.start_date, 'datetime') }}
                   </QItemLabel>
                   <QItemLabel>
                     <i>
@@ -223,7 +226,7 @@ function findInvitingUsers(findIds: number[]): UserDto[] {
                     }}
                   </QItemLabel>
                   <QItemLabel>
-                    {{ $utils.dateFormat(event.start_date) }}
+                    {{ dateFormat(event.start_date, 'datetime') }}
                   </QItemLabel>
                 </QItemSection>
               </QItem>

@@ -14,6 +14,7 @@ import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import EventMarker from 'components/EventMarker.vue'
 import { useRouter } from 'vue-router'
+import { useDateFormat } from 'src/utils/dateFormat'
 
 interface Props {
   event: EventDto
@@ -24,6 +25,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const $router = useRouter()
+const { dateFormat } = useDateFormat()
 
 const areaFeatures = computed(() => {
   return props.eventAreas.map(eventAreaToFeature)
@@ -80,7 +82,7 @@ function print() {
         Einsatztyp:
         {{ eventTypeOptions.find(({ key }) => key === event.event_type)?.label
         }}<br />
-        Datum: {{ $utils.dateFormat(event.start_date) }}
+        Datum: {{ dateFormat(event.start_date, 'datetime') }}
       </p>
       <p>{{ event.description }}</p>
       <img class="linke-logo" src="../../assets/logo_dielinke.svg" />
@@ -120,7 +122,7 @@ function print() {
                 ?.label
             }}<br />
             Einsatzname: {{ event.name }}<br />
-            Datum: {{ $utils.dateFormat(event.start_date) }}<br />
+            Datum: {{ dateFormat(event.start_date, 'datetime') }}<br />
             <template v-if="area.area_details">
               Anzahl Adressen: {{ countAddresses(area.area_details) }}
             </template>

@@ -31,6 +31,7 @@ import LabeledBtn from 'components/LabeledBtn.vue'
 import { openDeleteEventDialog } from 'src/utils/dialog'
 import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 import { useRouter } from 'vue-router'
+import { useDateFormat } from 'src/utils/dateFormat'
 
 const PREFIX_HANG_DOWN_POSTERS = '[Abhängen] '
 const pollIntervalMs = 5000
@@ -38,15 +39,9 @@ const authStore = getAuthStore()
 
 const $router = useRouter()
 const $q = useQuasar()
+const { dateFormat } = useDateFormat()
 
 const joinLoading = ref(false)
-const dateOptions: Intl.DateTimeFormatOptions = {
-  year: 'numeric',
-  month: '2-digit',
-  day: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit'
-}
 const verficationPollTimeout = ref<null | NodeJS.Timeout>(null)
 const adminMenuOpen = ref(false)
 
@@ -91,15 +86,8 @@ const shareDescription = computed(() => {
   }
 })
 const shareText = computed(() => {
-  const formattedDate = new Date(event.value.start_date).toLocaleString([], {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  })
-  const formattedTime = new Date(event.value.start_date).toLocaleString([], {
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+  const formattedDate = dateFormat(event.value.start_date, 'date')
+  const formattedTime = dateFormat(event.value.start_date, 'time')
   return `${event.value.name}\n${eventTypeLabel.value}${shareDescription.value}\n\nam: ${formattedDate}\num: ${formattedTime}\n`
 })
 const eventId = computed(() => {
@@ -365,17 +353,13 @@ onBeforeUnmount(() => {
               <b>Start:</b>
             </div>
             <div class="col-8">
-              {{ new Date(event.start_date).toLocaleString([], dateOptions) }}
+              {{ dateFormat(event.start_date, 'datetime') }}
             </div>
             <div class="col-4">
               <b>Ende:</b>
             </div>
             <div class="col-8">
-              {{
-                event.end_date
-                  ? new Date(event.end_date).toLocaleString([], dateOptions)
-                  : 'Nicht definiert'
-              }}
+              {{ dateFormat(event.end_date, 'datetime') }}
             </div>
             <template v-if="event.external_url">
               <div class="col-4"><b>Link:</b></div>

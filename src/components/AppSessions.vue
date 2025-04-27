@@ -7,8 +7,10 @@ import {
   ionPhonePortraitOutline
 } from '@quasar/extras/ionicons-v5'
 import { apiClient } from 'src/api/ApiClient'
+import { useDateFormat } from 'src/utils/dateFormat'
 
 const sessions = ref<AppSessionDto[]>([])
+const { dateFormat } = useDateFormat()
 
 onMounted(async () => {
   await refreshSessions()
@@ -48,7 +50,7 @@ async function refreshSessions() {
         </QItemLabel>
         <QItemLabel>
           <!-- TODO(peter): Use i18n for date formating -->
-          seit: {{ $utils.dateFormat(session.created_at) }}
+          seit: {{ dateFormat(session.created_at, 'datetime') }}
         </QItemLabel>
         <QItemLabel caption v-if="session.is_active">
           <span class="current-session-info">
