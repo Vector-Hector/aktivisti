@@ -3,6 +3,24 @@
     "quasarLangIso": "de",
     "apexLangIso": "de"
   },
+  "api": {
+    "model": {
+      "UserObjectPermissionDto": {
+        "permissionCodename": {
+          "none": "Keine Rechte",
+          "team_captain": "Teamcaptain",
+          "manages_events": "Koordinator*in"
+        },
+        "contentTypeNaturalKey": {
+          "core": {
+            "subassociation": "Kreisverband",
+            "stateassociation": "Landesverband",
+            "campaign": "Kampagne"
+          }
+        }
+      }
+    }
+  },
   "apex": {
     "noData": "Bisher liegen keine Daten vor",
     "title": "Statistik",
@@ -104,5 +122,73 @@
     "help": "Hilfe",
     "imprint": "Impressum / Datenschutz",
     "logout": "Abmelden"
+  },
+  "profile": {
+    "notification": {
+      "save": {
+        "success": "Deine Einstellungen wurden gespeichert",
+        "error": "Beim speichern des Profils trat ein Fehler auf",
+        "errorVerbose": "Beim speichern des Profils trat ein Fehler auf: {0}",
+        "errorVerify": "Dein Profil konnte nicht gespeichert werden, bitte prüfe deine Angaben",
+        "inProgress": "Wird gespeichert"
+      }
+    },
+    "deleteAccountDialog": {
+      "title": "Account löschen",
+      "description": "Möchtest du wirklich deinen Account löschen?",
+      "submitButton": "Account löschen",
+      "cancelButton": "Abbrechen",
+      "notification": {
+        "success": "Dein Account wurde gelöscht",
+        "error": "Beim löschen deines Accounts trat ein Fehler auf"
+      }
+    },
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "username": "Benutzer*innenname",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "phone": "Telefon",
+    "zipCode": "Postleitzahl",
+    "subAssociation": "Bezirk/Kreisverband",
+    "notificationsSettings": {
+      "title": "Benachrichtigungen",
+      "emailOnInvitation": "E-Mail-Benachrichtigung wenn ich zu einer Aktion eingeladen wurde",
+      "emailOnNewVolunteers": "E-Mail-Benachrichtigung wenn sich neue Freiwillige für meine Aktion gemeldet haben",
+      "emailOnVolounteersRequireVerfification": "E-Mail-Benachrichtigung wenn neue Freiwillige meine Bestätigung brauchen",
+      "pushNotifications": "Push Notifications"
+    },
+    "permissions": {
+      "title": "Berechtigungen",
+      "youAre": "Du bist",
+      "administrator": "Administrator",
+      "globalCoordinator": "globale*r Koordinator*in",
+      "youHavePermission": "Du hast die Berechtigung",
+      "permissionFor": "im"
+    },
+    "personalReport": {
+      "title": "Persönliche Ergebnisse"
+    },
+    "account": {
+      "title": "Account",
+      "description": "Deinen Account löschen",
+      "deleteButton": "Account löschen"
+    },
+    "manageSessions": {
+      "title": "Aktive Sitzungen",
+      "description": "Dies ist eine Liste der Geräte, die sich bei deinem Konto angemeldet haben. Widerrufe alle Sitzungen, die Du nicht kennst."
+    }
+  },
+  "personalMetrics": {
+    "metric": "Ergebnis",
+    "count": "Anzahl"
+  },
+  "appSessions": {
+    "currentSession": "Aktuelle Sitzung",
+    "revokeButton": "Abmelden"
+  },
+  "campaignFilter": {
+    "defaultLabel": "Kampagnen",
+    "showAllCampaigns": "Alle Kampagnen"
   }
 }

@@ -3,6 +3,24 @@
     "quasarLangIso": "en-US",
     "apexLangIso": "en"
   },
+  "api": {
+    "model": {
+      "UserObjectPermissionDto": {
+        "permissionCodename": {
+          "none": "No rights",
+          "team_captain": "Team Captain",
+          "manages_events": "Coordinator"
+        },
+        "contentTypeNaturalKey": {
+          "core": {
+            "subassociation": "Sub Association",
+            "stateassociation": "State Association",
+            "campaign": "Campaign"
+          }
+        }
+      }
+    }
+  },
   "apex": {
     "noData": "No data available yet",
     "title": "Statistics",
@@ -31,6 +49,146 @@
   "routes": {
     "login": {
       "title": "Login"
+    },
+    "profile": {
+      "title": "My Profile"
+    },
+    "my_participations": {
+      "title": "My Participations"
+    },
+    "statistics": {
+      "title": "Statistics"
+    },
+    "offices": {
+      "title": "The Left Nearby"
+    },
+    "posters": {
+      "title": "Posters"
+    },
+    "events": {
+      "title": "All Events",
+      "report": {
+        "title": "Results"
+      },
+      "area": {
+        "street": {
+          "addresses": {
+            "title": "Addresses"
+          },
+          "record_results": {
+            "title": "Record Results"
+          }
+        },
+        "create_lead": {
+          "title": "Register Contact"
+        }
+      },
+      "create_event": {
+        "title": "Create Event"
+      },
+      "request_permissions": {
+        "title": "Request Coordinator Permissions"
+      },
+      "edit": {
+        "title": "Edit Event",
+        "posters": {
+          "title": "Edit Poster"
+        }
+      }
+    },
+    "register": {
+      "title": "Register"
+    },
+    "register_success": {
+      "title": "Registration Successful"
+    },
+    "imprint": {
+      "title": "Imprint"
+    },
+    "manage_users": {
+      "title": "Manage Users"
     }
+  },
+  "sidebar": {
+    "login": "Login",
+    "register": "Register",
+    "my_participations": "My Participations",
+    "events": "All Events",
+    "offices": "The Left Nearby",
+    "posters": "Posters",
+    "reports": "Statistics",
+    "manage_users": "Manage Users",
+    "version": "Version",
+    "help": "Help",
+    "imprint": "Imprint / Privacy Policy",
+    "logout": "Logout"
+  },
+  "profile": {
+    "notification": {
+      "save": {
+        "success": "Your settings have been saved",
+        "error": "An error occurred while saving the profile",
+        "errorVerbose": "An error occurred while saving the profile: {0}",
+        "errorVerify": "Your profile could not be saved, please check your input",
+        "inProgress": "Saving in progress"
+      }
+    },
+    "deleteAccountDialog": {
+      "title": "Delete Account",
+      "description": "Do you really want to delete your account?",
+      "submitButton": "Delete Account",
+      "cancelButton": "Cancel",
+      "notification": {
+        "success": "Your account has been deleted",
+        "error": "An error occurred while deleting your account"
+      }
+    },
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "phone": "Phone",
+    "zipCode": "ZIP Code",
+    "subAssociation": "Sub Association",
+    "notificationsSettings": {
+      "title": "Notifications",
+      "emailOnInvitation": "Email notification when I am invited to an event",
+      "emailOnNewVolunteers": "Email notification when new volunteers sign up for my event",
+      "emailOnVolounteersRequireVerfification": "Email notification when new volunteers require my confirmation",
+      "pushNotifications": "Push Notifications"
+    },
+    "permissions": {
+      "title": "Permissions",
+      "youAre": "You are",
+      "administrator": "Administrator",
+      "globalCoordinator": "Global Coordinator",
+      "youHavePermission": "You have the permission",
+      "permissionFor": "in"
+    },
+    "personalReport": {
+      "title": "Personal Results"
+    },
+    "account": {
+      "title": "Account",
+      "description": "Delete your account",
+      "deleteButton": "Delete Account"
+    },
+    "manageSessions": {
+      "title": "Active Sessions",
+      "description": "This is a list of devices that are logged into your account. Revoke any sessions you do not recognize."
+    }
+  },
+  "personalMetrics": {
+    "metric": "Metric",
+    "count": "Count"
+  },
+  "appSessions": {
+    "currentSession": "Current Session",
+    "revokeButton": "Revoke"
+  },
+  "campaignFilter": {
+    "defaultLabel": "Campaigns",
+    "showAllCampaigns": "All Campaigns"
   }
 }

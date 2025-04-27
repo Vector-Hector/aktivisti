@@ -6,6 +6,9 @@ import { QTable } from 'quasar'
 import CampaignFilter from 'components/filterInput/filters/CampaignFilter.vue'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { apiClient } from 'src/api/ApiClient'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const campaigns = ref<CampaignDto[]>([])
 const eventMetrics = ref<EventMetricDto[]>([])
@@ -13,13 +16,13 @@ const personalMetricsColumns = [
   {
     field: 'name',
     name: 'name',
-    label: 'Ergebnis',
+    label: t('personalMetrics.metric'),
     align: 'left'
   },
   {
     field: 'value',
     name: 'value',
-    label: 'Anzahl'
+    label: t('personalMetrics.count')
   }
 ]
 const personalMetrics = ref<Partial<PersonalMetricsDto>>({})

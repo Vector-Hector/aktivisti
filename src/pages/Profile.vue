@@ -72,10 +72,12 @@ import ChangeUsernameDialog from 'components/modals/ChangeUsernameDialog.vue'
 import PersonalMetrics from 'components/PersonalMetrics.vue'
 import { deregisterDevice, registerDevice } from 'src/utils/push-notification'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const authStore = getAuthStore()
 const $q = useQuasar()
 const $router = useRouter()
+const { t } = useI18n()
 
 const hasAtLeastOneManagePermission = computed(() => {
   return userStore.hasAtLeastOneManagePermission()
@@ -147,15 +149,12 @@ async function savePushNotificationSettings() {
   const notification = notifySavingInProgress()
   try {
     await action()
-    notifySuccess(notification, 'Deine Einstellungen wurden gespeichert')
+    notifySuccess(notification, t('profile.notification.save.success'))
 
     userStore.setPushNotificationPreferences(newValue)
     pushNotificationSettings.value.pushNotifications = newValue
   } catch (e) {
-    notifyFailure(
-      notification,
-      'Beim speichern des Profils trat ein Fehler auf'
-    )
+    notifyFailure(notification, t('profile.notification.save.error'))
     pushNotificationSettings.value.pushNotifications = !newValue
   }
 }
@@ -205,12 +204,12 @@ async function saveEmailNotificationSettings() {
       )
     }
     emailNotificationSettings.value = response.payload.data
-    notifySuccess(notification, 'Deine Einstellungen wurden gespeichert')
+    notifySuccess(notification, t('profile.notification.save.success'))
   } catch (e) {
     if (apiClient.isApiClientError(e) || e instanceof Error) {
       notifyFailure(
         notification,
-        `Beim speichern des Profils trat ein Fehler auf: ${e.message}`
+        t('profile.notification.save.errorVerbose', [e.message])
       )
     }
   }
@@ -229,42 +228,39 @@ async function saveProfile(): Promise<void> {
         (item: SubAssociationDto) => item.id === user.value?.sub_association
       ) ?? null
 
-    notifySuccess(notification, 'Dein Profil wurde gespeichert')
+    notifySuccess(notification, t('profile.notification.save.success'))
   } catch (e) {
     if (apiClient.isApiClientError(e) && e.response?.status === 400) {
       errors.value = e.response.data
-      notifyFailure(
-        notification,
-        'Dein Profil konnte nicht gespeichert werden, bitte prüfe deine Angaben'
-      )
+      notifyFailure(notification, t('profile.notification.save.errorVerify'))
     } else if (apiClient.isApiClientError(e) || e instanceof Error) {
       notifyFailure(
         notification,
-        `Beim speichern des Profils trat ein Fehler auf: ${e.message}`
+        t('profile.notification.save.errorVerbose', [e.message])
       )
     }
   }
 }
 function openDeleteAccountPrompt() {
   $q.dialog({
-    title: 'Account löschen',
-    message: 'Möchtest du wirklich deinen Account löschen?',
-    ok: 'Account löschen',
-    cancel: 'Abbrechen'
+    title: t('profile.deleteAccountDialog.title'),
+    message: t('profile.deleteAccountDialog.description'),
+    ok: t('profile.deleteAccountDialog.submitButton'),
+    cancel: t('profile.deleteAccountDialog.cancelButton')
   })
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     .onOk(async () => {
       try {
         await apiClient.user.delete('me')
         $q.notify({
-          message: 'Dein Account wurde gelöscht',
+          message: t('profile.deleteAccountDialog.notification.success'),
           color: 'positive'
         })
         await $router.push({ name: 'home' })
         authStore.deleteSessionData()
       } catch (e) {
         $q.notify({
-          message: 'Beim löschen deines Accounts trat ein Fehler auf',
+          message: t('profile.deleteAccountDialog.notification.error'),
           color: 'negative'
         })
       }
@@ -274,7 +270,7 @@ function notifySavingInProgress() {
   const notification = $q.notify({
     group: false,
     spinner: true,
-    message: 'Wird gespeichert',
+    message: t('profile.notification.save.inProgress'),
     // Fixme(Peter): Should be reseted to 0, but leads to problem when
     //  requesting notification permission on android see also wk-frontend#364
     timeout: 5000
@@ -342,13 +338,13 @@ defineExpose({ setEmailNotificationSettings, setPermissions })
         <QInput
           stack-label
           v-model="localUser.first_name"
-          label="Vorname"
+          :label="$t('profile.firstName')"
           @update:model-value="saveProfileDebounced"
         />
         <QInput
           stack-label
           v-model="localUser.last_name"
-          label="Nachname"
+          :label="$t('profile.lastName')"
           @update:model-value="saveProfileDebounced"
           :error-message="errors.last_name?.[0]"
           :error="!!errors.last_name?.length"
@@ -357,7 +353,7 @@ defineExpose({ setEmailNotificationSettings, setPermissions })
           stack-label
           readonly
           v-model="localUser.username"
-          label="Benutzer*innenname"
+          :label="$t('profile.username')"
           @update:model-value="saveProfileDebounced"
         >
           <template v-slot:after>
@@ -373,7 +369,7 @@ defineExpose({ setEmailNotificationSettings, setPermissions })
           stack-label
           readonly
           v-model="localUser.email"
-          label="E-Mail"
+          :label="$t('profile.email')"
           @update:model-value="saveProfileDebounced"
         >
           <template v-slot:after>
@@ -385,7 +381,7 @@ defineExpose({ setEmailNotificationSettings, setPermissions })
           readonly
           type="password"
           model-value="************"
-          label="Passwort"
+          :label="$t('profile.password')"
           @update:model-value="saveProfileDebounced"
         >
           <template v-slot:after>
@@ -400,7 +396,7 @@ defineExpose({ setEmailNotificationSettings, setPermissions })
         <QInput
           stack-label
           v-model="localUser.phone_number"
-          label="Telefon"
+          :label="$t('profile.phone')"
           @change="saveProfileDebounced"
           :error-message="errors.phone_number?.[0]"
           :error="!!errors.phone_number?.length"
@@ -408,22 +404,24 @@ defineExpose({ setEmailNotificationSettings, setPermissions })
         <QInput
           stack-label
           v-model="localUser.plz"
-          label="Postleitzahl"
+          :label="$t('profile.zipCode')"
           @change="saveProfileDebounced"
           :error-message="errors.plz?.[0]"
           :error="!!errors.plz?.length"
         />
         <QInput
           readonly
-          label="Bezirk/Kreisverband"
+          :label="$t('profile.subAssociation')"
           :model-value="homeAssociationName"
         />
-        <h3 class="profile-section-heading">Benachrichtigungen</h3>
+        <h3 class="profile-section-heading">
+          {{ $t('profile.notificationsSettings.title') }}
+        </h3>
         <QSeparator class="profile-section-divider" />
         <QList>
           <QItem>
             <QItemSection>
-              E-Mail-Benachrichtigung wenn ich zu einer Aktion eingeladen wurde
+              {{ $t('profile.notificationsSettings.emailOnInvitation') }}
             </QItemSection>
             <QItemSection side>
               <QToggle
@@ -435,8 +433,7 @@ defineExpose({ setEmailNotificationSettings, setPermissions })
           </QItem>
           <QItem v-if="hasAtLeastOneManagePermission">
             <QItemSection>
-              E-Mail-Benachrichtigung wenn sich neue Freiwillige für meine
-              Aktion gemeldet haben
+              {{ $t('profile.notificationsSettings.emailOnNewVolunteers') }}
             </QItemSection>
             <QItemSection side>
               <QToggle
@@ -448,8 +445,11 @@ defineExpose({ setEmailNotificationSettings, setPermissions })
           </QItem>
           <QItem v-if="hasAtLeastOneManagePermission">
             <QItemSection>
-              E-Mail-Benachrichtigung wenn neue Freiwillige meine Bestätigung
-              brauchen
+              {{
+                $t(
+                  'profile.notificationsSettings.emailOnVolounteersRequireVerfification'
+                )
+              }}
             </QItemSection>
             <QItemSection side>
               <QToggle
@@ -462,7 +462,9 @@ defineExpose({ setEmailNotificationSettings, setPermissions })
             </QItemSection>
           </QItem>
           <QItem>
-            <QItemSection>Push Notifications</QItemSection>
+            <QItemSection>{{
+              $t('profile.notificationsSettings.pushNotifications')
+            }}</QItemSection>
             <QItemSection side>
               <QToggle
                 @update:model-value="savePushNotificationSettings"
@@ -473,48 +475,73 @@ defineExpose({ setEmailNotificationSettings, setPermissions })
           </QItem>
         </QList>
         <template v-if="hasAnyPermission">
-          <h3 class="profile-section-heading">Berechtigungen</h3>
+          <h3 class="profile-section-heading">
+            {{ $t('profile.permissions.title') }}
+          </h3>
           <QSeparator class="profile-section-divider" />
           <QList>
             <QItem v-if="user?.is_superuser">
-              <span>Du bist <b>Administrator</b></span>
+              <span
+                >{{ $t('profile.permissions.youAre') }}
+                <b>{{ $t('profile.permissions.administrator') }}</b></span
+              >
             </QItem>
             <QItem v-if="user?.roles.includes(CAMPAIGN_ADMIN)">
-              <span>Du bist globale*r <b>Koordinator*in</b></span>
+              <span
+                >{{ $t('profile.permissions.youAre') }}
+                <b>{{ $t('profile.permissions.globalCoordinator') }}</b></span
+              >
             </QItem>
             <QItem v-for="permission in permissions" :key="permission.id">
               <span>
-                Du hast die Berechtigung
-                <b>{{ permission.permission_name }}</b> in
-                {{ permission.content_type_name }}
+                {{ $t('profile.permissions.youHavePermission') }}
+                <b>{{
+                  $t(
+                    `api.model.UserObjectPermissionDto.permissionCodename.${permission.permission_codename}`
+                  )
+                }}</b>
+                {{
+                  $t('profile.permissions.permissionFor') +
+                  ' ' +
+                  $t(
+                    `api.model.UserObjectPermissionDto.contentTypeNaturalKey.${permission.content_type_natural_key}`
+                  )
+                }}
                 <b>{{ permission.content_object_name }}</b>
               </span>
             </QItem>
           </QList>
         </template>
-        <h3 class="profile-section-heading">Persönliche Ergebnisse</h3>
+        <h3 class="profile-section-heading">
+          {{ $t('profile.personalReport.title') }}
+        </h3>
         <QSeparator class="profile-section-divider" />
         <PersonalMetrics />
-        <h3 class="profile-section-heading">Account</h3>
+        <h3 class="profile-section-heading">
+          {{ $t('profile.account.title') }}
+        </h3>
         <QSeparator class="profile-section-divider" />
         <QList>
           <QItem>
-            <QItemSection> Deinen Account löschen</QItemSection>
+            <QItemSection>
+              {{ $t('profile.account.description') }}</QItemSection
+            >
             <QItemSection side>
               <QBtn
                 flat
                 @click="openDeleteAccountPrompt"
                 color="negative"
-                label="Account löschen"
+                :label="$t('profile.account.deleteButton')"
               />
             </QItemSection>
           </QItem>
         </QList>
-        <h3 class="profile-section-heading">Aktive Sitzungen</h3>
+        <h3 class="profile-section-heading">
+          {{ $t('profile.manageSessions.title') }}
+        </h3>
         <QSeparator class="profile-section-divider" />
         <span class="description-text">
-          Dies ist eine Liste der Geräte, die sich bei deinem Konto angemeldet
-          haben. Widerrufe alle Sitzungen, die Du nicht kennst.
+          {{ $t('profile.manageSessions.description') }}
         </span>
         <AppSessions />
       </div>

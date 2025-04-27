@@ -47,15 +47,18 @@ async function refreshSessions() {
           }}
         </QItemLabel>
         <QItemLabel>
+          <!-- TODO(peter): Use i18n for date formating -->
           seit: {{ $utils.dateFormat(session.created_at) }}
         </QItemLabel>
         <QItemLabel caption v-if="session.is_active">
-          <span class="current-session-info"> Aktuelle Sitzung </span>
+          <span class="current-session-info">
+            {{ $t('appSessions.currentSession') }}
+          </span>
         </QItemLabel>
       </QItemSection>
       <QItemSection v-if="!session.is_active" side top>
         <QBtn color="primary" @click="() => revokeSession(session.id)">
-          Abmelden
+          {{ $t('appSessions.revokeButton') }}
         </QBtn>
       </QItemSection>
     </QItem>
