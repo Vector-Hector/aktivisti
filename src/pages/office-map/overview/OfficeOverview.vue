@@ -62,7 +62,7 @@ function goToOffice(office: OfficeGeoJsonFeature) {
         <template v-slot:item="{ item }">
           <OfficeListItem :office="item" @click="goToOffice(item)" />
         </template>
-        <template v-slot:emptyList>Keine Adressen im Gebiet gefunden</template>
+        <template v-slot:emptyList>{{ $t('offices.emptyList') }}</template>
       </InfiniteList>
     </QScrollArea>
   </div>

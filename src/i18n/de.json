@@ -251,5 +251,12 @@
     "activeParticipants": {
       "total": "Gesamt"
     }
+  },
+  "infiniteList": {
+    "emptyList": "Keine Einträge gefunden"
+  },
+  "offices": {
+    "emptyList": "Keine Adressen im Gebiet gefunden",
+    "getMoreInfo": "Mehr Informationen"
   }
 }
