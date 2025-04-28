@@ -20,7 +20,7 @@ function updateModelValue(value: boolean) {
   <QField filled dense>
     <template v-slot:control>
       <QToggle
-        label="Zeige nur bearbeitbare Aktionen"
+        :label="$t('editableFilter.defaultLabel')"
         class="flex justify-between full-width"
         left-label
         color="primary"

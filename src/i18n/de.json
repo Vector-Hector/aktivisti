@@ -59,6 +59,10 @@
         "POSTERS": "Plakate",
         "GENERIC": "Veranstaltung",
         "FLYERS": "Flyer"
+      },
+      "EventStatus": {
+        "ACTIVE": "aktuell",
+        "ENDED": "beendet"
       }
     }
   },
@@ -253,6 +257,31 @@
     "defaultLabel": "Bezirks/Kreisverband",
     "noOptionsFound": "Kein Verband gefunden"
   },
+  "editableFilter": {
+    "defaultLabel": "Zeige nur bearbeitbare Aktionen"
+  },
+  "ownershipFilter": {
+    "defaultLabel": "Aktionen erstellt von",
+    "options": {
+      "me": "Mir",
+      "other": "Anderen",
+      "all": "Allen"
+    }
+  },
+  "sortOrderFilter": {
+    "options": {
+      "startDate": "Datum (Beginn)",
+      "name": "Aktionsname"
+    },
+    "defaultLabel": "Sortierung",
+    "placeholder": "Sortierung auswählen"
+  },
+  "eventTypeFilter": {
+    "defaultLabel": "Aktionstyp"
+  },
+  "eventStatusFilter": {
+    "defaultLabel": "Status"
+  },
   "myParticipations": {
     "pendingInvitations": "Offene Einladungen",
     "unknown": "Unbekannt",
@@ -304,6 +333,7 @@
   "events": {
     "dialog": {
       "joinAndGetInfo": "Mitmachen/Infos"
-    }
+    },
+    "createButton": "Aktion erstellen"
   }
 }

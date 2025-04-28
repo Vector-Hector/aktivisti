@@ -59,6 +59,10 @@
         "POSTERS": "Posters",
         "GENERIC": "Generic Event",
         "FLYERS": "Flyers"
+      },
+      "EventStatus": {
+        "ACTIVE": "active",
+        "ENDED": "ended"
       }
     }
   },
@@ -253,6 +257,31 @@
     "defaultLabel": "Sub Association",
     "noOptionsFound": "No association found"
   },
+  "editableFilter": {
+    "defaultLabel": "Show only editable events"
+  },
+  "ownershipFilter": {
+    "defaultLabel": "Events created by",
+    "options": {
+      "me": "Me",
+      "other": "Others",
+      "all": "All"
+    }
+  },
+  "sortOrderFilter": {
+    "options": {
+      "startDate": "Date (Start)",
+      "name": "Event Name"
+    },
+    "defaultLabel": "Sorting",
+    "placeholder": "Select sorting"
+  },
+  "eventTypeFilter": {
+    "defaultLabel": "Event Type"
+  },
+  "eventStatusFilter": {
+    "defaultLabel": "Status"
+  },
   "myParticipations": {
     "pendingInvitations": "Pending Invitations",
     "unknown": "Unknown",
@@ -304,6 +333,7 @@
   "events": {
     "dialog": {
       "joinAndGetInfo": "Join/Info"
-    }
+    },
+    "createButton": "Create Event"
   }
 }

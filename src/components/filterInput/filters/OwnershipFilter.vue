@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
+import { useI18n } from 'vue-i18n'
 
 enum Ownership {
   ME,
@@ -8,17 +9,19 @@ enum Ownership {
   ALL
 }
 
+const { t } = useI18n()
+
 const ownershipOptions: { key: Ownership; label: string }[] = [
   {
-    label: 'Mir',
+    label: t('ownershipFilter.options.me'),
     key: Ownership.ME
   },
   {
-    label: 'Anderen',
+    label: t('ownershipFilter.options.other'),
     key: Ownership.OTHER
   },
   {
-    label: 'Allen',
+    label: t('ownershipFilter.options.all'),
     key: Ownership.ALL
   }
 ]
@@ -55,7 +58,7 @@ function updateModelValue(value: Ownership) {
 </script>
 <template>
   <FilterInput
-    label="Aktionen erstellt von"
+    :label="$t('ownershipFilter.defaultLabel')"
     :model-value="selectedOwnership"
     emit-value
     @update:model-value="updateModelValue"

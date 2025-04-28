@@ -30,7 +30,7 @@ const possibleEventTypeOptions = computed(() => {
     :model-value="modelValue"
     @update:model-value="(value) => emit('update:modelValue', value)"
     input-debounce="0"
-    label="Aktionstyp"
+    :label="$t('eventTypeFilter.defaultLabel')"
     :options="possibleEventTypeOptions"
     emit-value
     map-options
