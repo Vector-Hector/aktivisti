@@ -340,6 +340,10 @@
   "map": {
     "geocoder": {
       "placeholder": "Suchen"
+    },
+    "geolocationControl": {
+      "currentLocation": "Standort",
+      "currentEvent": "Aktion"
     }
   }
 }
