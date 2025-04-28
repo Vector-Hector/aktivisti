@@ -35,9 +35,13 @@ function toggle() {
     <div class="headline" @click="toggle">
       <QIcon :name="ionFunnel" class="filter-icon" />
       <div class="headline-caption">
-        <h4 class="filter-title">Filter</h4>
+        <h4 class="filter-title">{{ $t('collapsibleFilters.title') }}</h4>
         <QBadge v-if="isFilterActive">
-          {{ props.activatedFilterCount }} gesetzt
+          {{
+            $t('collapsibleFilters.activeFilterCount', [
+              props.activatedFilterCount
+            ])
+          }}
         </QBadge>
       </div>
       <QBtn
@@ -50,7 +54,7 @@ function toggle() {
         no-caps
       >
         <QIcon left :name="ionRefresh" class="q-mr-sm reset-icon" />
-        <div class="text-center">Reset</div>
+        <div class="text-center">{{ $t('collapsibleFilters.reset') }}</div>
       </QBtn>
       <span class="chevron-icon" :class="{ rotated: !collapsed }">
         <QIcon :name="ionChevronDown" />

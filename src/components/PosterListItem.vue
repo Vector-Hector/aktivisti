@@ -4,7 +4,7 @@ import { QIcon, QItem, QItemLabel, QItemSection } from 'quasar'
 import {
   PosterDto,
   PosterStatus,
-  posterStatusOptions
+  usePosterOptions
 } from 'src/api/model/PosterDto'
 import {
   ionAlertCircle,
@@ -16,6 +16,8 @@ interface Props {
   poster: PosterDto
 }
 const props = defineProps<Props>()
+
+const { posterStatusOptions } = usePosterOptions()
 
 const statusLabel = computed(() => {
   return (

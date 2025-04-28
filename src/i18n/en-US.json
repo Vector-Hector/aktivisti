@@ -41,6 +41,18 @@
             "campaign": "Campaign"
           }
         }
+      },
+      "PosterDto": {
+        "status": {
+          "ABSENT": "absent",
+          "MOUNTED": "mounted",
+          "DAMAGED": "damaged"
+        },
+        "mountedOn": {
+          "LAMPPOST": "Lamppost",
+          "TREE": "Tree",
+          "OTHER": "Other"
+        }
       }
     }
   },
@@ -210,6 +222,11 @@
     "currentSession": "Current Session",
     "revokeButton": "Revoke"
   },
+  "collapsibleFilters": {
+    "title": "Filter",
+    "activeFilterCount": "{0} active",
+    "reset": "Reset"
+  },
   "campaignFilter": {
     "defaultLabel": "Campaigns",
     "showAllCampaigns": "All Campaigns"
@@ -221,6 +238,14 @@
   "subAssociationFilter": {
     "defaultLabel": "Sub Association",
     "showAllSubAssociations": "All Sub Associations"
+  },
+  "posterStatusFilter": {
+    "defaultLabel": "Poster Status",
+    "showAllStates": "All States"
+  },
+  "multipleSubAssociationFilter": {
+    "defaultLabel": "Sub Association",
+    "noOptionsFound": "No association found"
   },
   "myParticipations": {
     "pendingInvitations": "Pending Invitations",
@@ -263,5 +288,11 @@
     "emailAddress": "Email Address",
     "phoneNumber": "Phone",
     "description": "Description"
+  },
+  "posters": {
+    "dialog": {
+      "title": "Poster",
+      "goToPoster": "Go to Poster"
+    }
   }
 }

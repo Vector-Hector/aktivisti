@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
-import { PosterStatus, posterStatusOptions } from 'src/api/model/PosterDto'
+import { PosterStatus, usePosterOptions } from 'src/api/model/PosterDto'
+import { useI18n } from 'vue-i18n'
 
 const ALL_STATES = 'all_states'
 
@@ -16,12 +17,14 @@ interface Emits {
   (e: 'update:modelValue', modelValue: string | undefined): void
 }
 const emit = defineEmits<Emits>()
+const { t } = useI18n()
+const { posterStatusOptions } = usePosterOptions()
 
 const extendedOptions = computed(() => {
   return [
     {
       key: ALL_STATES,
-      label: 'Alle Status'
+      label: t('posterStatusFilter.showAllStates')
     },
     ...posterStatusOptions
   ]
@@ -33,7 +36,7 @@ function updateModelValue(value: string) {
 </script>
 <template>
   <FilterInput
-    label="Plakat Status"
+    :label="$t('posterStatusFilter.defaultLabel')"
     :model-value="props.modelValue"
     @update:model-value="updateModelValue"
     :options="extendedOptions"

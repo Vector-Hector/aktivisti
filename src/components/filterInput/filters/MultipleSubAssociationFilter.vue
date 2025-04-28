@@ -46,7 +46,7 @@ watch(
 
 <template>
   <FilterInput
-    label="Bezirks/Kreisverband"
+    :label="$t('multipleSubAssociationFilter.defaultLabel')"
     :multiple="multiple"
     :model-value="modelValue"
     @update:model-value="(value) => emit('update:modelValue', value)"
@@ -64,7 +64,7 @@ watch(
     <template v-slot:no-option>
       <q-item>
         <q-item-section class="text-grey">
-          Kein Verband gefunden
+          {{ $t('multipleSubAssociationFilter.noOptionsFound') }}
         </q-item-section>
       </q-item>
     </template>

@@ -16,9 +16,8 @@ import {
 import EventMarker from 'components/EventMarker.vue'
 import {
   PosterDto,
-  PosterMountUtil,
   PosterStatus,
-  PosterStatusUtil
+  usePosterOptions
 } from 'src/api/model/PosterDto'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
 import { useDateFormat } from 'src/utils/dateFormat'
@@ -31,6 +30,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const { dateFormat } = useDateFormat()
+const { PosterStatusUtil, PosterMountUtil } = usePosterOptions()
 
 const areaFeatures = computed(() => {
   return props.eventAreas.map(eventAreaToFeature)

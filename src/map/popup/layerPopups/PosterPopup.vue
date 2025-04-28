@@ -19,10 +19,10 @@ defineExpose({ showPopup })
   <LayerPopup ref="layerPopup">
     <template v-slot:content="{ passedObject: poster }">
       <div class="popup-contents">
-        <span class="popup-title">Poster</span>
+        <span class="popup-title">{{ $t('posters.dialog.title') }}</span>
         <span class="popup-address">{{ poster.location_description }}</span>
         <QBtn
-          label="Zum Plakat"
+          :label="$t('posters.dialog.goToPoster')"
           color="primary"
           :to="`/events/${poster.event}/area/${
             poster.area ? poster.area : UNDEFINED_POSTER_AREA

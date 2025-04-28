@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import {
-  PosterDto,
-  posterMountOptions,
-  posterStatusOptions
-} from 'src/api/model/PosterDto'
+import { PosterDto } from 'src/api/model/PosterDto'
 import { QInput, QSelect } from 'quasar'
 import { cloneDeep } from 'lodash-es'
 import LocationSelect from 'components/LocationSelect.vue'
+import { usePosterOptions } from 'src/api/model/PosterDto'
 
 interface Props {
   poster: Partial<PosterDto>
@@ -28,6 +25,8 @@ const props = withDefaults(defineProps<Props>(), {
   editLocation: false
 })
 const emit = defineEmits<Emits>()
+
+const { posterStatusOptions, posterMountOptions } = usePosterOptions()
 
 const localPoster = ref<Partial<PosterDto>>({})
 

@@ -41,6 +41,18 @@
             "campaign": "Kampagne"
           }
         }
+      },
+      "PosterDto": {
+        "status": {
+          "ABSENT": "hängt nicht",
+          "MOUNTED": "hängt",
+          "DAMAGED": "beschädigt"
+        },
+        "mountedOn": {
+          "LAMPPOST": "Straßenlaterne",
+          "TREE": "Baum",
+          "OTHER": "Sonstige"
+        }
       }
     }
   },
@@ -210,6 +222,11 @@
     "currentSession": "Aktuelle Sitzung",
     "revokeButton": "Abmelden"
   },
+  "collapsibleFilters": {
+    "title": "Filter",
+    "activeFilterCount": "{0} gesetzt",
+    "reset": "Reset"
+  },
   "campaignFilter": {
     "defaultLabel": "Kampagnen",
     "showAllCampaigns": "Alle Kampagnen"
@@ -221,6 +238,14 @@
   "subAssociationFilter": {
     "defaultLabel": "Bezirks/Kreisverband",
     "showAllSubAssociations": "Alle Kreisverbände"
+  },
+  "posterStatusFilter": {
+    "defaultLabel": "Plakat Status",
+    "showAllStates": "Alle Status"
+  },
+  "multipleSubAssociationFilter": {
+    "defaultLabel": "Bezirks/Kreisverband",
+    "noOptionsFound": "Kein Verband gefunden"
   },
   "myParticipations": {
     "pendingInvitations": "Offene Einladungen",
@@ -263,5 +288,11 @@
     "emailAddress": "E-Mail-Adresse",
     "phoneNumber": "Telefon",
     "description": "Beschreibung"
+  },
+  "posters": {
+    "dialog": {
+      "title": "Plakat",
+      "goToPoster": "Zum Plakat"
+    }
   }
 }
