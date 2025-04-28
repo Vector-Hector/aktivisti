@@ -3,7 +3,7 @@ import { useReportScope } from 'components/reportCharts/reportChartScope'
 import { computed, onBeforeMount, ref } from 'vue'
 import { apiClient } from 'src/api/ApiClient'
 import VueApexCharts from 'vue3-apexcharts'
-import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { useEventTypes } from 'src/api/model/EventTypes'
 import { ReportEventDto } from 'src/api/model/ReportEventDto'
 import { ApexDataUtil, ApexDatePoint } from 'src/api/model/ApexDatePoint'
 import { ReportType, useReportType } from 'src/api/model/ReportType'
@@ -19,6 +19,7 @@ const props = defineProps<Props>()
 
 const { t } = useI18n()
 const { ReportTypeUtil } = useReportType()
+const { eventTypeOptions } = useEventTypes()
 
 interface ApexSeriesEntity {
   name: string

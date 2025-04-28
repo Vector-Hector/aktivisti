@@ -6,7 +6,7 @@ import { EventAreaDto, eventAreaToFeature } from 'src/api/model/EventAreaDto'
 import FeatureLayer from 'src/map/AreaFeatureLayer.vue'
 import { bbox, circle } from '@turf/turf'
 import { QBtn, QIcon } from 'quasar'
-import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { useEventTypes } from 'src/api/model/EventTypes'
 import {
   ionArrowBack,
   ionEllipse,
@@ -31,6 +31,7 @@ const props = defineProps<Props>()
 
 const { dateFormat } = useDateFormat()
 const { PosterStatusUtil, PosterMountUtil } = usePosterOptions()
+const { eventTypeOptions } = useEventTypes()
 
 const areaFeatures = computed(() => {
   return props.eventAreas.map(eventAreaToFeature)

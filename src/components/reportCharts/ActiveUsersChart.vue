@@ -6,7 +6,7 @@ import VueApexCharts from 'vue3-apexcharts'
 import { apiClient } from 'src/api/ApiClient'
 import { ReportType, useReportType } from 'src/api/model/ReportType'
 import { ReportActiveUsersDto } from 'src/api/model/ReportActiveUsersDto'
-import { EventTypes, EventTypesUtil } from 'src/api/model/EventTypes'
+import { EventTypes, useEventTypes } from 'src/api/model/EventTypes'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
@@ -19,6 +19,7 @@ const props = defineProps<Props>()
 
 const { t } = useI18n()
 const { ReportTypeUtil } = useReportType()
+const { EventTypesUtil } = useEventTypes()
 
 interface ApexSeriesEntity {
   name: string

@@ -7,7 +7,7 @@ import FeatureLayer from 'src/map/AreaFeatureLayer.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox, circle } from '@turf/turf'
 import { QBtn, QIcon } from 'quasar'
-import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { useEventTypes } from 'src/api/model/EventTypes'
 import { ionArrowBack, ionEllipse, ionPrint } from '@quasar/extras/ionicons-v5'
 import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
@@ -26,6 +26,7 @@ const props = defineProps<Props>()
 
 const $router = useRouter()
 const { dateFormat } = useDateFormat()
+const { eventTypeOptions } = useEventTypes()
 
 const areaFeatures = computed(() => {
   return props.eventAreas.map(eventAreaToFeature)

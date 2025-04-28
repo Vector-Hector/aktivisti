@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
-import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import { EventTypes, useEventTypes } from 'src/api/model/EventTypes'
 
 interface Props {
   modelValue?: EventTypes
@@ -15,6 +15,8 @@ interface Emits {
   (e: 'update:modelValue', value: any): void
 }
 const emit = defineEmits<Emits>()
+
+const { eventTypeOptions } = useEventTypes()
 
 const possibleEventTypeOptions = computed(() => {
   return eventTypeOptions.filter((item) =>

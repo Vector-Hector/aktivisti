@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import { EventTypes, useEventTypes } from 'src/api/model/EventTypes'
 import { UserDto } from 'src/api/model/UserDto'
 import {
   QBtn,
@@ -29,6 +29,7 @@ const campaigns = ref<CampaignDto[]>([])
 const loading = ref(true)
 
 const { dateFormat } = useDateFormat()
+const { eventTypeOptions } = useEventTypes()
 
 onMounted(async () => {
   await Promise.all([getParticipatedEvents(), getCampaigns()])

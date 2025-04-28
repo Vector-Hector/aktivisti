@@ -25,7 +25,7 @@ import {
   QScrollArea,
   useQuasar
 } from 'quasar'
-import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import { EventTypes, useEventTypes } from 'src/api/model/EventTypes'
 import Share from 'components/Share.vue'
 import LabeledBtn from 'components/LabeledBtn.vue'
 import { openDeleteEventDialog } from 'src/utils/dialog'
@@ -40,6 +40,7 @@ const authStore = getAuthStore()
 const $router = useRouter()
 const $q = useQuasar()
 const { dateFormat } = useDateFormat()
+const { eventTypeOptions } = useEventTypes()
 
 const joinLoading = ref(false)
 const verficationPollTimeout = ref<null | NodeJS.Timeout>(null)

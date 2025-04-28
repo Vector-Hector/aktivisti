@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, ref, watch } from 'vue'
 
-import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import { EventTypes, useEventTypes } from 'src/api/model/EventTypes'
 import { useEditEventMixin } from 'src/pages/edit-event/EditEventMixin'
 import { VisibilityLabels, VisibilityOptions } from 'src/api/model/EventDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
@@ -27,6 +27,7 @@ import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.
 const $q = useQuasar()
 const { metricRecords, campaigns, event } = useEditEventMixin()
 const { errors, saveDebouncer } = useEditEventAutoSaveMixin()
+const { eventTypeOptions } = useEventTypes()
 const stepControls = inject('stepControls') as StepControls
 
 // Fixme(peter) Check what of the metrics functionality is still needed here

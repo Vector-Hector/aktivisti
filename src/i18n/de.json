@@ -53,6 +53,12 @@
           "TREE": "Baum",
           "OTHER": "Sonstige"
         }
+      },
+      "EventTypes": {
+        "DOOR_TO_DOOR": "Haustürgespräch",
+        "POSTERS": "Plakate",
+        "GENERIC": "Veranstaltung",
+        "FLYERS": "Flyer"
       }
     }
   },

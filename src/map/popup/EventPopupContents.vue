@@ -12,7 +12,7 @@
 </template>
 <script setup lang="ts">
 import { EventGeoJsonFeature } from 'src/api/model/EventGeoJsonDto'
-import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import { EventTypes, useEventTypes } from 'src/api/model/EventTypes'
 import { QBtn } from 'quasar'
 import { useDateFormat } from 'src/utils/dateFormat'
 
@@ -23,6 +23,7 @@ interface Props {
 defineProps<Props>()
 
 const { dateFormat } = useDateFormat()
+const { eventTypeOptions } = useEventTypes()
 
 function getEventTypeLabel(eventType: EventTypes): string | undefined {
   return eventTypeOptions.find(({ key }) => key === eventType)?.label

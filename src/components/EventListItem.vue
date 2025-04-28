@@ -4,7 +4,7 @@ import { EventDto } from 'src/api/model/EventDto'
 import { QBtn, QItem, QItemLabel, QItemSection, useQuasar } from 'quasar'
 import { ionPencil, ionTrash } from '@quasar/extras/ionicons-v5'
 import { CampaignDto } from 'src/api/model/CampaignDto'
-import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { useEventTypes } from 'src/api/model/EventTypes'
 import { openDeleteEventDialog } from 'src/utils/dialog'
 import { useDateFormat } from 'src/utils/dateFormat'
 
@@ -25,6 +25,7 @@ interface Emits {
 const emit = defineEmits<Emits>()
 
 const { dateFormat } = useDateFormat()
+const { eventTypeOptions } = useEventTypes()
 const $q = useQuasar()
 
 const eventTypeLabel = computed(() => {

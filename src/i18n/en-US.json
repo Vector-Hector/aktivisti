@@ -53,6 +53,12 @@
           "TREE": "Tree",
           "OTHER": "Other"
         }
+      },
+      "EventTypes": {
+        "DOOR_TO_DOOR": "Door-to-door conversation",
+        "POSTERS": "Posters",
+        "GENERIC": "Generic Event",
+        "FLYERS": "Flyers"
       }
     }
   },

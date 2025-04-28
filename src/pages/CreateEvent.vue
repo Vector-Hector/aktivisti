@@ -36,7 +36,7 @@ export default {
 </script>
 <script setup lang="ts">
 import { ComponentPublicInstance, ref } from 'vue'
-import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import { EventTypes, useEventTypes } from 'src/api/model/EventTypes'
 import { apiClient } from 'src/api/ApiClient'
 import { QBtn, QInput, QPage, QScrollArea, QSelect, useQuasar } from 'quasar'
 import { EventDto } from 'src/api/model/EventDto'
@@ -49,6 +49,7 @@ import { useRouter } from 'vue-router'
 
 const $router = useRouter()
 const $q = useQuasar()
+const { eventTypeOptions } = useEventTypes()
 
 const metrics = ref<EventMetricDto[]>([])
 const campaigns = ref<CampaignDto[]>([])

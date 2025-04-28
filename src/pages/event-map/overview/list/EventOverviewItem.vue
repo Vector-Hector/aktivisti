@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { QBtn, QItem, QItemLabel, QItemSection, useQuasar } from 'quasar'
 import { CampaignDto } from 'src/api/model/CampaignDto'
-import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { useEventTypes } from 'src/api/model/EventTypes'
 import { EventGeoJsonFeature } from 'src/api/model/EventGeoJsonDto'
 import { ionPencil, ionPeopleSharp } from '@quasar/extras/ionicons-v5'
 import EventParticipantsModal from 'components/modals/EventParticipantsModal.vue'
@@ -22,6 +22,7 @@ const emit = defineEmits<Emits>()
 
 const q = useQuasar()
 const { dateFormat } = useDateFormat()
+const { eventTypeOptions } = useEventTypes()
 
 const eventTypeLabel = computed(() => {
   return eventTypeOptions.find(
