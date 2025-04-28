@@ -257,6 +257,11 @@
   },
   "offices": {
     "emptyList": "No addresses found in the area",
-    "getMoreInfo": "More information"
+    "getMoreInfo": "More information",
+    "address": "Address",
+    "website": "Website",
+    "emailAddress": "Email Address",
+    "phoneNumber": "Phone",
+    "description": "Description"
   }
 }
