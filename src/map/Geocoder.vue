@@ -6,6 +6,7 @@ import { forwardGeocode, reverseGeocode } from 'src/utils/map'
 import { GeocodeResult } from 'src/types/GeocodeResult'
 import maplibregl, { MarkerOptions } from 'maplibre-gl'
 import { MapKey } from 'src/types/keys'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   countries?: string[] | null
@@ -29,6 +30,8 @@ interface Emits {
 }
 const emit = defineEmits<Emits>()
 
+const { t } = useI18n()
+
 const geocodeControl = new MaplibreGeocoder(
   {
     forwardGeocode: forwardGeocode,
@@ -38,7 +41,8 @@ const geocodeControl = new MaplibreGeocoder(
     collapsed: props.collapsed,
     countries: props.countries?.join(',') ?? undefined,
     marker: props.markerOptions,
-    placeholder: 'Suchen',
+    placeholder: t('map.geocoder.placeholder'),
+    language: t('config.mapLibreLangIso'),
     showResultsWhileTyping: true,
     maplibregl: maplibregl
   }

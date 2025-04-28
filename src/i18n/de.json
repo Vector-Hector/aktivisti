@@ -2,6 +2,7 @@
   "config": {
     "quasarLangIso": "de",
     "apexLangIso": "de",
+    "mapLibreLangIso": "de",
     "datetimeFormats": {
       "datetime": {
         "day": "2-digit",
@@ -335,5 +336,10 @@
       "joinAndGetInfo": "Mitmachen/Infos"
     },
     "createButton": "Aktion erstellen"
+  },
+  "map": {
+    "geocoder": {
+      "placeholder": "Suchen"
+    }
   }
 }
