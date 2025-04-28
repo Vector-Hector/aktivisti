@@ -211,5 +211,17 @@
   "campaignFilter": {
     "defaultLabel": "Campaigns",
     "showAllCampaigns": "All Campaigns"
+  },
+  "myParticipations": {
+    "pendingInvitations": "Pending Invitations",
+    "unknown": "Unknown",
+    "hasInvitedYou": "{invitingUsers} has invited you | {invitingUsers} have invited you",
+    "reject": "Reject",
+    "accept": "Accept",
+    "activeParticipations": "Active Participations",
+    "noEventParticipations": {
+      "info": "You are not participating in any events - search for some now!",
+      "searchEventsButton": "Search for events now"
+    }
   }
 }

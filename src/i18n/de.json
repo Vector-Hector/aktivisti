@@ -211,5 +211,17 @@
   "campaignFilter": {
     "defaultLabel": "Kampagnen",
     "showAllCampaigns": "Alle Kampagnen"
+  },
+  "myParticipations": {
+    "pendingInvitations": "Offene Einladungen",
+    "unknown": "Unbekannt",
+    "hasInvitedYou": "{invitingUsers} hat dich eingeladen | {invitingUsers} haben dich eingeladen",
+    "reject": "Ablehnen",
+    "accept": "Annehmen",
+    "activeParticipations": "Aktive Teilnahmen",
+    "noEventParticipations": {
+      "info": "Du nimmst an keinen Aktion teil - suche jetzt welche!",
+      "searchEventsButton": "Jetzt nach Aktionen suchen"
+    }
   }
 }
