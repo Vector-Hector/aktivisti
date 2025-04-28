@@ -345,6 +345,11 @@
     "geolocationControl": {
       "currentLocation": "Location",
       "currentEvent": "Event"
+    },
+    "overlayDialog": {
+      "title": "Select overlays",
+      "noOverlay": "Do not display any overlay",
+      "noOverlayDefined": "No overlay defined"
     }
   }
 }
