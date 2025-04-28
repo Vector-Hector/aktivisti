@@ -22,7 +22,9 @@
     }
   },
   "general": {
-    "noValidDate": "Kein gültiges Datum"
+    "noValidDate": "Kein gültiges Datum",
+    "cancel": "Abbrechen",
+    "add": "Hinzufügen"
   },
   "api": {
     "model": {
@@ -47,7 +49,8 @@
     "title": "Statistik",
     "date": "Datum",
     "count": "Anzahl",
-    "download": "Download"
+    "download": "Download",
+    "loading": "Lade Daten..."
   },
   "login": {
     "reset_password": {
@@ -158,7 +161,6 @@
       "title": "Account löschen",
       "description": "Möchtest du wirklich deinen Account löschen?",
       "submitButton": "Account löschen",
-      "cancelButton": "Abbrechen",
       "notification": {
         "success": "Dein Account wurde gelöscht",
         "error": "Beim löschen deines Accounts trat ein Fehler auf"
@@ -212,6 +214,14 @@
     "defaultLabel": "Kampagnen",
     "showAllCampaigns": "Alle Kampagnen"
   },
+  "stateAssociationFilter": {
+    "defaultLabel": "Landesverbände",
+    "showAllStateAssociations": "Alle Landesverbände"
+  },
+  "subAssociationFilter": {
+    "defaultLabel": "Bezirks/Kreisverband",
+    "showAllSubAssociations": "Alle Kreisverbände"
+  },
   "myParticipations": {
     "pendingInvitations": "Offene Einladungen",
     "unknown": "Unbekannt",
@@ -222,6 +232,24 @@
     "noEventParticipations": {
       "info": "Du nimmst an keinen Aktion teil - suche jetzt welche!",
       "searchEventsButton": "Jetzt nach Aktionen suchen"
+    }
+  },
+  "reports": {
+    "addChartButton": "Graph hinzufügen",
+    "selectReportDialog": {
+      "campaign": "Kampagne",
+      "stateAssociation": "Landesverband",
+      "type": "Typ"
+    },
+    "reportTypes": {
+      "METRICS_POSTER": "Plakate",
+      "METRICS_FLYER": "Flyer",
+      "METRICS_DOOR2DOOR": "Haustürgespräche",
+      "ACTIVE_EVENTS": "Aktive Veranstaltungen",
+      "ACTIVE_USERS": "Aktivierung Teilnehmer*innen"
+    },
+    "activeParticipants": {
+      "total": "Gesamt"
     }
   }
 }

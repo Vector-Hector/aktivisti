@@ -63,10 +63,10 @@ function handleAdd() {
         <QBtn
           color="primary"
           outline
-          label="Abbrechen"
+          :label="$t('general.cancel')"
           @click="onDialogCancel"
         />
-        <QBtn color="primary" label="Hinzufügen" @click="handleAdd" />
+        <QBtn color="primary" :label="$t('general.add')" @click="handleAdd" />
       </QCardActions>
     </QCard>
   </QDialog>

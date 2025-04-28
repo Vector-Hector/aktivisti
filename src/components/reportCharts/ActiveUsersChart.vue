@@ -4,9 +4,10 @@ import { useReportScope } from 'components/reportCharts/reportChartScope'
 import { computed, onBeforeMount, ref } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import { apiClient } from 'src/api/ApiClient'
-import { ReportType, ReportTypeUtil } from 'src/api/model/ReportType'
+import { ReportType, useReportType } from 'src/api/model/ReportType'
 import { ReportActiveUsersDto } from 'src/api/model/ReportActiveUsersDto'
 import { EventTypes, EventTypesUtil } from 'src/api/model/EventTypes'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   campaignId: number
@@ -15,6 +16,9 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const { t } = useI18n()
+const { ReportTypeUtil } = useReportType()
 
 interface ApexSeriesEntity {
   name: string
@@ -68,7 +72,7 @@ async function fetchActiveUsersReport() {
     ).payload.data
     series.value = [
       {
-        name: 'Gesamt',
+        name: t('reports.activeParticipants.total'),
         data: ApexDataUtil.fillMissingDataPoints(
           reportOverall.map(toApexDatePoint),
           firstDateOfChart,
@@ -117,7 +121,7 @@ const chartOptions = computed(() => {
       decimalsInFloat: 3
     },
     noData: {
-      text: isLoading.value ? 'Lade Daten...' : Apex.noData?.text
+      text: isLoading.value ? t('apex.loading') : Apex.noData?.text
     }
   }
 })

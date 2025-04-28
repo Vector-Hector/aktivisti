@@ -246,7 +246,7 @@ function openDeleteAccountPrompt() {
     title: t('profile.deleteAccountDialog.title'),
     message: t('profile.deleteAccountDialog.description'),
     ok: t('profile.deleteAccountDialog.submitButton'),
-    cancel: t('profile.deleteAccountDialog.cancelButton')
+    cancel: t('general.cancel')
   })
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     .onOk(async () => {
