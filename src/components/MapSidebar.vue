@@ -20,7 +20,7 @@ function handleCreateEvent() {
 <template>
   <div class="map-sidebar">
     <QBtn
-      :label="$t('events.createButton')"
+      :label="$t('events.createButtonLong')"
       class="create-button"
       color="primary"
       v-if="props.showCreateButton"

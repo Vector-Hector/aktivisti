@@ -335,7 +335,8 @@
     "dialog": {
       "joinAndGetInfo": "Join/Info"
     },
-    "createButton": "Create Event"
+    "createButtonLong": "Create Event",
+    "createButtonShort": "Create"
   },
   "map": {
     "geocoder": {

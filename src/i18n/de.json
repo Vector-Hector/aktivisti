@@ -335,7 +335,8 @@
     "dialog": {
       "joinAndGetInfo": "Mitmachen/Infos"
     },
-    "createButton": "Aktion erstellen"
+    "createButtonLong": "Aktion erstellen",
+    "createButtonShort": "Erstellen"
   },
   "map": {
     "geocoder": {
