@@ -7,7 +7,11 @@
     <span class="popup-date">
       {{ dateFormat(event.properties.start_date, 'datetime') }}
     </span>
-    <QBtn label="Mitmachen/Infos" color="primary" :to="`/events/${event.id}`" />
+    <QBtn
+      :label="$t('events.dialog.joinAndGetInfo')"
+      color="primary"
+      :to="`/events/${event.id}`"
+    />
   </div>
 </template>
 <script setup lang="ts">

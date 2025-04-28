@@ -300,5 +300,10 @@
       "title": "Plakat",
       "goToPoster": "Zum Plakat"
     }
+  },
+  "events": {
+    "dialog": {
+      "joinAndGetInfo": "Mitmachen/Infos"
+    }
   }
 }

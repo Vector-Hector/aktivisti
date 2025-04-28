@@ -300,5 +300,10 @@
       "title": "Poster",
       "goToPoster": "Go to Poster"
     }
+  },
+  "events": {
+    "dialog": {
+      "joinAndGetInfo": "Join/Info"
+    }
   }
 }
