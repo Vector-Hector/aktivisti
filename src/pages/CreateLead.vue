@@ -1,3 +1,5 @@
+<!--FIXME(peter) 2023/12/12 The composition API doesn't support `beforeRouteEnter` so far so this a workaround
+      see https://github.com/vuejs/rfcs/discussions/302-->
 <script lang="ts">
 interface IInstance extends ComponentPublicInstance {
   setpreviousBottomSheetState(value: BottomSheetState): void
@@ -10,6 +12,7 @@ export default {
     ) {
       ErrorBus.emit(
         NOT_AUTHORIZED,
+        // FIXME(peter) Due to the workaround for the composition API, we need to use a string here for now, but needs to be internationalized in future
         'Um einen Kontakt zu registrieren, benötigst du eine Teamcaptain- oder Koordinator*innen-Berechtigung'
       )
       next({ name: 'login' })
@@ -47,6 +50,7 @@ import { apiClient } from 'src/api/ApiClient'
 import { useEventDetailStore } from './event-map/detail/EventDetailStoreMixin'
 import { SubOrganizationDto } from 'src/api/model/SubOrganizationDto'
 import { OrganizationDto } from 'src/api/model/OrganizationDto'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   areaId: string
@@ -55,6 +59,7 @@ const props = defineProps<Props>()
 
 const $q = useQuasar()
 const $router = useRouter()
+const { t } = useI18n()
 const form = ref<InstanceType<typeof QForm> | null>(null)
 const { event } = useEventDetailStore()
 const subOrganizations = ref<SubOrganizationDto[]>([])
@@ -70,15 +75,15 @@ const errors = ref<any>({})
 const genders = [
   {
     value: 'm',
-    label: 'männlich'
+    label: t('createLead.male')
   },
   {
     value: 'f',
-    label: 'weiblich'
+    label: t('createLead.female')
   },
   {
     value: 'o',
-    label: 'divers'
+    label: t('createLead.divers')
   }
 ]
 
@@ -115,7 +120,7 @@ async function saveLead() {
     })
     $q.notify({
       color: 'positive',
-      message: 'Kontakt wurde registriert'
+      message: t('createLead.successMessage')
     })
     // TODO: maybe add an explicit back route
     lead.value = {
@@ -128,7 +133,7 @@ async function saveLead() {
       errors.value = error.response.data
     } else {
       errors.value = {
-        non_field_error: ['Ein unerwarteter Fehler ist aufgetreten']
+        non_field_error: [t('createLead.generalError')]
       }
     }
   }
@@ -169,6 +174,10 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
 
   return `${titleSubOrg} (${titleOrg})`
 }
+
+function addMandatorySymbol(string: string) {
+  return `${string} *`
+}
 </script>
 
 <template>
@@ -178,7 +187,7 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
         <div class="q-px-md q-pb-md">
           <QForm ref="form" @submit="saveLead">
             <QInput
-              label="Vorname *"
+              :label="addMandatorySymbol($t('createLead.firstName'))"
               v-model="lead.first_name"
               :rules="[$validationRules.isRequired]"
               :error-message="errors.first_name?.[0]"
@@ -186,7 +195,7 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
               :required="true"
             />
             <QInput
-              label="Nachname *"
+              :label="addMandatorySymbol($t('createLead.lastName'))"
               v-model="lead.last_name"
               :rules="[$validationRules.isRequired]"
               :error-message="errors.last_name?.[0]"
@@ -194,7 +203,7 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
               :required="true"
             />
             <QInput
-              label="E-Mail *"
+              :label="addMandatorySymbol($t('createLead.email'))"
               v-model="lead.email"
               :rules="[$validationRules.isRequired, $validationRules.email]"
               :error-message="errors.email?.[0]"
@@ -203,14 +212,14 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
               :required="true"
             />
             <QInput
-              label="Telefonnummer"
+              :label="$t('createLead.phone')"
               v-model="lead.phone"
               :error-message="errors.phone?.[0]"
               :error="!!errors.phone?.length"
               type="tel"
             />
             <QSelect
-              label="Geschlecht"
+              :label="$t('createLead.gender')"
               :dropdownIcon="ionChevronDown"
               v-model="lead.gender"
               emit-value
@@ -224,7 +233,7 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
               :error="!!errors.gender?.length"
             />
             <QInput
-              label="Postleitzahl *"
+              :label="addMandatorySymbol($t('createLead.zipCode'))"
               v-model="lead.zip_code"
               :minlength="5"
               :maxlength="5"
@@ -234,13 +243,13 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
               :required="true"
             />
             <QInput
-              label="Stadt"
+              :label="$t('createLead.city')"
               v-model="lead.city"
               :error-message="errors.city?.[0]"
               :error="!!errors.city?.length"
             />
             <QSelect
-              label="Organisation *"
+              :label="addMandatorySymbol($t('createLead.subOrganization'))"
               :dropdownIcon="ionChevronDown"
               v-model="lead.sub_organization"
               :rules="[$validationRules.isRequired]"
@@ -258,7 +267,7 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
               :required="true"
             />
             <QInput
-              label="Bemerkung"
+              :label="$t('createLead.note')"
               v-model="lead.note"
               :maxlength="400"
               :error-message="errors.note?.[0]"
@@ -266,13 +275,13 @@ function formatSubOrganization(subOrganization: SubOrganizationDto) {
               type="textarea"
             />
             <QCheckbox
-              label="Ich möchte Die Linke-Mitglied werden"
+              :label="$t('createLead.wantToBecomeMember')"
               v-model="lead.wants_to_become_member"
             />
             <div class="control-buttons">
               <FormError :error="errors.non_field_error" />
               <QBtn color="primary" type="submit" :disabled="isSubmitting">
-                Abschicken
+                {{ $t('createLead.submit') }}
               </QBtn>
             </div>
           </QForm>

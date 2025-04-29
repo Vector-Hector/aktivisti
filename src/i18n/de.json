@@ -507,5 +507,24 @@
     "title": "{0} wirklich löschen?",
     "description": "Das Event {0} wird gelöscht und kann nicht wiederhergestellt werden.",
     "generalError": "Die Aktion konnte nicht gelöscht werden."
+  },
+  "createLead": {
+    "male": "männlich",
+    "female": "weiblich",
+    "divers": "divers",
+    "noPermissionError": "Um einen Kontakt zu registrieren, benötigst du eine Teamcaptain- oder Koordinator*innen-Berechtigung",
+    "successMessage": "Kontakt wurde registriert",
+    "generalError": "Ein unerwarteter Fehler ist aufgetreten",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "email": "E-Mail",
+    "phone": "Telefonnummer",
+    "gender": "Geschlecht",
+    "zipCode": "Postleitzahl",
+    "city": "Stadt",
+    "subOrganization": "Organisation",
+    "note": "Bemerkung",
+    "wantToBecomeMember": "Ich möchte Die Linke-Mitglied werden",
+    "submit": "Abschicken"
   }
 }

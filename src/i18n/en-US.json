@@ -507,5 +507,24 @@
     "title": "Really delete {0}?",
     "description": "The event {0} will be deleted and cannot be restored.",
     "generalError": "The event could not be deleted."
+  },
+  "createLead": {
+    "male": "male",
+    "female": "female",
+    "divers": "diverse",
+    "noPermissionError": "To register a contact, you need team captain or coordinator permissions",
+    "successMessage": "Contact has been registered",
+    "generalError": "An unexpected error occurred",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone Number",
+    "gender": "Gender",
+    "zipCode": "ZIP Code",
+    "city": "City",
+    "subOrganization": "Organization",
+    "note": "Note",
+    "wantToBecomeMember": "I want to become a member of Die Linke",
+    "submit": "Submit"
   }
 }
