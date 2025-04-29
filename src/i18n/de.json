@@ -477,5 +477,10 @@
     "verifiedParticipants": "Bestätigte Teilnehmer*innen",
     "verifyParticipants": "Teilnehmer*innen bestätigen",
     "noOneWaitingToGetVerified": "Niemand wartet auf Freischaltung. Lade noch mehr Leute zur Aktion ein."
+  },
+  "eventDeleteDialog": {
+    "title": "{0} wirklich löschen?",
+    "description": "Das Event {0} wird gelöscht und kann nicht wiederhergestellt werden.",
+    "generalError": "Die Aktion konnte nicht gelöscht werden."
   }
 }

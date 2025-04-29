@@ -477,5 +477,10 @@
     "verifiedParticipants": "Verified Participants",
     "verifyParticipants": "Verify Participants",
     "noOneWaitingToGetVerified": "No one is waiting for verification. Invite more people to the event."
+  },
+  "eventDeleteDialog": {
+    "title": "Really delete {0}?",
+    "description": "The event {0} will be deleted and cannot be restored.",
+    "generalError": "The event could not be deleted."
   }
 }

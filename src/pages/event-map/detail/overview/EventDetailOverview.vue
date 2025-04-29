@@ -28,7 +28,7 @@ import {
 import { EventTypes, useEventTypes } from 'src/api/model/EventTypes'
 import Share from 'components/Share.vue'
 import LabeledBtn from 'components/LabeledBtn.vue'
-import { openDeleteEventDialog } from 'src/utils/dialog'
+import { useDeleteEventDialog } from 'src/utils/dialog'
 import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 import { useRouter } from 'vue-router'
 import { useDateFormat } from 'src/utils/dateFormat'
@@ -44,6 +44,7 @@ const $router = useRouter()
 const $q = useQuasar()
 const { dateFormat } = useDateFormat()
 const { eventTypeOptions } = useEventTypes()
+const { openDeleteEventDialog } = useDeleteEventDialog()
 
 const joinLoading = ref(false)
 const verficationPollTimeout = ref<null | NodeJS.Timeout>(null)
@@ -289,7 +290,7 @@ function openParticipantsModal() {
   })
 }
 function openDeleteModal() {
-  openDeleteEventDialog($q, event.value).catch(console.error)
+  openDeleteEventDialog(event.value).catch(console.error)
 }
 function openAdminMenu() {
   adminMenuOpen.value = true
