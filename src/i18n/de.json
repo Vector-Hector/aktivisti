@@ -442,6 +442,25 @@
         "addressesInEventArea": "Adressen im Gebiet",
         "collectedLeads": "Gewonnene Kontakte",
         "total": "Gesamt"
+      },
+      "area": {
+        "completionModal": {
+          "title": "Aktionsgebiet erledigt",
+          "description": "Das Aktionsgebiet {eventArea} als {status} markieren?",
+          "statusLabel": {
+            "completed": "erledigt",
+            "notCompleted": "offen"
+          },
+          "generalError": "Das Aktionsgebiet konnte nicht aktualisiert werden"
+        },
+        "addressCounter": "{0} Adressen",
+        "assignAreaParticipant": {
+          "inputPlaceholder": "Teilnehmer*innen",
+          "notPartOfEventAnymoreError": "Die gewählte Person ist nicht mehr Teil der Aktion",
+          "generalError": "Unbekannter fehler beim Aktualisieren der Teilnehmer*innen"
+        },
+        "joinButton": "In diesem Gebiet mitmachen",
+        "leaveButton": "Doch nicht hier mitmachen"
       }
     }
   },

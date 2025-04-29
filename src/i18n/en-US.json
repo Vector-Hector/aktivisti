@@ -442,6 +442,25 @@
         "addressesInEventArea": "Addresses in Area",
         "collectedLeads": "Collected Leads",
         "total": "Total"
+      },
+      "area": {
+        "completionModal": {
+          "title": "Event Area Completed",
+          "description": "Mark the event area {eventArea} as {status}?",
+          "statusLabel": {
+            "completed": "completed",
+            "notCompleted": "open"
+          },
+          "generalError": "The event area could not be updated"
+        },
+        "addressCounter": "{0} Addresses",
+        "assignAreaParticipant": {
+          "inputPlaceholder": "Participants",
+          "notPartOfEventAnymoreError": "The selected person is no longer participating in the event",
+          "generalError": "Unknown error while updating participants"
+        },
+        "joinButton": "Participate in this area",
+        "leaveButton": "No longer participate here"
       }
     }
   },

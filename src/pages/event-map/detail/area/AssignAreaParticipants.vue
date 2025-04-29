@@ -5,8 +5,10 @@ import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { QBtn, QSelect, useQuasar } from 'quasar'
 import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 import { apiClient } from 'src/api/ApiClient'
+import { useI18n } from 'vue-i18n'
 
 const $q = useQuasar()
+const { t } = useI18n()
 
 const {
   eventArea,
@@ -104,14 +106,16 @@ async function updateAreaParticipations(
   } catch (e) {
     if (apiClient.isApiClientError(e) && e.response?.status === 404) {
       $q.notify({
-        message: 'Die gewählte Person ist nicht mehr Teil der Aktion',
+        message: t(
+          'events.details.area.assignAreaParticipant.notPartOfEventAnymoreError'
+        ),
         timeout: 2000,
         color: 'negative'
       })
       await refreshParticipants()
     } else {
       $q.notify({
-        message: 'Unbekannter fehler beim Aktualisieren der Teilnehmer*innen',
+        message: t('events.details.area.assignAreaParticipant.generalError'),
         timeout: 2000,
         color: 'negative'
       })
@@ -132,7 +136,7 @@ function updateParticipations(updatedParticipations: EventParticipationDto[]) {
     :model-value="eventAreaParticipants"
     @update:model-value="updateAreaParticipations($event)"
     :multiple="true"
-    label="Teilnehmer*innen"
+    :label="$t('events.details.area.assignAreaParticipant.inputPlaceholder')"
     :options="onlyMemberParticipants"
     option-label="user_username"
     :display-value="
@@ -144,10 +148,10 @@ function updateParticipations(updatedParticipations: EventParticipationDto[]) {
     class="join-buttons"
   >
     <QBtn v-if="isUserEventAreaParticipant" @click="leaveArea" flat>
-      Doch nicht hier mitmachen
+      {{ $t('events.details.area.leaveButton') }}
     </QBtn>
     <QBtn v-else color="primary" @click="joinArea">
-      In diesem Gebiet mitmachen
+      {{ $t('events.details.area.joinButton') }}
     </QBtn>
   </div>
 </template>
