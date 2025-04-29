@@ -11,6 +11,7 @@ async function updateRouteCopy(params: RouteParams) {
     eventDetailStore.setEventArea(null)
     eventDetailStore.setEventAreaPermissions(null)
     uiStore.updateActiveElements({
+      // TODO(peter) 04/29/2025 Introduce i18n, at the moment this is quite complicated in combination with this `beforeRouteEnter` workaround
       eventArea: 'Undefiniertes Gebiet'
     })
   } else {
