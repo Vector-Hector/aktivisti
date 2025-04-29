@@ -84,9 +84,9 @@ function share() {
     :icon="ionShareSocial"
     outline
     round
-    external-label="Teilen"
+    :external-label="$t('events.details.actions.share.label')"
   />
-  <LabeledBtn v-else external-label="Teilen">
+  <LabeledBtn v-else :external-label="$t('events.details.actions.share.label')">
     <template v-slot:btn>
       <QFab outline round :icon="ionShareSocial" padding="sm" direction="left">
         <QFabAction

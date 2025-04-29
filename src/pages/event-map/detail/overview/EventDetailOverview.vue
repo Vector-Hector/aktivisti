@@ -32,8 +32,11 @@ import { openDeleteEventDialog } from 'src/utils/dialog'
 import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 import { useRouter } from 'vue-router'
 import { useDateFormat } from 'src/utils/dateFormat'
+import { useI18n } from 'vue-i18n'
 
-const PREFIX_HANG_DOWN_POSTERS = '[Abhängen] '
+const { t } = useI18n()
+
+const PREFIX_HANG_DOWN_POSTERS = t('events.details.prefixHangDownPostersEvent')
 const pollIntervalMs = 5000
 const authStore = getAuthStore()
 
@@ -89,7 +92,13 @@ const shareDescription = computed(() => {
 const shareText = computed(() => {
   const formattedDate = dateFormat(event.value.start_date, 'date')
   const formattedTime = dateFormat(event.value.start_date, 'time')
-  return `${event.value.name}\n${eventTypeLabel.value}${shareDescription.value}\n\nam: ${formattedDate}\num: ${formattedTime}\n`
+  return t('events.details.actions.share.shareText', {
+    eventName: event.value.name,
+    eventType: eventTypeLabel.value,
+    eventDescription: shareDescription.value,
+    eventDate: formattedDate,
+    eventTime: formattedTime
+  })
 })
 const eventId = computed(() => {
   return event.value.id.toString()
@@ -97,7 +106,7 @@ const eventId = computed(() => {
 const noAreaPosters = computed(() => {
   return {
     id: undefined,
-    name: 'Ohne Gebiet',
+    name: t('events.details.noAreaPosters'),
     color: '#FFFFFF',
     event: parseInt(eventId.value),
     is_completed: false,
@@ -158,8 +167,7 @@ watch(
 )
 
 async function join() {
-  const generalJoinError =
-    'Ein unerwarteter Fehler trat auf beim versuch der Aktion beizutreten'
+  const generalJoinError = t('events.details.notifications.generalJoinError')
   try {
     joinLoading.value = true
     event.value = (await apiClient.events.join(eventId.value)).payload.data
@@ -207,8 +215,7 @@ async function updateParticipationAndLoadAreas() {
   }
 }
 async function leave() {
-  const generalLeaveError =
-    'Ein unerwarteter Fehler trat auf beim versuch die Aktion zu verlassen'
+  const generalLeaveError = t('events.details.notifications.generalLeaveError')
   try {
     joinLoading.value = true
     event.value = (await apiClient.events.leave(eventId.value)).payload.data
@@ -232,8 +239,7 @@ async function acceptInvite() {
   } catch {
     $q.notify({
       color: 'negative',
-      message:
-        'Ein unerwarteter Fehler trat auf beim versuch der Aktion beizutreten'
+      message: t('events.details.notifications.generalJoinError')
     })
   } finally {
     joinLoading.value = false
@@ -293,8 +299,11 @@ function hideAdminMenu() {
 }
 function openPosterTakeDownModal() {
   $q.dialog({
-    title: 'Willst Du Plakate abhängen?',
-    message: `Das Event <b>"${event.value.name}"</b> wird in eine Aktion zum Abhängen von Plakaten umgewandelt.`,
+    title: t('events.details.actions.admin.posterTakeDown.dialog.title'),
+    message: t(
+      'events.details.actions.admin.posterTakeDown.dialog.description',
+      [`<b>"${event.value.name}"</b>`]
+    ),
     html: true,
     cancel: true
   })
@@ -318,8 +327,9 @@ function openPosterTakeDownModal() {
       } catch {
         $q.notify({
           color: 'negative',
-          message:
-            'Die Aktion konnte nicht in eine Plakate-Abhängaktion umgewandelt werden'
+          message: t(
+            'events.details.actions.admin.posterTakeDown.dialog.notifications.generalError'
+          )
         })
       }
     })
@@ -339,31 +349,33 @@ onBeforeUnmount(() => {
         <div class="col">
           <div class="row q-col-gutter-sm event-details">
             <div class="col-4">
-              <b>Aktionstyp:</b>
+              <b>{{ $t('events.details.eventType') }}:</b>
             </div>
             <div class="col-8">
               {{ eventTypeLabel }}
             </div>
             <div class="col-4">
-              <b>Treffpunkt:</b>
+              <b>{{ $t('events.details.meetingPoint') }}:</b>
             </div>
             <div class="col-8">
               {{ event.location_description }}
             </div>
             <div class="col-4">
-              <b>Start:</b>
+              <b>{{ $t('events.details.startDate') }}:</b>
             </div>
             <div class="col-8">
               {{ dateFormat(event.start_date, 'datetime') }}
             </div>
             <div class="col-4">
-              <b>Ende:</b>
+              <b>{{ $t('events.details.endDate') }}:</b>
             </div>
             <div class="col-8">
               {{ dateFormat(event.end_date, 'datetime') }}
             </div>
             <template v-if="event.external_url">
-              <div class="col-4"><b>Link:</b></div>
+              <div class="col-4">
+                <b>{{ $t('events.details.externalUrl') }}:</b>
+              </div>
               <div class="col-8">
                 <a
                   target="_blank"
@@ -374,7 +386,9 @@ onBeforeUnmount(() => {
               </div>
             </template>
             <template v-if="event.messenger_url">
-              <div class="col-4"><b>Messenger:</b></div>
+              <div class="col-4">
+                <b>{{ $t('events.details.messangerUrl') }}:</b>
+              </div>
               <div class="col-8">
                 <a
                   target="_blank"
@@ -391,7 +405,7 @@ onBeforeUnmount(() => {
               "
             >
               <div class="col-4">
-                <b>Teilnahmen:</b>
+                <b>{{ $t('events.details.participants') }}:</b>
               </div>
               <div class="col-8">
                 {{ event.participants }}
@@ -409,13 +423,13 @@ onBeforeUnmount(() => {
             outline
             :icon="ionPerson"
             @click="openParticipantsModal"
-            external-label="Teilnahmen"
+            :external-label="$t('events.details.participants')"
             :has-notification="isVerficationRequired"
           />
           <Share :title="shareTitle" :text="shareText" :url="shareUrl" />
           <LabeledBtn
             v-if="isTeamCaptainOrCoordinator"
-            external-label="Admin"
+            :external-label="$t('events.details.actions.admin.label')"
             class="admin-button"
             :class="{ float: adminMenuOpen }"
           >
@@ -438,7 +452,7 @@ onBeforeUnmount(() => {
                   :icon="ionTrash"
                   class="bg-white admin-fab"
                   stacked
-                  label="Löschen"
+                  :label="$t('events.details.actions.admin.delete.label')"
                   outline
                   label-class="bg-grey-2 text-primary"
                   external-label
@@ -454,7 +468,7 @@ onBeforeUnmount(() => {
                   :icon="ionPencil"
                   class="bg-white admin-fab"
                   stacked
-                  label="Bearbeiten"
+                  :label="$t('events.details.actions.admin.edit.label')"
                   outline
                   label-class="bg-grey-2 text-primary"
                   external-label
@@ -474,7 +488,7 @@ onBeforeUnmount(() => {
                   :icon="ionBarChart"
                   class="bg-white admin-fab"
                   stacked
-                  label="Report"
+                  :label="$t('events.details.actions.admin.report.label')"
                   outline
                   label-class="bg-grey-2 text-primary"
                   external-label
@@ -491,7 +505,9 @@ onBeforeUnmount(() => {
                   :icon="ionReceipt"
                   class="bg-white admin-fab"
                   stacked
-                  label="Abhängen"
+                  :label="
+                    $t('events.details.actions.admin.posterTakeDown.label')
+                  "
                   outline
                   label-class="bg-grey-2 text-primary"
                   external-label
@@ -504,7 +520,7 @@ onBeforeUnmount(() => {
                   :icon="ionPrint"
                   class="bg-white admin-fab"
                   stacked
-                  label="Drucken"
+                  :label="$t('events.details.actions.admin.print.label')"
                   outline
                   label-class="bg-grey-2 text-primary"
                   external-label
@@ -517,13 +533,15 @@ onBeforeUnmount(() => {
       </div>
       <div class="row">
         <div class="col-12 event-description">
-          <b>Öffentliche Beschreibung</b><br />
+          <b>{{ $t('events.details.publicDescription') }}</b
+          ><br />
           {{ event.description }}
         </div>
       </div>
       <div v-if="event.internal_description" class="row">
         <div class="col-12 event-description">
-          <b>Interne Informationen</b><br />
+          <b>{{ $t('events.details.internalDescription') }}</b
+          ><br />
           {{ event.internal_description }}
         </div>
       </div>
@@ -554,10 +572,7 @@ onBeforeUnmount(() => {
       <div v-if="needsVerification" class="row text-primary q-col-gutter-x-md">
         <template v-if="!isTeamCaptainOrCoordinator">
           <span class="col-12">
-            Super, dass du mitmachen möchtest. Du hast dich für diese Aktion
-            gemeldet. Der nächste Schritt ist zur angegebenen Zeit am
-            vereinbarten Treffpunkt zu erscheinen. Ein Teamcaptain wird dich
-            dann für diese Aktion freischalten.
+            {{ $t('events.details.infoUserNeedsVerification.description') }}
           </span>
         </template>
       </div>
@@ -574,7 +589,7 @@ onBeforeUnmount(() => {
             color="primary"
             class="full-width"
           >
-            Anmelden um mitzumachen
+            {{ $t('events.details.infoUserNeedsToBeLoggedIn') }}
           </QBtn>
         </div>
       </div>
@@ -586,7 +601,7 @@ onBeforeUnmount(() => {
             @click="openInviteModal"
             flat
           >
-            Leute einladen
+            {{ $t('events.details.inviteUsers.label') }}
           </QBtn>
           <div
             v-if="needsVerification"
@@ -597,10 +612,9 @@ onBeforeUnmount(() => {
               color="negative"
               size="md"
               name="img:/static/icons/Icon_Waiting.svg"
-              aria-label="Fehlerindikator für Gebiet"
             >
             </QIcon>
-            Freischaltung
+            {{ $t('events.details.infoUserNeedsVerification.iconTitle') }}
           </div>
         </div>
         <div class="col-6">
@@ -611,7 +625,7 @@ onBeforeUnmount(() => {
             @click="leave"
             class="full-width"
           >
-            Doch nicht dabei
+            {{ $t('events.details.leaveButton') }}
           </QBtn>
           <QBtn
             v-else-if="isInvited"
@@ -620,7 +634,7 @@ onBeforeUnmount(() => {
             color="primary"
             class="full-width"
           >
-            Einladung annehmen
+            {{ $t('events.details.acceptInviteButton') }}
           </QBtn>
           <QBtn
             v-else-if="!isMember"
@@ -629,7 +643,7 @@ onBeforeUnmount(() => {
             @click="join"
             color="primary"
           >
-            Ich bin dabei
+            {{ $t('events.details.joinButton') }}
           </QBtn>
         </div>
       </div>

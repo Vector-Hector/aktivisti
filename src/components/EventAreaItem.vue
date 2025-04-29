@@ -67,10 +67,14 @@ function countAddresses(areaDetails: AreaDetailsDto) {
       </QItemLabel>
 
       <QItemLabel v-if="eventType === EventTypes.DOOR_TO_DOOR">
-        {{ countAddresses(area.area_details) }} Adressen
+        {{
+          $t('events.details.eventArea.addressCounter', [
+            countAddresses(area.area_details)
+          ])
+        }}
       </QItemLabel>
       <QItemLabel v-else-if="eventType === EventTypes.POSTERS">
-        {{ area.poster_count }} Plakate
+        {{ $t('events.details.eventArea.posterCounter', [area.poster_count]) }}
       </QItemLabel>
     </QItemSection>
 

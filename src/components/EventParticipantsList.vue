@@ -14,6 +14,7 @@ import {
   useQuasar
 } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   eventId: number
@@ -24,6 +25,7 @@ const props = defineProps<Props>()
 const participations = ref<EventParticipationDto[]>([])
 
 const $q = useQuasar()
+const { t } = useI18n()
 
 onMounted(async () => {
   participations.value = (
@@ -85,22 +87,23 @@ async function elevateToTeamCaptain(userId: number) {
     ) {
       $q.notify({
         color: 'negative',
-        message:
-          'Dieser Aktion ist kein gültiger Landkreis zugeordnet. Die Ernennung einer*eines Teamcaptains ' +
-          'ist an einen Landkreis gebunden.'
+        message: t('eventParticipantsModal.notifications.noSubAssociationError')
       })
     } else {
       $q.notify({
         color: 'negative',
-        message: 'Ein unerwarteter Fehler ist aufgetreten'
+        message: t('eventParticipantsModal.notifications.generalError')
       })
     }
   }
 }
 function handleInviteToTeamCaptain(userId: number, username: string) {
   $q.dialog({
-    title: 'Benutzer*innen zu Teamcaptain hochstufen',
-    message: `Möchtest du die*den Benutzer*in <b>${username}</b> zur*zum Teamcaptain machen?`,
+    title: t('eventParticipantsModal.promoteUserToTeamcamptain.dialog.title'),
+    message: t(
+      'eventParticipantsModal.promoteUserToTeamcamptain.dialog.description',
+      [`<b>${username}</b>`]
+    ),
     html: true,
     cancel: true
   })
@@ -113,7 +116,9 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
   <div class="row">
     <div class="col">
       <QList v-if="areTeamCaptainsParticipations.length > 0">
-        <QToolbarTitle>Teamcaptains</QToolbarTitle>
+        <QToolbarTitle>{{
+          $t('eventParticipantsModal.teamcaptains')
+        }}</QToolbarTitle>
         <QSeparator spaced />
         <QItem
           v-for="participation in areTeamCaptainsParticipations"
@@ -142,14 +147,16 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
                 flat
                 round
                 @click="deleteParticipation(participation.id)"
-                aria-label="Benutzer:in von der Aktion entfernen"
+                :aria-label="$t('eventParticipantsModal.removeParticipant')"
               />
             </div>
           </QItemSection>
         </QItem>
       </QList>
       <QList v-if="verifiedParticipations.length > 0">
-        <QToolbarTitle>Bestätigte Teilnehmer*innen</QToolbarTitle>
+        <QToolbarTitle>{{
+          $t('eventParticipantsModal.verifiedParticipants')
+        }}</QToolbarTitle>
         <QSeparator spaced />
         <QItem
           v-for="participation in verifiedParticipations"
@@ -179,7 +186,7 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
                 flat
                 round
                 @click="deleteParticipation(participation.id)"
-                aria-label="Benutzer:in von der Aktion entfernen"
+                :aria-label="$t('eventParticipantsModal.removeParticipant')"
               />
               <QBtn
                 v-if="!participation.is_event_coordinator"
@@ -195,14 +202,18 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
                     participation.user_username
                   )
                 "
-                aria-label="Benutzer:in zu Teamcaptain machen"
+                :aria-label="
+                  $t('eventParticipantsModal.promoteUserToTeamcamptain.label')
+                "
               />
             </div>
           </QItemSection>
         </QItem>
       </QList>
       <QList v-if="notVerifiedParticipations.length > 0">
-        <QToolbarTitle>Teilnehmer*innen bestätigen</QToolbarTitle>
+        <QToolbarTitle>{{
+          $t('eventParticipantsModal.verifyParticipants')
+        }}</QToolbarTitle>
         <QSeparator spaced />
         <QItem
           v-for="participation in notVerifiedParticipations"
@@ -230,7 +241,7 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
                 dense
                 flat
                 round
-                aria-label="Benutzer:in von der Aktion entfernen"
+                :aria-label="$t('eventParticipantsModal.removeParticipant')"
                 :icon="ionClose"
                 @click="deleteParticipation(participation.id)"
               />
@@ -254,7 +265,7 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
           notVerifiedParticipations.length === 0
         "
       >
-        Niemand wartet auf Freischaltung. Lade noch mehr Leute zur Aktion ein.
+        {{ $t('eventParticipantsModal.noOneWaitingToGetVerified') }}
       </p>
     </div>
   </div>

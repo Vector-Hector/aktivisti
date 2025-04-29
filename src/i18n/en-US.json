@@ -336,7 +336,107 @@
       "joinAndGetInfo": "Join/Info"
     },
     "createButtonLong": "Create Event",
-    "createButtonShort": "Create"
+    "createButtonShort": "Create",
+    "details": {
+      "prefixHangDownPostersEvent": "[Take Down] ",
+      "noAreaPosters": "Without Area",
+      "notifications": {
+        "generalJoinError": "An unexpected error occurred while trying to join the event",
+        "generalLeaveError": "An unexpected error occurred while trying to leave the event"
+      },
+      "participants": "Participants",
+      "actions": {
+        "participants": {
+          "label": "Participants"
+        },
+        "share": {
+          "label": "Share",
+          "shareText": "{eventName}\n{eventType}{eventDescription}\n\non: {eventDate}\nat: {eventTime}\n"
+        },
+        "admin": {
+          "label": "Admin",
+          "delete": {
+            "label": "Delete"
+          },
+          "edit": {
+            "label": "Edit"
+          },
+          "report": {
+            "label": "Report"
+          },
+          "posterTakeDown": {
+            "label": "Take Down",
+            "dialog": {
+              "title": "Do you want to take down posters?",
+              "description": "The event {0} will be converted into a poster take-down event.",
+              "notifications": {
+                "generalError": "The event could not be converted into a poster take-down event"
+              }
+            }
+          },
+          "print": {
+            "label": "Print"
+          }
+        }
+      },
+      "eventType": "Event Type",
+      "meetingPoint": "Meeting Point",
+      "startDate": "Start",
+      "endDate": "End",
+      "externalUrl": "Link",
+      "messangerUrl": "Messenger",
+      "publicDescription": "Public Description",
+      "internalDescription": "Internal Information",
+      "infoUserNeedsToBeLoggedIn": "Log in to participate",
+      "inviteUsers": {
+        "label": "Invite People",
+        "dialog": {
+          "title": "Invite People",
+          "notifications": {
+            "userNameNotExistsError": "The username does not exist",
+            "generalError": "Something went wrong while inviting the user"
+          },
+          "inviteAllCoordinators": {
+            "label": "Invite All Coordinators",
+            "dialog": {
+              "title": "Invite All Coordinators",
+              "description": "Do you want to invite all coordinators of the sub association?",
+              "notifications": {
+                "allCoordinatorsAreAlreadyInvited": "All coordinators have already been invited.",
+                "noCoordinatorsFound": "There are no coordinators in this event area."
+              }
+            }
+          },
+          "inviteAllTeamcaptains": {
+            "label": "Invite All Team Captains",
+            "dialog": {
+              "title": "Invite All Team Captains",
+              "description": "Do you want to invite all team captains of the sub association?",
+              "notifications": {
+                "allTeamcaptainsAreAlreadyInvited": "All team captains have already been invited.",
+                "noTeamcaptainsFound": "There are no team captains in this event area."
+              }
+            }
+          }
+        },
+        "inputPlaceholder": "Username",
+        "alreadyInvited": "Already Invited",
+        "removeParticipant": "Remove user from the event",
+        "inviteMoreUsersByMail": "{0} more Users are invited via email",
+        "description": "No pending invitations. Use the input field to invite new participants"
+      },
+      "infoUserNeedsVerification": {
+        "description": "Great that you want to participate. You have signed up for this event. The next step is to appear at the agreed meeting point at the specified time. A team captain will then unlock you for this event.",
+        "iconTitle": "Verification"
+      },
+      "leaveButton": "Cancel Participation",
+      "acceptInviteButton": "Accept Invitation",
+      "joinButton": "Join",
+      "eventArea": {
+        "addressCounter": "{0} Addresses",
+        "posterCounter": "{0} Posters"
+      }
+    }
   },
   "map": {
     "geocoder": {
@@ -351,5 +451,24 @@
       "noOverlay": "Do not display any overlay",
       "noOverlayDefined": "No overlay defined"
     }
+  },
+  "eventParticipantsModal": {
+    "title": "Participants",
+    "teamcaptains": "Team Captains",
+    "notifications": {
+      "noSubAssociationError": "This event is not assigned to a valid sub association. Assigning a team captain is tied to a sub association.",
+      "generalError": "An unexpected error occurred"
+    },
+    "promoteUserToTeamcamptain": {
+      "label": "Promote user to team captain",
+      "dialog": {
+        "title": "Promote user to team captain",
+        "description": "Do you want to promote the user {0} to team captain?"
+      }
+    },
+    "removeParticipant": "Remove user from the event",
+    "verifiedParticipants": "Verified Participants",
+    "verifyParticipants": "Verify Participants",
+    "noOneWaitingToGetVerified": "No one is waiting for verification. Invite more people to the event."
   }
 }

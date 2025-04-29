@@ -336,7 +336,107 @@
       "joinAndGetInfo": "Mitmachen/Infos"
     },
     "createButtonLong": "Aktion erstellen",
-    "createButtonShort": "Erstellen"
+    "createButtonShort": "Erstellen",
+    "details": {
+      "prefixHangDownPostersEvent": "[Abhängen] ",
+      "noAreaPosters": "Ohne Gebiet",
+      "notifications": {
+        "generalJoinError": "Ein unerwarteter Fehler trat auf beim versuch der Aktion beizutreten",
+        "generalLeaveError": "Ein unerwarteter Fehler trat auf beim versuch die Aktion zu verlassen"
+      },
+      "participants": "Teilnahmen",
+      "actions": {
+        "participants": {
+          "label": "Teilnahmen"
+        },
+        "share": {
+          "label": "Teilen",
+          "shareText": "{eventName}\n{eventType}{eventDescription}\n\nam: {eventDate}\num: {eventTime}\n"
+        },
+        "admin": {
+          "label": "Admin",
+          "delete": {
+            "label": "Löschen"
+          },
+          "edit": {
+            "label": "Bearbeiten"
+          },
+          "report": {
+            "label": "Report"
+          },
+          "posterTakeDown": {
+            "label": "Abhängen",
+            "dialog": {
+              "title": "Willst Du Plakate abhängen?",
+              "description": "Das Event {0} wird in eine Aktion zum Abhängen von Plakaten umgewandelt.",
+              "notifications": {
+                "generalError": "Die Aktion konnte nicht in eine Plakate-Abhängaktion umgewandelt werden"
+              }
+            }
+          },
+          "print": {
+            "label": "Drucken"
+          }
+        }
+      },
+      "eventType": "Aktionstyp",
+      "meetingPoint": "Treffpunkt",
+      "startDate": "Start",
+      "endDate": "Ende",
+      "externalUrl": "Link",
+      "messangerUrl": "Messenger",
+      "publicDescription": "Öffentliche Beschreibung",
+      "internalDescription": "Interne Informationen",
+      "infoUserNeedsToBeLoggedIn": "Anmelden um mitzumachen",
+      "inviteUsers": {
+        "label": "Leute einladen",
+        "dialog": {
+          "title": "Leute einladen",
+          "notifications": {
+            "userNameNotExistsError": "Der Benutzer*innenname existiert nicht",
+            "generalError": "Etwas ging schief beim Einladen des*der Benutzer*in"
+          },
+          "inviteAllCoordinators": {
+            "label": "Alle Koordinator*innen einladen",
+            "dialog": {
+              "title": "Alle Koordinator*innen einladen",
+              "description": "Möchtest du alle Koordinator*innen des Kreisverbandes einladen?",
+              "notifications": {
+                "allCoordinatorsAreAlreadyInvited": "Es wurden bereits alle Koordinator*innen eingeladen.",
+                "noCoordinatorsFound": "In diesem Eventgebiet gibt es keine Koordinator*innen."
+              }
+            }
+          },
+          "inviteAllTeamcaptains": {
+            "label": "Alle Teamcaptains einladen",
+            "dialog": {
+              "title": "Alle Teamcaptains einladen",
+              "description": "Möchtest du alle Teamcaptains des Kreisverbandes einladen?",
+              "notifications": {
+                "allTeamcaptainsAreAlreadyInvited": "Es wurden bereits alle Teamcaptains eingeladen.",
+                "noTeamcaptainsFound": "In diesem Eventgebiet gibt es keine Teamcaptains."
+              }
+            }
+          }
+        },
+        "inputPlaceholder": "Benutzer*innenname",
+        "alreadyInvited": "Bereits eingeladen",
+        "removeParticipant": "Benutzer*in von der Aktion entfernen",
+        "inviteMoreUsersByMail": "{0} weitere per Mail eingeladen",
+        "description": "Keine offenen Einladungen. Nutze das Eingabefeld um neue Teilnehmende einzuladen"
+      },
+      "infoUserNeedsVerification": {
+        "description": "Super, dass du mitmachen möchtest. Du hast dich für diese Aktion gemeldet. Der nächste Schritt ist zur angegebenen Zeit am vereinbarten Treffpunkt zu erscheinen. Ein Teamcaptain wird dich dann für diese Aktion freischalten.",
+        "iconTitle": "Freischaltung"
+      },
+      "leaveButton": "Doch nicht dabei",
+      "acceptInviteButton": "Einladung annehmen",
+      "joinButton": "Ich bin dabei",
+      "eventArea": {
+        "addressCounter": "{0} Adressen",
+        "posterCounter": "{0} Plakate"
+      }
+    }
   },
   "map": {
     "geocoder": {
@@ -351,5 +451,24 @@
       "noOverlay": "Kein Overlay anzeigen",
       "noOverlayDefined": "Kein Overlay definiert"
     }
+  },
+  "eventParticipantsModal": {
+    "title": "Mitmachende",
+    "teamcaptains": "Teamcaptains",
+    "notifications": {
+      "noSubAssociationError": "Dieser Aktion ist kein gültiger Landkreis zugeordnet. Die Ernennung einer*eines Teamcaptains ist an einen Landkreis gebunden.",
+      "generalError": "Ein unerwarteter Fehler ist aufgetreten"
+    },
+    "promoteUserToTeamcamptain": {
+      "label": "Benutzer*in zu Teamcaptain machen",
+      "dialog": {
+        "title": "Benutzer*innen zu Teamcaptain hochstufen",
+        "description": "Möchtest du die*den Benutzer*in {0} zur*zum Teamcaptain machen?"
+      }
+    },
+    "removeParticipant": "Benutzer*in von der Aktion entfernen",
+    "verifiedParticipants": "Bestätigte Teilnehmer*innen",
+    "verifyParticipants": "Teilnehmer*innen bestätigen",
+    "noOneWaitingToGetVerified": "Niemand wartet auf Freischaltung. Lade noch mehr Leute zur Aktion ein."
   }
 }
