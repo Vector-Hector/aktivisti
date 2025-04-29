@@ -435,6 +435,13 @@
       "eventArea": {
         "addressCounter": "{0} Addresses",
         "posterCounter": "{0} Posters"
+      },
+      "report": {
+        "eventArea": "Area",
+        "visitedAddresses": "Visited Addresses",
+        "addressesInEventArea": "Addresses in Area",
+        "collectedLeads": "Collected Leads",
+        "total": "Total"
       }
     }
   },

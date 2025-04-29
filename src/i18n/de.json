@@ -435,6 +435,13 @@
       "eventArea": {
         "addressCounter": "{0} Adressen",
         "posterCounter": "{0} Plakate"
+      },
+      "report": {
+        "eventArea": "Gebiet",
+        "visitedAddresses": "Besuchte Adressen",
+        "addressesInEventArea": "Adressen im Gebiet",
+        "collectedLeads": "Gewonnene Kontakte",
+        "total": "Gesamt"
       }
     }
   },
