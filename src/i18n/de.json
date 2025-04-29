@@ -460,7 +460,13 @@
           "generalError": "Unbekannter fehler beim Aktualisieren der Teilnehmer*innen"
         },
         "joinButton": "In diesem Gebiet mitmachen",
-        "leaveButton": "Doch nicht hier mitmachen"
+        "leaveButton": "Doch nicht hier mitmachen",
+        "metrics": {
+          "areaNotFoundError": "Das Gebiet scheint nicht mehr zu existieren.",
+          "createLead": "Kontakt registrieren",
+          "noMetricsDefinedWarning": "Für diese Aktion wurden keine Ergebnisse definiert",
+          "openExternalUrl": "Externe Umfrage öffnen"
+        }
       }
     }
   },

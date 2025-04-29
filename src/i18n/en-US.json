@@ -460,7 +460,13 @@
           "generalError": "Unknown error while updating participants"
         },
         "joinButton": "Participate in this area",
-        "leaveButton": "No longer participate here"
+        "leaveButton": "No longer participate here",
+        "metrics": {
+          "areaNotFoundError": "The area seems to no longer exist.",
+          "createLead": "Register contact",
+          "noMetricsDefinedWarning": "No metrics have been defined for this event",
+          "openExternalUrl": "Open external survey"
+        }
       }
     }
   },
