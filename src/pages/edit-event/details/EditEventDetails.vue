@@ -23,11 +23,13 @@ import { useEditEventAutoSaveMixin } from 'pages/edit-event/EditEventAutoSaveMix
 import { apiClient } from 'src/api/ApiClient'
 import DateTimeInput from 'components/DateTimeInput.vue'
 import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
+import { useValidationRules } from 'src/utils/validationRules'
 
 const $q = useQuasar()
 const { metricRecords, campaigns, event } = useEditEventMixin()
 const { errors, saveDebouncer } = useEditEventAutoSaveMixin()
 const { eventTypeOptions } = useEventTypes()
+const { validationRules } = useValidationRules()
 const stepControls = inject('stepControls') as StepControls
 
 // Fixme(peter) Check what of the metrics functionality is still needed here
@@ -191,7 +193,7 @@ async function next() {
           label="Name der Aktion"
           :error-message="errors.name?.[0]"
           :error="!!errors.name?.length"
-          :rules="[$validationRules.isRequired]"
+          :rules="[validationRules.isRequired]"
         />
         <QSelect
           filled
@@ -229,7 +231,7 @@ async function next() {
             :mask="mask"
             :error-message="errors.end_date?.[0]"
             :error="!!errors.end_date?.length"
-            :rules="[$validationRules.isRequired]"
+            :rules="[validationRules.isRequired]"
           />
         </div>
         <QInput

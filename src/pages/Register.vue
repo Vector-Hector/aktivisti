@@ -8,9 +8,11 @@ import { configStore } from 'src/store/ConfigStore'
 import PasswordInput from 'components/PasswordInput.vue'
 import { apiClient } from 'src/api/ApiClient'
 import { useRouter } from 'vue-router'
+import { useValidationRules } from 'src/utils/validationRules'
 
 const $q = useQuasar()
 const $router = useRouter()
+const { validationRules } = useValidationRules()
 
 const registrationData = ref<Partial<UserRegistrationDto>>({})
 const errors = ref<any>({})
@@ -57,7 +59,7 @@ async function register() {
         <QForm @submit="register">
           <QInput
             v-model="registrationData.email"
-            :rules="[$validationRules.isRequired, $validationRules.email]"
+            :rules="[validationRules.isRequired, validationRules.email]"
             name="email"
             label="E-Mailadresse *"
             :error-message="errors.email?.[0]"
@@ -65,7 +67,7 @@ async function register() {
           />
           <QInput
             v-model="registrationData.username"
-            :rules="[$validationRules.isRequired]"
+            :rules="[validationRules.isRequired]"
             name="username"
             label="Benutzer*innenname *"
             :error-message="errors.username?.[0]"
@@ -73,7 +75,7 @@ async function register() {
           />
           <PasswordInput
             v-model="registrationData.password"
-            :rules="[$validationRules.isRequired]"
+            :rules="[validationRules.isRequired]"
             name="password"
             label="Passwort *"
             :minlength="6"
@@ -82,7 +84,7 @@ async function register() {
           />
           <QInput
             v-model="registrationData.plz"
-            :rules="[$validationRules.isRequired]"
+            :rules="[validationRules.isRequired]"
             :maxlength="5"
             :minlength="5"
             label="Postleitzahl *"

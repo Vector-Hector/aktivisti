@@ -5,15 +5,16 @@ import FormError from 'components/FormError.vue'
 import { AuthType, getAuthStore, getAuthType } from 'src/store/AuthStore'
 import PasswordInput from 'components/PasswordInput.vue'
 import { apiClient } from 'src/api/ApiClient'
-import { emailRegex } from 'boot/validation-rules'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { emailRegex, useValidationRules } from 'src/utils/validationRules'
 
 const authStore = getAuthStore()
 
 const $q = useQuasar()
 const $router = useRouter()
 const { t } = useI18n()
+const { validationRules } = useValidationRules()
 
 if (authStore.isLoggedIn()) {
   void $router.replace({ name: 'events' })
@@ -95,13 +96,13 @@ function openResetPasswordModal() {
       <QInput
         :label="$t('login.username_label')"
         v-model="username"
-        :rules="[$validationRules.isRequired]"
+        :rules="[validationRules.isRequired]"
         type="text"
       />
       <PasswordInput
         :label="$t('login.password_label')"
         v-model="password"
-        :rules="[$validationRules.isRequired]"
+        :rules="[validationRules.isRequired]"
       />
       <div class="forgot-password-link">
         <a @click="openResetPasswordModal" class="primary-link">

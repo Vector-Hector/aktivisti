@@ -13,6 +13,7 @@ import {
   useQuasar
 } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
+import { useValidationRules } from 'src/utils/validationRules'
 
 interface Emits {
   // REQUIRED
@@ -29,6 +30,7 @@ const emit = defineEmits<Emits>()
 
 const $q = useQuasar()
 const dialog = ref<InstanceType<typeof QDialog> | null>(null)
+const { validationRules } = useValidationRules()
 
 const newEmail = ref('')
 const password = ref('')
@@ -96,14 +98,14 @@ function onDialogHide() {
             v-model="password"
             type="password"
             :minlength="8"
-            :rules="[$validationRules.isRequired]"
+            :rules="[validationRules.isRequired]"
             :error-message="errors.password?.[0]"
             :error="!!errors.password?.length"
           />
           <QInput
             label="Neue E-Mail Adresse"
             v-model="newEmail"
-            :rules="[$validationRules.email]"
+            :rules="[validationRules.email]"
             :error-message="errors.new_email?.[0]"
             :error="!!errors.new_email?.length"
           />

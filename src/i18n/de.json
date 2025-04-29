@@ -25,7 +25,11 @@
   "general": {
     "noValidDate": "Kein gültiges Datum",
     "cancel": "Abbrechen",
-    "add": "Hinzufügen"
+    "add": "Hinzufügen",
+    "validationRules": {
+      "fieldRequiredError": "Dieses Feld ist erforderlich",
+      "noValidEmailError": "Dies ist keine gültige E-Mailadress"
+    }
   },
   "api": {
     "model": {

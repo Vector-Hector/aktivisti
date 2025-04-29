@@ -25,7 +25,11 @@
   "general": {
     "noValidDate": "No valid date",
     "cancel": "Cancel",
-    "add": "Add"
+    "add": "Add",
+    "validationRules": {
+      "fieldRequiredError": "This field is required",
+      "noValidEmailError": "This is not a valid email address"
+    }
   },
   "api": {
     "model": {

@@ -13,6 +13,7 @@ import {
 } from 'quasar'
 import PasswordInput from 'components/PasswordInput.vue'
 import { apiClient } from 'src/api/ApiClient'
+import { useValidationRules } from 'src/utils/validationRules'
 
 interface Emits {
   // REQUIRED
@@ -22,6 +23,7 @@ interface Emits {
 const emit = defineEmits<Emits>()
 
 const $q = useQuasar()
+const { validationRules } = useValidationRules()
 const dialog = ref<InstanceType<typeof QDialog> | null>(null)
 
 const oldPassword = ref('')
@@ -92,7 +94,7 @@ function passwordMatch(value: string) {
             label="Aktuelles Passwort"
             v-model="oldPassword"
             :minlength="8"
-            :rules="[$validationRules.isRequired]"
+            :rules="[validationRules.isRequired]"
             :error-message="errors.old_password?.[0]"
             :error="!!errors.old_password?.length"
           />
@@ -100,7 +102,7 @@ function passwordMatch(value: string) {
             label="Neues Passwort"
             v-model="newPassword"
             :minlength="8"
-            :rules="[$validationRules.isRequired]"
+            :rules="[validationRules.isRequired]"
             :error-message="errors.new_password?.[0]"
             :error="!!errors.new_password?.length"
           />
@@ -108,7 +110,7 @@ function passwordMatch(value: string) {
             label="Neues Passwort bestätigen"
             v-model="newPasswordConfirm"
             :minlength="8"
-            :rules="[$validationRules.isRequired, passwordMatch]"
+            :rules="[validationRules.isRequired, passwordMatch]"
           />
         </QCardSection>
         <QCardActions align="right">

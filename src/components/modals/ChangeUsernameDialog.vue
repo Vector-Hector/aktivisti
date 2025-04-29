@@ -14,6 +14,7 @@ import {
 } from 'quasar'
 import PasswordInput from 'components/PasswordInput.vue'
 import { apiClient } from 'src/api/ApiClient'
+import { useValidationRules } from 'src/utils/validationRules'
 
 interface Emits {
   // REQUIRED
@@ -23,6 +24,7 @@ interface Emits {
 const emit = defineEmits<Emits>()
 
 const $q = useQuasar()
+const { validationRules } = useValidationRules()
 const dialog = ref<InstanceType<typeof QDialog> | null>(null)
 
 const newUsername = ref('')
@@ -87,14 +89,14 @@ function onDialogHide() {
             label="Passwort"
             v-model="password"
             :minlength="8"
-            :rules="[$validationRules.isRequired]"
+            :rules="[validationRules.isRequired]"
             :error-message="errors.password?.[0]"
             :error="!!errors.password?.length"
           />
           <QInput
             label="Neuer Benutzer*innenname"
             v-model="newUsername"
-            :rules="[$validationRules.isRequired]"
+            :rules="[validationRules.isRequired]"
             :error-message="errors.new_username?.[0]"
             :error="!!errors.new_username?.length"
           />

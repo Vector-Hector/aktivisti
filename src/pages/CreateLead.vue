@@ -51,6 +51,7 @@ import { useEventDetailStore } from './event-map/detail/EventDetailStoreMixin'
 import { SubOrganizationDto } from 'src/api/model/SubOrganizationDto'
 import { OrganizationDto } from 'src/api/model/OrganizationDto'
 import { useI18n } from 'vue-i18n'
+import { useValidationRules } from 'src/utils/validationRules'
 
 interface Props {
   areaId: string
@@ -60,6 +61,8 @@ const props = defineProps<Props>()
 const $q = useQuasar()
 const $router = useRouter()
 const { t } = useI18n()
+const { validationRules } = useValidationRules()
+
 const form = ref<InstanceType<typeof QForm> | null>(null)
 const { event } = useEventDetailStore()
 const subOrganizations = ref<SubOrganizationDto[]>([])
@@ -189,7 +192,7 @@ function addMandatorySymbol(string: string) {
             <QInput
               :label="addMandatorySymbol($t('createLead.firstName'))"
               v-model="lead.first_name"
-              :rules="[$validationRules.isRequired]"
+              :rules="[validationRules.isRequired]"
               :error-message="errors.first_name?.[0]"
               :error="!!errors.first_name?.length"
               :required="true"
@@ -197,7 +200,7 @@ function addMandatorySymbol(string: string) {
             <QInput
               :label="addMandatorySymbol($t('createLead.lastName'))"
               v-model="lead.last_name"
-              :rules="[$validationRules.isRequired]"
+              :rules="[validationRules.isRequired]"
               :error-message="errors.last_name?.[0]"
               :error="!!errors.last_name?.length"
               :required="true"
@@ -205,7 +208,7 @@ function addMandatorySymbol(string: string) {
             <QInput
               :label="addMandatorySymbol($t('createLead.email'))"
               v-model="lead.email"
-              :rules="[$validationRules.isRequired, $validationRules.email]"
+              :rules="[validationRules.isRequired, validationRules.email]"
               :error-message="errors.email?.[0]"
               :error="!!errors.email?.length"
               type="email"
@@ -237,7 +240,7 @@ function addMandatorySymbol(string: string) {
               v-model="lead.zip_code"
               :minlength="5"
               :maxlength="5"
-              :rules="[$validationRules.isRequired]"
+              :rules="[validationRules.isRequired]"
               :error-message="errors.zip_code?.[0]"
               :error="!!errors.zip_code?.length"
               :required="true"
@@ -252,7 +255,7 @@ function addMandatorySymbol(string: string) {
               :label="addMandatorySymbol($t('createLead.subOrganization'))"
               :dropdownIcon="ionChevronDown"
               v-model="lead.sub_organization"
-              :rules="[$validationRules.isRequired]"
+              :rules="[validationRules.isRequired]"
               :options="suggestedSubOrganizations"
               option-value="id"
               :option-label="formatSubOrganization"

@@ -46,10 +46,12 @@ import { userStore } from 'src/store/UserStore'
 import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { useRouter } from 'vue-router'
+import { useValidationRules } from 'src/utils/validationRules'
 
 const $router = useRouter()
 const $q = useQuasar()
 const { eventTypeOptions } = useEventTypes()
+const { validationRules } = useValidationRules()
 
 const metrics = ref<EventMetricDto[]>([])
 const campaigns = ref<CampaignDto[]>([])
@@ -136,7 +138,7 @@ defineExpose({
             label="Name der Aktion"
             :error-message="errors.name?.[0]"
             :error="!!errors.name?.length"
-            :rules="[$validationRules.isRequired]"
+            :rules="[validationRules.isRequired]"
           />
           <QSelect
             filled
