@@ -583,5 +583,17 @@
     "eventTypeLabel": "Event Type",
     "campaignsLabel": "Campaigns",
     "campaignsPlaceholder": "Select a campaign"
+  },
+  "requestPermission": {
+    "notifications": {
+      "success": "Thank you for your message. We will get back to you soon.",
+      "noValidDataError": "Your message could not be sent, please check your details.",
+      "generalError": "An unexpected error occurred"
+    },
+    "description": "Do you want to plan an event in your sub association and invite others to join? Then you need coordination rights. Briefly tell us what kind of events you want to plan - we will get back to you.",
+    "username": "Username",
+    "email": "Email",
+    "message": "Your Message",
+    "submitButton": "Request Coordination Rights"
   }
 }

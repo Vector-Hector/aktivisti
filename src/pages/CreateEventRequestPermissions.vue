@@ -7,8 +7,10 @@ import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import MultipleSubAssociationFilter from 'components/filterInput/filters/MultipleSubAssociationFilter.vue'
 import { UserDto } from 'src/api/model/UserDto'
 import { apiClient } from 'src/api/ApiClient'
+import { useI18n } from 'vue-i18n'
 
 const $q = useQuasar()
+const { t } = useI18n()
 
 const message = ref<string>('')
 const localUser = ref<UserDto | null>(cloneDeep(userStore.getState().user))
@@ -33,20 +35,19 @@ async function requestCoordinatorPermissions() {
     })
     $q.notify({
       color: 'positive',
-      message: 'Vielen Dank für deine Nachricht. Wir melden uns bald bei dir.'
+      message: t('requestPermission.notifications.success')
     })
   } catch (e) {
     if (apiClient.isApiClientError(e) && e.response?.status === 400) {
       errors.value = e.response.data
       $q.notify({
-        message:
-          'Deine Nachricht konnte nicht versendet werden, bitte prüfe deine Angaben.',
+        message: t('requestPermission.notifications.noValidDataError'),
         color: 'negative'
       })
     } else {
       $q.notify({
         color: 'negative',
-        message: 'Ein unerwarteter Fehler ist aufgetreten'
+        message: t('requestPermission.notifications.generalError')
       })
     }
   }
@@ -57,17 +58,20 @@ async function requestCoordinatorPermissions() {
     <QPage>
       <div class="container">
         <p class="description-text">
-          Du willst eine Aktion in Deinem Kreisverband planen und andere dazu
-          einladen? Dann brauchst Du Koordination-Rechte. Schreibe uns kurz, was
-          Du für Veranstaltungen planen willst - wir melden uns bei Dir.
+          {{ $t('requestPermission.description') }}
         </p>
         <QInput
           stack-label
           disable
           v-model="localUser.username"
-          label="Benutzer*innenname"
+          :label="$t('requestPermission.username')"
         />
-        <QInput stack-label disable v-model="localUser.email" label="E-Mail" />
+        <QInput
+          stack-label
+          disable
+          v-model="localUser.email"
+          :label="$t('requestPermission.email')"
+        />
         <MultipleSubAssociationFilter
           v-model="selectedSubAssociation"
           :multiple="false"
@@ -79,12 +83,12 @@ async function requestCoordinatorPermissions() {
           stack-label
           type="textarea"
           v-model="message"
-          label="Deine Nachricht"
+          :label="$t('requestPermission.message')"
           :error="!!errors.message?.length"
           :error-message="errors.message?.[0]"
         />
         <QBtn
-          label="Koordinationsrechte beantragen"
+          :label="$t('requestPermission.submitButton')"
           color="negative"
           @click="requestCoordinatorPermissions"
         />
