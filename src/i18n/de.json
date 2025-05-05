@@ -30,7 +30,8 @@
       "fieldRequiredError": "Dieses Feld ist erforderlich",
       "noValidEmailError": "Dies ist keine gültige E-Mailadress"
     },
-    "back": "Zurück"
+    "back": "Zurück",
+    "create": "Erstellen"
   },
   "api": {
     "model": {
@@ -575,5 +576,12 @@
   },
   "standaloneGeocoder": {
     "inputLabel": "Adresse eingeben"
+  },
+  "createEvent": {
+    "heading": "Neue Aktion erstellen",
+    "nameLabel": "Name der Aktion",
+    "eventTypeLabel": "Aktionstyp",
+    "campaignsLabel": "Kampagnen",
+    "campaignsPlaceholder": "Wähle eine Kampagne aus"
   }
 }

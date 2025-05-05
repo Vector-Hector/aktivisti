@@ -30,7 +30,8 @@
       "fieldRequiredError": "This field is required",
       "noValidEmailError": "This is not a valid email address"
     },
-    "back": "Back"
+    "back": "Back",
+    "create": "Create"
   },
   "api": {
     "model": {
@@ -575,5 +576,12 @@
   },
   "standaloneGeocoder": {
     "inputLabel": "Enter address"
+  },
+  "createEvent": {
+    "heading": "Create New Event",
+    "nameLabel": "Event Name",
+    "eventTypeLabel": "Event Type",
+    "campaignsLabel": "Campaigns",
+    "campaignsPlaceholder": "Select a campaign"
   }
 }
