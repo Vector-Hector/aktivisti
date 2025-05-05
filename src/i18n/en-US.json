@@ -595,5 +595,9 @@
     "email": "Email",
     "message": "Your Message",
     "submitButton": "Request Coordination Rights"
+  },
+  "registrationSuccess": {
+    "title": "Thank you",
+    "description": "Registration was successful. Please check your inbox to confirm it, after which you can log in to the app."
   }
 }

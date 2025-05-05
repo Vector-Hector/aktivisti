@@ -595,5 +595,9 @@
     "email": "E-Mail",
     "message": "Deine Nachricht",
     "submitButton": "Koordinationsrechte beantragen"
+  },
+  "registrationSuccess": {
+    "title": "Vielen Dank",
+    "description": "Die Registrierung war erfolgreich. Bitte schaue in dein Postfach um sie zu bestätigen, danach kannst du dich bei der App anmelden."
   }
 }
