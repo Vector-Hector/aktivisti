@@ -24,6 +24,7 @@ function updateRoute(
   if (posterIndex > -1) {
     eventDetailStore.state.activePosterIndex = posterIndex
     uiStore.updateActiveElements({
+      // FIXME(peter) Due to the workaround for the composition API, we need to use a hard-coded string here for now, but needs to be internationalized in future
       poster: `Plakat #${postersInArea[posterIndex]?.poster_id}`
     })
     next()
@@ -66,9 +67,11 @@ import { uiStore } from 'src/store/UiStore'
 import SidebarBottomBackNavigation from 'components/SidebarBottomBackNavigation.vue'
 import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 import { apiClient } from 'src/api/ApiClient'
+import { useI18n } from 'vue-i18n'
 
 const $q = useQuasar()
 const $router = useRouter()
+const { t } = useI18n()
 const { event, deletePostersByIds } = useEventDetailStore()
 const { poster } = useEventDetailPosterMixin()
 
@@ -97,8 +100,10 @@ watch(
 
 function onDeleteClicked() {
   $q.dialog({
-    title: 'Plakat löschen',
-    message: `Möchtest du das Plakat #${poster.value.poster_id} wirklich löschen?`,
+    title: t('events.details.area.posters.detail.deleteDialog.title'),
+    message: t('events.details.area.posters.detail.deleteDialog.description', [
+      poster.value.poster_id
+    ]),
     cancel: true
   })
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -107,7 +112,9 @@ function onDeleteClicked() {
         await apiClient.posters.delete(poster.value.id.toString())
         $q.notify({
           color: 'neutral',
-          message: 'Plakat wurde gelöscht'
+          message: t(
+            'events.details.area.posters.detail.deleteDialog.successMessage'
+          )
         })
         const posterId = poster.value.id
         await $router.replace({ name: 'event-detail-poster-list' })
@@ -115,7 +122,9 @@ function onDeleteClicked() {
       } catch (e) {
         $q.notify({
           color: 'negative',
-          message: 'Beim Löschen des Plakats trat ein Fehler auf'
+          message: t(
+            'events.details.area.posters.detail.deleteDialog.errorMessage'
+          )
         })
       }
     })
@@ -130,12 +139,12 @@ async function save() {
       })
       $q.notify({
         color: 'positive',
-        message: 'Das Plakat wurde gespeichert'
+        message: t('events.details.area.posters.detail.successMessage')
       })
     } catch (e) {
       $q.notify({
         color: 'negative',
-        message: 'Beim Speichern trat ein Fehler auf'
+        message: t('events.details.area.posters.detail.errorMessage')
       })
     }
   })
@@ -152,7 +161,7 @@ async function save() {
             class="delete-button"
             flat
             :icon="ionTrash"
-            label="Löschen"
+            :label="$t('events.details.area.posters.detail.delete')"
             color="primary"
             @click="onDeleteClicked"
           />

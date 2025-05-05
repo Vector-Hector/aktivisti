@@ -29,7 +29,8 @@
     "validationRules": {
       "fieldRequiredError": "This field is required",
       "noValidEmailError": "This is not a valid email address"
-    }
+    },
+    "back": "Back"
   },
   "api": {
     "model": {
@@ -470,6 +471,29 @@
           "createLead": "Register contact",
           "noMetricsDefinedWarning": "No metrics have been defined for this event",
           "openExternalUrl": "Open external survey"
+        },
+        "posters": {
+          "createPosterButton": "Create",
+          "posterNotCreatedInAreaWarning": "The new poster was not placed in the currently selected area!",
+          "createPosterDialog": {
+            "title": "New Poster Location",
+            "descriptionMobile": "Please either enter an address in the search field or use the {gpsFunctionality} to set the location of this site on the map.",
+            "gpsFunctionality": "location functionality",
+            "descriptionDesktop": "Please either enter an address in the search field or move the red highlighted pin on the map to set the location of this site on the map.",
+            "createPosterButton": "Create Poster"
+          },
+          "posterCreationGeneralError": "The poster could not be created",
+          "detail": {
+            "delete": "Delete",
+            "deleteDialog": {
+              "title": "Delete Poster",
+              "description": "Do you really want to delete poster #{0}?",
+              "successMessage": "Poster has been deleted",
+              "errorMessage": "An error occurred while deleting the poster"
+            },
+            "successMessage": "The poster has been saved",
+            "errorMessage": "An error occurred while saving"
+          }
         }
       }
     }
@@ -530,5 +554,26 @@
     "note": "Note",
     "wantToBecomeMember": "I want to become a member of Die Linke",
     "submit": "Submit"
+  },
+  "posterTable": {
+    "columns": {
+      "place": "Place",
+      "unnamedPlace": "Unnamed Place",
+      "status": "Status"
+    },
+    "deletePosterModal": {
+      "title": "Delete Poster",
+      "description": "Do you really want to delete poster #{0}?",
+      "skipConfirm": "Don't ask again next time"
+    },
+    "noDataLabel": "No posters created yet"
+  },
+  "editPoster": {
+    "address": "Address",
+    "status": "Status",
+    "mountedOn": "Mounted On"
+  },
+  "standaloneGeocoder": {
+    "inputLabel": "Enter address"
   }
 }

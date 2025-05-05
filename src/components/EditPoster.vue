@@ -65,7 +65,7 @@ function updatePoster(poster: Partial<PosterDto>) {
     readonly
     disable
     filled
-    label="Adresse"
+    :label="$t('editPoster.address')"
     :error-message="errors.location_description?.[0]"
     :error="!!errors.location_description?.length"
   />
@@ -78,7 +78,7 @@ function updatePoster(poster: Partial<PosterDto>) {
     emit-value
     option-label="label"
     option-value="key"
-    label="Zustand"
+    :label="$t('editPoster.status')"
     :error-message="errors.status?.[0]"
     :error="!!errors.status?.length"
   />
@@ -91,7 +91,7 @@ function updatePoster(poster: Partial<PosterDto>) {
     emit-value
     option-label="label"
     option-value="key"
-    label="Position"
+    :label="$t('editPoster.mountedOn')"
     :error-message="errors.mounted_on?.[0]"
     :error="!!errors.mounted_on?.length"
   />
