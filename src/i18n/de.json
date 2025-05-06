@@ -559,7 +559,21 @@
           "deleteError": "Etwas ging schief beim löschen des Gebiets"
         },
         "noValidLocationError": "Bitte gebe einen gültigen Treffpunkt an.",
-        "noAreasDefinedError": "Dieses Event hat keine Gebiete"
+        "noAreasDefinedError": "Dieses Event hat keine Gebiete",
+        "posterCreationButton": "Erstellen"
+      },
+      "posters": {
+        "creationButton": "Erstellen",
+        "editPoster": {
+          "generalError": "Das Plakat konnte nicht gespeichert werden",
+          "deleteDialog": {
+            "title": "Plakat löschen",
+            "description": "Möchtest dieses Plakat wirklich löschen?"
+          },
+          "deleteButton": "Löschen",
+          "saveButton": "Speichern",
+          "createButton": "Erstellen"
+        }
       }
     }
   },

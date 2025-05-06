@@ -559,7 +559,21 @@
           "deleteError": "Something went wrong while deleting the area"
         },
         "noValidLocationError": "Please provide a valid meeting point.",
-        "noAreasDefinedError": "This event has no areas"
+        "noAreasDefinedError": "This event has no areas",
+        "posterCreationButton": "Create"
+      },
+      "posters": {
+        "creationButton": "Create",
+        "editPoster": {
+          "generalError": "The poster could not be saved",
+          "deleteDialog": {
+            "title": "Delete Poster",
+            "description": "Do you really want to delete this poster?"
+          },
+          "deleteButton": "Delete",
+          "saveButton": "Save",
+          "createButton": "Create"
+        }
       }
     }
   },
