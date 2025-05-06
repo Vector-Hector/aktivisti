@@ -667,5 +667,26 @@
   "locationSelect": {
     "hintText": "Please either enter an address in the search field or move the red highlighted pin on the map to set the location of this site on the map.",
     "adoptSuggestionPopup": "Do you want to adopt the description for this location?"
+  },
+  "adoptEventAreas": {
+    "heading": "Adopt Areas",
+    "adoptPosters": "Adopt Poster Locations",
+    "selectAreaSet": {
+      "description": "From where would you like to adopt areas?",
+      "searchByAreaName": "Search by Area Name",
+      "adoptFromRecentEvents": "From Recent Events"
+    },
+    "searchEventArea": {
+      "description": "Search for an area you would like to adopt.",
+      "areaName": "Area Name",
+      "noAreasFound": "You have not created any areas with this name.",
+      "minLengthError": "At least {0} characters"
+    },
+    "recentEventAreas": {
+      "description": "Please select an event from which you would like to adopt the defined areas."
+    },
+    "campaignCollections": {
+      "description": "Please select an area"
+    }
   }
 }

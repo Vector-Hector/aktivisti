@@ -146,7 +146,7 @@ defineExpose({
   >
     <QCard class="adopt-events-modal" :class="qCardClass">
       <QToolbar>
-        <QToolbarTitle>Gebiete übernehmen</QToolbarTitle>
+        <QToolbarTitle>{{ $t('adoptEventAreas.heading') }}</QToolbarTitle>
       </QToolbar>
       <SelectAreaSet
         v-if="page === Page.SELECT_AREA_SET"
@@ -176,7 +176,7 @@ defineExpose({
           color="primary"
           outline
           dense
-          label="Abbrechen"
+          :label="$t('general.cancel')"
           @click="onDialogCancel"
         />
         <QBtn
@@ -190,7 +190,7 @@ defineExpose({
           color="primary"
           outline
           dense
-          label="Zurück"
+          :label="$t('general.back')"
           @click="
             () => {
               page = Page.SELECT_AREA_SET
@@ -200,7 +200,7 @@ defineExpose({
         <QToggle
           v-if="isPageWithAdoptPostersButton"
           v-model="adoptPosters"
-          label="Plakatstandorte übernehmen"
+          :label="$t('adoptEventAreas.adoptPosters')"
         ></QToggle>
       </QCardActions>
     </QCard>
