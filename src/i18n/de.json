@@ -31,7 +31,10 @@
       "noValidEmailError": "Dies ist keine gültige E-Mailadress"
     },
     "back": "Zurück",
-    "create": "Erstellen"
+    "create": "Erstellen",
+    "close": "Schließen",
+    "continue": "Weiter",
+    "finish": "Fertig"
   },
   "api": {
     "model": {
@@ -70,6 +73,10 @@
       "EventStatus": {
         "ACTIVE": "aktuell",
         "ENDED": "beendet"
+      },
+      "VisibilityOptions": {
+        "PUBLIC": "Öffentlich",
+        "INVITE_ONLY": "Nur mit Einladung"
       }
     }
   },
@@ -504,6 +511,30 @@
         "geometry": "Treffpunkt/Gebiete",
         "posterLocations": "Standorte",
         "eventLocation": "Veranstaltungsort"
+      },
+      "details": {
+        "notifications": {
+          "invalidDateError": "Ungültiges Datum",
+          "successMessageMetrics": "Ergebnisse gespeichert",
+          "generalErrorMetrics": "Die Ergebnisse konnten nicht gespeichert werden",
+          "generalSuccessMessage": "Gespeichert",
+          "noValidDataError": "Bitte korrigiere die Fehler im Formular",
+          "unknownError": "Ein unbekannter Fehler ist aufgetreten",
+          "generalError": "Beim speichern des events ist etwas schiefgegangen"
+        },
+        "eventType": "Aktionstyp",
+        "eventName": "Name der Aktion",
+        "campaign": "Kampagne",
+        "campaignPlaceholder": "Wähle eine Kampagne aus",
+        "startDate": "Startdatum",
+        "endDate": "Enddatum",
+        "externalUrl": "Externe URL",
+        "messengerUrl": "Messenger URL",
+        "externalUrlDoorToDoor": "Link für externe Umfrage",
+        "publicDescription": "Öffentliche Beschreibung",
+        "internalDescription": "Interne Informationen (nur für Teilnehmer*innen sichtbar)",
+        "visibility": "Sichtbarkeit",
+        "posterCreationAllowed": "Teilnehmer*innen können Plakate anlegen"
       }
     }
   },

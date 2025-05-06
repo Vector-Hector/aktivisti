@@ -31,7 +31,10 @@
       "noValidEmailError": "This is not a valid email address"
     },
     "back": "Back",
-    "create": "Create"
+    "create": "Create",
+    "close": "Close",
+    "continue": "Continue",
+    "finish": "Finish"
   },
   "api": {
     "model": {
@@ -70,6 +73,10 @@
       "EventStatus": {
         "ACTIVE": "active",
         "ENDED": "ended"
+      },
+      "VisibilityOptions": {
+        "PUBLIC": "Public",
+        "INVITE_ONLY": "Invite Only"
       }
     }
   },
@@ -504,6 +511,30 @@
         "geometry": "Meeting Point/Areas",
         "posterLocations": "Locations",
         "eventLocation": "Event Location"
+      },
+      "details": {
+        "notifications": {
+          "invalidDateError": "Invalid date",
+          "successMessageMetrics": "Settings saved",
+          "generalErrorMetrics": "The settings could not be saved",
+          "generalSuccessMessage": "Saved",
+          "noValidDataError": "Please correct the errors in the form",
+          "unknownError": "An unknown error occurred",
+          "generalError": "Something went wrong while saving the event"
+        },
+        "eventType": "Event Type",
+        "eventName": "Event Name",
+        "campaign": "Campaign",
+        "campaignPlaceholder": "Select a campaign",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "externalUrl": "External URL",
+        "messengerUrl": "Messenger URL",
+        "externalUrlDoorToDoor": "Link for external survey",
+        "publicDescription": "Public Description",
+        "internalDescription": "Internal Information (visible only to participants)",
+        "visibility": "Visibility",
+        "posterCreationAllowed": "Participants can create posters"
       }
     }
   },

@@ -5,9 +5,11 @@ import { SettleDebouncer } from 'src/utils/debounce'
 import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 import { useQuasar } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
+import { useI18n } from 'vue-i18n'
 
 export function useEditEventAutoSaveMixin() {
   const $q = useQuasar()
+  const { t } = useI18n()
 
   const { event } = useEditEventMixin()
   const lastSavedEvent = ref<EventDto | null>(null)
@@ -34,22 +36,22 @@ export function useEditEventAutoSaveMixin() {
       lastSavedEvent.value = normalizedEventCopy(updatedEvent)
       $q.notify({
         color: 'positive',
-        message: 'Gespeichert'
+        message: t('events.edit.details.notifications.generalSuccessMessage')
       })
     } catch (e) {
       if (apiClient.isApiClientError(e) && e.response?.status === 400) {
         errors.value = e.response.data
         $q.notify({
           color: 'negative',
-          message: 'Bitte korrigiere die Fehler im Formular'
+          message: t('events.edit.details.notifications.noValidDataError')
         })
       } else {
         errors.value = {
-          'non-field-error': 'Ein unbekannter Fehler ist aufgetreten'
+          'non-field-error': t('events.edit.details.notifications.unknownError')
         }
         $q.notify({
           color: 'negative',
-          message: 'Beim speichern des events ist etwas schiefgegangen'
+          message: t('events.edit.details.notifications.generalError')
         })
       }
     }
