@@ -497,6 +497,14 @@
           }
         }
       }
+    },
+    "edit": {
+      "steps": {
+        "settings": "Settings",
+        "geometry": "Meeting Point/Areas",
+        "posterLocations": "Locations",
+        "eventLocation": "Event Location"
+      }
     }
   },
   "map": {
