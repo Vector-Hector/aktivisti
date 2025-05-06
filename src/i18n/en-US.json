@@ -34,7 +34,9 @@
     "create": "Create",
     "close": "Close",
     "continue": "Continue",
-    "finish": "Finish"
+    "finish": "Finish",
+    "no": "No",
+    "yes": "Yes"
   },
   "api": {
     "model": {
@@ -535,6 +537,29 @@
         "internalDescription": "Internal Information (visible only to participants)",
         "visibility": "Visibility",
         "posterCreationAllowed": "Participants can create posters"
+      },
+      "geometry": {
+        "locationGenericEvent": "Event Location",
+        "locationGeneralEvent": "Meeting Point",
+        "areas": {
+          "heading": "Areas",
+          "prefixNewArea": "Area",
+          "table": {
+            "color": "Color",
+            "name": "Name",
+            "posters": "Posters",
+            "addresses": "Addresses",
+            "ariaLabelEventError": "Error indicator for area",
+            "loadingData": "Loading area data",
+            "noData": "No areas drawn yet"
+          },
+          "adoptAreasButton": "Adopt Areas",
+          "drawAreasButton": "Draw Area",
+          "generalError": "Something went wrong while creating or modifying an area",
+          "deleteError": "Something went wrong while deleting the area"
+        },
+        "noValidLocationError": "Please provide a valid meeting point.",
+        "noAreasDefinedError": "This event has no areas"
       }
     }
   },
@@ -638,5 +663,9 @@
   "registrationSuccess": {
     "title": "Thank you",
     "description": "Registration was successful. Please check your inbox to confirm it, after which you can log in to the app."
+  },
+  "locationSelect": {
+    "hintText": "Please either enter an address in the search field or move the red highlighted pin on the map to set the location of this site on the map.",
+    "adoptSuggestionPopup": "Do you want to adopt the description for this location?"
   }
 }

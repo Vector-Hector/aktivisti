@@ -18,6 +18,7 @@ import AddressMarkerLayer from 'src/map/AddressMarkerLayer.vue'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
 import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 import { IMapboxDrawControls } from '@mapbox/mapbox-gl-draw'
+import { useI18n } from 'vue-i18n'
 
 const defaultColors = [
   '#E22A3A',
@@ -36,6 +37,7 @@ const { event, eventAreas, posters } = useEditEventMixin()
 const { updateArea, deleteAreaByFeatureId, features } =
   useEditEventGeometryMixin()
 const { map } = useInjectMapMixin()
+const { t } = useI18n()
 
 const routePlannerStyles = ref<any[]>(routePlannerStylesFunction('#000000'))
 const drawControls = ref<IMapboxDrawControls>({
@@ -114,7 +116,7 @@ async function handleCreatedFeatures(e: any) {
     )
     const updatedArea = Object.assign(
       {
-        name: `Gebiet ${eventAreas.value.length + 1}`,
+        name: `${t('events.edit.geometry.areas.prefixNewArea')} ${eventAreas.value.length + 1}`,
         color: defaultColors[eventAreas.value.length] ?? defaultColors[0],
         event: event.value.id
       },

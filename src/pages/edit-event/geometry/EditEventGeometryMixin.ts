@@ -3,9 +3,11 @@ import { computed } from 'vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { apiClient } from 'src/api/ApiClient'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 
 export function useEditEventGeometryMixin() {
   const $q = useQuasar()
+  const { t } = useI18n()
   const {
     eventAreas,
     updatingAreaFeatureIds,
@@ -57,13 +59,10 @@ export function useEditEventGeometryMixin() {
     } catch (e) {
       if (apiClient.isApiClientError(e) && e.response?.status === 400) {
         const errorMessage =
-          e.response?.data?.[0] ??
-          'Etwas ging beim anlegen oder verändern eines Gebiets schief'
+          e.response?.data?.[0] ?? t('events.edit.geometry.areas.generalError')
         $q.notify({
           color: 'negative',
-          message:
-            e.response?.data?.[0] ??
-            'Etwas ging beim anlegen oder verändern eines Gebiets schief'
+          message: errorMessage
         })
         if (area.feature_id) {
           updatingAreaFeatureIds.value.delete(area.feature_id)
@@ -86,7 +85,7 @@ export function useEditEventGeometryMixin() {
         eventAreas.value = eventAreas.value.filter(({ id }) => area?.id !== id)
       } catch {
         $q.notify({
-          message: 'Etwas ging schief beim löschen des Gebiets',
+          message: t('events.edit.geometry.areas.deleteError'),
           color: 'negative',
           timeout: 3000
         })

@@ -34,7 +34,9 @@
     "create": "Erstellen",
     "close": "Schließen",
     "continue": "Weiter",
-    "finish": "Fertig"
+    "finish": "Fertig",
+    "no": "Nein",
+    "yes": "Ja"
   },
   "api": {
     "model": {
@@ -535,6 +537,29 @@
         "internalDescription": "Interne Informationen (nur für Teilnehmer*innen sichtbar)",
         "visibility": "Sichtbarkeit",
         "posterCreationAllowed": "Teilnehmer*innen können Plakate anlegen"
+      },
+      "geometry": {
+        "locationGenericEvent": "Veranstaltungsort",
+        "locationGeneralEvent": "Treffpunkt",
+        "areas": {
+          "heading": "Gebiete",
+          "prefixNewArea": "Gebiet",
+          "table": {
+            "color": "Farbe",
+            "name": "Name",
+            "posters": "Plakate",
+            "addresses": "Adressen",
+            "ariaLabelEventError": "Fehlerindikator für Gebiet",
+            "loadingData": "Lade Daten zu Gebieten",
+            "noData": "Noch keine Gebiete gezeichnet"
+          },
+          "adoptAreasButton": "Gebiete übernehmen",
+          "drawAreasButton": "Gebiet zeichnen",
+          "generalError": "Etwas ging beim anlegen oder verändern eines Gebiets schief",
+          "deleteError": "Etwas ging schief beim löschen des Gebiets"
+        },
+        "noValidLocationError": "Bitte gebe einen gültigen Treffpunkt an.",
+        "noAreasDefinedError": "Dieses Event hat keine Gebiete"
       }
     }
   },
@@ -638,5 +663,9 @@
   "registrationSuccess": {
     "title": "Vielen Dank",
     "description": "Die Registrierung war erfolgreich. Bitte schaue in dein Postfach um sie zu bestätigen, danach kannst du dich bei der App anmelden."
+  },
+  "locationSelect": {
+    "hintText": "Bitte gib entweder eine Adresse in das Suchfeld ein oder verschiebe den rot hervorgehobenen Pin auf der Karte, um die Position dieses Standorts auf der Karte festzulegen.",
+    "adoptSuggestionPopup": "Willst du die Beschreibung für diesen Ort übernehmen?"
   }
 }
