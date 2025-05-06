@@ -56,6 +56,10 @@ export function useEditEventGeometryMixin() {
       })
       updatingAreaFeatureIds.value.delete(updatedArea.feature_id)
       clearAreaError(updatedArea.feature_id)
+      $q.notify({
+        color: 'positive',
+        message: t('events.edit.details.notifications.generalSuccessMessage')
+      })
     } catch (e) {
       if (apiClient.isApiClientError(e) && e.response?.status === 400) {
         const errorMessage =
