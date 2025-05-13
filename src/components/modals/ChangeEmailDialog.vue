@@ -14,6 +14,7 @@ import {
 } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
 import { useValidationRules } from 'src/utils/validationRules'
+import { useI18n } from 'vue-i18n'
 
 interface Emits {
   // REQUIRED
@@ -29,6 +30,7 @@ interface Emits {
 const emit = defineEmits<Emits>()
 
 const $q = useQuasar()
+const { t } = useI18n()
 const dialog = ref<InstanceType<typeof QDialog> | null>(null)
 const { validationRules } = useValidationRules()
 
@@ -54,7 +56,7 @@ async function onOk() {
       new_email: newEmail.value
     })
     $q.notify({
-      message: 'Bestätigungsmail wurde verschickt',
+      message: t('profile.changeEmailDialog.notifications.success'),
       color: 'positive'
     })
     emit('ok', {
@@ -67,7 +69,7 @@ async function onOk() {
       errors.value = e.response.data
     }
     $q.notify({
-      message: 'Etwas ging schief beim Ändern der E-Mail Adresse',
+      message: t('profile.changeEmailDialog.notifications.error'),
       color: 'negative'
     })
   } finally {
@@ -83,18 +85,17 @@ function onDialogHide() {
   <QDialog ref="dialog" @hide="onDialogHide">
     <QCard class="change-email-dialog">
       <QToolbar>
-        <QToolbarTitle>E-Mail Adresse ändern</QToolbarTitle>
+        <QToolbarTitle>{{
+          $t('profile.changeEmailDialog.title')
+        }}</QToolbarTitle>
       </QToolbar>
       <QForm @submit="onOk">
         <QCardSection>
           <p>
-            Hier kannst du eine neue E-Mail Adresse festlegen. Dazu brauchen wir
-            noch einmal dein aktuelles Passwort. Die E-Mail Adresse wird erst in
-            deinem Profil übernommen, wenn du den Bestätigungslink anklickst,
-            den wir an deine neue E-Mail Adresse schicken.
+            {{ $t('profile.changeEmailDialog.description') }}
           </p>
           <QInput
-            label="Passwort"
+            :label="$t('profile.changeEmailDialog.passwordInput')"
             v-model="password"
             type="password"
             :minlength="8"
@@ -103,7 +104,7 @@ function onDialogHide() {
             :error="!!errors.password?.length"
           />
           <QInput
-            label="Neue E-Mail Adresse"
+            :label="$t('profile.changeEmailDialog.newEmailAddress')"
             v-model="newEmail"
             :rules="[validationRules.email]"
             :error-message="errors.new_email?.[0]"
@@ -115,14 +116,14 @@ function onDialogHide() {
             flat
             :disabled="isSubmitting"
             color="primary"
-            label="Abbrechen"
+            :label="$t('general.cancel')"
             @click="onDialogHide"
           />
           <QBtn
             flat
             :disabled="isSubmitting"
             color="primary"
-            label="OK"
+            :label="$t('profile.changeEmailDialog.submitButton')"
             type="submit"
           />
         </QCardActions>

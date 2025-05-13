@@ -14,6 +14,7 @@ import {
 import PasswordInput from 'components/PasswordInput.vue'
 import { apiClient } from 'src/api/ApiClient'
 import { useValidationRules } from 'src/utils/validationRules'
+import { useI18n } from 'vue-i18n'
 
 interface Emits {
   // REQUIRED
@@ -23,6 +24,7 @@ interface Emits {
 const emit = defineEmits<Emits>()
 
 const $q = useQuasar()
+const { t } = useI18n()
 const { validationRules } = useValidationRules()
 const dialog = ref<InstanceType<typeof QDialog> | null>(null)
 
@@ -49,7 +51,7 @@ async function onOk() {
       new_password: newPassword.value
     })
     $q.notify({
-      message: 'Passwort wurde geändert',
+      message: t('profile.changePasswordDialog.notifications.success'),
       color: 'positive'
     })
     emit('ok')
@@ -59,7 +61,7 @@ async function onOk() {
       errors.value = e.response.data
     }
     $q.notify({
-      message: 'Etwas ging schief beim Ändern des Passworts',
+      message: t('profile.changePasswordDialog.notifications.generalError'),
       color: 'negative'
     })
   } finally {
@@ -73,7 +75,7 @@ function passwordMatch(value: string) {
   if (newPassword.value === value) {
     return true
   } else {
-    return 'Die Passwörter müssen übereinstimmen'
+    return t('profile.changePasswordDialog.notifications.noMatchingPassword')
   }
 }
 </script>
@@ -82,16 +84,17 @@ function passwordMatch(value: string) {
   <QDialog ref="dialog" @hide="onDialogHide">
     <QCard class="change-email-dialog">
       <QToolbar>
-        <QToolbarTitle>Passwort ändern</QToolbarTitle>
+        <QToolbarTitle>{{
+          $t('profile.changePasswordDialog.title')
+        }}</QToolbarTitle>
       </QToolbar>
       <QForm @submit="onOk">
         <QCardSection>
           <p>
-            Hier kannst du eine neues Passwort eingeben. Gib dazu dein aktuelles
-            und das neue Passwort ein
+            {{ $t('profile.changePasswordDialog.description') }}
           </p>
           <PasswordInput
-            label="Aktuelles Passwort"
+            :label="$t('profile.changePasswordDialog.currentPassword')"
             v-model="oldPassword"
             :minlength="8"
             :rules="[validationRules.isRequired]"
@@ -99,7 +102,7 @@ function passwordMatch(value: string) {
             :error="!!errors.old_password?.length"
           />
           <PasswordInput
-            label="Neues Passwort"
+            :label="$t('profile.changePasswordDialog.newPassword')"
             v-model="newPassword"
             :minlength="8"
             :rules="[validationRules.isRequired]"
@@ -107,7 +110,7 @@ function passwordMatch(value: string) {
             :error="!!errors.new_password?.length"
           />
           <PasswordInput
-            label="Neues Passwort bestätigen"
+            :label="$t('profile.changePasswordDialog.confirmNewPassword')"
             v-model="newPasswordConfirm"
             :minlength="8"
             :rules="[validationRules.isRequired, passwordMatch]"
@@ -118,14 +121,14 @@ function passwordMatch(value: string) {
             flat
             :disabled="isSubmitting"
             color="primary"
-            label="Abbrechen"
+            :label="$t('general.cancel')"
             @click="onDialogHide"
           />
           <QBtn
             flat
             :disabled="isSubmitting"
             color="primary"
-            label="OK"
+            :label="$t('profile.changePasswordDialog.submitButton')"
             type="submit"
           />
         </QCardActions>

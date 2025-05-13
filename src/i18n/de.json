@@ -197,6 +197,41 @@
         "inProgress": "Wird gespeichert"
       }
     },
+    "changeUsernameDialog": {
+      "title": "Benutzer*innenname ändern",
+      "description": "Hier kannst du eine neuen Benutzer*innenname festlegen. Dazu brauchen wir noch einmal dein aktuelles Passwort. Nachdem du dein Benutzer*innenname geändert hast, ist dein alter Benutzer*innenname für alle anderen Benutzer*innen verfügbar.",
+      "passwordInput": "Passwort",
+      "newUsername": "Neuer Benutzer*innenname",
+      "submitButton": "OK",
+      "notifications": {
+        "success": "Benutzer*innenname wurde geändert",
+        "error": "Etwas ging schief beim Ändern des Benutzer*innenname"
+      }
+    },
+    "changeEmailDialog": {
+      "title": "E-Mail Adresse ändern",
+      "description": "Hier kannst du eine neue E-Mail Adresse festlegen. Dazu brauchen wir noch einmal dein aktuelles Passwort. Die E-Mail Adresse wird erst in deinem Profil übernommen, wenn du den Bestätigungslink anklickst, den wir an deine neue E-Mail Adresse schicken.",
+      "passwordInput": "Passwort",
+      "newEmailAddress": "Neue E-Mail Adresse",
+      "submitButton": "OK",
+      "notifications": {
+        "success": "Bestätigungsmail wurde verschickt",
+        "error": "Etwas ging schief beim Ändern der E-Mail Adresse"
+      }
+    },
+    "changePasswordDialog": {
+      "title": "Passwort ändern",
+      "description": "Hier kannst du eine neues Passwort eingeben. Gib dazu dein aktuelles und das neue Passwort ein",
+      "currentPassword": "Aktuelles Passwort",
+      "newPassword": "Neues Passwort",
+      "confirmNewPassword": "Neues Passwort bestätigen",
+      "submitButton": "OK",
+      "notifications": {
+        "success": "Passwort wurde geändert",
+        "generalError": "Etwas ging schief beim Ändern des Passworts",
+        "noMatchingPassword": "Die Passwörter müssen übereinstimmen"
+      }
+    },
     "deleteAccountDialog": {
       "title": "Account löschen",
       "description": "Möchtest du wirklich deinen Account löschen?",

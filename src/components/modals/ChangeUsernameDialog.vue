@@ -15,6 +15,7 @@ import {
 import PasswordInput from 'components/PasswordInput.vue'
 import { apiClient } from 'src/api/ApiClient'
 import { useValidationRules } from 'src/utils/validationRules'
+import { useI18n } from 'vue-i18n'
 
 interface Emits {
   // REQUIRED
@@ -24,6 +25,7 @@ interface Emits {
 const emit = defineEmits<Emits>()
 
 const $q = useQuasar()
+const { t } = useI18n()
 const { validationRules } = useValidationRules()
 const dialog = ref<InstanceType<typeof QDialog> | null>(null)
 
@@ -49,7 +51,7 @@ async function onOk() {
       new_username: newUsername.value
     })
     $q.notify({
-      message: 'Benutzer*innenname wurde geändert',
+      message: t('profile.changeUsernameDialog.notifications.success'),
       color: 'positive'
     })
     emit('ok', newUsername.value)
@@ -59,7 +61,7 @@ async function onOk() {
       errors.value = e.response.data
     }
     $q.notify({
-      message: 'Etwas ging schief beim Ändern des Benutzer*innenname',
+      message: t('profile.changeUsernameDialog.notifications.error'),
       color: 'negative'
     })
   } finally {
@@ -75,18 +77,17 @@ function onDialogHide() {
   <QDialog ref="dialog">
     <QCard class="change-username-dialog">
       <QToolbar>
-        <QToolbarTitle>Benutzer*innenname ändern</QToolbarTitle>
+        <QToolbarTitle>{{
+          $t('profile.changeUsernameDialog.title')
+        }}</QToolbarTitle>
       </QToolbar>
       <QForm @submit="onOk">
         <QCardSection>
           <p>
-            Hier kannst du eine neuen Benutzer*innenname festlegen. Dazu
-            brauchen wir noch einmal dein aktuelles Passwort. Nachdem du dein
-            Benutzer*innenname geändert hast, ist dein alter Benutzer*innenname
-            für alle anderen Benutzer*innen verfügbar.
+            {{ $t('profile.changeUsernameDialog.description') }}
           </p>
           <PasswordInput
-            label="Passwort"
+            :label="$t('profile.changeUsernameDialog.passwordInput')"
             v-model="password"
             :minlength="8"
             :rules="[validationRules.isRequired]"
@@ -94,7 +95,7 @@ function onDialogHide() {
             :error="!!errors.password?.length"
           />
           <QInput
-            label="Neuer Benutzer*innenname"
+            :label="$t('profile.changeUsernameDialog.newUsername')"
             v-model="newUsername"
             :rules="[validationRules.isRequired]"
             :error-message="errors.new_username?.[0]"
@@ -106,14 +107,14 @@ function onDialogHide() {
             flat
             :disabled="isSubmitting"
             color="primary"
-            label="Abbrechen"
+            :label="$t('general.cancel')"
             @click="onDialogHide"
           />
           <QBtn
             flat
             :disabled="isSubmitting"
             color="primary"
-            label="OK"
+            :label="$t('profile.changeUsernameDialog.submitButton')"
             type="submit"
           />
         </QCardActions>

@@ -197,6 +197,41 @@
         "inProgress": "Saving in progress"
       }
     },
+    "changeUsernameDialog": {
+      "title": "Change Username",
+      "description": "Here you can set a new username. For this, we need your current password again. After you change your username, your old username will be available to other users.",
+      "passwordInput": "Password",
+      "newUsername": "New Username",
+      "submitButton": "OK",
+      "notifications": {
+        "success": "Username has been changed",
+        "error": "Something went wrong while changing the username"
+      }
+    },
+    "changeEmailDialog": {
+      "title": "Change Email Address",
+      "description": "Here you can set a new email address. For this, we need your current password again. The email address will only be updated in your profile after you click the confirmation link we send to your new email address.",
+      "passwordInput": "Password",
+      "newEmailAddress": "New Email Address",
+      "submitButton": "OK",
+      "notifications": {
+        "success": "Confirmation email has been sent",
+        "error": "Something went wrong while changing the email address"
+      }
+    },
+    "changePasswordDialog": {
+      "title": "Change Password",
+      "description": "Here you can enter a new password. Please enter your current password and the new password.",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmNewPassword": "Confirm New Password",
+      "submitButton": "OK",
+      "notifications": {
+        "success": "Password has been changed",
+        "generalError": "Something went wrong while changing the password",
+        "noMatchingPassword": "Passwords must match"
+      }
+    },
     "deleteAccountDialog": {
       "title": "Delete Account",
       "description": "Do you really want to delete your account?",
