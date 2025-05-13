@@ -652,6 +652,31 @@
       "currentStatus": "Current{newLine}Status"
     }
   },
+  "register": {
+    "betaDialog": {
+      "title": "Closed Beta",
+      "description": "Great that you are interested in Aktivisti. We are currently in a closed beta phase. Registrations will only be possible in the next phase. To participate now, a comrade must invite you."
+    },
+    "email": "Email Address",
+    "username": "Username",
+    "password": "Password",
+    "zipCode": "ZIP Code",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "submitButton": "Register",
+    "accountAlreadyExists": "Already registered?",
+    "goToLogin": "Go to Login",
+    "privacyDisclaimer": {
+      "description": "As a user of Aktivisti, you acknowledge and agree that you will not use the data received and transmitted via the app for any purpose other than organizing actions of the party Die Linke, in particular, you will neither save, copy, nor transmit it to third parties for other purposes. You agree to always keep the password confidential and to immediately notify the federal board at {email} of any loss of the device or any possible disclosure of the password or misuse of the app by third parties. You agree to forward any third-party inquiries regarding the scope of data processing of the app to the responsible party at the federal board of the party and to provide the affected person with the contact details or the link to the {link}.",
+      "email": "datenschutz@die-linke.app",
+      "link_label": "Privacy Policy",
+      "link_address": "https://www.die-linke.de/seitenfuss/datenschutz/#accordion-heading-17445-2912"
+    },
+    "notifications": {
+      "unknownError": "An unexpected error occurred",
+      "functionalityNotAvailable": "This functionality is currently not available"
+    }
+  },
   "map": {
     "geocoder": {
       "placeholder": "Search"

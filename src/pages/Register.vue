@@ -9,8 +9,10 @@ import PasswordInput from 'components/PasswordInput.vue'
 import { apiClient } from 'src/api/ApiClient'
 import { useRouter } from 'vue-router'
 import { useValidationRules } from 'src/utils/validationRules'
+import { useI18n } from 'vue-i18n'
 
 const $q = useQuasar()
+const { t } = useI18n()
 const $router = useRouter()
 const { validationRules } = useValidationRules()
 
@@ -20,11 +22,8 @@ const submitting = ref(false)
 
 if (configStore.getState().service_config.registration_disabled) {
   $q.dialog({
-    title: 'Geschlossene Beta',
-    message:
-      'Schön, dass du dich für Aktivisti interessierst. Derzeit befinden wir uns in einer ' +
-      'geschlossenen Beta-Phase. Registrierungen sind erst ab der nächsten Phase möglich. ' +
-      'Um jetzt schon mitzumachen, muss eine Genoss*in dich einladen.'
+    title: t('register.betaDialog.title'),
+    message: t('register.betaDialog.description')
   })
 }
 
@@ -39,12 +38,12 @@ async function register() {
         errors.value = error.response.data
       } else if (error.response?.status === 503) {
         errors.value = {
-          non_field_error: 'Diese Funktion steht derzeit nicht zur Verfügung'
+          non_field_error: t('register.notifications.functionalityNotAvailable')
         }
       }
     } else {
       errors.value = {
-        non_field_error: 'Ein unerwarteter Fehler ist aufgetreten'
+        non_field_error: t('register.notifications.unknownError')
       }
     }
   }
@@ -61,7 +60,7 @@ async function register() {
             v-model="registrationData.email"
             :rules="[validationRules.isRequired, validationRules.email]"
             name="email"
-            label="E-Mailadresse *"
+            :label="`${$t('register.email')} *`"
             :error-message="errors.email?.[0]"
             :error="!!errors.email?.length"
           />
@@ -69,7 +68,7 @@ async function register() {
             v-model="registrationData.username"
             :rules="[validationRules.isRequired]"
             name="username"
-            label="Benutzer*innenname *"
+            :label="`${$t('register.username')} *`"
             :error-message="errors.username?.[0]"
             :error="!!errors.username?.length"
           />
@@ -77,7 +76,7 @@ async function register() {
             v-model="registrationData.password"
             :rules="[validationRules.isRequired]"
             name="password"
-            label="Passwort *"
+            :label="`${$t('register.password')} *`"
             :minlength="6"
             :error-message="errors.password?.[0]"
             :error="!!errors.password?.length"
@@ -87,7 +86,7 @@ async function register() {
             :rules="[validationRules.isRequired]"
             :maxlength="5"
             :minlength="5"
-            label="Postleitzahl *"
+            :label="`${$t('register.zipCode')} *`"
             name="plz"
             :error-message="errors.plz?.[0]"
             :error="!!errors.plz?.length"
@@ -95,58 +94,55 @@ async function register() {
           <QInput
             v-model="registrationData.first_name"
             name="first_name"
-            label="Vorname"
+            :label="$t('register.firstName')"
             :error-message="errors.first_name?.[0]"
             :error="!!errors.first_name?.length"
           />
           <QInput
             v-model="registrationData.last_name"
             name="last_name"
-            label="Nachname"
+            :label="$t('register.lastName')"
             :error-message="errors.last_name?.[0]"
             :error="!!errors.last_name?.length"
           />
 
           <div class="privacy-disclaimer">
             <p>
-              Als Benutzer*in von Aktivisti nimmst Du zur Kenntnis und stimmst
-              zu, dass Du die per App erhaltenen und übermittelten Daten zu
-              keinem anderen Zweck als der Organisation von Aktionen der Partei
-              Die Linke nutzt, insbesondere diese weder speicherst, noch
-              kopierst oder Dritten für andere Zwecke übermittelst. Du stimmst
-              zu, dass Passwort stets vertraulich zu behandeln und jeden Verlust
-              des Gerätes oder jede mögliche Offenbarung des Passwortes oder
-              zweckwidrige Nutzung der App durch Dritte unverzüglich dem
-              Bundesvorstand unter
-              <a href="mailto:datenschutz@die-linke.app" class="primary-link"
-                >datenschutz@die-linke.app</a
+              <i18n-t
+                keypath="register.privacyDisclaimer.description"
+                tag="div"
               >
-              mitzuteilen. Du stimmst zu, jede Nachfrage Dritter zum Umfang der
-              Datenverarbeitung der App an den Verantwortlichen beim
-              Bundesvorstand der Partei weiterzuleiten und dem Betroffenen die
-              Kontaktdaten bzw. den Link zu den
-              <a
-                href="https://www.die-linke.de/seitenfuss/datenschutz/#accordion-heading-17445-2912"
-                target="_blank"
-                class="primary-link"
-              >
-                Datenschutzhinweisen
-              </a>
-              mitzuteilen.
+                <template #email>
+                  <a
+                    :href="`mailto:${$t('register.privacyDisclaimer.email')}`"
+                    class="primary-link"
+                    >{{ $t('register.privacyDisclaimer.email') }}</a
+                  >
+                </template>
+                <template #link>
+                  <a
+                    :href="$t('register.privacyDisclaimer.link_address')"
+                    target="_blank"
+                    class="primary-link"
+                  >
+                    {{ $t('register.privacyDisclaimer.link_label') }}
+                  </a>
+                </template>
+              </i18n-t>
             </p>
           </div>
           <FormError :error="errors.non_field_error?.[0]" />
           <div class="control-buttons">
             <QBtn color="primary" type="submit" :disabled="submitting">
-              Registrieren
+              {{ $t('register.submitButton') }}
             </QBtn>
           </div>
         </QForm>
 
         <div class="sign-up-link">
-          Du bist bereits angemeldet?
+          {{ $t('register.accountAlreadyExists') }}
           <router-link to="/login" class="primary-link">
-            Zum Login
+            {{ $t('register.goToLogin') }}
           </router-link>
         </div>
       </div>

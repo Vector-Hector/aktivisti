@@ -652,6 +652,31 @@
       "currentStatus": "Aktueller{newLine}Status"
     }
   },
+  "register": {
+    "betaDialog": {
+      "title": "Geschlossene Beta",
+      "description": "Schön, dass du dich für Aktivisti interessierst. Derzeit befinden wir uns in einer geschlossenen Beta-Phase. Registrierungen sind erst ab der nächsten Phase möglich. Um jetzt schon mitzumachen, muss eine Genoss*in dich einladen."
+    },
+    "email": "E-Mailadresse",
+    "username": "Benutzer*innenname",
+    "password": "Passwort",
+    "zipCode": "Postleitzahl",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "submitButton": "Registrieren",
+    "accountAlreadyExists": "Du bist bereits angemeldet?",
+    "goToLogin": "Zum Login",
+    "privacyDisclaimer": {
+      "description": "Als Benutzer*in von Aktivisti nimmst Du zur Kenntnis und stimmst zu, dass Du die per App erhaltenen und übermittelten Daten zu keinem anderen Zweck als der Organisation von Aktionen der Partei Die Linke nutzt, insbesondere diese weder speicherst, noch kopierst oder Dritten für andere Zwecke übermittelst. Du stimmst zu, dass Passwort stets vertraulich zu behandeln und jeden Verlust des Gerätes oder jede mögliche Offenbarung des Passwortes oder zweckwidrige Nutzung der App durch Dritte unverzüglich dem Bundesvorstand unter {email} mitzuteilen. Du stimmst zu, jede Nachfrage Dritter zum Umfang der Datenverarbeitung der App an den Verantwortlichen beim Bundesvorstand der Partei weiterzuleiten und dem Betroffenen die Kontaktdaten bzw. den Link zu den {link} mitzuteilen.",
+      "email": "datenschutz@die-linke.app",
+      "link_label": "Datenschutzhinweisen",
+      "link_address": "https://www.die-linke.de/seitenfuss/datenschutz/#accordion-heading-17445-2912"
+    },
+    "notifications": {
+      "unknownError": "Ein unerwarteter Fehler ist aufgetreten",
+      "functionalityNotAvailable": "Diese Funktion steht derzeit nicht zur Verfügung"
+    }
+  },
   "map": {
     "geocoder": {
       "placeholder": "Suchen"
