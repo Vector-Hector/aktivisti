@@ -98,6 +98,6 @@ async function loadData(index: number, done: () => void) {
         :show-management-control-buttons="showManagementControlButtons"
       />
     </template>
-    <template v-slot:emptyList> Keine Aktionen im Gebiet gefunden</template>
+    <template v-slot:emptyList> {{ $t('events.noEventsFound') }}</template>
   </InfiniteList>
 </template>

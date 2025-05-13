@@ -353,6 +353,7 @@
       "joinAndGetInfo": "Join/Info"
     },
     "createButtonLong": "Create Event",
+    "noEventsFound": "No events found in the area",
     "createButtonShort": "Create",
     "details": {
       "prefixHangDownPostersEvent": "[Take Down] ",

@@ -50,6 +50,6 @@ function addToVisibile(index, done) {
         :campaigns="props.campaigns"
       />
     </template>
-    <template v-slot:emptyList> Keine Aktionen im Gebiet gefunden</template>
+    <template v-slot:emptyList> {{ $t('events.noEventsFound') }}</template>
   </InfiniteList>
 </template>

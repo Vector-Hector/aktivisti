@@ -353,6 +353,7 @@
       "joinAndGetInfo": "Mitmachen/Infos"
     },
     "createButtonLong": "Aktion erstellen",
+    "noEventsFound": "Keine Aktionen im Gebiet gefunden",
     "createButtonShort": "Erstellen",
     "details": {
       "prefixHangDownPostersEvent": "[Abhängen] ",
