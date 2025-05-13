@@ -45,8 +45,10 @@
           "none": "No rights",
           "team_captain": "Team Captain",
           "manages_events": "Coordinator"
-        },
-        "contentTypeNaturalKey": {
+        }
+      },
+      "ContentTypeDto": {
+        "naturalKey": {
           "core": {
             "subassociation": "Sub Association",
             "stateassociation": "State Association",
@@ -575,6 +577,19 @@
           "createButton": "Create"
         }
       }
+    }
+  },
+  "manageUsers": {
+    "noAssociationFound": "No association found",
+    "selectContentTypeLabel": "On which level would you like to manage users",
+    "selectAssociationLabel": "For which {0} would you like to manage users",
+    "selectUserLabel": "Select user",
+    "notifications": {
+      "userAlreadyAddedError": "The user has already been added to the list",
+      "userNotFoundError": "User not found.",
+      "generalError": "An unknown error occurred while adding the user",
+      "removePermissionsSuccess": "The user has been stripped of permissions for the association area",
+      "savedSuccess": "Saved"
     }
   },
   "map": {

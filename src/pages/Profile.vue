@@ -464,7 +464,7 @@ defineExpose({ setEmailNotificationSettings, setPermissions })
           <QItem>
             <QItemSection>{{
               $t('profile.notificationsSettings.pushNotifications')
-            }}</QItemSection>
+              }}</QItemSection>
             <QItemSection side>
               <QToggle
                 @update:model-value="savePushNotificationSettings"
@@ -504,7 +504,7 @@ defineExpose({ setEmailNotificationSettings, setPermissions })
                   $t('profile.permissions.permissionFor') +
                   ' ' +
                   $t(
-                    `api.model.UserObjectPermissionDto.contentTypeNaturalKey.${permission.content_type_natural_key}`
+                    `api.model.ContentTypeDto.naturalKey.${permission.content_type_natural_key}`
                   )
                 }}
                 <b>{{ permission.content_object_name }}</b>

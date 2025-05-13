@@ -19,6 +19,7 @@ import {
 } from 'src/api/model/UserObjectPermissionDto'
 import { ContentTypeNaturalKey } from 'src/api/model/ContentTypeDto'
 import { apiClient } from 'src/api/ApiClient'
+import { useI18n } from 'vue-i18n'
 
 interface UserPermissionItem {
   username: string
@@ -45,6 +46,7 @@ defineExpose({
 })
 
 const $q = useQuasar()
+const { t } = useI18n()
 
 const userPermissions = ref<UserPermissionItem[]>([])
 
@@ -110,8 +112,7 @@ async function updateObjectPermission(
     )
     $q.notify({
       color: 'positive',
-      message:
-        'Der Benutzer*in wurden die Rechte für das Verwaltungsgebiet entzogen'
+      message: t('manageUsers.notifications.removePermissionsSuccess')
     })
   } else {
     const newUserObjectPermission = {
@@ -134,7 +135,7 @@ async function updateObjectPermission(
     }
     $q.notify({
       color: 'positive',
-      message: 'Gespeichert'
+      message: t('manageUsers.notifications.savedSuccess')
     })
   }
   user.permission_name = permission.label

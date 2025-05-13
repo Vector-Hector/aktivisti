@@ -45,8 +45,10 @@
           "none": "Keine Rechte",
           "team_captain": "Teamcaptain",
           "manages_events": "Koordinator*in"
-        },
-        "contentTypeNaturalKey": {
+        }
+      },
+      "ContentTypeDto": {
+        "naturalKey": {
           "core": {
             "subassociation": "Kreisverband",
             "stateassociation": "Landesverband",
@@ -575,6 +577,19 @@
           "createButton": "Erstellen"
         }
       }
+    }
+  },
+  "manageUsers": {
+    "noAssociationFound": "Kein Verband gefunden",
+    "selectContentTypeLabel": "Auf welcher Ebene möchtest du Benutzer*innen verwalten",
+    "selectAssociationLabel": "Für welchen {0} möchtest du Benutzer*innen verwalten",
+    "selectUserLabel": "Benutzer*in wählen",
+    "notifications": {
+      "userAlreadyAddedError": "Die Benutzer*in wurde bereits zur Liste hinzugefügt",
+      "userNotFoundError": "Benutzer*in nicht gefunden.",
+      "generalError": "Beim Hinzufügen der Benutzer*in ist ein unbekannter Fehler aufgetreten",
+      "removePermissionsSuccess": "Der Benutzer*in wurden die Rechte für das Verwaltungsgebiet entzogen",
+      "savedSuccess": "Gespeichert"
     }
   },
   "map": {
