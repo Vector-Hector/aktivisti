@@ -21,6 +21,7 @@ import {
 } from 'src/api/model/PosterDto'
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
 import { useDateFormat } from 'src/utils/dateFormat'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   event: EventDto
@@ -32,6 +33,7 @@ const props = defineProps<Props>()
 const { dateFormat } = useDateFormat()
 const { PosterStatusUtil, PosterMountUtil } = usePosterOptions()
 const { eventTypeOptions } = useEventTypes()
+const { t } = useI18n()
 
 const areaFeatures = computed(() => {
   return props.eventAreas.map(eventAreaToFeature)
@@ -97,11 +99,16 @@ function print() {
     <div class="print-page">
       <h1 class="headline">{{ event.name }}</h1>
       <p class="facts">
-        Treffpunkt: {{ event.location_description }}<br />
-        Einsatztyp:
-        {{ eventTypeOptions.find(({ key }) => key === event.event_type)?.label
-        }}<br />
-        Datum: {{ dateFormat(event.start_date, 'datetime') }}
+        {{
+          `${t('events.details.meetingPoint')}: ${event.location_description}`
+        }}
+        <br />
+        {{
+          `${t('print.operationType')}:
+        ${eventTypeOptions.find(({ key }) => key === event.event_type)?.label}`
+        }}
+        <br />
+        {{ `${t('print.date')}: ${dateFormat(event.start_date, 'datetime')}` }}
       </p>
       <p>{{ event.description }}</p>
       <img class="linke-logo" src="../../assets/logo_dielinke.svg" />
@@ -109,7 +116,7 @@ function print() {
         <EventMarker v-if="event?.location" :event="event" />
         <FeatureLayer :features="areaFeatures" />
       </Map>
-      <h3>Gebiete</h3>
+      <h3>{{ $t('print.headingAreas') }}</h3>
       <div class="row q-col-gutter-md">
         <div class="area-item col-4" v-for="area in eventAreas" :key="area.id">
           <QIcon
@@ -128,17 +135,20 @@ function print() {
 
     <div class="print-page" v-for="area in eventAreas" :key="area.id">
       <img class="linke-logo" src="../../assets/logo_dielinke.svg" />
-      <h1 class="headline">Erfassungsbogen für Gebiet: {{ area.name }}</h1>
+      <h1 class="headline">
+        {{ $t('print.headingAreaRecordSheet', [area.name]) }}
+      </h1>
       <div class="row q-col-gutter-x-sm">
         <div class="col-8">
           <p class="facts">
-            Einsatztyp:
             {{
-              eventTypeOptions.find(({ key }) => key === event.event_type)
-                ?.label
+              `${t('print.operationType')}:
+        ${eventTypeOptions.find(({ key }) => key === event.event_type)?.label}`
             }}<br />
-            Einsatzname: {{ event.name }}<br />
-            Datum: {{ dateFormat(event.start_date, 'datetime') }}<br />
+            {{ `${t('print.operationName')}: ${event.name}` }}<br />
+            {{
+              `${t('print.date')}:  ${dateFormat(event.start_date, 'datetime')}`
+            }}<br />
           </p>
           <Map
             class="area-map"
@@ -158,11 +168,25 @@ function print() {
       <div class="posters-entry-table">
         <div class="tableheader row">
           <div class="col-1 poster-item-cell">#</div>
-          <div class="col-5 poster-item-cell location">Ort</div>
-          <div class="col-2 poster-item-cell">Position</div>
-          <div class="col-2 poster-item-cell">letzter<br />Status</div>
+          <div class="col-5 poster-item-cell location">
+            {{ $t('print.posterTable.location') }}
+          </div>
+          <div class="col-2 poster-item-cell">
+            {{ $t('print.posterTable.mountedOn') }}
+          </div>
+          <div class="col-2 poster-item-cell">
+            <i18n-t keypath="print.posterTable.lastStatus">
+              <template #newLine>
+                <br />
+              </template>
+            </i18n-t>
+          </div>
           <div class="col-2 poster-item-cell new-status">
-            aktueller<br />Status
+            <i18n-t keypath="print.posterTable.currentStatus">
+              <template #newLine>
+                <br />
+              </template>
+            </i18n-t>
           </div>
         </div>
         <div
@@ -193,17 +217,18 @@ function print() {
     </div>
     <div class="print-page" v-if="arePostersOutsideArea">
       <img class="linke-logo" src="../../assets/logo_dielinke.svg" />
-      <h1 class="headline">Erfassungsbogen für Plakate ohne Gebiet</h1>
+      <h1 class="headline">{{ $t('print.headingPostersWithoutAreaSheet') }}</h1>
       <div class="row q-col-gutter-x-sm">
         <div class="col-8">
           <p class="facts">
-            Einsatztyp:
             {{
-              eventTypeOptions.find(({ key }) => key === event.event_type)
-                ?.label
+              `${t('print.operationType')}:
+        ${eventTypeOptions.find(({ key }) => key === event.event_type)?.label}`
             }}<br />
-            Einsatzname: {{ event.name }}<br />
-            Datum: {{ dateFormat(event.start_date, 'datetime') }}<br />
+            {{ `${t('print.operationName')}: ${event.name}` }}<br />
+            {{
+              `${t('print.date')}:  ${dateFormat(event.start_date, 'datetime')}`
+            }}<br />
           </p>
           <Map class="area-map" :interactive="false" :bounding-box="zoomBox">
             <FeatureLayer :features="areaFeatures" />
@@ -219,11 +244,25 @@ function print() {
       <div class="posters-entry-table">
         <div class="tableheader row">
           <div class="col-1 poster-item-cell">#</div>
-          <div class="col-5 poster-item-cell location">Ort</div>
-          <div class="col-2 poster-item-cell">Position</div>
-          <div class="col-2 poster-item-cell">letzter<br />Status</div>
+          <div class="col-5 poster-item-cell location">
+            {{ $t('print.posterTable.location') }}
+          </div>
+          <div class="col-2 poster-item-cell">
+            {{ $t('print.posterTable.mountedOn') }}
+          </div>
+          <div class="col-2 poster-item-cell">
+            <i18n-t keypath="print.posterTable.lastStatus">
+              <template #newLine>
+                <br />
+              </template>
+            </i18n-t>
+          </div>
           <div class="col-2 poster-item-cell new-status">
-            aktueller<br />Status
+            <i18n-t keypath="print.posterTable.currentStatus">
+              <template #newLine>
+                <br />
+              </template>
+            </i18n-t>
           </div>
         </div>
         <div

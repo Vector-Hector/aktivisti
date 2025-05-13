@@ -593,6 +593,30 @@
       "savedSuccess": "Saved"
     }
   },
+  "print": {
+    "headingAreas": "Areas",
+    "operationType": "Operation Type",
+    "operationName": "Operation Name",
+    "addressCounter": "Number of Addresses",
+    "date": "Date",
+    "suffixAddressCounter": "Addresses",
+    "headingAreaRecordSheet": "Record Sheet for Area: {0}",
+    "headingPostersWithoutAreaSheet": "Record Sheet for Posters Without Area",
+    "streets": "Streets",
+    "noAddressesFound": "No addresses in the OSM dataset",
+    "metricsTable": {
+      "metrics": "Results",
+      "tally": "Tally",
+      "total": "Total",
+      "collectedLeads": "Collected Leads"
+    },
+    "posterTable": {
+      "location": "Location",
+      "mountedOn": "Mounted On",
+      "lastStatus": "Last{newLine}Status",
+      "currentStatus": "Current{newLine}Status"
+    }
+  },
   "map": {
     "geocoder": {
       "placeholder": "Search"

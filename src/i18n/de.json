@@ -593,6 +593,30 @@
       "savedSuccess": "Gespeichert"
     }
   },
+  "print": {
+    "headingAreas": "Gebiete",
+    "operationType": "Einsatztyp",
+    "operationName": "Einsatzname",
+    "addressCounter": "Anzahl Adressen",
+    "date": "Datum",
+    "suffixAddressCounter": "Adressen",
+    "headingAreaRecordSheet": "Erfassungsbogen für Gebiet: {0}",
+    "headingPostersWithoutAreaSheet": "Erfassungsbogen für Plakate ohne Gebiet",
+    "streets": "Straßen",
+    "noAddressesFound": "Keine Adressen im OSM Datensatz",
+    "metricsTable": {
+      "metrics": "Ergebnisse",
+      "tally": "Strichliste",
+      "total": "Gesamt",
+      "collectedLeads": "Aufgenommene Kontaktdaten"
+    },
+    "posterTable": {
+      "location": "Ort",
+      "mountedOn": "Position",
+      "lastStatus": "Letzter{newLine}Status",
+      "currentStatus": "Aktueller{newLine}Status"
+    }
+  },
   "map": {
     "geocoder": {
       "placeholder": "Suchen"
