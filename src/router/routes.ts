@@ -89,7 +89,7 @@ const routes = [
         component: MyParticipations,
         name: 'my-participations',
         meta: {
-          title: (t) => t('routes.my_participations.title')
+          title: (t) => t('routes.myParticipations.title')
         }
       },
       {
@@ -257,7 +257,7 @@ const routes = [
                       title: () =>
                         uiStore.getState().activeTitleElements.houseNumber,
                       subtitle: (t) =>
-                        t('routes.events.area.street.record_results.title')
+                        t('routes.events.area.street.recordResults.title')
                     },
                     props: true,
                     name: 'event-detail-area-metrics'
@@ -268,7 +268,7 @@ const routes = [
                     component: CreateLead,
                     props: true,
                     meta: {
-                      title: (t) => t('routes.events.area.create_lead.title')
+                      title: (t) => t('routes.events.area.createLead.title')
                     }
                   },
                   {
@@ -314,7 +314,7 @@ const routes = [
         component: CreateEvent,
         name: 'create-event',
         meta: {
-          title: (t) => t('routes.events.create_event.title')
+          title: (t) => t('routes.events.createEvent.title')
         }
       },
       {
@@ -322,7 +322,7 @@ const routes = [
         component: CreateEventRequestPermissions,
         name: 'create-event-request-permissions',
         meta: {
-          title: (t) => t('routes.events.request_permissions.title')
+          title: (t) => t('routes.events.requestPermissions.title')
         }
       },
       {
@@ -418,7 +418,7 @@ const routes = [
         name: 'register-success',
         meta: {
           requiresAuth: false,
-          title: (t) => t('routes.register_success.title')
+          title: (t) => t('routes.registerSuccess.title')
         }
       },
       {
@@ -434,7 +434,7 @@ const routes = [
         name: 'manage-users',
         component: ManageUsers,
         meta: {
-          title: (t) => t('routes.manage_users.title')
+          title: (t) => t('routes.manageUsers.title')
         }
       }
     ]

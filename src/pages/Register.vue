@@ -121,11 +121,11 @@ async function register() {
                 </template>
                 <template #link>
                   <a
-                    :href="$t('register.privacyDisclaimer.link_address')"
+                    :href="$t('register.privacyDisclaimer.linkAddress')"
                     target="_blank"
                     class="primary-link"
                   >
-                    {{ $t('register.privacyDisclaimer.link_label') }}
+                    {{ $t('register.privacyDisclaimer.linkLabel') }}
                   </a>
                 </template>
               </i18n-t>

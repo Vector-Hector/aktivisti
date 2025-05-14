@@ -95,22 +95,22 @@
     "loading": "Loading data..."
   },
   "login": {
-    "reset_password": {
+    "resetPassword": {
       "message": "Enter your email address here. We will send you an email with instructions on how to reset your password.",
-      "success_message": "Please check your inbox. We have sent you an email with further instructions.",
-      "error_message": "An error occurred while trying to reset your password",
+      "successMessage": "Please check your inbox. We have sent you an email with further instructions.",
+      "errorMessage": "An error occurred while trying to reset your password",
       "title": "Reset Password"
     },
     "register": {
-      "no_account": "No account yet?",
-      "register_here": "Register here"
+      "noAccount": "No account yet?",
+      "registerHere": "Register here"
     },
-    "invalid_credentials": "The entered credentials are invalid",
-    "username_label": "Username",
-    "password_label": "Password",
-    "remember_me": "Stay logged in",
-    "submit_button": "Login",
-    "forget_password": "Forgot Password?"
+    "invalidCredentials": "The entered credentials are invalid",
+    "usernameLabel": "Username",
+    "passwordLabel": "Password",
+    "rememberMe": "Stay logged in",
+    "submitButton": "Login",
+    "forgetPassword": "Forgot Password?"
   },
   "routes": {
     "login": {
@@ -119,7 +119,7 @@
     "profile": {
       "title": "My Profile"
     },
-    "my_participations": {
+    "myParticipations": {
       "title": "My Participations"
     },
     "statistics": {
@@ -141,18 +141,18 @@
           "addresses": {
             "title": "Addresses"
           },
-          "record_results": {
+          "recordResults": {
             "title": "Record Results"
           }
         },
-        "create_lead": {
+        "createLead": {
           "title": "Register Contact"
         }
       },
-      "create_event": {
+      "createEvent": {
         "title": "Create Event"
       },
-      "request_permissions": {
+      "requestPermissions": {
         "title": "Request Coordinator Permissions"
       },
       "edit": {
@@ -165,25 +165,25 @@
     "register": {
       "title": "Register"
     },
-    "register_success": {
+    "registerSuccess": {
       "title": "Registration Successful"
     },
     "imprint": {
       "title": "Imprint"
     },
-    "manage_users": {
+    "manageUsers": {
       "title": "Manage Users"
     }
   },
   "sidebar": {
     "login": "Login",
     "register": "Register",
-    "my_participations": "My Participations",
+    "myParticipations": "My Participations",
     "events": "All Events",
     "offices": "The Left Nearby",
     "posters": "Posters",
     "reports": "Statistics",
-    "manage_users": "Manage Users",
+    "manageUsers": "Manage Users",
     "version": "Version",
     "help": "Help",
     "imprint": "Imprint / Privacy Policy",
@@ -673,8 +673,8 @@
     "privacyDisclaimer": {
       "description": "As a user of Aktivisti, you acknowledge and agree that you will not use the data received and transmitted via the app for any purpose other than organizing actions of the party Die Linke, in particular, you will neither save, copy, nor transmit it to third parties for other purposes. You agree to always keep the password confidential and to immediately notify the federal board at {email} of any loss of the device or any possible disclosure of the password or misuse of the app by third parties. You agree to forward any third-party inquiries regarding the scope of data processing of the app to the responsible party at the federal board of the party and to provide the affected person with the contact details or the link to the {link}.",
       "email": "datenschutz@die-linke.app",
-      "link_label": "Privacy Policy",
-      "link_address": "https://www.die-linke.de/seitenfuss/datenschutz/#accordion-heading-17445-2912"
+      "linkLabel": "Privacy Policy",
+      "linkAddress": "https://www.die-linke.de/seitenfuss/datenschutz/#accordion-heading-17445-2912"
     },
     "notifications": {
       "unknownError": "An unexpected error occurred",

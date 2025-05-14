@@ -45,7 +45,7 @@ async function login() {
       if (authType === AuthType.SESSION) {
         nonFieldError.value = error.response?.data?.non_field_errors?.[0]
       } else {
-        nonFieldError.value = t('login.invalid_credentials')
+        nonFieldError.value = t('login.invalidCredentials')
       }
     }
   }
@@ -53,8 +53,8 @@ async function login() {
 }
 function openResetPasswordModal() {
   $q.dialog({
-    title: t('login.reset_password.title'),
-    message: t('login.reset_password.message'),
+    title: t('login.resetPassword.title'),
+    message: t('login.resetPassword.message'),
     prompt: {
       model: '',
       isValid: (val: string) => !!val && emailRegex.test(val),
@@ -71,10 +71,10 @@ function openResetPasswordModal() {
         })
         $q.notify({
           color: 'positive',
-          message: t('login.reset_password.success_message')
+          message: t('login.resetPassword.successMessage')
         })
       } catch (e) {
-        let error = t('login.reset_password.error_message')
+        let error = t('login.resetPassword.errorMessage')
         if (apiClient.isApiClientError(e) && e.response?.data?.email) {
           error = e.response?.data?.email
         }
@@ -94,26 +94,26 @@ function openResetPasswordModal() {
     </div>
     <QForm @submit="login">
       <QInput
-        :label="$t('login.username_label')"
+        :label="$t('login.usernameLabel')"
         v-model="username"
         :rules="[validationRules.isRequired]"
         type="text"
       />
       <PasswordInput
-        :label="$t('login.password_label')"
+        :label="$t('login.passwordLabel')"
         v-model="password"
         :rules="[validationRules.isRequired]"
       />
       <div class="forgot-password-link">
         <a @click="openResetPasswordModal" class="primary-link">
-          {{ $t('login.forget_password') }}
+          {{ $t('login.forgetPassword') }}
         </a>
       </div>
 
       <div class="control-buttons">
         <QCheckbox
           v-model="longSession"
-          :label="$t('login.remember_me')"
+          :label="$t('login.rememberMe')"
           class="checkbox-margin-right"
         />
         <FormError :error="nonFieldError" />
@@ -123,14 +123,14 @@ function openResetPasswordModal() {
           type="submit"
           :disabled="submitting"
         >
-          {{ t('login.submit_button') }}
+          {{ t('login.submitButton') }}
         </QBtn>
       </div>
     </QForm>
     <div class="sign-in-link">
-      {{ $t('login.register.no_account') }}
+      {{ $t('login.register.noAccount') }}
       <router-link to="/register" class="primary-link">
-        {{ $t('login.register.register_here') }}
+        {{ $t('login.register.registerHere') }}
       </router-link>
     </div>
   </div>

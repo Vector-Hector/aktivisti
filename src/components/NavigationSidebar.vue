@@ -135,7 +135,7 @@ async function logout() {
             <MenuLink :to="{ name: 'my-participations' }">
               <QIcon class="menu-item-icon" :name="ionCalendarOutline" />
               <span class="menu-item-link-text">{{
-                $t('sidebar.my_participations')
+                $t('sidebar.myParticipations')
               }}</span>
               <OpenInvitationsBadge />
             </MenuLink>
@@ -182,7 +182,7 @@ async function logout() {
             <MenuLink :to="{ name: 'manage-users' }">
               <QIcon class="menu-item-icon" :name="ionPeopleOutline" />
               <span class="menu-item-link-text">{{
-                $t('sidebar.manage_users')
+                $t('sidebar.manageUsers')
               }}</span>
             </MenuLink>
           </div>
