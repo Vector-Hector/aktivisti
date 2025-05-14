@@ -3,6 +3,7 @@
     "quasarLangIso": "en-US",
     "apexLangIso": "en",
     "mapLibreLangIso": "en-US",
+    "accpetLanguageHeaderApiIso": "en-US",
     "datetimeFormats": {
       "datetime": {
         "day": "2-digit",

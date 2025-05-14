@@ -41,6 +41,11 @@ async function refreshOnErrorInterceptor(error: any) {
 
 export default defineBoot(async ({ app }) => {
   app.config.globalProperties.$apiClient = apiClient
+  const t = (key: string) => app.config.globalProperties.$t(key)
+  apiClient.axiosInstance.interceptors.request.use((config) => {
+    config.headers['Accept-Language'] = t('config.accpetLanguageHeaderApiIso')
+    return config
+  })
   const authType = getAuthType()
   if (authType === AuthType.TOKEN) {
     await (authStore as TokenAuthStore).loadFromNativeStorage()
