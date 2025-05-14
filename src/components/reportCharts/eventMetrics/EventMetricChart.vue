@@ -6,6 +6,7 @@ import { apiClient } from 'src/api/ApiClient'
 import VueApexCharts from 'vue3-apexcharts'
 import { ReportEventMetricsDto } from 'src/api/model/ReportEventMetricsDto'
 import { useReportScope } from 'components/reportCharts/reportChartScope'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   title?: string
@@ -22,6 +23,7 @@ interface ApexSeriesEntity {
   data: ApexDatePoint[]
 }
 
+const { t } = useI18n()
 const { campaign, stateAssociation, subAssociation, fetchData } =
   useReportScope(
     props.campaignId,
@@ -85,7 +87,7 @@ const chartOptions = computed(() => {
       }${subAssociation.value?.name ? ' > ' + subAssociation.value.name : ''}`
     },
     noData: {
-      text: isLoading.value ? 'Lade Daten...' : Apex.noData?.text
+      text: isLoading.value ? t('reports.loadData') : Apex.noData?.text
     }
   }
 })

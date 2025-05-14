@@ -98,6 +98,12 @@
     "download": "Download",
     "loading": "Lade Daten..."
   },
+  "app": {
+    "versionUnknownError": "Diese App-Version ist unbekannt und wird nicht unterstützt. Bitte lade eine neue Version aus offiziellen Quellen.",
+    "versionObsoleteError": "Diese App-Version ist kritisch veraltet und wird nicht mehr unterstützt. Du musst die Seite neu laden oder ein Update durchführen, ansonsten wird die App vermutlich Fehler produzieren.",
+    "versionDeprecatedError": "Es gibt eine neuere Version dieser App. Bitte führe ein Update durch.",
+    "noInternetError": "Die Internetverbindung steht derzeit nicht zur Verfügung oder der App-Dienst konnte nicht erreicht werden, versuche es später noch einmal"
+  },
   "login": {
     "resetPassword": {
       "message": "Gib hier deine E-Mail Adresse ein. Wir schicken dir eine E-Mail mit Anweisungen, wie du dein Passwort zurücksetzen kannst.",
@@ -285,11 +291,13 @@
   },
   "personalMetrics": {
     "metric": "Ergebnis",
-    "count": "Anzahl"
+    "count": "Anzahl",
+    "completedAddresses": "Besuchte Adressen"
   },
   "appSessions": {
     "currentSession": "Aktuelle Sitzung",
-    "revokeButton": "Abmelden"
+    "revokeButton": "Abmelden",
+    "createdAd": "seit"
   },
   "collapsibleFilters": {
     "title": "Filter",
@@ -355,6 +363,7 @@
   },
   "reports": {
     "addChartButton": "Graph hinzufügen",
+    "loadData": "Lade Daten...",
     "selectReportDialog": {
       "campaign": "Kampagne",
       "stateAssociation": "Landesverband",
@@ -412,7 +421,8 @@
         },
         "share": {
           "label": "Teilen",
-          "shareText": "{eventName}\n{eventType}{eventDescription}\n\nam: {eventDate}\num: {eventTime}\n"
+          "shareText": "{eventName}\n{eventType}{eventDescription}\n\nam: {eventDate}\num: {eventTime}\n",
+          "subjectLine": "Mach' mit bei der Aktion von Die Linke: {0}"
         },
         "admin": {
           "label": "Admin",
@@ -614,7 +624,8 @@
           "generalError": "Das Plakat konnte nicht gespeichert werden",
           "deleteDialog": {
             "title": "Plakat löschen",
-            "description": "Möchtest dieses Plakat wirklich löschen?"
+            "description": "Möchtest dieses Plakat wirklich löschen?",
+            "generalError": "Beim löschen des Posters ist ein Fehler aufgetreten"
           },
           "deleteButton": "Löschen",
           "saveButton": "Speichern",

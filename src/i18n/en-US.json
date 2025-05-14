@@ -98,6 +98,12 @@
     "download": "Download",
     "loading": "Loading data..."
   },
+  "app": {
+    "versionUnknownError": "This app version is unknown and not supported. Please download a new version from official sources.",
+    "versionObsoleteError": "This app version is critically outdated and no longer supported. You must reload the page or perform an update; otherwise, the app may produce errors.",
+    "versionDeprecatedError": "A newer version of this app is available. Please update.",
+    "noInternetError": "The internet connection is currently unavailable, or the app service could not be reached. Please try again later."
+  },
   "login": {
     "resetPassword": {
       "message": "Enter your email address here. We will send you an email with instructions on how to reset your password.",
@@ -285,11 +291,13 @@
   },
   "personalMetrics": {
     "metric": "Metric",
-    "count": "Count"
+    "count": "Count",
+    "completedAddresses": "Visited Addresses"
   },
   "appSessions": {
     "currentSession": "Current Session",
-    "revokeButton": "Revoke"
+    "revokeButton": "Revoke",
+    "createdAd": "since"
   },
   "collapsibleFilters": {
     "title": "Filter",
@@ -355,6 +363,7 @@
   },
   "reports": {
     "addChartButton": "Add Chart",
+    "loadData": "Loading data...",
     "selectReportDialog": {
       "campaign": "Campaign",
       "stateAssociation": "State Association",
@@ -412,7 +421,8 @@
         },
         "share": {
           "label": "Share",
-          "shareText": "{eventName}\n{eventType}{eventDescription}\n\non: {eventDate}\nat: {eventTime}\n"
+          "shareText": "{eventName}\n{eventType}{eventDescription}\n\non: {eventDate}\nat: {eventTime}\n",
+          "subjectLine": "Join the action by Die Linke: {0}"
         },
         "admin": {
           "label": "Admin",
@@ -614,7 +624,8 @@
           "generalError": "The poster could not be saved",
           "deleteDialog": {
             "title": "Delete Poster",
-            "description": "Do you really want to delete this poster?"
+            "description": "Do you really want to delete this poster?",
+            "generalError": "An error occurred while deleting the poster"
           },
           "deleteButton": "Delete",
           "saveButton": "Save",

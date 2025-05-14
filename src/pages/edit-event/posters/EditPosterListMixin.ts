@@ -3,9 +3,12 @@ import { posterListStore } from 'src/store/PosterListStore'
 import { PosterDto } from 'src/api/model/PosterDto'
 import { apiClient } from 'src/api/ApiClient'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 
 export function useEditPosterListMixin() {
   const $q = useQuasar()
+  const { t } = useI18n()
+
   const posters = computed({
     get(): Partial<PosterDto>[] {
       return posterListStore.state.posters
@@ -31,7 +34,7 @@ export function useEditPosterListMixin() {
     } catch {
       $q.notify({
         color: 'negative',
-        message: 'Beim löschen des Posters ist ein Fehler aufgetreten'
+        message: t('events.edit.posters.editPoster.deleteDialog.generalError')
       })
     }
   }

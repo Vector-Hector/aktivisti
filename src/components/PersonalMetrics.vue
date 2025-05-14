@@ -58,7 +58,7 @@ const personalMetricsRows = computed(() => {
   return [
     ...generalMetrics,
     {
-      name: 'Besuchte Adressen',
+      name: t('personalMetrics.completedAddresses'),
       value: personalMetrics.value.completed_addresses ?? 0
     }
   ]

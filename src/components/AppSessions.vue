@@ -50,7 +50,9 @@ async function refreshSessions() {
         </QItemLabel>
         <QItemLabel>
           <!-- TODO(peter): Use i18n for date formating -->
-          seit: {{ dateFormat(session.created_at, 'datetime') }}
+          {{
+            `${$t('appSessions.createdAd')}: ${dateFormat(session.created_at, 'datetime')}`
+          }}
         </QItemLabel>
         <QItemLabel caption v-if="session.is_active">
           <span class="current-session-info">

@@ -69,24 +69,19 @@ onMounted(async () => {
     case VersionHealth.UNKNOWN:
       $q.notify({
         color: 'warning',
-        message:
-          'Diese App-Version ist unbekannt und wird nicht unterstützt. ' +
-          'Bitte lade eine neue Version aus offiziellen Quellen.'
+        message: t('app.versionUnknownError')
       })
       break
     case VersionHealth.OBSOLETE:
       $q.notify({
         color: 'negative',
-        message:
-          'Diese App-Version ist kritisch veraltet und wird nicht mehr unterstützt. ' +
-          'Du musst die Seite neu laden oder ein Update durchführen, ansonsten wird die App vermutlich Fehler produzieren.'
+        message: t('app.versionObsoleteError')
       })
       break
     case VersionHealth.DEPRECATED:
       $q.notify({
         color: 'warning',
-        message:
-          'Es gibt eine neuere Version dieser App. Bitte führe ein Update durch.'
+        message: t('app.versionDeprecatedError')
       })
       break
   }
@@ -139,9 +134,7 @@ onMounted(async () => {
       $q.notify({
         type: 'negative',
         timeout: 5000,
-        message:
-          'Die Internetverbindung steht derzeit nicht zur Verfügung oder der ' +
-          'App-Dienst konnte nicht erreicht werden, versuche es später noch einmal'
+        message: t('app.noInternetError')
       })
     })
   })
