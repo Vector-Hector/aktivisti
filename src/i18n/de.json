@@ -391,6 +391,8 @@
     "createButtonLong": "Aktion erstellen",
     "noEventsFound": "Keine Aktionen im Gebiet gefunden",
     "createButtonShort": "Erstellen",
+    "editActionAriaLabel": "Aktion bearbeiten",
+    "manageParticipantsAriaLabel": "Teilnehmer*innen verwalten",
     "details": {
       "prefixHangDownPostersEvent": "[Abhängen] ",
       "noAreaPosters": "Ohne Gebiet",

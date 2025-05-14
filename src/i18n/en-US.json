@@ -391,6 +391,8 @@
     "createButtonLong": "Create Event",
     "noEventsFound": "No events found in the area",
     "createButtonShort": "Create",
+    "editActionAriaLabel": "Edit action",
+    "manageParticipantsAriaLabel": "Manage participants",
     "details": {
       "prefixHangDownPostersEvent": "[Take Down] ",
       "noAreaPosters": "Without Area",
