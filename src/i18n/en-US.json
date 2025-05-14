@@ -19,7 +19,8 @@
       "time": {
         "hour": "2-digit",
         "minute": "2-digit"
-      }
+      },
+      "dateTimePickerMask": "MM/DD/YYYY HH:mm"
     }
   },
   "general": {

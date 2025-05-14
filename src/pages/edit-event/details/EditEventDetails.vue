@@ -44,7 +44,7 @@ const metrics = ref<EventMetricDto[]>([])
 const lastSavedMetricRecords = ref<EventMetricRecordDto[] | null>(null)
 const startDate = ref<string>('')
 const endDate = ref<string>('')
-const mask = ref<string>('DD.MM.YYYY HH:mm')
+const mask = ref<string>(t('config.datetimeFormats.dateTimePickerMask'))
 
 const currentYearMonth = computed(() => date.formatDate(new Date(), 'YYYY/MM'))
 const eventTypes = computed(() => eventTypeOptions)
