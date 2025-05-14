@@ -80,16 +80,10 @@ export default defineBoot(async ({ app }) => {
           // If the request is not authenticated our session expired
           authStore.setUserId(null)
           authStore.deleteSessionData()
-          ErrorBus.emit(
-            SESSION_INVALID,
-            'Deine Sitzung ist abgelaufen, bitte melde dich erneut an'
-          )
+          ErrorBus.emit(SESSION_INVALID, t('api.notifications.sessionInvalid'))
         } else {
           // Emit the permission problem on a global error bus
-          ErrorBus.emit(
-            NOT_AUTHORIZED,
-            'Du hast nicht genügend Rechte, um die angefragte Seite zu lesen.'
-          )
+          ErrorBus.emit(NOT_AUTHORIZED, t('api.notifications.notAuthorized'))
         }
       }
       // Ultimately reject the error

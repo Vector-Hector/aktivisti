@@ -84,6 +84,10 @@
         "PUBLIC": "Public",
         "INVITE_ONLY": "Invite Only"
       }
+    },
+    "notifications": {
+      "sessionInvalid": "Your session has expired, please log in again",
+      "notAuthorized": "You do not have sufficient rights to access the requested page."
     }
   },
   "apex": {

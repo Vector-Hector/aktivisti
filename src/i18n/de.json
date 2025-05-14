@@ -84,6 +84,10 @@
         "PUBLIC": "Öffentlich",
         "INVITE_ONLY": "Nur mit Einladung"
       }
+    },
+    "notifications": {
+      "sessionInvalid": "Deine Sitzung ist abgelaufen, bitte melde dich erneut an",
+      "notAuthorized": "Du hast nicht genügend Rechte, um die angefragte Seite zu lesen."
     }
   },
   "apex": {
