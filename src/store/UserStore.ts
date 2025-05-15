@@ -30,6 +30,7 @@ interface UserState {
   user: UserDto | null
   homeAssociation: SubAssociationDto | null
   bbox: BBox2d | null
+  locale: string | null
   filterPreferences: EventFilterPreferences
   permissions: UserObjectPermissionDto[]
   reportCharts: ReportChartData[]
@@ -40,6 +41,7 @@ const KEY_BBOX = 'KEY_BBOX'
 const KEY_FILTERPREFERENCES = 'KEY_FILTERPREFERENCES'
 const KEY_REPORT_CHARTS = 'KEY_REPORT_CHARTS'
 const KEY_PUSH_NOTIFICATIONS = 'KEY_PUSH_NOTIFICATIONS'
+const KEY_LOCALE = 'de'
 export const DEFAULT_FILTER_PREFERENCES = {
   subAssociations: [],
   campaign: undefined,
@@ -56,6 +58,7 @@ class UserStore extends Store<UserState> {
       user: null,
       permissions: [],
       bbox: null,
+      locale: process.env.APP_LANGUAGE || 'de',
       homeAssociation: null,
       filterPreferences: DEFAULT_FILTER_PREFERENCES,
       reportCharts: [],
@@ -88,6 +91,15 @@ class UserStore extends Store<UserState> {
       localStorage.setItem(KEY_BBOX, JSON.stringify(bbox))
     } else {
       localStorage.removeItem(KEY_BBOX)
+    }
+  }
+
+  public setLocale(locale: string | null) {
+    this.state.locale = locale
+    if (locale) {
+      localStorage.setItem(KEY_LOCALE, locale)
+    } else {
+      localStorage.removeItem(KEY_LOCALE)
     }
   }
 

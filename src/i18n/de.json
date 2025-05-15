@@ -1,5 +1,6 @@
 {
   "config": {
+    "nativeName": "Deutsch",
     "quasarLangIso": "de",
     "apexLangIso": "de",
     "mapLibreLangIso": "de",

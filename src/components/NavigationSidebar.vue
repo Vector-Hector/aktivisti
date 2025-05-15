@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { uiStore } from 'src/store/UiStore'
 import { userStore } from 'src/store/UserStore'
 import { getAuthStore } from 'src/store/AuthStore'
@@ -16,14 +16,50 @@ import {
   ionPeopleOutline,
   ionHomeOutline,
   ionHelpCircleOutline,
-  ionStatsChartOutline
+  ionStatsChartOutline,
+  ionGlobeOutline
 } from '@quasar/extras/ionicons-v5'
-import { QBtn, QDrawer, QIcon, QScrollArea } from 'quasar'
+import { QBtn, QDrawer, QIcon, QScrollArea, QSelect, useQuasar } from 'quasar'
 import { farIdCard } from '@quasar/extras/fontawesome-v5'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const $router = useRouter()
 const authStore = getAuthStore()
+const $q = useQuasar()
+const { availableLocales, t } = useI18n()
+
+const versionClickCounter = ref(0)
+const isVersionClickCounterVisible = ref(false)
+
+watch(
+  () =>
+    versionClickCounter.value > 5 &&
+    isVersionClickCounterVisible.value === false,
+  (isDeveloperOptionsActivated) => {
+    isVersionClickCounterVisible.value = true
+    if (isDeveloperOptionsActivated) {
+      $q.notify({
+        message: 'Language switcher activated',
+        color: 'blue',
+        timeout: 3000
+      })
+    }
+  }
+)
+
+const isLocaleSwitcherVisible = computed(() => {
+  return versionClickCounter.value > 5
+})
+
+const localeChangerOptions = computed(() => {
+  return availableLocales.map((locale) => {
+    return {
+      label: t('config.nativeName', 1, { locale: locale }),
+      value: locale
+    }
+  })
+})
 
 const version = computed(() => {
   return process.env.APP_VERSION!
@@ -189,7 +225,7 @@ async function logout() {
         </div>
 
         <div class="menu-group menu-bottom">
-          <div class="version">
+          <div class="version" @click="() => versionClickCounter++">
             {{ $t('sidebar.version') + ': ' + version }}
           </div>
           <hr class="menu-divider" />
@@ -214,6 +250,20 @@ async function logout() {
                 $t('sidebar.logout')
               }}</span>
             </div>
+          </div>
+          <div v-if="isLocaleSwitcherVisible" class="menu-item">
+            <QSelect
+              dense
+              options-dense
+              v-model="$i18n.locale"
+              :options="localeChangerOptions"
+              emit-value
+              map-options
+            >
+              <template v-slot:prepend>
+                <QIcon :name="ionGlobeOutline" />
+              </template>
+            </QSelect>
           </div>
         </div>
       </QScrollArea>
