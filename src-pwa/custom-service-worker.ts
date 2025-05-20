@@ -15,7 +15,7 @@ import {
 } from 'workbox-precaching'
 import { registerRoute, NavigationRoute } from 'workbox-routing'
 
-self.skipWaiting()
+void self.skipWaiting()
 clientsClaim()
 
 // Use with precache injection
@@ -30,7 +30,10 @@ if (process.env.MODE !== 'ssr' || process.env.PROD) {
     new NavigationRoute(
       createHandlerBoundToURL(process.env.PWA_FALLBACK_HTML),
       {
-        denylist: [/sw\.js$/, /workbox-(.)*\.js$/]
+        denylist: [
+          new RegExp(process.env.PWA_SERVICE_WORKER_REGEX),
+          /workbox-(.)*\.js$/
+        ]
       }
     )
   )

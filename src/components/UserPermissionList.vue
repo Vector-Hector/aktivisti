@@ -23,7 +23,7 @@ import { apiClient } from 'src/api/ApiClient'
 interface UserPermissionItem {
   username: string
   object_permission_id?: number
-  permission_codename?: string
+  permission_codename?: PermissionCodename
   permission_name?: string
 }
 

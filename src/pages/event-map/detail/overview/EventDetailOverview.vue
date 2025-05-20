@@ -181,7 +181,7 @@ async function join() {
         message: generalJoinError
       })
     }
-  } catch (e) {
+  } catch {
     $q.notify({
       color: 'negative',
       message: generalJoinError
@@ -224,7 +224,7 @@ async function leave() {
     joinLoading.value = true
     event.value = (await apiClient.events.leave(eventId.value)).payload.data
     personalParticipation.value = null
-  } catch (e) {
+  } catch {
     $q.notify({
       color: 'negative',
       message: generalLeaveError
@@ -240,7 +240,7 @@ async function acceptInvite() {
       personalParticipation.value!.id.toString()
     )
     personalParticipation.value = response.payload.data
-  } catch (e) {
+  } catch {
     $q.notify({
       color: 'negative',
       message:
@@ -326,7 +326,7 @@ function openPosterTakeDownModal() {
           end_date: newEndDate.toISOString()
         })
         $router.go(0)
-      } catch (error) {
+      } catch {
         $q.notify({
           color: 'negative',
           message:

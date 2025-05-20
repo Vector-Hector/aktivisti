@@ -61,7 +61,7 @@ function goToPoster(poster: PosterDto) {
   })
 }
 function handleResetClick() {
-  updateFilterParams(DEFAULT_POSTER_FILTER_PREFERENCES)
+  void updateFilterParams(DEFAULT_POSTER_FILTER_PREFERENCES)
 }
 </script>
 <template>

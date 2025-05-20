@@ -1,7 +1,7 @@
-import { boot } from 'quasar/wrappers'
+import { defineBoot } from '#q-app/wrappers'
 import { App, URLOpenListenerEvent } from '@capacitor/app'
 
-export default boot(({ router }) => {
+export default defineBoot(({ router }) => {
   void App.addListener('appUrlOpen', function (event: URLOpenListenerEvent) {
     const slug = new URL(event.url).pathname
 

@@ -18,9 +18,9 @@ export class PosterStatusUtil {
   }
 }
 
-export const posterStatusOptions: { key: string; label: string }[] =
+export const posterStatusOptions: { key: PosterStatus; label: string }[] =
   Object.keys(PosterStatus).map((key) => ({
-    key: key,
+    key: key as PosterStatus,
     label: PosterStatusUtil.getLabel(key as PosterStatus)
   }))
 

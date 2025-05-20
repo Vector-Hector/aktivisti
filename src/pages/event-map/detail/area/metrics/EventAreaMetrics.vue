@@ -55,6 +55,7 @@ const metricValues = computed({
       return defaultObject
     }
   },
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   async set(newMetrics: MetricValueMap) {
     try {
       await trackingSessionStore.updateMetricsForAddress(

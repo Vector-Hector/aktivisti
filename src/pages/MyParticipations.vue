@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
 import { UserDto } from 'src/api/model/UserDto'
 import {
   QBtn,
@@ -106,7 +106,7 @@ function reject(eventParticipation: EventParticipationDto) {
 function eventForParticipation(participation: EventParticipationDto) {
   return participatedEvents.value.find(({ id }) => participation.event === id)
 }
-function eventTypeLabel(event_type: string) {
+function eventTypeLabel(event_type: EventTypes) {
   return eventTypeOptions.find(({ key }) => key === event_type)?.label
 }
 function campaignsByIds(findIds: number[]): CampaignDto[] {

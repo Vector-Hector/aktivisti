@@ -115,7 +115,7 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
         return this.state.sessions[this.state.trackingSessionId].eventAreas[
           eventArea
         ][address.osm_id]
-      } catch (e) {
+      } catch {
         // If TypeError arises there is no record yet
         return undefined
       }

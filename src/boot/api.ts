@@ -1,4 +1,4 @@
-import { boot } from 'quasar/wrappers'
+import { defineBoot } from '#q-app/wrappers'
 import { AxiosResponse } from 'axios'
 import { apiClient } from 'src/api/ApiClient'
 import { OAuth2Client } from 'src/api/OAuth2Client'
@@ -27,12 +27,11 @@ async function refreshOnErrorInterceptor(error: any) {
     // redo initial request with new access token
     try {
       await authStore.renewLogin()
-    } catch (e) {
+    } catch {
       return Promise.reject(error)
     }
-    originalRequest.headers[
-      'Authorization'
-    ] = `Bearer ${authStore.state.tokenSet.access_token}`
+    originalRequest.headers['Authorization'] =
+      `Bearer ${authStore.state.tokenSet.access_token}`
     return apiClient.axiosInstance(originalRequest)
   } else {
     // all other request just fail regulary
@@ -40,7 +39,7 @@ async function refreshOnErrorInterceptor(error: any) {
   }
 }
 
-export default boot(async ({ app }) => {
+export default defineBoot(async ({ app }) => {
   app.config.globalProperties.$apiClient = apiClient
   const authType = getAuthType()
   if (authType === AuthType.TOKEN) {
@@ -52,14 +51,14 @@ export default boot(async ({ app }) => {
     try {
       const profileRequest = await apiClient.user.get('me')
       authStore.setUserId(profileRequest.payload.data.id)
-    } catch (e) {
+    } catch {
       // hydrating profile failed, not logged in
     }
   } else if (authType === AuthType.SESSION) {
     try {
       const sessionRequest = await apiClient.session.session()
       authStore.setUserId(sessionRequest.payload.data.user_id)
-    } catch (e) {
+    } catch {
       console.warn('Request to session failed, probably offline')
     }
   }

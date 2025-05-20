@@ -140,7 +140,7 @@ async function updateMetrics() {
       color: 'positive',
       message: 'Ergebnisse gespeichert'
     })
-  } catch (e) {
+  } catch {
     $q.notify({
       color: 'negative',
       message: 'Die Ergebnisse konnten nicht gespeichert werden'

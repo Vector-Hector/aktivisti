@@ -25,11 +25,7 @@ interface Emits {
     e: 'onCampaignCollectionClick',
     collection: CampaignGeometryCollectionsDto
   ): void
-  (
-    e: 'loadCollections',
-    index: number,
-    done: (stop?: boolean | undefined) => void
-  ): void
+  (e: 'loadCollections', index: number, done: (stop?: boolean) => void): void
 }
 
 const props = defineProps<Props>()

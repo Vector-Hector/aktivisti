@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 interface Emits {
-  (e: 'load', index: number, done: (stop?: boolean | undefined) => void): void
+  (e: 'load', index: number, done: (stop?: boolean) => void): void
 }
 const emit = defineEmits<Emits>()
 </script>

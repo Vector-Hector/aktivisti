@@ -142,7 +142,7 @@ async function getStateAssociations() {
 async function getContentTypeCodes(): Promise<ContentTypeOption[] | null> {
   const contentTypes = (await apiClient.contentTypes.list()).payload.data
 
-  let contentTypeOptions = [] as ContentTypeOption[]
+  const contentTypeOptions = [] as ContentTypeOption[]
   for (const natural_key of [
     ContentTypeNaturalKey.SUB_ASSOCIATION,
     ContentTypeNaturalKey.STATE_ASSOCIATION
