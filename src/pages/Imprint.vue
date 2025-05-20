@@ -8,68 +8,68 @@ import { QPage, QScrollArea } from 'quasar'
       <div class="container">
         <br />
         <br />
-        <h2>Partei Die Linke</h2>
+        <h2>{{ $t('imprint.ownerHeading') }}</h2>
         <p>
-          Parteivorstand der Partei Die Linke<br />
-          Kleine Alexanderstraße 28, 10178 Berlin<br />
-          Telefon: (030) 24 009 397<br />
-          <a href="mailto:bundesgeschaeftsstelle@die-linke.de" class="text-link"
-            >bundesgeschaeftsstelle@die-linke.de</a
+          {{ $t('imprint.ownerName') }}<br />
+          {{ $t('imprint.ownerAddress') }}<br />
+          {{
+            `${$t('imprint.ownerPhoneLabel')}: ${$t('imprint.ownerPhoneNumber')}`
+          }}<br />
+          <a :href="`mailto:${$t('imprint.ownerEmail')}`" class="text-link">
+            {{ $t('imprint.ownerEmail') }}</a
           ><br />
         </p>
-        <h2>Technische Entwicklung</h2>
+        <h2>{{ $t('imprint.techHeading') }}</h2>
         <p>
-          <b>control.alt.coop eG</b><br />
-          Franz-Mehring-Platz 1, 10243 Berlin<br />
-          <a href="https://control.alt.coop/" target="_blank"
-            >control.alt.coop</a
-          >
-        </p>
-        <h2>Hosting</h2>
-        <p>
-          <b>minuskel screen partner GmbH</b><br />
-          Am Friedrichshain 22, 10407 Berlin<br />
-          <a href="mailto:websupport@minuskel.de" class="text-link"
-            >websupport@minuskel.de </a
+          <b>{{ $t('imprint.techName') }}</b
           ><br />
-          <a
-            href="https://www.minuskel.de
-"
-            target="_blank"
-            >https://www.minuskel.de
+          {{ $t('imprint.techAddress') }}<br />
+          <a :href="$t('imprint.techWebsite')" target="_blank">{{
+            $t('imprint.techWebsite')
+          }}</a>
+        </p>
+        <h2>{{ $t('imprint.hostingHeading') }}</h2>
+        <p>
+          <b>{{ $t('imprint.hostingName') }}</b
+          ><br />
+          {{ $t('imprint.hostingAddress') }}<br />
+          <a :href="`mailto:${$t('imprint.hostingEmail')}`" class="text-link">{{
+            $t('imprint.hostingEmail')
+          }}</a
+          ><br />
+          <a :href="$t('imprint.hostingWebsite')" target="_blank">
+            {{ $t('imprint.hostingWebsite') }}
           </a>
         </p>
-        <h2>Finanzamt</h2>
+        <h2>{{ $t('imprint.taxHeading') }}</h2>
         <p>
-          Die Partei Die Linke wird beim Finanzamt für Körperschaften I in
-          Berlin unter der Steuernummer 27/650/52427 geführt.
+          {{ $t('imprint.taxText') }}
         </p>
 
-        <h2>Datenschutz</h2>
-        <p>
-          Die Partei Die Linke nimmt den Schutz Ihrer persönlichen Daten sehr
-          ernst und hält sich strikt an die Regeln der Datenschutzgesetze.
-          <a
-            href="https://www.die-linke.de/seitenfuss/datenschutz/#accordion-heading-17445-2912"
-            target="_blank"
-            class="text-link"
-          >
-            weiterlesen
-          </a>
-        </p>
-        <h2>Haftung</h2>
-        <p>
-          Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für
-          die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir
-          jedoch keine Gewähr übernehmen.
-          <a
-            href="https://www.die-linke.de/seitenfuss/impressum/haftungsausschluss/"
-            target="_blank"
-            class="text-link"
-          >
-            weiterlesen
-          </a>
-        </p>
+        <h2>{{ $t('imprint.privacyHeading') }}</h2>
+        <i18n-t keypath="imprint.privacyText.content" tag="p">
+          <template #link>
+            <a
+              :href="$t('imprint.privacyText.linkAddress')"
+              target="_blank"
+              class="text-link"
+            >
+              {{ $t('imprint.privacyText.linkLabel') }}
+            </a>
+          </template>
+        </i18n-t>
+        <h2>{{ $t('imprint.liabilityHeading') }}</h2>
+        <i18n-t keypath="imprint.liabilityText.content" tag="p">
+          <template #link>
+            <a
+              :href="$t('imprint.liabilityText.linkAddress')"
+              target="_blank"
+              class="text-link"
+            >
+              {{ $t('imprint.liabilityText.linkLabel') }}
+            </a>
+          </template>
+        </i18n-t>
       </div>
     </QPage>
   </QScrollArea>

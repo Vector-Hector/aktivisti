@@ -697,6 +697,37 @@
       "functionalityNotAvailable": "This functionality is currently not available"
     }
   },
+  "imprint": {
+    "ownerHeading": "Party Die Linke",
+    "ownerName": "Executive Board of the Party Die Linke",
+    "ownerAddress": "Kleine Alexanderstraße 28, 10178 Berlin",
+    "ownerPhoneLabel": "Phone",
+    "ownerPhoneNumber": "(030) 24 009 397",
+    "ownerEmail": "bundesgeschaeftsstelle@die-linke.de",
+    "techHeading": "Technical Development",
+    "techName": "control.alt.coop eG",
+    "techAddress": "Franz-Mehring-Platz 1, 10243 Berlin",
+    "techWebsite": "https://control.alt.coop",
+    "hostingHeading": "Hosting",
+    "hostingName": "minuskel screen partner GmbH",
+    "hostingAddress": "Am Friedrichshain 22, 10407 Berlin",
+    "hostingEmail": "websupport@minuskel.de",
+    "hostingWebsite": "https://www.minuskel.de",
+    "taxHeading": "Tax Office",
+    "taxText": "The Party Die Linke is registered with the \"Finanzamt für Körperschaften I\" in Berlin under the tax number 27/650/52427.",
+    "privacyHeading": "Privacy",
+    "privacyText": {
+      "content": "The Party Die Linke takes the protection of your personal data very seriously and strictly adheres to the rules of data protection laws. {link}",
+      "linkLabel": "read more",
+      "linkAddress": "https://www.die-linke.de/seitenfuss/datenschutz/#accordion-heading-17445-2912"
+    },
+    "liabilityHeading": "Liability",
+    "liabilityText": {
+      "content": "The contents of our pages were created with the utmost care. However, we cannot guarantee the accuracy, completeness, and timeliness of the content. {link}",
+      "linkLabel": "read more",
+      "linkAddress": "https://www.die-linke.de/seitenfuss/impressum/haftungsausschluss/"
+    }
+  },
   "map": {
     "geocoder": {
       "placeholder": "Search"
