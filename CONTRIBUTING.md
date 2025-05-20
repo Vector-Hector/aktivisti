@@ -113,7 +113,7 @@ To ensure a consistent and maintainable approach to internationalization, please
 ### 2. Key Naming Conventions
 
 - Use descriptive, namespaced keys (e.g., `login.resetPassword.message`).
-- Use camelCase for key names.
+- Use camelCase for key names, unless otherwise appropriate.
 - Group related keys under common namespaces.
 
 ### 3. Adding or Updating Translations
