@@ -3,11 +3,11 @@ import { useReportScope } from 'components/reportCharts/reportChartScope'
 import { computed, onBeforeMount, ref } from 'vue'
 import { apiClient } from 'src/api/ApiClient'
 import VueApexCharts from 'vue3-apexcharts'
-import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { useEventTypes } from 'src/api/model/EventTypes'
 import { ReportEventDto } from 'src/api/model/ReportEventDto'
 import { ApexDataUtil, ApexDatePoint } from 'src/api/model/ApexDatePoint'
-import { ReportType, ReportTypeUtil } from 'src/api/model/ReportType'
-import { defaultApexChartOptions } from 'boot/apex'
+import { ReportType, useReportType } from 'src/api/model/ReportType'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   campaignId: number
@@ -16,6 +16,10 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const { t } = useI18n()
+const { ReportTypeUtil } = useReportType()
+const { eventTypeOptions } = useEventTypes()
 
 interface ApexSeriesEntity {
   name: string
@@ -90,9 +94,7 @@ const chartOptions = computed(() => {
       }${subAssociation.value?.name ? ' > ' + subAssociation.value.name : ''}`
     },
     noData: {
-      text: isLoading.value
-        ? 'Lade Daten...'
-        : defaultApexChartOptions.noData?.text
+      text: isLoading.value ? t('apex.loading') : Apex.noData?.text
     }
   }
 })

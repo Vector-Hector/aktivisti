@@ -22,11 +22,11 @@ void loadOffices()
 const offices = computed(() => {
   const bbox = officeOverviewStore.state.bbox
   return bbox
-    ? officeOverviewStore.state.featureCollection?.features.filter(
+    ? (officeOverviewStore.state.featureCollection?.features.filter(
         (officeFeature) => {
           return bbox && inside(officeFeature, polygonFromBBox(bbox))
         }
-      ) ?? []
+      ) ?? [])
     : []
 })
 
@@ -54,7 +54,6 @@ function goToOffice(office: OfficeGeoJsonFeature) {
   <div class="container office-overview">
     <QScrollArea class="scroll-area">
       <InfiniteList
-        v-if="visibleItems.length > 0"
         :items="visibleItems"
         :disable="maxVisibleItems >= offices.length"
         @load="addToVisibile"
@@ -63,7 +62,7 @@ function goToOffice(office: OfficeGeoJsonFeature) {
         <template v-slot:item="{ item }">
           <OfficeListItem :office="item" @click="goToOffice(item)" />
         </template>
-        <template v-slot:emptyList>Keine Adressen im Gebiet gefunden</template>
+        <template v-slot:emptyList>{{ $t('offices.emptyList') }}</template>
       </InfiniteList>
     </QScrollArea>
   </div>

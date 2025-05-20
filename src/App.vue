@@ -28,11 +28,13 @@ import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 import { VersionHealth } from 'src/api/model/ConfigDto'
 import { useRoute, useRouter } from 'vue-router'
 import { GlobalLoadingInjectionKey } from 'src/utils/app'
+import { useI18n } from 'vue-i18n'
 
 const authStore = getAuthStore()
 const $route = useRoute()
 const $router = useRouter()
 const $q = useQuasar()
+const { t } = useI18n()
 
 const initialized = ref(false)
 const transitionDirection = ref<string | null>(null)
@@ -67,24 +69,19 @@ onMounted(async () => {
     case VersionHealth.UNKNOWN:
       $q.notify({
         color: 'warning',
-        message:
-          'Diese App-Version ist unbekannt und wird nicht unterstützt. ' +
-          'Bitte lade eine neue Version aus offiziellen Quellen.'
+        message: t('app.versionUnknownError')
       })
       break
     case VersionHealth.OBSOLETE:
       $q.notify({
         color: 'negative',
-        message:
-          'Diese App-Version ist kritisch veraltet und wird nicht mehr unterstützt. ' +
-          'Du musst die Seite neu laden oder ein Update durchführen, ansonsten wird die App vermutlich Fehler produzieren.'
+        message: t('app.versionObsoleteError')
       })
       break
     case VersionHealth.DEPRECATED:
       $q.notify({
         color: 'warning',
-        message:
-          'Es gibt eine neuere Version dieser App. Bitte führe ein Update durch.'
+        message: t('app.versionDeprecatedError')
       })
       break
   }
@@ -137,9 +134,7 @@ onMounted(async () => {
       $q.notify({
         type: 'negative',
         timeout: 5000,
-        message:
-          'Die Internetverbindung steht derzeit nicht zur Verfügung oder der ' +
-          'App-Dienst konnte nicht erreicht werden, versuche es später noch einmal'
+        message: t('app.noInternetError')
       })
     })
   })
@@ -164,10 +159,10 @@ function backButton() {
         />
         <QToolbarTitle class="title-wrapper col">
           <span class="title">
-            {{ $route.meta.title?.() }}
+            {{ $route.meta.title?.(t) }}
           </span>
           <span class="subtitle">
-            {{ $route.meta.subtitle?.() }}
+            {{ $route.meta.subtitle?.(t) }}
           </span>
         </QToolbarTitle>
         <QToolbarTitle class="subtitle"></QToolbarTitle>

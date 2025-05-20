@@ -1,0 +1,826 @@
+{
+  "config": {
+    "nativeName": "Deutsch",
+    "quasarLangIso": "de",
+    "apexLangIso": "de",
+    "mapLibreLangIso": "de",
+    "accpetLanguageHeaderApiIso": "de-de",
+    "datetimeFormats": {
+      "datetime": {
+        "day": "2-digit",
+        "month": "2-digit",
+        "year": "numeric",
+        "hour": "2-digit",
+        "minute": "2-digit"
+      },
+      "date": {
+        "day": "2-digit",
+        "month": "2-digit",
+        "year": "numeric"
+      },
+      "time": {
+        "hour": "2-digit",
+        "minute": "2-digit"
+      },
+      "dateTimePickerMask": "DD.MM.YYYY HH:mm"
+    }
+  },
+  "general": {
+    "noValidDate": "Kein gültiges Datum",
+    "cancel": "Abbrechen",
+    "add": "Hinzufügen",
+    "validationRules": {
+      "fieldRequiredError": "Dieses Feld ist erforderlich",
+      "noValidEmailError": "Dies ist keine gültige E-Mailadress"
+    },
+    "back": "Zurück",
+    "create": "Erstellen",
+    "close": "Schließen",
+    "continue": "Weiter",
+    "finish": "Fertig",
+    "no": "Nein",
+    "yes": "Ja"
+  },
+  "api": {
+    "model": {
+      "UserObjectPermissionDto": {
+        "permissionCodename": {
+          "none": "Keine Rechte",
+          "team_captain": "Teamcaptain",
+          "manages_events": "Koordinator*in"
+        }
+      },
+      "ContentTypeDto": {
+        "naturalKey": {
+          "core": {
+            "subassociation": "Kreisverband",
+            "stateassociation": "Landesverband",
+            "campaign": "Kampagne"
+          }
+        }
+      },
+      "PosterDto": {
+        "status": {
+          "ABSENT": "hängt nicht",
+          "MOUNTED": "hängt",
+          "DAMAGED": "beschädigt"
+        },
+        "mountedOn": {
+          "LAMPPOST": "Straßenlaterne",
+          "TREE": "Baum",
+          "OTHER": "Sonstige"
+        }
+      },
+      "EventTypes": {
+        "DOOR_TO_DOOR": "Haustürgespräch",
+        "POSTERS": "Plakate",
+        "GENERIC": "Veranstaltung",
+        "FLYERS": "Flyer"
+      },
+      "EventStatus": {
+        "ACTIVE": "aktuell",
+        "ENDED": "beendet"
+      },
+      "VisibilityOptions": {
+        "PUBLIC": "Öffentlich",
+        "INVITE_ONLY": "Nur mit Einladung"
+      }
+    },
+    "notifications": {
+      "sessionInvalid": "Deine Sitzung ist abgelaufen, bitte melde dich erneut an",
+      "notAuthorized": "Du hast nicht genügend Rechte, um die angefragte Seite zu lesen."
+    }
+  },
+  "apex": {
+    "noData": "Bisher liegen keine Daten vor",
+    "title": "Statistik",
+    "date": "Datum",
+    "count": "Anzahl",
+    "download": "Download",
+    "loading": "Lade Daten..."
+  },
+  "app": {
+    "versionUnknownError": "Diese App-Version ist unbekannt und wird nicht unterstützt. Bitte lade eine neue Version aus offiziellen Quellen.",
+    "versionObsoleteError": "Diese App-Version ist kritisch veraltet und wird nicht mehr unterstützt. Du musst die Seite neu laden oder ein Update durchführen, ansonsten wird die App vermutlich Fehler produzieren.",
+    "versionDeprecatedError": "Es gibt eine neuere Version dieser App. Bitte führe ein Update durch.",
+    "noInternetError": "Die Internetverbindung steht derzeit nicht zur Verfügung oder der App-Dienst konnte nicht erreicht werden, versuche es später noch einmal"
+  },
+  "login": {
+    "resetPassword": {
+      "message": "Gib hier deine E-Mail Adresse ein. Wir schicken dir eine E-Mail mit Anweisungen, wie du dein Passwort zurücksetzen kannst.",
+      "successMessage": "Bitte sieh nun in deinem Postfach nach. Wir haben dir eine E-Mail mit weiteren Anweisungen geschickt.",
+      "errorMessage": "Beim versuch dein Passwort zurückzusetzen trat ein Fehler auf",
+      "title": "Passwort zurücksetzen"
+    },
+    "register": {
+      "noAccount": "Noch kein Konto?",
+      "registerHere": "Hier registrieren"
+    },
+    "invalidCredentials": "Die eingegebenen Zugangsdaten sind ungültig",
+    "usernameLabel": "Benutzer*innenname",
+    "passwordLabel": "Passwort",
+    "rememberMe": "Angemeldet bleiben",
+    "submitButton": "Anmelden",
+    "forgetPassword": "Passwort vergessen?"
+  },
+  "routes": {
+    "login": {
+      "title": "Anmelden"
+    },
+    "profile": {
+      "title": "Mein Profil"
+    },
+    "myParticipations": {
+      "title": "Meine Teilnahmen"
+    },
+    "statistics": {
+      "title": "Statistiken"
+    },
+    "offices": {
+      "title": "Die Linke vor Ort"
+    },
+    "posters": {
+      "title": "Plakate"
+    },
+    "events": {
+      "title": "Alle Aktionen",
+      "report": {
+        "title": "Ergebnisses"
+      },
+      "area": {
+        "street": {
+          "addresses": {
+            "title": "Adressen"
+          },
+          "recordResults": {
+            "title": "Ergebnisse aufnehmen"
+          }
+        },
+        "createLead": {
+          "title": "Kontakt registrieren"
+        }
+      },
+      "createEvent": {
+        "title": "Aktion erstellen"
+      },
+      "requestPermissions": {
+        "title": "Koordinator*innen-Rechte beantragen"
+      },
+      "edit": {
+        "title": "Aktion bearbeiten",
+        "posters": {
+          "title": "Plakat bearbeiten"
+        }
+      }
+    },
+    "register": {
+      "title": "Registrieren"
+    },
+    "registerSuccess": {
+      "title": "Registrierung erfolgreich"
+    },
+    "imprint": {
+      "title": "Impressum"
+    },
+    "manageUsers": {
+      "title": "Benutzer*innen verwalten"
+    }
+  },
+  "sidebar": {
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "myParticipations": "Meine Teilnahmen",
+    "events": "Alle Aktionen",
+    "offices": "Die Linke vor Ort",
+    "posters": "Plakate",
+    "reports": "Statistiken",
+    "manageUsers": "Benutzer*innen verwalten",
+    "version": "Version",
+    "help": "Hilfe",
+    "imprint": "Impressum / Datenschutz",
+    "logout": "Abmelden"
+  },
+  "profile": {
+    "notification": {
+      "save": {
+        "success": "Deine Einstellungen wurden gespeichert",
+        "error": "Beim speichern des Profils trat ein Fehler auf",
+        "errorVerbose": "Beim speichern des Profils trat ein Fehler auf: {0}",
+        "errorVerify": "Dein Profil konnte nicht gespeichert werden, bitte prüfe deine Angaben",
+        "inProgress": "Wird gespeichert"
+      }
+    },
+    "changeUsernameDialog": {
+      "title": "Benutzer*innenname ändern",
+      "description": "Hier kannst du eine neuen Benutzer*innenname festlegen. Dazu brauchen wir noch einmal dein aktuelles Passwort. Nachdem du dein Benutzer*innenname geändert hast, ist dein alter Benutzer*innenname für alle anderen Benutzer*innen verfügbar.",
+      "passwordInput": "Passwort",
+      "newUsername": "Neuer Benutzer*innenname",
+      "submitButton": "OK",
+      "notifications": {
+        "success": "Benutzer*innenname wurde geändert",
+        "error": "Etwas ging schief beim Ändern des Benutzer*innenname"
+      }
+    },
+    "changeEmailDialog": {
+      "title": "E-Mail Adresse ändern",
+      "description": "Hier kannst du eine neue E-Mail Adresse festlegen. Dazu brauchen wir noch einmal dein aktuelles Passwort. Die E-Mail Adresse wird erst in deinem Profil übernommen, wenn du den Bestätigungslink anklickst, den wir an deine neue E-Mail Adresse schicken.",
+      "passwordInput": "Passwort",
+      "newEmailAddress": "Neue E-Mail Adresse",
+      "submitButton": "OK",
+      "notifications": {
+        "success": "Bestätigungsmail wurde verschickt",
+        "error": "Etwas ging schief beim Ändern der E-Mail Adresse"
+      }
+    },
+    "changePasswordDialog": {
+      "title": "Passwort ändern",
+      "description": "Hier kannst du eine neues Passwort eingeben. Gib dazu dein aktuelles und das neue Passwort ein",
+      "currentPassword": "Aktuelles Passwort",
+      "newPassword": "Neues Passwort",
+      "confirmNewPassword": "Neues Passwort bestätigen",
+      "submitButton": "OK",
+      "notifications": {
+        "success": "Passwort wurde geändert",
+        "generalError": "Etwas ging schief beim Ändern des Passworts",
+        "noMatchingPassword": "Die Passwörter müssen übereinstimmen"
+      }
+    },
+    "deleteAccountDialog": {
+      "title": "Account löschen",
+      "description": "Möchtest du wirklich deinen Account löschen?",
+      "submitButton": "Account löschen",
+      "notification": {
+        "success": "Dein Account wurde gelöscht",
+        "error": "Beim löschen deines Accounts trat ein Fehler auf"
+      }
+    },
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "username": "Benutzer*innenname",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "phone": "Telefon",
+    "zipCode": "Postleitzahl",
+    "subAssociation": "Bezirk/Kreisverband",
+    "notificationsSettings": {
+      "title": "Benachrichtigungen",
+      "emailOnInvitation": "E-Mail-Benachrichtigung wenn ich zu einer Aktion eingeladen wurde",
+      "emailOnNewVolunteers": "E-Mail-Benachrichtigung wenn sich neue Freiwillige für meine Aktion gemeldet haben",
+      "emailOnVolounteersRequireVerfification": "E-Mail-Benachrichtigung wenn neue Freiwillige meine Bestätigung brauchen",
+      "pushNotifications": "Push Notifications"
+    },
+    "permissions": {
+      "title": "Berechtigungen",
+      "youAre": "Du bist",
+      "administrator": "Administrator",
+      "globalCoordinator": "globale*r Koordinator*in",
+      "youHavePermission": "Du hast die Berechtigung",
+      "permissionFor": "im"
+    },
+    "personalReport": {
+      "title": "Persönliche Ergebnisse"
+    },
+    "account": {
+      "title": "Account",
+      "description": "Deinen Account löschen",
+      "deleteButton": "Account löschen"
+    },
+    "manageSessions": {
+      "title": "Aktive Sitzungen",
+      "description": "Dies ist eine Liste der Geräte, die sich bei deinem Konto angemeldet haben. Widerrufe alle Sitzungen, die Du nicht kennst."
+    }
+  },
+  "personalMetrics": {
+    "metric": "Ergebnis",
+    "count": "Anzahl",
+    "completedAddresses": "Besuchte Adressen"
+  },
+  "appSessions": {
+    "currentSession": "Aktuelle Sitzung",
+    "revokeButton": "Abmelden",
+    "createdAd": "seit"
+  },
+  "collapsibleFilters": {
+    "title": "Filter",
+    "activeFilterCount": "{0} gesetzt",
+    "reset": "Reset"
+  },
+  "campaignFilter": {
+    "defaultLabel": "Kampagnen",
+    "showAllCampaigns": "Alle Kampagnen"
+  },
+  "stateAssociationFilter": {
+    "defaultLabel": "Landesverbände",
+    "showAllStateAssociations": "Alle Landesverbände"
+  },
+  "subAssociationFilter": {
+    "defaultLabel": "Bezirks/Kreisverband",
+    "showAllSubAssociations": "Alle Kreisverbände"
+  },
+  "posterStatusFilter": {
+    "defaultLabel": "Plakat Status",
+    "showAllStates": "Alle Status"
+  },
+  "multipleSubAssociationFilter": {
+    "defaultLabel": "Bezirks/Kreisverband",
+    "noOptionsFound": "Kein Verband gefunden"
+  },
+  "editableFilter": {
+    "defaultLabel": "Zeige nur bearbeitbare Aktionen"
+  },
+  "ownershipFilter": {
+    "defaultLabel": "Aktionen erstellt von",
+    "options": {
+      "me": "Mir",
+      "other": "Anderen",
+      "all": "Allen"
+    }
+  },
+  "sortOrderFilter": {
+    "options": {
+      "startDate": "Datum (Beginn)",
+      "name": "Aktionsname"
+    },
+    "defaultLabel": "Sortierung",
+    "placeholder": "Sortierung auswählen"
+  },
+  "eventTypeFilter": {
+    "defaultLabel": "Aktionstyp"
+  },
+  "eventStatusFilter": {
+    "defaultLabel": "Status"
+  },
+  "myParticipations": {
+    "pendingInvitations": "Offene Einladungen",
+    "unknown": "Unbekannt",
+    "hasInvitedYou": "{invitingUsers} hat dich eingeladen | {invitingUsers} haben dich eingeladen",
+    "reject": "Ablehnen",
+    "accept": "Annehmen",
+    "activeParticipations": "Aktive Teilnahmen",
+    "noEventParticipations": {
+      "info": "Du nimmst an keinen Aktion teil - suche jetzt welche!",
+      "searchEventsButton": "Jetzt nach Aktionen suchen"
+    }
+  },
+  "reports": {
+    "addChartButton": "Graph hinzufügen",
+    "loadData": "Lade Daten...",
+    "selectReportDialog": {
+      "campaign": "Kampagne",
+      "stateAssociation": "Landesverband",
+      "type": "Typ"
+    },
+    "reportTypes": {
+      "METRICS_POSTER": "Plakate",
+      "METRICS_FLYER": "Flyer",
+      "METRICS_DOOR2DOOR": "Haustürgespräche",
+      "ACTIVE_EVENTS": "Aktive Veranstaltungen",
+      "ACTIVE_USERS": "Aktivierung Teilnehmer*innen"
+    },
+    "activeParticipants": {
+      "total": "Gesamt"
+    }
+  },
+  "infiniteList": {
+    "emptyList": "Keine Einträge gefunden"
+  },
+  "offices": {
+    "emptyList": "Keine Adressen im Gebiet gefunden",
+    "getMoreInfo": "Mehr Informationen",
+    "address": "Adresse",
+    "website": "Internetseite",
+    "emailAddress": "E-Mail-Adresse",
+    "phoneNumber": "Telefon",
+    "description": "Beschreibung"
+  },
+  "posters": {
+    "dialog": {
+      "title": "Plakat",
+      "goToPoster": "Zum Plakat"
+    }
+  },
+  "events": {
+    "dialog": {
+      "joinAndGetInfo": "Mitmachen/Infos"
+    },
+    "createButtonLong": "Aktion erstellen",
+    "noEventsFound": "Keine Aktionen im Gebiet gefunden",
+    "createButtonShort": "Erstellen",
+    "editActionAriaLabel": "Aktion bearbeiten",
+    "manageParticipantsAriaLabel": "Teilnehmer*innen verwalten",
+    "details": {
+      "prefixHangDownPostersEvent": "[Abhängen] ",
+      "noAreaPosters": "Ohne Gebiet",
+      "notifications": {
+        "generalJoinError": "Ein unerwarteter Fehler trat auf beim versuch der Aktion beizutreten",
+        "generalLeaveError": "Ein unerwarteter Fehler trat auf beim versuch die Aktion zu verlassen"
+      },
+      "participants": "Teilnahmen",
+      "actions": {
+        "participants": {
+          "label": "Teilnahmen"
+        },
+        "share": {
+          "label": "Teilen",
+          "shareText": "{eventName}\n{eventType}{eventDescription}\n\nam: {eventDate}\num: {eventTime}\n",
+          "subjectLine": "Mach' mit bei der Aktion von Die Linke: {0}"
+        },
+        "admin": {
+          "label": "Admin",
+          "delete": {
+            "label": "Löschen"
+          },
+          "edit": {
+            "label": "Bearbeiten"
+          },
+          "report": {
+            "label": "Report"
+          },
+          "posterTakeDown": {
+            "label": "Abhängen",
+            "dialog": {
+              "title": "Willst Du Plakate abhängen?",
+              "description": "Das Event {0} wird in eine Aktion zum Abhängen von Plakaten umgewandelt.",
+              "notifications": {
+                "generalError": "Die Aktion konnte nicht in eine Plakate-Abhängaktion umgewandelt werden"
+              }
+            }
+          },
+          "print": {
+            "label": "Drucken"
+          }
+        }
+      },
+      "eventType": "Aktionstyp",
+      "meetingPoint": "Treffpunkt",
+      "startDate": "Start",
+      "endDate": "Ende",
+      "externalUrl": "Link",
+      "messangerUrl": "Messenger",
+      "publicDescription": "Öffentliche Beschreibung",
+      "internalDescription": "Interne Informationen",
+      "infoUserNeedsToBeLoggedIn": "Anmelden um mitzumachen",
+      "inviteUsers": {
+        "label": "Leute einladen",
+        "dialog": {
+          "title": "Leute einladen",
+          "notifications": {
+            "userNameNotExistsError": "Der Benutzer*innenname existiert nicht",
+            "generalError": "Etwas ging schief beim Einladen des*der Benutzer*in"
+          },
+          "inviteAllCoordinators": {
+            "label": "Alle Koordinator*innen einladen",
+            "dialog": {
+              "title": "Alle Koordinator*innen einladen",
+              "description": "Möchtest du alle Koordinator*innen des Kreisverbandes einladen?",
+              "notifications": {
+                "allCoordinatorsAreAlreadyInvited": "Es wurden bereits alle Koordinator*innen eingeladen.",
+                "noCoordinatorsFound": "In diesem Eventgebiet gibt es keine Koordinator*innen."
+              }
+            }
+          },
+          "inviteAllTeamcaptains": {
+            "label": "Alle Teamcaptains einladen",
+            "dialog": {
+              "title": "Alle Teamcaptains einladen",
+              "description": "Möchtest du alle Teamcaptains des Kreisverbandes einladen?",
+              "notifications": {
+                "allTeamcaptainsAreAlreadyInvited": "Es wurden bereits alle Teamcaptains eingeladen.",
+                "noTeamcaptainsFound": "In diesem Eventgebiet gibt es keine Teamcaptains."
+              }
+            }
+          }
+        },
+        "inputPlaceholder": "Benutzer*innenname",
+        "alreadyInvited": "Bereits eingeladen",
+        "removeParticipant": "Benutzer*in von der Aktion entfernen",
+        "inviteMoreUsersByMail": "{0} weitere per Mail eingeladen",
+        "description": "Keine offenen Einladungen. Nutze das Eingabefeld um neue Teilnehmende einzuladen"
+      },
+      "infoUserNeedsVerification": {
+        "description": "Super, dass du mitmachen möchtest. Du hast dich für diese Aktion gemeldet. Der nächste Schritt ist zur angegebenen Zeit am vereinbarten Treffpunkt zu erscheinen. Ein Teamcaptain wird dich dann für diese Aktion freischalten.",
+        "iconTitle": "Freischaltung"
+      },
+      "leaveButton": "Doch nicht dabei",
+      "acceptInviteButton": "Einladung annehmen",
+      "joinButton": "Ich bin dabei",
+      "eventArea": {
+        "addressCounter": "{0} Adressen",
+        "posterCounter": "{0} Plakate"
+      },
+      "report": {
+        "eventArea": "Gebiet",
+        "visitedAddresses": "Besuchte Adressen",
+        "addressesInEventArea": "Adressen im Gebiet",
+        "collectedLeads": "Gewonnene Kontakte",
+        "total": "Gesamt"
+      },
+      "area": {
+        "completionModal": {
+          "title": "Aktionsgebiet erledigt",
+          "description": "Das Aktionsgebiet {eventArea} als {status} markieren?",
+          "statusLabel": {
+            "completed": "erledigt",
+            "notCompleted": "offen"
+          },
+          "generalError": "Das Aktionsgebiet konnte nicht aktualisiert werden"
+        },
+        "addressCounter": "{0} Adressen",
+        "assignAreaParticipant": {
+          "inputPlaceholder": "Teilnehmer*innen",
+          "notPartOfEventAnymoreError": "Die gewählte Person ist nicht mehr Teil der Aktion",
+          "generalError": "Unbekannter fehler beim Aktualisieren der Teilnehmer*innen"
+        },
+        "joinButton": "In diesem Gebiet mitmachen",
+        "leaveButton": "Doch nicht hier mitmachen",
+        "metrics": {
+          "areaNotFoundError": "Das Gebiet scheint nicht mehr zu existieren.",
+          "createLead": "Kontakt registrieren",
+          "noMetricsDefinedWarning": "Für diese Aktion wurden keine Ergebnisse definiert",
+          "openExternalUrl": "Externe Umfrage öffnen"
+        },
+        "posters": {
+          "createPosterButton": "Erstellen",
+          "posterNotCreatedInAreaWarning": "Das neue Plakat wurde nicht im derzeit ausgewählten Gebiet platziert!",
+          "createPosterDialog": {
+            "title": "Neuer Plakatstandort",
+            "descriptionMobile": "Bitte gib entweder eine Adresse in das Suchfeld ein oder nutze die {gpsFunctionality} um die Position dieses Standorts auf der Karte festzulegen.",
+            "gpsFunctionality": "Ortungsfunktion",
+            "descriptionDesktop": "Bitte geben Sie entweder eine Adresse in das Suchfeld ein oder verschieben Sie den rot hervorgehobenen Pin auf der Karte, um die Position dieses Standorts auf der Karte festzulegen.",
+            "createPosterButton": "Plakat erstellen"
+          },
+          "posterCreationGeneralError": "Das Plakat konnte nicht angelegt werden",
+          "detail": {
+            "delete": "Löschen",
+            "deleteDialog": {
+              "title": "Plakat löschen",
+              "description": "Möchtest du das Plakat #{0} wirklich löschen?",
+              "successMessage": "Plakat wurde gelöscht",
+              "errorMessage": "Beim Löschen des Plakats trat ein Fehler auf"
+            },
+            "successMessage": "Das Plakat wurde gespeichert",
+            "errorMessage": "Beim Speichern trat ein Fehler auf"
+          }
+        }
+      }
+    },
+    "edit": {
+      "steps": {
+        "settings": "Einstellungen",
+        "geometry": "Treffpunkt/Gebiete",
+        "posterLocations": "Standorte",
+        "eventLocation": "Veranstaltungsort"
+      },
+      "details": {
+        "notifications": {
+          "invalidDateError": "Ungültiges Datum",
+          "successMessageMetrics": "Ergebnisse gespeichert",
+          "generalErrorMetrics": "Die Ergebnisse konnten nicht gespeichert werden",
+          "generalSuccessMessage": "Gespeichert",
+          "noValidDataError": "Bitte korrigiere die Fehler im Formular",
+          "unknownError": "Ein unbekannter Fehler ist aufgetreten",
+          "generalError": "Beim speichern des events ist etwas schiefgegangen"
+        },
+        "eventType": "Aktionstyp",
+        "eventName": "Name der Aktion",
+        "campaign": "Kampagne",
+        "campaignPlaceholder": "Wähle eine Kampagne aus",
+        "startDate": "Startdatum",
+        "endDate": "Enddatum",
+        "externalUrl": "Externe URL",
+        "messengerUrl": "Messenger URL",
+        "externalUrlDoorToDoor": "Link für externe Umfrage",
+        "publicDescription": "Öffentliche Beschreibung",
+        "internalDescription": "Interne Informationen (nur für Teilnehmer*innen sichtbar)",
+        "visibility": "Sichtbarkeit",
+        "posterCreationAllowed": "Teilnehmer*innen können Plakate anlegen"
+      },
+      "geometry": {
+        "locationGenericEvent": "Veranstaltungsort",
+        "locationGeneralEvent": "Treffpunkt",
+        "areas": {
+          "heading": "Gebiete",
+          "prefixNewArea": "Gebiet",
+          "table": {
+            "color": "Farbe",
+            "name": "Name",
+            "posters": "Plakate",
+            "addresses": "Adressen",
+            "ariaLabelEventError": "Fehlerindikator für Gebiet",
+            "loadingData": "Lade Daten zu Gebieten",
+            "noData": "Noch keine Gebiete gezeichnet"
+          },
+          "adoptAreasButton": "Gebiete übernehmen",
+          "drawAreasButton": "Gebiet zeichnen",
+          "generalError": "Etwas ging beim anlegen oder verändern eines Gebiets schief",
+          "deleteError": "Etwas ging schief beim löschen des Gebiets"
+        },
+        "noValidLocationError": "Bitte gebe einen gültigen Treffpunkt an.",
+        "noAreasDefinedError": "Dieses Event hat keine Gebiete",
+        "posterCreationButton": "Erstellen"
+      },
+      "posters": {
+        "creationButton": "Erstellen",
+        "editPoster": {
+          "generalError": "Das Plakat konnte nicht gespeichert werden",
+          "deleteDialog": {
+            "title": "Plakat löschen",
+            "description": "Möchtest dieses Plakat wirklich löschen?",
+            "generalError": "Beim löschen des Posters ist ein Fehler aufgetreten"
+          },
+          "deleteButton": "Löschen",
+          "saveButton": "Speichern",
+          "createButton": "Erstellen"
+        }
+      }
+    }
+  },
+  "manageUsers": {
+    "noAssociationFound": "Kein Verband gefunden",
+    "selectContentTypeLabel": "Auf welcher Ebene möchtest du Benutzer*innen verwalten",
+    "selectAssociationLabel": "Für welchen {0} möchtest du Benutzer*innen verwalten",
+    "selectUserLabel": "Benutzer*in wählen",
+    "notifications": {
+      "userAlreadyAddedError": "Die Benutzer*in wurde bereits zur Liste hinzugefügt",
+      "userNotFoundError": "Benutzer*in nicht gefunden.",
+      "generalError": "Beim Hinzufügen der Benutzer*in ist ein unbekannter Fehler aufgetreten",
+      "removePermissionsSuccess": "Der Benutzer*in wurden die Rechte für das Verwaltungsgebiet entzogen",
+      "savedSuccess": "Gespeichert"
+    }
+  },
+  "print": {
+    "headingAreas": "Gebiete",
+    "operationType": "Einsatztyp",
+    "operationName": "Einsatzname",
+    "addressCounter": "Anzahl Adressen",
+    "date": "Datum",
+    "suffixAddressCounter": "Adressen",
+    "headingAreaRecordSheet": "Erfassungsbogen für Gebiet: {0}",
+    "headingPostersWithoutAreaSheet": "Erfassungsbogen für Plakate ohne Gebiet",
+    "streets": "Straßen",
+    "noAddressesFound": "Keine Adressen im OSM Datensatz",
+    "metricsTable": {
+      "metrics": "Ergebnisse",
+      "tally": "Strichliste",
+      "total": "Gesamt",
+      "collectedLeads": "Aufgenommene Kontaktdaten"
+    },
+    "posterTable": {
+      "location": "Ort",
+      "mountedOn": "Position",
+      "lastStatus": "Letzter{newLine}Status",
+      "currentStatus": "Aktueller{newLine}Status"
+    }
+  },
+  "register": {
+    "betaDialog": {
+      "title": "Geschlossene Beta",
+      "description": "Schön, dass du dich für Aktivisti interessierst. Derzeit befinden wir uns in einer geschlossenen Beta-Phase. Registrierungen sind erst ab der nächsten Phase möglich. Um jetzt schon mitzumachen, muss eine Genoss*in dich einladen."
+    },
+    "email": "E-Mailadresse",
+    "username": "Benutzer*innenname",
+    "password": "Passwort",
+    "zipCode": "Postleitzahl",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "submitButton": "Registrieren",
+    "accountAlreadyExists": "Du bist bereits angemeldet?",
+    "goToLogin": "Zum Login",
+    "privacyDisclaimer": {
+      "description": "Als Benutzer*in von Aktivisti nimmst Du zur Kenntnis und stimmst zu, dass Du die per App erhaltenen und übermittelten Daten zu keinem anderen Zweck als der Organisation von Aktionen der Partei Die Linke nutzt, insbesondere diese weder speicherst, noch kopierst oder Dritten für andere Zwecke übermittelst. Du stimmst zu, dass Passwort stets vertraulich zu behandeln und jeden Verlust des Gerätes oder jede mögliche Offenbarung des Passwortes oder zweckwidrige Nutzung der App durch Dritte unverzüglich dem Bundesvorstand unter {email} mitzuteilen. Du stimmst zu, jede Nachfrage Dritter zum Umfang der Datenverarbeitung der App an den Verantwortlichen beim Bundesvorstand der Partei weiterzuleiten und dem Betroffenen die Kontaktdaten bzw. den Link zu den {link} mitzuteilen.",
+      "email": "datenschutz@die-linke.app",
+      "linkLabel": "Datenschutzhinweisen",
+      "linkAddress": "https://www.die-linke.de/seitenfuss/datenschutz/#accordion-heading-17445-2912"
+    },
+    "notifications": {
+      "unknownError": "Ein unerwarteter Fehler ist aufgetreten",
+      "functionalityNotAvailable": "Diese Funktion steht derzeit nicht zur Verfügung"
+    }
+  },
+  "map": {
+    "geocoder": {
+      "placeholder": "Suchen"
+    },
+    "geolocationControl": {
+      "currentLocation": "Standort",
+      "currentEvent": "Aktion"
+    },
+    "overlayDialog": {
+      "title": "Overlays auswählen",
+      "noOverlay": "Kein Overlay anzeigen",
+      "noOverlayDefined": "Kein Overlay definiert"
+    }
+  },
+  "eventParticipantsModal": {
+    "title": "Mitmachende",
+    "teamcaptains": "Teamcaptains",
+    "notifications": {
+      "noSubAssociationError": "Dieser Aktion ist kein gültiger Landkreis zugeordnet. Die Ernennung einer*eines Teamcaptains ist an einen Landkreis gebunden.",
+      "generalError": "Ein unerwarteter Fehler ist aufgetreten"
+    },
+    "promoteUserToTeamcamptain": {
+      "label": "Benutzer*in zu Teamcaptain machen",
+      "dialog": {
+        "title": "Benutzer*innen zu Teamcaptain hochstufen",
+        "description": "Möchtest du die*den Benutzer*in {0} zur*zum Teamcaptain machen?"
+      }
+    },
+    "removeParticipant": "Benutzer*in von der Aktion entfernen",
+    "verifiedParticipants": "Bestätigte Teilnehmer*innen",
+    "verifyParticipants": "Teilnehmer*innen bestätigen",
+    "noOneWaitingToGetVerified": "Niemand wartet auf Freischaltung. Lade noch mehr Leute zur Aktion ein."
+  },
+  "eventDeleteDialog": {
+    "title": "{0} wirklich löschen?",
+    "description": "Das Event {0} wird gelöscht und kann nicht wiederhergestellt werden.",
+    "generalError": "Die Aktion konnte nicht gelöscht werden."
+  },
+  "createLead": {
+    "male": "männlich",
+    "female": "weiblich",
+    "divers": "divers",
+    "noPermissionError": "Um einen Kontakt zu registrieren, benötigst du eine Teamcaptain- oder Koordinator*innen-Berechtigung",
+    "successMessage": "Kontakt wurde registriert",
+    "generalError": "Ein unerwarteter Fehler ist aufgetreten",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "email": "E-Mail",
+    "phone": "Telefonnummer",
+    "gender": "Geschlecht",
+    "zipCode": "Postleitzahl",
+    "city": "Stadt",
+    "subOrganization": "Organisation",
+    "note": "Bemerkung",
+    "wantToBecomeMember": "Ich möchte Die Linke-Mitglied werden",
+    "submit": "Abschicken"
+  },
+  "posterTable": {
+    "columns": {
+      "place": "Ort",
+      "unnamedPlace": "Unbenannter Ort",
+      "status": "Status"
+    },
+    "deletePosterModal": {
+      "title": "Plakat löschen",
+      "description": "Möchtest du Plakat #{0} wirklich löschen?",
+      "skipConfirm": "Beim nächsten mal nicht mehr fragen"
+    },
+    "noDataLabel": "Noch keine Plakate erstellt"
+  },
+  "editPoster": {
+    "address": "Adresse",
+    "status": "Zustand",
+    "mountedOn": "Position"
+  },
+  "standaloneGeocoder": {
+    "inputLabel": "Adresse eingeben"
+  },
+  "createEvent": {
+    "heading": "Neue Aktion erstellen",
+    "nameLabel": "Name der Aktion",
+    "eventTypeLabel": "Aktionstyp",
+    "campaignsLabel": "Kampagnen",
+    "campaignsPlaceholder": "Wähle eine Kampagne aus"
+  },
+  "requestPermission": {
+    "notifications": {
+      "success": "Vielen Dank für deine Nachricht. Wir melden uns bald bei dir.",
+      "noValidDataError": "Deine Nachricht konnte nicht versendet werden, bitte prüfe deine Angaben.",
+      "generalError": "Ein unerwarteter Fehler ist aufgetreten"
+    },
+    "description": "Du willst eine Aktion in Deinem Kreisverband planen und andere dazu einladen? Dann brauchst Du Koordination-Rechte. Schreibe uns kurz, was Du für Veranstaltungen planen willst - wir melden uns bei Dir.",
+    "username": "Benutzer*innenname",
+    "email": "E-Mail",
+    "message": "Deine Nachricht",
+    "submitButton": "Koordinationsrechte beantragen"
+  },
+  "registrationSuccess": {
+    "title": "Vielen Dank",
+    "description": "Die Registrierung war erfolgreich. Bitte schaue in dein Postfach um sie zu bestätigen, danach kannst du dich bei der App anmelden."
+  },
+  "locationSelect": {
+    "hintText": "Bitte gib entweder eine Adresse in das Suchfeld ein oder verschiebe den rot hervorgehobenen Pin auf der Karte, um die Position dieses Standorts auf der Karte festzulegen.",
+    "adoptSuggestionPopup": "Willst du die Beschreibung für diesen Ort übernehmen?"
+  },
+  "adoptEventAreas": {
+    "heading": "Gebiete übernehmen",
+    "adoptPosters": "Plakatstandorte übernehmen",
+    "selectAreaSet": {
+      "description": "Von wo möchtest du Gebiete übernehmen?",
+      "searchByAreaName": "Nach Gebietsnamen suchen",
+      "adoptFromRecentEvents": "Aus vergangenen Aktionen"
+    },
+    "searchEventArea": {
+      "description": "Such nach einem Gebiet, welches du übernehmen möchtest.",
+      "areaName": "Gebietsname",
+      "noAreasFound": "Sie haben keine Gebiete mit diesem Namen angelegt.",
+      "minLengthError": "Mindestens {0} Zeichen"
+    },
+    "recentEventAreas": {
+      "description": "Bitte wähle eine Aktion aus, von welcher du die definierten Gebiete übernehmen möchtest."
+    },
+    "campaignCollections": {
+      "description": "Bitte wähle ein Gebiet aus"
+    }
+  }
+}

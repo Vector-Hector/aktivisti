@@ -35,7 +35,7 @@ function onDialogHide() {
   <QDialog ref="dialog" @hide="onDialogHide">
     <QCard class="participants-modal">
       <QToolbar>
-        <QToolbarTitle>Mitmachende</QToolbarTitle>
+        <QToolbarTitle>{{ $t('eventParticipantsModal.title') }}</QToolbarTitle>
       </QToolbar>
       <QCardSection>
         <EventParticipantsList

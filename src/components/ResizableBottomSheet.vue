@@ -123,7 +123,7 @@ onBeforeUnmount(() => {
           <button class="control-button create" @click="handleCreateEvent">
             <QIcon class="icon" :name="farCalendarPlus" />
           </button>
-          <div class="create-text">Erstellen</div>
+          <div class="create-text">{{ $t('events.createButtonShort') }}</div>
         </div>
         <div class="col resize-button-group">
           <button class="control-button expand" @click="expand">
@@ -231,7 +231,9 @@ onBeforeUnmount(() => {
   font-weight: bold;
   font-size: 18px;
   overflow: hidden;
-  transition: all 400ms ease-out, border-radius 250ms ease-out;
+  transition:
+    all 400ms ease-out,
+    border-radius 250ms ease-out;
   cursor: pointer;
   display: flex;
   align-items: center;

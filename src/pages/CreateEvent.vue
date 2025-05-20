@@ -12,6 +12,7 @@ export default {
     if (!userStore.hasAtLeastOneManagePermission()) {
       ErrorBus.emit(
         NOT_AUTHORIZED,
+        // FIXME(peter) Due to the workaround for the composition API, we need to use a hard-coded string here for now, but needs to be internationalized in future
         'Um eine Aktion zu erstellen benötigst du eine Koordinator*innenberechtigung'
       )
       next({ name: 'login' })
@@ -36,7 +37,7 @@ export default {
 </script>
 <script setup lang="ts">
 import { ComponentPublicInstance, ref } from 'vue'
-import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import { EventTypes, useEventTypes } from 'src/api/model/EventTypes'
 import { apiClient } from 'src/api/ApiClient'
 import { QBtn, QInput, QPage, QScrollArea, QSelect, useQuasar } from 'quasar'
 import { EventDto } from 'src/api/model/EventDto'
@@ -46,9 +47,12 @@ import { userStore } from 'src/store/UserStore'
 import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { useRouter } from 'vue-router'
+import { useValidationRules } from 'src/utils/validationRules'
 
 const $router = useRouter()
 const $q = useQuasar()
+const { eventTypeOptions } = useEventTypes()
+const { validationRules } = useValidationRules()
 
 const metrics = ref<EventMetricDto[]>([])
 const campaigns = ref<CampaignDto[]>([])
@@ -126,22 +130,22 @@ defineExpose({
     <QPage>
       <div class="container">
         <div class="create-event">
-          <h3>Neue Aktion erstellen</h3>
+          <h3>{{ $t('createEvent.heading') }}</h3>
           <FormError :error="errors.non_field_error" />
           <QInput
             filled
             class="create-event-input"
             v-model="event.name"
-            label="Name der Aktion"
+            :label="$t('createEvent.nameLabel')"
             :error-message="errors.name?.[0]"
             :error="!!errors.name?.length"
-            :rules="[$validationRules.isRequired]"
+            :rules="[validationRules.isRequired]"
           />
           <QSelect
             filled
             class="create-event-input"
             v-model="event.event_type"
-            label="Aktionstyp"
+            :label="$t('createEvent.eventTypeLabel')"
             :options="eventTypeOptions"
             option-label="label"
             option-value="key"
@@ -155,8 +159,8 @@ defineExpose({
             filled
             class="create-event-input"
             v-model="event.campaigns"
-            label="Kampagnen"
-            placeholder="Wähle eine Kampagne aus"
+            :label="$t('createEvent.campaignsLabel')"
+            :placeholder="$t('createEvent.campaignsPlaceholder')"
             :multiple="true"
             :options="campaigns"
             option-label="name"
@@ -170,10 +174,14 @@ defineExpose({
             <QBtn
               outline
               color="primary"
-              label="Abbrechen"
+              :label="$t('general.cancel')"
               @click="$router.go(-1)"
             />
-            <QBtn color="primary" label="Erstellen" @click="saveAndProceed()" />
+            <QBtn
+              color="primary"
+              :label="$t('general.create')"
+              @click="saveAndProceed()"
+            />
           </div>
         </div>
       </div>

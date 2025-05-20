@@ -1,14 +1,25 @@
 import { EventTypes } from 'src/api/model/EventTypes'
 import { LocationDto } from 'src/api/model/LocationDto'
+import { useI18n } from 'vue-i18n'
 
 export enum VisibilityOptions {
   Public = 'PUBLIC',
   InviteOnly = 'INVITE_ONLY'
 }
 
-export const VisibilityLabels: { [option in VisibilityOptions]: string } = {
-  [VisibilityOptions.Public]: 'Öffentlich',
-  [VisibilityOptions.InviteOnly]: 'Nur mit Einladung'
+export function useVisibilityLabels() {
+  const { t } = useI18n()
+  function getLabel(option: VisibilityOptions): string {
+    if (option === VisibilityOptions.Public) {
+      return t('api.model.VisibilityOptions.PUBLIC')
+    }
+    if (option === VisibilityOptions.InviteOnly) {
+      return t('api.model.VisibilityOptions.INVITE_ONLY')
+    }
+    return ''
+  }
+
+  return { getLabel }
 }
 
 export interface EventDto {

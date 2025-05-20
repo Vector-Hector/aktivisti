@@ -63,7 +63,7 @@ onMounted(async () => {
 <template>
   <QCardSection class="description-section">
     <span class="description">
-      Such nach einem Gebiet, welches du übernehmen möchtest.
+      {{ $t('adoptEventAreas.searchEventArea.description') }}
     </span>
   </QCardSection>
   <QCardSection class="section">
@@ -72,9 +72,13 @@ onMounted(async () => {
         <div class="col-grow">
           <QInput
             dense
-            label="Gebietsname"
+            :label="$t('adoptEventAreas.searchEventArea.areaName')"
             v-model="searchString"
-            :rules="[(val) => val?.length >= 3 || 'Mindestens 3 Zeichen']"
+            :rules="[
+              (val) =>
+                val?.length >= 3 ||
+                $t('adoptEventAreas.searchEventArea.minLengthError', [3])
+            ]"
           />
         </div>
         <div class="col-auto">
@@ -104,7 +108,7 @@ onMounted(async () => {
           />
         </QScrollArea>
         <div class="empty-list-placeholder" v-else>
-          Sie haben keine Gebiete mit diesem Namen angelegt.
+          {{ $t('adoptEventAreas.searchEventArea.noAreasFound') }}
         </div>
       </template>
     </template>

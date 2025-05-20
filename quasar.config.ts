@@ -33,7 +33,7 @@ export default defineConfig(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['api', 'validation-rules', 'map', 'utils', 'apex', 'deep-links'],
+    boot: ['i18n', 'api', 'map', 'apex', 'deep-links', 'quasar-lang-pack'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
     css: ['app.scss'],
@@ -118,8 +118,6 @@ export default defineConfig(function (ctx) {
       config: {},
 
       iconSet: 'svg-ionicons-v5', // Quasar icon set
-      lang: 'de', // Quasar language pack
-
       // For special cases outside of where the auto-import strategy can have an impact
       // (like functional components as one of the examples),
       // you can manually specify Quasar components/directives to be available everywhere:

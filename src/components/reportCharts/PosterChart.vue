@@ -2,11 +2,12 @@
 import { apiClient } from 'src/api/ApiClient'
 import VueApexCharts from 'vue3-apexcharts'
 import { computed, onBeforeMount, ref } from 'vue'
-import { PosterStatus, PosterStatusUtil } from 'src/api/model/PosterDto'
+import { PosterStatus, usePosterOptions } from 'src/api/model/PosterDto'
 import { ReportPosterDto } from 'src/api/model/ReportPosterDto'
 import { ApexDataUtil, ApexDatePoint } from 'src/api/model/ApexDatePoint'
 import { useReportScope } from 'components/reportCharts/reportChartScope'
-import { defaultApexChartOptions } from 'boot/apex'
+import { ReportType, useReportType } from 'src/api/model/ReportType'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   campaignId: number
@@ -22,6 +23,10 @@ const { campaign, stateAssociation, subAssociation, fetchData } =
     props.stateAssociationId,
     props.subAssociationId
   )
+
+const { t } = useI18n()
+const { ReportTypeUtil } = useReportType()
+const { PosterStatusUtil } = usePosterOptions()
 
 const absentPosterData = ref<ApexDatePoint[]>([])
 const mountedPosterData = ref<ApexDatePoint[]>([])
@@ -89,7 +94,7 @@ const chartOptions = computed(() => {
   return {
     colors: ['#93959d', '#2fd370', '#df0505'],
     title: {
-      text: 'Plakate'
+      text: ReportTypeUtil.getLabel(ReportType.METRICS_POSTER)
     },
     subtitle: {
       text: `${campaign.value?.name}${
@@ -97,9 +102,7 @@ const chartOptions = computed(() => {
       }${subAssociation.value?.name ? ' > ' + subAssociation.value.name : ''}`
     },
     noData: {
-      text: isLoading.value
-        ? 'Lade Daten...'
-        : defaultApexChartOptions.noData?.text
+      text: isLoading.value ? t('apex.loading') : Apex.noData?.text
     }
   }
 })

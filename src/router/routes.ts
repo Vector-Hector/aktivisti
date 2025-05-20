@@ -81,7 +81,7 @@ const routes = [
         component: Profile,
         name: 'profile',
         meta: {
-          title: () => 'Mein Profil'
+          title: (t) => t('routes.profile.title')
         }
       },
       {
@@ -89,7 +89,7 @@ const routes = [
         component: MyParticipations,
         name: 'my-participations',
         meta: {
-          title: () => 'Meine Teilnahmen'
+          title: (t) => t('routes.myParticipations.title')
         }
       },
       {
@@ -97,7 +97,7 @@ const routes = [
         component: Reports,
         name: 'reports',
         meta: {
-          title: () => 'Statistiken'
+          title: (t) => t('routes.statistics.title')
         }
       },
       {
@@ -105,7 +105,7 @@ const routes = [
         component: MapWithSheet,
         name: 'office-map',
         meta: {
-          title: () => 'Die Linke vor Ort'
+          title: (t) => t('routes.offices.title')
         },
         props: {
           isShowingOfficeLayer: false
@@ -138,7 +138,7 @@ const routes = [
         component: MapWithSheet,
         name: 'poster-map',
         meta: {
-          title: () => 'Plakate'
+          title: (t) => t('routes.posters.title')
         },
         props: {
           isShowingOfficeLayer: false
@@ -168,7 +168,7 @@ const routes = [
         },
         name: 'events',
         meta: {
-          title: () => 'Alle Aktionen'
+          title: (t) => t('routes.events.title')
         },
         children: [
           {
@@ -206,7 +206,7 @@ const routes = [
                 component: EventDetailReport,
                 name: 'event-detail-report',
                 meta: {
-                  title: () => 'Ergebnisse',
+                  title: (t) => t('routes.events.report.title'),
                   subtitle: () => uiStore.getState().activeTitleElements.event
                 }
               },
@@ -239,7 +239,8 @@ const routes = [
                       map: EventAreaStreetMap
                     },
                     meta: {
-                      title: () => 'Adressen',
+                      title: (t) =>
+                        t('routes.events.area.street.addresses.title'),
                       subtitle: () =>
                         uiStore.getState().activeTitleElements.street
                     },
@@ -255,7 +256,8 @@ const routes = [
                     meta: {
                       title: () =>
                         uiStore.getState().activeTitleElements.houseNumber,
-                      subtitle: () => 'Ergebnisse aufnehmen'
+                      subtitle: (t) =>
+                        t('routes.events.area.street.recordResults.title')
                     },
                     props: true,
                     name: 'event-detail-area-metrics'
@@ -266,7 +268,7 @@ const routes = [
                     component: CreateLead,
                     props: true,
                     meta: {
-                      title: () => 'Kontakt registrieren'
+                      title: (t) => t('routes.events.area.createLead.title')
                     }
                   },
                   {
@@ -312,7 +314,7 @@ const routes = [
         component: CreateEvent,
         name: 'create-event',
         meta: {
-          title: () => 'Aktion erstellen'
+          title: (t) => t('routes.events.createEvent.title')
         }
       },
       {
@@ -320,7 +322,7 @@ const routes = [
         component: CreateEventRequestPermissions,
         name: 'create-event-request-permissions',
         meta: {
-          title: () => 'Koordinator*innen-Rechte beantragen'
+          title: (t) => t('routes.events.requestPermissions.title')
         }
       },
       {
@@ -330,7 +332,7 @@ const routes = [
         redirect: { name: 'edit-event-details' },
         meta: {
           subtitle: () => uiStore.getState().activeTitleElements.event,
-          title: () => 'Aktion bearbeiten'
+          title: (t) => t('routes.events.edit.title')
         },
         children: [
           {
@@ -358,7 +360,7 @@ const routes = [
               map: EditEventPostersMap
             },
             meta: {
-              title: () => 'Plakat bearbeiten'
+              title: (t) => t('routes.events.edit.posters.title')
             },
             children: [
               {
@@ -399,7 +401,7 @@ const routes = [
         }),
         meta: {
           requiresAuth: false,
-          title: () => 'Anmelden'
+          title: (t) => t('routes.login.title')
         }
       },
       {
@@ -407,7 +409,7 @@ const routes = [
         component: Register,
         meta: {
           requiresAuth: false,
-          title: () => 'Registrieren'
+          title: (t) => t('routes.register.title')
         }
       },
       {
@@ -416,7 +418,7 @@ const routes = [
         name: 'register-success',
         meta: {
           requiresAuth: false,
-          title: () => 'Registrierung erfolgreich'
+          title: (t) => t('routes.registerSuccess.title')
         }
       },
       {
@@ -424,7 +426,7 @@ const routes = [
         component: Imprint,
         meta: {
           requiresAuth: false,
-          title: () => 'Impressum'
+          title: (t) => t('routes.imprint.title')
         }
       },
       {
@@ -432,7 +434,7 @@ const routes = [
         name: 'manage-users',
         component: ManageUsers,
         meta: {
-          title: () => 'Benutzer*innen verwalten'
+          title: (t) => t('routes.manageUsers.title')
         }
       }
     ]

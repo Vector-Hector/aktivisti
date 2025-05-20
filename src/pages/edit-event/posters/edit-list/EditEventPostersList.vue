@@ -36,7 +36,7 @@ async function editPoster(posterId: number) {
       <div class="col buttons">
         <QBtn
           color="primary"
-          label="Erstellen"
+          :label="$t('events.edit.posters.creationButton')"
           :icon="ionLocationSharp"
           :to="{ name: 'edit-event-single-poster-new' }"
         />

@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import { EventTypes, useEventTypes } from 'src/api/model/EventTypes'
 import { UserDto } from 'src/api/model/UserDto'
 import {
   QBtn,
@@ -21,11 +21,15 @@ import { myParticipationsStore } from 'src/store/MyParticipationsStore'
 import { userStore } from 'src/store/UserStore'
 import { EventStatus } from 'src/api/model/EventStatus'
 import { apiClient } from 'src/api/ApiClient'
+import { useDateFormat } from 'src/utils/dateFormat'
 
 const participatedEvents = ref<EventDto[]>([])
 const invitingUsers = ref<UserDto[]>([])
 const campaigns = ref<CampaignDto[]>([])
 const loading = ref(true)
+
+const { dateFormat } = useDateFormat()
+const { eventTypeOptions } = useEventTypes()
 
 onMounted(async () => {
   await Promise.all([getParticipatedEvents(), getCampaigns()])
@@ -125,7 +129,7 @@ function findInvitingUsers(findIds: number[]): UserDto[] {
         <div v-else class="my-participations-content">
           <div v-show="pendingEvents.length > 0">
             <h3 class="my-participations-section-heading">
-              Offene Einladungen
+              {{ $t('myParticipations.pendingInvitations') }}
             </h3>
             <QSeparator class="profile-section-divider" />
 
@@ -154,18 +158,24 @@ function findInvitingUsers(findIds: number[]): UserDto[] {
                     }}
                   </QItemLabel>
                   <QItemLabel>
-                    {{ $utils.dateFormat(event.start_date) }}
+                    {{ dateFormat(event.start_date, 'datetime') }}
                   </QItemLabel>
                   <QItemLabel>
                     <i>
                       {{
-                        findInvitingUsers(participation.inviting_users)
-                          .map(({ username }) => username)
-                          .join(',') ?? 'Unbekannt '
+                        $t(
+                          'myParticipations.hasInvitedYou',
+                          participation.inviting_users.length,
+                          {
+                            named: {
+                              invitingUsers:
+                                findInvitingUsers(participation.inviting_users)
+                                  .map(({ username }) => username)
+                                  .join(',') ?? $t('myParticipations.unknown')
+                            }
+                          }
+                        )
                       }}
-                      <span v-if="participation.inviting_users.length > 1"
-                        >haben</span
-                      ><span v-else>hat</span> dich eingeladen
                     </i>
                   </QItemLabel>
                 </QItemSection>
@@ -177,7 +187,7 @@ function findInvitingUsers(findIds: number[]): UserDto[] {
                       @click.prevent.stop="reject(participation)"
                       :icon="ionClose"
                     >
-                      Ablehnen
+                      {{ $t('myParticipations.reject') }}
                     </QBtn>
                     <QBtn
                       dense
@@ -186,7 +196,7 @@ function findInvitingUsers(findIds: number[]): UserDto[] {
                       @click.prevent.stop="accept(participation)"
                       :icon="ionCheckmark"
                     >
-                      Annehmen
+                      {{ $t('myParticipations.accept') }}
                     </QBtn>
                   </div>
                 </QItemSection>
@@ -195,7 +205,9 @@ function findInvitingUsers(findIds: number[]): UserDto[] {
           </div>
 
           <div v-show="acceptedEvents.length > 0">
-            <h3 class="my-participations-section-heading">Aktive Teilnahmen</h3>
+            <h3 class="my-participations-section-heading">
+              {{ $t('myParticipations.activeParticipations') }}
+            </h3>
             <QSeparator class="profile-section-divider" />
 
             <QList>
@@ -223,16 +235,18 @@ function findInvitingUsers(findIds: number[]): UserDto[] {
                     }}
                   </QItemLabel>
                   <QItemLabel>
-                    {{ $utils.dateFormat(event.start_date) }}
+                    {{ dateFormat(event.start_date, 'datetime') }}
                   </QItemLabel>
                 </QItemSection>
               </QItem>
             </QList>
           </div>
           <div v-if="eventParticipations.length <= 0" class="placeholder">
-            <p>Du nimmst an keinen Aktion teil - suche jetzt welche!</p>
+            <p>{{ $t('myParticipations.noEventParticipations.info') }}</p>
             <QBtn
-              label="Jetzt nach Aktionen suchen"
+              :label="
+                $t('myParticipations.noEventParticipations.searchEventsButton')
+              "
               :to="{ name: 'events' }"
               color="primary"
             />

@@ -1,3 +1,9 @@
+import { ApexOptions } from 'apexcharts'
+
+declare global {
+  let Apex: ApexOptions
+}
+
 declare namespace NodeJS {
   interface ProcessEnv {
     NODE_ENV: string

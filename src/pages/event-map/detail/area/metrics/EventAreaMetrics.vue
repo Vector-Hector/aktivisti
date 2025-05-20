@@ -69,7 +69,7 @@ const metricValues = computed({
         if (status === 400 && data.event_area) {
           $q.notify({
             color: 'negative',
-            message: 'Das Gebiet scheint nicht mehr zu existieren.'
+            message: t('events.details.area.metrics.areaNotFoundError')
           })
         }
         // TODO(peter) Handle other errors
@@ -105,7 +105,7 @@ function updateMetricValue(metricRecordId: number, value: string) {
   <QScrollArea class="d-flex flex-fill column q-py-sm">
     <div class="create-lead">
       <QBtn :to="{ name: 'create-lead' }" outline color="primary">
-        Kontakt registrieren
+        {{ $t('events.details.area.metrics.createLead') }}
       </QBtn>
     </div>
 
@@ -119,7 +119,9 @@ function updateMetricValue(metricRecordId: number, value: string) {
         @update:modelValue="updateMetricValue(metricRecord.id, $event)"
       />
     </div>
-    <p v-else>Für diese Aktion wurden keine Ergebnisse definiert</p>
+    <p v-else>
+      {{ $t('events.details.area.metrics.noMetricsDefinedWarning') }}
+    </p>
     <div v-if="event.external_url_door" class="external-url">
       <QBtn
         :href="event.external_url_door"
@@ -127,7 +129,7 @@ function updateMetricValue(metricRecordId: number, value: string) {
         outline
         color="primary"
       >
-        externe Umfrage öffnen
+        {{ $t('events.details.area.metrics.openExternalUrl') }}
       </QBtn>
     </div>
   </QScrollArea>

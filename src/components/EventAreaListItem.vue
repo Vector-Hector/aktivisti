@@ -3,8 +3,9 @@ import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { EventDto } from 'src/api/model/EventDto'
 import { QItem, QItemLabel, QItemSection } from 'quasar'
 import { computed } from 'vue'
-import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { useEventTypes } from 'src/api/model/EventTypes'
 import { CampaignDto } from 'src/api/model/CampaignDto'
+import { useDateFormat } from 'src/utils/dateFormat'
 
 interface Props {
   eventArea: EventAreaDto
@@ -18,6 +19,9 @@ interface Emits {
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
+
+const { dateFormat } = useDateFormat()
+const { eventTypeOptions } = useEventTypes()
 
 const eventTypeLabel = computed(() => {
   return eventTypeOptions.find(({ key }) => key === props.event.event_type)
@@ -44,7 +48,7 @@ const campaigns = computed(() => {
         {{ campaigns }}
       </QItemLabel>
       <QItemLabel>
-        {{ $utils.dateFormat(event.start_date) }}
+        {{ dateFormat(event.start_date, 'datetime') }}
       </QItemLabel>
     </QItemSection>
   </QItem>

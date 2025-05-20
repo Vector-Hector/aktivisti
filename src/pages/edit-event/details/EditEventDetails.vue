@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, ref, watch } from 'vue'
 
-import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import { EventTypes, useEventTypes } from 'src/api/model/EventTypes'
 import { useEditEventMixin } from 'src/pages/edit-event/EditEventMixin'
-import { VisibilityLabels, VisibilityOptions } from 'src/api/model/EventDto'
+import { VisibilityOptions, useVisibilityLabels } from 'src/api/model/EventDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import {
@@ -23,10 +23,16 @@ import { useEditEventAutoSaveMixin } from 'pages/edit-event/EditEventAutoSaveMix
 import { apiClient } from 'src/api/ApiClient'
 import DateTimeInput from 'components/DateTimeInput.vue'
 import SidebarBottomStepNavigation from 'components/SidebarBottomStepNavigation.vue'
+import { useValidationRules } from 'src/utils/validationRules'
+import { useI18n } from 'vue-i18n'
 
 const $q = useQuasar()
+const { t } = useI18n()
+const { getLabel } = useVisibilityLabels()
 const { metricRecords, campaigns, event } = useEditEventMixin()
 const { errors, saveDebouncer } = useEditEventAutoSaveMixin()
+const { eventTypeOptions } = useEventTypes()
+const { validationRules } = useValidationRules()
 const stepControls = inject('stepControls') as StepControls
 
 // Fixme(peter) Check what of the metrics functionality is still needed here
@@ -38,7 +44,7 @@ const metrics = ref<EventMetricDto[]>([])
 const lastSavedMetricRecords = ref<EventMetricRecordDto[] | null>(null)
 const startDate = ref<string>('')
 const endDate = ref<string>('')
-const mask = ref<string>('DD.MM.YYYY HH:mm')
+const mask = ref<string>(t('config.datetimeFormats.dateTimePickerMask'))
 
 const currentYearMonth = computed(() => date.formatDate(new Date(), 'YYYY/MM'))
 const eventTypes = computed(() => eventTypeOptions)
@@ -101,7 +107,9 @@ watch(startDate, (newValue) => {
       event.value.start_date = extractedIsoDate
     }
   } else {
-    errors.value.start_date = ['Ungültiges Datum']
+    errors.value.start_date = [
+      t('events.edit.details.notifications.invalidDateError')
+    ]
   }
 })
 watch(endDate, (newValue) => {
@@ -112,7 +120,9 @@ watch(endDate, (newValue) => {
       event.value.end_date = extractedIsoDate
     }
   } else {
-    errors.value.end_date = ['Ungültiges Datum']
+    errors.value.end_date = [
+      t('events.edit.details.notifications.invalidDateError')
+    ]
   }
 })
 
@@ -138,12 +148,12 @@ async function updateMetrics() {
     metricRecords.value = cloneDeep(metricRecordsRequest.payload.data)
     $q.notify({
       color: 'positive',
-      message: 'Ergebnisse gespeichert'
+      message: t('events.edit.details.notifications.successMessageMetrics')
     })
   } catch {
     $q.notify({
       color: 'negative',
-      message: 'Die Ergebnisse konnten nicht gespeichert werden'
+      message: t('events.edit.details.notifications.generalErrorMetrics')
     })
   }
 }
@@ -173,7 +183,7 @@ async function next() {
         <QSelect
           filled
           v-model="event.event_type"
-          label="Aktionstyp"
+          :label="$t('events.edit.details.eventType')"
           disable
           :option-disable="() => true"
           :options="eventTypes"
@@ -187,16 +197,16 @@ async function next() {
         <QInput
           filled
           v-model="event.name"
-          label="Name der Aktion"
+          :label="$t('events.edit.details.eventName')"
           :error-message="errors.name?.[0]"
           :error="!!errors.name?.length"
-          :rules="[$validationRules.isRequired]"
+          :rules="[validationRules.isRequired]"
         />
         <QSelect
           filled
           v-model="event.campaigns"
-          label="Kampagne"
-          placeholder="Wähle eine Kampagne aus"
+          :label="$t('events.edit.details.campaign')"
+          :placeholder="$t('events.edit.details.campaignPlaceholder')"
           :multiple="true"
           :options="campaigns"
           option-label="name"
@@ -210,7 +220,7 @@ async function next() {
           <DateTimeInput
             class="col"
             filled
-            :input-props="{ label: 'Startdatum' }"
+            :input-props="{ label: $t('events.edit.details.startDate') }"
             :time-props="{ minuteOptions: [0, 15, 30, 45] }"
             :date-props="{ navigationMinYearMonth: currentYearMonth }"
             v-model="startDate"
@@ -221,21 +231,21 @@ async function next() {
           <DateTimeInput
             class="col"
             filled
-            :input-props="{ label: 'Enddatum' }"
+            :input-props="{ label: $t('events.edit.details.endDate') }"
             :time-props="{ minuteOptions: [0, 15, 30, 45] }"
             :date-props="{ navigationMinYearMonth: currentYearMonth }"
             v-model="endDate"
             :mask="mask"
             :error-message="errors.end_date?.[0]"
             :error="!!errors.end_date?.length"
-            :rules="[$validationRules.isRequired]"
+            :rules="[validationRules.isRequired]"
           />
         </div>
         <QInput
           filled
           v-if="event.event_type === EventTypes.GENERIC"
           v-model.number="event.external_url"
-          label="Externe URL"
+          :label="$t('events.edit.details.externalUrl')"
           :error-message="errors.external_url?.[0]"
           :error="!!errors.external_url?.length"
         />
@@ -249,7 +259,7 @@ async function next() {
             ].includes(event.event_type)
           "
           v-model.number="event.messenger_url"
-          label="Messenger URL"
+          :label="$t('events.edit.details.messengerUrl')"
           :error-message="errors.messenger_url?.[0]"
           :error="!!errors.messenger_url?.length"
           type="url"
@@ -261,7 +271,7 @@ async function next() {
               event.event_type
             )
           "
-          label="Link für externe Umfrage"
+          :label="$t('events.edit.details.externalUrlDoorToDoor')"
           v-model.number="event.external_url_door"
           :error-message="errors.external_url_door?.[0]"
           :error="!!errors.external_url_door?.length"
@@ -270,7 +280,7 @@ async function next() {
         <QInput
           filled
           type="textarea"
-          label="Öffentliche Beschreibung"
+          :label="$t('events.edit.details.publicDescription')"
           v-model="event.description"
           :error-message="errors.description?.[0]"
           :error="!!errors.description?.length"
@@ -285,7 +295,7 @@ async function next() {
           "
           filled
           type="textarea"
-          label="Interne Informationen (nur für Teilnehmer*innen sichtbar)"
+          :label="$t('events.edit.details.internalDescription')"
           v-model="event.internal_description"
           :error-message="errors.internal_description?.[0]"
           :error="!!errors.internal_description?.length"
@@ -293,17 +303,17 @@ async function next() {
         <QSelect
           filled
           v-if="event.event_type !== EventTypes.GENERIC"
-          label="Sichtbarkeit"
+          :label="$t('events.edit.details.visibility')"
           v-model="event.visibility"
           :options="Object.values(VisibilityOptions)"
-          :option-label="(item) => VisibilityLabels[item]"
+          :option-label="(item) => getLabel(item)"
           :error-message="errors.visibility?.[0]"
           :error="!!errors.visibility?.length"
         />
         <div v-if="event.event_type === EventTypes.POSTERS">
           <QCheckbox
             v-model="event.poster_creation_allowed"
-            label="Teilnehmer*innen können Plakate anlegen"
+            :label="$t('events.edit.details.posterCreationAllowed')"
           />
         </div>
       </QForm>

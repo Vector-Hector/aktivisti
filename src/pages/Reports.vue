@@ -57,7 +57,7 @@ function handleCloseChart(chart_uuid: string) {
           <QBtn
             outline
             :icon="ionStatsChartOutline"
-            label="Graph hinzufügen"
+            :label="$t('reports.addChartButton')"
             class="button-add"
             color="primary"
             @click="openReportSelection"

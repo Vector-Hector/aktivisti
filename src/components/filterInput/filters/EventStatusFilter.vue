@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FilterInput from 'components/filterInput/FilterInput.vue'
-import { EventStatus, eventStatusOptions } from 'src/api/model/EventStatus'
+import { EventStatus, useEventStatus } from 'src/api/model/EventStatus'
 
 interface Props {
   modelValue?: EventStatus
@@ -11,11 +11,13 @@ interface Emits {
   (e: 'update:modelValue', value: EventStatus): void
 }
 const emit = defineEmits<Emits>()
+
+const { eventStatusOptions } = useEventStatus()
 </script>
 
 <template>
   <FilterInput
-    label="Status"
+    :label="$t('eventStatusFilter.defaultLabel')"
     :model-value="props.modelValue"
     @update:model-value="(value) => emit('update:modelValue', value)"
     :options="eventStatusOptions"

@@ -2,6 +2,9 @@
 import { computed } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   options: SubAssociationDto[]
@@ -13,8 +16,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   modelValue: 0,
   showAllCampaigns: true,
-  disable: false,
-  label: 'Bezirks/Kreisverband'
+  disable: false
 })
 
 interface Emits {
@@ -22,12 +24,14 @@ interface Emits {
 }
 const emit = defineEmits<Emits>()
 
+const label = props.label ? props.label : t('subAssociationFilter.defaultLabel')
+
 const extendedOptions = computed(() => {
   if (props.showAllCampaigns) {
     return [
       {
         id: 0,
-        name: 'Alle Bezirks/Kreisverbände'
+        name: t('subAssociationFilter.showAllSubAssociations')
       },
       ...props.options
     ]

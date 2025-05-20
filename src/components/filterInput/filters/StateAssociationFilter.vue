@@ -2,6 +2,9 @@
 import { computed } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
 import { StateAssociationDto } from 'src/api/model/StateAssociationDto'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   options: StateAssociationDto[]
@@ -13,9 +16,12 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   modelValue: 0,
   showAllStateAssociation: true,
-  disable: false,
-  label: 'Landesverbände'
+  disable: false
 })
+
+const label = props.label
+  ? props.label
+  : t('stateAssociationFilter.defaultLabel')
 
 interface Emits {
   (e: 'update:modelValue', value: number | undefined): void
@@ -27,7 +33,7 @@ const extendedOptions = computed(() => {
     return [
       {
         id: 0,
-        name: 'Alle Landesverbände'
+        name: t('stateAssociationFilter.showAllStateAssociations')
       },
       ...props.options
     ]

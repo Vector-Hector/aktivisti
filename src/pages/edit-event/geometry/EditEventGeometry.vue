@@ -40,6 +40,7 @@ import { bbox } from '@turf/turf'
 import { posterListStore } from 'src/store/PosterListStore'
 import { PosterStatus } from 'src/api/model/PosterDto'
 import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
+import { useI18n } from 'vue-i18n'
 
 const $q = useQuasar()
 
@@ -53,6 +54,7 @@ const {
 } = useEditEventMixin()
 const { updateArea, deleteAreaByFeatureId } = useEditEventGeometryMixin()
 const { errors, saveDebouncer } = useEditEventAutoSaveMixin()
+const { t } = useI18n()
 
 const stepControls = inject('stepControls') as StepControls
 
@@ -61,30 +63,32 @@ const showing = ref(false)
 
 const locationHeadline = computed(() => {
   if (event.value.event_type === EventTypes.GENERIC) {
-    return 'Veranstaltungsort'
+    return t('events.edit.geometry.locationGenericEvent')
   } else {
-    return 'Treffpunkt'
+    return t('events.edit.geometry.locationGeneralEvent')
   }
 })
 const columns = computed(() => {
   return [
     {
       name: 'color',
-      label: 'Farbe',
+      label: t('events.edit.geometry.areas.table.color'),
       field: 'color',
       align: 'left',
       required: true
     },
     {
       name: 'name',
-      label: 'Name',
+      label: t('events.edit.geometry.areas.table.name'),
       field: 'name',
       align: 'left'
     },
     {
       name: 'details',
       label:
-        event.value.event_type === EventTypes.POSTERS ? 'Plakate' : 'Adressen'
+        event.value.event_type === EventTypes.POSTERS
+          ? t('events.edit.geometry.areas.table.posters')
+          : t('events.edit.geometry.areas.table.addresses')
     },
     {
       name: 'actions',
@@ -107,7 +111,7 @@ async function next() {
   if (!event.value.location) {
     $q.notify({
       color: 'negative',
-      message: 'Bitte gebe einen gültigen Treffpunkt an.'
+      message: t('events.edit.geometry.noValidLocationError')
     })
   } else {
     stepControls.next()
@@ -188,7 +192,7 @@ function openAdoptAreasModal() {
       } else {
         $q.notify({
           color: 'warning',
-          message: 'Dieses Event hat keine Gebiete'
+          message: t('events.edit.geometry.noAreasDefinedError')
         })
       }
       isLoading.value = false
@@ -211,10 +215,10 @@ function openAdoptAreasModal() {
     </div>
     <template v-if="event.event_type !== EventTypes.GENERIC">
       <div class="area-drawing">
-        <h2 class="headline">Gebiete</h2>
+        <h2 class="headline">{{ $t('events.edit.geometry.areas.heading') }}</h2>
         <QTable
           :loading="isLoading"
-          loading-label="Lade Daten zu Gebieten"
+          :loading-label="$t('events.edit.geometry.areas.table.loadingData')"
           :auto-layout="true"
           flat
           dense
@@ -226,7 +230,7 @@ function openAdoptAreasModal() {
           :rows-per-page-options="[0]"
           class="editable-cells-table overflow-hidden q-my-sm"
           edit-mode="cell"
-          no-data-label="Noch keine Gebiete gezeichnet"
+          :no-data-label="$t('events.edit.geometry.areas.table.noData')"
           @cell-edit-complete="updateArea($event.data)"
         >
           <template v-slot:header="props">
@@ -305,7 +309,9 @@ function openAdoptAreasModal() {
                     color="negative"
                     size="sm"
                     :name="ionAlertCircleOutline"
-                    aria-label="Fehlerindikator für Gebiet"
+                    :aria-label="
+                      $t('events.edit.geometry.areas.table.ariaLabelEventError')
+                    "
                   >
                   </QIcon>
                   <QTooltip v-model="showing">
@@ -345,7 +351,7 @@ function openAdoptAreasModal() {
             :icon="ionCopyOutline"
             dense
             size="md"
-            label="Gebiete übernehmen"
+            :label="$t('events.edit.geometry.areas.adoptAreasButton')"
             @click="openAdoptAreasModal"
           />
           <QBtn
@@ -354,7 +360,7 @@ function openAdoptAreasModal() {
             :icon="ionCreateOutline"
             dense
             size="md"
-            label="Gebiet zeichnen"
+            :label="$t('events.edit.geometry.areas.drawAreasButton')"
             @click="startDrawArea"
           />
         </div>

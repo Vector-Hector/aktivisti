@@ -39,7 +39,7 @@ const emit = defineEmits<Emits>()
     </template>
   </QInfiniteScroll>
   <div v-else class="empty-list-placeholder">
-    <slot name="emptyList"> Keine Einträge gefunden</slot>
+    <slot name="emptyList">{{ $t('infiniteList.emptyList') }}</slot>
   </div>
 </template>
 

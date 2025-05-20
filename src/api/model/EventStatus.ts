@@ -1,15 +1,23 @@
+import { useI18n } from 'vue-i18n'
+
 export enum EventStatus {
   ACTIVE = 'active',
   ENDED = 'ended'
 }
 
-export const eventStatusOptions: { key: string; label: string }[] = [
-  {
-    key: EventStatus.ACTIVE,
-    label: 'aktuell'
-  },
-  {
-    key: EventStatus.ENDED,
-    label: 'beendet'
-  }
-]
+export function useEventStatus() {
+  const { t } = useI18n()
+
+  const eventStatusOptions: { key: string; label: string }[] = [
+    {
+      key: EventStatus.ACTIVE,
+      label: t('api.model.EventStatus.ACTIVE')
+    },
+    {
+      key: EventStatus.ENDED,
+      label: t('api.model.EventStatus.ENDED')
+    }
+  ]
+
+  return { eventStatusOptions }
+}

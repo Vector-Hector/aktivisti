@@ -27,6 +27,7 @@ import {
 } from 'vue-router'
 import AssignAreaParticipants from 'pages/event-map/detail/area/AssignAreaParticipants.vue'
 import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
+import { useI18n } from 'vue-i18n'
 
 function updateRoute(
   to: RouteLocation,
@@ -41,6 +42,7 @@ function updateRoute(
 
 const $q = useQuasar()
 const $router = useRouter()
+const { t } = useI18n()
 const {
   event,
   eventArea,
@@ -67,8 +69,7 @@ function openCreatePosterDialog() {
     if (poster.area !== eventArea.value.id) {
       $q.notify({
         color: 'warning',
-        message:
-          'Das neue Plakat wurde nicht im derzeit ausgewählten Gebiet platziert!'
+        message: t('events.details.area.posters.posterNotCreatedInAreaWarning')
       })
     }
     void $router.push({
@@ -94,7 +95,7 @@ function openCreatePosterDialog() {
         <QBtn
           v-if="event.poster_creation_allowed"
           color="primary"
-          label="Erstellen"
+          :label="$t('events.details.area.posters.createPosterButton')"
           :icon="ionLocationSharp"
           @click="openCreatePosterDialog"
         />

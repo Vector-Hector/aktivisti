@@ -5,13 +5,16 @@ import FormError from 'components/FormError.vue'
 import { AuthType, getAuthStore, getAuthType } from 'src/store/AuthStore'
 import PasswordInput from 'components/PasswordInput.vue'
 import { apiClient } from 'src/api/ApiClient'
-import { emailRegex } from 'boot/validation-rules'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { emailRegex, useValidationRules } from 'src/utils/validationRules'
 
 const authStore = getAuthStore()
 
 const $q = useQuasar()
 const $router = useRouter()
+const { t } = useI18n()
+const { validationRules } = useValidationRules()
 
 if (authStore.isLoggedIn()) {
   void $router.replace({ name: 'events' })
@@ -42,7 +45,7 @@ async function login() {
       if (authType === AuthType.SESSION) {
         nonFieldError.value = error.response?.data?.non_field_errors?.[0]
       } else {
-        nonFieldError.value = 'Die eingegebenen Zugangsdaten sind ungültig'
+        nonFieldError.value = t('login.invalidCredentials')
       }
     }
   }
@@ -50,9 +53,8 @@ async function login() {
 }
 function openResetPasswordModal() {
   $q.dialog({
-    title: 'Passwort zurücksetzen',
-    message:
-      'Gib hier deine E-Mail Adresse ein. Wir schicken dir eine E-Mail mit Anweisungen, wie du dein Passwort zurücksetzen kannst.',
+    title: t('login.resetPassword.title'),
+    message: t('login.resetPassword.message'),
     prompt: {
       model: '',
       isValid: (val: string) => !!val && emailRegex.test(val),
@@ -69,12 +71,10 @@ function openResetPasswordModal() {
         })
         $q.notify({
           color: 'positive',
-          message:
-            'Bitte sieh nun in deinem Postfach nach. Wir haben dir eine E-Mail mit weiteren Anweisungen geschickt.'
+          message: t('login.resetPassword.successMessage')
         })
       } catch (e) {
-        let error =
-          'Beim versuch dein Passwort zurückzusetzen trat ein Fehler auf'
+        let error = t('login.resetPassword.errorMessage')
         if (apiClient.isApiClientError(e) && e.response?.data?.email) {
           error = e.response?.data?.email
         }
@@ -94,27 +94,26 @@ function openResetPasswordModal() {
     </div>
     <QForm @submit="login">
       <QInput
-        label="Benutzer*innenname"
+        :label="$t('login.usernameLabel')"
         v-model="username"
-        :rules="[$validationRules.isRequired]"
+        :rules="[validationRules.isRequired]"
         type="text"
       />
       <PasswordInput
-        label="Passwort"
+        :label="$t('login.passwordLabel')"
         v-model="password"
-        :rules="[$validationRules.isRequired]"
+        :rules="[validationRules.isRequired]"
       />
       <div class="forgot-password-link">
-        Passwort
         <a @click="openResetPasswordModal" class="primary-link">
-          zurücksetzen
+          {{ $t('login.forgetPassword') }}
         </a>
       </div>
 
       <div class="control-buttons">
         <QCheckbox
           v-model="longSession"
-          label="Angemeldet bleiben"
+          :label="$t('login.rememberMe')"
           class="checkbox-margin-right"
         />
         <FormError :error="nonFieldError" />
@@ -124,14 +123,14 @@ function openResetPasswordModal() {
           type="submit"
           :disabled="submitting"
         >
-          Anmelden
+          {{ t('login.submitButton') }}
         </QBtn>
       </div>
     </QForm>
     <div class="sign-in-link">
-      Noch kein Konto?
+      {{ $t('login.register.noAccount') }}
       <router-link to="/register" class="primary-link">
-        Hier registrieren
+        {{ $t('login.register.registerHere') }}
       </router-link>
     </div>
   </div>

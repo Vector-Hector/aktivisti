@@ -129,9 +129,7 @@ const reverseLocation = async (location: LocationDto) => {
     <div class="col-12">
       <span class="description-text">
         <slot name="hintText">
-          Bitte gib entweder eine Adresse in das Suchfeld ein oder verschiebe
-          den rot hervorgehobenen Pin auf der Karte, um die Position dieses
-          Standorts auf der Karte festzulegen.
+          {{ $t('locationSelect.hintText') }}
         </slot>
       </span>
     </div>
@@ -149,18 +147,23 @@ const reverseLocation = async (location: LocationDto) => {
         <QCard>
           <QCardSection>
             <span>
-              Willst du die Beschreibung für diesen Ort übernehmen?
+              {{ $t('locationSelect.adoptSuggestionPopup') }}
               <br />
               <b>{{ suggestion }}</b>
             </span>
           </QCardSection>
           <QCardActions align="right">
-            <QBtn v-close-popup flat color="primary" label="Nein" />
             <QBtn
               v-close-popup
               flat
               color="primary"
-              label="Ja"
+              :label="$t('general.no')"
+            />
+            <QBtn
+              v-close-popup
+              flat
+              color="primary"
+              :label="$t('general.yes')"
               @click="acceptSuggestedPlace"
             />
           </QCardActions>

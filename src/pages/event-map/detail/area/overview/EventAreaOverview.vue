@@ -40,8 +40,10 @@ import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixi
 import { apiClient } from 'src/api/ApiClient'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { ComponentPublicInstance } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const $q = useQuasar()
+const { t } = useI18n()
 
 const { eventArea, eventAreaPermissions, completedTargetIds } =
   useEventDetailStore()
@@ -69,11 +71,15 @@ function streetCompleted(street: StreetDetails) {
   )
 }
 function openCompletionModal() {
+  const statusLabel = eventArea.value.is_completed
+    ? t('events.details.area.completionModal.statusLabel.notCompleted')
+    : t('events.details.area.completionModal.statusLabel.completed')
   $q.dialog({
-    title: 'Aktionsgebiet erledigt',
-    message: eventArea.value.is_completed
-      ? `Das Aktionsgebiet <b>${eventArea.value.name}</b> als <b>offen</b> markieren?`
-      : `Das Aktionsgebiet <b>${eventArea.value.name}</b> als <b>erledigt</b> markieren?`,
+    title: t('events.details.area.completionModal.title'),
+    message: t('events.details.area.completionModal.description', {
+      eventArea: `<b>${eventArea.value.name}</b>`,
+      status: `<b>${statusLabel}</b>`
+    }),
     html: true,
     cancel: true,
     persistent: true
@@ -91,7 +97,7 @@ function openCompletionModal() {
       } catch (error) {
         void $q.notify({
           position: 'bottom',
-          message: 'Das Aktionsgebiet konnte nicht aktualisiert werden',
+          message: t('events.details.area.completionModal.generalError'),
           color: 'negative',
           timeout: 2000
         })
@@ -141,7 +147,13 @@ defineExpose({ eventArea })
               <QItemLabel>
                 {{ street.name }}
               </QItemLabel>
-              <QItemLabel> {{ street.addresses.length }} Adressen</QItemLabel>
+              <QItemLabel>
+                {{
+                  $t('events.details.area.addressCounter', [
+                    street.addresses.length
+                  ])
+                }}</QItemLabel
+              >
             </QItemSection>
 
             <QItemSection side>

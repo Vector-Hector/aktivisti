@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { PosterStatus, posterStatusOptions } from 'src/api/model/PosterDto'
+import { PosterStatus, usePosterOptions } from 'src/api/model/PosterDto'
 import {
   ionAlertCircle,
   ionCheckmarkCircle,
@@ -12,6 +12,8 @@ interface Props {
   status: PosterStatus
 }
 const props = defineProps<Props>()
+
+const { posterStatusOptions } = usePosterOptions()
 
 const statusLabel = computed(() => {
   return (

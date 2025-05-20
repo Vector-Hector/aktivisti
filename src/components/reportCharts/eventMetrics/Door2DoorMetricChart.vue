@@ -4,6 +4,7 @@ import { onBeforeMount, ref } from 'vue'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { EventTypes } from 'src/api/model/EventTypes'
 import { apiClient } from 'src/api/ApiClient'
+import { ReportType, useReportType } from 'src/api/model/ReportType'
 
 interface Props {
   campaignId: number
@@ -14,6 +15,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const metricsDoor2Door = ref<EventMetricDto[] | null>(null)
+const { ReportTypeUtil } = useReportType()
 
 onBeforeMount(async () => {
   metricsDoor2Door.value = await fetchEventMetric(EventTypes.DOOR_TO_DOOR)
@@ -30,6 +32,6 @@ async function fetchEventMetric(eventType: EventTypes) {
     :stateAssociationId="props.stateAssociationId"
     :subAssociationId="props.subAssociationId"
     :eventMetrics="metricsDoor2Door"
-    title="Haustürgespräche"
+    :title="ReportTypeUtil.getLabel(ReportType.METRICS_DOOR2DOOR)"
   />
 </template>

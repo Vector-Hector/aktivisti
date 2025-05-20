@@ -7,14 +7,16 @@ import { ionEllipse } from '@quasar/extras/ionicons-v5'
 import { QIcon, QPage, QScrollArea, QTable, QTd } from 'quasar'
 import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 import { apiClient } from 'src/api/ApiClient'
+import { useI18n } from 'vue-i18n'
 
 const { event, eventAreas } = useEventDetailStore()
+const { t } = useI18n()
 
 const columns = ref<any[]>([
   {
     name: 'areaName',
     field: 'areaName',
-    label: 'Gebiet',
+    label: t('events.details.report.eventArea'),
     align: 'left'
   }
 ])
@@ -38,22 +40,22 @@ onMounted(async () => {
     {
       name: 'completedAddresses',
       field: 'completedAddresses',
-      label: 'Besuchte Adressen'
+      label: t('events.details.report.visitedAddresses')
     },
     {
       name: 'overallAddresses',
       field: 'overallAddresses',
-      label: 'Adressen im Gebiet'
+      label: t('events.details.report.addressesInEventArea')
     },
     {
       name: 'createdLeads',
       field: 'createdLeads',
-      label: 'Gewonnene Kontakte'
+      label: t('events.details.report.collectedLeads')
     }
   )
 
   const summarizedCountsRow: any = {
-    areaName: 'Gesamt',
+    areaName: t('events.details.report.total'),
     overallAddresses: 0,
     completedAddresses: 0,
     createdLeads: 0
