@@ -537,7 +537,8 @@
           "areaNotFoundError": "Das Gebiet scheint nicht mehr zu existieren.",
           "createLead": "Kontakt registrieren",
           "noMetricsDefinedWarning": "Für diese Aktion wurden keine Ergebnisse definiert",
-          "openExternalUrl": "Externe Umfrage öffnen"
+          "openExternalUrl": "Externe Umfrage öffnen",
+          "notAValidNumberError": "Keine gültige Zahl"
         },
         "posters": {
           "createPosterButton": "Erstellen",
