@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ionAdd, ionRemove } from '@quasar/extras/ionicons-v5'
-import { QBtn, QInput } from 'quasar'
+import { QBtn, QInput, useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   modelValue?: number
@@ -14,10 +15,18 @@ interface Emits {
 }
 const emit = defineEmits<Emits>()
 
+const $q = useQuasar()
+const { t } = useI18n()
+
 function updateValue(value: any) {
   const parsedValue = parseInt(value)
   if (!isNaN(parsedValue) && parsedValue >= 0) {
     emit('update:modelValue', parsedValue)
+  } else if (value !== '') {
+    $q.notify({
+      color: 'negative',
+      message: t('events.details.area.metrics.notAValidNumberError')
+    })
   }
 }
 </script>
@@ -37,9 +46,9 @@ function updateValue(value: any) {
       dense
       outlined
       :counter="false"
+      maxlength="2"
       :model-value="props.modelValue"
-      min="0"
-      type="number"
+      inputmode="numeric"
       @update:model-value="updateValue($event)"
     />
     <QBtn
@@ -47,6 +56,7 @@ function updateValue(value: any) {
       :icon="ionAdd"
       color="primary"
       class="counter-button"
+      :disabled="props.modelValue >= 99"
       @click="updateValue(modelValue + 1)"
     />
   </div>
