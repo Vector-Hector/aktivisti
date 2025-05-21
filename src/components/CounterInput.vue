@@ -29,7 +29,7 @@ function updateValue(value: any) {
       color="primary"
       class="counter-button"
       :disabled="props.modelValue <= 0"
-      @click="emit('update:modelValue', props.modelValue - 1)"
+      @click="updateValue(props.modelValue - 1)"
     />
     <QInput
       class="counter-input-field"
@@ -47,7 +47,7 @@ function updateValue(value: any) {
       :icon="ionAdd"
       color="primary"
       class="counter-button"
-      @click="emit('update:modelValue', modelValue + 1)"
+      @click="updateValue(modelValue + 1)"
     />
   </div>
 </template>
