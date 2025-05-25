@@ -102,6 +102,14 @@ watch(
 watch(startDate, (newValue) => {
   if (dateMaskMatches(newValue, mask.value)) {
     const extractedDate = date.extractDate(newValue, mask.value)
+    if (extractedDate.getTime() < 0) {
+      errors.value.start_date = [
+        t('events.edit.details.notifications.before1970DateError')
+      ]
+      return
+    } else {
+      errors.value.start_date = []
+    }
     const extractedIsoDate = extractedDate.toISOString()
     if (extractedIsoDate !== event.value.start_date) {
       event.value.start_date = extractedIsoDate
@@ -115,6 +123,14 @@ watch(startDate, (newValue) => {
 watch(endDate, (newValue) => {
   if (dateMaskMatches(newValue, mask.value)) {
     const extractedDate = date.extractDate(newValue, mask.value)
+    if (extractedDate.getTime() < 0) {
+      errors.value.end_date = [
+        t('events.edit.details.notifications.before1970DateError')
+      ]
+      return
+    } else {
+      errors.value.end_date = []
+    }
     const extractedIsoDate = extractedDate.toISOString()
     if (extractedIsoDate !== event.value.end_date) {
       event.value.end_date = extractedIsoDate
