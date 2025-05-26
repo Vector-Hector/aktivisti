@@ -575,6 +575,7 @@
       "details": {
         "notifications": {
           "invalidDateError": "Ungültiges Datum",
+          "before1970DateError": "Datum nach 1970 erforderlich",
           "successMessageMetrics": "Ergebnisse gespeichert",
           "generalErrorMetrics": "Die Ergebnisse konnten nicht gespeichert werden",
           "generalSuccessMessage": "Gespeichert",

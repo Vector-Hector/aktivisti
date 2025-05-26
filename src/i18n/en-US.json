@@ -575,6 +575,7 @@
       "details": {
         "notifications": {
           "invalidDateError": "Invalid date",
+          "before1970DateError": "Date after 1970 required",
           "successMessageMetrics": "Settings saved",
           "generalErrorMetrics": "The settings could not be saved",
           "generalSuccessMessage": "Saved",
