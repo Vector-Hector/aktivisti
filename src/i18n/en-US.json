@@ -71,9 +71,9 @@
         }
       },
       "EventTypes": {
-        "DOOR_TO_DOOR": "Door-to-door conversation",
+        "DOOR_TO_DOOR": "Canvassing",
         "POSTERS": "Posters",
-        "GENERIC": "Generic Event",
+        "GENERIC": "Event",
         "FLYERS": "Flyers"
       },
       "EventStatus": {
@@ -436,7 +436,7 @@
     "reportTypes": {
       "METRICS_POSTER": "Posters",
       "METRICS_FLYER": "Flyers",
-      "METRICS_DOOR2DOOR": "Door-to-door conversations",
+      "METRICS_DOOR2DOOR": "Canvassing",
       "ACTIVE_EVENTS": "Active Events",
       "ACTIVE_USERS": "Activation of Participants"
     },
