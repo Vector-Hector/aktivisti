@@ -2,7 +2,7 @@
 import { useReportScope } from 'components/reportCharts/reportChartScope'
 import { computed, onBeforeMount, ref } from 'vue'
 import { apiClient } from 'src/api/ApiClient'
-import VueApexCharts from 'vue3-apexcharts'
+import Charts from 'src/components/reportCharts/Charts.vue'
 import { useEventTypes } from 'src/api/model/EventTypes'
 import { ReportEventDto } from 'src/api/model/ReportEventDto'
 import { ApexDataUtil, ApexDatePoint } from 'src/api/model/ApexDatePoint'
@@ -100,5 +100,5 @@ const chartOptions = computed(() => {
 })
 </script>
 <template>
-  <VueApexCharts type="area" :options="chartOptions" :series="series" />
+  <Charts type="area" :options="chartOptions" :series="series" />
 </template>

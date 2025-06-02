@@ -3,7 +3,7 @@ import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { ApexDatePoint } from 'src/api/model/ApexDatePoint'
 import { computed, onBeforeMount, ref } from 'vue'
 import { apiClient } from 'src/api/ApiClient'
-import VueApexCharts from 'vue3-apexcharts'
+import Charts from 'src/components/reportCharts/Charts.vue'
 import { ReportEventMetricsDto } from 'src/api/model/ReportEventMetricsDto'
 import { useReportScope } from 'components/reportCharts/reportChartScope'
 import { useI18n } from 'vue-i18n'
@@ -93,5 +93,5 @@ const chartOptions = computed(() => {
 })
 </script>
 <template>
-  <VueApexCharts type="line" :options="chartOptions" :series="series" />
+  <Charts type="line" :options="chartOptions" :series="series" />
 </template>

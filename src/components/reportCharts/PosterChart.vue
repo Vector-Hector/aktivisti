@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { apiClient } from 'src/api/ApiClient'
-import VueApexCharts from 'vue3-apexcharts'
+import Charts from 'src/components/reportCharts/Charts.vue'
 import { computed, onBeforeMount, ref } from 'vue'
 import { PosterStatus, usePosterOptions } from 'src/api/model/PosterDto'
 import { ReportPosterDto } from 'src/api/model/ReportPosterDto'
@@ -121,5 +121,5 @@ const toApexDatePoint = (reportPoster: ReportPosterDto) => ({
 </script>
 
 <template>
-  <VueApexCharts type="area" :options="chartOptions" :series="series" />
+  <Charts type="area" :options="chartOptions" :series="series" />
 </template>
