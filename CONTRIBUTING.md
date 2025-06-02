@@ -135,9 +135,8 @@ To ensure a consistent and maintainable approach to internationalization, please
 
 - The `config` section in each locale file (e.g., `de.json`) contains language-specific configuration such as date/time formats, language codes, and other settings required by libraries or the application.
 - Do not modify or remove keys in the `config` section unless you are updating configuration for localization support.
-- For `quasarLangIso`, `apexLangIso`, and `mapLibreLangIso`, we rely on the official locale options provided by each library. Please refer to their documentation for available locale codes:
+- For `quasarLangIso` and `mapLibreLangIso`, we rely on the official locale options provided by each library. Please refer to their documentation for available locale codes:
   - **Quasar**: For some Quasar components we're relying on the default language by Quasar. For possible options take a look into [Quasar Language Packs](https://github.com/quasarframework/quasar/tree/dev/ui/lang)
-  - **ApexCharts**: Specifies the language of Charts, mainly used on Reports page. For options see [ApexCharts Locales](https://github.com/apexcharts/apexcharts.js/tree/main/dist/locales)
   - **MapLibre**: Specify the language to use for response text and query result weighting in the Geocoder Options are IETF language tags comprised of a mandatory ISO 639-1 language code and optionally one or more IETF subtags for country or script. (See also [MaplibreGeocoderApiConfig documentation](https://maplibre.org/maplibre-gl-geocoder/types/MaplibreGeocoderApiConfig.html))
 - For `accpetLanguageHeaderApiIso`, use the locale code that should be sent in the `Accept-Language` HTTP header for API requests. The possible options for this value can be retrieved from the Django backend variable `LANGUAGES`.
 - Example:
@@ -146,7 +145,6 @@ To ensure a consistent and maintainable approach to internationalization, please
     "config": {
       "nativeName": "Deutsch",
       "quasarLangIso": "de-DE",
-      "apexLangIso": "de",
       "mapLibreLangIso": "de-DE",
       "accpetLanguageHeaderApiIso": "de-de",
       "datetimeFormats": { ... }
@@ -179,4 +177,4 @@ To add support for a new language (locale) in the app:
 
 5. **Configure Locale in the App**
    - If necessary, update the app’s configuration to include the new locale as a selectable option.
-   - Ensure the `config` section is filled out, including `quasarLangIso`, `apexLangIso`, `mapLibreLangIso`, and `accpetLanguageHeaderApiIso`.
+   - Ensure the `config` section is filled out, including `quasarLangIso`, `mapLibreLangIso` and `accpetLanguageHeaderApiIso`.

@@ -2,7 +2,6 @@
   "config": {
     "nativeName": "English (US)",
     "quasarLangIso": "en-US",
-    "apexLangIso": "en",
     "mapLibreLangIso": "en-US",
     "accpetLanguageHeaderApiIso": "en-US",
     "datetimeFormats": {
@@ -97,7 +96,71 @@
     "date": "Date",
     "count": "Count",
     "download": "Download",
-    "loading": "Loading data..."
+    "loading": "Loading data...",
+    "chart": {
+      "locales": {
+        "options": {
+          "month": {
+            "january": "January",
+            "february": "February",
+            "march": "March",
+            "april": "April",
+            "may": "May",
+            "june": "June",
+            "july": "July",
+            "august": "August",
+            "september": "September",
+            "october": "October",
+            "november": "November",
+            "december": "December"
+          },
+          "shortMonths": {
+            "january": "Jan",
+            "february": "Feb",
+            "march": "Mar",
+            "april": "Apr",
+            "may": "May",
+            "june": "Jun",
+            "july": "Jul",
+            "august": "Aug",
+            "september": "Sep",
+            "october": "Oct",
+            "november": "Nov",
+            "december": "Dec"
+          },
+          "days": {
+            "sunday": "Sunday",
+            "monday": "Monday",
+            "tuesday": "Tuesday",
+            "wednesday": "Wednesday",
+            "thursday": "Thursday",
+            "friday": "Friday",
+            "saturday": "Saturday"
+          },
+          "shortDays": {
+            "sunday": "Sun",
+            "monday": "Mon",
+            "tuesday": "Tue",
+            "wednesday": "Wed",
+            "thursday": "Thu",
+            "friday": "Fri",
+            "saturday": "Sat"
+          },
+          "toolbar": {
+            "exportToSVG": "Download SVG",
+            "exportToPNG": "Download PNG",
+            "exportToCSV": "Download CSV",
+            "menu": "Download",
+            "selection": "Selection",
+            "selectionZoom": "Selection Zoom",
+            "zoomIn": "Zoom In",
+            "zoomOut": "Zoom Out",
+            "pan": "Panning",
+            "reset": "Reset Zoom"
+          }
+        }
+      }
+    }
   },
   "app": {
     "versionUnknownError": "This app version is unknown and not supported. Please download a new version from official sources.",
