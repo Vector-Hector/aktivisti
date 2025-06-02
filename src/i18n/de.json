@@ -690,7 +690,7 @@
     "goToLogin": "Zum Login",
     "privacyDisclaimer": {
       "description": "Als Benutzer*in von Aktivisti nimmst Du zur Kenntnis und stimmst zu, dass Du die per App erhaltenen und übermittelten Daten zu keinem anderen Zweck als der Organisation von Aktionen der Partei Die Linke nutzt, insbesondere diese weder speicherst, noch kopierst oder Dritten für andere Zwecke übermittelst. Du stimmst zu, dass Passwort stets vertraulich zu behandeln und jeden Verlust des Gerätes oder jede mögliche Offenbarung des Passwortes oder zweckwidrige Nutzung der App durch Dritte unverzüglich dem Bundesvorstand unter {email} mitzuteilen. Du stimmst zu, jede Nachfrage Dritter zum Umfang der Datenverarbeitung der App an den Verantwortlichen beim Bundesvorstand der Partei weiterzuleiten und dem Betroffenen die Kontaktdaten bzw. den Link zu den {link} mitzuteilen.",
-      "email": "datenschutz@die-linke.app",
+      "email": "datenschutz{'@'}die-linke.app",
       "linkLabel": "Datenschutzhinweisen",
       "linkAddress": "https://www.die-linke.de/seitenfuss/datenschutz/#accordion-heading-17445-2912"
     },
@@ -705,7 +705,7 @@
     "ownerAddress": "Kleine Alexanderstraße 28, 10178 Berlin",
     "ownerPhoneLabel": "Telefon",
     "ownerPhoneNumber": "(030) 24 009 397",
-    "ownerEmail": "bundesgeschaeftsstelle@die-linke.de",
+    "ownerEmail": "bundesgeschaeftsstelle{'@'}die-linke.de",
     "techHeading": "Technische Entwicklung",
     "techName": "control.alt.coop eG",
     "techAddress": "Franz-Mehring-Platz 1, 10243 Berlin",
@@ -713,7 +713,7 @@
     "hostingHeading": "Hosting",
     "hostingName": "minuskel screen partner GmbH",
     "hostingAddress": "Am Friedrichshain 22, 10407 Berlin",
-    "hostingEmail": "websupport@minuskel.de",
+    "hostingEmail": "websupport{'@'}minuskel.de",
     "hostingWebsite": "https://www.minuskel.de",
     "taxHeading": "Finanzamt",
     "taxText": "Die Partei Die Linke wird beim Finanzamt für Körperschaften I in Berlin unter der Steuernummer 27/650/52427 geführt.",
