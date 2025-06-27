@@ -10,9 +10,9 @@ interface IInstance extends ComponentPublicInstance {
 export default {
   async beforeRouteEnter(to, from, next) {
     if (!userStore.hasAtLeastOneManagePermission()) {
+      //TODO(peter) Check if command is required, seems like it is not emitted
       ErrorBus.emit(
         NOT_AUTHORIZED,
-        // FIXME(peter) Due to the workaround for the composition API, we need to use a hard-coded string here for now, but needs to be internationalized in future
         'Um eine Aktion zu erstellen benötigst du eine Koordinator*innenberechtigung'
       )
       next({ name: 'login' })

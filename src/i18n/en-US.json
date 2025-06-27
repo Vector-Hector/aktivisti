@@ -148,6 +148,8 @@
         "title": "Results"
       },
       "area": {
+        "title": "Event Area",
+        "undefinedAreaTitle": "Undefined Area",
         "street": {
           "addresses": {
             "title": "Addresses"
@@ -158,6 +160,12 @@
         },
         "createLead": {
           "title": "Register Contact"
+        },
+        "posters": {
+          "title": "Posters",
+          "detail": {
+            "title": "Poster #{0}"
+          }
         }
       },
       "createEvent": {

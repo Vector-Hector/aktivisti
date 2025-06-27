@@ -10,9 +10,9 @@ export default {
       !userStore.isTeamCaptainOrLocalCoordinator() &&
       !userStore.isAdminOrGlobalCoordinator()
     ) {
+      //TODO(peter) Check if command is required, seems like it is not emitted
       ErrorBus.emit(
         NOT_AUTHORIZED,
-        // FIXME(peter) Due to the workaround for the composition API, we need to use a string here for now, but needs to be internationalized in future
         'Um einen Kontakt zu registrieren, benötigst du eine Teamcaptain- oder Koordinator*innen-Berechtigung'
       )
       next({ name: 'login' })
