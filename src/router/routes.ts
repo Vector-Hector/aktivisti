@@ -40,7 +40,9 @@ import EditEventSinglePosterMap from 'pages/edit-event/posters/edit-single/EditE
 import EditEventPostersListMap from 'pages/edit-event/posters/edit-list/EditEventPostersListMap.vue'
 import EventDetailPosters from 'pages/event-map/detail/area/posters/EventDetailPosters.vue'
 import EventDetailPostersMap from 'pages/event-map/detail/area/posters/EventDetailPostersMap.vue'
-import EventDetailPosterDetail from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetail.vue'
+import EventDetailPosterDetail, {
+  UNDEFINED_POSTER_AREA
+} from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetail.vue'
 import EventDetailPosterDetailMap from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetailMap.vue'
 import EventDetailPosterList from 'pages/event-map/detail/area/posters/list/EventDetailPosterList.vue'
 import EventDetailPosterListMap from 'pages/event-map/detail/area/posters/list/EventDetailPosterListMap.vue'
@@ -219,7 +221,15 @@ const routes = [
                   map: EventDetailAreaMap
                 },
                 meta: {
-                  title: () => uiStore.getState().activeTitleElements.eventArea,
+                  title: (t) => {
+                    const eventArea =
+                      uiStore.getState().activeTitleElements.eventArea
+                    if (eventArea === UNDEFINED_POSTER_AREA) {
+                      return t('routes.events.area.undefinedAreaTitle')
+                    } else {
+                      return `${t('routes.events.area.title')} ${eventArea}`
+                    }
+                  },
                   subtitle: () => uiStore.getState().activeTitleElements.event
                 },
                 children: [
@@ -281,7 +291,15 @@ const routes = [
                       map: EventDetailPostersMap
                     },
                     meta: {
-                      title: () => uiStore.state.activeTitleElements.poster,
+                      title: (t) => {
+                        const eventArea =
+                          uiStore.getState().activeTitleElements.eventArea
+                        if (eventArea === UNDEFINED_POSTER_AREA) {
+                          return `${t('routes.events.area.undefinedAreaTitle')}: ${t('routes.events.area.posters.title')}`
+                        } else {
+                          return `${t('routes.events.area.title')} ${eventArea}: ${t('routes.events.area.posters.title')}`
+                        }
+                      },
                       subtitle: () => uiStore.state.activeTitleElements.event
                     },
                     children: [
@@ -299,6 +317,12 @@ const routes = [
                         components: {
                           default: EventDetailPosterDetail,
                           map: EventDetailPosterDetailMap
+                        },
+                        meta: {
+                          title: (t) =>
+                            t('routes.events.area.posters.detail.title', [
+                              uiStore.getState().activeTitleElements.poster
+                            ])
                         }
                       }
                     ]

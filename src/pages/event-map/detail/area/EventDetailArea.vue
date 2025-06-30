@@ -11,8 +11,7 @@ async function updateRouteCopy(params: RouteParams) {
     eventDetailStore.setEventArea(null)
     eventDetailStore.setEventAreaPermissions(null)
     uiStore.updateActiveElements({
-      // TODO(peter) 04/29/2025 Introduce i18n, at the moment this is quite complicated in combination with this `beforeRouteEnter` workaround
-      eventArea: 'Undefiniertes Gebiet'
+      eventArea: UNDEFINED_POSTER_AREA
     })
   } else {
     const response = await apiClient.eventAreas.get(
@@ -23,7 +22,7 @@ async function updateRouteCopy(params: RouteParams) {
     eventDetailStore.setEventArea(response.payload.data)
     eventDetailStore.setEventAreaPermissions(response.payload.permissions)
     uiStore.updateActiveElements({
-      eventArea: `Aktionsgebiet ${response.payload.data.name}`
+      eventArea: response.payload.data.name
     })
   }
 }
@@ -57,7 +56,7 @@ async function updateRoute(params: RouteParams) {
     eventDetailStore.setEventArea(null)
     eventDetailStore.setEventAreaPermissions(null)
     uiStore.updateActiveElements({
-      eventArea: 'Undefiniertes Gebiet'
+      eventArea: UNDEFINED_POSTER_AREA
     })
   } else {
     const response = await apiClient.eventAreas.get(
@@ -68,7 +67,7 @@ async function updateRoute(params: RouteParams) {
     eventDetailStore.setEventArea(response.payload.data)
     eventDetailStore.setEventAreaPermissions(response.payload.permissions)
     uiStore.updateActiveElements({
-      eventArea: `Aktionsgebiet ${response.payload.data.name}`
+      eventArea: response.payload.data.name
     })
   }
 }

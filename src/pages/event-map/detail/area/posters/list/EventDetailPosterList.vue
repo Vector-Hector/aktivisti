@@ -1,15 +1,3 @@
-<!--FIXME(peter) 2023/12/12 The composition API doesn't support `beforeRouteEnter` so far so this a workaround
-      see https://github.com/vuejs/rfcs/discussions/302-->
-<script lang="ts">
-export default {
-  beforeRouteEnter: (to, from, next) => {
-    uiStore.updateActiveElements({
-      poster: `${uiStore.state.activeTitleElements.eventArea}: Plakate`
-    })
-    next()
-  }
-}
-</script>
 <script setup lang="ts">
 import PosterTable from 'components/PosterTable.vue'
 import { useEventDetailPosterMixin } from 'pages/event-map/detail/area/posters/EventDetailPosterMixin'
@@ -18,27 +6,10 @@ import { QBtn, useQuasar } from 'quasar'
 import SelectPosterLocation from 'components/modals/SelectPosterLocation.vue'
 import { PosterDto } from 'src/api/model/PosterDto'
 import { userStore } from 'src/store/UserStore'
-import { uiStore } from 'src/store/UiStore'
-import {
-  NavigationGuardNext,
-  RouteLocation,
-  onBeforeRouteUpdate,
-  useRouter
-} from 'vue-router'
+import { useRouter } from 'vue-router'
 import AssignAreaParticipants from 'pages/event-map/detail/area/AssignAreaParticipants.vue'
 import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 import { useI18n } from 'vue-i18n'
-
-function updateRoute(
-  to: RouteLocation,
-  from: RouteLocation,
-  next: NavigationGuardNext
-) {
-  uiStore.updateActiveElements({
-    poster: `${uiStore.state.activeTitleElements.eventArea}: Plakate`
-  })
-  next()
-}
 
 const $q = useQuasar()
 const $router = useRouter()
@@ -52,8 +23,6 @@ const {
   mergePosters
 } = useEventDetailStore()
 const { selectPoster } = useEventDetailPosterMixin()
-
-onBeforeRouteUpdate(updateRoute)
 
 function openCreatePosterDialog() {
   $q.dialog({

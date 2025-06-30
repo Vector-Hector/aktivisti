@@ -211,6 +211,8 @@
         "title": "Ergebnisses"
       },
       "area": {
+        "title": "Aktionsgebiet",
+        "undefinedAreaTitle": "Undefiniertes Gebiet",
         "street": {
           "addresses": {
             "title": "Adressen"
@@ -221,6 +223,12 @@
         },
         "createLead": {
           "title": "Kontakt registrieren"
+        },
+        "posters": {
+          "title": "Plakate",
+          "detail": {
+            "title": "Plakat #{0}"
+          }
         }
       },
       "createEvent": {

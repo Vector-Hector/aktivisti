@@ -10,9 +10,9 @@ export interface StepControls {
 export default {
   async beforeRouteEnter(to, from, next) {
     if (!userStore.hasAtLeastOneManagePermission()) {
+      //TODO(peter) Check if emit is still required and if working
       ErrorBus.emit(
         NOT_AUTHORIZED,
-        // FIXME(peter) Due to the workaround for the composition API, we need to use a string here for now, but needs to be internationalized in future
         'Um eine Aktion zu erstellen benötigst du eine Koordinator*innenberechtigung'
       )
       next({ name: 'login' })

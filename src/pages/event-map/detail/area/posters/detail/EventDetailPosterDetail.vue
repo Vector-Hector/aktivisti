@@ -24,8 +24,7 @@ function updateRoute(
   if (posterIndex > -1) {
     eventDetailStore.state.activePosterIndex = posterIndex
     uiStore.updateActiveElements({
-      // FIXME(peter) Due to the workaround for the composition API, we need to use a hard-coded string here for now, but needs to be internationalized in future
-      poster: `Plakat #${postersInArea[posterIndex]?.poster_id}`
+      poster: postersInArea[posterIndex]?.poster_id.toString()
     })
     next()
   } else {
