@@ -21,7 +21,7 @@ Documentation resources for the used tools:
 
 ### Install dependencies
 
-Make sure you are running **node version 16** in development
+Make sure you are running **node version 20** in development
 
 ```sh
 npm install
