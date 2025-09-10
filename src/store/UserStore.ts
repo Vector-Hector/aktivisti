@@ -12,7 +12,7 @@ import { EventStatus } from 'src/api/model/EventStatus'
 import { ReportChartData } from 'src/api/model/ReportChartData'
 
 export enum SortOption {
-  START_DATE = 'start_date',
+  START_DATE = '-start_date',
   NAME = 'name'
 }
 
