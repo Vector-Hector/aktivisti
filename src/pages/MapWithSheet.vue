@@ -28,8 +28,6 @@ import GeolocationControl from 'src/map/GeolocationControl.vue'
 import MapContainer from 'components/MapContainer.vue'
 import { eventDetailStore } from 'src/store/EventDetailStore'
 import ResetRotateControl from 'src/map/ResetRotateControl.vue'
-import CampaignCollectionOverlayControl from 'src/map/CampaignCollectionOverlayControl.vue'
-import { getAuthStore } from 'src/store/AuthStore'
 import { onBeforeRouteUpdate } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
@@ -45,7 +43,6 @@ const { t } = useI18n()
 
 const bbox = ref(userStore.getState().bbox)
 const isMapDefined = ref(true)
-const isLoggedIn = ref(getAuthStore().isLoggedIn())
 
 onBeforeRouteUpdate((to, from, next) => {
   const componentsOfMostPrecisePath =
@@ -91,7 +88,6 @@ defineExpose({ setIsMapDefined })
         <template v-slot:top-right>
           <div class="flex column q-gutter-y-sm">
             <GeolocationControl :poi-location="poiLocation" />
-            <CampaignCollectionOverlayControl v-if="isLoggedIn" />
             <ResetRotateControl />
           </div>
         </template>
