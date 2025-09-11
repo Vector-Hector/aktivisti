@@ -16,7 +16,7 @@ class MyParticipationsStore extends Store<MyParticipationsStoreState> {
       filterPreferences: {
         subAssociations: [],
         campaign: undefined,
-        sorting: SortOption.START_DATE,
+        sorting: SortOption.START_DATE_DESC,
         eventType: undefined,
         status: undefined,
         is_owner: undefined,

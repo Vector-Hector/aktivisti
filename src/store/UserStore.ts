@@ -12,7 +12,8 @@ import { EventStatus } from 'src/api/model/EventStatus'
 import { ReportChartData } from 'src/api/model/ReportChartData'
 
 export enum SortOption {
-  START_DATE = '-start_date',
+  START_DATE_DESC = '-start_date',
+  START_DATE_ASC = 'start_date',
   NAME = 'name'
 }
 
@@ -45,7 +46,7 @@ const KEY_LOCALE = 'de'
 export const DEFAULT_FILTER_PREFERENCES = {
   subAssociations: [],
   campaign: undefined,
-  sorting: SortOption.START_DATE,
+  sorting: SortOption.START_DATE_DESC,
   eventType: undefined,
   status: EventStatus.ACTIVE,
   is_owner: undefined,
