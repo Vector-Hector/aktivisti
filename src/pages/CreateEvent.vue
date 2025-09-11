@@ -3,7 +3,7 @@
 <script lang="ts">
 interface IInstance extends ComponentPublicInstance {
   setMetrics(metrics: EventMetricDto[]): void
-  setCampaigns(campaings: CampaignDto[]): void
+  setCampaigns(campaigns: CampaignDto[]): void
   setEventCampaign(campaignId: number): void
 }
 
