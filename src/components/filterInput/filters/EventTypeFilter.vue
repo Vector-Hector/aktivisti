@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
-import { eventTypeOptions, EventTypes } from 'src/api/model/EventTypes'
+import { EventTypes, useEventTypes } from 'src/api/model/EventTypes'
 
 interface Props {
   modelValue?: EventTypes
@@ -16,6 +16,8 @@ interface Emits {
 }
 const emit = defineEmits<Emits>()
 
+const { eventTypeOptions } = useEventTypes()
+
 const possibleEventTypeOptions = computed(() => {
   return eventTypeOptions.filter((item) =>
     props.availableEventTypes.includes(item.key)
@@ -28,7 +30,7 @@ const possibleEventTypeOptions = computed(() => {
     :model-value="modelValue"
     @update:model-value="(value) => emit('update:modelValue', value)"
     input-debounce="0"
-    label="Aktionstyp"
+    :label="$t('eventTypeFilter.defaultLabel')"
     :options="possibleEventTypeOptions"
     emit-value
     map-options

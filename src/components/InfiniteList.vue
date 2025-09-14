@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 interface Emits {
-  (e: 'load', index: number, done: (stop?: boolean | undefined) => void): void
+  (e: 'load', index: number, done: (stop?: boolean) => void): void
 }
 const emit = defineEmits<Emits>()
 </script>
@@ -39,7 +39,7 @@ const emit = defineEmits<Emits>()
     </template>
   </QInfiniteScroll>
   <div v-else class="empty-list-placeholder">
-    <slot name="emptyList"> Keine Einträge gefunden</slot>
+    <slot name="emptyList">{{ $t('infiniteList.emptyList') }}</slot>
   </div>
 </template>
 

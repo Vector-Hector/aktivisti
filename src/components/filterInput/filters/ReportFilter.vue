@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import { withDefaults } from 'vue'
-import {
-  ReportType,
-  ReportTypeOption,
-  reportTypeOptions
-} from 'src/api/model/ReportType'
+import { ReportType, useReportType } from 'src/api/model/ReportType'
 import FilterInput from 'components/filterInput/FilterInput.vue'
 
+const { reportTypeOptions } = useReportType()
+
 interface Props {
-  modelValue?: ReportTypeOption
+  modelValue?: ReportType
 }
 
 interface Emits {
@@ -16,9 +13,7 @@ interface Emits {
 }
 
 const emit = defineEmits<Emits>()
-const props = withDefaults(defineProps<Props>(), {
-  modelValue: () => reportTypeOptions[0]
-})
+const props = defineProps<Props>()
 
 function updateModelValue(reportType: ReportType) {
   emit('update:modelValue', reportType)
@@ -26,7 +21,7 @@ function updateModelValue(reportType: ReportType) {
 </script>
 <template>
   <FilterInput
-    label="Typ"
+    :label="$t('reports.selectReportDialog.type')"
     :model-value="props.modelValue"
     @update:model-value="updateModelValue"
     :options="reportTypeOptions"

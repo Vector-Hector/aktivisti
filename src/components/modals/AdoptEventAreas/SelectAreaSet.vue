@@ -25,11 +25,7 @@ interface Emits {
     e: 'onCampaignCollectionClick',
     collection: CampaignGeometryCollectionsDto
   ): void
-  (
-    e: 'loadCollections',
-    index: number,
-    done: (stop?: boolean | undefined) => void
-  ): void
+  (e: 'loadCollections', index: number, done: (stop?: boolean) => void): void
 }
 
 const props = defineProps<Props>()
@@ -50,7 +46,9 @@ function handleCampaignCollectionClick(
 </script>
 <template>
   <QCardSection class="description-section">
-    <span class="description"> Von wo möchtest du Gebiete übernehmen? </span>
+    <span class="description">
+      {{ $t('adoptEventAreas.selectAreaSet.description') }}
+    </span>
   </QCardSection>
   <QCardSection class="section">
     <QScrollArea class="scroll-area">
@@ -67,14 +65,18 @@ function handleCampaignCollectionClick(
           <QItem clickable @click="handleSearchEventAreaClick">
             <QItemSection>
               <QItemLabel>
-                <b>Nach Gebietsnamen suchen</b>
+                <b>{{
+                  $t('adoptEventAreas.selectAreaSet.searchByAreaName')
+                }}</b>
               </QItemLabel>
             </QItemSection>
           </QItem>
           <QItem clickable @click="handleRecentEventAreasClick">
             <QItemSection>
               <QItemLabel>
-                <b>Aus vergangenen Aktionen</b>
+                <b>{{
+                  $t('adoptEventAreas.selectAreaSet.adoptFromRecentEvents')
+                }}</b>
               </QItemLabel>
             </QItemSection>
           </QItem>

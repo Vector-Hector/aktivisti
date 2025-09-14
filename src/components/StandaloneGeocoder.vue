@@ -68,7 +68,7 @@ function emitResult(selection: GeocodeResult) {
             @filter="filterFn"
             dense
             filled
-            label="Adresse eingeben"
+            :label="$t('standaloneGeocoder.inputLabel')"
             :fill-input="customPlaceName"
             use-input
             hide-selected

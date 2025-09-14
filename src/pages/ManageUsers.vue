@@ -8,23 +8,21 @@ import { userStore } from 'src/store/UserStore'
 import {
   PermissionCodename,
   PermissionTypeOption,
-  permissionTypeOptions,
+  usePermissionTypeOptions,
   UserObjectPermissionDto
 } from 'src/api/model/UserObjectPermissionDto'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
-import { ContentTypeNaturalKey } from 'src/api/model/ContentTypeDto'
+import {
+  ContentTypeNaturalKey,
+  useContentTypeLabels
+} from 'src/api/model/ContentTypeDto'
 import UserPermissionAdding from 'components/UserPermissionAdding.vue'
 import UserPermissionList from 'components/UserPermissionList.vue'
 import { apiClient } from 'src/api/ApiClient'
 
-enum ContentTypesDisplayNames {
-  SUB_ASSOCIATION = 'Kreisverband',
-  STATE_ASSOCIATION = 'Landesverband'
-}
-
 export interface ContentTypeOption {
   id: number
-  label: ContentTypesDisplayNames
+  label: string
   natural_key: ContentTypeNaturalKey
 }
 
@@ -51,8 +49,14 @@ const myExplicitPermissionForSelectedSubAssociation =
   ref<UserObjectPermissionDto | null>(null)
 const isAbleToManageStateAssociations = ref(true)
 
+const { getLabel } = useContentTypeLabels()
+const { getPermissionTypeOption } = usePermissionTypeOptions()
+
+const permissionTypeOptions = getPermissionTypeOption()
+
 onMounted(async () => {
   contentTypeOptions.value = await getContentTypeCodes()
+  console.log('contentTypeOptions', contentTypeOptions.value)
 
   mySubAssociations.value = await getMySubAssociations()
   myStateAssociations.value = await getMyStateAssociations()
@@ -142,7 +146,7 @@ async function getStateAssociations() {
 async function getContentTypeCodes(): Promise<ContentTypeOption[] | null> {
   const contentTypes = (await apiClient.contentTypes.list()).payload.data
 
-  let contentTypeOptions = [] as ContentTypeOption[]
+  const contentTypeOptions = [] as ContentTypeOption[]
   for (const natural_key of [
     ContentTypeNaturalKey.SUB_ASSOCIATION,
     ContentTypeNaturalKey.STATE_ASSOCIATION
@@ -153,13 +157,9 @@ async function getContentTypeCodes(): Promise<ContentTypeOption[] | null> {
     if (!contentType) {
       throw Error('Natural key seams to be unknown to content-type service')
     }
-    const label =
-      natural_key === ContentTypeNaturalKey.SUB_ASSOCIATION
-        ? ContentTypesDisplayNames.SUB_ASSOCIATION
-        : ContentTypesDisplayNames.STATE_ASSOCIATION
     contentTypeOptions.push({
       id: contentType.id,
-      label: label,
+      label: getLabel(natural_key),
       natural_key: natural_key
     })
   }
@@ -303,7 +303,7 @@ function isAllowedToManagePermissions(permissionType: PermissionTypeOption) {
       <div v-else class="manage-users-content">
         <div class="header">
           <QSelect
-            label="Auf welcher Ebene möchtest du Benutzer*innen verwalten"
+            :label="$t('manageUsers.selectContentTypeLabel')"
             filled
             :dropdownIcon="ionChevronDown"
             :model-value="selectedContentType"
@@ -318,7 +318,13 @@ function isAllowedToManagePermissions(permissionType: PermissionTypeOption) {
             <QSelect
               v-if="isManagingState"
               class="filter-dropdown"
-              :label="`Für welchen ${ContentTypesDisplayNames.STATE_ASSOCIATION} möchtest du Benutzer*innen verwalten`"
+              :label="
+                $t('manageUsers.selectAssociationLabel', [
+                  $t(
+                    'api.model.ContentTypeDto.naturalKey.core.stateassociation'
+                  )
+                ])
+              "
               :dropdownIcon="ionChevronDown"
               filled
               :model-value="selectedState"
@@ -337,7 +343,7 @@ function isAllowedToManagePermissions(permissionType: PermissionTypeOption) {
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
-                    Kein Verband gefunden
+                    {{ $t('manageUsers.noAssociationFound') }}
                   </q-item-section>
                 </q-item>
               </template>
@@ -345,7 +351,11 @@ function isAllowedToManagePermissions(permissionType: PermissionTypeOption) {
             <QSelect
               v-if="isManagingSubAssociation"
               class="filter-dropdown"
-              :label="`Für welchen ${ContentTypesDisplayNames.SUB_ASSOCIATION} möchtest du Benutzer*innen verwalten`"
+              :label="
+                $t('manageUsers.selectAssociationLabel', [
+                  $t('api.model.ContentTypeDto.naturalKey.core.subassociation')
+                ])
+              "
               :dropdownIcon="ionChevronDown"
               filled
               :model-value="selectedSubAssociation"
@@ -364,7 +374,7 @@ function isAllowedToManagePermissions(permissionType: PermissionTypeOption) {
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
-                    Kein Verband gefunden
+                    {{ $t('manageUsers.noAssociationFound') }}
                   </q-item-section>
                 </q-item>
               </template>

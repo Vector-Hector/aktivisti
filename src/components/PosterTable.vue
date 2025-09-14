@@ -5,6 +5,7 @@ import { PosterDto } from 'src/api/model/PosterDto'
 import StatusRow from 'components/StatusRow.vue'
 import { QBtn, QTable, QTd, QTh, QTr, useQuasar } from 'quasar'
 import { ionTrash } from '@quasar/extras/ionicons-v5'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   posters: PosterDto[]
@@ -22,6 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 
 const $q = useQuasar()
+const { t } = useI18n()
 
 const confirmDelete = ref(true)
 
@@ -36,16 +38,16 @@ const posterColumns = computed(() => {
     },
     {
       name: 'location_description',
-      label: 'Ort',
+      label: t('posterTable.columns.place'),
       field: 'location_description',
       align: 'left',
       required: true,
       format: (value: string) =>
-        value ? ellipsis(value, 25) : 'Unbenannter Ort'
+        value ? ellipsis(value, 25) : t('posterTable.columns.unnamedPlace')
     },
     {
       name: 'status',
-      label: 'Status',
+      label: t('posterTable.columns.status'),
       field: 'status',
       align: 'right'
     }
@@ -64,14 +66,16 @@ const posterColumns = computed(() => {
 function onDeleteClicked(poster: PosterDto) {
   if (confirmDelete.value) {
     $q.dialog({
-      title: 'Plakat löschen',
-      message: `Möchtest du Plakat #${poster.poster_id} wirklich löschen?`,
+      title: t('posterTable.deletePosterModal.title'),
+      message: t('posterTable.deletePosterModal.description', [
+        poster.poster_id
+      ]),
       options: {
         type: 'checkbox',
         model: [],
         items: [
           {
-            label: 'Beim nächsten mal nicht mehr fragen',
+            label: t('posterTable.deletePosterModal.skipConfirm'),
             value: 'skipConfirm'
           }
         ]
@@ -103,7 +107,7 @@ function onDeleteClicked(poster: PosterDto) {
     :rows-per-page-options="[0]"
     class="editable-cells-table overflow-hidden q-my-sm poster-table"
     edit-mode="cell"
-    no-data-label="Noch keine Plakate erstellt"
+    :no-data-label="$t('posterTable.noDataLabel')"
   >
     <template v-slot:header="props">
       <QTr :props="props">

@@ -34,7 +34,7 @@ export class SettleDebouncer {
       try {
         await this.currentTimeoutPromise
         return
-      } catch (e) {
+      } catch {
         // if the promise is rejected wait for the next one
       }
     }

@@ -7,13 +7,15 @@ import FeatureLayer from 'src/map/AreaFeatureLayer.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox, circle } from '@turf/turf'
 import { QBtn, QIcon } from 'quasar'
-import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { useEventTypes } from 'src/api/model/EventTypes'
 import { ionArrowBack, ionEllipse, ionPrint } from '@quasar/extras/ionicons-v5'
 import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import EventMarker from 'components/EventMarker.vue'
 import { useRouter } from 'vue-router'
+import { useDateFormat } from 'src/utils/dateFormat'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   event: EventDto
@@ -24,6 +26,9 @@ interface Props {
 const props = defineProps<Props>()
 
 const $router = useRouter()
+const { dateFormat } = useDateFormat()
+const { eventTypeOptions } = useEventTypes()
+const { t } = useI18n()
 
 const areaFeatures = computed(() => {
   return props.eventAreas.map(eventAreaToFeature)
@@ -76,11 +81,16 @@ function print() {
     <div class="print-page">
       <h1 class="headline">{{ event.name }}</h1>
       <p class="facts">
-        Treffpunkt: {{ event.location_description }}<br />
-        Einsatztyp:
-        {{ eventTypeOptions.find(({ key }) => key === event.event_type)?.label
-        }}<br />
-        Datum: {{ $utils.dateFormat(event.start_date) }}
+        {{
+          `${t('events.details.meetingPoint')}: ${event.location_description}`
+        }}
+        <br />
+        {{
+          `${t('print.operationType')}:
+        ${eventTypeOptions.find(({ key }) => key === event.event_type)?.label}`
+        }}
+        <br />
+        {{ `${t('print.date')}: ${dateFormat(event.start_date, 'datetime')}` }}
       </p>
       <p>{{ event.description }}</p>
       <img class="linke-logo" src="../../assets/logo_dielinke.svg" />
@@ -88,7 +98,7 @@ function print() {
         <EventMarker v-if="event?.location" :event="event" />
         <FeatureLayer :features="areaFeatures" />
       </Map>
-      <h3>Gebiete</h3>
+      <h3>{{ $t('print.headingAreas') }}</h3>
       <div class="row q-col-gutter-md">
         <div class="area-item col-4" v-for="area in eventAreas" :key="area.id">
           <QIcon
@@ -101,7 +111,9 @@ function print() {
           <div class="area-label">
             <div>{{ area.name }}</div>
             <div v-if="area.area_details">
-              {{ countAddresses(area.area_details) }} Adressen
+              {{
+                `${countAddresses(area.area_details)} ${t('print.suffixAddressCounter')}`
+              }}
             </div>
           </div>
         </div>
@@ -110,19 +122,24 @@ function print() {
 
     <div class="print-page" v-for="area in eventAreas" :key="area.id">
       <img class="linke-logo" src="../../assets/logo_dielinke.svg" />
-      <h1 class="headline">Erfassungsbogen für Gebiet: {{ area.name }}</h1>
+      <h1 class="headline">
+        {{ $t('print.headingAreaRecordSheet', [area.name]) }}
+      </h1>
       <div class="row q-col-gutter-x-sm">
         <div class="col-8">
           <p class="facts">
-            Einsatztyp:
             {{
-              eventTypeOptions.find(({ key }) => key === event.event_type)
-                ?.label
+              `${t('print.operationType')}:
+        ${eventTypeOptions.find(({ key }) => key === event.event_type)?.label}`
             }}<br />
-            Einsatzname: {{ event.name }}<br />
-            Datum: {{ $utils.dateFormat(event.start_date) }}<br />
+            {{ `${t('print.operationName')}: ${event.name}` }}<br />
+            {{
+              `${t('print.date')}:  ${dateFormat(event.start_date, 'datetime')}`
+            }}<br />
             <template v-if="area.area_details">
-              Anzahl Adressen: {{ countAddresses(area.area_details) }}
+              {{
+                `${t('print.addressCounter')}: ${countAddresses(area.area_details)}`
+              }}
             </template>
           </p>
           <Map
@@ -134,7 +151,7 @@ function print() {
           </Map>
         </div>
         <div class="col-4">
-          <h4 class="address-headline">Straßen</h4>
+          <h4 class="address-headline">{{ $t('print.streets') }}</h4>
           <span
             class="street"
             v-for="street in area.area_details?.streets"
@@ -142,17 +159,17 @@ function print() {
           >
             <p class="street-name">{{ street.name }}</p>
           </span>
-          <span v-if="area.area_details?.streets.length === 0"
-            >Keine Adressen im OSM Datensatz</span
-          >
+          <span v-if="area.area_details?.streets.length === 0">{{
+            $t('print.noAddressesFound')
+          }}</span>
         </div>
       </div>
 
       <div class="metrics-entry-table">
         <div class="tableheader row">
-          <div class="col-3">Ergebnisse</div>
-          <div class="col-6">Strichliste</div>
-          <div class="col-2">Gesamt</div>
+          <div class="col-3">{{ $t('print.metricsTable.metrics') }}</div>
+          <div class="col-6">{{ $t('print.metricsTable.tally') }}</div>
+          <div class="col-2">{{ $t('print.metricsTable.total') }}</div>
         </div>
         <div
           v-for="metric in metrics"
@@ -167,7 +184,7 @@ function print() {
         </div>
         <div class="metric-item row">
           <div class="col-3 metric-item-cell">
-            <span>Aufgenommene Kontaktdaten</span>
+            <span>{{ $t('print.metricsTable.collectedLeads') }}</span>
           </div>
           <div class="col-6 metric-item-cell"></div>
           <div class="col-3 metric-item-cell"></div>

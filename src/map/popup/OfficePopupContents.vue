@@ -16,7 +16,7 @@ defineProps<Props>()
       office.properties.location_description
     }}</span>
     <QBtn
-      label="Mehr Informationen"
+      :label="$t('offices.getMoreInfo')"
       color="primary"
       :to="`/offices/${office.id}`"
     />

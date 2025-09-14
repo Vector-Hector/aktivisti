@@ -27,7 +27,7 @@ const emit = defineEmits<Emits>()
         outline
         dense
         color="primary"
-        label="Zurück"
+        :label="$t('general.back')"
         :icon="ionChevronBack"
         @click="emit('back')"
       />
@@ -37,7 +37,7 @@ const emit = defineEmits<Emits>()
         class="button"
         dense
         color="primary"
-        :label="props.last ? 'Fertig' : 'Weiter'"
+        :label="props.last ? $t('general.finish') : $t('general.continue')"
         :icon-right="props.last ? ionCheckmark : ionChevronForward"
         @click="emit('forward')"
       />

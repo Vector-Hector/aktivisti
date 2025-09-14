@@ -34,10 +34,7 @@ export class BaseApiRoute {
       appendAsQueryParams(url, config.query)
     }
 
-    const headers: Record<string, string> = {
-      // TODO: For now we will fix the accept language header to german, as the frontend is localized to german
-      'Accept-Language': 'de'
-    }
+    const headers: Record<string, string> = {}
     if (['POST', 'PATCH', 'PUT', 'DELETE'].includes(config.method)) {
       if (!config.omitCsrf) {
         headers['x-csrftoken'] = Cookies.get('csrftoken')
@@ -47,9 +44,8 @@ export class BaseApiRoute {
     if (getAuthType() === AuthType.TOKEN) {
       const authStore = getAuthStore() as TokenAuthStore
       if (authStore.state.tokenSet) {
-        headers[
-          'Authorization'
-        ] = `Bearer ${authStore.state.tokenSet.access_token}`
+        headers['Authorization'] =
+          `Bearer ${authStore.state.tokenSet.access_token}`
       }
     }
 

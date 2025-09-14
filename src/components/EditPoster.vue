@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import {
-  PosterDto,
-  posterMountOptions,
-  posterStatusOptions
-} from 'src/api/model/PosterDto'
+import { PosterDto } from 'src/api/model/PosterDto'
 import { QInput, QSelect } from 'quasar'
 import { cloneDeep } from 'lodash-es'
 import LocationSelect from 'components/LocationSelect.vue'
+import { usePosterOptions } from 'src/api/model/PosterDto'
 
 interface Props {
   poster: Partial<PosterDto>
@@ -28,6 +25,8 @@ const props = withDefaults(defineProps<Props>(), {
   editLocation: false
 })
 const emit = defineEmits<Emits>()
+
+const { posterStatusOptions, posterMountOptions } = usePosterOptions()
 
 const localPoster = ref<Partial<PosterDto>>({})
 
@@ -66,7 +65,7 @@ function updatePoster(poster: Partial<PosterDto>) {
     readonly
     disable
     filled
-    label="Adresse"
+    :label="$t('editPoster.address')"
     :error-message="errors.location_description?.[0]"
     :error="!!errors.location_description?.length"
   />
@@ -79,7 +78,7 @@ function updatePoster(poster: Partial<PosterDto>) {
     emit-value
     option-label="label"
     option-value="key"
-    label="Zustand"
+    :label="$t('editPoster.status')"
     :error-message="errors.status?.[0]"
     :error="!!errors.status?.length"
   />
@@ -92,7 +91,7 @@ function updatePoster(poster: Partial<PosterDto>) {
     emit-value
     option-label="label"
     option-value="key"
-    label="Position"
+    :label="$t('editPoster.mountedOn')"
     :error-message="errors.mounted_on?.[0]"
     :error="!!errors.mounted_on?.length"
   />

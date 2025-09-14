@@ -34,6 +34,7 @@ yarn-error.log*
 *.sln
 .env
 .env.development.local
+.env.local*
 
 quasar.conf.local.js
 

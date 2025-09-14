@@ -2,6 +2,9 @@
 import { computed } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
 import { CampaignDto } from 'src/api/model/CampaignDto'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   options: CampaignDto[]
@@ -13,9 +16,10 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   modelValue: 0,
   showAllCampaigns: true,
-  disable: false,
-  label: 'Kampagnen'
+  disable: false
 })
+
+const label = props.label ? props.label : t('campaignFilter.defaultLabel')
 
 interface Emits {
   (e: 'update:modelValue', value: number | undefined): void
@@ -27,7 +31,7 @@ const extendedOptions = computed(() => {
     return [
       {
         id: 0,
-        name: 'Alle Kampagnen'
+        name: t('campaignFilter.showAllCampaigns')
       },
       ...props.options
     ]

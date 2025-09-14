@@ -1,4 +1,5 @@
 import { ContentTypeNaturalKey } from 'src/api/model/ContentTypeDto'
+import { useI18n } from 'vue-i18n'
 
 export enum PermissionCodename {
   MANAGE_EVENTS = 'manages_events',
@@ -11,20 +12,30 @@ export interface PermissionTypeOption {
   label: string
 }
 
-export const permissionTypeOptions: PermissionTypeOption[] = [
-  {
-    key: PermissionCodename.NONE,
-    label: 'Keine Rechte'
-  },
-  {
-    key: PermissionCodename.TEAM_CAPTAIN,
-    label: 'Teamcaptain'
-  },
-  {
-    key: PermissionCodename.MANAGE_EVENTS,
-    label: 'Koordinator*in'
+export function usePermissionTypeOptions() {
+  const { t } = useI18n()
+  function getPermissionTypeOption(): PermissionTypeOption[] {
+    return [
+      {
+        key: PermissionCodename.NONE,
+        label: t('api.model.UserObjectPermissionDto.permissionCodename.none')
+      },
+      {
+        key: PermissionCodename.TEAM_CAPTAIN,
+        label: t(
+          'api.model.UserObjectPermissionDto.permissionCodename.team_captain'
+        )
+      },
+      {
+        key: PermissionCodename.MANAGE_EVENTS,
+        label: t(
+          'api.model.UserObjectPermissionDto.permissionCodename.manages_events'
+        )
+      }
+    ]
   }
-]
+  return { getPermissionTypeOption }
+}
 
 export interface UserObjectPermissionDto {
   id: number

@@ -17,7 +17,7 @@ const emit = defineEmits<Emits>()
         dense
         color="primary"
         style="background: white !important"
-        label="Zurück"
+        :label="$t('general.back')"
         :icon="ionChevronBack"
         @click="emit('back')"
       />

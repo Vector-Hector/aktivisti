@@ -36,7 +36,12 @@ const dateTime = computed({
       <QPopupProxy transition-show="scale" transition-hide="scale">
         <QDate v-bind="dateProps" v-model="dateTime" :mask="mask">
           <div class="row items-center justify-end">
-            <QBtn v-close-popup label="Schließen" color="primary" flat />
+            <QBtn
+              v-close-popup
+              :label="$t('general.close')"
+              color="primary"
+              flat
+            />
           </div>
         </QDate>
       </QPopupProxy>
@@ -47,7 +52,12 @@ const dateTime = computed({
       <QPopupProxy transition-show="scale" transition-hide="scale">
         <QTime v-bind="timeProps" v-model="dateTime" :mask="mask" format24h>
           <div class="row items-center justify-end">
-            <QBtn v-close-popup label="Schließen" color="primary" flat />
+            <QBtn
+              v-close-popup
+              :label="$t('general.close')"
+              color="primary"
+              flat
+            />
           </div>
         </QTime>
       </QPopupProxy>

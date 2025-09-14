@@ -23,6 +23,7 @@ import { Feature } from 'geojson'
 import AreaFeatureLayer from 'src/map/AreaFeatureLayer.vue'
 import ResetRotateControl from 'src/map/ResetRotateControl.vue'
 import { apiClient } from 'src/api/ApiClient'
+import { useI18n } from 'vue-i18n'
 
 const DEFAULT_POSTER_STATUS = PosterStatus.MOUNTED
 
@@ -48,6 +49,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 
 const $q = useQuasar()
+const { t } = useI18n()
 
 const location = ref<LocationDto | null>(null)
 const location_description = ref<string>('')
@@ -102,10 +104,10 @@ const createPoster = async () => {
     })
     emit('ok', posterRequest.payload.data)
     hide()
-  } catch (e) {
+  } catch {
     $q.notify({
       color: 'negative',
-      message: 'Das Plakat konnte nicht angelegt werden'
+      message: t('events.details.area.posters.posterCreationGeneralError')
     })
   }
 }
@@ -130,7 +132,9 @@ const onPosterMove = (posters: PosterDto[]) => {
   >
     <QCard class="select-poster-location-modal">
       <QToolbar>
-        <QToolbarTitle>Neuer Plakatstandort</QToolbarTitle>
+        <QToolbarTitle>{{
+          $t('events.details.area.posters.createPosterDialog.title')
+        }}</QToolbarTitle>
       </QToolbar>
       <QCardSection class="flex-fill d-flex">
         <div class="select-poster-location-content">
@@ -141,18 +145,28 @@ const onPosterMove = (posters: PosterDto[]) => {
               :is-draggable-marker-shown="!$q.platform.is.mobile"
             >
               <template v-slot:hintText v-if="$q.platform.is.mobile">
-                Bitte gib entweder eine Adresse in das Suchfeld ein oder nutze
-                die
-                <span style="white-space: nowrap">
-                  Ortungsfunktion
-                  <QIcon :name="matGpsNotFixed" flat round />
-                </span>
-                um die Position dieses Standorts auf der Karte festzulegen.
+                <i18n-t
+                  keypath="events.details.area.posters.createPosterDialog.descriptionMobile"
+                  for="events.details.area.posters.createPosterDialog.gpsFunctionality"
+                >
+                  <template v-slot:gpsFunctionality>
+                    <span style="white-space: nowrap">
+                      {{
+                        $t(
+                          'events.details.area.posters.createPosterDialog.gpsFunctionality'
+                        )
+                      }}
+                      <QIcon :name="matGpsNotFixed" flat round />
+                    </span>
+                  </template>
+                </i18n-t>
               </template>
               <template v-else v-slot:hintText>
-                Bitte geben Sie entweder eine Adresse in das Suchfeld ein oder
-                verschieben Sie den rot hervorgehobenen Pin auf der Karte, um
-                die Position dieses Standorts auf der Karte festzulegen.
+                {{
+                  $t(
+                    'events.details.area.posters.createPosterDialog.descriptionDesktop'
+                  )
+                }}
               </template>
             </LocationSelect>
           </div>
@@ -183,7 +197,11 @@ const onPosterMove = (posters: PosterDto[]) => {
               <QBtn
                 v-if="location"
                 class="accept-button"
-                label="Plakat erstellen"
+                :label="
+                  $t(
+                    'events.details.area.posters.createPosterDialog.createPosterButton'
+                  )
+                "
                 color="primary"
                 @click="createPoster"
               />

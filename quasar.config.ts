@@ -1,42 +1,22 @@
-/* eslint-env node */
-
-/*
- * This file runs in a Node context (it's NOT transpiled by Babel), so use only
- * the ES6 features that are supported by your Node version. https://node.green/
- */
-
 // Configuration for your app
-// https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
+// https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
-/* eslint-env node */
-/* eslint-disable @typescript-eslint/no-var-requires */
-const fs = require('fs')
-const { configure } = require('quasar/wrappers')
-const execSync = require('child_process').execSync
-
-const filterAppEnvVariables = (envObject) => {
-  return Object.fromEntries(
-    Object.entries(envObject).filter(([key]) => key.startsWith('APP'))
-  )
-}
-
-// Read .env file and let process env ovewrite it if set
-const env = {
-  ...filterAppEnvVariables(require('dotenv').config().parsed ?? {}),
-  ...filterAppEnvVariables(process.env),
-  APP_VERSION: execSync('git describe --tags').toString().trim()
-}
-
-console.info('Build environment')
-console.info('=================')
-console.dir(env)
+import { defineConfig } from '#q-app/wrappers'
+import fs from 'fs'
+import path from 'path'
+import { execSync } from 'child_process'
 
 let localConfigure = {}
-if (fs.existsSync('./quasar.conf.local.js')) {
-  localConfigure = require('./quasar.conf.local.js')()
+const localConfigPathJs = path.resolve('./quasar.conf.local.js')
+if (fs.existsSync(localConfigPathJs)) {
+  const localModule = await import(localConfigPathJs)
+  localConfigure =
+    typeof localModule.default === 'function'
+      ? await localModule.default()
+      : localModule.default
 }
 
-module.exports = configure(function (ctx) {
+export default defineConfig(function (ctx) {
   return {
     eslint: {
       // fix: true,
@@ -53,7 +33,7 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['api', 'validation-rules', 'map', 'utils', 'apex', 'deep-links'],
+    boot: ['i18n', 'api', 'map', 'apex', 'deep-links', 'quasar-lang-pack'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
     css: ['app.scss'],
@@ -79,12 +59,24 @@ module.exports = configure(function (ctx) {
       },
 
       vueRouterMode: 'history', // available values: 'hash', 'history',
-      env
-      // vueRouterBase,
-      // vueDevtools,
-      // vueOptionsAPI: false,
+      envFilter(originalEnv) {
+        const newEnv = {}
+        for (const key in originalEnv) {
+          if (key.startsWith('APP')) {
+            newEnv[key] = originalEnv[key]
+          }
+        }
+        newEnv['APP_VERSION'] = execSync('git describe --tags')
+          .toString()
+          .trim()
 
-      // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
+        console.info('Build environment')
+        console.info('=================')
+        console.table(newEnv)
+        return newEnv
+      },
+      // vueRouterBase,
+      // vueOptionsAPI: false,
 
       // publicPath: '/',
       // analyze: true,
@@ -97,10 +89,21 @@ module.exports = configure(function (ctx) {
 
       // extendViteConf (viteConf) {},
       // viteVuePluginOptions: {},
-
-      // vitePlugins: [
-      //   [ 'package-name', { ..options.. } ]
-      // ]
+      vitePlugins: [
+        [
+          'vite-plugin-checker',
+          {
+            // TODO(peter) Active again.
+            vueTsc: false,
+            eslint: {
+              lintCommand:
+                'eslint -c ./eslint.config.js "./src*/**/*.{ts,js,mjs,cjs,vue}"',
+              useFlatConfig: true
+            }
+          },
+          { server: false }
+        ]
+      ]
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
@@ -115,8 +118,6 @@ module.exports = configure(function (ctx) {
       config: {},
 
       iconSet: 'svg-ionicons-v5', // Quasar icon set
-      lang: 'de', // Quasar language pack
-
       // For special cases outside of where the auto-import strategy can have an impact
       // (like functional components as one of the examples),
       // you can manually specify Quasar components/directives to be available everywhere:
@@ -134,7 +135,10 @@ module.exports = configure(function (ctx) {
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#sourcefiles
     sourceFiles: {
-      rootComponent: 'src/Entry.vue'
+      rootComponent: 'src/Entry.vue',
+      pwaRegisterServiceWorker: 'src-pwa/register-service-worker',
+      pwaServiceWorker: 'src-pwa/custom-service-worker',
+      pwaManifestFile: 'src-pwa/manifest.json'
       // rootComponent: 'src/App.vue',
       // router: 'src/router/index',
       // store: 'src/store/index',
@@ -168,19 +172,18 @@ module.exports = configure(function (ctx) {
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
     pwa: {
-      workboxMode: 'injectManifest', // or 'injectManifest'
+      workboxMode: 'InjectManifest', // or 'GenerateSW'
       injectPwaMetaTags: true,
       swFilename: 'service-worker.js',
       manifestFilename: 'manifest.json',
       useCredentialsForManifestTag: false,
-      // useFilenameHashes: true,
       // extendGenerateSWOptions (cfg) {}
       // extendInjectManifestOptions (cfg) {},
       // extendManifestJson (json) {}
       // extendPWACustomSWConf (esbuildConf) {}
       workboxOptions: {
-        maximumFileSizeToCacheInBytes: 5000000,
-      },
+        maximumFileSizeToCacheInBytes: 5000000
+      }
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-cordova-apps/configuring-cordova

@@ -16,6 +16,7 @@ import { useEditSinglePosterMixin } from 'pages/edit-event/posters/edit-single/E
 import { posterListStore } from 'src/store/PosterListStore'
 import { useEditPosterListMixin } from 'pages/edit-event/posters/EditPosterListMixin'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const defaultPoster: Partial<PosterDto> = {
   status: PosterStatus.ABSENT,
@@ -30,6 +31,7 @@ const props = defineProps<Props>()
 const $q = useQuasar()
 const $route = useRoute()
 const $router = useRouter()
+const { t } = useI18n()
 
 onMounted(async () => {
   let initialPoster: Partial<PosterDto>
@@ -83,7 +85,7 @@ async function save() {
       errors.value = e.response?.data
     } else {
       $q.notify({
-        message: 'Das Plakat konnte nicht gespeichert werden',
+        message: t('events.edit.posters.editPoster.generalError'),
         color: 'negative'
       })
     }
@@ -97,8 +99,8 @@ async function abort() {
 function onDeleteClicked() {
   if (!props.posterId) return
   $q.dialog({
-    title: 'Plakat löschen',
-    message: 'Möchtest dieses Plakat wirklich löschen?',
+    title: t('events.edit.posters.editPoster.deleteDialog.title'),
+    message: t('events.edit.posters.editPoster.deleteDialog.description'),
     cancel: true
   })
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -126,7 +128,7 @@ function onDeleteClicked() {
             <QBtn
               dense
               flat
-              label="Löschen"
+              :label="$t('events.edit.posters.editPoster.deleteButton')"
               :icon="ionTrash"
               @click="onDeleteClicked"
               color="primary"
@@ -137,7 +139,7 @@ function onDeleteClicked() {
             <QBtn
               dense
               outline
-              label="Abbrechen"
+              :label="$t('general.cancel')"
               :icon="ionClose"
               @click="abort"
               color="primary"
@@ -148,7 +150,7 @@ function onDeleteClicked() {
               dense
               v-if="posterId"
               color="primary"
-              label="Speichern"
+              :label="$t('events.edit.posters.editPoster.saveButton')"
               :icon="ionSave"
               @click="save"
             />
@@ -156,7 +158,7 @@ function onDeleteClicked() {
               v-else
               dense
               color="primary"
-              label="Erstellen"
+              :label="$t('events.edit.posters.editPoster.createButton')"
               :icon="ionLocationSharp"
               @click="save"
             />

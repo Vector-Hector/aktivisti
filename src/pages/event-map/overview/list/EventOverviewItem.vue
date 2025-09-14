@@ -2,10 +2,11 @@
 import { computed } from 'vue'
 import { QBtn, QItem, QItemLabel, QItemSection, useQuasar } from 'quasar'
 import { CampaignDto } from 'src/api/model/CampaignDto'
-import { eventTypeOptions } from 'src/api/model/EventTypes'
+import { useEventTypes } from 'src/api/model/EventTypes'
 import { EventGeoJsonFeature } from 'src/api/model/EventGeoJsonDto'
 import { ionPencil, ionPeopleSharp } from '@quasar/extras/ionicons-v5'
 import EventParticipantsModal from 'components/modals/EventParticipantsModal.vue'
+import { useDateFormat } from 'src/utils/dateFormat'
 
 interface Props {
   event: EventGeoJsonFeature
@@ -20,6 +21,8 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const q = useQuasar()
+const { dateFormat } = useDateFormat()
+const { eventTypeOptions } = useEventTypes()
 
 const eventTypeLabel = computed(() => {
   return eventTypeOptions.find(
@@ -59,14 +62,14 @@ function openParticipantsModal() {
         }}
       </QItemLabel>
       <QItemLabel>
-        {{ $utils.dateFormat(event.properties.start_date) }}
+        {{ dateFormat(event.properties.start_date, 'datetime') }}
       </QItemLabel>
     </QItemSection>
     <QItemSection side>
       <div class="q-gutter-x-md">
         <QBtn
           v-if="event.properties.can_edit"
-          aria-label="Aktion bearbeiten"
+          :aria-label="$t('events.editActionAriaLabel')"
           round
           outline
           color="primary"
@@ -75,7 +78,7 @@ function openParticipantsModal() {
         ></QBtn>
         <QBtn
           v-if="event.properties.can_edit_participants"
-          aria-label="Teilnehmer:innen verwalten"
+          :aria-label="$t('events.manageParticipantsAriaLabel')"
           round
           outline
           :icon="ionPeopleSharp"

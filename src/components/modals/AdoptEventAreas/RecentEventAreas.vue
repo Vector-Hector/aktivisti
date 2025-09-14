@@ -36,8 +36,7 @@ function excludeCurrentEvent(event: EventDto) {
 <template>
   <QCardSection class="description-section">
     <span class="description">
-      Bitte wähle eine Aktion aus, von welcher du die definierten Gebiete
-      übernehmen möchtest.
+      {{ $t('adoptEventAreas.recentEventAreas.description') }}
     </span>
   </QCardSection>
   <QCardSection class="section">

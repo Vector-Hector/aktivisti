@@ -1,3 +1,5 @@
+<!--FIXME(peter) 2023/12/12 The composition API doesn't support `beforeRouteEnter` so far so this a workaround
+      see https://github.com/vuejs/rfcs/discussions/302-->
 <script lang="ts">
 export interface StepControls {
   isLastStep: ComputedRef<boolean>
@@ -8,6 +10,7 @@ export interface StepControls {
 export default {
   async beforeRouteEnter(to, from, next) {
     if (!userStore.hasAtLeastOneManagePermission()) {
+      //TODO(peter) Check if emit is still required and if working
       ErrorBus.emit(
         NOT_AUTHORIZED,
         'Um eine Aktion zu erstellen benötigst du eine Koordinator*innenberechtigung'
@@ -73,40 +76,43 @@ import CampaignCollectionOverlayControl from 'src/map/CampaignCollectionOverlayC
 import hat from 'hat'
 import { onBeforeRouteUpdate, useRouter } from 'vue-router'
 import { Feature } from 'geojson'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const Door2DoorAndFlyerSteps = [
   {
-    label: 'Einstellungen',
+    label: t('events.edit.steps.settings'),
     routeName: 'edit-event-details'
   },
   {
-    label: 'Treffpunkt/Gebiete',
+    label: t('events.edit.steps.geometry'),
     routeName: 'edit-event-geometry'
   }
 ]
 
 const PosterEventSteps = [
   {
-    label: 'Einstellungen',
+    label: t('events.edit.steps.settings'),
     routeName: 'edit-event-details'
   },
   {
-    label: 'Treffpunkt/Gebiete',
+    label: t('events.edit.steps.geometry'),
     routeName: 'edit-event-geometry'
   },
   {
-    label: 'Standorte',
+    label: t('events.edit.steps.posterLocations'),
     routeName: 'edit-event-posters'
   }
 ]
 
 const GenericEventSteps = [
   {
-    label: 'Einstellungen',
+    label: t('events.edit.steps.settings'),
     routeName: 'edit-event-details'
   },
   {
-    label: 'Veranstaltungsort',
+    label: t('events.edit.steps.eventLocation'),
     routeName: 'edit-event-geometry'
   }
 ]

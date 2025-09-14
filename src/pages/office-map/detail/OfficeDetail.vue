@@ -42,7 +42,7 @@ defineExpose({ setOffice })
           <div class="row q-col-gutter-sm office-details">
             <template v-if="office.location_description">
               <div class="col-4">
-                <b>Adresse:</b>
+                <b>{{ $t('offices.address') }}:</b>
               </div>
               <div class="col-8">
                 {{ office.location_description }}
@@ -50,7 +50,7 @@ defineExpose({ setOffice })
             </template>
             <template v-if="office.link">
               <div class="col-4">
-                <b>Internetseite:</b>
+                <b>{{ $t('offices.website') }}:</b>
               </div>
               <div class="col-8">
                 <a
@@ -63,7 +63,7 @@ defineExpose({ setOffice })
             </template>
             <template v-if="office.email">
               <div class="col-4">
-                <b>E-Mail-Adresse:</b>
+                <b>{{ $t('offices.emailAddress') }}:</b>
               </div>
               <div class="col-8">
                 <a :href="'mailto:' + office.email">{{ office.email }}</a>
@@ -71,7 +71,7 @@ defineExpose({ setOffice })
             </template>
             <template v-if="office.phone_number">
               <div class="col-4">
-                <b>Telefon:</b>
+                <b>{{ $t('offices.phoneNumber') }}:</b>
               </div>
               <div class="col-8">
                 <a :href="'tel:' + office.phone_number">{{
@@ -82,7 +82,7 @@ defineExpose({ setOffice })
             <template v-if="office.description">
               <div class="row">
                 <div class="col-12 office-description">
-                  <b>Beschreibung:</b><br />
+                  <b>{{ $t('offices.description') }}:</b><br />
                   {{ office.description }}
                 </div>
               </div>

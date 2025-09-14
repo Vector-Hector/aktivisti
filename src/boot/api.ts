@@ -1,4 +1,4 @@
-import { boot } from 'quasar/wrappers'
+import { defineBoot } from '#q-app/wrappers'
 import { AxiosResponse } from 'axios'
 import { apiClient } from 'src/api/ApiClient'
 import { OAuth2Client } from 'src/api/OAuth2Client'
@@ -27,12 +27,11 @@ async function refreshOnErrorInterceptor(error: any) {
     // redo initial request with new access token
     try {
       await authStore.renewLogin()
-    } catch (e) {
+    } catch {
       return Promise.reject(error)
     }
-    originalRequest.headers[
-      'Authorization'
-    ] = `Bearer ${authStore.state.tokenSet.access_token}`
+    originalRequest.headers['Authorization'] =
+      `Bearer ${authStore.state.tokenSet.access_token}`
     return apiClient.axiosInstance(originalRequest)
   } else {
     // all other request just fail regulary
@@ -40,8 +39,13 @@ async function refreshOnErrorInterceptor(error: any) {
   }
 }
 
-export default boot(async ({ app }) => {
+export default defineBoot(async ({ app }) => {
   app.config.globalProperties.$apiClient = apiClient
+  const t = (key: string) => app.config.globalProperties.$t(key)
+  apiClient.axiosInstance.interceptors.request.use((config) => {
+    config.headers['Accept-Language'] = t('config.accpetLanguageHeaderApiIso')
+    return config
+  })
   const authType = getAuthType()
   if (authType === AuthType.TOKEN) {
     await (authStore as TokenAuthStore).loadFromNativeStorage()
@@ -52,14 +56,14 @@ export default boot(async ({ app }) => {
     try {
       const profileRequest = await apiClient.user.get('me')
       authStore.setUserId(profileRequest.payload.data.id)
-    } catch (e) {
+    } catch {
       // hydrating profile failed, not logged in
     }
   } else if (authType === AuthType.SESSION) {
     try {
       const sessionRequest = await apiClient.session.session()
       authStore.setUserId(sessionRequest.payload.data.user_id)
-    } catch (e) {
+    } catch {
       console.warn('Request to session failed, probably offline')
     }
   }
@@ -76,16 +80,10 @@ export default boot(async ({ app }) => {
           // If the request is not authenticated our session expired
           authStore.setUserId(null)
           authStore.deleteSessionData()
-          ErrorBus.emit(
-            SESSION_INVALID,
-            'Deine Sitzung ist abgelaufen, bitte melde dich erneut an'
-          )
+          ErrorBus.emit(SESSION_INVALID, t('api.notifications.sessionInvalid'))
         } else {
           // Emit the permission problem on a global error bus
-          ErrorBus.emit(
-            NOT_AUTHORIZED,
-            'Du hast nicht genügend Rechte, um die angefragte Seite zu lesen.'
-          )
+          ErrorBus.emit(NOT_AUTHORIZED, t('api.notifications.notAuthorized'))
         }
       }
       // Ultimately reject the error

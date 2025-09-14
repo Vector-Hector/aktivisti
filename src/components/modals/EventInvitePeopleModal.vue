@@ -34,7 +34,9 @@ function onDialogHide() {
   <QDialog ref="dialog" @hide="onDialogHide">
     <QCard class="invite-modal">
       <QToolbar>
-        <QToolbarTitle>Leute einladen</QToolbarTitle>
+        <QToolbarTitle>{{
+          $t('events.details.inviteUsers.dialog.title')
+        }}</QToolbarTitle>
       </QToolbar>
       <QCardSection>
         <EventInvitePeople :event-id="props.eventId" />

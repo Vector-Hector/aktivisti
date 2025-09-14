@@ -221,6 +221,7 @@ function removeGeometries(overlayId: string): void {
  * @see {@link drawFeatureCollection}
  */
 function handleGeometryClick(e: any): void {
+  // eslint-disable-next-line no-unsafe-optional-chaining
   const { properties, geometry } = e.features?.[0]
   const geometryId = properties?.id
   const metadata = JSON.parse(properties?.raw_metadata)
@@ -237,6 +238,7 @@ function handleGeometryClick(e: any): void {
  */
 function handleGeometryMouseOver(e: any): void {
   if (e.features?.length > 0) {
+    // eslint-disable-next-line no-unsafe-optional-chaining
     const { properties, id: layerId, source: sourceId } = e.features?.[0]
     const metadata = JSON.parse(properties?.raw_metadata)
     geometryPopup.value?.remove()

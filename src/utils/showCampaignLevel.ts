@@ -1,12 +1,12 @@
-import { CampaignDto } from 'src/api/model/CampaignDto'
+import { CampaignDto, CampaignLevel } from 'src/api/model/CampaignDto'
 
 export function showCampaignLevel(campaign: CampaignDto) {
   switch (campaign.campaign_level) {
-    case 'FEDERAL':
+    case CampaignLevel.FEDERAL:
       return 'Bund'
-    case 'STATE_ASSOCIATION':
+    case CampaignLevel.STATE_ASSOCIATION:
       return 'Land'
-    case 'SUB_ASSOCIATION':
+    case CampaignLevel.SUB_ASSOCIATION:
       return 'Bezirk'
     default:
       break

@@ -186,9 +186,8 @@ watch(
         isAbleToRequestAllSubAssociations.value = false
       } else {
         if (stateAssociationId) {
-          const allSubAssociationOfState = await fetchAllSubAssociations(
-            stateAssociationId
-          )
+          const allSubAssociationOfState =
+            await fetchAllSubAssociations(stateAssociationId)
           if (isManagedStateAssociation) {
             subAssociations.value = allSubAssociationOfState
             isAbleToRequestAllSubAssociations.value = true
@@ -295,7 +294,7 @@ function handleSubAssociationSelection(subAssociationId: number) {
 </script>
 <template>
   <CampaignFilter
-    label="Kampagne"
+    :label="$t('reports.selectReportDialog.campaign')"
     :options="campaigns"
     :show-all-campaigns="false"
     :model-value="selectedCampaignId"
@@ -303,7 +302,7 @@ function handleSubAssociationSelection(subAssociationId: number) {
     @update:model-value="handleCampaignSelection"
   />
   <StateAssociationFilter
-    label="Landesverband"
+    :label="$t('reports.selectReportDialog.stateAssociation')"
     :options="stateAssociations"
     :model-value="selectedStateAssociationId"
     :disable="stateAssociations.length < 2"

@@ -1,10 +1,9 @@
 <script setup lang="ts"></script>
 <template>
   <div class="container">
-    <h1>Vielen Dank</h1>
+    <h1>{{ $t('registrationSuccess.title') }}</h1>
     <p>
-      Die Registrierung war erfolgreich. Bitte schaue in dein Postfach um sie zu
-      bestätigen, danach kannst du dich bei der App anmelden.
+      {{ $t('registrationSuccess.description') }}
     </p>
   </div>
 </template>

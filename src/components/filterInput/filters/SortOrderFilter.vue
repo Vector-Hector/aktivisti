@@ -2,10 +2,13 @@
 import { ref } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
 import { SortOption } from 'src/store/UserStore'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const SortOptionLabels = {
-  [SortOption.START_DATE]: 'Datum (Beginn)',
-  [SortOption.NAME]: 'Aktionsname'
+  [SortOption.START_DATE]: t('sortOrderFilter.options.startDate'),
+  [SortOption.NAME]: t('sortOrderFilter.options.name')
 }
 interface Props {
   modelValue?: string
@@ -26,9 +29,9 @@ const sortOptions = ref(Object.values(SortOption))
     :model-value="props.modelValue"
     @update:model-value="(value) => emit('update:modelValue', value)"
     input-debounce="0"
-    label="Sortierung"
+    :label="$t('sortOrderFilter.defaultLabel')"
     :options="sortOptions"
     :option-label="(item) => SortOptionLabels[item]"
-    placeholder="Sortierung auswählen"
+    placeholder="$t('sortOrderFilter.placeholder')"
   />
 </template>

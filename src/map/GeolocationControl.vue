@@ -192,7 +192,7 @@ function updatePosition(position: Position | null, error: any) {
         label-position="bottom"
         :disable="isGeolocationServiceUnavailable"
         :color="locatorColor"
-        label="Standort"
+        :label="$t('map.geolocationControl.currentLocation')"
         flat
         round
         @click="onLocateClicked(userPosition, true)"
@@ -204,7 +204,7 @@ function updatePosition(position: Position | null, error: any) {
         external-label
         label-position="bottom"
         :icon="ionLocation"
-        label="Aktion"
+        :label="$t('map.geolocationControl.currentEvent')"
         flat
         round
         class="geolocation-control-button"

@@ -14,6 +14,7 @@ import {
   useQuasar
 } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   eventId: number
@@ -22,6 +23,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const $q = useQuasar()
+const { t } = useI18n()
 
 const isLoading = ref(false)
 const usernameToInvite = ref('')
@@ -71,12 +73,16 @@ async function inviteUser(username: string) {
     if (apiClient.isApiClientError(error) && error.response?.status === 400) {
       $q.notify({
         color: 'negative',
-        message: 'Der Benutzer*innenname existiert nicht'
+        message: t(
+          'events.details.inviteUsers.dialog.notifications.userNameNotExistsError'
+        )
       })
     } else {
       $q.notify({
         color: 'negative',
-        message: 'Etwas ging schief beim Einladen des*der Benutzer*in'
+        message: t(
+          'events.details.inviteUsers.dialog.notifications.generalError'
+        )
       })
     }
   } finally {
@@ -86,8 +92,12 @@ async function inviteUser(username: string) {
 // TODO(peter) Remove code duplication
 function handleInviteAllCoordinators() {
   $q.dialog({
-    title: 'Alle Koordinator*innen einladen',
-    message: 'Möchtest du alle Koordinator*innen des Kreisverbandes einladen?',
+    title: t(
+      'events.details.inviteUsers.dialog.inviteAllCoordinators.dialog.title'
+    ),
+    message: t(
+      'events.details.inviteUsers.dialog.inviteAllCoordinators.dialog.description'
+    ),
     cancel: true
   })
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -109,20 +119,28 @@ async function inviteCoordinators() {
     if (areCoordinatorsAlreadyInvited) {
       $q.notify({
         color: 'warning',
-        message: 'Es wurden bereits alle Koordinator*innen eingeladen.'
+        message: t(
+          'events.details.inviteUsers.dialog.inviteAllCoordinators.dialog.notifications.allCoordinatorsAreAlreadyInvited'
+        )
       })
     }
   } else {
     $q.notify({
       color: 'info',
-      message: 'In diesem Eventgebiet gibt es keine Koordinator*innen.'
+      message: t(
+        'events.details.inviteUsers.dialog.inviteAllCoordinators.dialog.notifications.noCoordinatorsFound'
+      )
     })
   }
 }
 function handleInviteAllTeamCaptains() {
   $q.dialog({
-    title: 'Alle Teamcaptains einladen',
-    message: 'Möchtest du alle Teamcaptains des Kreisverbandes einladen?',
+    title: t(
+      'events.details.inviteUsers.dialog.inviteAllTeamcaptains.dialog.title'
+    ),
+    message: t(
+      'events.details.inviteUsers.dialog.inviteAllTeamcaptains.dialog.description'
+    ),
     cancel: true
   })
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -144,13 +162,17 @@ async function inviteTeamCaptains() {
     if (areTeamCaptainsAlreadyInvited) {
       $q.notify({
         color: 'warning',
-        message: 'Es wurden bereits alle Teamcaptains eingeladen.'
+        message: t(
+          'events.details.inviteUsers.dialog.inviteAllTeamcaptains.dialog.notifications.allTeamcaptainsAreAlreadyInvited'
+        )
       })
     }
   } else {
     $q.notify({
       color: 'info',
-      message: 'In diesem Eventgebiet gibt es keine Teamcaptains.'
+      message: t(
+        'events.details.inviteUsers.dialog.inviteAllTeamcaptains.dialog.notifications.noTeamcaptainsFound'
+      )
     })
   }
 }
@@ -170,7 +192,7 @@ async function deleteParticipation(deleteId: number) {
           use-input
           dense
           v-model="usernameToInvite"
-          placeholder="Benutzer*innenname"
+          :placeholder="$t('events.details.inviteUsers.inputPlaceholder')"
           class="w-100 d-flex flex-col"
           @keydown.enter="inviteUser(usernameToInvite)"
         />
@@ -190,7 +212,7 @@ async function deleteParticipation(deleteId: number) {
     <div class="row">
       <div class="col">
         <QList v-if="participations.length > 0">
-          <p>Bereits eingeladen:</p>
+          <p>{{ $t('events.details.inviteUsers.alreadyInvited') }}:</p>
           <QItem
             v-for="participation in displayedParticipations"
             :key="participation.id"
@@ -213,7 +235,9 @@ async function deleteParticipation(deleteId: number) {
                 >
                   <QIcon
                     :name="ionClose"
-                    aria-label="Benutzer:in von der Aktion entfernen"
+                    :aria-label="
+                      $t('events.details.inviteUsers.removeParticipant')
+                    "
                   />
                 </QIcon>
               </div>
@@ -222,26 +246,32 @@ async function deleteParticipation(deleteId: number) {
           <QItem v-if="pendingUsersWithoutVisibleEmailAddresses > 0">
             <QItemSection>
               <QItemLabel>
-                {{ pendingUsersWithoutVisibleEmailAddresses }} weitere per Mail
-                eingeladen
+                {{
+                  $t('events.details.inviteUsers.inviteMoreUsersByMail', [
+                    pendingUsersWithoutVisibleEmailAddresses
+                  ])
+                }}
               </QItemLabel>
             </QItemSection>
           </QItem>
         </QList>
         <p v-else>
-          Keine offenen Einladungen. Nutze das Eingabefeld um neue Teilnehmende
-          einzuladen
+          {{ $t('events.details.inviteUsers.description') }}
         </p>
       </div>
     </div>
     <div class="row invite-users">
       <QBtn class="full-width" @click="handleInviteAllCoordinators">
-        Alle Koordinator*innen einladen
+        {{
+          $t('events.details.inviteUsers.dialog.inviteAllCoordinators.label')
+        }}
       </QBtn>
     </div>
     <div class="row invite-users">
       <QBtn class="full-width" @click="handleInviteAllTeamCaptains">
-        Alle Teamcaptains einladen
+        {{
+          $t('events.details.inviteUsers.dialog.inviteAllTeamcaptains.label')
+        }}
       </QBtn>
     </div>
   </div>

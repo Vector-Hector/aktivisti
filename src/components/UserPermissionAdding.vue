@@ -8,6 +8,7 @@ import { QBtn, QInput, QSelect, useQuasar } from 'quasar'
 import { ionChevronDown } from '@quasar/extras/ionicons-v5'
 import { ErrorBus, USER_NOT_FOUND } from 'src/utils/errorBus'
 import { apiClient } from 'src/api/ApiClient'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   /**
@@ -32,6 +33,7 @@ interface Emits {
 const emit = defineEmits<Emits>()
 
 const $q = useQuasar()
+const { t } = useI18n()
 
 const username = ref('')
 const selectedPermissionType = ref(
@@ -54,16 +56,18 @@ async function handleSubmission() {
       if (status === 409) {
         $q.notify({
           color: 'info',
-          message: 'Die Benutzer*in wurde bereits zur Liste hinzugefügt'
+          message: t('manageUsers.notifications.userAlreadyAddedError')
         })
       } else if (status === 400 && data.user) {
-        ErrorBus.emit(USER_NOT_FOUND, 'Benutzer*in nicht gefunden.')
+        ErrorBus.emit(
+          USER_NOT_FOUND,
+          t('manageUsers.notifications.userNotFoundError')
+        )
       }
     } else {
       $q.notify({
         color: 'negative',
-        message:
-          'Beim Hinzufügen der Benutzer*in ist ein unbekannter Fehler aufgetreten'
+        message: t('manageUsers.notifications.generalError')
       })
     }
   }
@@ -75,7 +79,7 @@ async function handleSubmission() {
     <div class="col-grow">
       <QInput
         class="w-100 d-flex flex-col"
-        label="Benutzer*in wählen"
+        :label="$t('manageUsers.selectUserLabel')"
         use-input
         v-model="username"
         @keydown.enter="handleSubmission"
@@ -94,7 +98,7 @@ async function handleSubmission() {
     </QSelect>
     <QBtn
       class="new-user-add-btn full-width"
-      label="Hinzufügen"
+      :label="$t('general.add')"
       unelevated
       outline
       :icon-right="ionChevronDown"

@@ -4,6 +4,7 @@ import EventMetricChart from 'components/reportCharts/eventMetrics/EventMetricCh
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { EventTypes } from 'src/api/model/EventTypes'
 import { apiClient } from 'src/api/ApiClient'
+import { ReportType, useReportType } from 'src/api/model/ReportType'
 
 interface Props {
   campaignId: number
@@ -12,6 +13,7 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const { ReportTypeUtil } = useReportType()
 
 const metricsFlyer = ref<EventMetricDto[] | null>(null)
 
@@ -30,6 +32,6 @@ async function fetchEventMetric(eventType: EventTypes) {
     :stateAssociationId="props.stateAssociationId"
     :subAssociationId="props.subAssociationId"
     :eventMetrics="metricsFlyer"
-    title="Flyer"
+    :title="ReportTypeUtil.getLabel(ReportType.METRICS_FLYER)"
   />
 </template>

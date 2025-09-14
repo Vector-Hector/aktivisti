@@ -83,7 +83,7 @@ defineExpose({
             :ripple-effect="false"
           />
           <QToolbarTitle class="title-wrapper col">
-            <span class="title"> Overlays auswählen </span>
+            <span class="title">{{ $t('map.overlayDialog.title') }}</span>
           </QToolbarTitle>
         </QToolbar>
       </div>
@@ -97,14 +97,14 @@ defineExpose({
             >
               <QItemSection>
                 <QItemLabel>
-                  <b>Kein Overlay anzeigen</b>
+                  <b>{{ $t('map.overlayDialog.noOverlay') }}</b>
                 </QItemLabel>
               </QItemSection>
             </QItem>
             <QItem clickable @click="() => onDialogOK(null)" v-else>
               <QItemSection>
                 <QItemLabel>
-                  <b>Kein Overlay definiert</b>
+                  <b>{{ $t('map.overlayDialog.noOverlayDefined') }}</b>
                 </QItemLabel>
               </QItemSection>
             </QItem>

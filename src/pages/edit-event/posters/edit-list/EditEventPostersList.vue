@@ -14,10 +14,10 @@ const $router = useRouter()
 const { posters, deletePoster } = useEditPosterListMixin()
 const stepControls = inject('stepControls') as StepControls
 
-async function back() {
+function back() {
   stepControls.previous()
 }
-async function next() {
+function next() {
   stepControls.next()
 }
 async function editPoster(posterId: number) {
@@ -36,7 +36,7 @@ async function editPoster(posterId: number) {
       <div class="col buttons">
         <QBtn
           color="primary"
-          label="Erstellen"
+          :label="$t('events.edit.posters.creationButton')"
           :icon="ionLocationSharp"
           :to="{ name: 'edit-event-single-poster-new' }"
         />

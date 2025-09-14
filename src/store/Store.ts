@@ -1,7 +1,6 @@
 import { reactive } from 'vue'
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export abstract class Store<T extends Object> {
+export abstract class Store<T extends object> {
   public state: T
 
   constructor() {
@@ -12,7 +11,7 @@ export abstract class Store<T extends Object> {
 
   protected abstract data(): T
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected setup(data: T): void {}
 
   public getState(): T {
