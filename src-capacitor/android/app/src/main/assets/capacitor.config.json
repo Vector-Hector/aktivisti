@@ -1,7 +1,10 @@
 {
-  "appId": "app.dielinke.wahlkampf",
-  "appName": "Aktivisti",
-  "bundledWebRuntime": false,
-  "npmClient": "npm",
-  "webDir": "www"
+	"appId": "app.dielinke.wahlkampf",
+	"appName": "Aktivisti",
+	"bundledWebRuntime": false,
+	"npmClient": "npm",
+	"webDir": "www",
+	"android": {
+		"adjustMarginsForEdgeToEdge": "auto"
+	}
 }
