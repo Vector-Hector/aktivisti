@@ -72,7 +72,6 @@ import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 import { userStore } from 'src/store/UserStore'
 import { posterListStore } from 'src/store/PosterListStore'
-import CampaignCollectionOverlayControl from 'src/map/CampaignCollectionOverlayControl.vue'
 import hat from 'hat'
 import { onBeforeRouteUpdate, useRouter } from 'vue-router'
 import { Feature } from 'geojson'
@@ -216,7 +215,6 @@ bbox.value =
       <Map :bounding-box="bbox">
         <template v-slot:top-right>
           <div class="flex column q-gutter-y-sm">
-            <CampaignCollectionOverlayControl />
             <router-view name="map" />
           </div>
         </template>
