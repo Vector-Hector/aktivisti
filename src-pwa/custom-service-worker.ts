@@ -32,7 +32,10 @@ if (process.env.MODE !== 'ssr' || process.env.PROD) {
       {
         denylist: [
           new RegExp(process.env.PWA_SERVICE_WORKER_REGEX),
-          /workbox-(.)*\.js$/
+          /workbox-(.)*\.js$/,
+          /admin\/.*/,
+          /api\/.*/,
+          /oauth2\/.*/
         ]
       }
     )
