@@ -110,11 +110,11 @@ import { ObjectPermissions } from 'src/api/model/ObjectPermissionDto'
 import { includesOneOf } from 'src/utils/array'
 import { EventTypes } from 'src/api/model/EventTypes'
 import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
-import { onBeforeRouteLeave } from 'vue-router'
+import { onUnmounted } from 'vue'
 
 const { event } = useEventDetailStore()
 
-onBeforeRouteLeave(() => {
+onUnmounted(() => {
   eventDetailStore.reset()
 })
 </script>
