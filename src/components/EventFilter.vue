@@ -57,6 +57,9 @@ const activatedFilterCount = computed(() => {
   if ((props.filterParams.campaigns?.length ?? 0) > 0) {
     active++
   }
+  if (props.filterParams.order_by !== DEFAULT_FILTER_PREFERENCES.sorting) {
+    active++
+  }
   if (props.filterParams.status !== DEFAULT_FILTER_PREFERENCES.status) {
     active++
   }
