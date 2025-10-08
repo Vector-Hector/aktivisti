@@ -1,5 +1,5 @@
-import { SortOption } from 'src/store/UserStore'
 import { EventTypes } from 'src/api/model/EventTypes'
+import { SortOption } from 'src/stores/user'
 import { Polygon } from 'geojson'
 import { EventStatus } from 'src/api/model/EventStatus'
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import { ionClose, ionPersonAddSharp } from '@quasar/extras/ionicons-v5'
 import {
   QBtn,
@@ -24,6 +24,7 @@ const props = defineProps<Props>()
 
 const $q = useQuasar()
 const { t } = useI18n()
+const userStore = useUserStore()
 
 const isLoading = ref(false)
 const usernameToInvite = ref('')
@@ -47,7 +48,7 @@ const displayedParticipations = computed(() => {
   return participations.value
     .filter((item) => item.user_is_member || item.user_email !== null)
     .filter((item) => {
-      return item.user != userStore.getState().user?.id
+      return item.user != userStore.user?.id
     })
     .sort((a, b) => {
       return a.user_username.localeCompare(b.user_username)

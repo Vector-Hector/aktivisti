@@ -13,10 +13,11 @@ import { PosterDto } from 'src/api/model/PosterDto'
 import { apiClient } from 'src/api/ApiClient'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox, circle } from '@turf/turf'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 
 export function useEventDetailStore() {
   const zoomBox = computed(() => {
+    const userStore = useUserStore()
     const locationFeatures = [...areaFeatures.value]
     if (event.value?.location) {
       locationFeatures.push(
@@ -28,7 +29,7 @@ export function useEventDetailStore() {
           type: 'FeatureCollection',
           features: [...areaFeatures.value, ...locationFeatures]
         }) as BBox2d)
-      : userStore.getState().bbox
+      : userStore.bbox
   })
 
   const areaFeatures = computed(() => {

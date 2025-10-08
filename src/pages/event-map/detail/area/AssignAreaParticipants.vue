@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { QBtn, QSelect, useQuasar } from 'quasar'
 import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
@@ -9,6 +9,7 @@ import { useI18n } from 'vue-i18n'
 
 const $q = useQuasar()
 const { t } = useI18n()
+const userStore = useUserStore()
 
 const {
   eventArea,
@@ -20,7 +21,7 @@ const {
 } = useEventDetailStore()
 
 const user = computed(() => {
-  return userStore.getState().user
+  return userStore.user
 })
 const eventAreaParticipants = computed(() => {
   return participations.value.filter(({ assigned_event_areas }) => {

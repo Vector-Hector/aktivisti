@@ -23,7 +23,7 @@ import { IntervalDebouncer } from 'src/utils/debounce'
 import { apiClient } from 'src/api/ApiClient'
 import { configStore } from 'src/store/ConfigStore'
 import { getAuthStore } from 'src/store/AuthStore'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from './stores/user'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 import { VersionHealth } from 'src/api/model/ConfigDto'
 import { useRoute, useRouter } from 'vue-router'
@@ -35,6 +35,7 @@ const $route = useRoute()
 const $router = useRouter()
 const $q = useQuasar()
 const { t } = useI18n()
+const userStore = useUserStore()
 
 const initialized = ref(false)
 const transitionDirection = ref<string | null>(null)

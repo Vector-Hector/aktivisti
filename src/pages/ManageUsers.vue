@@ -4,7 +4,7 @@ import { QItem, QItemSection, QPage, QSelect } from 'quasar'
 import { ionChevronDown } from '@quasar/extras/ionicons-v5'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { StateAssociationDto } from 'src/api/model/StateAssociationDto'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import {
   PermissionCodename,
   PermissionTypeOption,
@@ -51,6 +51,7 @@ const isAbleToManageStateAssociations = ref(true)
 
 const { getLabel } = useContentTypeLabels()
 const { getPermissionTypeOption } = usePermissionTypeOptions()
+const userStore = useUserStore()
 
 const permissionTypeOptions = getPermissionTypeOption()
 
@@ -83,10 +84,10 @@ onMounted(async () => {
 })
 
 const userManagementPermissions = computed(() => {
-  return userStore.getMyTeamCaptainOrCoordinatorPermissions()
+  return userStore.myTeamCaptainOrCoordinatorPermissions
 })
 const isUserAdminOrGlobalCoordinator = computed(() => {
-  return userStore.isAdminOrGlobalCoordinator()
+  return userStore.isAdminOrGlobalCoordinator
 })
 const isManagingState = computed(() => {
   return Boolean(
@@ -101,7 +102,7 @@ const isManagingSubAssociation = computed(() => {
   )
 })
 const myPermissions = computed(() => {
-  return userStore.getMyPermissions()
+  return userStore.myPermissions
 })
 const permissionOptionsForNewUsers = computed(() => {
   const permissionOptionsForNewUsers = [

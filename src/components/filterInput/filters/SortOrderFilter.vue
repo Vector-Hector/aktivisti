@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import FilterInput from 'components/filterInput/FilterInput.vue'
-import { SortOption } from 'src/store/UserStore'
+import { SortOption } from 'src/stores/user'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()

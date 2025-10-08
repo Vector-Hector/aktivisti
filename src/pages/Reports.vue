@@ -4,12 +4,14 @@ import { ref } from 'vue'
 import SelectReportDialog from 'components/modals/SelectReportDialog/SelectReportDialog.vue'
 import ChartFabric from 'components/reportCharts/ChartFabric.vue'
 import { uuidv4 } from 'src/utils/uuid'
-import { userStore } from 'src/store/UserStore'
 import { ReportChartData } from 'src/api/model/ReportChartData'
 import { ionStatsChartOutline } from '@quasar/extras/ionicons-v5'
+import { useUserStore } from 'src/stores/user'
+
+const userStore = useUserStore()
 
 const reportCharts = ref<ReportChartData[]>([])
-reportCharts.value = userStore.state.reportCharts
+reportCharts.value = userStore.reportCharts
 
 const $q = useQuasar()
 

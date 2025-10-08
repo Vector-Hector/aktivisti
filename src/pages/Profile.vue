@@ -9,6 +9,7 @@ interface IInstance extends ComponentPublicInstance {
 }
 export default {
   beforeRouteEnter: async (to, from, next) => {
+    const userStore = useUserStore()
     const userResponse = await apiClient.user.get('me', [
       'sub_association',
       'email_notification_settings'
@@ -56,7 +57,7 @@ import {
   ionPencil,
   ionPersonCircleOutline
 } from '@quasar/extras/ionicons-v5'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import { CAMPAIGN_ADMIN, UserDto } from 'src/api/model/UserDto'
 import { apiClient } from 'src/api/ApiClient'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
@@ -78,9 +79,10 @@ const authStore = getAuthStore()
 const $q = useQuasar()
 const $router = useRouter()
 const { t } = useI18n()
+const userStore = useUserStore()
 
 const hasAtLeastOneManagePermission = computed(() => {
-  return userStore.hasAtLeastOneManagePermission()
+  return userStore.hasAtLeastOneManagePermission
 })
 const hasAnyPermission = computed(() => {
   return (
@@ -105,7 +107,7 @@ const realName = computed(() => {
 })
 const user = computed({
   get() {
-    return userStore.getState().user
+    return userStore.user
   },
   set(value: UserDto | null) {
     userStore.setUser(value!)
@@ -113,7 +115,7 @@ const user = computed({
 })
 const homeAssociation = computed({
   get() {
-    return userStore.getState().homeAssociation
+    return userStore.homeAssociation
   },
   set(value: SubAssociationDto | null) {
     userStore.setHomeAssociation(value)
@@ -125,14 +127,14 @@ const homeAssociationName = computed(() => {
 
 const profileSaveDebouncer = new SettleDebouncer()
 const emailNotificationSettingsSaveDebouncer = new SettleDebouncer()
-const localUser = ref(cloneDeep(userStore.getState().user))
+const localUser = ref(cloneDeep(userStore.user))
 const errors = ref<any>({})
 const emailNotificationSettings = ref<Partial<EmailNotificationSettingsDto>>({
   on_invitation: true,
   on_new_volunteers: true
 })
 const pushNotificationSettings = ref({
-  pushNotifications: userStore.state.pushNotifications
+  pushNotifications: userStore.pushNotifications
 })
 const permissions = ref<UserObjectPermissionDto[]>([])
 
@@ -464,7 +466,7 @@ defineExpose({ setEmailNotificationSettings, setPermissions })
           <QItem>
             <QItemSection>{{
               $t('profile.notificationsSettings.pushNotifications')
-              }}</QItemSection>
+            }}</QItemSection>
             <QItemSection side>
               <QToggle
                 @update:model-value="savePushNotificationSettings"

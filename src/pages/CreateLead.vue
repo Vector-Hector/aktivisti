@@ -6,9 +6,10 @@ interface IInstance extends ComponentPublicInstance {
 }
 export default {
   beforeRouteEnter(to, from, next) {
+    const userStore = useUserStore()
     if (
-      !userStore.isTeamCaptainOrLocalCoordinator() &&
-      !userStore.isAdminOrGlobalCoordinator()
+      !userStore.isTeamCaptainOrLocalCoordinator &&
+      !userStore.isAdminOrGlobalCoordinator
     ) {
       //TODO(peter) Check if command is required, seems like it is not emitted
       ErrorBus.emit(
@@ -43,7 +44,7 @@ import {
 import FormError from 'components/FormError.vue'
 import { ionChevronDown } from '@quasar/extras/ionicons-v5'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 import { onBeforeRouteLeave, useRouter } from 'vue-router'
 import { apiClient } from 'src/api/ApiClient'

@@ -21,7 +21,7 @@ import { ComponentPublicInstance, computed, ref } from 'vue'
 import MapOverlayProxy from 'components/MapOverlayProxy.vue'
 import Map from 'src/map/Map.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import { QPage } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import GeolocationControl from 'src/map/GeolocationControl.vue'
@@ -39,9 +39,10 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const map = ref<InstanceType<typeof Map> | null>(null)
+const userStore = useUserStore()
 const { t } = useI18n()
 
-const bbox = ref(userStore.getState().bbox)
+const bbox = ref(userStore.bbox)
 const isMapDefined = ref(true)
 
 onBeforeRouteUpdate((to, from, next) => {
