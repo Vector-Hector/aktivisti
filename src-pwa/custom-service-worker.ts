@@ -35,7 +35,9 @@ if (process.env.MODE !== 'ssr' || process.env.PROD) {
           /workbox-(.)*\.js$/,
           /admin\/.*/,
           /api\/.*/,
-          /oauth2\/.*/
+          /nominatim\/.*/,
+          /oauth2\/.*/,
+          /tiles\/.*/
         ]
       }
     )
