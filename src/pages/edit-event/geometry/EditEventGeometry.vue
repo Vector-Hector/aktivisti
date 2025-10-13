@@ -50,7 +50,8 @@ const {
   eventAreasWithError,
   campaigns,
   event,
-  eventAreas
+  eventAreas,
+  selectedFeatures
 } = useEditEventMixin()
 const { updateArea, deleteAreaByFeatureId } = useEditEventGeometryMixin()
 const { errors, saveDebouncer } = useEditEventAutoSaveMixin()
@@ -98,6 +99,10 @@ const columns = computed(() => {
     }
   ]
 })
+
+function isFeatureSelected(feature_id: number) {
+  return selectedFeatures.value?.find((f) => f.id === feature_id)
+}
 
 function startDrawArea() {
   EditEventBus.emit(START_DRAW_AREA)
@@ -246,7 +251,11 @@ function openAdoptAreasModal() {
             </QTr>
           </template>
           <template v-slot:body="props">
-            <QTr>
+            <QTr
+              :class="{
+                selected: isFeatureSelected(props.row.feature_id)
+              }"
+            >
               <QTd key="color" :props="props">
                 <QBtn
                   unelevated

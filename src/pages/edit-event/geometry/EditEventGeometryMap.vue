@@ -33,7 +33,7 @@ const defaultColors = [
   '#495D63'
 ]
 
-const { event, eventAreas, posters } = useEditEventMixin()
+const { event, eventAreas, posters, selectedFeatures } = useEditEventMixin()
 const { updateArea, deleteAreaByFeatureId, features } =
   useEditEventGeometryMixin()
 const { map } = useInjectMapMixin()
@@ -147,6 +147,9 @@ function handleDeletedFeatures(event: any) {
     void deleteAreaByFeatureId(featureId)
   }
 }
+function handleSelectionChanged(event: any) {
+  selectedFeatures.value = event?.features
+}
 </script>
 
 <template>
@@ -160,6 +163,7 @@ function handleDeletedFeatures(event: any) {
     @draw:create="handleCreatedFeatures"
     @draw:update="handleCreatedFeatures"
     @draw:delete="handleDeletedFeatures"
+    @draw:selectionchange="handleSelectionChanged"
   />
   <template v-if="zoomLevel > 16">
     <AddressMarkerLayer :addresses="addresses" />
