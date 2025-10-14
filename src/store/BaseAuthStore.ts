@@ -1,7 +1,7 @@
 import { trackingSessionStore } from 'src/store/TrackingSessionStore'
 import { LoginDto } from 'src/api/model/LoginDto'
 import { Store } from 'src/store/Store'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import { bbox, circle } from '@turf/turf'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { apiClient } from 'src/api/ApiClient'
@@ -14,6 +14,7 @@ export abstract class BaseAuthStore<
   T extends BaseAuthStoreState
 > extends Store<T> {
   deleteSessionData() {
+    const userStore = useUserStore()
     // remove all local tracking data
     trackingSessionStore.clear()
     userStore.setPushNotificationPreferences(false)
@@ -35,6 +36,7 @@ export abstract class BaseAuthStore<
   }
 
   async login(username: string, password: string, longSession = false) {
+    const userStore = useUserStore()
     await this.auth({
       identifier: username,
       password,
@@ -51,7 +53,7 @@ export abstract class BaseAuthStore<
       profileRequest.payload.embedded.sub_association?.[0] ?? null
     )
     // when loggin in set the map to the center of the postcode
-    const center = userStore.getState().user?.plz_center
+    const center = userStore.user?.plz_center
     if (center) {
       userStore.setBbox(bbox(circle([center.lng, center.lat], 2)) as BBox2d)
     }

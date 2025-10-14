@@ -6,7 +6,7 @@ import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import CollapsibleFilters from 'components/CollapsibleFilters.vue'
 import EventFilterList from 'components/EventFilterList.vue'
 import { EventTypes } from 'src/api/model/EventTypes'
-import { DEFAULT_FILTER_PREFERENCES } from 'src/store/UserStore'
+import { DEFAULT_FILTER_PREFERENCES } from 'src/stores/user'
 
 interface Props {
   isCollapsible?: boolean
@@ -55,6 +55,9 @@ const activatedFilterCount = computed(() => {
     active++
   }
   if ((props.filterParams.campaigns?.length ?? 0) > 0) {
+    active++
+  }
+  if (props.filterParams.order_by !== DEFAULT_FILTER_PREFERENCES.sorting) {
     active++
   }
   if (props.filterParams.status !== DEFAULT_FILTER_PREFERENCES.status) {

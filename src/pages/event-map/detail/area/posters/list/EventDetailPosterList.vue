@@ -5,7 +5,7 @@ import { ionLocationSharp } from '@quasar/extras/ionicons-v5'
 import { QBtn, useQuasar } from 'quasar'
 import SelectPosterLocation from 'components/modals/SelectPosterLocation.vue'
 import { PosterDto } from 'src/api/model/PosterDto'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import { useRouter } from 'vue-router'
 import AssignAreaParticipants from 'pages/event-map/detail/area/AssignAreaParticipants.vue'
 import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
@@ -14,6 +14,8 @@ import { useI18n } from 'vue-i18n'
 const $q = useQuasar()
 const $router = useRouter()
 const { t } = useI18n()
+const userStore = useUserStore()
+
 const {
   event,
   eventArea,
@@ -30,7 +32,7 @@ function openCreatePosterDialog() {
     componentProps: {
       eventId: event.value.id,
       posters: posters.value,
-      initialBBox: userStore.state.bbox,
+      initialBBox: userStore.bbox,
       areaFeatures: [currentAreaFeature.value]
     }
   }).onOk((poster: PosterDto) => {

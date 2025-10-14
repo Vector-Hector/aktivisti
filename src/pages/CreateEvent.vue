@@ -9,7 +9,8 @@ interface IInstance extends ComponentPublicInstance {
 
 export default {
   async beforeRouteEnter(to, from, next) {
-    if (!userStore.hasAtLeastOneManagePermission()) {
+    const userStore = useUserStore()
+    if (!userStore.hasAtLeastOneManagePermission) {
       //TODO(peter) Check if command is required, seems like it is not emitted
       ErrorBus.emit(
         NOT_AUTHORIZED,
@@ -43,7 +44,7 @@ import { QBtn, QInput, QPage, QScrollArea, QSelect, useQuasar } from 'quasar'
 import { EventDto } from 'src/api/model/EventDto'
 import FormError from 'components/FormError.vue'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { useRouter } from 'vue-router'

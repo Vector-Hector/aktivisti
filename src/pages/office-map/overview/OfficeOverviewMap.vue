@@ -8,7 +8,7 @@ import {
 } from 'vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import Geocoder from 'src/map/Geocoder.vue'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import { officeOverviewStore } from 'src/store/OfficeOverviewStore'
 import { apiClient } from 'src/api/ApiClient'
 import {
@@ -24,7 +24,8 @@ import { uiStore } from 'src/store/UiStore'
 
 const activeOffice = ref<null | OfficeGeoJsonFeature>()
 const map = useMap()
-const bounds = ref(userStore.getState().bbox)
+const userStore = useUserStore()
+const bounds = ref(userStore.bbox)
 const officeFeatureCollection = ref<OfficeGeoJsonDto | null>(null)
 
 onBeforeMount(() => {

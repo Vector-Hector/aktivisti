@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from 'vue'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import Geocoder from 'src/map/Geocoder.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bboxPolygon } from '@turf/turf'
@@ -17,7 +17,8 @@ import { useMap } from 'src/map/MapUtils'
 const posterPopup = ref<InstanceType<typeof PosterPopup> | null>(null)
 
 const map = useMap()
-const bounds = ref(userStore.getState().bbox)
+const userStore = useUserStore()
+const bounds = ref(userStore.bbox)
 const popup = ref<Popup | null>(null)
 const updateBounds = () => {
   bounds.value = map.value?.getBounds().toArray().flat() as BBox2d

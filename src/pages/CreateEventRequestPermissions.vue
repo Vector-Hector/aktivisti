@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { cloneDeep } from 'lodash-es'
 import { QBtn, QInput, QPage, QScrollArea, useQuasar } from 'quasar'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import MultipleSubAssociationFilter from 'components/filterInput/filters/MultipleSubAssociationFilter.vue'
 import { UserDto } from 'src/api/model/UserDto'
@@ -11,16 +11,17 @@ import { useI18n } from 'vue-i18n'
 
 const $q = useQuasar()
 const { t } = useI18n()
+const userStore = useUserStore()
 
 const message = ref<string>('')
-const localUser = ref<UserDto | null>(cloneDeep(userStore.getState().user))
+const localUser = ref<UserDto | null>(cloneDeep(userStore.user))
 const errors = ref<any>({})
 const subAssociations = ref<SubAssociationDto[]>([])
 const selectedSubAssociation = ref<number>(0)
 
 onMounted(async () => {
   await getSubAssociations()
-  const homeAssociation = userStore.getState().homeAssociation
+  const homeAssociation = userStore.homeAssociation
   selectedSubAssociation.value = homeAssociation ? homeAssociation.id : 0
 })
 

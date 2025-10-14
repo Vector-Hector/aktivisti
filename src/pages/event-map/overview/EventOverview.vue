@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { CampaignDto } from 'src/api/model/CampaignDto'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import EventFilter from 'components/EventFilter.vue'
 import { EventStatus } from 'src/api/model/EventStatus'
@@ -17,8 +17,9 @@ import { QScrollArea, QSpinnerDots } from 'quasar'
 import { useGlobalLoadingState } from 'src/utils/app'
 
 const router = useRouter()
+const userStore = useUserStore()
 
-if (userStore.getState().bbox === null) {
+if (userStore.bbox === null) {
   void router.replace({ name: 'home' })
 }
 
@@ -36,7 +37,7 @@ const userFilterParams = computed({
       status,
       is_owner,
       management_permission
-    } = userStore.getState().filterPreferences
+    } = userStore.filterPreferences
     return {
       sub_association: subAssociations,
       campaigns: campaign !== undefined ? [campaign] : undefined,
@@ -49,7 +50,7 @@ const userFilterParams = computed({
   },
   set(value) {
     userStore.setFilterPreferences({
-      ...userStore.getState().filterPreferences,
+      ...userStore.filterPreferences,
       ...{
         subAssociations: value.sub_association ?? [],
         campaign: value.campaigns?.[0],
@@ -83,11 +84,11 @@ watch(
 const shownEvents = computed(() => {
   const bbox = eventOverviewStore.state.bbox
   return bbox
-    ? eventOverviewStore.state.featureCollection?.features.filter(
+    ? (eventOverviewStore.state.featureCollection?.features.filter(
         (eventFeature) => {
           return bbox && inside(eventFeature, polygonFromBBox(bbox))
         }
-      ) ?? []
+      ) ?? [])
     : []
 })
 
@@ -123,8 +124,8 @@ onUnmounted(() => {
         :is-collapsible="true"
         :campaigns="campaigns"
         :sub-associations="subAssociations"
-        :is-editable-filterable="userStore.hasAtLeastOneManagePermission()"
-        :is-ownership-filterable="userStore.hasAtLeastOneManagePermission()"
+        :is-editable-filterable="userStore.hasAtLeastOneManagePermission"
+        :is-ownership-filterable="userStore.hasAtLeastOneManagePermission"
         @on-reset-click="() => userStore.clearFilterPreferences()"
       />
       <EventOverviewList

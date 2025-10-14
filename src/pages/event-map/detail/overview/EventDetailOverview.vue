@@ -2,7 +2,7 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { getAuthStore } from 'src/store/AuthStore'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import EventInvitePeopleModal from 'src/components/modals/EventInvitePeopleModal.vue'
 import EventParticipantsModal from 'src/components/modals/EventParticipantsModal.vue'
 import { apiClient } from 'src/api/ApiClient'
@@ -35,6 +35,7 @@ import { useDateFormat } from 'src/utils/dateFormat'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+const userStore = useUserStore()
 
 const PREFIX_HANG_DOWN_POSTERS = t('events.details.prefixHangDownPostersEvent')
 const pollIntervalMs = 5000
@@ -192,7 +193,7 @@ async function updateParticipationAndLoadAreas() {
   personalParticipation.value = (
     await apiClient.eventParticipations.list({
       event: eventId.value,
-      user: userStore.getState().user?.id
+      user: userStore.user?.id
     })
   ).payload.data?.[0]
   if (

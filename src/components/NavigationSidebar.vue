@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { uiStore } from 'src/store/UiStore'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import { getAuthStore } from 'src/store/AuthStore'
 import MenuLink from 'src/components/MenuLink.vue'
 import OpenInvitationsBadge from 'components/OpenInvitationsBadge.vue'
@@ -26,6 +26,7 @@ import { useI18n } from 'vue-i18n'
 
 const $router = useRouter()
 const authStore = getAuthStore()
+const userStore = useUserStore()
 const $q = useQuasar()
 const { availableLocales, t } = useI18n()
 
@@ -71,20 +72,20 @@ const isLoggedIn = computed(() => {
   return authStore.isLoggedIn()
 })
 const hasManagePermission = computed(() => {
-  return userStore.hasAtLeastOneManagePermission()
+  return userStore.hasAtLeastOneManagePermission
 })
 const isTeamCaptainOrLocalCoordinator = computed(() => {
-  return userStore.isTeamCaptainOrLocalCoordinator()
+  return userStore.isTeamCaptainOrLocalCoordinator
 })
 const isAdminOrGlobalCoordinator = computed(() => {
-  return userStore.isAdminOrGlobalCoordinator()
+  return userStore.isAdminOrGlobalCoordinator
 })
 const userName = computed(() => {
-  return userStore.getState().user?.username
+  return userStore.user?.username
 })
 const userFullname = computed(() => {
-  const first_name = userStore.getState().user?.first_name
-  const last_name = userStore.getState().user?.last_name
+  const first_name = userStore.user?.first_name
+  const last_name = userStore.user?.last_name
   return [first_name, last_name].filter(Boolean).join(' ')
 })
 const sidebarExpanded = computed({
@@ -101,7 +102,7 @@ const helpUrl = computed(() => {
 
 async function logout() {
   await authStore.logout()
-  void userStore.reset()
+  void userStore.$reset()
   void $router.push('/')
 }
 </script>

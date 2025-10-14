@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SortOption } from 'src/store/UserStore'
+import { SortOption } from 'src/stores/user'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { EventTypes } from 'src/api/model/EventTypes'

@@ -14,7 +14,7 @@ import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { editEventStore } from 'src/store/EditEventStore'
 import { QScrollArea, useQuasar } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
-import { DEFAULT_FILTER_PREFERENCES } from 'src/store/UserStore'
+import { DEFAULT_FILTER_PREFERENCES } from 'src/stores/user'
 
 const $q = useQuasar()
 
