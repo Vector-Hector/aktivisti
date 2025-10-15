@@ -32,7 +32,8 @@ const campaigns = ref<CampaignDto[]>([])
 const subAssociations = ref<SubAssociationDto[]>([])
 const filterParams = ref<EventFilterParams>({
   ...DEFAULT_FILTER_PREFERENCES,
-  event_type: editEventStore.state.event?.event_type
+  event_type: editEventStore.state.event?.event_type,
+  include_expired_campaigns: true
 })
 const pagination = ref<Pagination | null>(_defaultPagination)
 const shownEvents = ref<EventDto[]>([])
