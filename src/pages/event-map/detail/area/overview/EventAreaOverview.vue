@@ -34,7 +34,7 @@ import {
 } from '@quasar/extras/ionicons-v5'
 import { StreetDetails } from 'src/api/model/AreaDetailsDto'
 import { difference } from 'lodash-es'
-import { eventDetailStore } from 'src/store/EventDetailStore'
+import { useEventStore } from 'src/stores/event'
 import AssignAreaParticipants from 'pages/event-map/detail/area/AssignAreaParticipants.vue'
 import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 import { apiClient } from 'src/api/ApiClient'
@@ -45,6 +45,7 @@ import { useI18n } from 'vue-i18n'
 const $q = useQuasar()
 const { t } = useI18n()
 
+const eventStore = useEventStore()
 const { eventArea, eventAreaPermissions, completedTargetIds } =
   useEventDetailStore()
 
@@ -93,7 +94,7 @@ function openCompletionModal() {
             is_completed: !eventArea.value.is_completed
           }
         )
-        eventDetailStore.updateEventArea(response.payload.data)
+        eventStore.updateEventArea(response.payload.data)
       } catch (error) {
         void $q.notify({
           position: 'bottom',

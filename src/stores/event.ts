@@ -1,0 +1,171 @@
+import { defineStore, acceptHMRUpdate } from 'pinia'
+import { PermissionHintsDto } from 'src/api/model/APIEnvelope'
+import { CampaignDto } from 'src/api/model/CampaignDto'
+import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
+import { EventAreaDto } from 'src/api/model/EventAreaDto'
+import { EventDto } from 'src/api/model/EventDto'
+import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
+import { ObjectPermissionDto } from 'src/api/model/ObjectPermissionDto'
+import { PosterDto } from 'src/api/model/PosterDto'
+import { ref } from 'vue'
+
+const DEAFULT_EVENT_DETAIL_STATE = {
+  event: null,
+  eventAreas: [],
+  eventAreaPermissions: null,
+  participations: [],
+  personalParticipation: null,
+  personalParticipationPermissions: null,
+  campaigns: [],
+  eventPermissions: null,
+  completionNotes: [],
+  selectedEventAreaId: null,
+  posters: [],
+  activePosterIndex: null
+}
+
+export const useEventStore = defineStore('eventDetail', () => {
+  const event = ref<EventDto | null>(DEAFULT_EVENT_DETAIL_STATE.event)
+  const eventAreas = ref<EventAreaDto[]>(DEAFULT_EVENT_DETAIL_STATE.eventAreas)
+  const eventAreaPermissions = ref<PermissionHintsDto | null>(
+    DEAFULT_EVENT_DETAIL_STATE.eventAreaPermissions
+  )
+  const participations = ref<EventParticipationDto[]>(
+    DEAFULT_EVENT_DETAIL_STATE.participations
+  )
+  const personalParticipation = ref<EventParticipationDto | null>(
+    DEAFULT_EVENT_DETAIL_STATE.personalParticipation
+  )
+  const personalParticipationPermissions = ref<PermissionHintsDto | null>(
+    DEAFULT_EVENT_DETAIL_STATE.personalParticipationPermissions
+  )
+  const campaigns = ref<CampaignDto[]>(DEAFULT_EVENT_DETAIL_STATE.campaigns)
+  const eventPermissions = ref<ObjectPermissionDto | null>(
+    DEAFULT_EVENT_DETAIL_STATE.eventPermissions
+  )
+  const completionNotes = ref<CompletionNoteDto[]>(
+    DEAFULT_EVENT_DETAIL_STATE.completionNotes
+  )
+  const selectedEventAreaId = ref<null | number>(
+    DEAFULT_EVENT_DETAIL_STATE.selectedEventAreaId
+  )
+  const posters = ref<PosterDto[]>(DEAFULT_EVENT_DETAIL_STATE.posters)
+  const activePosterIndex = ref<number | null>(
+    DEAFULT_EVENT_DETAIL_STATE.activePosterIndex
+  )
+
+  function setEvent(value: EventDto | null) {
+    event.value = value
+  }
+
+  function getEventArea(): EventAreaDto | null {
+    return (
+      eventAreas.value.find(({ id }) => id === selectedEventAreaId.value) ??
+      null
+    )
+  }
+
+  function updateEventArea(value: EventAreaDto) {
+    const indexToReplace = eventAreas.value.findIndex(
+      ({ id }) => value.id === id
+    )
+    eventAreas.value[indexToReplace] = value
+  }
+
+  function setEventArea(value: EventAreaDto | null) {
+    if (value) {
+      updateEventArea(value)
+    }
+    selectedEventAreaId.value = value?.id ?? null
+  }
+
+  function setEventAreaPermissions(value: PermissionHintsDto | null) {
+    eventAreaPermissions.value = value
+  }
+
+  function setParticipations(value: EventParticipationDto[]) {
+    participations.value = value
+  }
+
+  function setPersonalParticipation(value: EventParticipationDto | null) {
+    personalParticipation.value = value
+  }
+
+  function setPersonalParticipationPermissions(
+    value: PermissionHintsDto | null
+  ) {
+    personalParticipationPermissions.value = value
+  }
+
+  function setEventAreas(value: EventAreaDto[]) {
+    eventAreas.value = value
+  }
+
+  function setEventPermissions(value: ObjectPermissionDto | null) {
+    eventPermissions.value = value
+  }
+
+  function setCampaigns(value: CampaignDto[]) {
+    campaigns.value = value
+  }
+
+  function addCompletionNotes(value: CompletionNoteDto[]) {
+    const newIds = value.map(({ target_id }) => target_id)
+    // discard any in the current set that are added with this new set
+    completionNotes.value = [
+      ...completionNotes.value.filter(
+        ({ target_id }) => !newIds.includes(target_id)
+      ),
+      ...value
+    ]
+  }
+
+  function $reset() {
+    event.value = DEAFULT_EVENT_DETAIL_STATE.event
+    eventAreas.value = DEAFULT_EVENT_DETAIL_STATE.eventAreas
+    eventAreaPermissions.value = DEAFULT_EVENT_DETAIL_STATE.eventAreaPermissions
+    participations.value = DEAFULT_EVENT_DETAIL_STATE.participations
+    personalParticipation.value =
+      DEAFULT_EVENT_DETAIL_STATE.personalParticipation
+    personalParticipationPermissions.value =
+      DEAFULT_EVENT_DETAIL_STATE.personalParticipationPermissions
+    campaigns.value = DEAFULT_EVENT_DETAIL_STATE.campaigns
+    eventPermissions.value = DEAFULT_EVENT_DETAIL_STATE.eventPermissions
+    completionNotes.value = DEAFULT_EVENT_DETAIL_STATE.completionNotes
+    selectedEventAreaId.value = DEAFULT_EVENT_DETAIL_STATE.selectedEventAreaId
+    posters.value = DEAFULT_EVENT_DETAIL_STATE.posters
+    activePosterIndex.value = DEAFULT_EVENT_DETAIL_STATE.activePosterIndex
+  }
+
+  return {
+    event,
+    eventAreas,
+    eventAreaPermissions,
+    participations,
+    personalParticipation,
+    personalParticipationPermissions,
+    campaigns,
+    eventPermissions,
+    completionNotes,
+    selectedEventAreaId,
+    posters,
+    activePosterIndex,
+    setEvent,
+    getEventArea,
+    updateEventArea,
+    setEventArea,
+    setEventAreaPermissions,
+    setParticipations,
+    setPersonalParticipation,
+    setPersonalParticipationPermissions,
+    setEventAreas,
+    setEventPermissions,
+    setCampaigns,
+    addCompletionNotes,
+    $reset
+  }
+})
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useEventStore, import.meta.hot))
+}

@@ -2,7 +2,6 @@ import { computed } from 'vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { PermissionHintsDto } from 'src/api/model/APIEnvelope'
-import { eventDetailStore } from 'src/store/EventDetailStore'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import {
   ObjectPermissionDto,
@@ -14,8 +13,10 @@ import { apiClient } from 'src/api/ApiClient'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox, circle } from '@turf/turf'
 import { useUserStore } from 'src/stores/user'
+import { useEventStore } from 'src/stores/event'
 
 export function useEventDetailStore() {
+  const eventStore = useEventStore()
   const zoomBox = computed(() => {
     const userStore = useUserStore()
     const locationFeatures = [...areaFeatures.value]
@@ -58,25 +59,25 @@ export function useEventDetailStore() {
 
   const activePosterIndex = computed({
     get: () => {
-      return eventDetailStore.state.activePosterIndex
+      return eventStore.activePosterIndex
     },
     set: (index: number | null) => {
-      eventDetailStore.state.activePosterIndex = index
+      eventStore.activePosterIndex = index
     }
   })
 
   const posters = computed({
     get: () => {
-      return eventDetailStore.state.posters
+      return eventStore.posters
     },
     set: (posters: PosterDto[]) => {
-      eventDetailStore.state.posters = posters
+      eventStore.posters = posters
     }
   })
 
   const postersInArea = computed({
     get: () => {
-      return eventDetailStore.state.posters.filter(
+      return eventStore.posters.filter(
         ({ area }) => area === (eventArea.value?.id ?? null)
       )
     },
@@ -87,7 +88,7 @@ export function useEventDetailStore() {
 
   const postersWithoutArea = computed({
     get: () => {
-      return eventDetailStore.state.posters.filter(({ area }) => area === null)
+      return eventStore.posters.filter(({ area }) => area === null)
     },
     set: (posters: PosterDto[]) => {
       mergePosters(posters)
@@ -96,7 +97,7 @@ export function useEventDetailStore() {
 
   const participations = computed({
     get: () => {
-      return eventDetailStore.getState().participations
+      return eventStore.participations
     },
     set: (value: EventParticipationDto[]) => {
       const personalParticipationAlt = value.find(
@@ -104,15 +105,15 @@ export function useEventDetailStore() {
       )
       // if the update contains the personal one keep them in sync
       if (personalParticipationAlt) {
-        eventDetailStore.setPersonalParticipation(personalParticipationAlt)
+        eventStore.setPersonalParticipation(personalParticipationAlt)
       }
-      eventDetailStore.setParticipations(value)
+      eventStore.setParticipations(value)
     }
   })
 
   const personalParticipation = computed({
     get: () => {
-      return eventDetailStore.getState().personalParticipation
+      return eventStore.personalParticipation
     },
     set: (value: EventParticipationDto | null) => {
       const oldParticipation = personalParticipation.value
@@ -121,73 +122,72 @@ export function useEventDetailStore() {
       )
       // keep the participation list in sync
       if (value === null && existingParticipationIndex > -1) {
-        eventDetailStore.setParticipations(
+        eventStore.setParticipations(
           participations.value.filter(({ id }) => oldParticipation?.id !== id)
         )
       } else if (value !== null && existingParticipationIndex > -1) {
         const newParticipations = [...participations.value]
         newParticipations[existingParticipationIndex] = value
-        eventDetailStore.setParticipations(newParticipations)
+        eventStore.setParticipations(newParticipations)
       } else if (value !== null && existingParticipationIndex === -1) {
-        eventDetailStore.setParticipations([...participations.value, value])
+        eventStore.setParticipations([...participations.value, value])
       }
-      eventDetailStore.setPersonalParticipation(value)
+      eventStore.setPersonalParticipation(value)
     }
   })
 
   const personalParticipationPermissions = computed(() => {
-    return eventDetailStore.getState().personalParticipationPermissions
+    return eventStore.personalParticipationPermissions
   })
 
   const completedTargetIds = computed(() => {
-    return eventDetailStore
-      .getState()
-      .completionNotes.filter(({ completed }) => completed)
+    return eventStore.completionNotes
+      .filter(({ completed }) => completed)
       .map(({ target_id }) => target_id)
   })
 
   const event = computed({
     get: () => {
-      return eventDetailStore.getState().event!
+      return eventStore.event!
     },
     set: (value: EventDto) => {
-      eventDetailStore.setEvent(value)
+      eventStore.setEvent(value)
     }
   })
 
   const eventArea = computed({
     get: () => {
-      return eventDetailStore.getEventArea()!
+      return eventStore.getEventArea()!
     },
     set: (value: EventAreaDto) => {
-      eventDetailStore.setEventArea(value)
+      eventStore.setEventArea(value)
     }
   })
 
   const eventAreas = computed({
     get: () => {
-      return eventDetailStore.getState().eventAreas
+      return eventStore.eventAreas
     },
     set: (value: EventAreaDto[]) => {
-      eventDetailStore.setEventAreas(value)
+      eventStore.setEventAreas(value)
     }
   })
 
   const eventPermissions = computed({
     get: () => {
-      return eventDetailStore.getState().eventPermissions
+      return eventStore.eventPermissions
     },
     set: (value: ObjectPermissionDto | null) => {
-      eventDetailStore.setEventPermissions(value)
+      eventStore.setEventPermissions(value)
     }
   })
 
   const eventAreaPermissions = computed({
     get: () => {
-      return eventDetailStore.getState().eventAreaPermissions
+      return eventStore.eventAreaPermissions
     },
     set: (value: PermissionHintsDto | null) => {
-      eventDetailStore.setEventAreaPermissions(value)
+      eventStore.setEventAreaPermissions(value)
     }
   })
 

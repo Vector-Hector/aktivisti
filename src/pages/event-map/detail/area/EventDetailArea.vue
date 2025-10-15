@@ -5,11 +5,12 @@
  * This is an exact copy of updateRoute(). Which is a result of the FIXME.
  */
 async function updateRouteCopy(params: RouteParams) {
+  const eventStore = useEventStore()
   const { areaId } = params
   if (areaId === UNDEFINED_POSTER_AREA) {
     // the special undefined route is for posters that are not assigned to an area
-    eventDetailStore.setEventArea(null)
-    eventDetailStore.setEventAreaPermissions(null)
+    eventStore.setEventArea(null)
+    eventStore.setEventAreaPermissions(null)
     uiStore.updateActiveElements({
       eventArea: UNDEFINED_POSTER_AREA
     })
@@ -19,8 +20,8 @@ async function updateRouteCopy(params: RouteParams) {
       [],
       { show_permissions: true }
     )
-    eventDetailStore.setEventArea(response.payload.data)
-    eventDetailStore.setEventAreaPermissions(response.payload.permissions)
+    eventStore.setEventArea(response.payload.data)
+    eventStore.setEventAreaPermissions(response.payload.permissions)
     uiStore.updateActiveElements({
       eventArea: response.payload.data.name
     })
@@ -37,7 +38,7 @@ export default defineComponent({
 <script setup lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue'
 import { apiClient } from 'src/api/ApiClient'
-import { eventDetailStore } from 'src/store/EventDetailStore'
+import { useEventStore } from 'src/stores/event'
 import Timeout = NodeJS.Timeout
 import { EventTypes } from 'src/api/model/EventTypes'
 import { RouteParams, onBeforeRouteUpdate } from 'vue-router'
@@ -46,6 +47,7 @@ import { UNDEFINED_POSTER_AREA } from 'pages/event-map/detail/area/posters/detai
 import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 
 const { event, eventArea } = useEventDetailStore()
+const eventStore = useEventStore()
 
 const nextPoll = ref<Timeout | null>(null)
 
@@ -53,8 +55,8 @@ async function updateRoute(params: RouteParams) {
   const { areaId } = params
   if (areaId === UNDEFINED_POSTER_AREA) {
     // the special undefined route is for posters that are not assigned to an area
-    eventDetailStore.setEventArea(null)
-    eventDetailStore.setEventAreaPermissions(null)
+    eventStore.setEventArea(null)
+    eventStore.setEventAreaPermissions(null)
     uiStore.updateActiveElements({
       eventArea: UNDEFINED_POSTER_AREA
     })
@@ -64,8 +66,8 @@ async function updateRoute(params: RouteParams) {
       [],
       { show_permissions: true }
     )
-    eventDetailStore.setEventArea(response.payload.data)
-    eventDetailStore.setEventAreaPermissions(response.payload.permissions)
+    eventStore.setEventArea(response.payload.data)
+    eventStore.setEventAreaPermissions(response.payload.permissions)
     uiStore.updateActiveElements({
       eventArea: response.payload.data.name
     })
@@ -85,7 +87,7 @@ onUnmounted(() => {
 })
 
 async function pollForCompletionNotes() {
-  eventDetailStore.addCompletionNotes(
+  eventStore.addCompletionNotes(
     (
       await apiClient.completionNotes.list({
         event_area: eventArea.value.id
