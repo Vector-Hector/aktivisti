@@ -108,11 +108,13 @@ const noAreaPosters = computed(() => {
 const eventAreasSorted = computed(() => {
   const collator = new Intl.Collator('de', { caseFirst: 'upper' })
   return [...eventStore.eventAreas].sort((a, b) => {
-    if (a.is_completed) {
+    if (a.is_completed && !b.is_completed) {
       return 1
-    } else {
-      return collator.compare(a.name, b.name)
     }
+    if (!a.is_completed && b.is_completed) {
+      return -1
+    }
+    return collator.compare(a.name, b.name)
   })
 })
 const eventTypeLabel = computed(() => {
