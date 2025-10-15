@@ -409,8 +409,8 @@
   },
   "sortOrderFilter": {
     "options": {
-      "startDateAsc": "Datum (Beginn) - Älteste zuerst",
-      "startDateDesc": "Datum (Beginn) - Neueste zuerst",
+      "startDateAsc": "Datum (Beginn - älteste zuerst)",
+      "startDateDesc": "Datum (Beginn - neueste zuerst)",
       "name": "Aktionsname"
     },
     "defaultLabel": "Sortierung",

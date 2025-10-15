@@ -409,8 +409,8 @@
   },
   "sortOrderFilter": {
     "options": {
-      "startDateAsc": "Date (Start) - Oldest first",
-      "startDateDesc": "Date (start) - Newest first",
+      "startDateAsc": "Date (Start - oldest first)",
+      "startDateDesc": "Date (Start - newest first)",
       "name": "Event Name"
     },
     "defaultLabel": "Sorting",
