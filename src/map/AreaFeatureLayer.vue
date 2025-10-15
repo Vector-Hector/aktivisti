@@ -3,8 +3,9 @@ import { onMounted, onUnmounted, watch } from 'vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { Feature } from 'geojson'
 import { getColorFromPropertiesWithDefault } from 'pages/edit-event/geometry/route-planner.styles'
-import { GeoJSONSource } from 'maplibre-gl'
+import { GeoJSONSource, FillPaint } from 'maplibre-gl'
 import { useMap } from 'src/map/MapUtils'
+import { loadImageIfNonExistent } from 'src/utils/map'
 
 interface Props {
   features: Feature[]
@@ -15,7 +16,13 @@ const uuid = uuidv4()
 const map = useMap()
 
 const layers: string[] = []
-onMounted(() => {
+onMounted(async () => {
+  await loadImageIfNonExistent(
+    map.value,
+    'is-complete',
+    '/static/ionicons/checkmark-circle-outline.png'
+  )
+
   map?.value.addSource(uuid, {
     type: 'geojson',
     data: {
@@ -36,8 +43,9 @@ onMounted(() => {
   )
   const fillLayer = `${uuid}-fill`
   const outlineLayer = `${uuid}-outline`
+  const iconLayer = `${uuid}-icon`
 
-  layers.push(fillLayer, outlineLayer)
+  layers.push(fillLayer, outlineLayer, iconLayer)
   map?.value.addLayer({
     id: `${uuid}-fill`,
     type: 'fill',
@@ -54,10 +62,31 @@ onMounted(() => {
     source: uuid,
     paint: {
       // @ts-ignore
-      'line-color': getColorFromPropertiesWithDefault('#000', 'color')
+      'line-color': getColorFromPropertiesWithDefault('#000', 'color'),
+      'line-width': 1
     }
   })
+
+  map.value?.addLayer({
+    id: `${uuid}-icon`,
+    type: 'fill',
+    source: uuid,
+    filter: ['==', ['get', 'is_completed'], true],
+    paint: getPaintFillFromProperties()
+  })
 })
+
+function getPaintFillFromProperties(): FillPaint {
+  return {
+    'fill-pattern': [
+      'case',
+      ['==', ['get', 'is_completed'], true],
+      'is-complete',
+      ''
+    ],
+    'fill-opacity': ['case', ['==', ['get', 'is_completed'], true], 0.25, 0.5]
+  }
+}
 
 onUnmounted(() => {
   layers.forEach((layerId) => {
