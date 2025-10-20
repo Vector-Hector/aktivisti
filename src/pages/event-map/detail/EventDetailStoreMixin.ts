@@ -31,10 +31,6 @@ export function useEventDetailStore() {
     }
   })
 
-  const personalParticipationPermissions = computed(() => {
-    return eventStore.personalParticipationPermissions
-  })
-
   const refreshParticipants = async () => {
     eventStore.setParticipations(
       (
@@ -46,7 +42,6 @@ export function useEventDetailStore() {
   }
 
   return {
-    personalParticipationPermissions,
     personalParticipation,
     refreshParticipants
   }
