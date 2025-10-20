@@ -65,7 +65,6 @@ import { ionTrash } from '@quasar/extras/ionicons-v5'
 import { QBtn, useQuasar } from 'quasar'
 import { uiStore } from 'src/store/UiStore'
 import SidebarBottomBackNavigation from 'components/SidebarBottomBackNavigation.vue'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 import { apiClient } from 'src/api/ApiClient'
 import { useI18n } from 'vue-i18n'
 
@@ -73,7 +72,6 @@ const $q = useQuasar()
 const $router = useRouter()
 const { t } = useI18n()
 const eventStore = useEventStore()
-const { event, deletePostersByIds } = useEventDetailStore()
 const { poster } = useEventDetailPosterMixin()
 
 onBeforeRouteUpdate(updateRoute)
@@ -119,7 +117,7 @@ function onDeleteClicked() {
         })
         const posterId = poster.value.id
         await $router.replace({ name: 'event-detail-poster-list' })
-        deletePostersByIds([posterId])
+        eventStore.deletePostersByIds([posterId])
       } catch (e) {
         $q.notify({
           color: 'negative',
@@ -158,7 +156,7 @@ async function save() {
       <div class="row">
         <div class="col-grow d-flex justify-center">
           <QBtn
-            v-if="event.poster_creation_allowed"
+            v-if="eventStore.event.poster_creation_allowed"
             class="delete-button"
             flat
             :icon="ionTrash"

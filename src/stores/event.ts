@@ -196,6 +196,10 @@ export const useEventStore = defineStore('eventDetail', () => {
     } as Feature
   })
 
+  function deletePostersByIds(posterIds: number[]) {
+    posters.value = posters.value.filter(({ id }) => !posterIds.includes(id))
+  }
+
   return {
     event,
     eventAreas,
@@ -226,7 +230,8 @@ export const useEventStore = defineStore('eventDetail', () => {
     setEventPermissions,
     setCampaigns,
     addCompletionNotes,
-    $reset
+    $reset,
+    deletePostersByIds
   }
 })
 
