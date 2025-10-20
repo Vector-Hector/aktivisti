@@ -185,6 +185,17 @@ export const useEventStore = defineStore('eventDetail', () => {
       .map(({ target_id }) => target_id)
   })
 
+  const currentAreaFeature = computed(() => {
+    if (!eventArea.value) return undefined
+    return {
+      type: 'Feature',
+      geometry: eventArea.value.geometry,
+      properties: {
+        color: eventArea.value.color
+      }
+    } as Feature
+  })
+
   return {
     event,
     eventAreas,
@@ -202,6 +213,7 @@ export const useEventStore = defineStore('eventDetail', () => {
     areaFeatures,
     zoomBox,
     completedTargetIds,
+    currentAreaFeature,
     setEvent,
     getEventArea,
     updateEventArea,
