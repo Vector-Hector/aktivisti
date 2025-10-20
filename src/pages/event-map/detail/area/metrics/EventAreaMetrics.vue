@@ -13,6 +13,7 @@ import { useEventStore } from 'src/stores/event'
 import { useEventAreaMetricsComposable } from 'pages/event-map/detail/area/metrics/EventAreaMetricsMixin'
 import { useRoute } from 'vue-router'
 import { apiClient } from 'src/api/ApiClient'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   houseNumber: string
@@ -26,6 +27,7 @@ const $q = useQuasar()
 const $route = useRoute()
 const eventStore = useEventStore()
 const { address } = useEventAreaMetricsComposable(props)
+const { t } = useI18n()
 
 const metricRecords = ref<EventMetricRecordDto[]>([])
 const metrics = ref<EventMetricDto[]>([])
