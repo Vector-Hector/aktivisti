@@ -1,6 +1,5 @@
 import { computed } from 'vue'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { apiClient } from 'src/api/ApiClient'
 import { useEventStore } from 'src/stores/event'
 
 export function useEventDetailStore() {
@@ -31,18 +30,7 @@ export function useEventDetailStore() {
     }
   })
 
-  const refreshParticipants = async () => {
-    eventStore.setParticipations(
-      (
-        await apiClient.eventParticipations.list({
-          event: eventStore.event.id
-        })
-      ).payload.data
-    )
-  }
-
   return {
-    personalParticipation,
-    refreshParticipants
+    personalParticipation
   }
 }

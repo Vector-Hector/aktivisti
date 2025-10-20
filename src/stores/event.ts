@@ -15,6 +15,7 @@ import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox, circle } from '@turf/turf'
 import { useUserStore } from './user'
 import { Feature } from 'geojson'
+import { apiClient } from 'src/api/ApiClient'
 
 const DEAFULT_EVENT_DETAIL_STATE = {
   event: null,
@@ -254,6 +255,16 @@ export const useEventStore = defineStore('eventDetail', () => {
     participations.value = value
   }
 
+  const refreshParticipants = async () => {
+    setParticipations(
+      (
+        await apiClient.eventParticipations.list({
+          event: event.value.id
+        })
+      ).payload.data
+    )
+  }
+
   return {
     event,
     eventAreas,
@@ -289,7 +300,8 @@ export const useEventStore = defineStore('eventDetail', () => {
     $reset,
     deletePostersByIds,
     mergePosters,
-    setParticipations
+    setParticipations,
+    refreshParticipants
   }
 })
 

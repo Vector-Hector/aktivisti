@@ -52,7 +52,7 @@ const joinLoading = ref(false)
 const verficationPollTimeout = ref<null | NodeJS.Timeout>(null)
 const adminMenuOpen = ref(false)
 
-const { personalParticipation, refreshParticipants } = useEventDetailStore()
+const { personalParticipation } = useEventDetailStore()
 
 const eventStore = useEventStore()
 
@@ -286,7 +286,7 @@ function openParticipantsModal() {
     }
   }).onDismiss(() => {
     void refreshEvent()
-    void refreshParticipants()
+    void eventStore.refreshParticipants()
   })
 }
 function openDeleteModal() {

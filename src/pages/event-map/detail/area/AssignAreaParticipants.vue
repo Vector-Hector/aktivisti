@@ -12,7 +12,7 @@ const $q = useQuasar()
 const { t } = useI18n()
 const userStore = useUserStore()
 
-const { personalParticipation, refreshParticipants } = useEventDetailStore()
+const { personalParticipation } = useEventDetailStore()
 const eventStore = useEventStore()
 
 const user = computed(() => {
@@ -108,7 +108,7 @@ async function updateAreaParticipations(
         timeout: 2000,
         color: 'negative'
       })
-      await refreshParticipants()
+      await eventStore.refreshParticipants()
     } else {
       $q.notify({
         message: t('events.details.area.assignAreaParticipant.generalError'),
