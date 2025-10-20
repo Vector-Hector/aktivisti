@@ -107,10 +107,8 @@ import { getAuthStore } from 'src/store/AuthStore'
 import { ObjectPermissions } from 'src/api/model/ObjectPermissionDto'
 import { includesOneOf } from 'src/utils/array'
 import { EventTypes } from 'src/api/model/EventTypes'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 import { onUnmounted } from 'vue'
 
-const { event } = useEventDetailStore()
 const eventStore = useEventStore()
 
 onUnmounted(() => {
@@ -119,7 +117,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <router-view v-if="event" />
+  <router-view v-if="eventStore.event" />
 </template>
 
 <style lang="scss" scoped></style>
