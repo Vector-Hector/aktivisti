@@ -1,20 +1,10 @@
 import { computed } from 'vue'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { PosterDto } from 'src/api/model/PosterDto'
 import { apiClient } from 'src/api/ApiClient'
 import { useEventStore } from 'src/stores/event'
 
 export function useEventDetailStore() {
   const eventStore = useEventStore()
-
-  const postersWithoutArea = computed({
-    get: () => {
-      return eventStore.posters.filter(({ area }) => area === null)
-    },
-    set: (posters: PosterDto[]) => {
-      eventStore.mergePosters(posters)
-    }
-  })
 
   const participations = computed({
     get: () => {
@@ -73,7 +63,6 @@ export function useEventDetailStore() {
     personalParticipationPermissions,
     participations,
     personalParticipation,
-    refreshParticipants,
-    postersWithoutArea
+    refreshParticipants
   }
 }

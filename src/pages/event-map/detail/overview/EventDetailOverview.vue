@@ -52,12 +52,8 @@ const joinLoading = ref(false)
 const verficationPollTimeout = ref<null | NodeJS.Timeout>(null)
 const adminMenuOpen = ref(false)
 
-const {
-  participations,
-  personalParticipation,
-  postersWithoutArea,
-  refreshParticipants
-} = useEventDetailStore()
+const { participations, personalParticipation, refreshParticipants } =
+  useEventDetailStore()
 
 const eventStore = useEventStore()
 
@@ -153,6 +149,10 @@ const needsVerification = computed(() => {
     eventStore.event.event_type !== EventTypes.GENERIC
   )
 })
+
+const postersWithoutArea = computed(() =>
+  eventStore.posters.filter(({ area }) => area === null)
+)
 
 watch(
   () => personalParticipation.value?.is_verified,
