@@ -6,42 +6,26 @@ import { useEventStore } from 'src/stores/event'
 export function useEventDetailStore() {
   const eventStore = useEventStore()
 
-  const participations = computed({
-    get: () => {
-      return eventStore.participations
-    },
-    set: (value: EventParticipationDto[]) => {
-      const personalParticipationAlt = value.find(
-        ({ id }) => id === personalParticipation.value?.id
-      )
-      // if the update contains the personal one keep them in sync
-      if (personalParticipationAlt) {
-        eventStore.setPersonalParticipation(personalParticipationAlt)
-      }
-      eventStore.setParticipations(value)
-    }
-  })
-
   const personalParticipation = computed({
     get: () => {
       return eventStore.personalParticipation
     },
     set: (value: EventParticipationDto | null) => {
       const oldParticipation = personalParticipation.value
-      const existingParticipationIndex = participations.value.findIndex(
+      const existingParticipationIndex = eventStore.participations.findIndex(
         ({ id }) => oldParticipation?.id === id
       )
       // keep the participation list in sync
       if (value === null && existingParticipationIndex > -1) {
-        eventStore.setParticipations(
-          participations.value.filter(({ id }) => oldParticipation?.id !== id)
+        eventStore.participations = eventStore.participations.filter(
+          ({ id }) => oldParticipation?.id !== id
         )
       } else if (value !== null && existingParticipationIndex > -1) {
-        const newParticipations = [...participations.value]
+        const newParticipations = [...eventStore.participations]
         newParticipations[existingParticipationIndex] = value
-        eventStore.setParticipations(newParticipations)
+        eventStore.participations = newParticipations
       } else if (value !== null && existingParticipationIndex === -1) {
-        eventStore.setParticipations([...participations.value, value])
+        eventStore.participations = [...eventStore.participations, value]
       }
       eventStore.setPersonalParticipation(value)
     }
@@ -52,16 +36,17 @@ export function useEventDetailStore() {
   })
 
   const refreshParticipants = async () => {
-    participations.value = (
-      await apiClient.eventParticipations.list({
-        event: eventStore.event.id
-      })
-    ).payload.data
+    eventStore.setParticipations(
+      (
+        await apiClient.eventParticipations.list({
+          event: eventStore.event.id
+        })
+      ).payload.data
+    )
   }
 
   return {
     personalParticipationPermissions,
-    participations,
     personalParticipation,
     refreshParticipants
   }

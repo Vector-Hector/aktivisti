@@ -52,13 +52,12 @@ const joinLoading = ref(false)
 const verficationPollTimeout = ref<null | NodeJS.Timeout>(null)
 const adminMenuOpen = ref(false)
 
-const { participations, personalParticipation, refreshParticipants } =
-  useEventDetailStore()
+const { personalParticipation, refreshParticipants } = useEventDetailStore()
 
 const eventStore = useEventStore()
 
 const isVerficationRequired = computed(() => {
-  return participations.value.some(
+  return eventStore.participations.some(
     ({ is_verified, is_team_captain }) => !is_team_captain && !is_verified
   )
 })
@@ -559,7 +558,7 @@ onBeforeUnmount(() => {
               v-for="area in eventAreasSorted"
               :key="area.id"
               :area="area"
-              :participations="participations"
+              :participations="eventStore.participations"
               :show-participation-count="eventStore.isTeamCaptainOrCoordinator"
               :personal-participation="personalParticipation"
               :event-type="eventStore.event.event_type"

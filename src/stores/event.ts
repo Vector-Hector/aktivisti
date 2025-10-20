@@ -90,10 +90,6 @@ export const useEventStore = defineStore('eventDetail', () => {
     eventAreaPermissions.value = value
   }
 
-  function setParticipations(value: EventParticipationDto[]) {
-    participations.value = value
-  }
-
   function setPersonalParticipation(value: EventParticipationDto | null) {
     personalParticipation.value = value
   }
@@ -247,6 +243,17 @@ export const useEventStore = defineStore('eventDetail', () => {
     return isTeamCaptain.value || isCoordinator.value
   })
 
+  function setParticipations(value: EventParticipationDto[]) {
+    const personalParticipationAlt = value.find(
+      ({ id }) => id === personalParticipation.value?.id
+    )
+    // if the update contains the personal one keep them in sync
+    if (personalParticipationAlt) {
+      setPersonalParticipation(personalParticipationAlt)
+    }
+    participations.value = value
+  }
+
   return {
     event,
     eventAreas,
@@ -273,7 +280,6 @@ export const useEventStore = defineStore('eventDetail', () => {
     updateEventArea,
     setEventArea,
     setEventAreaPermissions,
-    setParticipations,
     setPersonalParticipation,
     setPersonalParticipationPermissions,
     setEventAreas,
@@ -282,7 +288,8 @@ export const useEventStore = defineStore('eventDetail', () => {
     addCompletionNotes,
     $reset,
     deletePostersByIds,
-    mergePosters
+    mergePosters,
+    setParticipations
   }
 })
 

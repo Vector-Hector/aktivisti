@@ -12,15 +12,14 @@ const $q = useQuasar()
 const { t } = useI18n()
 const userStore = useUserStore()
 
-const { personalParticipation, participations, refreshParticipants } =
-  useEventDetailStore()
+const { personalParticipation, refreshParticipants } = useEventDetailStore()
 const eventStore = useEventStore()
 
 const user = computed(() => {
   return userStore.user
 })
 const eventAreaParticipants = computed(() => {
-  return participations.value.filter(({ assigned_event_areas }) => {
+  return eventStore.participations.filter(({ assigned_event_areas }) => {
     return assigned_event_areas.includes(eventStore.eventArea.id!)
   })
 })
@@ -34,7 +33,7 @@ const isUserEventAreaParticipant = computed(() => {
   )
 })
 const onlyMemberParticipants = computed(() => {
-  return participations.value.filter((item) => item.user_is_member)
+  return eventStore.participations.filter((item) => item.user_is_member)
 })
 
 async function joinArea() {
@@ -64,7 +63,7 @@ async function updateAreaParticipations(
   const changedParticipations: EventParticipationDto[] = []
 
   try {
-    for (const participation of participations.value) {
+    for (const participation of eventStore.participations) {
       if (
         participants.includes(participation.user) &&
         !participation.assigned_event_areas.includes(eventStore.eventArea.id!)
@@ -121,10 +120,12 @@ async function updateAreaParticipations(
   updateParticipations(changedParticipations)
 }
 function updateParticipations(updatedParticipations: EventParticipationDto[]) {
-  participations.value = participations.value.map((item) => {
-    const changedItem = updatedParticipations.find(({ id }) => item.id === id)
-    return changedItem ?? item
-  })
+  eventStore.setParticipations(
+    eventStore.participations.map((item) => {
+      const changedItem = updatedParticipations.find(({ id }) => item.id === id)
+      return changedItem ?? item
+    })
+  )
 }
 </script>
 <template>

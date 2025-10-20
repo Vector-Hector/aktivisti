@@ -31,7 +31,7 @@ export default {
               event: eventId
             })
             .then((response) => {
-              eventStore.setParticipations(response.payload.data)
+              eventStore.participations = response.payload.data
             })
         )
       }
