@@ -19,11 +19,18 @@ const map = useMap()
 
 const layers: string[] = []
 onMounted(async () => {
-  await loadImageIfNonExistent(
-    map.value,
-    'is-completed-icon',
-    '/static/ionicons/checkmark-circle-outline.png'
-  )
+  await Promise.all([
+    loadImageIfNonExistent(
+      map.value,
+      'is-completed-icon',
+      '/static/ionicons/checkmark-circle-outline.png'
+    ),
+    loadImageIfNonExistent(
+      map.value,
+      'has-no-assignee-icon',
+      '/static/ionicons/warning-outline.png'
+    )
+  ])
 
   map?.value.addSource(uuid, {
     type: 'geojson',
@@ -79,17 +86,22 @@ onMounted(async () => {
       'line-width': 1
     }
   })
-
   map.value?.addLayer({
     id: `${uuid}-icon`,
     type: 'fill',
     source: uuid,
-    filter: ['==', ['get', 'is_completed'], true],
+    filter: [
+      'any',
+      ['==', ['get', 'is_completed'], true],
+      ['!=', ['get', 'has_assignee'], true]
+    ],
     paint: {
       'fill-pattern': [
         'case',
         ['==', ['get', 'is_completed'], true],
         'is-completed-icon',
+        ['!=', ['get', 'has_assignee'], true],
+        'has-no-assignee-icon',
         ''
       ],
       'fill-opacity': ['case', ['==', ['get', 'is_completed'], true], 0.25, 0.5]

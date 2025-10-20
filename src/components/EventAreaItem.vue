@@ -8,7 +8,8 @@ import {
   ionCheckmarkCircleOutline,
   ionChevronForward,
   ionEllipse,
-  ionPersonCircleOutline
+  ionPersonCircleOutline,
+  ionWarningOutline
 } from '@quasar/extras/ionicons-v5'
 import { EventTypes } from 'src/api/model/EventTypes'
 import { UNDEFINED_POSTER_AREA } from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetail.vue'
@@ -84,6 +85,11 @@ function countAddresses(areaDetails: AreaDetailsDto) {
           v-if="personalParticipation?.assigned_event_areas?.includes(area.id)"
           class="area-indicator-icon"
           :name="ionPersonCircleOutline"
+        />
+        <QIcon
+          v-if="!area.has_assignee && !area.is_completed"
+          class="area-indicator-icon"
+          :name="ionWarningOutline"
         />
         <QBadge
           v-if="showParticipationCount"

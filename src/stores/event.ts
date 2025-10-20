@@ -154,7 +154,8 @@ export const useEventStore = defineStore('eventDetail', () => {
         geometry: area.geometry,
         properties: {
           color: area.color,
-          is_completed: area.is_completed
+          is_completed: area.is_completed,
+          has_assignee: area.has_assignee
         }
       } as Feature
     })
@@ -189,7 +190,8 @@ export const useEventStore = defineStore('eventDetail', () => {
       geometry: eventArea.value.geometry,
       properties: {
         color: eventArea.value.color,
-        is_completed: eventArea.value.is_completed
+        is_completed: eventArea.value.is_completed,
+        has_assignee: eventArea.value.has_assignee
       }
     } as Feature
   })
