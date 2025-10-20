@@ -5,7 +5,10 @@ import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { ObjectPermissionDto } from 'src/api/model/ObjectPermissionDto'
+import {
+  ObjectPermissionDto,
+  ObjectPermissions
+} from 'src/api/model/ObjectPermissionDto'
 import { PosterDto } from 'src/api/model/PosterDto'
 import { computed, ref } from 'vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
@@ -224,6 +227,26 @@ export const useEventStore = defineStore('eventDetail', () => {
     }
   })
 
+  const isTeamCaptain = computed(() => {
+    return (
+      eventPermissions.value?.permissions?.includes(
+        ObjectPermissions.TeamCaptain
+      ) ?? false
+    )
+  })
+
+  const isCoordinator = computed(() => {
+    return (
+      eventPermissions.value?.permissions?.includes(
+        ObjectPermissions.Coordinator
+      ) ?? false
+    )
+  })
+
+  const isTeamCaptainOrCoordinator = computed(() => {
+    return isTeamCaptain.value || isCoordinator.value
+  })
+
   return {
     event,
     eventAreas,
@@ -243,6 +266,8 @@ export const useEventStore = defineStore('eventDetail', () => {
     completedTargetIds,
     currentAreaFeature,
     postersInArea,
+    isCoordinator,
+    isTeamCaptainOrCoordinator,
     setEvent,
     getEventArea,
     updateEventArea,
