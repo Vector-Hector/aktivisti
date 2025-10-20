@@ -9,7 +9,7 @@ import AddressMarker from 'src/map/AddressMarker.vue'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { useEventAreaStreetComposable } from 'pages/event-map/detail/area/street/EventAreaStreetMixin'
 import { useRoute, useRouter } from 'vue-router'
-import { useEventDetailStore } from '../../EventDetailStoreMixin'
+import { useEventStore } from 'src/stores/event'
 
 interface Props {
   street: string
@@ -21,7 +21,7 @@ const $router = useRouter()
 const $route = useRoute()
 
 const { addresses, bbox } = useEventAreaStreetComposable(props)
-const { completedTargetIds } = useEventDetailStore()
+const eventStore = useEventStore()
 const { map } = useInjectMapMixin()
 
 onMounted(() => {
@@ -55,7 +55,7 @@ async function jumpToAddress(address: AddressDetails) {
     :location="center(address.geometry)"
     :text="address.house_number"
     :selected="$route.params.houseNumber === address.house_number"
-    :done="completedTargetIds.includes(address.osm_id.toString())"
+    :done="eventStore.completedTargetIds.includes(address.osm_id.toString())"
     @click="jumpToAddress(address)"
   />
 </template>

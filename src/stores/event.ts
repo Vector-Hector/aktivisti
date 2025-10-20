@@ -179,6 +179,12 @@ export const useEventStore = defineStore('eventDetail', () => {
       : userStore.bbox
   })
 
+  const completedTargetIds = computed(() => {
+    return completionNotes.value
+      .filter(({ completed }) => completed)
+      .map(({ target_id }) => target_id)
+  })
+
   return {
     event,
     eventAreas,
@@ -195,6 +201,7 @@ export const useEventStore = defineStore('eventDetail', () => {
     eventArea,
     areaFeatures,
     zoomBox,
+    completedTargetIds,
     setEvent,
     getEventArea,
     updateEventArea,
