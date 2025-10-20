@@ -6,33 +6,29 @@ import { QBtn, QSelect, useQuasar } from 'quasar'
 import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 import { apiClient } from 'src/api/ApiClient'
 import { useI18n } from 'vue-i18n'
+import { useEventStore } from 'src/stores/event'
 
 const $q = useQuasar()
 const { t } = useI18n()
 const userStore = useUserStore()
 
-const {
-  eventArea,
-  isTeamCaptainOrCoordinator,
-  personalParticipationPermissions,
-  personalParticipation,
-  participations,
-  refreshParticipants
-} = useEventDetailStore()
+const { personalParticipation, participations, refreshParticipants } =
+  useEventDetailStore()
+const eventStore = useEventStore()
 
 const user = computed(() => {
   return userStore.user
 })
 const eventAreaParticipants = computed(() => {
   return participations.value.filter(({ assigned_event_areas }) => {
-    return assigned_event_areas.includes(eventArea.value.id!)
+    return assigned_event_areas.includes(eventStore.eventArea.id!)
   })
 })
 const isUserEventAreaParticipant = computed(() => {
   return (
     (user.value !== null &&
       personalParticipation.value?.assigned_event_areas.includes(
-        eventArea.value.id!
+        eventStore.eventArea.id!
       )) ??
     false
   )
@@ -46,7 +42,7 @@ async function joinArea() {
     personalParticipation.value = (
       await apiClient.eventParticipations.assignEventArea(
         personalParticipation.value.id.toString(),
-        eventArea.value.id!
+        eventStore.eventArea.id!
       )
     ).payload.data
   }
@@ -56,7 +52,7 @@ async function leaveArea() {
     personalParticipation.value = (
       await apiClient.eventParticipations.unassignEventArea(
         personalParticipation.value.id.toString(),
-        eventArea.value.id!
+        eventStore.eventArea.id!
       )
     ).payload.data
   }
@@ -71,7 +67,7 @@ async function updateAreaParticipations(
     for (const participation of participations.value) {
       if (
         participants.includes(participation.user) &&
-        !participation.assigned_event_areas.includes(eventArea.value.id!)
+        !participation.assigned_event_areas.includes(eventStore.eventArea.id!)
       ) {
         changedParticipations.push(
           (
@@ -80,7 +76,7 @@ async function updateAreaParticipations(
               {
                 assigned_event_areas: [
                   ...participation.assigned_event_areas,
-                  eventArea.value.id!
+                  eventStore.eventArea.id!
                 ]
               }
             )
@@ -88,7 +84,7 @@ async function updateAreaParticipations(
         )
       } else if (
         !participants.includes(participation.user) &&
-        participation.assigned_event_areas.includes(eventArea.value.id!)
+        participation.assigned_event_areas.includes(eventStore.eventArea.id!)
       ) {
         changedParticipations.push(
           (
@@ -96,7 +92,7 @@ async function updateAreaParticipations(
               participation.id.toString(),
               {
                 assigned_event_areas: participation.assigned_event_areas.filter(
-                  (id) => id !== eventArea.value?.id
+                  (id) => id !== eventStore.eventArea?.id
                 )
               }
             )
@@ -133,7 +129,7 @@ function updateParticipations(updatedParticipations: EventParticipationDto[]) {
 </script>
 <template>
   <QSelect
-    v-if="isTeamCaptainOrCoordinator"
+    v-if="eventStore.isTeamCaptainOrCoordinator"
     :model-value="eventAreaParticipants"
     @update:model-value="updateAreaParticipations($event)"
     :multiple="true"
@@ -145,7 +141,9 @@ function updateParticipations(updatedParticipations: EventParticipationDto[]) {
     "
   />
   <div
-    v-else-if="personalParticipationPermissions?.assign_event_area?.POST"
+    v-else-if="
+      eventStore.personalParticipationPermissions?.assign_event_area?.POST
+    "
     class="join-buttons"
   >
     <QBtn v-if="isUserEventAreaParticipant" @click="leaveArea" flat>
