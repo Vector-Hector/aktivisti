@@ -106,11 +106,11 @@ import { getAuthStore } from 'src/store/AuthStore'
 import { ObjectPermissions } from 'src/api/model/ObjectPermissionDto'
 import { includesOneOf } from 'src/utils/array'
 import { EventTypes } from 'src/api/model/EventTypes'
-import { onUnmounted } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 
 const eventStore = useEventStore()
 
-onUnmounted(() => {
+onBeforeRouteLeave(() => {
   eventStore.$reset()
 })
 </script>
