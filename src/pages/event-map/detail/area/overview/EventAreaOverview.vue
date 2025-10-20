@@ -36,7 +36,6 @@ import { StreetDetails } from 'src/api/model/AreaDetailsDto'
 import { difference } from 'lodash-es'
 import { useEventStore } from 'src/stores/event'
 import AssignAreaParticipants from 'pages/event-map/detail/area/AssignAreaParticipants.vue'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 import { apiClient } from 'src/api/ApiClient'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { ComponentPublicInstance } from 'vue'
@@ -46,8 +45,6 @@ const $q = useQuasar()
 const { t } = useI18n()
 
 const eventStore = useEventStore()
-const { eventArea, eventAreaPermissions, completedTargetIds } =
-  useEventDetailStore()
 
 /**
  * Check if the street has been started by checking if any of the addresses
@@ -57,7 +54,7 @@ const { eventArea, eventAreaPermissions, completedTargetIds } =
  */
 function streetStarted(street: StreetDetails) {
   return street.addresses.some(({ osm_id }) =>
-    completedTargetIds.value.includes(osm_id.toString())
+    eventStore.completedTargetIds.includes(osm_id.toString())
   )
 }
 function streetCompleted(street: StreetDetails) {
@@ -67,18 +64,18 @@ function streetCompleted(street: StreetDetails) {
       //  the same type, it seems that the BE is communicating the wrong type
       //  for one of them.
       street.addresses.map(({ osm_id }) => osm_id.toString()),
-      completedTargetIds.value
+      eventStore.completedTargetIds
     ).length === 0
   )
 }
 function openCompletionModal() {
-  const statusLabel = eventArea.value.is_completed
+  const statusLabel = eventStore.eventArea.is_completed
     ? t('events.details.area.completionModal.statusLabel.notCompleted')
     : t('events.details.area.completionModal.statusLabel.completed')
   $q.dialog({
     title: t('events.details.area.completionModal.title'),
     message: t('events.details.area.completionModal.description', {
-      eventArea: `<b>${eventArea.value.name}</b>`,
+      eventArea: `<b>${eventStore.eventArea.name}</b>`,
       status: `<b>${statusLabel}</b>`
     }),
     html: true,
@@ -89,9 +86,9 @@ function openCompletionModal() {
     .onOk(async () => {
       try {
         const response = await apiClient.eventAreas.patch(
-          eventArea.value.id!.toString(),
+          eventStore.eventArea.id!.toString(),
           {
-            is_completed: !eventArea.value.is_completed
+            is_completed: !eventStore.eventArea.is_completed
           }
         )
         eventStore.updateEventArea(response.payload.data)
@@ -106,7 +103,7 @@ function openCompletionModal() {
     })
 }
 
-defineExpose({ eventArea })
+defineExpose({ eventArea: eventStore.eventArea })
 </script>
 
 <template>
@@ -118,7 +115,7 @@ defineExpose({ eventArea })
         </div>
         <div
           class="col-grow complete-button"
-          v-if="eventAreaPermissions?.self?.PATCH"
+          v-if="eventStore.eventAreaPermissions?.self?.PATCH"
         >
           <QBtn
             outline
@@ -126,7 +123,7 @@ defineExpose({ eventArea })
             round
             flat
             :class="{
-              'button-success': eventArea.is_completed
+              'button-success': eventStore.eventArea.is_completed
             }"
             @click="openCompletionModal"
             :icon="ionCheckmarkCircleOutline"
@@ -136,7 +133,7 @@ defineExpose({ eventArea })
       <div class="row">
         <QList class="address-list">
           <QItem
-            v-for="street in eventArea.area_details?.streets"
+            v-for="street in eventStore.eventArea.area_details?.streets"
             :key="street.name"
             :clickable="true"
             :to="{
