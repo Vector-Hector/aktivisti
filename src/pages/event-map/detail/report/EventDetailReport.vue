@@ -3,12 +3,22 @@ import { onMounted, ref } from 'vue'
 import { EventMetricReportDto } from 'src/api/model/EventMetricReportDto'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
-import { ionEllipse } from '@quasar/extras/ionicons-v5'
-import { QIcon, QPage, QScrollArea, QTable, QTd } from 'quasar'
+import { ionEllipse, ionArchive } from '@quasar/extras/ionicons-v5'
+import {
+  exportFile,
+  QBtn,
+  QIcon,
+  QPage,
+  QScrollArea,
+  QTable,
+  QTd,
+  useQuasar
+} from 'quasar'
 import { useEventStore } from 'src/stores/event'
 import { apiClient } from 'src/api/ApiClient'
 import { useI18n } from 'vue-i18n'
 
+const $q = useQuasar()
 const eventStore = useEventStore()
 const { t } = useI18n()
 
@@ -111,6 +121,33 @@ async function fetchMetricRecords(): Promise<{
     metrics: response.payload.embedded.metric
   }
 }
+
+function wrapCsvValue(value) {
+  let formatted = value === null ? '' : String(value)
+  // Escape quotes (") in strings
+  formatted = formatted.split('"').join('""')
+  return `"${formatted}"`
+}
+
+function handleExportToCSV() {
+  const header = columns.value.map((col) => wrapCsvValue(col.label))
+  const body = rows.value.map((row) =>
+    columns.value.map((col) => wrapCsvValue(row[col.field])).join(',')
+  )
+  const content = [header].concat(body).join('\r\n')
+
+  const timestamp = new Date().toISOString().slice(0, 10).replaceAll('-', '')
+  const fileName = `Report_${eventStore.event.name.replace(/\s+/g, '_')}_${timestamp}.csv`
+
+  const status = exportFile(fileName, content, 'text/csv')
+
+  if (status !== true) {
+    $q.notify({
+      message: t('events.details.report.csvExport.errorMessage'),
+      color: 'negative'
+    })
+  }
+}
 </script>
 <template>
   <QScrollArea class="flex flex-fill">
@@ -125,6 +162,15 @@ async function fetchMetricRecords(): Promise<{
           :pagination="{ rowsPerPage: 0 }"
           row-key="name"
         >
+          <template v-slot:top-right>
+            <QBtn
+              color="primary"
+              :icon-right="ionArchive"
+              no-caps
+              :label="$t('events.details.report.csvExport.label')"
+              @click="handleExportToCSV"
+            />
+          </template>
           <template v-slot:body-cell-areaName="props">
             <QTd :props="props">
               <div>

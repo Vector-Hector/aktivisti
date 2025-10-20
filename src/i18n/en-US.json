@@ -585,7 +585,11 @@
         "visitedAddresses": "Visited Addresses",
         "addressesInEventArea": "Addresses in Area",
         "collectedLeads": "Collected Leads",
-        "total": "Total"
+        "total": "Total",
+        "csvExport": {
+          "errorMessage": "Browser denied file download...",
+          "label": "Export as CSV"
+        }
       },
       "area": {
         "completionModal": {
