@@ -44,9 +44,7 @@ import { EventTypes } from 'src/api/model/EventTypes'
 import { RouteParams, onBeforeRouteUpdate } from 'vue-router'
 import { uiStore } from 'src/store/UiStore'
 import { UNDEFINED_POSTER_AREA } from 'pages/event-map/detail/area/posters/detail/EventDetailPosterDetail.vue'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 
-const { event, eventArea } = useEventDetailStore()
 const eventStore = useEventStore()
 
 const nextPoll = ref<Timeout | null>(null)
@@ -75,7 +73,7 @@ async function updateRoute(params: RouteParams) {
 }
 
 onMounted(async () => {
-  if (event.value.event_type !== EventTypes.POSTERS) {
+  if (eventStore.event.event_type !== EventTypes.POSTERS) {
     await pollForCompletionNotes()
   }
 })
@@ -90,7 +88,7 @@ async function pollForCompletionNotes() {
   eventStore.addCompletionNotes(
     (
       await apiClient.completionNotes.list({
-        event_area: eventArea.value.id
+        event_area: eventStore.eventArea.id
       })
     ).payload.data
   )

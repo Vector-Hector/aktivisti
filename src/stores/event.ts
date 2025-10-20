@@ -7,7 +7,7 @@ import { EventDto } from 'src/api/model/EventDto'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { ObjectPermissionDto } from 'src/api/model/ObjectPermissionDto'
 import { PosterDto } from 'src/api/model/PosterDto'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 const DEAFULT_EVENT_DETAIL_STATE = {
   event: null,
@@ -137,6 +137,15 @@ export const useEventStore = defineStore('eventDetail', () => {
     activePosterIndex.value = DEAFULT_EVENT_DETAIL_STATE.activePosterIndex
   }
 
+  const eventArea = computed({
+    get: () => {
+      return getEventArea()!
+    },
+    set: (value: EventAreaDto) => {
+      setEventArea(value)
+    }
+  })
+
   return {
     event,
     eventAreas,
@@ -150,6 +159,7 @@ export const useEventStore = defineStore('eventDetail', () => {
     selectedEventAreaId,
     posters,
     activePosterIndex,
+    eventArea,
     setEvent,
     getEventArea,
     updateEventArea,
