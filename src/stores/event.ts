@@ -200,6 +200,30 @@ export const useEventStore = defineStore('eventDetail', () => {
     posters.value = posters.value.filter(({ id }) => !posterIds.includes(id))
   }
 
+  function mergePosters(newPosters: PosterDto[]) {
+    for (const poster of newPosters) {
+      const originalIndex = posters.value.findIndex(
+        ({ id }) => id === poster.id
+      )
+      if (originalIndex > -1) {
+        Object.assign(posters.value[originalIndex], poster)
+      } else {
+        posters.value.push(poster)
+      }
+    }
+  }
+
+  const postersInArea = computed({
+    get: () => {
+      return posters.value.filter(
+        ({ area }) => area === (eventArea.value?.id ?? null)
+      )
+    },
+    set: (posters: PosterDto[]) => {
+      mergePosters(posters)
+    }
+  })
+
   return {
     event,
     eventAreas,
@@ -218,6 +242,7 @@ export const useEventStore = defineStore('eventDetail', () => {
     zoomBox,
     completedTargetIds,
     currentAreaFeature,
+    postersInArea,
     setEvent,
     getEventArea,
     updateEventArea,
@@ -231,7 +256,8 @@ export const useEventStore = defineStore('eventDetail', () => {
     setCampaigns,
     addCompletionNotes,
     $reset,
-    deletePostersByIds
+    deletePostersByIds,
+    mergePosters
   }
 })
 
