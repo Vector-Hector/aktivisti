@@ -44,11 +44,10 @@ export default {
               show_permissions: true
             })
             .then((response) => {
-              eventStore.setPersonalParticipation(
+              eventStore.personalParticipation =
                 response.payload.data?.find(
                   ({ user }) => user === authStore.getState().userId
                 ) ?? null
-              )
               eventStore.setPersonalParticipationPermissions(
                 response.payload.permissions
               )

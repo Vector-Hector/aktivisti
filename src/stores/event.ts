@@ -91,10 +91,6 @@ export const useEventStore = defineStore('eventDetail', () => {
     eventAreaPermissions.value = value
   }
 
-  function setPersonalParticipation(value: EventParticipationDto | null) {
-    personalParticipation.value = value
-  }
-
   function setPersonalParticipationPermissions(
     value: PermissionHintsDto | null
   ) {
@@ -250,7 +246,7 @@ export const useEventStore = defineStore('eventDetail', () => {
     )
     // if the update contains the personal one keep them in sync
     if (personalParticipationAlt) {
-      setPersonalParticipation(personalParticipationAlt)
+      personalParticipation.value = personalParticipationAlt
     }
     participations.value = value
   }
@@ -291,7 +287,6 @@ export const useEventStore = defineStore('eventDetail', () => {
     updateEventArea,
     setEventArea,
     setEventAreaPermissions,
-    setPersonalParticipation,
     setPersonalParticipationPermissions,
     setEventAreas,
     setEventPermissions,

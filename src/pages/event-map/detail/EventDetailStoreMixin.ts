@@ -26,7 +26,7 @@ export function useEventDetailStore() {
       } else if (value !== null && existingParticipationIndex === -1) {
         eventStore.participations = [...eventStore.participations, value]
       }
-      eventStore.setPersonalParticipation(value)
+      eventStore.personalParticipation = value
     }
   })
 
