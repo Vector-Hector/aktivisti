@@ -8,6 +8,10 @@ import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { ObjectPermissionDto } from 'src/api/model/ObjectPermissionDto'
 import { PosterDto } from 'src/api/model/PosterDto'
 import { computed, ref } from 'vue'
+import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
+import { bbox, circle } from '@turf/turf'
+import { useUserStore } from './user'
+import { Feature } from 'geojson'
 
 const DEAFULT_EVENT_DETAIL_STATE = {
   event: null,
@@ -146,6 +150,35 @@ export const useEventStore = defineStore('eventDetail', () => {
     }
   })
 
+  const areaFeatures = computed(() => {
+    return eventAreas.value.map((area) => {
+      return {
+        type: 'Feature',
+        id: area.feature_id,
+        geometry: area.geometry,
+        properties: {
+          color: area.color
+        }
+      } as Feature
+    })
+  })
+
+  const zoomBox = computed(() => {
+    const userStore = useUserStore()
+    const locationFeatures = [...areaFeatures.value]
+    if (event.value?.location) {
+      locationFeatures.push(
+        circle([event.value.location.lng, event.value.location.lat], 0.2)
+      )
+    }
+    return locationFeatures.length > 0
+      ? (bbox({
+          type: 'FeatureCollection',
+          features: [...areaFeatures.value, ...locationFeatures]
+        }) as BBox2d)
+      : userStore.bbox
+  })
+
   return {
     event,
     eventAreas,
@@ -160,6 +193,8 @@ export const useEventStore = defineStore('eventDetail', () => {
     posters,
     activePosterIndex,
     eventArea,
+    areaFeatures,
+    zoomBox,
     setEvent,
     getEventArea,
     updateEventArea,

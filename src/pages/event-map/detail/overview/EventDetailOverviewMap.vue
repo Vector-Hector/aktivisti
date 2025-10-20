@@ -5,17 +5,17 @@ import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { useInjectMapMixin } from 'src/pages/event-detail/InjectMapMixin'
 import EventMarker from 'components/EventMarker.vue'
 import { cloneDeep, isEqual } from 'lodash-es'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
+import { useEventStore } from 'src/stores/event'
 
-const { event, areaFeatures, zoomBox } = useEventDetailStore()
+const eventStore = useEventStore()
 const { map } = useInjectMapMixin()
 
 onMounted(() => {
-  map.value?.fitBounds(zoomBox.value as BBox2d, { animate: false })
+  map.value?.fitBounds(eventStore.zoomBox as BBox2d, { animate: false })
 })
 
 const zoomBoxCopy = computed(() => {
-  return cloneDeep(zoomBox.value)
+  return cloneDeep(eventStore.zoomBox)
 })
 
 watch(
@@ -30,8 +30,8 @@ watch(
 </script>
 
 <template>
-  <EventMarker v-if="event?.location" :event="event" />
-  <FeatureLayer :features="areaFeatures" />
+  <EventMarker v-if="eventStore.event?.location" :event="eventStore.event" />
+  <FeatureLayer :features="eventStore.areaFeatures" />
 </template>
 
 <style lang="scss" scoped></style>
