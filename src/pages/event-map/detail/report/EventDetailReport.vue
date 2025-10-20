@@ -5,11 +5,11 @@ import { EventMetricDto } from 'src/api/model/EventMetricDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { ionEllipse } from '@quasar/extras/ionicons-v5'
 import { QIcon, QPage, QScrollArea, QTable, QTd } from 'quasar'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
+import { useEventStore } from 'src/stores/event'
 import { apiClient } from 'src/api/ApiClient'
 import { useI18n } from 'vue-i18n'
 
-const { event, eventAreas } = useEventDetailStore()
+const eventStore = useEventStore()
 const { t } = useI18n()
 
 const columns = ref<any[]>([
@@ -60,7 +60,7 @@ onMounted(async () => {
     completedAddresses: 0,
     createdLeads: 0
   }
-  for (const { id, color, name } of eventAreas.value) {
+  for (const { id, color, name } of eventStore.eventAreas) {
     if (id) {
       const {
         completed_addresses,
@@ -103,7 +103,7 @@ async function fetchMetricRecords(): Promise<{
   metrics: EventMetricDto[]
 }> {
   const response = await apiClient.eventMetricRecords.list(
-    { event: event.value.id },
+    { event: eventStore.event.id },
     ['metric']
   )
   return {
