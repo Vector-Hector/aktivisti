@@ -261,6 +261,26 @@ export const useEventStore = defineStore('eventDetail', () => {
     )
   }
 
+  function setPersonalParticipation(value: EventParticipationDto | null) {
+    const oldParticipation = personalParticipation.value
+    const existingParticipationIndex = participations.value.findIndex(
+      ({ id }) => oldParticipation?.id === id
+    )
+    // keep the participation list in sync
+    if (value === null && existingParticipationIndex > -1) {
+      participations.value = participations.value.filter(
+        ({ id }) => oldParticipation?.id !== id
+      )
+    } else if (value !== null && existingParticipationIndex > -1) {
+      const newParticipations = [...participations.value]
+      newParticipations[existingParticipationIndex] = value
+      participations.value = newParticipations
+    } else if (value !== null && existingParticipationIndex === -1) {
+      participations.value = [...participations.value, value]
+    }
+    personalParticipation.value = value
+  }
+
   return {
     event,
     eventAreas,
@@ -296,7 +316,8 @@ export const useEventStore = defineStore('eventDetail', () => {
     deletePostersByIds,
     mergePosters,
     setParticipations,
-    refreshParticipants
+    refreshParticipants,
+    setPersonalParticipation
   }
 })
 

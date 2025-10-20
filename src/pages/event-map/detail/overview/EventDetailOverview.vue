@@ -29,7 +29,6 @@ import { EventTypes, useEventTypes } from 'src/api/model/EventTypes'
 import Share from 'components/Share.vue'
 import LabeledBtn from 'components/LabeledBtn.vue'
 import { useDeleteEventDialog } from 'src/utils/dialog'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 import { useRouter } from 'vue-router'
 import { useDateFormat } from 'src/utils/dateFormat'
 import { useI18n } from 'vue-i18n'
@@ -51,8 +50,6 @@ const { openDeleteEventDialog } = useDeleteEventDialog()
 const joinLoading = ref(false)
 const verficationPollTimeout = ref<null | NodeJS.Timeout>(null)
 const adminMenuOpen = ref(false)
-
-const { personalParticipation } = useEventDetailStore()
 
 const eventStore = useEventStore()
 
@@ -126,13 +123,13 @@ const isLoggedIn = computed(() => {
   return authStore.isLoggedIn()
 })
 const isMember = computed(() => {
-  return personalParticipation.value?.is_pending_invitation === false
+  return eventStore.personalParticipation?.is_pending_invitation === false
 })
 const isHangDownEvent = computed(() => {
   return eventStore.event.name.startsWith(PREFIX_HANG_DOWN_POSTERS)
 })
 const isInvited = computed(() => {
-  return personalParticipation.value?.is_pending_invitation === true
+  return eventStore.personalParticipation?.is_pending_invitation === true
 })
 const isPrintableEvent = computed(() => {
   const { event_type } = eventStore.event
@@ -144,7 +141,7 @@ const isPrintableEvent = computed(() => {
 })
 const needsVerification = computed(() => {
   return (
-    personalParticipation.value?.is_verified === false &&
+    eventStore.personalParticipation?.is_verified === false &&
     eventStore.event.event_type !== EventTypes.GENERIC
   )
 })
@@ -154,7 +151,7 @@ const postersWithoutArea = computed(() =>
 )
 
 watch(
-  () => personalParticipation.value?.is_verified,
+  () => eventStore.personalParticipation?.is_verified,
   (newValue) => {
     if (newValue === false) {
       void pollForVerification()
@@ -171,7 +168,7 @@ async function join() {
     joinLoading.value = true
     eventStore.event = (await apiClient.events.join(eventId.value)).payload.data
     await updateParticipationAndLoadAreas()
-    if (!personalParticipation.value) {
+    if (!eventStore.personalParticipation) {
       $q.notify({
         color: 'negative',
         message: generalJoinError
@@ -187,14 +184,16 @@ async function join() {
   }
 }
 async function updateParticipationAndLoadAreas() {
-  personalParticipation.value = (
-    await apiClient.eventParticipations.list({
-      event: eventId.value,
-      user: userStore.user?.id
-    })
-  ).payload.data?.[0]
+  eventStore.setPersonalParticipation(
+    (
+      await apiClient.eventParticipations.list({
+        event: eventId.value,
+        user: userStore.user?.id
+      })
+    ).payload.data?.[0]
+  )
   if (
-    personalParticipation.value?.is_verified ||
+    eventStore.personalParticipation?.is_verified ||
     eventStore.isTeamCaptainOrCoordinator
   ) {
     eventStore.eventAreas = (
@@ -234,9 +233,9 @@ async function acceptInvite() {
   try {
     joinLoading.value = true
     const response = await apiClient.eventParticipations.accept(
-      personalParticipation.value!.id.toString()
+      eventStore.personalParticipation!.id.toString()
     )
-    personalParticipation.value = response.payload.data
+    eventStore.personalParticipation = response.payload.data
   } catch {
     $q.notify({
       color: 'negative',
@@ -262,11 +261,14 @@ function openInviteModal() {
   }
 }
 async function pollForVerification() {
-  if (verficationPollTimeout.value !== null || !personalParticipation) {
+  if (
+    verficationPollTimeout.value !== null ||
+    !eventStore.personalParticipation
+  ) {
     // polling already started
     return
   }
-  if (personalParticipation.value?.is_verified) {
+  if (eventStore.personalParticipation?.is_verified) {
     // if we are finally verified we can stop polling
     return
   }
@@ -560,7 +562,7 @@ onBeforeUnmount(() => {
               :area="area"
               :participations="eventStore.participations"
               :show-participation-count="eventStore.isTeamCaptainOrCoordinator"
-              :personal-participation="personalParticipation"
+              :personal-participation="eventStore.personalParticipation"
               :event-type="eventStore.event.event_type"
             />
             <EventAreaItem

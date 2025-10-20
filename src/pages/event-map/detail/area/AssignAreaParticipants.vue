@@ -3,7 +3,6 @@ import { computed } from 'vue'
 import { useUserStore } from 'src/stores/user'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { QBtn, QSelect, useQuasar } from 'quasar'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 import { apiClient } from 'src/api/ApiClient'
 import { useI18n } from 'vue-i18n'
 import { useEventStore } from 'src/stores/event'
@@ -12,7 +11,6 @@ const $q = useQuasar()
 const { t } = useI18n()
 const userStore = useUserStore()
 
-const { personalParticipation } = useEventDetailStore()
 const eventStore = useEventStore()
 
 const user = computed(() => {
@@ -26,7 +24,7 @@ const eventAreaParticipants = computed(() => {
 const isUserEventAreaParticipant = computed(() => {
   return (
     (user.value !== null &&
-      personalParticipation.value?.assigned_event_areas.includes(
+      eventStore.personalParticipation?.assigned_event_areas.includes(
         eventStore.eventArea.id!
       )) ??
     false
@@ -37,23 +35,27 @@ const onlyMemberParticipants = computed(() => {
 })
 
 async function joinArea() {
-  if (personalParticipation.value) {
-    personalParticipation.value = (
-      await apiClient.eventParticipations.assignEventArea(
-        personalParticipation.value.id.toString(),
-        eventStore.eventArea.id!
-      )
-    ).payload.data
+  if (eventStore.personalParticipation) {
+    eventStore.setPersonalParticipation(
+      (
+        await apiClient.eventParticipations.assignEventArea(
+          eventStore.personalParticipation.id.toString(),
+          eventStore.eventArea.id!
+        )
+      ).payload.data
+    )
   }
 }
 async function leaveArea() {
-  if (personalParticipation.value) {
-    personalParticipation.value = (
-      await apiClient.eventParticipations.unassignEventArea(
-        personalParticipation.value.id.toString(),
-        eventStore.eventArea.id!
-      )
-    ).payload.data
+  if (eventStore.personalParticipation) {
+    eventStore.setPersonalParticipation(
+      (
+        await apiClient.eventParticipations.unassignEventArea(
+          eventStore.personalParticipation.id.toString(),
+          eventStore.eventArea.id!
+        )
+      ).payload.data
+    )
   }
 }
 async function updateAreaParticipations(
