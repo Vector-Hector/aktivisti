@@ -21,6 +21,11 @@ const $q = useQuasar()
 const _defaultPagination = {
   limit: EVENT_LIST_CHUNK_SIZE
 }
+const _defaultFilterPreference = {
+  ...DEFAULT_FILTER_PREFERENCES,
+  event_type: editEventStore.state.event?.event_type,
+  include_expired_campaigns: true
+}
 
 interface Emits {
   (e: 'clickOnEvent', event: EventDto): void
@@ -30,11 +35,7 @@ const emit = defineEmits<Emits>()
 
 const campaigns = ref<CampaignDto[]>([])
 const subAssociations = ref<SubAssociationDto[]>([])
-const filterParams = ref<EventFilterParams>({
-  ...DEFAULT_FILTER_PREFERENCES,
-  event_type: editEventStore.state.event?.event_type,
-  include_expired_campaigns: true
-})
+const filterParams = ref<EventFilterParams>(_defaultFilterPreference)
 const pagination = ref<Pagination | null>(_defaultPagination)
 const shownEvents = ref<EventDto[]>([])
 
@@ -92,7 +93,7 @@ async function updateShownEvents() {
 }
 
 function handleResetClick() {
-  filterParams.value = DEFAULT_FILTER_PREFERENCES
+  filterParams.value = _defaultFilterPreference
 }
 </script>
 
