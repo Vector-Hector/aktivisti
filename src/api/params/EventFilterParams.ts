@@ -15,4 +15,5 @@ export interface EventFilterParams {
   status?: EventStatus
   is_owner?: boolean
   management_permission?: boolean
+  include_expired_campaigns?: boolean
 }
