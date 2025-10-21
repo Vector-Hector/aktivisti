@@ -22,8 +22,13 @@ const _defaultPagination = {
   limit: EVENT_LIST_CHUNK_SIZE
 }
 const _defaultFilterPreference = {
-  ...DEFAULT_FILTER_PREFERENCES,
+  sub_association: DEFAULT_FILTER_PREFERENCES.subAssociations,
+  campaigns: DEFAULT_FILTER_PREFERENCES.campaign,
+  order_by: DEFAULT_FILTER_PREFERENCES.sorting,
   event_type: editEventStore.state.event?.event_type,
+  status: DEFAULT_FILTER_PREFERENCES.status,
+  is_owner: DEFAULT_FILTER_PREFERENCES.is_owner,
+  management_permission: DEFAULT_FILTER_PREFERENCES.management_permission,
   include_expired_campaigns: true
 }
 
