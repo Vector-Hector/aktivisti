@@ -7,6 +7,8 @@ import { GeoJSONSource } from 'maplibre-gl'
 import { useMap } from 'src/map/MapUtils'
 import { loadImageIfNonExistent } from 'src/utils/map'
 
+const IS_COMPLETED_COLOR = '#000'
+
 interface Props {
   features: Feature[]
 }
@@ -19,7 +21,7 @@ const layers: string[] = []
 onMounted(async () => {
   await loadImageIfNonExistent(
     map.value,
-    'is-complete',
+    'is-completed-icon',
     '/static/ionicons/checkmark-circle-outline.png'
   )
 
@@ -55,7 +57,7 @@ onMounted(async () => {
       'fill-color': [
         'case',
         ['==', ['get', 'is_completed'], true],
-        '#000000',
+        IS_COMPLETED_COLOR,
         getColorFromPropertiesWithDefault('#000', 'color')
       ],
       'fill-opacity': 0.1
@@ -70,7 +72,7 @@ onMounted(async () => {
       'line-color': [
         'case',
         ['==', ['get', 'is_completed'], true],
-        '#000000',
+        IS_COMPLETED_COLOR,
         getColorFromPropertiesWithDefault('#000', 'color')
       ],
       'line-opacity': ['case', ['==', ['get', 'is_completed'], true], 0.25, 1],
@@ -87,7 +89,7 @@ onMounted(async () => {
       'fill-pattern': [
         'case',
         ['==', ['get', 'is_completed'], true],
-        'is-complete',
+        'is-completed-icon',
         ''
       ],
       'fill-opacity': ['case', ['==', ['get', 'is_completed'], true], 0.25, 0.5]
