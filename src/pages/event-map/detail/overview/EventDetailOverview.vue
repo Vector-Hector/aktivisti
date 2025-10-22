@@ -29,10 +29,10 @@ import { EventTypes, useEventTypes } from 'src/api/model/EventTypes'
 import Share from 'components/Share.vue'
 import LabeledBtn from 'components/LabeledBtn.vue'
 import { useDeleteEventDialog } from 'src/utils/dialog'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 import { useRouter } from 'vue-router'
 import { useDateFormat } from 'src/utils/dateFormat'
 import { useI18n } from 'vue-i18n'
+import { useEventStore } from 'src/stores/event'
 
 const { t } = useI18n()
 const userStore = useUserStore()
@@ -51,20 +51,10 @@ const joinLoading = ref(false)
 const verficationPollTimeout = ref<null | NodeJS.Timeout>(null)
 const adminMenuOpen = ref(false)
 
-const {
-  event,
-  eventAreas,
-  isTeamCaptainOrCoordinator,
-  isCoordinator,
-  participations,
-  personalParticipation,
-  postersWithoutArea,
-  posters,
-  refreshParticipants
-} = useEventDetailStore()
+const eventStore = useEventStore()
 
 const isVerficationRequired = computed(() => {
-  return participations.value.some(
+  return eventStore.participations.some(
     ({ is_verified, is_team_captain }) => !is_team_captain && !is_verified
   )
 })
@@ -76,26 +66,26 @@ const shareUrl = computed(() => {
     $router.resolve({
       name: 'event-detail',
       params: {
-        eventId: event.value.id
+        eventId: eventStore.event.id
       }
     }).path
   )
 })
 const shareTitle = computed(() => {
-  return event.value.name
+  return eventStore.event.name
 })
 const shareDescription = computed(() => {
-  if (event.value.description) {
-    return `\n\n${event.value.description}`
+  if (eventStore.event.description) {
+    return `\n\n${eventStore.event.description}`
   } else {
     return ''
   }
 })
 const shareText = computed(() => {
-  const formattedDate = dateFormat(event.value.start_date, 'date')
-  const formattedTime = dateFormat(event.value.start_date, 'time')
+  const formattedDate = dateFormat(eventStore.event.start_date, 'date')
+  const formattedTime = dateFormat(eventStore.event.start_date, 'time')
   return t('events.details.actions.share.shareText', {
-    eventName: event.value.name,
+    eventName: eventStore.event.name,
     eventType: eventTypeLabel.value,
     eventDescription: shareDescription.value,
     eventDate: formattedDate,
@@ -103,7 +93,7 @@ const shareText = computed(() => {
   })
 })
 const eventId = computed(() => {
-  return event.value.id.toString()
+  return eventStore.event.id.toString()
 })
 const noAreaPosters = computed(() => {
   return {
@@ -117,7 +107,7 @@ const noAreaPosters = computed(() => {
 })
 const eventAreasSorted = computed(() => {
   const collator = new Intl.Collator('de', { caseFirst: 'upper' })
-  return [...eventAreas.value].sort((a, b) => {
+  return [...eventStore.eventAreas].sort((a, b) => {
     if (a.is_completed) {
       return 1
     } else {
@@ -126,23 +116,23 @@ const eventAreasSorted = computed(() => {
   })
 })
 const eventTypeLabel = computed(() => {
-  return eventTypeOptions.find(({ key }) => key === event.value.event_type)
+  return eventTypeOptions.find(({ key }) => key === eventStore.event.event_type)
     ?.label
 })
 const isLoggedIn = computed(() => {
   return authStore.isLoggedIn()
 })
 const isMember = computed(() => {
-  return personalParticipation.value?.is_pending_invitation === false
+  return eventStore.personalParticipation?.is_pending_invitation === false
 })
 const isHangDownEvent = computed(() => {
-  return event.value.name.startsWith(PREFIX_HANG_DOWN_POSTERS)
+  return eventStore.event.name.startsWith(PREFIX_HANG_DOWN_POSTERS)
 })
 const isInvited = computed(() => {
-  return personalParticipation.value?.is_pending_invitation === true
+  return eventStore.personalParticipation?.is_pending_invitation === true
 })
 const isPrintableEvent = computed(() => {
-  const { event_type } = event.value
+  const { event_type } = eventStore.event
   return [
     EventTypes.DOOR_TO_DOOR,
     EventTypes.POSTERS,
@@ -151,13 +141,17 @@ const isPrintableEvent = computed(() => {
 })
 const needsVerification = computed(() => {
   return (
-    personalParticipation.value?.is_verified === false &&
-    event.value.event_type !== EventTypes.GENERIC
+    eventStore.personalParticipation?.is_verified === false &&
+    eventStore.event.event_type !== EventTypes.GENERIC
   )
 })
 
+const postersWithoutArea = computed(() =>
+  eventStore.posters.filter(({ area }) => area === null)
+)
+
 watch(
-  () => personalParticipation.value?.is_verified,
+  () => eventStore.personalParticipation?.is_verified,
   (newValue) => {
     if (newValue === false) {
       void pollForVerification()
@@ -172,9 +166,9 @@ async function join() {
   const generalJoinError = t('events.details.notifications.generalJoinError')
   try {
     joinLoading.value = true
-    event.value = (await apiClient.events.join(eventId.value)).payload.data
+    eventStore.event = (await apiClient.events.join(eventId.value)).payload.data
     await updateParticipationAndLoadAreas()
-    if (!personalParticipation.value) {
+    if (!eventStore.personalParticipation) {
       $q.notify({
         color: 'negative',
         message: generalJoinError
@@ -190,37 +184,41 @@ async function join() {
   }
 }
 async function updateParticipationAndLoadAreas() {
-  personalParticipation.value = (
-    await apiClient.eventParticipations.list({
-      event: eventId.value,
-      user: userStore.user?.id
-    })
-  ).payload.data?.[0]
+  eventStore.setPersonalParticipation(
+    (
+      await apiClient.eventParticipations.list({
+        event: eventId.value,
+        user: userStore.user?.id
+      })
+    ).payload.data?.[0]
+  )
   if (
-    personalParticipation.value?.is_verified ||
-    isTeamCaptainOrCoordinator.value
+    eventStore.personalParticipation?.is_verified ||
+    eventStore.isTeamCaptainOrCoordinator
   ) {
-    eventAreas.value = (
-      await apiClient.eventAreas.list({ event: event.value.id })
+    eventStore.eventAreas = (
+      await apiClient.eventAreas.list({ event: eventStore.event.id })
     ).payload.data
-    if (event.value.event_type === EventTypes.POSTERS) {
-      posters.value = (
+    if (eventStore.event.event_type === EventTypes.POSTERS) {
+      eventStore.posters = (
         await apiClient.posters.list({
-          event: event.value.id,
+          event: eventStore.event.id,
           include_expired_events: true,
           include_expired_campaigns: true
         })
       ).payload.data
     }
   } else {
-    eventAreas.value = []
+    eventStore.eventAreas = []
   }
 }
 async function leave() {
   const generalLeaveError = t('events.details.notifications.generalLeaveError')
   try {
     joinLoading.value = true
-    event.value = (await apiClient.events.leave(eventId.value)).payload.data
+    eventStore.event = (
+      await apiClient.events.leave(eventId.value)
+    ).payload.data
     personalParticipation.value = null
   } catch {
     $q.notify({
@@ -235,9 +233,9 @@ async function acceptInvite() {
   try {
     joinLoading.value = true
     const response = await apiClient.eventParticipations.accept(
-      personalParticipation.value!.id.toString()
+      eventStore.personalParticipation!.id.toString()
     )
-    personalParticipation.value = response.payload.data
+    eventStore.personalParticipation = response.payload.data
   } catch {
     $q.notify({
       color: 'negative',
@@ -248,14 +246,14 @@ async function acceptInvite() {
   }
 }
 async function refreshEvent() {
-  event.value = (await apiClient.events.get(eventId.value)).payload.data
+  eventStore.event = (await apiClient.events.get(eventId.value)).payload.data
 }
 function openInviteModal() {
-  if (isTeamCaptainOrCoordinator.value) {
+  if (eventStore.isTeamCaptainOrCoordinator) {
     $q.dialog({
       component: EventInvitePeopleModal,
       componentProps: {
-        eventId: event.value.id
+        eventId: eventStore.event.id
       }
     }).onDismiss(() => {
       void refreshEvent()
@@ -263,11 +261,14 @@ function openInviteModal() {
   }
 }
 async function pollForVerification() {
-  if (verficationPollTimeout.value !== null || !personalParticipation) {
+  if (
+    verficationPollTimeout.value !== null ||
+    !eventStore.personalParticipation
+  ) {
     // polling already started
     return
   }
-  if (personalParticipation.value?.is_verified) {
+  if (eventStore.personalParticipation?.is_verified) {
     // if we are finally verified we can stop polling
     return
   }
@@ -282,16 +283,16 @@ function openParticipantsModal() {
     component: EventParticipantsModal,
     maximized: true,
     componentProps: {
-      eventId: event.value.id,
-      eventSubAssociation: event.value.sub_association
+      eventId: eventStore.event.id,
+      eventSubAssociation: eventStore.event.sub_association
     }
   }).onDismiss(() => {
     void refreshEvent()
-    void refreshParticipants()
+    void eventStore.refreshParticipants()
   })
 }
 function openDeleteModal() {
-  openDeleteEventDialog(event.value).catch(console.error)
+  openDeleteEventDialog(eventStore.event).catch(console.error)
 }
 function openAdminMenu() {
   adminMenuOpen.value = true
@@ -304,7 +305,7 @@ function openPosterTakeDownModal() {
     title: t('events.details.actions.admin.posterTakeDown.dialog.title'),
     message: t(
       'events.details.actions.admin.posterTakeDown.dialog.description',
-      [`<b>"${event.value.name}"</b>`]
+      [`<b>"${eventStore.event.name}"</b>`]
     ),
     html: true,
     cancel: true
@@ -319,9 +320,9 @@ function openPosterTakeDownModal() {
       const newEndDate = new Date(newStartDate)
       newEndDate.setDate(newEndDate.getDate() + 14)
       try {
-        await apiClient.events.update(event.value.id.toString(), {
-          ...event.value,
-          name: PREFIX_HANG_DOWN_POSTERS + event.value.name,
+        await apiClient.events.update(eventStore.event.id.toString(), {
+          ...eventStore.event,
+          name: PREFIX_HANG_DOWN_POSTERS + eventStore.event.name,
           start_date: newStartDate.toISOString(),
           end_date: newEndDate.toISOString()
         })
@@ -360,21 +361,21 @@ onBeforeUnmount(() => {
               <b>{{ $t('events.details.meetingPoint') }}:</b>
             </div>
             <div class="col-8">
-              {{ event.location_description }}
+              {{ eventStore.event.location_description }}
             </div>
             <div class="col-4">
               <b>{{ $t('events.details.startDate') }}:</b>
             </div>
             <div class="col-8">
-              {{ dateFormat(event.start_date, 'datetime') }}
+              {{ dateFormat(eventStore.event.start_date, 'datetime') }}
             </div>
             <div class="col-4">
               <b>{{ $t('events.details.endDate') }}:</b>
             </div>
             <div class="col-8">
-              {{ dateFormat(event.end_date, 'datetime') }}
+              {{ dateFormat(eventStore.event.end_date, 'datetime') }}
             </div>
-            <template v-if="event.external_url">
+            <template v-if="eventStore.event.external_url">
               <div class="col-4">
                 <b>{{ $t('events.details.externalUrl') }}:</b>
               </div>
@@ -382,12 +383,12 @@ onBeforeUnmount(() => {
                 <a
                   target="_blank"
                   class="primary-link"
-                  :href="event.external_url"
-                  >{{ event.external_url }}</a
+                  :href="eventStore.event.external_url"
+                  >{{ eventStore.event.external_url }}</a
                 >
               </div>
             </template>
-            <template v-if="event.messenger_url">
+            <template v-if="eventStore.event.messenger_url">
               <div class="col-4">
                 <b>{{ $t('events.details.messangerUrl') }}:</b>
               </div>
@@ -395,22 +396,22 @@ onBeforeUnmount(() => {
                 <a
                   target="_blank"
                   class="primary-link"
-                  :href="event.messenger_url"
-                  >{{ event.messenger_url }}</a
+                  :href="eventStore.event.messenger_url"
+                  >{{ eventStore.event.messenger_url }}</a
                 >
               </div>
             </template>
             <template
               v-if="
-                isTeamCaptainOrCoordinator &&
-                event.event_type !== EventTypes.GENERIC
+                eventStore.isTeamCaptainOrCoordinator &&
+                eventStore.event.event_type !== EventTypes.GENERIC
               "
             >
               <div class="col-4">
                 <b>{{ $t('events.details.participants') }}:</b>
               </div>
               <div class="col-8">
-                {{ event.participants }}
+                {{ eventStore.event.participants }}
               </div>
             </template>
           </div>
@@ -418,8 +419,8 @@ onBeforeUnmount(() => {
         <div class="col-auto column">
           <LabeledBtn
             v-if="
-              isTeamCaptainOrCoordinator &&
-              event.event_type !== EventTypes.GENERIC
+              eventStore.isTeamCaptainOrCoordinator &&
+              eventStore.event.event_type !== EventTypes.GENERIC
             "
             round
             outline
@@ -430,7 +431,7 @@ onBeforeUnmount(() => {
           />
           <Share :title="shareTitle" :text="shareText" :url="shareUrl" />
           <LabeledBtn
-            v-if="isTeamCaptainOrCoordinator"
+            v-if="eventStore.isTeamCaptainOrCoordinator"
             :external-label="$t('events.details.actions.admin.label')"
             class="admin-button"
             :class="{ float: adminMenuOpen }"
@@ -448,7 +449,7 @@ onBeforeUnmount(() => {
                 @before-hide="hideAdminMenu()"
               >
                 <QFabAction
-                  v-if="isCoordinator"
+                  v-if="eventStore.isCoordinator"
                   @click="openDeleteModal"
                   color="primary"
                   :icon="ionTrash"
@@ -461,10 +462,10 @@ onBeforeUnmount(() => {
                   label-position="bottom"
                 />
                 <QFabAction
-                  v-if="isCoordinator"
+                  v-if="eventStore.isCoordinator"
                   :to="{
                     name: 'edit-event-details',
-                    params: { eventId: event.id }
+                    params: { eventId: eventStore.event.id }
                   }"
                   color="primary"
                   :icon="ionPencil"
@@ -479,12 +480,12 @@ onBeforeUnmount(() => {
                 <QFabAction
                   v-if="
                     [EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(
-                      event.event_type
-                    ) && isCoordinator
+                      eventStore.event.event_type
+                    ) && eventStore.isCoordinator
                   "
                   :to="{
                     name: 'event-detail-report',
-                    params: { eventId: event.id }
+                    params: { eventId: eventStore.event.id }
                   }"
                   color="primary"
                   :icon="ionBarChart"
@@ -498,9 +499,9 @@ onBeforeUnmount(() => {
                 />
                 <QFabAction
                   v-if="
-                    event.event_type === EventTypes.POSTERS &&
+                    eventStore.event.event_type === EventTypes.POSTERS &&
                     !isHangDownEvent &&
-                    isCoordinator
+                    eventStore.isCoordinator
                   "
                   @click="openPosterTakeDownModal"
                   color="primary"
@@ -516,8 +517,13 @@ onBeforeUnmount(() => {
                   label-position="bottom"
                 />
                 <QFabAction
-                  v-if="isPrintableEvent && isTeamCaptainOrCoordinator"
-                  :to="{ name: 'print-event', params: { eventId: event.id } }"
+                  v-if="
+                    isPrintableEvent && eventStore.isTeamCaptainOrCoordinator
+                  "
+                  :to="{
+                    name: 'print-event',
+                    params: { eventId: eventStore.event.id }
+                  }"
                   color="primary"
                   :icon="ionPrint"
                   class="bg-white admin-fab"
@@ -537,14 +543,14 @@ onBeforeUnmount(() => {
         <div class="col-12 event-description">
           <b>{{ $t('events.details.publicDescription') }}</b
           ><br />
-          {{ event.description }}
+          {{ eventStore.event.description }}
         </div>
       </div>
-      <div v-if="event.internal_description" class="row">
+      <div v-if="eventStore.event.internal_description" class="row">
         <div class="col-12 event-description">
           <b>{{ $t('events.details.internalDescription') }}</b
           ><br />
-          {{ event.internal_description }}
+          {{ eventStore.event.internal_description }}
         </div>
       </div>
       <div class="areas row q-col-gutter-y-md" v-if="isMember">
@@ -554,25 +560,25 @@ onBeforeUnmount(() => {
               v-for="area in eventAreasSorted"
               :key="area.id"
               :area="area"
-              :participations="participations"
-              :show-participation-count="isTeamCaptainOrCoordinator"
-              :personal-participation="personalParticipation"
-              :event-type="event.event_type"
+              :participations="eventStore.participations"
+              :show-participation-count="eventStore.isTeamCaptainOrCoordinator"
+              :personal-participation="eventStore.personalParticipation"
+              :event-type="eventStore.event.event_type"
             />
             <EventAreaItem
               v-if="
-                event.event_type === EventTypes.POSTERS &&
+                eventStore.event.event_type === EventTypes.POSTERS &&
                 postersWithoutArea.length > 0
               "
               :area="noAreaPosters"
               :participations="[]"
-              :event-type="event.event_type"
+              :event-type="eventStore.event.event_type"
             />
           </QList>
         </div>
       </div>
       <div v-if="needsVerification" class="row text-primary q-col-gutter-x-md">
-        <template v-if="!isTeamCaptainOrCoordinator">
+        <template v-if="!eventStore.isTeamCaptainOrCoordinator">
           <span class="col-12">
             {{ $t('events.details.infoUserNeedsVerification.description') }}
           </span>
@@ -580,7 +586,7 @@ onBeforeUnmount(() => {
       </div>
       <div
         class="row"
-        v-if="!isLoggedIn && event.event_type !== EventTypes.GENERIC"
+        v-if="!isLoggedIn && eventStore.event.event_type !== EventTypes.GENERIC"
       >
         <div class="col-12">
           <QBtn
@@ -598,7 +604,7 @@ onBeforeUnmount(() => {
       <div class="row q-col-gutter-x-md" v-if="isLoggedIn">
         <div class="col-6">
           <QBtn
-            v-if="isTeamCaptainOrCoordinator"
+            v-if="eventStore.isTeamCaptainOrCoordinator"
             class="full-width"
             @click="openInviteModal"
             flat

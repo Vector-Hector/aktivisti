@@ -11,25 +11,26 @@ function updateRoute(
   from: RouteLocation,
   next: NavigationGuardNext
 ) {
+  const eventStore = useEventStore()
   const { posterId, areaId } = to.params
   const parsedAreaId =
     areaId !== UNDEFINED_POSTER_AREA ? parseInt(areaId.toString()) : null
 
-  const postersInArea = eventDetailStore.state.posters.filter(
+  const postersInArea = eventStore.posters.filter(
     ({ area }) => area === parsedAreaId
   )
   const posterIndex = postersInArea.findIndex(
     ({ id }) => parseInt(posterId as string) === id
   )
   if (posterIndex > -1) {
-    eventDetailStore.state.activePosterIndex = posterIndex
+    eventStore.activePosterIndex = posterIndex
     uiStore.updateActiveElements({
       poster: postersInArea[posterIndex]?.poster_id.toString()
     })
     next()
   } else {
     // poster not found
-    eventDetailStore.state.activePosterIndex = null
+    eventStore.activePosterIndex = null
     next({
       name: 'event-detail-poster-list',
       params: {
@@ -52,7 +53,7 @@ import EditPoster from 'components/EditPoster.vue'
 import { PosterDto } from 'src/api/model/PosterDto'
 import { cloneDeep, isEqual } from 'lodash-es'
 import { SettleDebouncer } from 'src/utils/debounce'
-import { eventDetailStore } from 'src/store/EventDetailStore'
+import { useEventStore } from 'src/stores/event'
 import {
   RouteLocation,
   NavigationGuardNext,
@@ -64,19 +65,18 @@ import { ionTrash } from '@quasar/extras/ionicons-v5'
 import { QBtn, useQuasar } from 'quasar'
 import { uiStore } from 'src/store/UiStore'
 import SidebarBottomBackNavigation from 'components/SidebarBottomBackNavigation.vue'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
 import { apiClient } from 'src/api/ApiClient'
 import { useI18n } from 'vue-i18n'
 
 const $q = useQuasar()
 const $router = useRouter()
 const { t } = useI18n()
-const { event, deletePostersByIds } = useEventDetailStore()
+const eventStore = useEventStore()
 const { poster } = useEventDetailPosterMixin()
 
 onBeforeRouteUpdate(updateRoute)
 onBeforeRouteLeave(() => {
-  eventDetailStore.state.activePosterIndex = null
+  eventStore.activePosterIndex = null
 })
 
 const saveDebouncer = new SettleDebouncer()
@@ -117,7 +117,7 @@ function onDeleteClicked() {
         })
         const posterId = poster.value.id
         await $router.replace({ name: 'event-detail-poster-list' })
-        deletePostersByIds([posterId])
+        eventStore.deletePostersByIds([posterId])
       } catch (e) {
         $q.notify({
           color: 'negative',
@@ -156,7 +156,7 @@ async function save() {
       <div class="row">
         <div class="col-grow d-flex justify-center">
           <QBtn
-            v-if="event.poster_creation_allowed"
+            v-if="eventStore.event.poster_creation_allowed"
             class="delete-button"
             flat
             :icon="ionTrash"

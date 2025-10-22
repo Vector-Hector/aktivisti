@@ -48,7 +48,7 @@ import { useUserStore } from 'src/stores/user'
 import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 import { onBeforeRouteLeave, useRouter } from 'vue-router'
 import { apiClient } from 'src/api/ApiClient'
-import { useEventDetailStore } from './event-map/detail/EventDetailStoreMixin'
+import { useEventStore } from 'src/stores/event'
 import { SubOrganizationDto } from 'src/api/model/SubOrganizationDto'
 import { OrganizationDto } from 'src/api/model/OrganizationDto'
 import { useI18n } from 'vue-i18n'
@@ -65,7 +65,7 @@ const { t } = useI18n()
 const { validationRules } = useValidationRules()
 
 const form = ref<InstanceType<typeof QForm> | null>(null)
-const { event } = useEventDetailStore()
+const eventStore = useEventStore()
 const subOrganizations = ref<SubOrganizationDto[]>([])
 const suggestedSubOrganizations = ref<SubOrganizationDto[]>([])
 const organizations = ref<OrganizationDto[]>([])
@@ -95,10 +95,10 @@ onMounted(async () => {
   const subOrgRequest = await apiClient.zetkinSubOrganizations.list({}, [
     'organization'
   ])
-  if (event.value && event.value.sub_association) {
+  if (eventStore.event && eventStore.event.sub_association) {
     const subOrgOfSubAssociationRequest =
       await apiClient.zetkinSubOrganizations.list({
-        sub_association: event.value.sub_association
+        sub_association: eventStore.event.sub_association
       })
 
     lead.value.sub_organization =

@@ -5,6 +5,7 @@ export default {
   async beforeRouteEnter(to, from, next) {
     const { eventId } = to.params
     const authStore = getAuthStore()
+    const eventStore = useEventStore()
     try {
       const [eventRequest, eventPermissionsRequest] = await Promise.all([
         apiClient.events.get(eventId.toString(), ['campaigns']),
@@ -13,9 +14,9 @@ export default {
       const event = eventRequest.payload.data
       const campaigns = eventRequest.payload.embedded.campaigns as CampaignDto[]
       const eventPermissions = eventPermissionsRequest.payload.data
-      eventDetailStore.setEvent(event)
-      eventDetailStore.setCampaigns(campaigns)
-      eventDetailStore.setEventPermissions(eventPermissions)
+      eventStore.setEvent(event)
+      eventStore.setCampaigns(campaigns)
+      eventStore.setEventPermissions(eventPermissions)
 
       const permissionRequests: Array<Promise<void>> = []
       if (
@@ -30,7 +31,7 @@ export default {
               event: eventId
             })
             .then((response) => {
-              eventDetailStore.setParticipations(response.payload.data)
+              eventStore.participations = response.payload.data
             })
         )
       }
@@ -43,12 +44,11 @@ export default {
               show_permissions: true
             })
             .then((response) => {
-              eventDetailStore.setPersonalParticipation(
+              eventStore.personalParticipation =
                 response.payload.data?.find(
                   ({ user }) => user === authStore.getState().userId
                 ) ?? null
-              )
-              eventDetailStore.setPersonalParticipationPermissions(
+              eventStore.setPersonalParticipationPermissions(
                 response.payload.permissions
               )
             })
@@ -58,7 +58,7 @@ export default {
 
       // verfied users can see event areas as well as users with write permission
       if (
-        eventDetailStore.getState().personalParticipation?.is_verified ||
+        eventStore.personalParticipation?.is_verified ||
         includesOneOf(eventPermissions.permissions, [
           ObjectPermissions.TeamCaptain,
           ObjectPermissions.Coordinator
@@ -77,19 +77,16 @@ export default {
           )
         }
         const [eventAreaRequest, posterRequest] = await Promise.all(promises)
-        eventDetailStore.setEventAreas(eventAreaRequest.payload.data)
+        eventStore.setEventAreas(eventAreaRequest.payload.data)
         if (posterRequest) {
-          eventDetailStore.state.posters = posterRequest.payload.data
+          eventStore.posters = posterRequest.payload.data
         }
       }
 
       next(() => {
         uiStore.updateActiveElements({
-          event: eventDetailStore.getState().event!.name,
-          campaigns: eventDetailStore
-            .getState()
-            .campaigns.map(({ name }) => name)
-            .join(',')
+          event: eventStore.event!.name,
+          campaigns: eventStore.campaigns.map(({ name }) => name).join(',')
         })
       })
     } catch (e) {
@@ -104,23 +101,22 @@ export default {
 import { apiClient } from 'src/api/ApiClient'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { uiStore } from 'src/store/UiStore'
-import { eventDetailStore } from 'src/store/EventDetailStore'
+import { useEventStore } from 'src/stores/event'
 import { getAuthStore } from 'src/store/AuthStore'
 import { ObjectPermissions } from 'src/api/model/ObjectPermissionDto'
 import { includesOneOf } from 'src/utils/array'
 import { EventTypes } from 'src/api/model/EventTypes'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
-import { onUnmounted } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 
-const { event } = useEventDetailStore()
+const eventStore = useEventStore()
 
-onUnmounted(() => {
-  eventDetailStore.reset()
+onBeforeRouteLeave(() => {
+  eventStore.$reset()
 })
 </script>
 
 <template>
-  <router-view v-if="event" />
+  <router-view v-if="eventStore.event" />
 </template>
 
 <style lang="scss" scoped></style>

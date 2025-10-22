@@ -585,7 +585,11 @@
         "visitedAddresses": "Besuchte Adressen",
         "addressesInEventArea": "Adressen im Gebiet",
         "collectedLeads": "Gewonnene Kontakte",
-        "total": "Gesamt"
+        "total": "Gesamt",
+        "csvExport": {
+          "errorMessage": "Browser hat den Dateidownload verweigert...",
+          "label": "Export als CSV"
+        }
       },
       "area": {
         "completionModal": {

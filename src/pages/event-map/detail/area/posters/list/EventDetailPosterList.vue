@@ -8,7 +8,7 @@ import { PosterDto } from 'src/api/model/PosterDto'
 import { useUserStore } from 'src/stores/user'
 import { useRouter } from 'vue-router'
 import AssignAreaParticipants from 'pages/event-map/detail/area/AssignAreaParticipants.vue'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
+import { useEventStore } from 'src/stores/event'
 import { useI18n } from 'vue-i18n'
 
 const $q = useQuasar()
@@ -16,28 +16,21 @@ const $router = useRouter()
 const { t } = useI18n()
 const userStore = useUserStore()
 
-const {
-  event,
-  eventArea,
-  currentAreaFeature,
-  posters,
-  postersInArea,
-  mergePosters
-} = useEventDetailStore()
+const eventStore = useEventStore()
 const { selectPoster } = useEventDetailPosterMixin()
 
 function openCreatePosterDialog() {
   $q.dialog({
     component: SelectPosterLocation,
     componentProps: {
-      eventId: event.value.id,
-      posters: posters.value,
+      eventId: eventStore.event.id,
+      posters: eventStore.posters,
       initialBBox: userStore.bbox,
-      areaFeatures: [currentAreaFeature.value]
+      areaFeatures: [eventStore.currentAreaFeature]
     }
   }).onOk((poster: PosterDto) => {
-    mergePosters([poster])
-    if (poster.area !== eventArea.value.id) {
+    eventStore.mergePosters([poster])
+    if (poster.area !== eventStore.eventArea.id) {
       $q.notify({
         color: 'warning',
         message: t('events.details.area.posters.posterNotCreatedInAreaWarning')
@@ -58,13 +51,13 @@ function openCreatePosterDialog() {
   <div class="container q-py-sm">
     <div class="row">
       <div class="col">
-        <AssignAreaParticipants v-if="eventArea" />
+        <AssignAreaParticipants v-if="eventStore.eventArea" />
       </div>
     </div>
     <div class="row q-py-sm">
       <div class="col-grow buttons">
         <QBtn
-          v-if="event.poster_creation_allowed"
+          v-if="eventStore.event.poster_creation_allowed"
           color="primary"
           :label="$t('events.details.area.posters.createPosterButton')"
           :icon="ionLocationSharp"
@@ -73,7 +66,7 @@ function openCreatePosterDialog() {
       </div>
     </div>
     <PosterTable
-      :posters="postersInArea"
+      :posters="eventStore.postersInArea"
       :show-actions="false"
       @row-click="selectPoster($event.id)"
     />

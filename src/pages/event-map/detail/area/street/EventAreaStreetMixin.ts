@@ -2,13 +2,13 @@ import { computed } from 'vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox as bboxTurf, bboxPolygon, transformScale } from '@turf/turf'
 import { FeatureCollection } from 'geojson'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
+import { useEventStore } from 'src/stores/event'
 
 export function useEventAreaStreetComposable(props) {
-  const { eventArea } = useEventDetailStore()
+  const eventStore = useEventStore()
 
   const addresses = computed(() => {
-    return eventArea.value?.area_details?.streets.find(
+    return eventStore.eventArea?.area_details?.streets.find(
       ({ name }) => name === props.street
     )?.addresses
   })

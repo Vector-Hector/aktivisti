@@ -10,7 +10,7 @@ import { AddressDetails } from 'src/api/model/AreaDetailsDto'
 import { useEventAreaStreetComposable } from 'pages/event-map/detail/area/street/EventAreaStreetMixin'
 import { useRoute, useRouter } from 'vue-router'
 import { useEventAreaMetricsComposable } from './EventAreaMetricsMixin'
-import { useEventDetailStore } from '../../EventDetailStoreMixin'
+import { useEventStore } from 'src/stores/event'
 
 interface Props {
   houseNumber: string
@@ -23,7 +23,7 @@ const $router = useRouter()
 const $route = useRoute()
 
 const { addresses } = useEventAreaStreetComposable(props)
-const { completedTargetIds } = useEventDetailStore()
+const eventStore = useEventStore()
 const { bbox } = useEventAreaMetricsComposable(props)
 const { map } = useInjectMapMixin()
 
@@ -58,7 +58,7 @@ async function jumpToAddress(address: AddressDetails) {
       :location="center(address.geometry)"
       :text="address.house_number"
       :selected="$route.params.houseNumber === address.house_number"
-      :done="completedTargetIds.includes(address.osm_id.toString())"
+      :done="eventStore.completedTargetIds.includes(address.osm_id.toString())"
       @click="jumpToAddress(address)"
     />
   </div>
