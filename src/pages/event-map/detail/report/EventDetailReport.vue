@@ -137,7 +137,7 @@ function handleExportToCSV() {
   const content = [header].concat(body).join('\r\n')
 
   const timestamp = new Date().toISOString().slice(0, 10).replaceAll('-', '')
-  const fileName = `Report_${eventStore.event.name.replace(/\s+/g, '_')}_${timestamp}.csv`
+  const fileName = `Report_${eventStore.event.id}_${eventStore.event.name.replace(/\s+/g, '_')}_${timestamp}.csv`
 
   const status = exportFile(fileName, content, 'text/csv')
 
