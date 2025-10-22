@@ -3,7 +3,7 @@ import { onMounted, onUnmounted, watch } from 'vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { Feature } from 'geojson'
 import { getColorFromPropertiesWithDefault } from 'pages/edit-event/geometry/route-planner.styles'
-import { GeoJSONSource, FillPaint } from 'maplibre-gl'
+import { GeoJSONSource } from 'maplibre-gl'
 import { useMap } from 'src/map/MapUtils'
 import { loadImageIfNonExistent } from 'src/utils/map'
 
@@ -52,7 +52,12 @@ onMounted(async () => {
     source: uuid,
     paint: {
       // @ts-ignore
-      'fill-color': getColorFromPropertiesWithDefault('#000', 'color'),
+      'fill-color': [
+        'case',
+        ['==', ['get', 'is_completed'], true],
+        '#000000',
+        getColorFromPropertiesWithDefault('#000', 'color')
+      ],
       'fill-opacity': 0.1
     }
   })
@@ -62,7 +67,13 @@ onMounted(async () => {
     source: uuid,
     paint: {
       // @ts-ignore
-      'line-color': getColorFromPropertiesWithDefault('#000', 'color'),
+      'line-color': [
+        'case',
+        ['==', ['get', 'is_completed'], true],
+        '#000000',
+        getColorFromPropertiesWithDefault('#000', 'color')
+      ],
+      'line-opacity': ['case', ['==', ['get', 'is_completed'], true], 0.25, 1],
       'line-width': 1
     }
   })
@@ -72,21 +83,17 @@ onMounted(async () => {
     type: 'fill',
     source: uuid,
     filter: ['==', ['get', 'is_completed'], true],
-    paint: getPaintFillFromProperties()
+    paint: {
+      'fill-pattern': [
+        'case',
+        ['==', ['get', 'is_completed'], true],
+        'is-complete',
+        ''
+      ],
+      'fill-opacity': ['case', ['==', ['get', 'is_completed'], true], 0.25, 0.5]
+    }
   })
 })
-
-function getPaintFillFromProperties(): FillPaint {
-  return {
-    'fill-pattern': [
-      'case',
-      ['==', ['get', 'is_completed'], true],
-      'is-complete',
-      ''
-    ],
-    'fill-opacity': ['case', ['==', ['get', 'is_completed'], true], 0.25, 0.5]
-  }
-}
 
 onUnmounted(() => {
   layers.forEach((layerId) => {
