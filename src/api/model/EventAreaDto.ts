@@ -9,6 +9,7 @@ export interface EventAreaDto {
   feature_id: string
   geometry: Geometry
   is_completed: boolean
+  has_assignee: boolean
   area_details?: AreaDetailsDto
   poster_count: number
 }
