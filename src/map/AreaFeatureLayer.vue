@@ -5,6 +5,9 @@ import { Feature } from 'geojson'
 import { getColorFromPropertiesWithDefault } from 'pages/edit-event/geometry/route-planner.styles'
 import { GeoJSONSource } from 'maplibre-gl'
 import { useMap } from 'src/map/MapUtils'
+import { loadImageIfNonExistent } from 'src/utils/map'
+
+const IS_COMPLETED_COLOR = '#000'
 
 interface Props {
   features: Feature[]
@@ -15,7 +18,13 @@ const uuid = uuidv4()
 const map = useMap()
 
 const layers: string[] = []
-onMounted(() => {
+onMounted(async () => {
+  await loadImageIfNonExistent(
+    map.value,
+    'is-completed-icon',
+    '/static/ionicons/checkmark-circle-outline.png'
+  )
+
   map?.value.addSource(uuid, {
     type: 'geojson',
     data: {
@@ -36,15 +45,21 @@ onMounted(() => {
   )
   const fillLayer = `${uuid}-fill`
   const outlineLayer = `${uuid}-outline`
+  const iconLayer = `${uuid}-icon`
 
-  layers.push(fillLayer, outlineLayer)
+  layers.push(fillLayer, outlineLayer, iconLayer)
   map?.value.addLayer({
     id: `${uuid}-fill`,
     type: 'fill',
     source: uuid,
     paint: {
       // @ts-ignore
-      'fill-color': getColorFromPropertiesWithDefault('#000', 'color'),
+      'fill-color': [
+        'case',
+        ['==', ['get', 'is_completed'], true],
+        IS_COMPLETED_COLOR,
+        getColorFromPropertiesWithDefault('#000', 'color')
+      ],
       'fill-opacity': 0.1
     }
   })
@@ -54,7 +69,30 @@ onMounted(() => {
     source: uuid,
     paint: {
       // @ts-ignore
-      'line-color': getColorFromPropertiesWithDefault('#000', 'color')
+      'line-color': [
+        'case',
+        ['==', ['get', 'is_completed'], true],
+        IS_COMPLETED_COLOR,
+        getColorFromPropertiesWithDefault('#000', 'color')
+      ],
+      'line-opacity': ['case', ['==', ['get', 'is_completed'], true], 0.25, 1],
+      'line-width': 1
+    }
+  })
+
+  map.value?.addLayer({
+    id: `${uuid}-icon`,
+    type: 'fill',
+    source: uuid,
+    filter: ['==', ['get', 'is_completed'], true],
+    paint: {
+      'fill-pattern': [
+        'case',
+        ['==', ['get', 'is_completed'], true],
+        'is-completed-icon',
+        ''
+      ],
+      'fill-opacity': ['case', ['==', ['get', 'is_completed'], true], 0.25, 0.5]
     }
   })
 })
