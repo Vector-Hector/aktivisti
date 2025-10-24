@@ -78,11 +78,10 @@ const updateListener = (event: any) =>
   forwardEventAndUpdateFeatures('draw:update', event)
 const selectionChangeListener = (event: any) =>
   forwardEventAndUpdateFeatures('draw:selectionchange', event)
-map.value
-  .on('draw.create', createListener)
-  .on('draw.delete', deleteListener)
-  .on('draw.update', updateListener)
-  .on('draw.selectionchange', selectionChangeListener)
+map.value.on('draw.create', createListener)
+map.value.on('draw.delete', deleteListener)
+map.value.on('draw.update', updateListener)
+map.value.on('draw.selectionchange', selectionChangeListener)
 
 onUnmounted(() => {
   map.value

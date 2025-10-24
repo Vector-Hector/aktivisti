@@ -162,14 +162,12 @@ function drawFeatureCollection(
 function addEventHandlers(overlayId: string): void {
   const fillLayerId = `${overlayId}-fill`
   const outlineLayerId = `${overlayId}-outline`
-  map.value
-    .on('click', fillLayerId, handleGeometryClick)
-    .on('click', outlineLayerId, handleGeometryClick)
+  map.value.on('click', fillLayerId, handleGeometryClick)
+  map.value.on('click', outlineLayerId, handleGeometryClick)
 
   if (props.hover) {
-    map.value
-      .on('mousemove', fillLayerId, handleGeometryMouseOver)
-      .on('mouseleave', fillLayerId, handleGeometryLeave)
+    map.value.on('mousemove', fillLayerId, handleGeometryMouseOver)
+    map.value.on('mouseleave', fillLayerId, handleGeometryLeave)
   }
 }
 
