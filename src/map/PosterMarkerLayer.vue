@@ -129,7 +129,7 @@ const onMouseDownActivePoster = (e: any) => {
   canvas.style.cursor = 'grab'
 
   map.value.on('mousemove', onMoveActivePoster)
-  map.value.once('mouseup', onUpActivePoster)
+  void map.value.once('mouseup', onUpActivePoster)
   MapEventBus.emit(MAP_GEOLOCATE_STOP_TRACKING)
 }
 
@@ -139,7 +139,7 @@ const onTouchStartActivePoster = (e: any) => {
   e.preventDefault()
 
   map.value.on('touchmove', onMoveActivePoster)
-  map.value.once('touchend', onUpActivePoster)
+  void map.value.once('touchend', onUpActivePoster)
   MapEventBus.emit(MAP_GEOLOCATE_STOP_TRACKING)
 }
 
