@@ -140,9 +140,7 @@ class EventLayer {
       })
       const clusterId = features[0]?.properties?.cluster_id
       const source = this.map.getSource(this.clusterLayerId) as GeoJSONSource
-      source.getClusterExpansionZoom(clusterId, (err, zoom) => {
-        if (err) return
-
+      void source.getClusterExpansionZoom(clusterId).then((zoom) => {
         this.map.easeTo({
           center: (features[0].geometry as Point).coordinates as [
             number,
