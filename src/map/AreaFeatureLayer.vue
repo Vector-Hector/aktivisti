@@ -60,7 +60,6 @@ onMounted(async () => {
     type: 'fill',
     source: uuid,
     paint: {
-      // @ts-ignore
       'fill-color': [
         'case',
         ['==', ['get', 'is_completed'], true],

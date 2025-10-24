@@ -1,9 +1,8 @@
 import maplibregl, {
-  AnyLayer,
-  EventData,
+  LayerSpecification,
   GeoJSONSource,
-  Layer,
-  MapLayerEventType
+  MapLayerEventType,
+  FilterSpecification
 } from 'maplibre-gl'
 import { Feature, FeatureCollection, LineString, Point } from 'geojson'
 import { uuidv4 } from 'src/utils/uuid'
@@ -17,8 +16,8 @@ interface Options {
   animationTimeMs: number
   animationTickMs: number
   layout?: Record<string, unknown>
-  paint?: Layer['paint']
-  onFeatureClick?: (ev: MapLayerEventType['click'] & EventData) => void
+  paint?: LayerSpecification['paint']
+  onFeatureClick?: (ev: MapLayerEventType['click'] & object) => void
 }
 
 const DEFAULT_OPTIONS: Options = {
@@ -36,7 +35,7 @@ export class SpiderifyFeatures {
     type: 'FeatureCollection',
     features: []
   }
-  private originalFilter: null | any[] = null
+  private originalFilter: null | FilterSpecification = null
   private readonly options: Options = DEFAULT_OPTIONS
   private featureMapById: Record<
     string | number,
@@ -48,7 +47,7 @@ export class SpiderifyFeatures {
 
   constructor(
     private map: maplibregl.Map,
-    private originLayer: Layer,
+    private originLayer: LayerSpecification,
     features: Array<Feature<Point>>,
     optionsParam: Partial<Options> = DEFAULT_OPTIONS
   ) {
@@ -185,7 +184,7 @@ export class SpiderifyFeatures {
       type: this.originLayer.type,
       source: this.spiderId,
       layout: this.options.layout
-    } as AnyLayer)
+    } as LayerSpecification)
 
     // calculate the spider
     const spiderParams = Array.from(
@@ -205,7 +204,7 @@ export class SpiderifyFeatures {
     // to avoid flicker give a little delay before hiding the underlying points and starting the spider animation
     setTimeout(() => {
       // make the features invisible in their original dataset as we'll animate them on the spiderify layer
-      this.originalFilter = this.map.getFilter(this.originLayer.id)
+      this.originalFilter = this.map.getFilter(this.originLayer.id) || null
       this.map.setFilter(this.originLayer.id, [
         'all',
         this.originalFilter,
@@ -213,7 +212,7 @@ export class SpiderifyFeatures {
           '!',
           ['in', ['id'], ['literal', this.renderedFeatures.map(({ id }) => id)]]
         ]
-      ])
+      ] as FilterSpecification)
       void this.animateSpider(spiderParams)
     }, 20)
 
@@ -278,7 +277,7 @@ export class SpiderifyFeatures {
                     ]
                   },
                   properties: {}
-                } as Feature<LineString>)
+                }) as Feature<LineString>
             )
             ;(this.map.getSource(this.spiderId) as GeoJSONSource).setData({
               type: 'FeatureCollection',
