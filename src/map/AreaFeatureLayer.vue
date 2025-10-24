@@ -76,7 +76,7 @@ onMounted(async () => {
           IS_COMPLETED_COLOR,
           getColorFromPropertiesWithDefault('#000', 'color')
         ],
-        'fill-opacity': 0.1
+        'fill-opacity': 0.35
       }
     },
     firstSymbolId
