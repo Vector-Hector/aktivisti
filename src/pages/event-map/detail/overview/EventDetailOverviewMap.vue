@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, watch } from 'vue'
-import FeatureLayer from 'src/map/AreaFeatureLayer.vue'
+import AreaFeatureLayer from 'src/map/AreaFeatureLayer.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { useInjectMapMixin } from 'src/pages/event-detail/InjectMapMixin'
 import EventMarker from 'components/EventMarker.vue'
@@ -31,7 +31,7 @@ watch(
 
 <template>
   <EventMarker v-if="eventStore.event?.location" :event="eventStore.event" />
-  <FeatureLayer :features="eventStore.areaFeatures" />
+  <AreaFeatureLayer :features="eventStore.areaFeatures" />
 </template>
 
 <style lang="scss" scoped></style>
