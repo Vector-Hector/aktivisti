@@ -24,7 +24,10 @@ export function useEditEventGeometryMixin() {
         id: area.feature_id,
         properties: {
           // find the corresponding area and copy the color
-          color: area.color
+          color: area.color,
+          is_completed: area.is_completed,
+          has_assignee: area.has_assignee,
+          name: area.name
         }
       }
     })

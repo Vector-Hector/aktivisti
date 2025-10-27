@@ -11,6 +11,7 @@ import {
 } from 'maplibre-gl'
 import { useMap } from 'src/map/MapUtils'
 import { loadImageIfNonExistent } from 'src/utils/map'
+import { centroid } from '@turf/turf'
 
 const IS_COMPLETED_COLOR = '#000'
 
@@ -27,6 +28,8 @@ const emit = defineEmits<Emits>()
 
 const uuid = uuidv4()
 const map = useMap()
+
+const labelSourceId = `${uuid}-labels`
 
 const layers: string[] = []
 
@@ -60,6 +63,11 @@ onMounted(async () => {
       map.value,
       'has-no-assignee-icon',
       '/static/ionicons/warning-outline.png'
+    ),
+    loadImageIfNonExistent(
+      map.value,
+      'label-background',
+      '/static/icons/background.png'
     )
   ])
 
@@ -70,22 +78,46 @@ onMounted(async () => {
       features: []
     }
   })
+  map?.value.addSource(labelSourceId, {
+    type: 'geojson',
+    data: {
+      type: 'FeatureCollection',
+      features: []
+    }
+  })
+
+  const updateSources = (features: Feature[]) => {
+    const baseSource = map.value?.getSource(uuid) as GeoJSONSource
+    baseSource?.setData({
+      type: 'FeatureCollection',
+      features
+    })
+
+    const centroidFeatures = features.map((f) => {
+      const c = centroid(f)
+      c.properties = f.properties || {}
+      return c
+    })
+
+    const labelSource = map.value?.getSource(labelSourceId) as GeoJSONSource
+    labelSource?.setData({
+      type: 'FeatureCollection',
+      features: centroidFeatures
+    })
+  }
 
   watch(
     () => props.features,
-    (newValue) => {
-      ;(map.value?.getSource(uuid) as GeoJSONSource)?.setData({
-        type: 'FeatureCollection',
-        features: newValue
-      })
-    },
+    (newValue) => updateSources(newValue),
     { immediate: true }
   )
   const fillLayer = `${uuid}-fill`
   const outlineLayer = `${uuid}-outline`
   const iconLayer = `${uuid}-icon`
+  const labelLayer = `${uuid}-label`
 
-  layers.push(fillLayer, outlineLayer, iconLayer)
+  layers.push(fillLayer, outlineLayer, iconLayer, labelLayer)
+
   map?.value.addLayer({
     id: `${uuid}-fill`,
     type: 'fill',
@@ -135,6 +167,39 @@ onMounted(async () => {
         ''
       ],
       'fill-opacity': ['case', ['==', ['get', 'is_completed'], true], 0.25, 0.5]
+    }
+  })
+  map.value?.addLayer({
+    id: labelLayer,
+    type: 'symbol',
+    source: labelSourceId,
+    layout: {
+      'text-field': ['get', 'name'],
+      'text-size': [
+        'interpolate',
+        ['linear'],
+        ['zoom'],
+        0,
+        0.01,
+        10,
+        8,
+        15,
+        12,
+        20,
+        14
+      ],
+      'text-anchor': 'center',
+      'text-max-width': 12,
+      'icon-image': 'label-background',
+      'icon-text-fit': 'both',
+      'icon-text-fit-padding': [2, 2, 2, 2],
+      'text-allow-overlap': true
+    },
+    paint: {
+      'text-color': '#000',
+      'text-halo-color': 'white',
+      'text-halo-width': 1,
+      'icon-opacity': 0.5
     }
   })
   addEventHandlers(uuid)
