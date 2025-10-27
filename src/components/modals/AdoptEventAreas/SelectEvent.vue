@@ -25,7 +25,7 @@ const _defaultFilterPreference = {
   sub_association: DEFAULT_FILTER_PREFERENCES.subAssociations,
   campaigns: DEFAULT_FILTER_PREFERENCES.campaign,
   order_by: DEFAULT_FILTER_PREFERENCES.sorting,
-  event_type: editEventStore.state.event?.event_type,
+  event_type: DEFAULT_FILTER_PREFERENCES.eventType,
   status: DEFAULT_FILTER_PREFERENCES.status,
   is_owner: DEFAULT_FILTER_PREFERENCES.is_owner,
   management_permission: DEFAULT_FILTER_PREFERENCES.management_permission,
@@ -40,7 +40,10 @@ const emit = defineEmits<Emits>()
 
 const campaigns = ref<CampaignDto[]>([])
 const subAssociations = ref<SubAssociationDto[]>([])
-const filterParams = ref<EventFilterParams>(_defaultFilterPreference)
+const filterParams = ref<EventFilterParams>({
+  ..._defaultFilterPreference,
+  event_type: editEventStore.state.event?.event_type
+})
 const pagination = ref<Pagination | null>(_defaultPagination)
 const shownEvents = ref<EventDto[]>([])
 
