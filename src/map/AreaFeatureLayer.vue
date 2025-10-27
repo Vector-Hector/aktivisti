@@ -32,15 +32,6 @@ onMounted(async () => {
     )
   ])
 
-  // Find the index of the first symbol layer in the map style
-  let firstSymbolId
-  const preExistingLayers = map.value?.getStyle()?.layers
-  if (preExistingLayers) {
-    firstSymbolId = preExistingLayers.find(
-      (layer) => layer.type === 'symbol'
-    )?.id
-  }
-
   map?.value.addSource(uuid, {
     type: 'geojson',
     data: {
@@ -64,76 +55,57 @@ onMounted(async () => {
   const iconLayer = `${uuid}-icon`
 
   layers.push(fillLayer, outlineLayer, iconLayer)
-  map?.value.addLayer(
-    {
-      id: `${uuid}-fill`,
-      type: 'fill',
-      source: uuid,
-      paint: {
-        'fill-color': [
-          'case',
-          ['==', ['get', 'is_completed'], true],
-          IS_COMPLETED_COLOR,
-          getColorFromPropertiesWithDefault('#000', 'color')
-        ],
-        'fill-opacity': 0.1
-      }
-    },
-    firstSymbolId
-  )
-  map?.value.addLayer(
-    {
-      id: `${uuid}-outline`,
-      type: 'line',
-      source: uuid,
-      paint: {
-        // @ts-ignore
-        'line-color': [
-          'case',
-          ['==', ['get', 'is_completed'], true],
-          IS_COMPLETED_COLOR,
-          getColorFromPropertiesWithDefault('#000', 'color')
-        ],
-        'line-opacity': [
-          'case',
-          ['==', ['get', 'is_completed'], true],
-          0.25,
-          1
-        ],
-        'line-width': 1
-      }
-    },
-    firstSymbolId
-  )
-  map.value?.addLayer(
-    {
-      id: `${uuid}-icon`,
-      type: 'fill',
-      source: uuid,
-      filter: [
-        'any',
+  map?.value.addLayer({
+    id: `${uuid}-fill`,
+    type: 'fill',
+    source: uuid,
+    paint: {
+      'fill-color': [
+        'case',
         ['==', ['get', 'is_completed'], true],
-        ['!=', ['get', 'has_assignee'], true]
+        IS_COMPLETED_COLOR,
+        getColorFromPropertiesWithDefault('#000', 'color')
       ],
-      paint: {
-        'fill-pattern': [
-          'case',
-          ['==', ['get', 'is_completed'], true],
-          'is-completed-icon',
-          ['!=', ['get', 'has_assignee'], true],
-          'has-no-assignee-icon',
-          ''
-        ],
-        'fill-opacity': [
-          'case',
-          ['==', ['get', 'is_completed'], true],
-          0.25,
-          0.5
-        ]
-      }
-    },
-    firstSymbolId
-  )
+      'fill-opacity': 0.1
+    }
+  })
+  map?.value.addLayer({
+    id: `${uuid}-outline`,
+    type: 'line',
+    source: uuid,
+    paint: {
+      // @ts-ignore
+      'line-color': [
+        'case',
+        ['==', ['get', 'is_completed'], true],
+        IS_COMPLETED_COLOR,
+        getColorFromPropertiesWithDefault('#000', 'color')
+      ],
+      'line-opacity': ['case', ['==', ['get', 'is_completed'], true], 0.25, 1],
+      'line-width': 1
+    }
+  })
+  map.value?.addLayer({
+    id: `${uuid}-icon`,
+    type: 'fill',
+    source: uuid,
+    filter: [
+      'any',
+      ['==', ['get', 'is_completed'], true],
+      ['!=', ['get', 'has_assignee'], true]
+    ],
+    paint: {
+      'fill-pattern': [
+        'case',
+        ['==', ['get', 'is_completed'], true],
+        'is-completed-icon',
+        ['!=', ['get', 'has_assignee'], true],
+        'has-no-assignee-icon',
+        ''
+      ],
+      'fill-opacity': ['case', ['==', ['get', 'is_completed'], true], 0.25, 0.5]
+    }
+  })
 })
 
 onUnmounted(() => {
