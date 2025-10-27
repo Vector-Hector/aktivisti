@@ -639,6 +639,13 @@
             "errorMessage": "Beim Speichern trat ein Fehler auf"
           }
         }
+      },
+      "areaPopup": {
+        "addressCounter": "{0} Adressen",
+        "posterCounter": "{0} Plakate",
+        "hasNoAssignee": "Niemand zugewiesen",
+        "isCompleted": "Abgeschlossen",
+        "goToArea": "Zum Gebiet"
       }
     },
     "edit": {
