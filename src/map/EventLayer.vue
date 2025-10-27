@@ -9,9 +9,10 @@ import {
   Point
 } from 'geojson'
 import maplibregl, {
-  Expression,
+  DataDrivenPropertyValueSpecification,
   GeoJSONSource,
-  StyleFunction
+  LayerSpecification,
+  ResolvedImageSpecification
 } from 'maplibre-gl'
 import { SpiderifyFeatures } from 'src/map/SpiderifyLayer'
 import { CLUSTER_COLOR } from 'src/constants'
@@ -30,7 +31,9 @@ class EventLayer {
   constructor(
     private map: maplibregl.Map,
     private featureCollection: FeatureCollection,
-    private iconImageValue: string | StyleFunction | Expression,
+    private iconImageValue:
+      | string
+      | DataDrivenPropertyValueSpecification<ResolvedImageSpecification>,
     private eventClickCallback: (feature: Feature) => void = () => {},
     private clusterize = true,
     private spiderify = true
@@ -93,7 +96,7 @@ class EventLayer {
       }
       const spiderifier = new SpiderifyFeatures(
         this.map,
-        this.map.getLayer(this.unclusteredPointId),
+        this.map.getLayer(this.unclusteredPointId) as LayerSpecification,
         e.features as Array<Feature<Point>>,
         {
           layout: {
@@ -137,9 +140,7 @@ class EventLayer {
       })
       const clusterId = features[0]?.properties?.cluster_id
       const source = this.map.getSource(this.clusterLayerId) as GeoJSONSource
-      source.getClusterExpansionZoom(clusterId, (err, zoom) => {
-        if (err) return
-
+      void source.getClusterExpansionZoom(clusterId).then((zoom) => {
         this.map.easeTo({
           center: (features[0].geometry as Point).coordinates as [
             number,
@@ -172,7 +173,9 @@ class EventLayer {
 
 interface Props {
   featureCollection: FeatureCollection
-  iconImageValue: string | StyleFunction | Expression
+  iconImageValue:
+    | string
+    | DataDrivenPropertyValueSpecification<ResolvedImageSpecification>
   iconName?: string
   clusterize?: boolean
 }

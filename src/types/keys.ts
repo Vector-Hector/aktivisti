@@ -1,4 +1,4 @@
-import { InjectionKey, Ref } from 'vue/dist/vue'
-import maplibregl from 'maplibre-gl'
+import { InjectionKey, Ref } from 'vue'
+import type { Map } from 'maplibre-gl'
 
-export const MapKey: InjectionKey<Ref<maplibregl.Map | null>> = Symbol()
+export const MapKey = Symbol() as InjectionKey<Ref<Map | null>>
