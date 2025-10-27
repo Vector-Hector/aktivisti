@@ -155,7 +155,8 @@ export const useEventStore = defineStore('eventDetail', () => {
         properties: {
           color: area.color,
           is_completed: area.is_completed,
-          has_assignee: area.has_assignee
+          has_assignee: area.has_assignee,
+          area_id: area.id
         }
       } as Feature
     })

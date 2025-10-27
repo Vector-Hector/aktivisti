@@ -3,7 +3,12 @@ import { onMounted, onUnmounted, watch } from 'vue'
 import { uuidv4 } from 'src/utils/uuid'
 import { Feature } from 'geojson'
 import { getColorFromPropertiesWithDefault } from 'pages/edit-event/geometry/route-planner.styles'
-import { GeoJSONSource } from 'maplibre-gl'
+import {
+  GeoJSONSource,
+  LngLat,
+  MapGeoJSONFeature,
+  MapMouseEvent
+} from 'maplibre-gl'
 import { useMap } from 'src/map/MapUtils'
 import { loadImageIfNonExistent } from 'src/utils/map'
 
@@ -12,12 +17,38 @@ const IS_COMPLETED_COLOR = '#000'
 interface Props {
   features: Feature[]
 }
+
+interface Emits {
+  (e: 'onEventAreaClick', eventAreaId: number, lngLat: LngLat): void
+}
+
 const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
 
 const uuid = uuidv4()
 const map = useMap()
 
 const layers: string[] = []
+
+function handleEventAreaClick(
+  e: MapMouseEvent & {
+    features?: MapGeoJSONFeature[]
+  } & object
+) {
+  const eventAreaId = e.features[0].properties.area_id
+  emit('onEventAreaClick', eventAreaId, e.lngLat)
+}
+
+function addEventHandlers(layerId: string) {
+  const fillLayer = `${layerId}-fill`
+  map.value.on('click', fillLayer, handleEventAreaClick)
+}
+
+function removeEventHandlers(layerId: string) {
+  const fillLayer = `${layerId}-fill`
+  map.value.off('click', fillLayer, handleEventAreaClick)
+}
+
 onMounted(async () => {
   await Promise.all([
     loadImageIfNonExistent(
@@ -106,12 +137,14 @@ onMounted(async () => {
       'fill-opacity': ['case', ['==', ['get', 'is_completed'], true], 0.25, 0.5]
     }
   })
+  addEventHandlers(uuid)
 })
 
 onUnmounted(() => {
   layers.forEach((layerId) => {
     map?.value?.removeLayer(layerId)
   })
+  removeEventHandlers(uuid)
 })
 </script>
 <template><span></span></template>
