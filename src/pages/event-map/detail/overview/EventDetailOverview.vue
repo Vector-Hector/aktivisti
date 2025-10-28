@@ -371,63 +371,16 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 @import 'src/css/utils.scss';
 
-.event {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.map-container {
-  flex: 1;
-}
-
-.campaign {
-  font-weight: bold;
-  display: block;
-}
-
 .full-width {
   width: 100%;
-}
-
-.event-name {
-  margin: 0 0 1rem 0;
-}
-
-.participants {
-  cursor: pointer;
 }
 
 label {
   text-align: left;
 }
 
-.campaign {
-  font-weight: bold;
-  display: block;
-}
-
 .full-width {
   width: 100%;
-}
-
-.event-name {
-  margin: 0 0 1rem 0;
-}
-
-.chevron {
-  margin-left: 2rem;
-  font-size: 2rem;
-}
-
-.item-buttons {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.social-button {
-  background-color: $grey-1;
 }
 
 .verification-indicator {
