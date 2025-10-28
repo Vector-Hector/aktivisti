@@ -127,7 +127,7 @@ async function leave() {
     eventStore.event = (
       await apiClient.events.leave(eventId.value)
     ).payload.data
-    personalParticipation.value = null
+    eventStore.personalParticipation = null
   } catch {
     $q.notify({
       color: 'negative',
