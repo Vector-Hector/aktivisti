@@ -7,15 +7,14 @@ import EventInvitePeopleModal from 'src/components/modals/EventInvitePeopleModal
 import { apiClient } from 'src/api/ApiClient'
 import EventAreaItem from 'src/components/EventAreaItem.vue'
 import { QBtn, QIcon, QList, QScrollArea, useQuasar } from 'quasar'
-import { EventTypes, useEventTypes } from 'src/api/model/EventTypes'
-import Share from 'components/Share.vue'
+import { EventTypes } from 'src/api/model/EventTypes'
 import { useRouter } from 'vue-router'
-import { useDateFormat } from 'src/utils/dateFormat'
 import { useI18n } from 'vue-i18n'
 import { useEventStore } from 'src/stores/event'
 import EventParticipationButton from 'src/components/eventDetails/EventParticipationButton.vue'
 import EventAdminActions from 'src/components/eventDetails/EventAdminActions.vue'
 import EventInfos from 'src/components/eventDetails/EventInfos.vue'
+import EventShareButton from 'src/components/eventDetails/EventShareButton.vue'
 
 const { t } = useI18n()
 const userStore = useUserStore()
@@ -25,8 +24,6 @@ const authStore = getAuthStore()
 
 const $router = useRouter()
 const $q = useQuasar()
-const { dateFormat } = useDateFormat()
-const { eventTypeOptions } = useEventTypes()
 
 const joinLoading = ref(false)
 const verficationPollTimeout = ref<null | NodeJS.Timeout>(null)
@@ -45,39 +42,6 @@ const isVerficationRequired = computed(() => {
   )
 })
 
-const shareUrl = computed(() => {
-  const shareUrl = process.env.APP_SHARE_URL as string
-  return (
-    shareUrl +
-    $router.resolve({
-      name: 'event-detail',
-      params: {
-        eventId: eventStore.event.id
-      }
-    }).path
-  )
-})
-const shareTitle = computed(() => {
-  return eventStore.event.name
-})
-const shareDescription = computed(() => {
-  if (eventStore.event.description) {
-    return `\n\n${eventStore.event.description}`
-  } else {
-    return ''
-  }
-})
-const shareText = computed(() => {
-  const formattedDate = dateFormat(eventStore.event.start_date, 'date')
-  const formattedTime = dateFormat(eventStore.event.start_date, 'time')
-  return t('events.details.actions.share.shareText', {
-    eventName: eventStore.event.name,
-    eventType: eventTypeLabel.value,
-    eventDescription: shareDescription.value,
-    eventDate: formattedDate,
-    eventTime: formattedTime
-  })
-})
 const eventId = computed(() => {
   return eventStore.event.id.toString()
 })
@@ -102,10 +66,6 @@ const eventAreasSorted = computed(() => {
     }
     return collator.compare(a.name, b.name)
   })
-})
-const eventTypeLabel = computed(() => {
-  return eventTypeOptions.find(({ key }) => key === eventStore.event.event_type)
-    ?.label
 })
 const isLoggedIn = computed(() => {
   return authStore.isLoggedIn()
@@ -287,7 +247,7 @@ onBeforeUnmount(() => {
           :has-notification="isVerficationRequired"
           @on-dissmiss="handleParticipationDissmiss"
         />
-        <Share :title="shareTitle" :text="shareText" :url="shareUrl" />
+        <EventShareButton :event="eventStore.event" />
         <EventAdminActions
           v-if="eventStore.isTeamCaptainOrCoordinator"
           :event="eventStore.event"
