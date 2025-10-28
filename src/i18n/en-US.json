@@ -639,6 +639,13 @@
             "errorMessage": "An error occurred while saving"
           }
         }
+      },
+      "areaPopup": {
+        "addressCounter": "{0} Addresses",
+        "posterCounter": "{0} Posters",
+        "hasNoAssignee": "No one assigned",
+        "isCompleted": "Completed",
+        "goToArea": "Go to Area"
       }
     },
     "edit": {

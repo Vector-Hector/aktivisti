@@ -5,13 +5,16 @@ import { useMap } from 'src/map/MapUtils'
 
 interface Props {
   coordinates: Array<number>
+  hasOffset?: boolean
 }
 
 interface Emits {
   (e: 'close'): void
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  hasOffset: true
+})
 const emit = defineEmits<Emits>()
 
 const map = useMap()
@@ -22,7 +25,9 @@ onMounted(() => {
   popup.value = new Popup().setLngLat(props.coordinates as [number, number])
   popup.value?.setDOMContent(popupElement.value!)
   popup.value.addTo(map.value)
-  popup.value.setOffset([0, -24])
+  if (props.hasOffset) {
+    popup.value.setOffset([0, -24])
+  }
   popup.value.on('close', () => emit('close'))
 })
 
