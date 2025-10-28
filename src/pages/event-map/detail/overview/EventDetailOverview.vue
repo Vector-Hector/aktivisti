@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
-import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { getAuthStore } from 'src/store/AuthStore'
 import { useUserStore } from 'src/stores/user'
 import EventInvitePeopleModal from 'src/components/modals/EventInvitePeopleModal.vue'
 import { apiClient } from 'src/api/ApiClient'
-import EventAreaItem from 'src/components/EventAreaItem.vue'
-import { QBtn, QIcon, QList, QScrollArea, useQuasar } from 'quasar'
+import { QBtn, QIcon, QScrollArea, useQuasar } from 'quasar'
 import { EventTypes } from 'src/api/model/EventTypes'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -15,6 +13,7 @@ import EventParticipationButton from 'src/components/eventDetails/EventParticipa
 import EventAdminActions from 'src/components/eventDetails/EventAdminActions.vue'
 import EventInfos from 'src/components/eventDetails/EventInfos.vue'
 import EventShareButton from 'src/components/eventDetails/EventShareButton.vue'
+import EventAreasList from 'src/components/eventDetails/EventAreasList.vue'
 
 const { t } = useI18n()
 const userStore = useUserStore()
@@ -45,28 +44,6 @@ const isVerficationRequired = computed(() => {
 const eventId = computed(() => {
   return eventStore.event.id.toString()
 })
-const noAreaPosters = computed(() => {
-  return {
-    id: undefined,
-    name: t('events.details.noAreaPosters'),
-    color: '#FFFFFF',
-    event: parseInt(eventId.value),
-    is_completed: false,
-    poster_count: postersWithoutArea.value.length
-  } as Partial<EventAreaDto>
-})
-const eventAreasSorted = computed(() => {
-  const collator = new Intl.Collator('de', { caseFirst: 'upper' })
-  return [...eventStore.eventAreas].sort((a, b) => {
-    if (a.is_completed && !b.is_completed) {
-      return 1
-    }
-    if (!a.is_completed && b.is_completed) {
-      return -1
-    }
-    return collator.compare(a.name, b.name)
-  })
-})
 const isLoggedIn = computed(() => {
   return authStore.isLoggedIn()
 })
@@ -82,10 +59,6 @@ const needsVerification = computed(() => {
     eventStore.event.event_type !== EventTypes.GENERIC
   )
 })
-
-const postersWithoutArea = computed(() =>
-  eventStore.posters.filter(({ area }) => area === null)
-)
 
 watch(
   () => eventStore.personalParticipation?.is_verified,
@@ -260,26 +233,15 @@ onBeforeUnmount(() => {
       </EventInfos>
       <div class="areas row q-col-gutter-y-md" v-if="isMember">
         <div class="col-12">
-          <QList class="area-list">
-            <EventAreaItem
-              v-for="area in eventAreasSorted"
-              :key="area.id"
-              :area="area"
-              :participations="eventStore.participations"
-              :show-participation-count="eventStore.isTeamCaptainOrCoordinator"
-              :personal-participation="eventStore.personalParticipation"
-              :event-type="eventStore.event.event_type"
-            />
-            <EventAreaItem
-              v-if="
-                eventStore.event.event_type === EventTypes.POSTERS &&
-                postersWithoutArea.length > 0
-              "
-              :area="noAreaPosters"
-              :participations="[]"
-              :event-type="eventStore.event.event_type"
-            />
-          </QList>
+          <EventAreasList
+            :eventId="eventStore.event.id"
+            :eventAreas="eventStore.eventAreas"
+            :eventType="eventStore.event.event_type"
+            :personalParticipation="eventStore.personalParticipation"
+            :posters="eventStore.posters"
+            :showParticipationCount="eventStore.isTeamCaptainOrCoordinator"
+            :participations="eventStore.participations"
+          />
         </div>
       </div>
       <div v-if="needsVerification" class="row text-primary q-col-gutter-x-md">
