@@ -6,37 +6,19 @@ import { useUserStore } from 'src/stores/user'
 import EventInvitePeopleModal from 'src/components/modals/EventInvitePeopleModal.vue'
 import { apiClient } from 'src/api/ApiClient'
 import EventAreaItem from 'src/components/EventAreaItem.vue'
-import {
-  ionBarChart,
-  ionPencil,
-  ionPrint,
-  ionReceipt,
-  ionSettingsSharp,
-  ionTrash
-} from '@quasar/extras/ionicons-v5'
-import {
-  QBtn,
-  QIcon,
-  QFab,
-  QFabAction,
-  QList,
-  QScrollArea,
-  useQuasar
-} from 'quasar'
+import { QBtn, QIcon, QList, QScrollArea, useQuasar } from 'quasar'
 import { EventTypes, useEventTypes } from 'src/api/model/EventTypes'
 import Share from 'components/Share.vue'
-import LabeledBtn from 'components/LabeledBtn.vue'
-import { useDeleteEventDialog } from 'src/utils/dialog'
 import { useRouter } from 'vue-router'
 import { useDateFormat } from 'src/utils/dateFormat'
 import { useI18n } from 'vue-i18n'
 import { useEventStore } from 'src/stores/event'
 import EventParticipationButton from 'src/components/eventDetails/EventParticipationButton.vue'
+import EventAdminActions from 'src/components/eventDetails/EventAdminActions.vue'
 
 const { t } = useI18n()
 const userStore = useUserStore()
 
-const PREFIX_HANG_DOWN_POSTERS = t('events.details.prefixHangDownPostersEvent')
 const pollIntervalMs = 5000
 const authStore = getAuthStore()
 
@@ -44,7 +26,6 @@ const $router = useRouter()
 const $q = useQuasar()
 const { dateFormat } = useDateFormat()
 const { eventTypeOptions } = useEventTypes()
-const { openDeleteEventDialog } = useDeleteEventDialog()
 
 const joinLoading = ref(false)
 const verficationPollTimeout = ref<null | NodeJS.Timeout>(null)
@@ -131,19 +112,8 @@ const isLoggedIn = computed(() => {
 const isMember = computed(() => {
   return eventStore.personalParticipation?.is_pending_invitation === false
 })
-const isHangDownEvent = computed(() => {
-  return eventStore.event.name.startsWith(PREFIX_HANG_DOWN_POSTERS)
-})
 const isInvited = computed(() => {
   return eventStore.personalParticipation?.is_pending_invitation === true
-})
-const isPrintableEvent = computed(() => {
-  const { event_type } = eventStore.event
-  return [
-    EventTypes.DOOR_TO_DOOR,
-    EventTypes.POSTERS,
-    EventTypes.FLYERS
-  ].includes(event_type)
 })
 const needsVerification = computed(() => {
   return (
@@ -285,51 +255,11 @@ async function pollForVerification() {
   }, pollIntervalMs)
 }
 
-function openDeleteModal() {
-  openDeleteEventDialog(eventStore.event).catch(console.error)
-}
 function openAdminMenu() {
   adminMenuOpen.value = true
 }
 function hideAdminMenu() {
   adminMenuOpen.value = false
-}
-function openPosterTakeDownModal() {
-  $q.dialog({
-    title: t('events.details.actions.admin.posterTakeDown.dialog.title'),
-    message: t(
-      'events.details.actions.admin.posterTakeDown.dialog.description',
-      [`<b>"${eventStore.event.name}"</b>`]
-    ),
-    html: true,
-    cancel: true
-  })
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    .onOk(async () => {
-      const newStartDate = new Date()
-      newStartDate.setHours(
-        newStartDate.getHours() + Math.round(newStartDate.getMinutes() / 60) + 1
-      )
-      newStartDate.setMinutes(0, 0, 0)
-      const newEndDate = new Date(newStartDate)
-      newEndDate.setDate(newEndDate.getDate() + 14)
-      try {
-        await apiClient.events.update(eventStore.event.id.toString(), {
-          ...eventStore.event,
-          name: PREFIX_HANG_DOWN_POSTERS + eventStore.event.name,
-          start_date: newStartDate.toISOString(),
-          end_date: newEndDate.toISOString()
-        })
-        $router.go(0)
-      } catch {
-        $q.notify({
-          color: 'negative',
-          message: t(
-            'events.details.actions.admin.posterTakeDown.dialog.notifications.generalError'
-          )
-        })
-      }
-    })
 }
 
 onBeforeUnmount(() => {
@@ -422,113 +352,15 @@ onBeforeUnmount(() => {
             @on-dissmiss="handleParticipationDissmiss"
           />
           <Share :title="shareTitle" :text="shareText" :url="shareUrl" />
-          <LabeledBtn
+          <EventAdminActions
             v-if="eventStore.isTeamCaptainOrCoordinator"
-            :external-label="$t('events.details.actions.admin.label')"
+            :event="eventStore.event"
+            :showCoordinatorFeatures="eventStore.isCoordinator"
+            @before-show="openAdminMenu()"
+            @before-hide="hideAdminMenu()"
             class="admin-button"
             :class="{ float: adminMenuOpen }"
-          >
-            <template v-slot:btn>
-              <QFab
-                class="bg-white"
-                :icon="ionSettingsSharp"
-                color="primary"
-                padding="sm"
-                direction="left"
-                outline
-                round
-                @before-show="openAdminMenu()"
-                @before-hide="hideAdminMenu()"
-              >
-                <QFabAction
-                  v-if="eventStore.isCoordinator"
-                  @click="openDeleteModal"
-                  color="primary"
-                  :icon="ionTrash"
-                  class="bg-white admin-fab"
-                  stacked
-                  :label="$t('events.details.actions.admin.delete.label')"
-                  outline
-                  label-class="bg-grey-2 text-primary"
-                  external-label
-                  label-position="bottom"
-                />
-                <QFabAction
-                  v-if="eventStore.isCoordinator"
-                  :to="{
-                    name: 'edit-event-details',
-                    params: { eventId: eventStore.event.id }
-                  }"
-                  color="primary"
-                  :icon="ionPencil"
-                  class="bg-white admin-fab"
-                  stacked
-                  :label="$t('events.details.actions.admin.edit.label')"
-                  outline
-                  label-class="bg-grey-2 text-primary"
-                  external-label
-                  label-position="bottom"
-                />
-                <QFabAction
-                  v-if="
-                    [EventTypes.DOOR_TO_DOOR, EventTypes.FLYERS].includes(
-                      eventStore.event.event_type
-                    ) && eventStore.isCoordinator
-                  "
-                  :to="{
-                    name: 'event-detail-report',
-                    params: { eventId: eventStore.event.id }
-                  }"
-                  color="primary"
-                  :icon="ionBarChart"
-                  class="bg-white admin-fab"
-                  stacked
-                  :label="$t('events.details.actions.admin.report.label')"
-                  outline
-                  label-class="bg-grey-2 text-primary"
-                  external-label
-                  label-position="bottom"
-                />
-                <QFabAction
-                  v-if="
-                    eventStore.event.event_type === EventTypes.POSTERS &&
-                    !isHangDownEvent &&
-                    eventStore.isCoordinator
-                  "
-                  @click="openPosterTakeDownModal"
-                  color="primary"
-                  :icon="ionReceipt"
-                  class="bg-white admin-fab"
-                  stacked
-                  :label="
-                    $t('events.details.actions.admin.posterTakeDown.label')
-                  "
-                  outline
-                  label-class="bg-grey-2 text-primary"
-                  external-label
-                  label-position="bottom"
-                />
-                <QFabAction
-                  v-if="
-                    isPrintableEvent && eventStore.isTeamCaptainOrCoordinator
-                  "
-                  :to="{
-                    name: 'print-event',
-                    params: { eventId: eventStore.event.id }
-                  }"
-                  color="primary"
-                  :icon="ionPrint"
-                  class="bg-white admin-fab"
-                  stacked
-                  :label="$t('events.details.actions.admin.print.label')"
-                  outline
-                  label-class="bg-grey-2 text-primary"
-                  external-label
-                  label-position="bottom"
-                />
-              </QFab>
-            </template>
-          </LabeledBtn>
+          />
         </div>
       </div>
       <div class="row">
@@ -725,11 +557,6 @@ label {
 
 .social-button {
   background-color: $grey-1;
-}
-
-.admin-fab {
-  margin-left: 15px !important;
-  margin-right: 15px !important;
 }
 
 .verification-indicator {
