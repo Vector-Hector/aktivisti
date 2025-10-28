@@ -14,6 +14,7 @@ import EventAdminActions from 'src/components/eventDetails/EventAdminActions.vue
 import EventInfos from 'src/components/eventDetails/EventInfos.vue'
 import EventShareButton from 'src/components/eventDetails/EventShareButton.vue'
 import EventAreasList from 'src/components/eventDetails/EventAreasList.vue'
+import { useEventAreaPolling } from './eventAreaPolling'
 
 const { t } = useI18n()
 const userStore = useUserStore()
@@ -29,6 +30,8 @@ const verficationPollTimeout = ref<null | NodeJS.Timeout>(null)
 const adminMenuOpen = ref(false)
 
 const eventStore = useEventStore()
+
+useEventAreaPolling()
 
 function handleParticipationDissmiss() {
   void refreshEvent()
