@@ -4,13 +4,11 @@ import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { getAuthStore } from 'src/store/AuthStore'
 import { useUserStore } from 'src/stores/user'
 import EventInvitePeopleModal from 'src/components/modals/EventInvitePeopleModal.vue'
-import EventParticipantsModal from 'src/components/modals/EventParticipantsModal.vue'
 import { apiClient } from 'src/api/ApiClient'
 import EventAreaItem from 'src/components/EventAreaItem.vue'
 import {
   ionBarChart,
   ionPencil,
-  ionPerson,
   ionPrint,
   ionReceipt,
   ionSettingsSharp,
@@ -33,6 +31,7 @@ import { useRouter } from 'vue-router'
 import { useDateFormat } from 'src/utils/dateFormat'
 import { useI18n } from 'vue-i18n'
 import { useEventStore } from 'src/stores/event'
+import EventParticipationButton from 'src/components/eventDetails/EventParticipationButton.vue'
 
 const { t } = useI18n()
 const userStore = useUserStore()
@@ -52,6 +51,11 @@ const verficationPollTimeout = ref<null | NodeJS.Timeout>(null)
 const adminMenuOpen = ref(false)
 
 const eventStore = useEventStore()
+
+function handleParticipationDissmiss() {
+  void refreshEvent()
+  void eventStore.refreshParticipants()
+}
 
 const isVerficationRequired = computed(() => {
   return eventStore.participations.some(
@@ -280,19 +284,7 @@ async function pollForVerification() {
     void pollForVerification()
   }, pollIntervalMs)
 }
-function openParticipantsModal() {
-  $q.dialog({
-    component: EventParticipantsModal,
-    maximized: true,
-    componentProps: {
-      eventId: eventStore.event.id,
-      eventSubAssociation: eventStore.event.sub_association
-    }
-  }).onDismiss(() => {
-    void refreshEvent()
-    void eventStore.refreshParticipants()
-  })
-}
+
 function openDeleteModal() {
   openDeleteEventDialog(eventStore.event).catch(console.error)
 }
@@ -419,17 +411,15 @@ onBeforeUnmount(() => {
           </div>
         </div>
         <div class="col-auto column">
-          <LabeledBtn
+          <EventParticipationButton
             v-if="
               eventStore.isTeamCaptainOrCoordinator &&
               eventStore.event.event_type !== EventTypes.GENERIC
             "
-            round
-            outline
-            :icon="ionPerson"
-            @click="openParticipantsModal"
-            :external-label="$t('events.details.participants')"
+            :event-id="eventStore.event.id"
+            :event-sub-association="eventStore.event.sub_association"
             :has-notification="isVerficationRequired"
+            @on-dissmiss="handleParticipationDissmiss"
           />
           <Share :title="shareTitle" :text="shareText" :url="shareUrl" />
           <LabeledBtn
