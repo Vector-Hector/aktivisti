@@ -15,6 +15,7 @@ import { useI18n } from 'vue-i18n'
 import { useEventStore } from 'src/stores/event'
 import EventParticipationButton from 'src/components/eventDetails/EventParticipationButton.vue'
 import EventAdminActions from 'src/components/eventDetails/EventAdminActions.vue'
+import EventInfos from 'src/components/eventDetails/EventInfos.vue'
 
 const { t } = useI18n()
 const userStore = useUserStore()
@@ -272,111 +273,31 @@ onBeforeUnmount(() => {
 <template>
   <QScrollArea class="d-flex flex-fill">
     <div class="container q-gutter-y-md q-py-sm">
-      <div class="row q-gutter-sm">
-        <div class="col">
-          <div class="row q-col-gutter-sm event-details">
-            <div class="col-4">
-              <b>{{ $t('events.details.eventType') }}:</b>
-            </div>
-            <div class="col-8">
-              {{ eventTypeLabel }}
-            </div>
-            <div class="col-4">
-              <b>{{ $t('events.details.meetingPoint') }}:</b>
-            </div>
-            <div class="col-8">
-              {{ eventStore.event.location_description }}
-            </div>
-            <div class="col-4">
-              <b>{{ $t('events.details.startDate') }}:</b>
-            </div>
-            <div class="col-8">
-              {{ dateFormat(eventStore.event.start_date, 'datetime') }}
-            </div>
-            <div class="col-4">
-              <b>{{ $t('events.details.endDate') }}:</b>
-            </div>
-            <div class="col-8">
-              {{ dateFormat(eventStore.event.end_date, 'datetime') }}
-            </div>
-            <template v-if="eventStore.event.external_url">
-              <div class="col-4">
-                <b>{{ $t('events.details.externalUrl') }}:</b>
-              </div>
-              <div class="col-8">
-                <a
-                  target="_blank"
-                  class="primary-link"
-                  :href="eventStore.event.external_url"
-                  >{{ eventStore.event.external_url }}</a
-                >
-              </div>
-            </template>
-            <template v-if="eventStore.event.messenger_url">
-              <div class="col-4">
-                <b>{{ $t('events.details.messangerUrl') }}:</b>
-              </div>
-              <div class="col-8">
-                <a
-                  target="_blank"
-                  class="primary-link"
-                  :href="eventStore.event.messenger_url"
-                  >{{ eventStore.event.messenger_url }}</a
-                >
-              </div>
-            </template>
-            <template
-              v-if="
-                eventStore.isTeamCaptainOrCoordinator &&
-                eventStore.event.event_type !== EventTypes.GENERIC
-              "
-            >
-              <div class="col-4">
-                <b>{{ $t('events.details.participants') }}:</b>
-              </div>
-              <div class="col-8">
-                {{ eventStore.event.participants }}
-              </div>
-            </template>
-          </div>
-        </div>
-        <div class="col-auto column">
-          <EventParticipationButton
-            v-if="
-              eventStore.isTeamCaptainOrCoordinator &&
-              eventStore.event.event_type !== EventTypes.GENERIC
-            "
-            :event-id="eventStore.event.id"
-            :event-sub-association="eventStore.event.sub_association"
-            :has-notification="isVerficationRequired"
-            @on-dissmiss="handleParticipationDissmiss"
-          />
-          <Share :title="shareTitle" :text="shareText" :url="shareUrl" />
-          <EventAdminActions
-            v-if="eventStore.isTeamCaptainOrCoordinator"
-            :event="eventStore.event"
-            :showCoordinatorFeatures="eventStore.isCoordinator"
-            @before-show="openAdminMenu()"
-            @before-hide="hideAdminMenu()"
-            class="admin-button"
-            :class="{ float: adminMenuOpen }"
-          />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 event-description">
-          <b>{{ $t('events.details.publicDescription') }}</b
-          ><br />
-          {{ eventStore.event.description }}
-        </div>
-      </div>
-      <div v-if="eventStore.event.internal_description" class="row">
-        <div class="col-12 event-description">
-          <b>{{ $t('events.details.internalDescription') }}</b
-          ><br />
-          {{ eventStore.event.internal_description }}
-        </div>
-      </div>
+      <EventInfos
+        :event="eventStore.event"
+        :show-particpants="eventStore.isTeamCaptainOrCoordinator"
+      >
+        <EventParticipationButton
+          v-if="
+            eventStore.isTeamCaptainOrCoordinator &&
+            eventStore.event.event_type !== EventTypes.GENERIC
+          "
+          :event-id="eventStore.event.id"
+          :event-sub-association="eventStore.event.sub_association"
+          :has-notification="isVerficationRequired"
+          @on-dissmiss="handleParticipationDissmiss"
+        />
+        <Share :title="shareTitle" :text="shareText" :url="shareUrl" />
+        <EventAdminActions
+          v-if="eventStore.isTeamCaptainOrCoordinator"
+          :event="eventStore.event"
+          :showCoordinatorFeatures="eventStore.isCoordinator"
+          @before-show="openAdminMenu()"
+          @before-hide="hideAdminMenu()"
+          class="admin-button"
+          :class="{ float: adminMenuOpen }"
+        />
+      </EventInfos>
       <div class="areas row q-col-gutter-y-md" v-if="isMember">
         <div class="col-12">
           <QList class="area-list">
@@ -490,10 +411,6 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 @import 'src/css/utils.scss';
 
-.event-details {
-  font-size: 1rem;
-}
-
 .event {
   display: flex;
   flex-direction: column;
@@ -515,12 +432,6 @@ onBeforeUnmount(() => {
 
 .event-name {
   margin: 0 0 1rem 0;
-}
-
-.event-description {
-  font-size: 1rem;
-  white-space: pre-line;
-  margin-bottom: 1rem;
 }
 
 .participants {
