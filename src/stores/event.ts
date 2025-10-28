@@ -265,6 +265,11 @@ export const useEventStore = defineStore('eventDetail', () => {
     )
   }
 
+  const refreshEventAreas = async () => {
+    const response = await apiClient.eventAreas.list({ event: event.value.id })
+    eventAreas.value = response.payload.data
+  }
+
   function setPersonalParticipation(value: EventParticipationDto | null) {
     const oldParticipation = personalParticipation.value
     const existingParticipationIndex = participations.value.findIndex(
@@ -312,6 +317,7 @@ export const useEventStore = defineStore('eventDetail', () => {
     setEventArea,
     setEventAreaPermissions,
     setPersonalParticipationPermissions,
+    refreshEventAreas,
     setEventAreas,
     setEventPermissions,
     setCampaigns,

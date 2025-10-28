@@ -44,6 +44,7 @@ async function joinArea() {
         )
       ).payload.data
     )
+    void eventStore.refreshEventAreas()
   }
 }
 async function leaveArea() {
@@ -56,6 +57,7 @@ async function leaveArea() {
         )
       ).payload.data
     )
+    void eventStore.refreshEventAreas()
   }
 }
 async function updateAreaParticipations(
@@ -119,6 +121,7 @@ async function updateAreaParticipations(
       })
     }
   }
+  void eventStore.refreshEventAreas()
   updateParticipations(changedParticipations)
 }
 function updateParticipations(updatedParticipations: EventParticipationDto[]) {
