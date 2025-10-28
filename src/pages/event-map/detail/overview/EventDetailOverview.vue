@@ -73,7 +73,6 @@ watch(
 )
 
 async function join() {
-  const generalJoinError = t('events.details.notifications.generalJoinError')
   try {
     joinLoading.value = true
     eventStore.event = (await apiClient.events.join(eventId.value)).payload.data
@@ -81,13 +80,13 @@ async function join() {
     if (!eventStore.personalParticipation) {
       $q.notify({
         color: 'negative',
-        message: generalJoinError
+        message: t('events.details.notifications.generalJoinError')
       })
     }
   } catch {
     $q.notify({
       color: 'negative',
-      message: generalJoinError
+      message: t('events.details.notifications.generalJoinError')
     })
   } finally {
     joinLoading.value = false
@@ -123,7 +122,6 @@ async function updateParticipationAndLoadAreas() {
   }
 }
 async function leave() {
-  const generalLeaveError = t('events.details.notifications.generalLeaveError')
   try {
     joinLoading.value = true
     eventStore.event = (
@@ -133,7 +131,7 @@ async function leave() {
   } catch {
     $q.notify({
       color: 'negative',
-      message: generalLeaveError
+      message: t('events.details.notifications.generalLeaveError')
     })
   } finally {
     joinLoading.value = false
