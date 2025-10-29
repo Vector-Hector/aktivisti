@@ -57,12 +57,12 @@ onMounted(async () => {
     loadImageIfNonExistent(
       map.value,
       'is-completed-icon',
-      '/static/ionicons/checkmark-circle-outline.png'
+      '/static/ionicons/checkmark-circle-outline_v2.png'
     ),
     loadImageIfNonExistent(
       map.value,
       'has-no-assignee-icon',
-      '/static/ionicons/warning-outline.png'
+      '/static/ionicons/warning-outline_v2.png'
     ),
     loadImageIfNonExistent(
       map.value,
@@ -113,10 +113,11 @@ onMounted(async () => {
   )
   const fillLayer = `${uuid}-fill`
   const outlineLayer = `${uuid}-outline`
+  const iconCircleLayer = `${uuid}-icon-circle`
   const iconLayer = `${uuid}-icon`
   const labelLayer = `${uuid}-label`
 
-  layers.push(fillLayer, outlineLayer, iconLayer, labelLayer)
+  layers.push(fillLayer, outlineLayer, iconCircleLayer, iconLayer, labelLayer)
 
   map?.value.addLayer({
     id: `${uuid}-fill`,
@@ -149,16 +150,29 @@ onMounted(async () => {
     }
   })
   map.value?.addLayer({
-    id: `${uuid}-icon`,
-    type: 'fill',
-    source: uuid,
+    id: `${uuid}-icon-circle`,
+    type: 'circle',
+    source: labelSourceId,
     filter: [
       'any',
       ['==', ['get', 'is_completed'], true],
       ['!=', ['get', 'has_assignee'], true]
     ],
     paint: {
-      'fill-pattern': [
+      'circle-radius': 10,
+      'circle-color': '#fff',
+      'circle-stroke-color': '#fff',
+      'circle-stroke-width': 2,
+      'circle-opacity': 1
+    }
+  })
+  map.value?.addLayer({
+    id: `${uuid}-icon`,
+    type: 'symbol',
+    source: labelSourceId,
+
+    layout: {
+      'icon-image': [
         'case',
         ['==', ['get', 'is_completed'], true],
         'is-completed-icon',
@@ -166,33 +180,24 @@ onMounted(async () => {
         'has-no-assignee-icon',
         ''
       ],
-      'fill-opacity': ['case', ['==', ['get', 'is_completed'], true], 0.25, 0.5]
+      'icon-allow-overlap': true,
+      'icon-size': 0.55
     }
   })
+
   map.value?.addLayer({
     id: labelLayer,
     type: 'symbol',
     source: labelSourceId,
     layout: {
       'text-field': ['get', 'name'],
-      'text-size': [
-        'interpolate',
-        ['linear'],
-        ['zoom'],
-        0,
-        0.01,
-        10,
-        8,
-        15,
-        12,
-        20,
-        14
-      ],
-      'text-anchor': 'center',
+      'text-size': 12,
+      'text-anchor': 'left',
+      'text-offset': [0.9, 0],
       'text-max-width': 12,
       'icon-image': 'label-background',
       'icon-text-fit': 'both',
-      'icon-text-fit-padding': [2, 2, 2, 2],
+      'icon-text-fit-padding': [2, 2, 2, 4],
       'text-allow-overlap': true
     },
     paint: {
