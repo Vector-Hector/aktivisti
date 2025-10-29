@@ -39,14 +39,26 @@ function handleEventAreaClick(
   emit('onEventAreaClick', eventAreaId, e.lngLat)
 }
 
+function handleMouseEnterArea() {
+  map.value.getCanvas().style.cursor = 'pointer'
+}
+
+function handleMouseLeaveArea() {
+  map.value.getCanvas().style.cursor = ''
+}
+
 function addEventHandlers(layerId: string) {
   const fillLayer = `${layerId}-fill`
   map.value.on('click', fillLayer, handleEventAreaClick)
+  map.value.on('mouseenter', fillLayer, handleMouseEnterArea)
+  map.value.on('mouseleave', fillLayer, handleMouseLeaveArea)
 }
 
 function removeEventHandlers(layerId: string) {
   const fillLayer = `${layerId}-fill`
   map.value.off('click', fillLayer, handleEventAreaClick)
+  map.value.off('mouseenter', fillLayer, handleMouseEnterArea)
+  map.value.off('mouseleave', fillLayer, handleMouseLeaveArea)
 }
 
 onMounted(async () => {
