@@ -26,10 +26,10 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const uuid = uuidv4()
-const map = useMap()
+const areaSourceId = uuidv4()
+const labelSourceId = uuidv4()
 
-const labelSourceId = `${uuid}-labels`
+const map = useMap()
 
 const layers: string[] = []
 
@@ -57,12 +57,12 @@ onMounted(async () => {
     loadImageIfNonExistent(
       map.value,
       'is-completed-icon',
-      '/static/ionicons/checkmark-circle-outline_v2.png'
+      '/static/ionicons/checkmark-sharp.png'
     ),
     loadImageIfNonExistent(
       map.value,
       'has-no-assignee-icon',
-      '/static/ionicons/warning-outline_v2.png'
+      '/static/ionicons/flag.png'
     ),
     loadImageIfNonExistent(
       map.value,
@@ -71,7 +71,7 @@ onMounted(async () => {
     )
   ])
 
-  map?.value.addSource(uuid, {
+  map?.value.addSource(areaSourceId, {
     type: 'geojson',
     data: {
       type: 'FeatureCollection',
@@ -87,7 +87,7 @@ onMounted(async () => {
   })
 
   const updateSources = (features: Feature[]) => {
-    const baseSource = map.value?.getSource(uuid) as GeoJSONSource
+    const baseSource = map.value?.getSource(areaSourceId) as GeoJSONSource
     baseSource?.setData({
       type: 'FeatureCollection',
       features
@@ -111,18 +111,18 @@ onMounted(async () => {
     (newValue) => updateSources(newValue),
     { immediate: true }
   )
-  const fillLayer = `${uuid}-fill`
-  const outlineLayer = `${uuid}-outline`
-  const iconCircleLayer = `${uuid}-icon-circle`
-  const iconLayer = `${uuid}-icon`
-  const labelLayer = `${uuid}-label`
+  const fillLayer = `${areaSourceId}-fill`
+  const outlineLayer = `${areaSourceId}-outline`
+  const iconCircleLayer = `${labelSourceId}-icon-circle`
+  const iconLayer = `${labelSourceId}-icon`
+  const nameLayer = `${labelSourceId}-name`
 
-  layers.push(fillLayer, outlineLayer, iconCircleLayer, iconLayer, labelLayer)
+  layers.push(fillLayer, outlineLayer, iconCircleLayer, iconLayer, nameLayer)
 
   map?.value.addLayer({
-    id: `${uuid}-fill`,
+    id: fillLayer,
     type: 'fill',
-    source: uuid,
+    source: areaSourceId,
     paint: {
       'fill-color': [
         'case',
@@ -134,9 +134,9 @@ onMounted(async () => {
     }
   })
   map?.value.addLayer({
-    id: `${uuid}-outline`,
+    id: outlineLayer,
     type: 'line',
-    source: uuid,
+    source: areaSourceId,
     paint: {
       // @ts-ignore
       'line-color': [
@@ -149,8 +149,32 @@ onMounted(async () => {
       'line-width': 1
     }
   })
+
   map.value?.addLayer({
-    id: `${uuid}-icon-circle`,
+    id: nameLayer,
+    type: 'symbol',
+    source: labelSourceId,
+    layout: {
+      'text-field': ['get', 'name'],
+      'text-size': 12,
+      'text-anchor': 'left',
+      'text-offset': [1.2, 0],
+      'text-max-width': 12,
+      'icon-image': 'label-background',
+      'icon-text-fit': 'both',
+      'icon-text-fit-padding': [2, 8, 2, 8],
+      'text-allow-overlap': true,
+      'icon-allow-overlap': true
+    },
+    paint: {
+      'text-color': '#000',
+      'text-halo-color': 'white',
+      'text-halo-width': 1,
+      'icon-opacity': 0.5
+    }
+  })
+  map.value?.addLayer({
+    id: iconCircleLayer,
     type: 'circle',
     source: labelSourceId,
     filter: [
@@ -159,15 +183,15 @@ onMounted(async () => {
       ['!=', ['get', 'has_assignee'], true]
     ],
     paint: {
-      'circle-radius': 10,
+      'circle-radius': 11,
       'circle-color': '#fff',
-      'circle-stroke-color': '#fff',
-      'circle-stroke-width': 2,
+      'circle-stroke-color': IS_COMPLETED_COLOR,
+      'circle-stroke-width': 1,
       'circle-opacity': 1
     }
   })
   map.value?.addLayer({
-    id: `${uuid}-icon`,
+    id: iconLayer,
     type: 'symbol',
     source: labelSourceId,
 
@@ -181,40 +205,18 @@ onMounted(async () => {
         ''
       ],
       'icon-allow-overlap': true,
-      'icon-size': 0.55
+      'icon-size': 0.25
     }
   })
 
-  map.value?.addLayer({
-    id: labelLayer,
-    type: 'symbol',
-    source: labelSourceId,
-    layout: {
-      'text-field': ['get', 'name'],
-      'text-size': 12,
-      'text-anchor': 'left',
-      'text-offset': [0.9, 0],
-      'text-max-width': 12,
-      'icon-image': 'label-background',
-      'icon-text-fit': 'both',
-      'icon-text-fit-padding': [2, 2, 2, 4],
-      'text-allow-overlap': true
-    },
-    paint: {
-      'text-color': '#000',
-      'text-halo-color': 'white',
-      'text-halo-width': 1,
-      'icon-opacity': 0.5
-    }
-  })
-  addEventHandlers(uuid)
+  addEventHandlers(areaSourceId)
 })
 
 onUnmounted(() => {
   layers.forEach((layerId) => {
     map?.value?.removeLayer(layerId)
   })
-  removeEventHandlers(uuid)
+  removeEventHandlers(areaSourceId)
 })
 </script>
 <template><span></span></template>
