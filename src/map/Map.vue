@@ -80,7 +80,8 @@ onMounted(() => {
     // for now we are disabling any rotating and pitching interaction
     touchPitch: false,
     dragRotate: false,
-    pitchWithRotate: false
+    pitchWithRotate: false,
+    attributionControl: false
   })
   map.value.on('load', () => {
     map.value?.resize()
