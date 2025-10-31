@@ -21,7 +21,9 @@ export function eventAreaToFeature(eventArea: EventAreaDto): Feature {
     geometry: eventArea.geometry,
     properties: {
       color: eventArea.color,
-      is_completed: eventArea.is_completed
+      is_completed: eventArea.is_completed,
+      has_assignee: eventArea.has_assignee,
+      name: eventArea.name
     }
   }
 }

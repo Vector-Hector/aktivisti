@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { QBtn, QIcon } from 'quasar'
-import {
-  ionCheckmarkCircleOutline,
-  ionWarningOutline
-} from '@quasar/extras/ionicons-v7'
+import { ionCheckmarkCircleOutline } from '@quasar/extras/ionicons-v7'
 import { AreaDetailsDto } from 'src/api/model/AreaDetailsDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { EventTypes } from 'src/api/model/EventTypes'
@@ -42,7 +39,7 @@ function handleGoToArea() {
       $t('events.details.areaPopup.posterCounter', [eventArea.poster_count])
     }}</span>
     <div v-if="!eventArea.has_assignee && !eventArea.is_completed">
-      <QIcon :name="ionWarningOutline" />
+      <QIcon name="img:/static/ionicons/flag-sharp-circle.svg" />
       <span class="popup-content-label">
         {{ $t('events.details.areaPopup.hasNoAssignee') }}</span
       >

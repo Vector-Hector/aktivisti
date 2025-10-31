@@ -11,6 +11,7 @@ import {
 } from 'maplibre-gl'
 import { useMap } from 'src/map/MapUtils'
 import { loadImageIfNonExistent } from 'src/utils/map'
+import { centroid } from '@turf/turf'
 
 const IS_COMPLETED_COLOR = '#000'
 
@@ -25,7 +26,9 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const uuid = uuidv4()
+const areaSourceId = uuidv4()
+const labelSourceId = uuidv4()
+
 const map = useMap()
 
 const layers: string[] = []
@@ -66,16 +69,28 @@ onMounted(async () => {
     loadImageIfNonExistent(
       map.value,
       'is-completed-icon',
-      '/static/ionicons/checkmark-circle-outline.png'
+      '/static/ionicons/checkmark-sharp.png'
     ),
     loadImageIfNonExistent(
       map.value,
       'has-no-assignee-icon',
-      '/static/ionicons/warning-outline.png'
+      '/static/ionicons/flag.png'
+    ),
+    loadImageIfNonExistent(
+      map.value,
+      'label-background',
+      '/static/icons/background.png'
     )
   ])
 
-  map?.value.addSource(uuid, {
+  map?.value.addSource(areaSourceId, {
+    type: 'geojson',
+    data: {
+      type: 'FeatureCollection',
+      features: []
+    }
+  })
+  map?.value.addSource(labelSourceId, {
     type: 'geojson',
     data: {
       type: 'FeatureCollection',
@@ -83,25 +98,43 @@ onMounted(async () => {
     }
   })
 
+  const updateSources = (features: Feature[]) => {
+    const baseSource = map.value?.getSource(areaSourceId) as GeoJSONSource
+    baseSource?.setData({
+      type: 'FeatureCollection',
+      features
+    })
+
+    const centroidFeatures = features.map((f) => {
+      const c = centroid(f)
+      c.properties = f.properties || {}
+      return c
+    })
+
+    const labelSource = map.value?.getSource(labelSourceId) as GeoJSONSource
+    labelSource?.setData({
+      type: 'FeatureCollection',
+      features: centroidFeatures
+    })
+  }
+
   watch(
     () => props.features,
-    (newValue) => {
-      ;(map.value?.getSource(uuid) as GeoJSONSource)?.setData({
-        type: 'FeatureCollection',
-        features: newValue
-      })
-    },
+    (newValue) => updateSources(newValue),
     { immediate: true }
   )
-  const fillLayer = `${uuid}-fill`
-  const outlineLayer = `${uuid}-outline`
-  const iconLayer = `${uuid}-icon`
+  const fillLayer = `${areaSourceId}-fill`
+  const outlineLayer = `${areaSourceId}-outline`
+  const iconCircleLayer = `${labelSourceId}-icon-circle`
+  const iconLayer = `${labelSourceId}-icon`
+  const nameLayer = `${labelSourceId}-name`
 
-  layers.push(fillLayer, outlineLayer, iconLayer)
+  layers.push(fillLayer, outlineLayer, iconCircleLayer, iconLayer, nameLayer)
+
   map?.value.addLayer({
-    id: `${uuid}-fill`,
+    id: fillLayer,
     type: 'fill',
-    source: uuid,
+    source: areaSourceId,
     paint: {
       'fill-color': [
         'case',
@@ -113,9 +146,9 @@ onMounted(async () => {
     }
   })
   map?.value.addLayer({
-    id: `${uuid}-outline`,
+    id: outlineLayer,
     type: 'line',
-    source: uuid,
+    source: areaSourceId,
     paint: {
       // @ts-ignore
       'line-color': [
@@ -128,17 +161,54 @@ onMounted(async () => {
       'line-width': 1
     }
   })
+
   map.value?.addLayer({
-    id: `${uuid}-icon`,
-    type: 'fill',
-    source: uuid,
+    id: nameLayer,
+    type: 'symbol',
+    source: labelSourceId,
+    layout: {
+      'text-field': ['get', 'name'],
+      'text-size': 12,
+      'text-anchor': 'left',
+      'text-offset': [1.2, 0],
+      'text-max-width': 12,
+      'icon-image': 'label-background',
+      'icon-text-fit': 'both',
+      'icon-text-fit-padding': [2, 8, 2, 8],
+      'text-allow-overlap': true,
+      'icon-allow-overlap': true
+    },
+    paint: {
+      'text-color': '#000',
+      'text-halo-color': 'white',
+      'text-halo-width': 1,
+      'icon-opacity': 0.5
+    }
+  })
+  map.value?.addLayer({
+    id: iconCircleLayer,
+    type: 'circle',
+    source: labelSourceId,
     filter: [
       'any',
       ['==', ['get', 'is_completed'], true],
       ['!=', ['get', 'has_assignee'], true]
     ],
     paint: {
-      'fill-pattern': [
+      'circle-radius': 11,
+      'circle-color': '#fff',
+      'circle-stroke-color': IS_COMPLETED_COLOR,
+      'circle-stroke-width': 1,
+      'circle-opacity': 1
+    }
+  })
+  map.value?.addLayer({
+    id: iconLayer,
+    type: 'symbol',
+    source: labelSourceId,
+
+    layout: {
+      'icon-image': [
         'case',
         ['==', ['get', 'is_completed'], true],
         'is-completed-icon',
@@ -146,17 +216,19 @@ onMounted(async () => {
         'has-no-assignee-icon',
         ''
       ],
-      'fill-opacity': ['case', ['==', ['get', 'is_completed'], true], 0.25, 0.5]
+      'icon-allow-overlap': true,
+      'icon-size': 0.25
     }
   })
-  addEventHandlers(uuid)
+
+  addEventHandlers(areaSourceId)
 })
 
 onUnmounted(() => {
   layers.forEach((layerId) => {
     map?.value?.removeLayer(layerId)
   })
-  removeEventHandlers(uuid)
+  removeEventHandlers(areaSourceId)
 })
 </script>
 <template><span></span></template>
