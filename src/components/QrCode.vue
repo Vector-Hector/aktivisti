@@ -4,9 +4,11 @@ import QRCodeStyling from 'qr-code-styling'
 
 interface Props {
   url: string
+  name: string
 }
 
 const props = defineProps<Props>()
+
 const qrContainer = ref<HTMLElement | null>(null)
 let qr: QRCodeStyling
 
@@ -39,9 +41,21 @@ watch(
     qr.update({ data: newUrl })
   }
 )
+async function downloadQrCode(): Promise<void> {
+  await qr.download({
+    name: `${props.name.replaceAll(' ', '_')}_qr_code`,
+    extension: 'png'
+  })
+}
+
+defineExpose({ downloadQrCode })
 </script>
 <template>
-  <div ref="qrContainer"></div>
+  <div class="qr-code" ref="qrContainer"></div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.qr-code {
+  text-align: center;
+}
+</style>
