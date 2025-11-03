@@ -10,7 +10,15 @@ import Share from '../Share.vue'
 interface Props {
   event: EventDto
 }
+interface Emits {
+  (e: 'clickQrCode', value: boolean): void
+}
 const props = defineProps<Props>()
+const emits = defineEmits<Emits>()
+
+function onClickQrCode(showQr: boolean): void {
+  emits('clickQrCode', showQr)
+}
 
 const $router = useRouter()
 const { t } = useI18n()
@@ -57,5 +65,10 @@ const shareText = computed(() => {
 })
 </script>
 <template>
-  <Share :title="shareTitle" :text="shareText" :url="shareUrl" />
+  <Share
+    :title="shareTitle"
+    :text="shareText"
+    :url="shareUrl"
+    @click-qr-code="onClickQrCode"
+  />
 </template>

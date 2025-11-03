@@ -15,6 +15,7 @@ import EventInfos from 'src/components/eventDetails/EventInfos.vue'
 import EventShareButton from 'src/components/eventDetails/EventShareButton.vue'
 import EventAreasList from 'src/components/eventDetails/EventAreasList.vue'
 import { useEventAreaPolling } from './eventAreaPolling'
+import QrCodeShareable from '../../../../components/QrCodeShareable.vue'
 
 const { t } = useI18n()
 const userStore = useUserStore()
@@ -24,6 +25,8 @@ const authStore = getAuthStore()
 
 const $router = useRouter()
 const $q = useQuasar()
+
+const showQr = ref(false)
 
 const joinLoading = ref(false)
 const verficationPollTimeout = ref<null | NodeJS.Timeout>(null)
@@ -46,6 +49,21 @@ const isVerficationRequired = computed(() => {
 
 const eventId = computed(() => {
   return eventStore.event.id.toString()
+})
+const eventName = computed(() => {
+  return eventStore.event.name
+})
+const eventUrl = computed(() => {
+  const eventUrl = ('https://' + process.env.APP_SHARE_URL) as string
+  return (
+    eventUrl +
+    $router.resolve({
+      name: 'event-detail',
+      params: {
+        eventId: eventId.value
+      }
+    }).path
+  )
 })
 const isLoggedIn = computed(() => {
   return authStore.isLoggedIn()
@@ -197,6 +215,10 @@ function hideAdminMenu() {
   adminMenuOpen.value = false
 }
 
+function handleClickQr(showQrNew: boolean): void {
+  showQr.value = showQrNew
+}
+
 onBeforeUnmount(() => {
   if (verficationPollTimeout.value !== null) {
     clearTimeout(verficationPollTimeout.value)
@@ -207,6 +229,11 @@ onBeforeUnmount(() => {
 <template>
   <QScrollArea class="d-flex flex-fill">
     <div class="container q-gutter-y-md q-py-sm">
+      <QrCodeShareable
+        v-if="showQr"
+        :name="eventName"
+        :url="eventUrl"
+      ></QrCodeShareable>
       <EventInfos
         :event="eventStore.event"
         :show-particpants="eventStore.isTeamCaptainOrCoordinator"
@@ -221,7 +248,10 @@ onBeforeUnmount(() => {
           :has-notification="isVerficationRequired"
           @on-dissmiss="handleParticipationDissmiss"
         />
-        <EventShareButton :event="eventStore.event" />
+        <EventShareButton
+          :event="eventStore.event"
+          @click-qr-code="handleClickQr"
+        />
         <EventAdminActions
           v-if="eventStore.isTeamCaptainOrCoordinator"
           :event="eventStore.event"
