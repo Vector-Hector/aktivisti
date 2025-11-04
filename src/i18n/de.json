@@ -939,7 +939,9 @@
         "description": "Welche Gebiete der Aktion sollen übernommen werden?",
         "all": "Alle Gebiete",
         "startedAreas": "Alle angefangenen Gebiete",
-        "notStartedAreas": "Alle nicht angefangenen Gebiete"
+        "notStartedAreas": "Alle nicht angefangenen Gebiete",
+        "errorMessage": "Fehler beim Laden der Gebiete",
+        "retry": "Erneut versuchen"
       }
     },
     "campaignCollections": {

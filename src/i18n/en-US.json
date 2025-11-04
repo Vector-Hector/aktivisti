@@ -939,7 +939,9 @@
         "description": "Which areas of the action should be adopted?",
         "all": "All Areas",
         "startedAreas": "All Started Areas",
-        "notStartedAreas": "All Not Started Areas"
+        "notStartedAreas": "All Not Started Areas",
+        "errorMessage": "Failed to load event areas data",
+        "retry": "Retry"
       }
     },
     "campaignCollections": {

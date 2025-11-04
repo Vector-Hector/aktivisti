@@ -2,8 +2,11 @@
 import hat from 'hat'
 import { QCardSection, QBtn } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
+import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { EventDto } from 'src/api/model/EventDto'
+import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   event: EventDto
@@ -16,25 +19,60 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-async function handleAllAreasClick() {
-  await handleClickOnOption()
+const { t } = useI18n()
+
+const eventAreas = ref<EventAreaDto[]>([])
+const completionNotes = ref<CompletionNoteDto[]>([])
+const isLoading = ref(false)
+const error = ref<string | null>(null)
+
+const eventAreaIdsWithCompletionNotes = computed(
+  () => new Set(completionNotes.value.map((note) => note.event_area))
+)
+
+const startedEventAreas = computed(() =>
+  eventAreas.value.filter((area) =>
+    eventAreaIdsWithCompletionNotes.value.has(area.id)
+  )
+)
+
+const notStartedEventAreas = computed(() =>
+  eventAreas.value.filter(
+    (area) => !eventAreaIdsWithCompletionNotes.value.has(area.id)
+  )
+)
+
+async function loadEventAreasData(): Promise<void> {
+  try {
+    isLoading.value = true
+    error.value = null
+
+    const responseData = (
+      await apiClient.eventAreas.list({ event: props.event.id.toString() }, [
+        'completion_notes'
+      ])
+    ).payload
+
+    eventAreas.value = responseData.data
+    completionNotes.value = responseData.embedded.completion_notes
+  } catch {
+    error.value = t(
+      'adoptEventAreas.recentEventAreas.recentEventAreasOptions.errorMessage'
+    )
+  } finally {
+    isLoading.value = false
+  }
 }
 
-function handleStartedAreasClick() {
-  // TODO(peter@control.alt.coop) Add method to handle filtering of areas
-  emit('onAdoptionOptionClick', null)
-}
+onMounted(loadEventAreasData)
 
-function handleNotStartedAreasClick() {
-  // TODO(peter@control.alt.coop) Add method to handle filtering of areas
-  emit('onAdoptionOptionClick', null)
-}
-
-async function handleClickOnOption(): Promise<void> {
-  const eventAreas = (
-    await apiClient.eventAreas.list({ event: props.event.id.toString() })
-  ).payload.data
-  const clonedEventAreas = eventAreas.map((area) => ({
+/**
+ * Remove all data from event area, that is not required for creating a new event area
+ *
+ * @param area - Event area to copy the data from
+ */
+function clearEventArea(area: EventAreaDto): Partial<EventAreaDto> {
+  return {
     event: props.event.id,
     name: area.name,
     // We're using hat, to get the same schema for the feature_id like mapbox see:
@@ -42,27 +80,57 @@ async function handleClickOnOption(): Promise<void> {
     feature_id: hat(),
     color: area.color,
     geometry: area.geometry
-  }))
-  emit('onAdoptionOptionClick', clonedEventAreas)
+  }
+}
+
+function emitAdoptionOption(areas: EventAreaDto[]): void {
+  const mappedAreas = areas.map(clearEventArea)
+  emit('onAdoptionOptionClick', mappedAreas)
+}
+
+function handleAllAreasClick(): void {
+  emitAdoptionOption(eventAreas.value)
+}
+
+function handleStartedAreasClick(): void {
+  emitAdoptionOption(startedEventAreas.value)
+}
+
+function handleNotStartedAreasClick(): void {
+  emitAdoptionOption(notStartedEventAreas.value)
 }
 </script>
 <template>
   <QCardSection class="description-section">
-    <div class="description">
-      <div>
-        {{
-          $t(
-            'adoptEventAreas.recentEventAreas.recentEventAreasOptions.description'
-          )
-        }}
-      </div>
-    </div>
+    <p class="description">
+      {{
+        $t(
+          'adoptEventAreas.recentEventAreas.recentEventAreasOptions.description'
+        )
+      }}
+    </p>
   </QCardSection>
-  <QCardSection class="section">
+
+  <QCardSection v-if="error" class="error-section">
+    <p class="error-text">{{ error }}</p>
+    <QBtn
+      :label="
+        $t('adoptEventAreas.recentEventAreas.recentEventAreasOptions.retry')
+      "
+      color="negative"
+      outline
+      size="sm"
+      @click="loadEventAreasData"
+    />
+  </QCardSection>
+
+  <QCardSection v-else class="section">
     <QBtn
       :label="
         $t('adoptEventAreas.recentEventAreas.recentEventAreasOptions.all')
       "
+      :loading="isLoading"
+      :disable="isLoading || eventAreas.length === 0"
       color="primary"
       @click="handleAllAreasClick"
     />
@@ -72,6 +140,8 @@ async function handleClickOnOption(): Promise<void> {
           'adoptEventAreas.recentEventAreas.recentEventAreasOptions.startedAreas'
         )
       "
+      :loading="isLoading"
+      :disable="isLoading || startedEventAreas.length === 0"
       color="primary"
       @click="handleStartedAreasClick"
     />
@@ -81,6 +151,8 @@ async function handleClickOnOption(): Promise<void> {
           'adoptEventAreas.recentEventAreas.recentEventAreasOptions.notStartedAreas'
         )
       "
+      :loading="isLoading"
+      :disable="isLoading || notStartedEventAreas.length === 0"
       color="primary"
       @click="handleNotStartedAreasClick"
     />
@@ -101,11 +173,28 @@ async function handleClickOnOption(): Promise<void> {
 .description {
   color: $grey-6;
   font-size: 0.75rem;
-  line-height: 1;
-  display: block;
+  line-height: 1.2;
+  margin: 0;
 }
 
 .description-section {
   padding-bottom: 0;
+}
+
+.error-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  height: 0;
+  flex-grow: 1;
+}
+
+.error-text {
+  color: $negative;
+  font-size: 0.875rem;
+  text-align: center;
+  margin: 0;
 }
 </style>
