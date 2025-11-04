@@ -5,6 +5,7 @@ import { apiClient } from 'src/api/ApiClient'
 import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { EventDto } from 'src/api/model/EventDto'
+import { EventAreaWithCompletionNotes } from 'src/pages/edit-event/geometry/EditEventGeometry.vue'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -13,7 +14,10 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'onAdoptionOptionClick', eventAreas: Partial<EventAreaDto>[]): void
+  (
+    e: 'onAdoptionOptionClick',
+    eventAreas: Partial<EventAreaWithCompletionNotes>[]
+  ): void
 }
 
 const props = defineProps<Props>()
@@ -83,6 +87,20 @@ function clearEventArea(area: EventAreaDto): Partial<EventAreaDto> {
   }
 }
 
+/**
+ * Remove all data from completion note, that is not required for creating a new completion note
+ *
+ * @param note - Completion note to copy the data from
+ */
+function clearCompletionNote(
+  note: CompletionNoteDto
+): Partial<CompletionNoteDto> {
+  return {
+    completed: note.completed,
+    target_id: note.target_id
+  }
+}
+
 function emitAdoptionOption(areas: EventAreaDto[]): void {
   const mappedAreas = areas.map(clearEventArea)
   emit('onAdoptionOptionClick', mappedAreas)
@@ -93,7 +111,26 @@ function handleAllAreasClick(): void {
 }
 
 function handleStartedAreasClick(): void {
-  emitAdoptionOption(startedEventAreas.value)
+  // Get completion notes for started areas
+  const startedAreasWithCompletionNotes = startedEventAreas.value.map(
+    (eventArea) => {
+      const areaCompletionNotes = completionNotes.value.filter(
+        (note) => note.event_area === eventArea.id
+      )
+      return {
+        eventArea,
+        completionNotes: areaCompletionNotes
+      }
+    }
+  )
+
+  const mappedAreasWithNotes = startedAreasWithCompletionNotes.map(
+    ({ eventArea, completionNotes }) => ({
+      ...clearEventArea(eventArea),
+      completionNotes: completionNotes.map(clearCompletionNote)
+    })
+  )
+  emit('onAdoptionOptionClick', mappedAreasWithNotes)
 }
 
 function handleNotStartedAreasClick(): void {
