@@ -170,7 +170,7 @@ onMounted(async () => {
       'text-field': ['get', 'name'],
       'text-size': 12,
       'text-anchor': 'left',
-      'text-offset': [1.2, 0],
+      'text-offset': [1.1, 0],
       'text-max-width': 12,
       'icon-image': 'label-background',
       'icon-text-fit': 'both',
@@ -195,7 +195,7 @@ onMounted(async () => {
       ['!=', ['get', 'has_assignee'], true]
     ],
     paint: {
-      'circle-radius': 11,
+      'circle-radius': 9,
       'circle-color': '#fff',
       'circle-stroke-color': IS_COMPLETED_COLOR,
       'circle-stroke-width': 1,
@@ -217,7 +217,7 @@ onMounted(async () => {
         ''
       ],
       'icon-allow-overlap': true,
-      'icon-size': 0.25
+      'icon-size': 0.2
     }
   })
 
