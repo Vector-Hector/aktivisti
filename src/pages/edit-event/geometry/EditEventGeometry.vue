@@ -144,6 +144,13 @@ function openAdoptAreasModal() {
       eventAreas: EventAreaDto[]
       adoptPosters: boolean
     }) => {
+      if (!eventAreasToAdopt) {
+        $q.notify({
+          color: 'warning',
+          message: t('events.edit.geometry.noAreasInSelectedOption')
+        })
+        return
+      }
       isLoading.value = true
       const events = new Set(eventAreasToAdopt.map(({ event }) => event))
 

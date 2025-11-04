@@ -702,6 +702,7 @@
         },
         "noValidLocationError": "Please provide a valid meeting point.",
         "noAreasDefinedError": "This event has no areas",
+        "noAreasInSelectedOption": "The selection contains no areas",
         "posterCreationButton": "Create"
       },
       "posters": {
@@ -933,7 +934,13 @@
       "minLengthError": "At least {0} characters"
     },
     "recentEventAreas": {
-      "description": "Please select an event from which you would like to adopt the defined areas."
+      "description": "Please select an event from which you would like to adopt the defined areas.",
+      "recentEventAreasOptions": {
+        "description": "Which areas of the action should be adopted?",
+        "all": "All Areas",
+        "startedAreas": "All Started Areas",
+        "notStartedAreas": "All Not Started Areas"
+      }
     },
     "campaignCollections": {
       "description": "Please select an area"

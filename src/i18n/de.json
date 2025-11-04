@@ -702,6 +702,7 @@
         },
         "noValidLocationError": "Bitte gebe einen gültigen Treffpunkt an.",
         "noAreasDefinedError": "Dieses Event hat keine Gebiete",
+        "noAreasInSelectedOption": "Die Auswahl enthält keine Gebiete",
         "posterCreationButton": "Erstellen"
       },
       "posters": {
@@ -933,7 +934,13 @@
       "minLengthError": "Mindestens {0} Zeichen"
     },
     "recentEventAreas": {
-      "description": "Bitte wähle eine Aktion aus, von welcher du die definierten Gebiete übernehmen möchtest."
+      "description": "Bitte wähle eine Aktion aus, von welcher du die definierten Gebiete übernehmen möchtest.",
+      "recentEventAreasOptions": {
+        "description": "Welche Gebiete der Aktion sollen übernommen werden?",
+        "all": "Alle Gebiete",
+        "startedAreas": "Alle angefangenen Gebiete",
+        "notStartedAreas": "Alle nicht angefangenen Gebiete"
+      }
     },
     "campaignCollections": {
       "description": "Bitte wähle ein Gebiet aus"
