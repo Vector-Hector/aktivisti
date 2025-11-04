@@ -15,7 +15,8 @@ import EventInfos from 'src/components/eventDetails/EventInfos.vue'
 import EventShareButton from 'src/components/eventDetails/EventShareButton.vue'
 import EventAreasList from 'src/components/eventDetails/EventAreasList.vue'
 import { useEventAreaPolling } from './eventAreaPolling'
-import QrCodeShareable from '../../../../components/QrCodeShareable.vue'
+import QrCodeDownloadable from '../../../../components/QrCodeDownloadable.vue'
+import { getShareUrlFromEventId } from 'src/utils/shareUrl'
 
 const { t } = useI18n()
 const userStore = useUserStore()
@@ -53,18 +54,7 @@ const eventId = computed(() => {
 const eventName = computed(() => {
   return eventStore.event.name
 })
-const eventUrl = computed(() => {
-  const eventUrl = ('https://' + process.env.APP_SHARE_URL) as string
-  return (
-    eventUrl +
-    $router.resolve({
-      name: 'event-detail',
-      params: {
-        eventId: eventId.value
-      }
-    }).path
-  )
-})
+const shareUrl = getShareUrlFromEventId(eventId.value)
 const isLoggedIn = computed(() => {
   return authStore.isLoggedIn()
 })
@@ -215,8 +205,8 @@ function hideAdminMenu() {
   adminMenuOpen.value = false
 }
 
-function handleClickQr(showQrNew: boolean): void {
-  showQr.value = showQrNew
+function handleClickQr(): void {
+  showQr.value = !showQr.value
 }
 
 onBeforeUnmount(() => {
@@ -229,11 +219,11 @@ onBeforeUnmount(() => {
 <template>
   <QScrollArea class="d-flex flex-fill">
     <div class="container q-gutter-y-md q-py-sm">
-      <QrCodeShareable
+      <QrCodeDownloadable
         v-if="showQr"
         :name="eventName"
-        :url="eventUrl"
-      ></QrCodeShareable>
+        :url="shareUrl"
+      ></QrCodeDownloadable>
       <EventInfos
         :event="eventStore.event"
         :show-particpants="eventStore.isTeamCaptainOrCoordinator"

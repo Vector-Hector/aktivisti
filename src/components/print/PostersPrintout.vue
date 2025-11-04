@@ -23,7 +23,7 @@ import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
 import { useDateFormat } from 'src/utils/dateFormat'
 import { useI18n } from 'vue-i18n'
 import QrCode from '../QrCode.vue'
-import { useRouter } from 'vue-router'
+import { getShareUrlFromEventId } from 'src/utils/shareUrl'
 
 interface Props {
   event: EventDto
@@ -36,7 +36,6 @@ const { dateFormat } = useDateFormat()
 const { PosterStatusUtil, PosterMountUtil } = usePosterOptions()
 const { eventTypeOptions } = useEventTypes()
 const { t } = useI18n()
-const $router = useRouter()
 
 const areaFeatures = computed(() => {
   return props.eventAreas.map(eventAreaToFeature)
@@ -72,18 +71,7 @@ const posterStates = computed(() => {
 const arePostersOutsideArea = computed(() => {
   return props.posters.some(({ area }) => area === null)
 })
-const eventUrl = computed(() => {
-  const eventUrl = ('https://' + process.env.APP_SHARE_URL) as string
-  return (
-    eventUrl +
-    $router.resolve({
-      name: 'event-detail',
-      params: {
-        eventId: props.event.id
-      }
-    }).path
-  )
-})
+const shareUrl = getShareUrlFromEventId(props.event.id)
 
 function boundingBoxOfArea(area: EventAreaDto) {
   return bbox({
@@ -127,7 +115,7 @@ function print() {
       </p>
       <p class="description">{{ event.description }}</p>
       <img class="linke-logo" src="../../assets/logo_dielinke.svg" />
-      <QrCode :url="eventUrl" :name="event.name"></QrCode>
+      <QrCode :url="shareUrl" :name="event.name"></QrCode>
 
       <Map class="map" :interactive="false" :bounding-box="zoomBox">
         <EventMarker v-if="event?.location" :event="event" />
@@ -354,12 +342,12 @@ function print() {
   max-width: 15cm;
 }
 
-.qr-code {
+div.qr-code {
+  position: absolute;
+  top: 3.5cm;
+  right: 0.5cm;
   * {
     width: 3.5cm;
-    position: absolute;
-    top: 3.5cm;
-    right: 0.5cm;
   }
 }
 

@@ -30,7 +30,6 @@ function downloadQrCode(): void {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin: 1rem;
-  padding: auto;
   .q-btn {
     margin-top: 1rem;
   }

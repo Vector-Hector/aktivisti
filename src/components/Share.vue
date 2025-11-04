@@ -27,22 +27,18 @@ interface Props {
   url: string
   dialogTitle?: string
 }
-
 interface Emits {
-  (e: 'clickQrCode', value: boolean): void
+  (e: 'clickQrCode'): void
 }
 
 const props = defineProps<Props>()
 const emits = defineEmits<Emits>()
 
-function onClickQrCode(showQr: boolean): void {
-  this.showQr = showQr
-  emits('clickQrCode', showQr)
-}
-
 const { t } = useI18n()
 
-const showQr: boolean = false
+function handleClickQrCode(): void {
+  emits('clickQrCode')
+}
 
 const shareApiAvailable = computed(() => {
   // Capacitor plugin works with either the web share API or uses the native one
@@ -130,7 +126,7 @@ function share() {
         <QFabAction
           class="share-fab"
           :icon="ionQrCodeOutline"
-          @click="onClickQrCode(!showQr)"
+          @click="handleClickQrCode"
         ></QFabAction>
       </QFab>
     </template>

@@ -20,13 +20,16 @@ onMounted(() => {
     dotsOptions: { color: '#000', type: 'square' },
     cornersDotOptions: {
       color: '#DF0303',
-      type: 'dot'
+      type: 'square'
     },
     backgroundOptions: { color: '#fff' },
     image: '/icons/favicon-96x96.png',
     imageOptions: {
       margin: 10,
       imageSize: 0.6
+    },
+    qrOptions: {
+      errorCorrectionLevel: 'H'
     }
   })
 

@@ -4,23 +4,18 @@ import { useEventTypes } from 'src/api/model/EventTypes'
 import { useDateFormat } from 'src/utils/dateFormat'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
 import Share from '../Share.vue'
+import { getShareUrlFromEventId } from 'src/utils/shareUrl'
 
 interface Props {
   event: EventDto
 }
 interface Emits {
-  (e: 'clickQrCode', value: boolean): void
+  (e: 'clickQrCode'): void
 }
 const props = defineProps<Props>()
 const emits = defineEmits<Emits>()
 
-function onClickQrCode(showQr: boolean): void {
-  emits('clickQrCode', showQr)
-}
-
-const $router = useRouter()
 const { t } = useI18n()
 const { eventTypeOptions } = useEventTypes()
 const { dateFormat } = useDateFormat()
@@ -30,18 +25,7 @@ const eventTypeLabel = computed(() => {
     ?.label
 })
 
-const shareUrl = computed(() => {
-  const shareUrl = process.env.APP_SHARE_URL as string
-  return (
-    shareUrl +
-    $router.resolve({
-      name: 'event-detail',
-      params: {
-        eventId: props.event.id
-      }
-    }).path
-  )
-})
+const shareUrl = getShareUrlFromEventId(props.event.id)
 const shareTitle = computed(() => {
   return props.event.name
 })
@@ -63,6 +47,9 @@ const shareText = computed(() => {
     eventTime: formattedTime
   })
 })
+function onClickQrCode(): void {
+  emits('clickQrCode')
+}
 </script>
 <template>
   <Share
