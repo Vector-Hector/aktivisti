@@ -5,16 +5,13 @@ import { useDateFormat } from 'src/utils/dateFormat'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Share from '../Share.vue'
-import { getShareUrlFromEventId } from 'src/utils/shareUrl'
+import { getShareUrl } from 'src/utils/shareUrl'
 
 interface Props {
   event: EventDto
 }
-interface Emits {
-  (e: 'clickQrCode'): void
-}
+
 const props = defineProps<Props>()
-const emits = defineEmits<Emits>()
 
 const { t } = useI18n()
 const { eventTypeOptions } = useEventTypes()
@@ -25,7 +22,7 @@ const eventTypeLabel = computed(() => {
     ?.label
 })
 
-const shareUrl = getShareUrlFromEventId(props.event.id)
+const shareUrl = getShareUrl(props.event.id)
 const shareTitle = computed(() => {
   return props.event.name
 })
@@ -47,15 +44,7 @@ const shareText = computed(() => {
     eventTime: formattedTime
   })
 })
-function onClickQrCode(): void {
-  emits('clickQrCode')
-}
 </script>
 <template>
-  <Share
-    :title="shareTitle"
-    :text="shareText"
-    :url="shareUrl"
-    @click-qr-code="onClickQrCode"
-  />
+  <Share :title="shareTitle" :text="shareText" :url="shareUrl" />
 </template>

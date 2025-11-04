@@ -17,7 +17,7 @@ import { useRouter } from 'vue-router'
 import { useDateFormat } from 'src/utils/dateFormat'
 import { useI18n } from 'vue-i18n'
 import QrCode from '../QrCode.vue'
-import { getShareUrlFromEventId } from 'src/utils/shareUrl'
+import { getShareUrl } from 'src/utils/shareUrl'
 
 interface Props {
   event: EventDto
@@ -50,7 +50,7 @@ const zoomBox = computed(() => {
   ) as BBox2d
 })
 
-const shareUrl = getShareUrlFromEventId(props.event.id)
+const shareUrl = getShareUrl(props.event.id)
 
 function countAddresses(areaDetails: AreaDetailsDto) {
   return areaDetails.streets.reduce((acc, street) => {
@@ -98,7 +98,7 @@ function print() {
       </p>
       <p class="description">{{ event.description }}</p>
       <img class="linke-logo" src="../../assets/logo_dielinke.svg" />
-      <QrCode :url="shareUrl" :name="event.name"></QrCode>
+      <QrCode :url="shareUrl" :name="event.name" />
       <Map class="map" :interactive="false" :bounding-box="zoomBox">
         <EventMarker v-if="event?.location" :event="event" />
         <FeatureLayer :features="areaFeatures" />

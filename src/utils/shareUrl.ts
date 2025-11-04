@@ -1,6 +1,6 @@
 import { useRouter } from 'vue-router'
 
-export function getShareUrlFromEventId(eventId: string | number): string {
+export function getShareUrl(eventId: string | number): string {
   const router = useRouter()
   const shareUrl = process.env.APP_SHARE_URL as string
   return (

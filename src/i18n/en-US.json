@@ -521,6 +521,12 @@
           "print": {
             "label": "Print"
           }
+        },
+        "qrCode": {
+          "label": "QR Code",
+          "dialog": {
+            "download": "Download"
+          }
         }
       },
       "eventType": "Event Type",

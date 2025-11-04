@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import QRCodeStyling from 'qr-code-styling'
 
 interface Props {
@@ -38,12 +38,6 @@ onMounted(() => {
   }
 })
 
-watch(
-  () => props.url,
-  (newUrl) => {
-    qr.update({ data: newUrl })
-  }
-)
 async function downloadQrCode(): Promise<void> {
   await qr.download({
     name: `${props.name.replaceAll(' ', '_')}_qr_code`,

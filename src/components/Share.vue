@@ -7,7 +7,6 @@ import {
   ionLogoTwitter,
   ionLogoWhatsapp,
   ionMail,
-  ionQrCodeOutline,
   ionShareSocial
 } from '@quasar/extras/ionicons-v5'
 import { QFab, QFabAction } from 'quasar'
@@ -27,18 +26,10 @@ interface Props {
   url: string
   dialogTitle?: string
 }
-interface Emits {
-  (e: 'clickQrCode'): void
-}
 
 const props = defineProps<Props>()
-const emits = defineEmits<Emits>()
 
 const { t } = useI18n()
-
-function handleClickQrCode(): void {
-  emits('clickQrCode')
-}
 
 const shareApiAvailable = computed(() => {
   // Capacitor plugin works with either the web share API or uses the native one
@@ -123,11 +114,6 @@ function share() {
           :icon="ionMail"
           @click="navigate(mailShareUrl)"
         />
-        <QFabAction
-          class="share-fab"
-          :icon="ionQrCodeOutline"
-          @click="handleClickQrCode"
-        ></QFabAction>
       </QFab>
     </template>
   </LabeledBtn>

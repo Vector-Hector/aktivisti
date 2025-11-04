@@ -16,10 +16,10 @@ function downloadQrCode(): void {
 </script>
 <template>
   <div class="qr-code-container">
-    <QrCode ref="qrRef" :name="props.name" :url="props.url"></QrCode>
-    <QBtn class="full-width" color="primary" @click="downloadQrCode()"
-      >Download</QBtn
-    >
+    <QrCode ref="qrRef" :name="props.name" :url="props.url" />
+    <QBtn class="full-width" color="primary" @click="downloadQrCode()">{{
+      $t('events.details.actions.qrCode.dialog.download')
+    }}</QBtn>
   </div>
 </template>
 
@@ -28,8 +28,6 @@ function downloadQrCode(): void {
   background: transparent;
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin: 1rem;
   .q-btn {
     margin-top: 1rem;
   }
