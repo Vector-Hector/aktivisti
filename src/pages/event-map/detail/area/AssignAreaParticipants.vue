@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useUserStore } from 'src/stores/user'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { QBtn, QSelect, useQuasar } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
 import { useI18n } from 'vue-i18n'
 import { useEventStore } from 'src/stores/event'
+import { ionSearch } from '@quasar/extras/ionicons-v5'
 
 const $q = useQuasar()
 const { t } = useI18n()
@@ -124,6 +125,17 @@ async function updateAreaParticipations(
   void eventStore.refreshEventAreas()
   updateParticipations(changedParticipations)
 }
+
+const filteredOptions = ref()
+function filterFn(val, update) {
+  update(() => {
+    const needle = val.toLocaleLowerCase()
+    filteredOptions.value = onlyMemberParticipants.value.filter(
+      (v) => v.user_username.toLocaleLowerCase().indexOf(needle) > -1
+    )
+  })
+}
+
 function updateParticipations(updatedParticipations: EventParticipationDto[]) {
   eventStore.setParticipations(
     eventStore.participations.map((item) => {
@@ -136,16 +148,19 @@ function updateParticipations(updatedParticipations: EventParticipationDto[]) {
 <template>
   <QSelect
     v-if="eventStore.isTeamCaptainOrCoordinator"
-    :model-value="eventAreaParticipants"
-    @update:model-value="updateAreaParticipations($event)"
+    use-input
+    input-debounce="0"
+    use-chips
     :multiple="true"
     :label="$t('events.details.area.assignAreaParticipant.inputPlaceholder')"
-    :options="onlyMemberParticipants"
+    :model-value="eventAreaParticipants"
+    :options="filteredOptions"
+    @filter="filterFn"
+    @update:model-value="updateAreaParticipations($event)"
     option-label="user_username"
-    :display-value="
-      eventAreaParticipants.map(({ user_username }) => user_username).join(',')
-    "
-  />
+  >
+    <template v-slot:prepend> <q-icon :name="ionSearch" /> </template>
+  </QSelect>
   <div
     v-else-if="
       eventStore.personalParticipationPermissions?.assign_event_area?.POST
