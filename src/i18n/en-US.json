@@ -936,6 +936,8 @@
     "recentEventAreas": {
       "description": "Please select an event from which you would like to adopt the defined areas.",
       "recentEventAreasOptions": {
+        "adoptPosters": "Adopt Poster Locations",
+        "dontAdoptPosters": "Don't Adopt Poster Locations",
         "description": "Which areas of the action should be adopted?",
         "all": "All Areas",
         "startedAreas": "All Started Areas",

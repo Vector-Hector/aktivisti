@@ -936,6 +936,8 @@
     "recentEventAreas": {
       "description": "Bitte wähle eine Aktion aus, von welcher du die definierten Gebiete übernehmen möchtest.",
       "recentEventAreasOptions": {
+        "adoptPosters": "Plakatstandorte übernehmen",
+        "dontAdoptPosters": "Plakatstandorte nicht übernehmen",
         "description": "Welche Gebiete der Aktion sollen übernommen werden?",
         "all": "Alle Gebiete",
         "startedAreas": "Alle angefangenen Gebiete",

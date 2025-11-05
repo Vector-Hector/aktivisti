@@ -5,14 +5,13 @@ import {
   QCardActions,
   QDialog,
   QToolbar,
-  QToolbarTitle,
-  QToggle
+  QToolbarTitle
 } from 'quasar'
 import { useDialogPluginComponent } from 'quasar'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import SelectAreaSet from 'components/modals/AdoptEventAreas/SelectAreaSet.vue'
 import { CampaignGeometryCollectionsDto } from 'src/api/model/CampaignGeometryCollectionsDto'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import RecentEventAreas from 'src/components/modals/AdoptEventAreas/RecentEventAreas/RecentEventAreas.vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import CampaignCollections from 'components/modals/AdoptEventAreas/CampaignCollections.vue'
@@ -21,14 +20,15 @@ import SearchEventArea from 'components/modals/AdoptEventAreas/SearchEventArea.v
 import { CAMPAIGN_GEOMETRY_COLLECTIONS_CHUNK_SIZE } from 'src/constants'
 import { EventDto } from 'src/api/model/EventDto'
 import RecentEventAreasOptions from './RecentEventAreas/RecentEventAreasOptions.vue'
+import { useAdoptEventAreaStore } from 'src/stores/adoptEventArea'
 
 interface Props {
   campaigns: CampaignDto[]
-  showAdoptPosters?: boolean
+  isPosterEvent?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  showAdoptPosters: false
+  isPosterEvent: false
 })
 defineEmits([
   // REQUIRED by QDialog, we need to emit some events through useDialogPluginComponent
@@ -55,7 +55,7 @@ const isCollectionExisting = computed(
 )
 
 const campaignCollection = ref<CampaignGeometryCollectionsDto | null>(null)
-const adoptPosters = ref(false)
+const adoptEventAreaStore = useAdoptEventAreaStore()
 
 const offsetCampaignCollections = ref(0)
 const totalCampaignCollections = ref(CAMPAIGN_GEOMETRY_COLLECTIONS_CHUNK_SIZE)
@@ -105,7 +105,10 @@ function handleCampaignCollectionClick(
 }
 
 function handleAreaClick(eventAreas: EventAreaDto[]) {
-  onDialogOK({ eventAreas: eventAreas, adoptPosters: adoptPosters.value })
+  onDialogOK({
+    eventAreas: eventAreas,
+    adoptPosters: adoptEventAreaStore.isAdoptingPosters
+  })
 }
 
 function handleEventClick(event: EventDto) {
@@ -132,13 +135,8 @@ const qCardClass = computed(() => {
   return ''
 })
 
-const isPageWithAdoptPostersButton = computed(() => {
-  return (
-    props.showAdoptPosters &&
-    [Page.RECENT_EVENT_AREAS_PAGE_2, Page.SEARCH_EVENT_AREAS].includes(
-      page.value
-    )
-  )
+onUnmounted(() => {
+  adoptEventAreaStore.$reset()
 })
 
 defineExpose({
@@ -172,6 +170,7 @@ defineExpose({
       />
       <SearchEventArea
         v-if="page === Page.SEARCH_EVENT_AREAS"
+        :isPosterEvent="props.isPosterEvent"
         @onEventAreaClick="(area) => handleAreaClick([area])"
       />
       <RecentEventAreas
@@ -181,6 +180,7 @@ defineExpose({
       <RecentEventAreasOptions
         v-if="page === Page.RECENT_EVENT_AREAS_PAGE_2"
         :event="recentEvent"
+        :isPosterEvent="props.isPosterEvent"
         @onAdoptionOptionClick="handleAreaClick"
       />
       <CampaignCollections
@@ -219,11 +219,6 @@ defineExpose({
             }
           "
         />
-        <QToggle
-          v-if="isPageWithAdoptPostersButton"
-          v-model="adoptPosters"
-          :label="$t('adoptEventAreas.adoptPosters')"
-        ></QToggle>
       </QCardActions>
     </QCard>
   </QDialog>

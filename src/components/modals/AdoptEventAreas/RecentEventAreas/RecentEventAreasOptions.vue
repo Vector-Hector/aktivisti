@@ -6,11 +6,13 @@ import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventAreaWithCompletionNotes } from 'src/pages/edit-event/geometry/EditEventGeometry.vue'
+import { useAdoptEventAreaStore } from 'src/stores/adoptEventArea'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
   event: EventDto
+  isPosterEvent?: boolean
 }
 
 interface Emits {
@@ -20,10 +22,13 @@ interface Emits {
   ): void
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  isPosterEvent: false
+})
 const emit = defineEmits<Emits>()
 
 const { t } = useI18n()
+const adoptEventAreaStore = useAdoptEventAreaStore()
 
 const eventAreas = ref<EventAreaDto[]>([])
 const completionNotes = ref<CompletionNoteDto[]>([])
@@ -110,6 +115,16 @@ function handleAllAreasClick(): void {
   emitAdoptionOption(eventAreas.value)
 }
 
+function handleAdoptPostersClick(): void {
+  adoptEventAreaStore.isAdoptingPosters = true
+  emitAdoptionOption(eventAreas.value)
+}
+
+function handleNoAdoptPostersClick(): void {
+  adoptEventAreaStore.isAdoptingPosters = false
+  emitAdoptionOption(eventAreas.value)
+}
+
 function handleStartedAreasClick(): void {
   // Get completion notes for started areas
   const startedAreasWithCompletionNotes = startedEventAreas.value.map(
@@ -163,6 +178,31 @@ function handleNotStartedAreasClick(): void {
 
   <QCardSection v-else class="section">
     <QBtn
+      v-if="props.isPosterEvent"
+      :label="
+        $t(
+          'adoptEventAreas.recentEventAreas.recentEventAreasOptions.adoptPosters'
+        )
+      "
+      :loading="isLoading"
+      :disable="isLoading || eventAreas.length === 0"
+      color="primary"
+      @click="handleAdoptPostersClick"
+    />
+    <QBtn
+      v-if="props.isPosterEvent"
+      :label="
+        $t(
+          'adoptEventAreas.recentEventAreas.recentEventAreasOptions.dontAdoptPosters'
+        )
+      "
+      :loading="isLoading"
+      :disable="isLoading || eventAreas.length === 0"
+      color="primary"
+      @click="handleNoAdoptPostersClick"
+    />
+    <QBtn
+      v-if="!props.isPosterEvent"
       :label="
         $t('adoptEventAreas.recentEventAreas.recentEventAreasOptions.all')
       "
@@ -172,6 +212,7 @@ function handleNotStartedAreasClick(): void {
       @click="handleAllAreasClick"
     />
     <QBtn
+      v-if="!props.isPosterEvent"
       :label="
         $t(
           'adoptEventAreas.recentEventAreas.recentEventAreasOptions.startedAreas'
@@ -183,6 +224,7 @@ function handleNotStartedAreasClick(): void {
       @click="handleStartedAreasClick"
     />
     <QBtn
+      v-if="!props.isPosterEvent"
       :label="
         $t(
           'adoptEventAreas.recentEventAreas.recentEventAreasOptions.notStartedAreas'

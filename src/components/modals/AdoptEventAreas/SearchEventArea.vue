@@ -5,7 +5,8 @@ import {
   QForm,
   QInput,
   QScrollArea,
-  QSpinnerDots
+  QSpinnerDots,
+  QToggle
 } from 'quasar'
 import { ionSearch } from '@quasar/extras/ionicons-v5'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
@@ -14,12 +15,22 @@ import { apiClient } from 'src/api/ApiClient'
 import EventAreaList from 'components/EventAreaList.vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { CampaignDto } from 'src/api/model/CampaignDto'
+import { useAdoptEventAreaStore } from 'src/stores/adoptEventArea'
+
+interface Props {
+  isPosterEvent?: boolean
+}
 
 interface Emits {
   (e: 'onEventAreaClick', eventArea: EventAreaDto): void
 }
 
+const props = withDefaults(defineProps<Props>(), {
+  isPosterEvent: false
+})
 const emit = defineEmits<Emits>()
+
+const adoptEventAreaStore = useAdoptEventAreaStore()
 
 const isInitial = ref<boolean>(true)
 const isLoading = ref<boolean>(false)
@@ -94,6 +105,12 @@ onMounted(async () => {
         </div>
       </div>
     </QForm>
+    <QToggle
+      v-if="props.isPosterEvent"
+      v-model="adoptEventAreaStore.isAdoptingPosters"
+      :label="$t('adoptEventAreas.adoptPosters')"
+      dense
+    />
     <template v-if="!isInitial">
       <div v-if="isLoading" class="row justify-center q-my-md">
         <QSpinnerDots color="primary" size="40px" />
