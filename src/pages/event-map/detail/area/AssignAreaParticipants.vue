@@ -2,11 +2,11 @@
 import { computed, ref } from 'vue'
 import { useUserStore } from 'src/stores/user'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { QBtn, QSelect, useQuasar } from 'quasar'
+import { QBtn, QIcon, QSelect, useQuasar } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
 import { useI18n } from 'vue-i18n'
 import { useEventStore } from 'src/stores/event'
-import { ionSearch } from '@quasar/extras/ionicons-v5'
+import { ionChevronDown, ionSearch } from '@quasar/extras/ionicons-v5'
 
 const $q = useQuasar()
 const { t } = useI18n()
@@ -126,12 +126,13 @@ async function updateAreaParticipations(
   updateParticipations(changedParticipations)
 }
 
-const filteredOptions = ref()
+const filteredOptions = ref<EventParticipationDto[]>()
 function filterFn(val, update) {
   update(() => {
-    const needle = val.toLocaleLowerCase()
+    const query = val.toLocaleLowerCase()
     filteredOptions.value = onlyMemberParticipants.value.filter(
-      (v) => v.user_username.toLocaleLowerCase().indexOf(needle) > -1
+      (participant) =>
+        participant.user_username.toLocaleLowerCase().indexOf(query) > -1
     )
   })
 }
@@ -158,8 +159,10 @@ function updateParticipations(updatedParticipations: EventParticipationDto[]) {
     @filter="filterFn"
     @update:model-value="updateAreaParticipations($event)"
     option-label="user_username"
+    dense
+    :dropdown-icon="ionChevronDown"
   >
-    <template v-slot:prepend> <q-icon :name="ionSearch" /> </template>
+    <template v-slot:prepend> <QIcon :name="ionSearch" /> </template>
   </QSelect>
   <div
     v-else-if="
