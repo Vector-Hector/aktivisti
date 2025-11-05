@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { QCard, QCardSection, QDialog } from 'quasar'
-import QrCodeDownloadable from '../QrCodeDownloadable.vue'
+import QrCode from '../QrCode.vue'
 
 interface Emits {
   // REQUIRED
@@ -33,16 +33,19 @@ function onDialogHide() {
 
 <template>
   <QDialog ref="dialog" @hide="onDialogHide">
-    <QCard class="participants-modal">
+    <QCard class="qr-code-modal">
       <QCardSection>
-        <QrCodeDownloadable :url="props.url" :name="props.name" />
+        <QrCode :url="props.url" :name="props.name" />
+        <span>
+          {{ props.url }}
+        </span>
       </QCardSection>
     </QCard>
   </QDialog>
 </template>
 
 <style lang="scss" scoped>
-.participants-modal {
+.qr-code-modal {
   min-width: 320px;
 }
 </style>

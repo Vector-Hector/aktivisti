@@ -498,10 +498,7 @@
           "subjectLine": "Mach' mit bei der Aktion von Die Linke: {0}"
         },
         "qrCode": {
-          "label": "QR-Code",
-          "dialog": {
-            "download": "Herunterladen"
-          }
+          "label": "QR-Code"
         },
         "admin": {
           "label": "Admin",

@@ -523,10 +523,7 @@
           }
         },
         "qrCode": {
-          "label": "QR Code",
-          "dialog": {
-            "download": "Download"
-          }
+          "label": "QR Code"
         }
       },
       "eventType": "Event Type",
