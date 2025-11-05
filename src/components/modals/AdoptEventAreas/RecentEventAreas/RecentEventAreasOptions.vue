@@ -184,73 +184,71 @@ function handleNotStartedAreasClick(): void {
   </QCardSection>
 
   <QCardSection v-else class="section">
-    <QBtn
-      v-if="props.isPosterEvent"
-      :label="
-        $t(
-          'adoptEventAreas.recentEventAreas.recentEventAreasOptions.adoptPosters'
-        )
-      "
-      :loading="isLoading"
-      :disable="isLoading || eventAreas.length === 0"
-      color="primary"
-      @click="handleAdoptPostersClick"
-    />
-    <QBtn
-      v-if="props.isPosterEvent"
-      :label="
-        $t(
-          'adoptEventAreas.recentEventAreas.recentEventAreasOptions.dontAdoptPosters'
-        )
-      "
-      :loading="isLoading"
-      :disable="isLoading || eventAreas.length === 0"
-      color="primary"
-      @click="handleNoAdoptPostersClick"
-    />
-    <QToggle
-      v-if="!props.isPosterEvent"
-      v-model="adoptEventAreaStore.isAdoptingCompletionNotes"
-      :label="
-        $t(
-          'adoptEventAreas.recentEventAreas.recentEventAreasOptions.adoptCompletionNotes'
-        )
-      "
-    />
-    <QBtn
-      v-if="!props.isPosterEvent"
-      :label="
-        $t('adoptEventAreas.recentEventAreas.recentEventAreasOptions.all')
-      "
-      :loading="isLoading"
-      :disable="isLoading || eventAreas.length === 0"
-      color="primary"
-      @click="handleAllAreasClick"
-    />
-    <QBtn
-      v-if="!props.isPosterEvent"
-      :label="
-        $t(
-          'adoptEventAreas.recentEventAreas.recentEventAreasOptions.startedAreas'
-        )
-      "
-      :loading="isLoading"
-      :disable="isLoading || startedEventAreas.length === 0"
-      color="primary"
-      @click="handleStartedAreasClick"
-    />
-    <QBtn
-      v-if="!props.isPosterEvent"
-      :label="
-        $t(
-          'adoptEventAreas.recentEventAreas.recentEventAreasOptions.notStartedAreas'
-        )
-      "
-      :loading="isLoading"
-      :disable="isLoading || notStartedEventAreas.length === 0"
-      color="primary"
-      @click="handleNotStartedAreasClick"
-    />
+    <template v-if="props.isPosterEvent">
+      <QBtn
+        :label="
+          $t(
+            'adoptEventAreas.recentEventAreas.recentEventAreasOptions.adoptPosters'
+          )
+        "
+        :loading="isLoading"
+        :disable="isLoading || eventAreas.length === 0"
+        color="primary"
+        @click="handleAdoptPostersClick"
+      />
+      <QBtn
+        :label="
+          $t(
+            'adoptEventAreas.recentEventAreas.recentEventAreasOptions.dontAdoptPosters'
+          )
+        "
+        :loading="isLoading"
+        :disable="isLoading || eventAreas.length === 0"
+        color="primary"
+        @click="handleNoAdoptPostersClick"
+      />
+    </template>
+    <template v-else>
+      <QToggle
+        v-model="adoptEventAreaStore.isAdoptingCompletionNotes"
+        :label="
+          $t(
+            'adoptEventAreas.recentEventAreas.recentEventAreasOptions.adoptCompletionNotes'
+          )
+        "
+      />
+      <QBtn
+        :label="
+          $t('adoptEventAreas.recentEventAreas.recentEventAreasOptions.all')
+        "
+        :loading="isLoading"
+        :disable="isLoading || eventAreas.length === 0"
+        color="primary"
+        @click="handleAllAreasClick"
+      />
+      <QBtn
+        :label="
+          $t(
+            'adoptEventAreas.recentEventAreas.recentEventAreasOptions.startedAreas'
+          )
+        "
+        :loading="isLoading"
+        :disable="isLoading || startedEventAreas.length === 0"
+        color="primary"
+        @click="handleStartedAreasClick"
+      />
+      <QBtn
+        :label="
+          $t(
+            'adoptEventAreas.recentEventAreas.recentEventAreasOptions.notStartedAreas'
+          )
+        "
+        :loading="isLoading"
+        :disable="isLoading || notStartedEventAreas.length === 0"
+        color="primary"
+        @click="handleNotStartedAreasClick"
+      />
+    </template>
   </QCardSection>
 </template>
 <style lang="scss" scoped>
