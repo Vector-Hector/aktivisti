@@ -929,6 +929,7 @@
     },
     "searchEventArea": {
       "description": "Search for an area you would like to adopt.",
+      "adoptCompletionNotes": "Adopt information of completed addresses",
       "areaName": "Area Name",
       "noAreasFound": "You have not created any areas with this name.",
       "minLengthError": "At least {0} characters"

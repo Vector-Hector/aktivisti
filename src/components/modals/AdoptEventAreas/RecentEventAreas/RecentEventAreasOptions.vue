@@ -7,6 +7,7 @@ import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { EventDto } from 'src/api/model/EventDto'
 import { EventAreaWithCompletionNotes } from 'src/pages/edit-event/geometry/EditEventGeometry.vue'
 import { useAdoptEventAreaStore } from 'src/stores/adoptEventArea'
+import { clearCompletionNote } from 'src/utils/adoptEventAreas'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -89,20 +90,6 @@ function clearEventArea(area: EventAreaDto): Partial<EventAreaDto> {
     feature_id: hat(),
     color: area.color,
     geometry: area.geometry
-  }
-}
-
-/**
- * Remove all data from completion note, that is not required for creating a new completion note
- *
- * @param note - Completion note to copy the data from
- */
-function clearCompletionNote(
-  note: CompletionNoteDto
-): Partial<CompletionNoteDto> {
-  return {
-    completed: note.completed,
-    target_id: note.target_id
   }
 }
 

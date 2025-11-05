@@ -929,6 +929,7 @@
     },
     "searchEventArea": {
       "description": "Such nach einem Gebiet, welches du übernehmen möchtest.",
+      "adoptCompletionNotes": "Informationen über erledigte Adressen übernehmen",
       "areaName": "Gebietsname",
       "noAreasFound": "Sie haben keine Gebiete mit diesem Namen angelegt.",
       "minLengthError": "Mindestens {0} Zeichen"

@@ -16,13 +16,18 @@ import EventAreaList from 'components/EventAreaList.vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { useAdoptEventAreaStore } from 'src/stores/adoptEventArea'
+import { EventAreaWithCompletionNotes } from 'src/pages/edit-event/geometry/EditEventGeometry.vue'
+import { clearCompletionNote } from 'src/utils/adoptEventAreas'
 
 interface Props {
   isPosterEvent?: boolean
 }
 
 interface Emits {
-  (e: 'onEventAreaClick', eventArea: EventAreaDto): void
+  (
+    e: 'onEventAreaClick',
+    eventArea: Partial<EventAreaWithCompletionNotes>
+  ): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -62,8 +67,23 @@ const handleSubmit = async () => {
   }
 }
 
-function handleEventAreaClick(eventArea: EventAreaDto) {
-  emit('onEventAreaClick', eventArea)
+async function handleEventAreaClick(eventArea: EventAreaDto) {
+  let adjustedEventArea: Partial<EventAreaWithCompletionNotes> = eventArea
+
+  if (adoptEventAreaStore.isAdoptingCompletionNotes) {
+    const completionNotes = (
+      await apiClient.completionNotes.list({
+        event_area: eventArea.id
+      })
+    ).payload.data
+
+    adjustedEventArea = {
+      ...eventArea,
+      completionNotes: completionNotes.map(clearCompletionNote)
+    }
+  }
+
+  emit('onEventAreaClick', adjustedEventArea)
 }
 
 onMounted(async () => {
@@ -109,6 +129,12 @@ onMounted(async () => {
       v-if="props.isPosterEvent"
       v-model="adoptEventAreaStore.isAdoptingPosters"
       :label="$t('adoptEventAreas.adoptPosters')"
+      dense
+    />
+    <QToggle
+      v-else
+      v-model="adoptEventAreaStore.isAdoptingCompletionNotes"
+      :label="$t('adoptEventAreas.searchEventArea.adoptCompletionNotes')"
       dense
     />
     <template v-if="!isInitial">
