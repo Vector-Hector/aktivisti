@@ -76,6 +76,16 @@ async function loadEventAreasData(): Promise<void> {
 
 onMounted(loadEventAreasData)
 
+function handleAdoptPostersClick(): void {
+  adoptEventAreaStore.isAdoptingPosters = true
+  emitAdoptionOption(eventAreas.value)
+}
+
+function handleNoAdoptPostersClick(): void {
+  adoptEventAreaStore.isAdoptingPosters = false
+  emitAdoptionOption(eventAreas.value)
+}
+
 /**
  * Remove all data from event area, that is not required for creating a new event area
  *
@@ -136,16 +146,6 @@ function emitAdoptionOption(areas: EventAreaDto[]): void {
 function handleAllAreasClick(): void {
   const mappedAreas = mapAreasWithOptionalCompletionNotes(eventAreas.value)
   emit('onAdoptionOptionClick', mappedAreas)
-}
-
-function handleAdoptPostersClick(): void {
-  adoptEventAreaStore.isAdoptingPosters = true
-  emitAdoptionOption(eventAreas.value)
-}
-
-function handleNoAdoptPostersClick(): void {
-  adoptEventAreaStore.isAdoptingPosters = false
-  emitAdoptionOption(eventAreas.value)
 }
 
 function handleStartedAreasClick(): void {
