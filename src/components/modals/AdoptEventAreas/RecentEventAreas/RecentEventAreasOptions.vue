@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import hat from 'hat'
-import { QCardSection, QBtn } from 'quasar'
+import { QCardSection, QBtn, QToggle } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
 import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
@@ -106,13 +106,49 @@ function clearCompletionNote(
   }
 }
 
+/**
+ * Maps event areas to adoption format with optional completion notes
+ *
+ * @param areas - Event areas to map
+ * @returns Mapped areas with optional completion notes
+ */
+function mapAreasWithOptionalCompletionNotes(
+  areas: EventAreaDto[]
+): Partial<EventAreaWithCompletionNotes>[] {
+  const shouldAdoptCompletionNotes =
+    adoptEventAreaStore.isAdoptingCompletionNotes
+
+  return areas.map((eventArea) => {
+    const baseArea = clearEventArea(eventArea)
+
+    // Early return if not adopting completion notes
+    if (!shouldAdoptCompletionNotes) {
+      return baseArea
+    }
+
+    // Get completion notes for this specific area
+    const areaCompletionNotes = completionNotes.value.filter(
+      (note) => note.event_area === eventArea.id
+    )
+
+    // Add completion notes if they exist
+    return areaCompletionNotes.length > 0
+      ? {
+          ...baseArea,
+          completionNotes: areaCompletionNotes.map(clearCompletionNote)
+        }
+      : baseArea
+  })
+}
+
 function emitAdoptionOption(areas: EventAreaDto[]): void {
   const mappedAreas = areas.map(clearEventArea)
   emit('onAdoptionOptionClick', mappedAreas)
 }
 
 function handleAllAreasClick(): void {
-  emitAdoptionOption(eventAreas.value)
+  const mappedAreas = mapAreasWithOptionalCompletionNotes(eventAreas.value)
+  emit('onAdoptionOptionClick', mappedAreas)
 }
 
 function handleAdoptPostersClick(): void {
@@ -126,26 +162,10 @@ function handleNoAdoptPostersClick(): void {
 }
 
 function handleStartedAreasClick(): void {
-  // Get completion notes for started areas
-  const startedAreasWithCompletionNotes = startedEventAreas.value.map(
-    (eventArea) => {
-      const areaCompletionNotes = completionNotes.value.filter(
-        (note) => note.event_area === eventArea.id
-      )
-      return {
-        eventArea,
-        completionNotes: areaCompletionNotes
-      }
-    }
+  const mappedAreas = mapAreasWithOptionalCompletionNotes(
+    startedEventAreas.value
   )
-
-  const mappedAreasWithNotes = startedAreasWithCompletionNotes.map(
-    ({ eventArea, completionNotes }) => ({
-      ...clearEventArea(eventArea),
-      completionNotes: completionNotes.map(clearCompletionNote)
-    })
-  )
-  emit('onAdoptionOptionClick', mappedAreasWithNotes)
+  emit('onAdoptionOptionClick', mappedAreas)
 }
 
 function handleNotStartedAreasClick(): void {
@@ -200,6 +220,15 @@ function handleNotStartedAreasClick(): void {
       :disable="isLoading || eventAreas.length === 0"
       color="primary"
       @click="handleNoAdoptPostersClick"
+    />
+    <QToggle
+      v-if="!props.isPosterEvent"
+      v-model="adoptEventAreaStore.isAdoptingCompletionNotes"
+      :label="
+        $t(
+          'adoptEventAreas.recentEventAreas.recentEventAreasOptions.adoptCompletionNotes'
+        )
+      "
     />
     <QBtn
       v-if="!props.isPosterEvent"

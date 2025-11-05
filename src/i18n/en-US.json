@@ -939,6 +939,7 @@
         "adoptPosters": "Adopt Poster Locations",
         "dontAdoptPosters": "Don't Adopt Poster Locations",
         "description": "Which areas of the action should be adopted?",
+        "adoptCompletionNotes": "Adopt information of completed addresses",
         "all": "All Areas",
         "startedAreas": "All Started Areas",
         "notStartedAreas": "All Not Started Areas",
