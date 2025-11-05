@@ -180,7 +180,6 @@ onMounted(async () => {
   margin: 1rem 0;
   overflow: hidden;
   height: 400px;
-  width: 300px;
 }
 
 .empty-list-placeholder {
