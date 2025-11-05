@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { ionClose, ionCheckmark } from '@quasar/extras/ionicons-v5'
+import {
+  ionClose,
+  ionCheckmark,
+  ionChevronDown
+} from '@quasar/extras/ionicons-v5'
 import { matArrowCircleUp } from '@quasar/extras/material-icons'
 import {
   QBtn,
@@ -10,8 +14,8 @@ import {
   QItemSection,
   QList,
   QSeparator,
-  QToolbarTitle,
-  useQuasar
+  useQuasar,
+  QExpansionItem
 } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
 import { useI18n } from 'vue-i18n'
@@ -115,160 +119,182 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
 <template>
   <div class="row">
     <div class="col">
-      <QList v-if="areTeamCaptainsParticipations.length > 0">
-        <QToolbarTitle>{{
-          $t('eventParticipantsModal.teamcaptains')
-        }}</QToolbarTitle>
-        <QSeparator spaced />
-        <QItem
-          v-for="participation in areTeamCaptainsParticipations"
-          :key="participation.id"
+      <QList>
+        <p
+          v-if="
+            verifiedParticipations.length === 0 &&
+            notVerifiedParticipations.length === 0
+          "
         >
-          <QItemSection>
-            <QItemLabel v-if="participation.user_is_member">
-              <q-item-label lines="1"
-                ><b>{{ participation.user_username }} </b></q-item-label
-              >
-              <q-item-label caption>{{
-                participation.user_email
-              }}</q-item-label>
-            </QItemLabel>
-            <QItemLabel v-else>
-              {{ participation.user_email }}
-            </QItemLabel>
-          </QItemSection>
-          <QItemSection side>
-            <div class="invitation-item-actions">
-              <QBtn
-                fill="none"
-                size="md"
-                :icon="ionClose"
-                dense
-                flat
-                round
-                @click="deleteParticipation(participation.id)"
-                :aria-label="$t('eventParticipantsModal.removeParticipant')"
-              />
-            </div>
-          </QItemSection>
-        </QItem>
-      </QList>
-      <QList v-if="verifiedParticipations.length > 0">
-        <QToolbarTitle>{{
-          $t('eventParticipantsModal.verifiedParticipants')
-        }}</QToolbarTitle>
-        <QSeparator spaced />
-        <QItem
-          v-for="participation in verifiedParticipations"
-          :key="participation.id"
+          {{ $t('eventParticipantsModal.noOneWaitingToGetVerified') }}
+        </p>
+        <QExpansionItem
+          v-if="notVerifiedParticipations.length > 0"
+          :label="$t('eventParticipantsModal.verifyParticipants')"
+          default-opened
+          :expand-icon="ionChevronDown"
+          group="participantsGroup"
+          header-class="participats-collapsable-header"
         >
-          <QItemSection>
-            <QItemLabel v-if="participation.user_is_member">
-              <q-item-label lines="1"
-                ><b>{{ participation.user_username }} </b></q-item-label
-              >
-              <q-item-label caption>{{
-                participation.user_email
-              }}</q-item-label>
-            </QItemLabel>
-            <QItemLabel v-else>
-              {{ participation.user_email }}
-            </QItemLabel>
-          </QItemSection>
+          <QItem
+            v-for="participation in notVerifiedParticipations"
+            :key="participation.id"
+          >
+            <QItemSection>
+              <QItemLabel v-if="participation.user_is_member">
+                <q-item-label lines="1"
+                  ><b>{{ participation.user_username }} </b></q-item-label
+                >
+                <q-item-label caption>{{
+                  participation.user_email
+                }}</q-item-label>
+              </QItemLabel>
+              <QItemLabel v-else>
+                {{ participation.user_email }}
+              </QItemLabel>
+            </QItemSection>
 
-          <QItemSection side>
-            <div class="invitation-item-actions">
-              <QBtn
-                fill="none"
-                size="md"
-                :icon="ionClose"
-                dense
-                flat
-                round
-                @click="deleteParticipation(participation.id)"
-                :aria-label="$t('eventParticipantsModal.removeParticipant')"
-              />
-              <QBtn
-                v-if="!participation.is_event_coordinator"
-                fill="none"
-                size="md"
-                :icon="matArrowCircleUp"
-                dense
-                flat
-                round
-                @click="
-                  handleInviteToTeamCaptain(
-                    participation.user,
-                    participation.user_username
-                  )
-                "
-                :aria-label="
-                  $t('eventParticipantsModal.promoteUserToTeamcamptain.label')
-                "
-              />
-            </div>
-          </QItemSection>
-        </QItem>
-      </QList>
-      <QList v-if="notVerifiedParticipations.length > 0">
-        <QToolbarTitle>{{
-          $t('eventParticipantsModal.verifyParticipants')
-        }}</QToolbarTitle>
-        <QSeparator spaced />
-        <QItem
-          v-for="participation in notVerifiedParticipations"
-          :key="participation.id"
-        >
-          <QItemSection>
-            <QItemLabel v-if="participation.user_is_member">
-              <q-item-label lines="1"
-                ><b>{{ participation.user_username }} </b></q-item-label
-              >
-              <q-item-label caption>{{
-                participation.user_email
-              }}</q-item-label>
-            </QItemLabel>
-            <QItemLabel v-else>
-              {{ participation.user_email }}
-            </QItemLabel>
-          </QItemSection>
+            <QItemSection side>
+              <div class="invitation-item-actions">
+                <QBtn
+                  fill="none"
+                  size="md"
+                  dense
+                  flat
+                  round
+                  :aria-label="$t('eventParticipantsModal.removeParticipant')"
+                  :icon="ionClose"
+                  @click="deleteParticipation(participation.id)"
+                />
+                <QBtn
+                  fill="none"
+                  size="md"
+                  color="positive"
+                  :icon="ionCheckmark"
+                  dense
+                  flat
+                  round
+                  @click="verifyParticipation(participation.id)"
+                />
+              </div>
+            </QItemSection>
+          </QItem>
+        </QExpansionItem>
 
-          <QItemSection side>
-            <div class="invitation-item-actions">
-              <QBtn
-                fill="none"
-                size="md"
-                dense
-                flat
-                round
-                :aria-label="$t('eventParticipantsModal.removeParticipant')"
-                :icon="ionClose"
-                @click="deleteParticipation(participation.id)"
-              />
-              <QBtn
-                fill="none"
-                size="md"
-                color="positive"
-                :icon="ionCheckmark"
-                dense
-                flat
-                round
-                @click="verifyParticipation(participation.id)"
-              />
-            </div>
-          </QItemSection>
-        </QItem>
+        <QSeparator spaced />
+
+        <QExpansionItem
+          v-if="areTeamCaptainsParticipations.length > 0"
+          :label="$t('eventParticipantsModal.teamcaptains')"
+          :default-opened="false"
+          :expand-icon="ionChevronDown"
+          group="participantsGroup"
+          header-class="participats-collapsable-header"
+        >
+          <QItem
+            v-for="participation in areTeamCaptainsParticipations"
+            :key="participation.id"
+          >
+            <QItemSection>
+              <QItemLabel v-if="participation.user_is_member">
+                <q-item-label lines="1"
+                  ><b>{{ participation.user_username }} </b></q-item-label
+                >
+                <q-item-label caption>{{
+                  participation.user_email
+                }}</q-item-label>
+              </QItemLabel>
+              <QItemLabel v-else>
+                {{ participation.user_email }}
+              </QItemLabel>
+            </QItemSection>
+            <QItemSection side>
+              <div class="invitation-item-actions">
+                <QBtn
+                  fill="none"
+                  size="md"
+                  :icon="ionClose"
+                  dense
+                  flat
+                  round
+                  @click="deleteParticipation(participation.id)"
+                  :aria-label="$t('eventParticipantsModal.removeParticipant')"
+                />
+              </div>
+            </QItemSection>
+          </QItem>
+        </QExpansionItem>
+
+        <QSeparator spaced />
+
+        <QExpansionItem
+          v-if="verifiedParticipations.length > 0"
+          :label="$t('eventParticipantsModal.verifiedParticipants')"
+          :default-opened="false"
+          :expand-icon="ionChevronDown"
+          group="participantsGroup"
+          header-class="participats-collapsable-header"
+        >
+          <QItem
+            v-for="participation in verifiedParticipations"
+            :key="participation.id"
+          >
+            <QItemSection>
+              <QItemLabel v-if="participation.user_is_member">
+                <q-item-label lines="1"
+                  ><b>{{ participation.user_username }} </b></q-item-label
+                >
+                <q-item-label caption>{{
+                  participation.user_email
+                }}</q-item-label>
+              </QItemLabel>
+              <QItemLabel v-else>
+                {{ participation.user_email }}
+              </QItemLabel>
+            </QItemSection>
+
+            <QItemSection side>
+              <div class="invitation-item-actions">
+                <QBtn
+                  fill="none"
+                  size="md"
+                  :icon="ionClose"
+                  dense
+                  flat
+                  round
+                  @click="deleteParticipation(participation.id)"
+                  :aria-label="$t('eventParticipantsModal.removeParticipant')"
+                />
+                <QBtn
+                  v-if="!participation.is_event_coordinator"
+                  fill="none"
+                  size="md"
+                  :icon="matArrowCircleUp"
+                  dense
+                  flat
+                  round
+                  @click="
+                    handleInviteToTeamCaptain(
+                      participation.user,
+                      participation.user_username
+                    )
+                  "
+                  :aria-label="
+                    $t('eventParticipantsModal.promoteUserToTeamcamptain.label')
+                  "
+                />
+              </div>
+            </QItemSection>
+          </QItem>
+        </QExpansionItem>
       </QList>
-      <p
-        v-if="
-          verifiedParticipations.length === 0 &&
-          notVerifiedParticipations.length === 0
-        "
-      >
-        {{ $t('eventParticipantsModal.noOneWaitingToGetVerified') }}
-      </p>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style lang="scss">
+.participats-collapsable-header {
+  font-size: 21px;
+  font-weight: 400;
+}
+</style>
