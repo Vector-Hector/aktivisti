@@ -32,10 +32,18 @@ const _defaultFilterPreference = {
   include_expired_campaigns: true
 }
 
+interface Props {
+  /**
+   * A filter function that can be passed to filter the events shown.
+   */
+  filter?: (event: EventDto) => boolean
+}
+
 interface Emits {
   (e: 'clickOnEvent', event: EventDto): void
 }
 
+const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const campaigns = ref<CampaignDto[]>([])
@@ -92,6 +100,9 @@ async function updateShownEvents() {
     ).payload
     pagination.value = newPagination!
     shownEvents.value = events
+    if (props.filter) {
+      shownEvents.value = shownEvents.value.filter(props.filter)
+    }
   } catch {
     $q.notify({
       message: 'Etwas ging schief beim Abrufen der Aktionen',
@@ -130,6 +141,7 @@ function handleResetClick() {
       <EventList
         v-model:events="shownEvents"
         v-model:pagination="pagination"
+        :filter="props.filter"
         :filter-params="filterParams"
         :campaigns="campaigns"
         class="event-list"
