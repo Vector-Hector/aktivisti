@@ -22,6 +22,8 @@ import {
 import PosterMarkerLayer from 'src/map/PosterMarkerLayer.vue'
 import { useDateFormat } from 'src/utils/dateFormat'
 import { useI18n } from 'vue-i18n'
+import QrCode from '../QrCode.vue'
+import { getShareUrl } from 'src/utils/shareUrl'
 
 interface Props {
   event: EventDto
@@ -69,6 +71,7 @@ const posterStates = computed(() => {
 const arePostersOutsideArea = computed(() => {
   return props.posters.some(({ area }) => area === null)
 })
+const shareUrl = getShareUrl(props.event.id)
 
 function boundingBoxOfArea(area: EventAreaDto) {
   return bbox({
@@ -110,8 +113,10 @@ function print() {
         <br />
         {{ `${t('print.date')}: ${dateFormat(event.start_date, 'datetime')}` }}
       </p>
-      <p>{{ event.description }}</p>
+      <p class="description">{{ event.description }}</p>
       <img class="linke-logo" src="../../assets/logo_dielinke.svg" />
+      <QrCode :url="shareUrl" :name="event.name" />
+
       <Map class="map" :interactive="false" :bounding-box="zoomBox">
         <EventMarker v-if="event?.location" :event="event" />
         <FeatureLayer :features="areaFeatures" />
@@ -331,6 +336,19 @@ function print() {
 
 .facts {
   font-weight: bold;
+  max-width: 15cm;
+}
+.description {
+  max-width: 15cm;
+}
+
+div.qr-code {
+  position: absolute;
+  top: 3.5cm;
+  right: 0.5cm;
+  * {
+    width: 3.5cm;
+  }
 }
 
 .area-item {

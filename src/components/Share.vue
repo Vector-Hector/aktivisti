@@ -28,6 +28,7 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
 const { t } = useI18n()
 
 const shareApiAvailable = computed(() => {

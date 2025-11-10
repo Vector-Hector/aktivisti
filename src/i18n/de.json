@@ -497,6 +497,9 @@
           "shareText": "{eventName}\n{eventType}{eventDescription}\n\nam: {eventDate}\num: {eventTime}\n",
           "subjectLine": "Mach' mit bei der Aktion von Die Linke: {0}"
         },
+        "qrCode": {
+          "label": "QR-Code"
+        },
         "admin": {
           "label": "Admin",
           "delete": {

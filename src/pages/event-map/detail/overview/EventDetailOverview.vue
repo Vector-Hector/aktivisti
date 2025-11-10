@@ -15,6 +15,8 @@ import EventInfos from 'src/components/eventDetails/EventInfos.vue'
 import EventShareButton from 'src/components/eventDetails/EventShareButton.vue'
 import EventAreasList from 'src/components/eventDetails/EventAreasList.vue'
 import { useEventAreaPolling } from './eventAreaPolling'
+import { getShareUrl } from 'src/utils/shareUrl'
+import EventQrCodeButton from 'src/components/eventDetails/EventQrCodeButton.vue'
 
 const { t } = useI18n()
 const userStore = useUserStore()
@@ -47,6 +49,10 @@ const isVerficationRequired = computed(() => {
 const eventId = computed(() => {
   return eventStore.event.id.toString()
 })
+const eventName = computed(() => {
+  return eventStore.event.name
+})
+const shareUrl = getShareUrl(eventId.value)
 const isLoggedIn = computed(() => {
   return authStore.isLoggedIn()
 })
@@ -222,6 +228,8 @@ onBeforeUnmount(() => {
           @on-dissmiss="handleParticipationDissmiss"
         />
         <EventShareButton :event="eventStore.event" />
+        <EventQrCodeButton :url="shareUrl" :name="eventName" />
+
         <EventAdminActions
           v-if="eventStore.isTeamCaptainOrCoordinator"
           :event="eventStore.event"

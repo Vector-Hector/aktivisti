@@ -521,6 +521,9 @@
           "print": {
             "label": "Print"
           }
+        },
+        "qrCode": {
+          "label": "QR Code"
         }
       },
       "eventType": "Event Type",

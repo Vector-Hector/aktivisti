@@ -4,15 +4,15 @@ import { useEventTypes } from 'src/api/model/EventTypes'
 import { useDateFormat } from 'src/utils/dateFormat'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
 import Share from '../Share.vue'
+import { getShareUrl } from 'src/utils/shareUrl'
 
 interface Props {
   event: EventDto
 }
+
 const props = defineProps<Props>()
 
-const $router = useRouter()
 const { t } = useI18n()
 const { eventTypeOptions } = useEventTypes()
 const { dateFormat } = useDateFormat()
@@ -22,18 +22,7 @@ const eventTypeLabel = computed(() => {
     ?.label
 })
 
-const shareUrl = computed(() => {
-  const shareUrl = process.env.APP_SHARE_URL as string
-  return (
-    shareUrl +
-    $router.resolve({
-      name: 'event-detail',
-      params: {
-        eventId: props.event.id
-      }
-    }).path
-  )
-})
+const shareUrl = getShareUrl(props.event.id)
 const shareTitle = computed(() => {
   return props.event.name
 })
