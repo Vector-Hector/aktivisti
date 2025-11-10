@@ -18,6 +18,7 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import { useAdoptEventAreaStore } from 'src/stores/adoptEventArea'
 import { EventAreaWithCompletionNotes } from 'src/pages/edit-event/geometry/EditEventGeometry.vue'
 import { clearCompletionNote } from 'src/utils/adoptEventAreas'
+import { useEditEventMixin } from 'src/pages/edit-event/EditEventMixin'
 
 interface Props {
   isPosterEvent?: boolean
@@ -44,6 +45,7 @@ const eventAreas = ref<EventAreaDto[]>([])
 const events = ref<EventDto[]>([])
 const campaigns = ref<CampaignDto[]>([])
 const searchString = ref<string | null>(null)
+const { event: currentEvent } = useEditEventMixin()
 
 const fetchEventAreas = async (searchString: string) => {
   const response = await apiClient.eventAreas.list({ name: searchString }, [
@@ -51,6 +53,9 @@ const fetchEventAreas = async (searchString: string) => {
   ])
   events.value = response.payload.embedded.event
   eventAreas.value = response.payload.data
+  eventAreas.value = eventAreas.value.filter(
+    (area) => area.event !== currentEvent.value.id
+  )
 }
 
 const fetchCampaigns = async () => {
