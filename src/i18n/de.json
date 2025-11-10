@@ -945,7 +945,8 @@
         "startedAreas": "Alle angefangenen Gebiete",
         "notStartedAreas": "Alle nicht angefangenen Gebiete",
         "errorMessage": "Fehler beim Laden der Gebiete",
-        "retry": "Erneut versuchen"
+        "retry": "Erneut versuchen",
+        "noEventAreas": "Keine Gebiete für diese Aktion gefunden."
       }
     },
     "campaignCollections": {

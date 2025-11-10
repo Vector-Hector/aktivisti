@@ -945,7 +945,8 @@
         "startedAreas": "All Started Areas",
         "notStartedAreas": "All Not Started Areas",
         "errorMessage": "Failed to load event areas data",
-        "retry": "Retry"
+        "retry": "Retry",
+        "noEventAreas": "No event areas found for this event."
       }
     },
     "campaignCollections": {

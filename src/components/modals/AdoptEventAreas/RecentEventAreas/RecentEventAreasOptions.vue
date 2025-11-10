@@ -185,6 +185,19 @@ function handleNotStartedAreasClick(): void {
     />
   </QCardSection>
 
+  <QCardSection
+    v-else-if="!isLoading && eventAreas.length === 0"
+    class="error-section"
+  >
+    <p class="error-text">
+      {{
+        $t(
+          'adoptEventAreas.recentEventAreas.recentEventAreasOptions.noEventAreas'
+        )
+      }}
+    </p>
+  </QCardSection>
+
   <QCardSection v-else class="section">
     <template v-if="props.isPosterEvent">
       <QBtn
