@@ -48,7 +48,9 @@ const startedEventAreas = computed(() =>
 
 const notStartedEventAreas = computed(() =>
   eventAreas.value.filter(
-    (area) => !eventAreaIdsWithCompletionNotes.value.has(area.id)
+    (area) =>
+      !eventAreaIdsWithCompletionNotes.value.has(area.id) &&
+      area.is_completed !== true
   )
 )
 
