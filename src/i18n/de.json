@@ -705,6 +705,7 @@
         },
         "noValidLocationError": "Bitte gebe einen gültigen Treffpunkt an.",
         "noAreasDefinedError": "Dieses Event hat keine Gebiete",
+        "noAreasInSelectedOption": "Die Auswahl enthält keine Gebiete",
         "posterCreationButton": "Erstellen"
       },
       "posters": {
@@ -931,12 +932,25 @@
     },
     "searchEventArea": {
       "description": "Such nach einem Gebiet, welches du übernehmen möchtest.",
+      "adoptCompletionNotes": "Informationen über erledigte Adressen übernehmen",
       "areaName": "Gebietsname",
       "noAreasFound": "Sie haben keine Gebiete mit diesem Namen angelegt.",
       "minLengthError": "Mindestens {0} Zeichen"
     },
     "recentEventAreas": {
-      "description": "Bitte wähle eine Aktion aus, von welcher du die definierten Gebiete übernehmen möchtest."
+      "description": "Bitte wähle eine Aktion aus, von welcher du die definierten Gebiete übernehmen möchtest.",
+      "recentEventAreasOptions": {
+        "adoptPosters": "Plakatstandorte übernehmen",
+        "dontAdoptPosters": "Plakatstandorte nicht übernehmen",
+        "description": "Welche Gebiete der Aktion sollen übernommen werden?",
+        "adoptCompletionNotes": "Informationen über erledigte Adressen übernehmen",
+        "all": "Alle Gebiete",
+        "startedAreas": "Alle angefangenen Gebiete",
+        "notStartedAreas": "Alle nicht angefangenen Gebiete",
+        "errorMessage": "Fehler beim Laden der Gebiete",
+        "retry": "Erneut versuchen",
+        "noEventAreas": "Keine Gebiete für diese Aktion gefunden."
+      }
     },
     "campaignCollections": {
       "description": "Bitte wähle ein Gebiet aus"

@@ -705,6 +705,7 @@
         },
         "noValidLocationError": "Please provide a valid meeting point.",
         "noAreasDefinedError": "This event has no areas",
+        "noAreasInSelectedOption": "The selection contains no areas",
         "posterCreationButton": "Create"
       },
       "posters": {
@@ -931,12 +932,25 @@
     },
     "searchEventArea": {
       "description": "Search for an area you would like to adopt.",
+      "adoptCompletionNotes": "Adopt information of completed addresses",
       "areaName": "Area Name",
       "noAreasFound": "You have not created any areas with this name.",
       "minLengthError": "At least {0} characters"
     },
     "recentEventAreas": {
-      "description": "Please select an event from which you would like to adopt the defined areas."
+      "description": "Please select an event from which you would like to adopt the defined areas.",
+      "recentEventAreasOptions": {
+        "adoptPosters": "Adopt Poster Locations",
+        "dontAdoptPosters": "Don't Adopt Poster Locations",
+        "description": "Which areas of the action should be adopted?",
+        "adoptCompletionNotes": "Adopt information of completed addresses",
+        "all": "All Areas",
+        "startedAreas": "All Started Areas",
+        "notStartedAreas": "All Not Started Areas",
+        "errorMessage": "Failed to load event areas data",
+        "retry": "Retry",
+        "noEventAreas": "No event areas found for this event."
+      }
     },
     "campaignCollections": {
       "description": "Please select an area"
