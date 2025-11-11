@@ -37,15 +37,13 @@ function handleVerifyParticipation(id: number): void {
 }
 </script>
 <template>
-  <QItem>
+  <QItem class="participants-list-item-wrapper">
     <QItemSection>
       <QItemLabel v-if="props.participation.user_is_member">
-        <q-item-label lines="1"
-          ><b>{{ props.participation.user_username }} </b></q-item-label
+        <QItemLabel lines="1"
+          ><b>{{ props.participation.user_username }} </b></QItemLabel
         >
-        <q-item-label caption>{{
-          props.participation.user_email
-        }}</q-item-label>
+        <QItemLabel caption>{{ props.participation.user_email }}</QItemLabel>
       </QItemLabel>
       <QItemLabel v-else>
         {{ props.participation.user_email }}
@@ -100,4 +98,10 @@ function handleVerifyParticipation(id: number): void {
     </QItemSection>
   </QItem>
 </template>
-<style scoped></style>
+<style lang="scss" scoped>
+.participants-list-item-wrapper {
+  width: 97%;
+  margin: auto;
+  background-color: $grey-1;
+}
+</style>

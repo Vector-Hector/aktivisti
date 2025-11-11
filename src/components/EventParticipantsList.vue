@@ -142,8 +142,7 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
             :verify="true"
             @on-verify-participation="verifyParticipation"
             @on-delete-participation="deleteParticipation"
-          >
-          </EventParticipantsListItem>
+          />
         </QExpansionItem>
 
         <QExpansionItem
@@ -158,8 +157,7 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
             :key="participation.id"
             :participation="participation"
             @on-delete-participation="deleteParticipation"
-          >
-          </EventParticipantsListItem>
+          />
         </QExpansionItem>
 
         <QExpansionItem
@@ -175,8 +173,7 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
             :key="participation.id"
             :participation="participation"
             @on-delete-participation="deleteParticipation"
-          >
-          </EventParticipantsListItem>
+          />
         </QExpansionItem>
 
         <QExpansionItem
@@ -195,7 +192,7 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
             :delete="true"
             @on-delete-participation="deleteParticipation"
             @on-invite-to-team-captain="handleInviteToTeamCaptain"
-          ></EventParticipantsListItem>
+          />
         </QExpansionItem>
       </QList>
     </div>
@@ -206,5 +203,7 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
 .participants-collapsible-header {
   font-size: 21px;
   font-weight: 400;
+  background-color: $grey-2;
+  margin-top: 8px;
 }
 </style>
