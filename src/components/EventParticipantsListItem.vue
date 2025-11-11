@@ -9,6 +9,7 @@ interface Props {
   invite?: boolean
   delete?: boolean
   verify?: boolean
+  highlight?: boolean
 }
 
 interface Emits {
@@ -20,7 +21,8 @@ interface Emits {
 const props = withDefaults(defineProps<Props>(), {
   invite: false,
   delete: true,
-  verify: false
+  verify: false,
+  highlight: false
 })
 const emit = defineEmits<Emits>()
 
@@ -39,7 +41,10 @@ function handleVerifyParticipation(id: number): void {
 <template>
   <QItem class="participants-list-item-wrapper">
     <QItemSection>
-      <QItemLabel v-if="props.participation.user_is_member">
+      <QItemLabel
+        :class="{ highlight: props.highlight }"
+        v-if="props.participation.user_is_member"
+      >
         <QItemLabel lines="1"
           ><b>{{ props.participation.user_username }} </b></QItemLabel
         >
@@ -103,5 +108,8 @@ function handleVerifyParticipation(id: number): void {
   width: 97%;
   margin: auto;
   background-color: $grey-1;
+}
+.highlight {
+  color: $red;
 }
 </style>

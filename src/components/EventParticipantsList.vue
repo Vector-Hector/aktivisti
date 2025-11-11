@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { ionChevronDown } from '@quasar/extras/ionicons-v5'
-import { QList, useQuasar, QExpansionItem } from 'quasar'
+import {
+  ionChevronDown,
+  ionPeopleSharp,
+  ionSearch
+} from '@quasar/extras/ionicons-v5'
+import { QList, useQuasar, QExpansionItem, QInput, QIcon } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
 import { useI18n } from 'vue-i18n'
 import EventParticipantsListItem from './EventParticipantsListItem.vue'
@@ -14,6 +18,7 @@ interface Props {
 
 const props = defineProps<Props>()
 const participations = ref<EventParticipationDto[]>([])
+const filteredParticipations = ref<EventParticipationDto[]>([])
 
 const $q = useQuasar()
 const { t } = useI18n()
@@ -25,32 +30,62 @@ onMounted(async () => {
       is_pending_invitation: false
     })
   ).payload.data
+  filteredParticipations.value = participations.value
 })
 
 const verifiedParticipations = computed(() => {
-  return participations.value.filter(
+  return filteredParticipations.value.filter(
     ({ is_verified, is_team_captain, is_event_coordinator }) =>
       !is_team_captain && !is_event_coordinator && is_verified
   )
 })
 const notVerifiedParticipations = computed(() => {
-  return participations.value.filter(
+  return filteredParticipations.value.filter(
     ({ is_verified, is_team_captain, is_event_coordinator }) =>
       !is_team_captain && !is_event_coordinator && !is_verified
   )
 })
 const areTeamCaptainsParticipations = computed(() => {
-  return participations.value.filter(
+  return filteredParticipations.value.filter(
     ({ is_team_captain, is_event_coordinator }) =>
       !is_event_coordinator && is_team_captain
   )
 })
 
 const areCoordinatorParticipations = computed(() => {
-  return participations.value.filter(
+  return filteredParticipations.value.filter(
     ({ is_event_coordinator }) => is_event_coordinator
   )
 })
+
+const query = ref<string>('')
+const expandCoordinators = ref<boolean>(false)
+const expandTeamCaptains = ref<boolean>(false)
+const expandVerified = ref<boolean>(false)
+const expandNotVerified = ref<boolean>(false)
+const highlight = ref<boolean>(false)
+
+function updateQuery(newValue: string): void {
+  query.value = newValue
+  const q = query.value.trim().toLowerCase()
+  if (q.length >= 3) {
+    highlight.value = true
+    filteredParticipations.value = participations.value.filter((value) =>
+      value.user_username.toLowerCase().includes(q)
+    )
+    expandVerified.value = verifiedParticipations.value.length > 0
+    expandNotVerified.value = notVerifiedParticipations.value.length > 0
+    expandTeamCaptains.value = areTeamCaptainsParticipations.value.length > 0
+    expandCoordinators.value = areCoordinatorParticipations.value.length > 0
+  } else {
+    highlight.value = false
+    filteredParticipations.value = participations.value
+    expandCoordinators.value = false
+    expandNotVerified.value = false
+    expandTeamCaptains.value = false
+    expandVerified.value = false
+  }
+}
 
 async function deleteParticipation(deleteId: number) {
   participations.value = participations.value.filter(
@@ -117,7 +152,15 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
 <template>
   <div class="row">
     <div class="col">
-      <QList>
+      <QInput :model-value="query" @update:model-value="updateQuery" dense>
+        <template v-slot:before>
+          <QIcon :name="ionPeopleSharp" />
+        </template>
+        <template v-slot:append>
+          <q-icon :name="ionSearch" />
+        </template>
+      </QInput>
+      <QList class="event-participants-list">
         <p
           v-if="
             verifiedParticipations.length === 0 &&
@@ -130,8 +173,8 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
           v-if="notVerifiedParticipations.length > 0"
           :label="$t('eventParticipantsModal.verifyParticipants')"
           default-opened
+          v-model="expandNotVerified"
           :expand-icon="ionChevronDown"
-          group="participantsGroup"
           header-class="participants-collapsible-header"
         >
           <EventParticipantsListItem
@@ -140,6 +183,7 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
             :participation="participation"
             :delete="true"
             :verify="true"
+            :highlight="highlight"
             @on-verify-participation="verifyParticipation"
             @on-delete-participation="deleteParticipation"
           />
@@ -148,14 +192,15 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
         <QExpansionItem
           v-if="areCoordinatorParticipations.length > 0"
           :label="$t('eventParticipantsModal.coordinators')"
+          v-model="expandCoordinators"
           :expand-icon="ionChevronDown"
-          group="participantsGroup"
           header-class="participants-collapsible-header"
         >
           <EventParticipantsListItem
             v-for="participation in areCoordinatorParticipations"
             :key="participation.id"
             :participation="participation"
+            :highlight="highlight"
             @on-delete-participation="deleteParticipation"
           />
         </QExpansionItem>
@@ -163,15 +208,16 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
         <QExpansionItem
           v-if="areTeamCaptainsParticipations.length > 0"
           :label="$t('eventParticipantsModal.teamcaptains')"
+          v-model="expandTeamCaptains"
           :default-opened="false"
           :expand-icon="ionChevronDown"
-          group="participantsGroup"
           header-class="participants-collapsible-header"
         >
           <EventParticipantsListItem
             v-for="participation in areTeamCaptainsParticipations"
             :key="participation.id"
             :participation="participation"
+            :highlight="highlight"
             @on-delete-participation="deleteParticipation"
           />
         </QExpansionItem>
@@ -179,9 +225,9 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
         <QExpansionItem
           v-if="verifiedParticipations.length > 0"
           :label="$t('eventParticipantsModal.verifiedParticipants')"
+          v-model="expandVerified"
           :default-opened="false"
           :expand-icon="ionChevronDown"
-          group="participantsGroup"
           header-class="participants-collapsible-header"
         >
           <EventParticipantsListItem
@@ -190,6 +236,7 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
             :participation="participation"
             :invite="true"
             :delete="true"
+            :highlight="highlight"
             @on-delete-participation="deleteParticipation"
             @on-invite-to-team-captain="handleInviteToTeamCaptain"
           />
@@ -205,5 +252,8 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
   font-weight: 400;
   background-color: $grey-2;
   margin-top: 8px;
+}
+.event-participants-list {
+  margin-top: 20px;
 }
 </style>
