@@ -848,7 +848,8 @@
     "removeParticipant": "Benutzer*in von der Aktion entfernen",
     "verifiedParticipants": "Bestätigte Teilnehmer*innen",
     "verifyParticipants": "Teilnehmer*innen bestätigen",
-    "noOneWaitingToGetVerified": "Niemand wartet auf Freischaltung. Lade noch mehr Leute zur Aktion ein."
+    "noOneWaitingToGetVerified": "Niemand wartet auf Freischaltung. Lade noch mehr Leute zur Aktion ein.",
+    "coordinators": "Koordinierende"
   },
   "eventDeleteDialog": {
     "title": "{0} wirklich löschen?",
