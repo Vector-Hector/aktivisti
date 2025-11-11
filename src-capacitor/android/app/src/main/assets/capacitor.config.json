@@ -3,5 +3,10 @@
 	"appName": "Aktivisti",
 	"bundledWebRuntime": false,
 	"npmClient": "npm",
-	"webDir": "www"
+	"webDir": "www",
+	"plugins": {
+		"EdgeToEdge": {
+			"backgroundColor": "#000000"
+		}
+	}
 }
