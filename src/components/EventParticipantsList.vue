@@ -59,10 +59,10 @@ const areCoordinatorParticipations = computed(() => {
 })
 
 const query = ref<string>('')
-const expandCoordinators = ref<boolean>(false)
-const expandTeamCaptains = ref<boolean>(false)
-const expandVerified = ref<boolean>(false)
-const expandNotVerified = ref<boolean>(false)
+const isCoordinatorsExpanded = ref<boolean>(false)
+const isTeamCaptainsExpanded = ref<boolean>(false)
+const isVerifiedExpanded = ref<boolean>(false)
+const isNotVerifiedExpanded = ref<boolean>(false)
 const highlight = ref<boolean>(false)
 
 function updateQuery(newValue: string): void {
@@ -73,17 +73,18 @@ function updateQuery(newValue: string): void {
     filteredParticipations.value = participations.value.filter((value) =>
       value.user_username.toLowerCase().includes(q)
     )
-    expandVerified.value = verifiedParticipations.value.length > 0
-    expandNotVerified.value = notVerifiedParticipations.value.length > 0
-    expandTeamCaptains.value = areTeamCaptainsParticipations.value.length > 0
-    expandCoordinators.value = areCoordinatorParticipations.value.length > 0
+    isVerifiedExpanded.value = verifiedParticipations.value.length > 0
+    isNotVerifiedExpanded.value = notVerifiedParticipations.value.length > 0
+    isTeamCaptainsExpanded.value =
+      areTeamCaptainsParticipations.value.length > 0
+    isCoordinatorsExpanded.value = areCoordinatorParticipations.value.length > 0
   } else {
     highlight.value = false
     filteredParticipations.value = participations.value
-    expandCoordinators.value = false
-    expandNotVerified.value = false
-    expandTeamCaptains.value = false
-    expandVerified.value = false
+    isCoordinatorsExpanded.value = false
+    isNotVerifiedExpanded.value = false
+    isTeamCaptainsExpanded.value = false
+    isVerifiedExpanded.value = false
   }
 }
 
@@ -173,7 +174,7 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
           v-if="notVerifiedParticipations.length > 0"
           :label="$t('eventParticipantsModal.verifyParticipants')"
           default-opened
-          v-model="expandNotVerified"
+          v-model="isNotVerifiedExpanded"
           :expand-icon="ionChevronDown"
           header-class="participants-collapsible-header"
         >
@@ -192,7 +193,7 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
         <QExpansionItem
           v-if="areCoordinatorParticipations.length > 0"
           :label="$t('eventParticipantsModal.coordinators')"
-          v-model="expandCoordinators"
+          v-model="isCoordinatorsExpanded"
           :expand-icon="ionChevronDown"
           header-class="participants-collapsible-header"
         >
@@ -208,7 +209,7 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
         <QExpansionItem
           v-if="areTeamCaptainsParticipations.length > 0"
           :label="$t('eventParticipantsModal.teamcaptains')"
-          v-model="expandTeamCaptains"
+          v-model="isTeamCaptainsExpanded"
           :default-opened="false"
           :expand-icon="ionChevronDown"
           header-class="participants-collapsible-header"
@@ -225,7 +226,7 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
         <QExpansionItem
           v-if="verifiedParticipations.length > 0"
           :label="$t('eventParticipantsModal.verifiedParticipants')"
-          v-model="expandVerified"
+          v-model="isVerifiedExpanded"
           :default-opened="false"
           :expand-icon="ionChevronDown"
           header-class="participants-collapsible-header"
