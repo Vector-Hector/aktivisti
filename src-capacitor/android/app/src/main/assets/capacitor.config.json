@@ -4,7 +4,9 @@
 	"bundledWebRuntime": false,
 	"npmClient": "npm",
 	"webDir": "www",
-	"android": {
-		"adjustMarginsForEdgeToEdge": "auto"
+	"plugins": {
+		"EdgeToEdge": {
+			"backgroundColor": "#000000"
+		}
 	}
 }
