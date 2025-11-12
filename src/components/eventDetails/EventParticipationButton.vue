@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ionPerson } from '@quasar/extras/ionicons-v5'
+import { ionPeopleSharp } from '@quasar/extras/ionicons-v5'
 import { useQuasar } from 'quasar'
 import LabeledBtn from 'components/LabeledBtn.vue'
 import EventParticipantsModal from 'src/components/modals/EventParticipantsModal.vue'
@@ -36,7 +36,7 @@ function openParticipantsModal() {
   <LabeledBtn
     round
     outline
-    :icon="ionPerson"
+    :icon="ionPeopleSharp"
     @click="openParticipantsModal"
     :external-label="$t('events.details.participants')"
     :has-notification="props.hasNotification"
