@@ -21,6 +21,8 @@ interface Emits {
     e: 'onAdoptionOptionClick',
     eventAreas: Partial<EventAreaWithCompletionNotes>[]
   ): void
+  (e: 'onBackClick'): void
+  (e: 'onAbortClick'): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -86,6 +88,13 @@ function handleAdoptPostersClick(): void {
 function handleNoAdoptPostersClick(): void {
   adoptEventAreaStore.isAdoptingPosters = false
   emitAdoptionOption(eventAreas.value)
+}
+
+function handleBackClick(): void {
+  emit('onBackClick')
+}
+function handleAbortClick(): void {
+  emit('onAbortClick')
 }
 
 /**
@@ -265,6 +274,24 @@ function handleNotStartedAreasClick(): void {
       />
     </template>
   </QCardSection>
+  <QCardSection>
+    <QCardActions>
+      <QBtn
+        color="primary"
+        outline
+        dense
+        :label="$t('general.back')"
+        @click="handleBackClick"
+      />
+      <QBtn
+        color="primary"
+        outline
+        dense
+        :label="$t('general.cancel')"
+        @click="handleAbortClick"
+      />
+    </QCardActions>
+  </QCardSection>
 </template>
 <style lang="scss" scoped>
 .section {
@@ -304,5 +331,13 @@ function handleNotStartedAreasClick(): void {
   font-size: 0.875rem;
   text-align: center;
   margin: 0;
+}
+
+.q-card__section {
+  qcardactions {
+    button:not(:first-child) {
+      margin-left: 8px;
+    }
+  }
 }
 </style>

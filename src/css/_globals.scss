@@ -1,12 +1,13 @@
-@import "extensions";
-@import "variables";
-@import "layout";
-@import "page-transitions";
-@import "utils";
-@import "print";
-@import "map";
+@import 'extensions';
+@import 'variables';
+@import 'layout';
+@import 'page-transitions';
+@import 'utils';
+@import 'print';
+@import 'map';
 
-html, body {
+html,
+body {
   font-family: $font-stack;
   margin: 0;
   padding: 0;
@@ -18,7 +19,6 @@ html, body {
 a.text-link {
   color: $primary;
 }
-
 
 #app {
   font-family: $font-stack;

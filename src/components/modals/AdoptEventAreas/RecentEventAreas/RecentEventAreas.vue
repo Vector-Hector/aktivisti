@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { EventDto } from 'src/api/model/EventDto'
-import { QCardSection } from 'quasar'
+import { QCardSection, QBtn } from 'quasar'
 import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 import SelectEvent from '../SelectEvent.vue'
 
 interface Emits {
   (e: 'onEventClick', event: EventDto): void
+  (e: 'onBackClick'): void
+  (e: 'onAbortClick'): void
 }
 
 const emit = defineEmits<Emits>()
@@ -13,6 +15,13 @@ const emit = defineEmits<Emits>()
 function handleClickOnEvent(event: EventDto) {
   emit('onEventClick', event)
 }
+function handleBackClick(): void {
+  emit('onBackClick')
+}
+function handleAbortClick(): void {
+  emit('onAbortClick')
+}
+
 function excludeCurrentEvent(event: EventDto) {
   const { event: currentEvent } = useEditEventMixin()
   return event.id !== currentEvent.value.id
@@ -29,6 +38,24 @@ function excludeCurrentEvent(event: EventDto) {
       @clickOnEvent="handleClickOnEvent"
       :filter="excludeCurrentEvent"
     />
+  </QCardSection>
+  <QCardSection>
+    <QCardActions>
+      <QBtn
+        color="primary"
+        outline
+        dense
+        :label="$t('general.back')"
+        @click="handleBackClick"
+      />
+      <QBtn
+        color="primary"
+        outline
+        dense
+        :label="$t('general.cancel')"
+        @click="handleAbortClick"
+      />
+    </QCardActions>
   </QCardSection>
 </template>
 
@@ -52,5 +79,13 @@ function excludeCurrentEvent(event: EventDto) {
 
 .description-section {
   padding-bottom: 0;
+}
+
+.q-card__section {
+  qcardactions {
+    button:not(:first-child) {
+      margin-left: 8px;
+    }
+  }
 }
 </style>

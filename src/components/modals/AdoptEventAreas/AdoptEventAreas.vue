@@ -172,52 +172,38 @@ defineExpose({
         v-if="page === Page.SEARCH_EVENT_AREAS"
         :isPosterEvent="props.isPosterEvent"
         @onEventAreaClick="(area) => handleAreaClick([area])"
+        @on-back-click="() => (page = Page.SELECT_AREA_SET)"
+        @on-abort-click="onDialogCancel"
       />
       <RecentEventAreas
         v-if="page === Page.RECENT_EVENT_AREAS_PAGE_1"
         @onEventClick="handleEventClick"
+        @on-back-click="() => (page = Page.SELECT_AREA_SET)"
+        @on-abort-click="onDialogCancel"
       />
       <RecentEventAreasOptions
         v-if="page === Page.RECENT_EVENT_AREAS_PAGE_2"
         :event="recentEvent"
         :isPosterEvent="props.isPosterEvent"
         @onAdoptionOptionClick="handleAreaClick"
+        @on-back-click="() => (page = Page.RECENT_EVENT_AREAS_PAGE_1)"
+        @on-abort-click="onDialogCancel"
       />
       <CampaignCollections
         v-if="page === Page.CAMPAIGN_COLLECTIONS"
         :collection="campaignCollection!"
         @onGeometryClick="handleAreaClick"
+        @on-back-click="() => (page = Page.SELECT_AREA_SET)"
+        @on-adopt-areas="handleAreaClick"
+        @on-abort-click="onDialogCancel"
       />
-      <QCardActions align="left">
+      <QCardActions align="left" v-if="page === Page.SELECT_AREA_SET">
         <QBtn
           color="primary"
           outline
           dense
           :label="$t('general.cancel')"
           @click="onDialogCancel"
-        />
-        <QBtn
-          v-if="
-            [
-              Page.CAMPAIGN_COLLECTIONS,
-              Page.RECENT_EVENT_AREAS_PAGE_1,
-              Page.RECENT_EVENT_AREAS_PAGE_2,
-              Page.SEARCH_EVENT_AREAS
-            ].includes(page) && isCollectionExisting
-          "
-          color="primary"
-          outline
-          dense
-          :label="$t('general.back')"
-          @click="
-            () => {
-              if (page === Page.RECENT_EVENT_AREAS_PAGE_2) {
-                recentEvent = null
-                page = Page.RECENT_EVENT_AREAS_PAGE_1
-              }
-              page = Page.SELECT_AREA_SET
-            }
-          "
         />
       </QCardActions>
     </QCard>

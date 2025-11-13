@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { QCardSection } from 'quasar'
+import { QCardSection, QBtn } from 'quasar'
 import Map from 'src/map/Map.vue'
 import { CampaignGeometryCollectionsDto } from 'src/api/model/CampaignGeometryCollectionsDto'
 import CampaignCollectionOverlay from 'src/map/CampaignCollectionOverlay.vue'
@@ -15,6 +15,8 @@ interface Props {
 
 interface Emits {
   (e: 'onGeometryClick', eventAreas: Partial<EventAreaDto>[]): void
+  (e: 'onBackClick'): void
+  (e: 'onAbortClick'): void
 }
 
 const props = defineProps<Props>()
@@ -43,6 +45,13 @@ function handleGeometryClick(
   emit('onGeometryClick', [eventArea])
 }
 
+function handleBackClick(): void {
+  emit('onBackClick')
+}
+function handleAbortClick(): void {
+  emit('onAbortClick')
+}
+
 /**
  * Generates a random hex color code from range #000000 to #FFFFFF
  */
@@ -67,6 +76,24 @@ function generateRandomHexColorCode() {
       />
     </Map>
   </QCardSection>
+  <QCardSection>
+    <QCardActions>
+      <QBtn
+        color="primary"
+        outline
+        dense
+        :label="$t('general.back')"
+        @click="handleBackClick"
+      />
+      <QBtn
+        color="primary"
+        outline
+        dense
+        :label="$t('general.cancel')"
+        @click="handleAbortClick"
+      />
+    </QCardActions>
+  </QCardSection>
 </template>
 
 <style lang="scss" scoped>
@@ -89,5 +116,12 @@ function generateRandomHexColorCode() {
 
 .description-section {
   padding-bottom: 0;
+}
+.q-card__section {
+  qcardactions {
+    button:not(:first-child) {
+      margin-left: 8px;
+    }
+  }
 }
 </style>
