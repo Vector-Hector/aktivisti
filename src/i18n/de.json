@@ -954,7 +954,9 @@
       }
     },
     "campaignCollections": {
-      "description": "Bitte wähle ein Gebiet aus"
+      "description": "Bitte wähle ein Gebiet aus",
+      "adopt": "Übernehmen",
+      "selectAll": "Alle auswählen"
     }
   }
 }

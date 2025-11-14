@@ -954,7 +954,8 @@
       }
     },
     "campaignCollections": {
-      "description": "Please select an area"
+      "description": "Please select an area",
+      "adopt": "Adopt"
     }
   }
 }

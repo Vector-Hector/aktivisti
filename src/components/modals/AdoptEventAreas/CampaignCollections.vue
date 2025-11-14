@@ -8,6 +8,7 @@ import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import hat from 'hat'
 import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 import { useI18n } from 'vue-i18n'
+import { Ref, ref } from 'vue'
 
 interface Props {
   collection: CampaignGeometryCollectionsDto
@@ -24,25 +25,42 @@ const emit = defineEmits<Emits>()
 const { eventAreas } = useEditEventMixin()
 const { t } = useI18n()
 
+const selectedEventAreas: Ref<globalThis.Map<number, Partial<EventAreaDto>>> =
+  ref(new globalThis.Map())
+
 function handleGeometryClick(
   geometryId: number,
   geometry: Geometry,
   metadata: any
 ): void {
-  const nameKey = Object.keys(metadata).find(
-    (key) => key.toUpperCase() === 'NAME'
-  )
-  const eventArea: Partial<EventAreaDto> = {
-    name: nameKey
-      ? metadata[nameKey]
-      : `${t('events.edit.geometry.areas.prefixNewArea')} ${eventAreas.value.length + 1}`,
-    // We're using hat, to get the same schema for the future_id like mapbox see:
-    // https://github.com/mapbox/mapbox-gl-draw/blob/2b9ce3e58e3695c018a48b6fca78ed1a9d1b67c2/src/feature_types/feature.js#L8
-    feature_id: hat(),
-    color: generateRandomHexColorCode(),
-    geometry: geometry
+  if (selectedEventAreas.value.has(geometryId)) {
+    selectedEventAreas.value.delete(geometryId)
+  } else {
+    const nameKey = Object.keys(metadata).find(
+      (key) => key.toUpperCase() === 'NAME'
+    )
+    const eventArea: Partial<EventAreaDto> = {
+      name: nameKey
+        ? metadata[nameKey]
+        : `${t('events.edit.geometry.areas.prefixNewArea')} ${eventAreas.value.length + selectedEventAreas.value.size + 1}`,
+      // We're using hat, to get the same schema for the future_id like mapbox see:
+      // https://github.com/mapbox/mapbox-gl-draw/blob/2b9ce3e58e3695c018a48b6fca78ed1a9d1b67c2/src/feature_types/feature.js#L8
+      feature_id: hat(),
+      color: generateRandomHexColorCode(),
+      geometry: geometry
+    }
+    selectedEventAreas.value.set(geometryId, eventArea)
   }
-  emit('onGeometryClick', [eventArea])
+}
+
+function handleAdoptClick(): void {
+  if (selectedEventAreas.value.size > 0) {
+    const eventAreas: Partial<EventAreaDto>[] = Array.from(
+      selectedEventAreas.value.values()
+    )
+
+    emit('onGeometryClick', eventAreas)
+  }
 }
 
 function handleBackClick(): void {
@@ -70,6 +88,7 @@ function generateRandomHexColorCode() {
     <Map>
       <CampaignCollectionOverlay
         :collection="props.collection"
+        :selectedEventAreaIds="Array.from(selectedEventAreas.keys())"
         hover
         fit-map
         @geometry-click="handleGeometryClick"
@@ -92,6 +111,14 @@ function generateRandomHexColorCode() {
         :label="$t('general.cancel')"
         @click="handleAbortClick"
       />
+      <QBtn
+        color="primary"
+        outline
+        dense
+        :disable="selectedEventAreas.size === 0"
+        :label="$t('adoptEventAreas.campaignCollections.adopt')"
+        @click="handleAdoptClick"
+      ></QBtn>
     </QCardActions>
   </QCardSection>
 </template>
@@ -119,8 +146,13 @@ function generateRandomHexColorCode() {
 }
 .q-card__section {
   qcardactions {
-    button:not(:first-child) {
-      margin-left: 8px;
+    button {
+      &:not(:first-child) {
+        margin-left: 8px;
+      }
+      &:last-child {
+        float: right;
+      }
     }
   }
 }
