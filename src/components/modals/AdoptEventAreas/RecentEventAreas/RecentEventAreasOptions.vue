@@ -275,20 +275,20 @@ function handleNotStartedAreasClick(): void {
     </template>
   </QCardSection>
   <QCardSection>
-    <QCardActions>
+    <QCardActions
+      ><QBtn
+        color="primary"
+        outline
+        dense
+        :label="$t('general.cancel')"
+        @click="handleAbortClick"
+      />
       <QBtn
         color="primary"
         outline
         dense
         :label="$t('general.back')"
         @click="handleBackClick"
-      />
-      <QBtn
-        color="primary"
-        outline
-        dense
-        :label="$t('general.cancel')"
-        @click="handleAbortClick"
       />
     </QCardActions>
   </QCardSection>

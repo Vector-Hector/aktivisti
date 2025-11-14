@@ -45,15 +45,15 @@ function excludeCurrentEvent(event: EventDto) {
         color="primary"
         outline
         dense
-        :label="$t('general.back')"
-        @click="handleBackClick"
+        :label="$t('general.cancel')"
+        @click="handleAbortClick"
       />
       <QBtn
         color="primary"
         outline
         dense
-        :label="$t('general.cancel')"
-        @click="handleAbortClick"
+        :label="$t('general.back')"
+        @click="handleBackClick"
       />
     </QCardActions>
   </QCardSection>

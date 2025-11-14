@@ -27,6 +27,7 @@ const { t } = useI18n()
 
 const selectedEventAreas: Ref<globalThis.Map<number, Partial<EventAreaDto>>> =
   ref(new globalThis.Map())
+const selectAllClickCounter = ref(0)
 
 function handleGeometryClick(
   geometryId: number,
@@ -63,6 +64,10 @@ function handleAdoptClick(): void {
   }
 }
 
+function handleSelectAllClick(): void {
+  selectAllClickCounter.value++
+}
+
 function handleBackClick(): void {
   emit('onBackClick')
 }
@@ -89,6 +94,7 @@ function generateRandomHexColorCode() {
       <CampaignCollectionOverlay
         :collection="props.collection"
         :selectedEventAreaIds="Array.from(selectedEventAreas.keys())"
+        :triggerSelectAll="selectAllClickCounter"
         hover
         fit-map
         @geometry-click="handleGeometryClick"
@@ -97,28 +103,39 @@ function generateRandomHexColorCode() {
   </QCardSection>
   <QCardSection>
     <QCardActions>
-      <QBtn
-        color="primary"
-        outline
-        dense
-        :label="$t('general.back')"
-        @click="handleBackClick"
-      />
-      <QBtn
-        color="primary"
-        outline
-        dense
-        :label="$t('general.cancel')"
-        @click="handleAbortClick"
-      />
-      <QBtn
-        color="primary"
-        outline
-        dense
-        :disable="selectedEventAreas.size === 0"
-        :label="$t('adoptEventAreas.campaignCollections.adopt')"
-        @click="handleAdoptClick"
-      ></QBtn>
+      <div>
+        <QBtn
+          color="primary"
+          outline
+          dense
+          :label="$t('general.cancel')"
+          @click="handleAbortClick"
+        />
+        <QBtn
+          color="primary"
+          outline
+          dense
+          :label="$t('general.back')"
+          @click="handleBackClick"
+        />
+      </div>
+      <div>
+        <QBtn
+          color="primary"
+          outline
+          dense
+          :label="$t('adoptEventAreas.campaignCollections.selectAll')"
+          @click="handleSelectAllClick"
+        />
+        <QBtn
+          color="primary"
+          outline
+          dense
+          :disable="selectedEventAreas.size === 0"
+          :label="$t('adoptEventAreas.campaignCollections.adopt')"
+          @click="handleAdoptClick"
+        />
+      </div>
     </QCardActions>
   </QCardSection>
 </template>
@@ -146,12 +163,17 @@ function generateRandomHexColorCode() {
 }
 .q-card__section {
   qcardactions {
-    button {
-      &:not(:first-child) {
-        margin-left: 8px;
-      }
-      &:last-child {
-        float: right;
+    display: flex;
+    justify-content: space-between;
+    div {
+      display: flex;
+      button {
+        &:not(:first-child) {
+          margin-left: 8px;
+        }
+        &:last-child {
+          float: right;
+        }
       }
     }
   }

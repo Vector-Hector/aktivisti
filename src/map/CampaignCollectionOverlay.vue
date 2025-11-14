@@ -27,6 +27,7 @@ interface Props {
    * List of ids of selected geometries. They are highlighted on the map.
    */
   selectedEventAreaIds: number[]
+  triggerSelectAll: number
 }
 
 interface Emits {
@@ -61,6 +62,50 @@ watch(
   async (newCollection) => {
     cleanUp()
     await initializeOverlay(newCollection)
+  }
+)
+
+watch(
+  () => props.selectedEventAreaIds,
+  (newIds, oldIds) => updateSelectionStates(newIds, oldIds),
+  { immediate: true }
+)
+
+watch(
+  () => props.triggerSelectAll,
+  () => {
+    if (!overlayID.value) return
+
+    const sourceId = `${overlayID.value}-source`
+    const source = map.value.getSource(sourceId)
+    if (!source) {
+      return
+    }
+
+    const data = source.serialize().data as FeatureCollection
+    if (!data?.features) {
+      return
+    }
+    const unselected = data.features.filter((f) => {
+      const state = map.value.getFeatureState({ source: sourceId, id: f.id })
+      return !state.selected
+    })
+
+    unselected.forEach((f) => {
+      const fakeEvent = {
+        features: [
+          {
+            properties: {
+              ...f.properties,
+              raw_metadata: JSON.stringify(f.properties.raw_metadata)
+            },
+            geometry: f.geometry
+          }
+        ]
+      }
+
+      handleGeometryClick(fakeEvent)
+    })
   }
 )
 

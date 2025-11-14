@@ -174,18 +174,18 @@ onMounted(async () => {
     <QCardActions>
       <QBtn
         color="primary"
-        outline
-        dense
-        :label="$t('general.back')"
-        @click="handleBackClick"
-      />
-      <QBtn
-        color="primary"
         class="grey-button"
         outline
         dense
         :label="$t('general.cancel')"
         @click="handleAbortClick"
+      />
+      <QBtn
+        color="primary"
+        outline
+        dense
+        :label="$t('general.back')"
+        @click="handleBackClick"
       />
     </QCardActions>
   </QCardSection>
