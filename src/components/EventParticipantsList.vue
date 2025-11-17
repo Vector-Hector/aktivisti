@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import {
   ionChevronDown,
@@ -30,8 +30,14 @@ onMounted(async () => {
       is_pending_invitation: false
     })
   ).payload.data
-  filteredParticipations.value = participations.value
 })
+
+watch(
+  () => participations.value,
+  (participations) => {
+    filteredParticipations.value = participations
+  }
+)
 
 const verifiedParticipations = computed(() => {
   return filteredParticipations.value.filter(
