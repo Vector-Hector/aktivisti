@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import hat from 'hat'
-import { QCardSection, QBtn, QToggle } from 'quasar'
+import { QCardSection, QBtn, QToggle, QCardActions } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
 import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
@@ -334,7 +334,7 @@ function handleNotStartedAreasClick(): void {
 }
 
 .q-card__section {
-  qcardactions {
+  .q-card__actions {
     button:not(:first-child) {
       margin-left: 8px;
     }

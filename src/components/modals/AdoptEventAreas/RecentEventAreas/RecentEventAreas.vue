@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { EventDto } from 'src/api/model/EventDto'
-import { QCardSection, QBtn } from 'quasar'
+import { QCardSection, QBtn, QCardActions } from 'quasar'
 import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 import SelectEvent from '../SelectEvent.vue'
 
@@ -82,7 +82,7 @@ function excludeCurrentEvent(event: EventDto) {
 }
 
 .q-card__section {
-  qcardactions {
+  .q-card__actions {
     button:not(:first-child) {
       margin-left: 8px;
     }

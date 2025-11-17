@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import {
-  QBtn,
-  QCard,
-  QCardActions,
-  QDialog,
-  QToolbar,
-  QToolbarTitle
-} from 'quasar'
+import { QCard, QDialog, QToolbar, QToolbarTitle } from 'quasar'
 import { useDialogPluginComponent } from 'quasar'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import SelectAreaSet from 'components/modals/AdoptEventAreas/SelectAreaSet.vue'
@@ -167,6 +160,7 @@ defineExpose({
         @onSearchEventAreaClick="handleSearchEventAreasClick"
         @onRecentEventAreasClick="handleRecentEventAreasClick"
         @onCampaignCollectionClick="handleCampaignCollectionClick"
+        @on-abort-click="onDialogCancel"
       />
       <SearchEventArea
         v-if="page === Page.SEARCH_EVENT_AREAS"
@@ -197,15 +191,6 @@ defineExpose({
         @on-adopt-areas="handleAreaClick"
         @on-abort-click="onDialogCancel"
       />
-      <QCardActions align="left" v-if="page === Page.SELECT_AREA_SET">
-        <QBtn
-          color="primary"
-          outline
-          dense
-          :label="$t('general.cancel')"
-          @click="onDialogCancel"
-        />
-      </QCardActions>
     </QCard>
   </QDialog>
 </template>

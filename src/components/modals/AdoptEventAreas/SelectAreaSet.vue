@@ -9,7 +9,9 @@ import {
   QCardSection,
   QScrollArea,
   QInfiniteScroll,
-  QSpinnerDots
+  QSpinnerDots,
+  QBtn,
+  QCardActions
 } from 'quasar'
 
 interface Props {
@@ -19,6 +21,7 @@ interface Props {
 }
 
 interface Emits {
+  (e: 'onAbortClick'): void
   (e: 'onRecentEventAreasClick'): void
   (e: 'onSearchEventAreaClick'): void
   (
@@ -26,6 +29,10 @@ interface Emits {
     collection: CampaignGeometryCollectionsDto
   ): void
   (e: 'loadCollections', index: number, done: (stop?: boolean) => void): void
+}
+
+function handleAbortClick(): void {
+  emit('onAbortClick')
 }
 
 const props = defineProps<Props>()
@@ -101,6 +108,15 @@ function handleCampaignCollectionClick(
         </QList>
       </QInfiniteScroll>
     </QScrollArea>
+    <QCardActions align="left">
+      <QBtn
+        color="primary"
+        outline
+        dense
+        :label="$t('general.cancel')"
+        @click="handleAbortClick"
+      />
+    </QCardActions>
   </QCardSection>
 </template>
 

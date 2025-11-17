@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { QCardSection, QBtn } from 'quasar'
+import { QCardSection, QBtn, QCardActions } from 'quasar'
 import Map from 'src/map/Map.vue'
 import { CampaignGeometryCollectionsDto } from 'src/api/model/CampaignGeometryCollectionsDto'
 import CampaignCollectionOverlay from 'src/map/CampaignCollectionOverlay.vue'
@@ -162,7 +162,7 @@ function generateRandomHexColorCode() {
   padding-bottom: 0;
 }
 .q-card__section {
-  qcardactions {
+  .q-card__actions {
     display: flex;
     justify-content: space-between;
     div {

@@ -6,7 +6,8 @@ import {
   QInput,
   QScrollArea,
   QSpinnerDots,
-  QToggle
+  QToggle,
+  QCardActions
 } from 'quasar'
 import { ionSearch } from '@quasar/extras/ionicons-v5'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
@@ -221,7 +222,7 @@ onMounted(async () => {
   justify-content: center;
 }
 .q-card__section {
-  qcardactions {
+  .q-card__actions {
     button:not(:first-child) {
       margin-left: 8px;
     }
