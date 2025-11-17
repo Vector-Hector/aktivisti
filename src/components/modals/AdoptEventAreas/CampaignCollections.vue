@@ -15,7 +15,7 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'onGeometryClick', eventAreas: Partial<EventAreaDto>[]): void
+  (e: 'onAdoptClick', eventAreas: Partial<EventAreaDto>[]): void
   (e: 'onBackClick'): void
   (e: 'onAbortClick'): void
 }
@@ -25,7 +25,7 @@ const emit = defineEmits<Emits>()
 const { eventAreas } = useEditEventMixin()
 const { t } = useI18n()
 
-const selectedEventAreas: Ref<globalThis.Map<number, Partial<EventAreaDto>>> =
+const selectedGeometries: Ref<globalThis.Map<number, Partial<EventAreaDto>>> =
   ref(new globalThis.Map())
 const selectAllClickCounter = ref(0)
 
@@ -34,8 +34,8 @@ function handleGeometryClick(
   geometry: Geometry,
   metadata: any
 ): void {
-  if (selectedEventAreas.value.has(geometryId)) {
-    selectedEventAreas.value.delete(geometryId)
+  if (selectedGeometries.value.has(geometryId)) {
+    selectedGeometries.value.delete(geometryId)
   } else {
     const nameKey = Object.keys(metadata).find(
       (key) => key.toUpperCase() === 'NAME'
@@ -43,24 +43,24 @@ function handleGeometryClick(
     const eventArea: Partial<EventAreaDto> = {
       name: nameKey
         ? metadata[nameKey]
-        : `${t('events.edit.geometry.areas.prefixNewArea')} ${eventAreas.value.length + selectedEventAreas.value.size + 1}`,
+        : `${t('events.edit.geometry.areas.prefixNewArea')} ${eventAreas.value.length + selectedGeometries.value.size + 1}`,
       // We're using hat, to get the same schema for the future_id like mapbox see:
       // https://github.com/mapbox/mapbox-gl-draw/blob/2b9ce3e58e3695c018a48b6fca78ed1a9d1b67c2/src/feature_types/feature.js#L8
       feature_id: hat(),
       color: generateRandomHexColorCode(),
       geometry: geometry
     }
-    selectedEventAreas.value.set(geometryId, eventArea)
+    selectedGeometries.value.set(geometryId, eventArea)
   }
 }
 
 function handleAdoptClick(): void {
-  if (selectedEventAreas.value.size > 0) {
+  if (selectedGeometries.value.size > 0) {
     const eventAreas: Partial<EventAreaDto>[] = Array.from(
-      selectedEventAreas.value.values()
+      selectedGeometries.value.values()
     )
 
-    emit('onGeometryClick', eventAreas)
+    emit('onAdoptClick', eventAreas)
   }
 }
 
@@ -93,7 +93,7 @@ function generateRandomHexColorCode() {
     <Map>
       <CampaignCollectionOverlay
         :collection="props.collection"
-        :selectedEventAreaIds="Array.from(selectedEventAreas.keys())"
+        :selectedGeometryIds="Array.from(selectedGeometries.keys())"
         :triggerSelectAll="selectAllClickCounter"
         hover
         fit-map
@@ -131,7 +131,7 @@ function generateRandomHexColorCode() {
           color="primary"
           outline
           dense
-          :disable="selectedEventAreas.size === 0"
+          :disable="selectedGeometries.size === 0"
           :label="$t('adoptEventAreas.campaignCollections.adopt')"
           @click="handleAdoptClick"
         />

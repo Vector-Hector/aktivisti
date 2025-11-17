@@ -26,7 +26,7 @@ interface Props {
   /**
    * List of ids of selected geometries. They are highlighted on the map.
    */
-  selectedEventAreaIds: number[]
+  selectedGeometryIds: number[]
   triggerSelectAll: number
 }
 
@@ -66,7 +66,7 @@ watch(
 )
 
 watch(
-  () => props.selectedEventAreaIds,
+  () => props.selectedGeometryIds,
   (newIds, oldIds) => updateSelectionStates(newIds, oldIds),
   { immediate: true }
 )
@@ -110,7 +110,7 @@ watch(
 )
 
 watch(
-  () => props.selectedEventAreaIds,
+  () => props.selectedGeometryIds,
   (newIds, oldIds) => updateSelectionStates(newIds, oldIds),
   { immediate: true }
 )

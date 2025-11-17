@@ -186,9 +186,8 @@ defineExpose({
       <CampaignCollections
         v-if="page === Page.CAMPAIGN_COLLECTIONS"
         :collection="campaignCollection!"
-        @onGeometryClick="handleAreaClick"
+        @on-adopt-click="handleAreaClick"
         @on-back-click="() => (page = Page.SELECT_AREA_SET)"
-        @on-adopt-areas="handleAreaClick"
         @on-abort-click="onDialogCancel"
       />
     </QCard>
