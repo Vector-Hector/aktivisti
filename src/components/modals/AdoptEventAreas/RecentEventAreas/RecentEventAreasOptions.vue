@@ -114,9 +114,13 @@ function handleAbortClick(): void {
  * Remove all data from event area, that is not required for creating a new event area
  *
  * @param area - Event area to copy the data from
+ * @param[keepCompleted=false] - If set to true, completion status of event area will not be removed.
  */
-function clearEventArea(area: EventAreaDto): Partial<EventAreaDto> {
-  return {
+function clearEventArea(
+  area: EventAreaDto,
+  keepCompleted: boolean = false
+): Partial<EventAreaDto> {
+  const cleanedArea = {
     event: props.event.id,
     name: area.name,
     // We're using hat, to get the same schema for the feature_id like mapbox see:
@@ -125,6 +129,10 @@ function clearEventArea(area: EventAreaDto): Partial<EventAreaDto> {
     color: area.color,
     geometry: area.geometry
   }
+  if (keepCompleted) {
+    cleanedArea['is_completed'] = area.is_completed
+  }
+  return cleanedArea
 }
 
 /**
@@ -140,7 +148,7 @@ function mapAreasWithOptionalCompletionNotes(
     adoptEventAreaStore.isAdoptingCompletionNotes
 
   return areas.map((eventArea) => {
-    const baseArea = clearEventArea(eventArea)
+    const baseArea = clearEventArea(eventArea, shouldAdoptCompletionNotes)
 
     // Early return if not adopting completion notes
     if (!shouldAdoptCompletionNotes) {
@@ -163,7 +171,7 @@ function mapAreasWithOptionalCompletionNotes(
 }
 
 function emitAdoptionOption(areas: EventAreaDto[]): void {
-  const mappedAreas = areas.map(clearEventArea)
+  const mappedAreas = areas.map((a) => clearEventArea(a))
   emit('onAdoptionOptionClick', mappedAreas)
 }
 
