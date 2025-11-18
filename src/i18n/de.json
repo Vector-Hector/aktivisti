@@ -832,7 +832,7 @@
     }
   },
   "eventParticipantsModal": {
-    "title": "Mitmachende",
+    "title": "Teilnehmer*innen",
     "teamcaptains": "Teamcaptains",
     "notifications": {
       "noSubAssociationError": "Dieser Aktion ist kein gültiger Landkreis zugeordnet. Die Ernennung einer*eines Teamcaptains ist an einen Landkreis gebunden.",
