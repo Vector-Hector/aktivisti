@@ -168,13 +168,8 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
         </template>
       </QInput>
       <QList class="event-participants-list">
-        <p
-          v-if="
-            verifiedParticipations.length === 0 &&
-            notVerifiedParticipations.length === 0
-          "
-        >
-          {{ $t('eventParticipantsModal.noOneWaitingToGetVerified') }}
+        <p v-if="participations.length === 0">
+          {{ $t('eventParticipantsModal.noParticipants') }}
         </p>
         <QExpansionItem
           v-if="notVerifiedParticipations.length > 0"

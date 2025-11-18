@@ -848,7 +848,7 @@
     "removeParticipant": "Remove user from the event",
     "verifiedParticipants": "Verified Participants",
     "verifyParticipants": "Verify Participants",
-    "noOneWaitingToGetVerified": "No one is waiting for verification. Invite more people to the event.",
+    "noParticipants": "There are currently no participants for this action",
     "coordinators": "Coordinators"
   },
   "eventDeleteDialog": {
