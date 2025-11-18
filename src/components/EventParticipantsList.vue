@@ -67,26 +67,48 @@ const isVerifiedExpanded = ref<boolean>(false)
 const isNotVerifiedExpanded = ref<boolean>(false)
 const highlight = ref<boolean>(false)
 
+function resetList(): void {
+  highlight.value = false
+  filteredParticipations.value = participations.value
+
+  isCoordinatorsExpanded.value = false
+  isNotVerifiedExpanded.value = false
+  isTeamCaptainsExpanded.value = false
+  isVerifiedExpanded.value = false
+}
+function setIsExpandedValues(): void {
+  isVerifiedExpanded.value = verifiedParticipations.value.length > 0
+  isNotVerifiedExpanded.value = notVerifiedParticipations.value.length > 0
+  isTeamCaptainsExpanded.value = areTeamCaptainsParticipations.value.length > 0
+  isCoordinatorsExpanded.value = areCoordinatorParticipations.value.length > 0
+}
+const MIN_LENGTH = 3
 function updateQuery(newValue: string): void {
   query.value = newValue
   const q = query.value.trim().toLowerCase()
-  if (q.length >= 3) {
-    highlight.value = true
-    filteredParticipations.value = participations.value.filter((value) =>
-      value.user_username.toLowerCase().includes(q)
+
+  // short usernames have to match the query exactly
+  if (q.length > 0 && q.length < MIN_LENGTH) {
+    const exactHits = participations.value.filter(
+      (p) => p.user_username.toLowerCase() === q
     )
-    isVerifiedExpanded.value = verifiedParticipations.value.length > 0
-    isNotVerifiedExpanded.value = notVerifiedParticipations.value.length > 0
-    isTeamCaptainsExpanded.value =
-      areTeamCaptainsParticipations.value.length > 0
-    isCoordinatorsExpanded.value = areCoordinatorParticipations.value.length > 0
+    if (exactHits.length > 0) {
+      highlight.value = true
+      filteredParticipations.value = exactHits
+      setIsExpandedValues()
+    } else {
+      resetList()
+    }
+  }
+  // longer usernames are also shown if the query is just a part of the username
+  else if (q.length >= MIN_LENGTH) {
+    highlight.value = true
+    filteredParticipations.value = participations.value.filter((p) =>
+      p.user_username.toLowerCase().includes(q)
+    )
+    setIsExpandedValues()
   } else {
-    highlight.value = false
-    filteredParticipations.value = participations.value
-    isCoordinatorsExpanded.value = false
-    isNotVerifiedExpanded.value = false
-    isTeamCaptainsExpanded.value = false
-    isVerifiedExpanded.value = false
+    resetList()
   }
 }
 
