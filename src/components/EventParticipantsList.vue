@@ -178,13 +178,15 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
   <div class="row">
     <div class="col">
       <div class="row" v-if="participations.length > 0">
+        <span class="description">
+          {{ $t('eventParticipantsModal.input.description') }}
+        </span>
         <div class="col-grow">
           <QInput
             use-input
             :model-value="query"
             @update:model-value="updateQuery"
             :label="$t('eventParticipantsModal.input.label')"
-            :placeholder="$t('eventParticipantsModal.input.placeholder')"
             dense
             class="w-100 d-flex flex-col"
           />
@@ -290,5 +292,14 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.description {
+  color: $grey-6;
+  font-size: 0.75rem;
+  line-height: 1;
+  display: block;
+}
+.q-card__section--vert {
+  padding-top: 0;
 }
 </style>
