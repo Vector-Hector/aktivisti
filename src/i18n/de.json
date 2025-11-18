@@ -838,6 +838,10 @@
       "noSubAssociationError": "Dieser Aktion ist kein gültiger Landkreis zugeordnet. Die Ernennung einer*eines Teamcaptains ist an einen Landkreis gebunden.",
       "generalError": "Ein unerwarteter Fehler ist aufgetreten"
     },
+    "input": {
+      "placeholder": "Benutzer*innenname",
+      "label": "Suche Teilnehmer*innen"
+    },
     "promoteUserToTeamcamptain": {
       "label": "Benutzer*in zu Teamcaptain machen",
       "dialog": {

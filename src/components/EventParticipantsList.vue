@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import {
-  ionChevronDown,
-  ionPeopleSharp,
-  ionSearch
-} from '@quasar/extras/ionicons-v5'
+import { ionChevronDown, ionSearch } from '@quasar/extras/ionicons-v5'
 import { QList, useQuasar, QExpansionItem, QInput, QIcon } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
 import { useI18n } from 'vue-i18n'
@@ -159,14 +155,22 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
 <template>
   <div class="row">
     <div class="col">
-      <QInput :model-value="query" @update:model-value="updateQuery" dense>
-        <template v-slot:before>
-          <QIcon :name="ionPeopleSharp" />
-        </template>
-        <template v-slot:append>
-          <q-icon :name="ionSearch" />
-        </template>
-      </QInput>
+      <div class="row" v-if="participations.length > 0">
+        <div class="col-grow">
+          <QInput
+            use-input
+            :model-value="query"
+            @update:model-value="updateQuery"
+            :label="$t('eventParticipantsModal.input.label')"
+            :placeholder="$t('eventParticipantsModal.input.placeholder')"
+            dense
+            class="w-100 d-flex flex-col"
+          />
+        </div>
+        <div class="search-icon">
+          <QIcon :name="ionSearch" color="primary" size="sm" />
+        </div>
+      </div>
       <QList class="event-participants-list">
         <p v-if="participations.length === 0">
           {{ $t('eventParticipantsModal.noParticipants') }}
@@ -257,5 +261,12 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
 }
 .event-participants-list {
   margin-top: 20px;
+}
+.search-icon {
+  width: 42px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
