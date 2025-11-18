@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import {
-  ionChevronDown,
-  ionPeopleSharp,
-  ionSearch
-} from '@quasar/extras/ionicons-v5'
+import { ionChevronDown, ionSearch } from '@quasar/extras/ionicons-v5'
 import { QList, useQuasar, QExpansionItem, QInput, QIcon } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
 import { useI18n } from 'vue-i18n'
@@ -30,8 +26,14 @@ onMounted(async () => {
       is_pending_invitation: false
     })
   ).payload.data
-  filteredParticipations.value = participations.value
 })
+
+watch(
+  () => participations.value,
+  (participations) => {
+    filteredParticipations.value = participations
+  }
+)
 
 const verifiedParticipations = computed(() => {
   return filteredParticipations.value.filter(
@@ -65,26 +67,48 @@ const isVerifiedExpanded = ref<boolean>(false)
 const isNotVerifiedExpanded = ref<boolean>(false)
 const highlight = ref<boolean>(false)
 
+function resetList(): void {
+  highlight.value = false
+  filteredParticipations.value = participations.value
+
+  isCoordinatorsExpanded.value = false
+  isNotVerifiedExpanded.value = false
+  isTeamCaptainsExpanded.value = false
+  isVerifiedExpanded.value = false
+}
+function setIsExpandedValues(): void {
+  isVerifiedExpanded.value = verifiedParticipations.value.length > 0
+  isNotVerifiedExpanded.value = notVerifiedParticipations.value.length > 0
+  isTeamCaptainsExpanded.value = areTeamCaptainsParticipations.value.length > 0
+  isCoordinatorsExpanded.value = areCoordinatorParticipations.value.length > 0
+}
+const MIN_LENGTH = 3
 function updateQuery(newValue: string): void {
   query.value = newValue
   const q = query.value.trim().toLowerCase()
-  if (q.length >= 3) {
-    highlight.value = true
-    filteredParticipations.value = participations.value.filter((value) =>
-      value.user_username.toLowerCase().includes(q)
+
+  // short usernames have to match the query exactly
+  if (q.length > 0 && q.length < MIN_LENGTH) {
+    const exactHits = participations.value.filter(
+      (p) => p.user_username.toLowerCase() === q
     )
-    isVerifiedExpanded.value = verifiedParticipations.value.length > 0
-    isNotVerifiedExpanded.value = notVerifiedParticipations.value.length > 0
-    isTeamCaptainsExpanded.value =
-      areTeamCaptainsParticipations.value.length > 0
-    isCoordinatorsExpanded.value = areCoordinatorParticipations.value.length > 0
+    if (exactHits.length > 0) {
+      highlight.value = true
+      filteredParticipations.value = exactHits
+      setIsExpandedValues()
+    } else {
+      resetList()
+    }
+  }
+  // longer usernames are also shown if the query is just a part of the username
+  else if (q.length >= MIN_LENGTH) {
+    highlight.value = true
+    filteredParticipations.value = participations.value.filter((p) =>
+      p.user_username.toLowerCase().includes(q)
+    )
+    setIsExpandedValues()
   } else {
-    highlight.value = false
-    filteredParticipations.value = participations.value
-    isCoordinatorsExpanded.value = false
-    isNotVerifiedExpanded.value = false
-    isTeamCaptainsExpanded.value = false
-    isVerifiedExpanded.value = false
+    resetList()
   }
 }
 
@@ -153,22 +177,25 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
 <template>
   <div class="row">
     <div class="col">
-      <QInput :model-value="query" @update:model-value="updateQuery" dense>
-        <template v-slot:before>
-          <QIcon :name="ionPeopleSharp" />
-        </template>
-        <template v-slot:append>
-          <q-icon :name="ionSearch" />
-        </template>
-      </QInput>
+      <div class="row" v-if="participations.length > 0">
+        <div class="col-grow">
+          <QInput
+            use-input
+            :model-value="query"
+            @update:model-value="updateQuery"
+            :label="$t('eventParticipantsModal.input.label')"
+            :placeholder="$t('eventParticipantsModal.input.placeholder')"
+            dense
+            class="w-100 d-flex flex-col"
+          />
+        </div>
+        <div class="search-icon">
+          <QIcon :name="ionSearch" color="primary" size="sm" />
+        </div>
+      </div>
       <QList class="event-participants-list">
-        <p
-          v-if="
-            verifiedParticipations.length === 0 &&
-            notVerifiedParticipations.length === 0
-          "
-        >
-          {{ $t('eventParticipantsModal.noOneWaitingToGetVerified') }}
+        <p v-if="participations.length === 0">
+          {{ $t('eventParticipantsModal.noParticipants') }}
         </p>
         <QExpansionItem
           v-if="notVerifiedParticipations.length > 0"
@@ -256,5 +283,12 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
 }
 .event-participants-list {
   margin-top: 20px;
+}
+.search-icon {
+  width: 42px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

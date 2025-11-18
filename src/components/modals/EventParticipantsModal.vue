@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { QCard, QCardSection, QDialog } from 'quasar'
+import { QCard, QCardSection, QDialog, QToolbar, QToolbarTitle } from 'quasar'
 import EventParticipantsList from 'src/components/EventParticipantsList.vue'
 
 interface Emits {
@@ -34,6 +34,9 @@ function onDialogHide() {
 <template>
   <QDialog ref="dialog" @hide="onDialogHide">
     <QCard class="participants-modal">
+      <QToolbar>
+        <QToolbarTitle>{{ $t('eventParticipantsModal.title') }}</QToolbarTitle>
+      </QToolbar>
       <QCardSection>
         <EventParticipantsList
           :event-id="props.eventId"

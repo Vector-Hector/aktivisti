@@ -845,10 +845,14 @@
         "description": "Do you want to promote the user {0} to team captain?"
       }
     },
+    "input": {
+      "placeholder": "Username",
+      "label": "Search participants"
+    },
     "removeParticipant": "Remove user from the event",
     "verifiedParticipants": "Verified Participants",
     "verifyParticipants": "Verify Participants",
-    "noOneWaitingToGetVerified": "No one is waiting for verification. Invite more people to the event.",
+    "noParticipants": "There are currently no participants for this action",
     "coordinators": "Coordinators"
   },
   "eventDeleteDialog": {
