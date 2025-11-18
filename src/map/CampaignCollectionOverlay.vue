@@ -23,6 +23,11 @@ interface Props {
    * When set to true, the underlying map will zoom to the features.
    */
   fitMap?: boolean
+  /**
+   * List of ids of selected geometries. They are highlighted on the map.
+   */
+  selectedGeometryIds: number[]
+  triggerSelectAll: number
 }
 
 interface Emits {
@@ -60,9 +65,85 @@ watch(
   }
 )
 
+watch(
+  () => props.selectedGeometryIds,
+  (newIds, oldIds) => updateSelectionStates(newIds, oldIds),
+  { immediate: true }
+)
+
+watch(
+  () => props.triggerSelectAll,
+  () => {
+    if (!overlayID.value) return
+
+    const sourceId = `${overlayID.value}-source`
+    const source = map.value.getSource(sourceId)
+    if (!source) {
+      return
+    }
+
+    const data = source.serialize().data as FeatureCollection
+    if (!data?.features) {
+      return
+    }
+    const unselected = data.features.filter((f) => {
+      const state = map.value.getFeatureState({ source: sourceId, id: f.id })
+      return !state.selected
+    })
+
+    unselected.forEach((f) => {
+      const fakeEvent = {
+        features: [
+          {
+            properties: {
+              ...f.properties,
+              raw_metadata: JSON.stringify(f.properties.raw_metadata)
+            },
+            geometry: f.geometry
+          }
+        ]
+      }
+
+      handleGeometryClick(fakeEvent)
+    })
+  }
+)
+
+watch(
+  () => props.selectedGeometryIds,
+  (newIds, oldIds) => updateSelectionStates(newIds, oldIds),
+  { immediate: true }
+)
+
 onUnmounted(() => {
   cleanUp()
 })
+
+function updateSelectionStates(
+  newSelectedIds: number[],
+  oldSelectedIds: number[]
+) {
+  const isMore =
+    oldSelectedIds === undefined ||
+    newSelectedIds.length > oldSelectedIds.length
+  const sourceId = `${overlayID.value}-source`
+  if (map.value.getSource(sourceId)) {
+    if (isMore) {
+      const shortSet = new Set(oldSelectedIds)
+      const newSelected = newSelectedIds.filter((id) => !shortSet.has(id))
+      newSelected.forEach((id) => {
+        map.value.setFeatureState({ source: sourceId, id }, { selected: true })
+      })
+    }
+    if (!isMore && newSelectedIds.length !== oldSelectedIds.length) {
+      const shortSet = new Set(newSelectedIds)
+      const deselected = oldSelectedIds.filter((id) => !shortSet.has(id))
+      deselected.forEach((id) => {
+        map.value.setFeatureState({ source: sourceId, id }, { selected: false })
+      })
+    }
+  }
+}
 
 async function initializeOverlay(collection: CampaignGeometryCollectionsDto) {
   const geometries = (
@@ -140,10 +221,13 @@ function drawFeatureCollection(
         'case',
         ['boolean', ['feature-state', 'hover'], false],
         0.5,
-        0.0
+        ['boolean', ['feature-state', 'selected'], false],
+        0.7,
+        0
       ]
     }
   })
+
   map.value.addLayer({
     id: outlineLayerId,
     type: 'line',

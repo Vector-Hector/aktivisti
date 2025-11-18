@@ -6,7 +6,8 @@ import {
   QInput,
   QScrollArea,
   QSpinnerDots,
-  QToggle
+  QToggle,
+  QCardActions
 } from 'quasar'
 import { ionSearch } from '@quasar/extras/ionicons-v5'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
@@ -29,6 +30,8 @@ interface Emits {
     e: 'onEventAreaClick',
     eventArea: Partial<EventAreaWithCompletionNotes>
   ): void
+  (e: 'onBackClick'): void
+  (e: 'onAbortClick'): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -70,6 +73,13 @@ const handleSubmit = async () => {
     await fetchEventAreas(searchString.value)
     isLoading.value = false
   }
+}
+
+function handleBackClick(): void {
+  emit('onBackClick')
+}
+function handleAbortClick(): void {
+  emit('onAbortClick')
 }
 
 async function handleEventAreaClick(eventArea: EventAreaDto) {
@@ -161,6 +171,25 @@ onMounted(async () => {
       </template>
     </template>
   </QCardSection>
+  <QCardSection>
+    <QCardActions>
+      <QBtn
+        color="primary"
+        class="grey-button"
+        outline
+        dense
+        :label="$t('general.cancel')"
+        @click="handleAbortClick"
+      />
+      <QBtn
+        color="primary"
+        outline
+        dense
+        :label="$t('general.back')"
+        @click="handleBackClick"
+      />
+    </QCardActions>
+  </QCardSection>
 </template>
 
 <style scoped lang="scss">
@@ -191,5 +220,12 @@ onMounted(async () => {
   margin: 1rem 0;
   display: flex;
   justify-content: center;
+}
+.q-card__section {
+  .q-card__actions {
+    button:not(:first-child) {
+      margin-left: 8px;
+    }
+  }
 }
 </style>

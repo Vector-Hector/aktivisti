@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { QCardSection } from 'quasar'
+import { QCardSection, QBtn, QCardActions } from 'quasar'
 import Map from 'src/map/Map.vue'
 import { CampaignGeometryCollectionsDto } from 'src/api/model/CampaignGeometryCollectionsDto'
 import CampaignCollectionOverlay from 'src/map/CampaignCollectionOverlay.vue'
@@ -8,13 +8,16 @@ import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import hat from 'hat'
 import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 import { useI18n } from 'vue-i18n'
+import { Ref, ref } from 'vue'
 
 interface Props {
   collection: CampaignGeometryCollectionsDto
 }
 
 interface Emits {
-  (e: 'onGeometryClick', eventAreas: Partial<EventAreaDto>[]): void
+  (e: 'onAdoptClick', eventAreas: Partial<EventAreaDto>[]): void
+  (e: 'onBackClick'): void
+  (e: 'onAbortClick'): void
 }
 
 const props = defineProps<Props>()
@@ -22,25 +25,54 @@ const emit = defineEmits<Emits>()
 const { eventAreas } = useEditEventMixin()
 const { t } = useI18n()
 
+const selectedGeometries: Ref<globalThis.Map<number, Partial<EventAreaDto>>> =
+  ref(new globalThis.Map())
+const selectAllClickCounter = ref(0)
+
 function handleGeometryClick(
   geometryId: number,
   geometry: Geometry,
   metadata: any
 ): void {
-  const nameKey = Object.keys(metadata).find(
-    (key) => key.toUpperCase() === 'NAME'
-  )
-  const eventArea: Partial<EventAreaDto> = {
-    name: nameKey
-      ? metadata[nameKey]
-      : `${t('events.edit.geometry.areas.prefixNewArea')} ${eventAreas.value.length + 1}`,
-    // We're using hat, to get the same schema for the future_id like mapbox see:
-    // https://github.com/mapbox/mapbox-gl-draw/blob/2b9ce3e58e3695c018a48b6fca78ed1a9d1b67c2/src/feature_types/feature.js#L8
-    feature_id: hat(),
-    color: generateRandomHexColorCode(),
-    geometry: geometry
+  if (selectedGeometries.value.has(geometryId)) {
+    selectedGeometries.value.delete(geometryId)
+  } else {
+    const nameKey = Object.keys(metadata).find(
+      (key) => key.toUpperCase() === 'NAME'
+    )
+    const eventArea: Partial<EventAreaDto> = {
+      name: nameKey
+        ? metadata[nameKey]
+        : `${t('events.edit.geometry.areas.prefixNewArea')} ${eventAreas.value.length + selectedGeometries.value.size + 1}`,
+      // We're using hat, to get the same schema for the future_id like mapbox see:
+      // https://github.com/mapbox/mapbox-gl-draw/blob/2b9ce3e58e3695c018a48b6fca78ed1a9d1b67c2/src/feature_types/feature.js#L8
+      feature_id: hat(),
+      color: generateRandomHexColorCode(),
+      geometry: geometry
+    }
+    selectedGeometries.value.set(geometryId, eventArea)
   }
-  emit('onGeometryClick', [eventArea])
+}
+
+function handleAdoptClick(): void {
+  if (selectedGeometries.value.size > 0) {
+    const eventAreas: Partial<EventAreaDto>[] = Array.from(
+      selectedGeometries.value.values()
+    )
+
+    emit('onAdoptClick', eventAreas)
+  }
+}
+
+function handleSelectAllClick(): void {
+  selectAllClickCounter.value++
+}
+
+function handleBackClick(): void {
+  emit('onBackClick')
+}
+function handleAbortClick(): void {
+  emit('onAbortClick')
 }
 
 /**
@@ -61,11 +93,50 @@ function generateRandomHexColorCode() {
     <Map>
       <CampaignCollectionOverlay
         :collection="props.collection"
+        :selectedGeometryIds="Array.from(selectedGeometries.keys())"
+        :triggerSelectAll="selectAllClickCounter"
         hover
         fit-map
         @geometry-click="handleGeometryClick"
       />
     </Map>
+  </QCardSection>
+  <QCardSection>
+    <QCardActions>
+      <div>
+        <QBtn
+          color="primary"
+          outline
+          dense
+          :label="$t('general.cancel')"
+          @click="handleAbortClick"
+        />
+        <QBtn
+          color="primary"
+          outline
+          dense
+          :label="$t('general.back')"
+          @click="handleBackClick"
+        />
+      </div>
+      <div>
+        <QBtn
+          color="primary"
+          outline
+          dense
+          :label="$t('adoptEventAreas.campaignCollections.selectAll')"
+          @click="handleSelectAllClick"
+        />
+        <QBtn
+          color="primary"
+          outline
+          dense
+          :disable="selectedGeometries.size === 0"
+          :label="$t('adoptEventAreas.campaignCollections.adopt')"
+          @click="handleAdoptClick"
+        />
+      </div>
+    </QCardActions>
   </QCardSection>
 </template>
 
@@ -89,5 +160,22 @@ function generateRandomHexColorCode() {
 
 .description-section {
   padding-bottom: 0;
+}
+.q-card__section {
+  .q-card__actions {
+    display: flex;
+    justify-content: space-between;
+    div {
+      display: flex;
+      button {
+        &:not(:first-child) {
+          margin-left: 8px;
+        }
+        &:last-child {
+          float: right;
+        }
+      }
+    }
+  }
 }
 </style>

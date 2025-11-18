@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import {
-  QBtn,
-  QCard,
-  QCardActions,
-  QDialog,
-  QToolbar,
-  QToolbarTitle
-} from 'quasar'
+import { QCard, QDialog, QToolbar, QToolbarTitle } from 'quasar'
 import { useDialogPluginComponent } from 'quasar'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import SelectAreaSet from 'components/modals/AdoptEventAreas/SelectAreaSet.vue'
@@ -167,59 +160,36 @@ defineExpose({
         @onSearchEventAreaClick="handleSearchEventAreasClick"
         @onRecentEventAreasClick="handleRecentEventAreasClick"
         @onCampaignCollectionClick="handleCampaignCollectionClick"
+        @on-abort-click="onDialogCancel"
       />
       <SearchEventArea
         v-if="page === Page.SEARCH_EVENT_AREAS"
         :isPosterEvent="props.isPosterEvent"
         @onEventAreaClick="(area) => handleAreaClick([area])"
+        @on-back-click="() => (page = Page.SELECT_AREA_SET)"
+        @on-abort-click="onDialogCancel"
       />
       <RecentEventAreas
         v-if="page === Page.RECENT_EVENT_AREAS_PAGE_1"
         @onEventClick="handleEventClick"
+        @on-back-click="() => (page = Page.SELECT_AREA_SET)"
+        @on-abort-click="onDialogCancel"
       />
       <RecentEventAreasOptions
         v-if="page === Page.RECENT_EVENT_AREAS_PAGE_2"
         :event="recentEvent"
         :isPosterEvent="props.isPosterEvent"
         @onAdoptionOptionClick="handleAreaClick"
+        @on-back-click="() => (page = Page.RECENT_EVENT_AREAS_PAGE_1)"
+        @on-abort-click="onDialogCancel"
       />
       <CampaignCollections
         v-if="page === Page.CAMPAIGN_COLLECTIONS"
         :collection="campaignCollection!"
-        @onGeometryClick="handleAreaClick"
+        @on-adopt-click="handleAreaClick"
+        @on-back-click="() => (page = Page.SELECT_AREA_SET)"
+        @on-abort-click="onDialogCancel"
       />
-      <QCardActions align="left">
-        <QBtn
-          color="primary"
-          outline
-          dense
-          :label="$t('general.cancel')"
-          @click="onDialogCancel"
-        />
-        <QBtn
-          v-if="
-            [
-              Page.CAMPAIGN_COLLECTIONS,
-              Page.RECENT_EVENT_AREAS_PAGE_1,
-              Page.RECENT_EVENT_AREAS_PAGE_2,
-              Page.SEARCH_EVENT_AREAS
-            ].includes(page) && isCollectionExisting
-          "
-          color="primary"
-          outline
-          dense
-          :label="$t('general.back')"
-          @click="
-            () => {
-              if (page === Page.RECENT_EVENT_AREAS_PAGE_2) {
-                recentEvent = null
-                page = Page.RECENT_EVENT_AREAS_PAGE_1
-              }
-              page = Page.SELECT_AREA_SET
-            }
-          "
-        />
-      </QCardActions>
     </QCard>
   </QDialog>
 </template>
