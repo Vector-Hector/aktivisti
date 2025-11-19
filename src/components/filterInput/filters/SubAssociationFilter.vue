@@ -9,7 +9,7 @@ const { t } = useI18n()
 interface Props {
   options: SubAssociationDto[]
   modelValue?: number
-  showAllCampaigns?: boolean
+  showAllSubAssociation?: boolean
   disable?: boolean
   label?: string
 }
@@ -27,7 +27,7 @@ const emit = defineEmits<Emits>()
 const label = props.label ? props.label : t('subAssociationFilter.defaultLabel')
 
 const extendedOptions = computed(() => {
-  if (props.showAllCampaigns) {
+  if (props.showAllSubAssociation) {
     return [
       {
         id: 0,

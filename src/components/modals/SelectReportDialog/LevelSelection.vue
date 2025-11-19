@@ -314,7 +314,7 @@ function handleSubAssociationSelection(subAssociationId: number) {
     :options="subAssociations"
     :model-value="selectedSubAssociationId"
     :disable="subAssociations.length < 2"
-    :show-all-state-association="isAbleToRequestAllSubAssociations"
+    :show-all-sub-association="isAbleToRequestAllSubAssociations"
     @update:model-value="handleSubAssociationSelection"
   />
 </template>
