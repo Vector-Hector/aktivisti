@@ -151,6 +151,7 @@ watch(
       stateAssociations.value = [
         await fetchStateAssociation(campaign!.state_association!)
       ]
+      allManagedStateAssociations.value = stateAssociations.value
       isAbleToRequestAllStateAssociations.value = false
       selectedStateAssociationId.value = stateAssociations.value[0].id
     } else if (campaign!.campaign_level === CampaignLevel.SUB_ASSOCIATION) {
