@@ -80,7 +80,9 @@ function handleAbortClick(): void {
  */
 function generateRandomHexColorCode() {
   // 16777215 = (16^6 - 1), which is total count of possible hex of length 6 (hex color codes)
-  return `#${Math.floor(Math.random() * 16777215).toString(16)}`
+  return `#${Math.floor(Math.random() * 16777215)
+    .toString(16)
+    .padStart(6, '0')}`
 }
 </script>
 <template>
