@@ -846,8 +846,8 @@
       }
     },
     "input": {
-      "placeholder": "Username",
-      "label": "Search participants"
+      "label": "Username",
+      "description": "Search participants"
     },
     "removeParticipant": "Remove user from the event",
     "verifiedParticipants": "Verified Participants",
