@@ -138,7 +138,7 @@ function openAdoptAreasModal() {
       campaigns: campaigns.value.filter(({ id }) =>
         event.value.campaigns.includes(id)
       ),
-      isPosterEvent: event.value.event_type === EventTypes.POSTERS
+      eventType: event.value.event_type
     }
   }).onOk(
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
