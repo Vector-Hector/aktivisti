@@ -276,13 +276,14 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
   </div>
 </template>
 
-<style lang="scss">
-.participants-collapsible-header {
+<style lang="scss" scoped>
+:deep(.participants-collapsible-header) {
   font-size: 21px;
   font-weight: 400;
   background-color: $grey-2;
   margin-top: 8px;
 }
+
 .event-participants-list {
   margin-top: 20px;
 }
@@ -297,9 +298,6 @@ function handleInviteToTeamCaptain(userId: number, username: string) {
   color: $grey-6;
   font-size: 0.75rem;
   line-height: 1;
-  display: block;
-}
-.q-card__section--vert {
-  padding-top: 0;
+  width: 100%;
 }
 </style>
