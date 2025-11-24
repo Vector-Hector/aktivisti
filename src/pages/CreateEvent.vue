@@ -19,7 +19,7 @@ export default {
       next({ name: 'login' })
     } else {
       const [campaignRequest, metricsRequest] = await Promise.all([
-        apiClient.campaigns.list(),
+        apiClient.campaigns.list({ can_create_events: true }),
         apiClient.eventMetrics.list()
       ])
       next((vm) => {

@@ -23,7 +23,7 @@ export default {
           apiClient.events.get(to.params.eventId as string, [
             'eventmetricrecord_set'
           ]),
-          apiClient.campaigns.list(),
+          apiClient.campaigns.list({ can_create_events: true }),
           apiClient.eventAreas.list({ event: to.params.eventId })
         ])
       if (eventRequest.payload.data.event_type === EventTypes.POSTERS) {
