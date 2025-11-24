@@ -51,4 +51,7 @@ function onDialogHide() {
 .participants-modal {
   min-width: 320px;
 }
+.q-card__section--vert {
+  padding-top: 0;
+}
 </style>
