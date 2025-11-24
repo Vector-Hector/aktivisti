@@ -949,6 +949,7 @@
         "dontAdoptPosters": "Plakatstandorte nicht übernehmen",
         "description": "Welche Gebiete der Aktion sollen übernommen werden?",
         "adoptCompletionNotes": "Informationen über erledigte Adressen übernehmen",
+        "completionNotesDisabledTooltip": "Informationen über erledigte Adressen können nur zwischen Aktionen derselben Kampagne übernommen werden.",
         "all": "Alle Gebiete",
         "startedAreas": "Alle angefangenen Gebiete",
         "notStartedAreas": "Alle nicht angefangenen Gebiete",

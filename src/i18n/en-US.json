@@ -949,6 +949,7 @@
         "dontAdoptPosters": "Don't Adopt Poster Locations",
         "description": "Which areas of the action should be adopted?",
         "adoptCompletionNotes": "Adopt information of completed addresses",
+        "completionNotesDisabledTooltip": "Completion notes can only be adopted between events that share the same campaign.",
         "all": "All Areas",
         "startedAreas": "All Started Areas",
         "notStartedAreas": "All Not Started Areas",

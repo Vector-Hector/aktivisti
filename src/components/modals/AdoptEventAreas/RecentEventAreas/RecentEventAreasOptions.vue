@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import hat from 'hat'
-import { QCardSection, QBtn, QToggle, QCardActions } from 'quasar'
+import { QCardSection, QBtn, QToggle, QTooltip, QCardActions } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
 import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { EventDto } from 'src/api/model/EventDto'
+import { useEditEventMixin } from 'src/pages/edit-event/EditEventMixin'
 import { EventAreaWithCompletionNotes } from 'src/pages/edit-event/geometry/EditEventGeometry.vue'
 import { useAdoptEventAreaStore } from 'src/stores/adoptEventArea'
 import { clearCompletionNote } from 'src/utils/adoptEventAreas'
@@ -32,6 +33,7 @@ const emit = defineEmits<Emits>()
 
 const { t } = useI18n()
 const adoptEventAreaStore = useAdoptEventAreaStore()
+const { event: editedEvent } = useEditEventMixin()
 
 const eventAreas = ref<EventAreaDto[]>([])
 const completionNotes = ref<CompletionNoteDto[]>([])
@@ -43,8 +45,10 @@ const eventAreaIdsWithCompletionNotes = computed(
 )
 
 const startedEventAreas = computed(() =>
-  eventAreas.value.filter((area) =>
-    eventAreaIdsWithCompletionNotes.value.has(area.id)
+  eventAreas.value.filter(
+    (area) =>
+      eventAreaIdsWithCompletionNotes.value.has(area.id) &&
+      area.is_completed !== true
   )
 )
 
@@ -55,6 +59,15 @@ const notStartedEventAreas = computed(() =>
       area.is_completed !== true
   )
 )
+
+const hasSharedCampaign = computed(() => {
+  if (!editedEvent.value?.campaigns || !props.event.campaigns) {
+    return false
+  }
+
+  const editedEventCampaignIds = new Set(editedEvent.value.campaigns)
+  return props.event.campaigns.some((id) => editedEventCampaignIds.has(id))
+})
 
 async function loadEventAreasData(): Promise<void> {
   try {
@@ -101,9 +114,13 @@ function handleAbortClick(): void {
  * Remove all data from event area, that is not required for creating a new event area
  *
  * @param area - Event area to copy the data from
+ * @param[keepCompleted=false] - If set to true, completion status of event area will not be removed.
  */
-function clearEventArea(area: EventAreaDto): Partial<EventAreaDto> {
-  return {
+function clearEventArea(
+  area: EventAreaDto,
+  keepCompleted: boolean = false
+): Partial<EventAreaDto> {
+  const cleanedArea = {
     event: props.event.id,
     name: area.name,
     // We're using hat, to get the same schema for the feature_id like mapbox see:
@@ -112,6 +129,10 @@ function clearEventArea(area: EventAreaDto): Partial<EventAreaDto> {
     color: area.color,
     geometry: area.geometry
   }
+  if (keepCompleted) {
+    cleanedArea['is_completed'] = area.is_completed
+  }
+  return cleanedArea
 }
 
 /**
@@ -127,7 +148,7 @@ function mapAreasWithOptionalCompletionNotes(
     adoptEventAreaStore.isAdoptingCompletionNotes
 
   return areas.map((eventArea) => {
-    const baseArea = clearEventArea(eventArea)
+    const baseArea = clearEventArea(eventArea, shouldAdoptCompletionNotes)
 
     // Early return if not adopting completion notes
     if (!shouldAdoptCompletionNotes) {
@@ -150,7 +171,7 @@ function mapAreasWithOptionalCompletionNotes(
 }
 
 function emitAdoptionOption(areas: EventAreaDto[]): void {
-  const mappedAreas = areas.map(clearEventArea)
+  const mappedAreas = areas.map((a) => clearEventArea(a))
   emit('onAdoptionOptionClick', mappedAreas)
 }
 
@@ -240,7 +261,15 @@ function handleNotStartedAreasClick(): void {
             'adoptEventAreas.recentEventAreas.recentEventAreasOptions.adoptCompletionNotes'
           )
         "
-      />
+        :disable="!hasSharedCampaign"
+        ><QTooltip v-if="!hasSharedCampaign">
+          {{
+            $t(
+              'adoptEventAreas.recentEventAreas.recentEventAreasOptions.completionNotesDisabledTooltip'
+            )
+          }}
+        </QTooltip></QToggle
+      >
       <QBtn
         :label="
           $t('adoptEventAreas.recentEventAreas.recentEventAreasOptions.all')
