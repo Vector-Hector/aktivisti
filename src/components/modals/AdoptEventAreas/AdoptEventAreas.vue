@@ -14,15 +14,15 @@ import { CAMPAIGN_GEOMETRY_COLLECTIONS_CHUNK_SIZE } from 'src/constants'
 import { EventDto } from 'src/api/model/EventDto'
 import RecentEventAreasOptions from './RecentEventAreas/RecentEventAreasOptions.vue'
 import { useAdoptEventAreaStore } from 'src/stores/adoptEventArea'
+import { EventTypes } from 'src/api/model/EventTypes'
 
 interface Props {
   campaigns: CampaignDto[]
-  isPosterEvent?: boolean
+  eventType: EventTypes
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  isPosterEvent: false
-})
+const props = defineProps<Props>()
+const isPosterEvent = computed(() => props.eventType === EventTypes.POSTERS)
 defineEmits([
   // REQUIRED by QDialog, we need to emit some events through useDialogPluginComponent
   ...useDialogPluginComponent.emits
@@ -68,6 +68,7 @@ async function fetchMoreCollections() {
   if (!areAllCollectionsLoaded.value) {
     const response = (
       await apiClient.campaignGeometryCollections.list({
+        event_type: [props.eventType],
         campaign: campaignIds.value,
         limit: CAMPAIGN_GEOMETRY_COLLECTIONS_CHUNK_SIZE,
         offset: offsetCampaignCollections.value,
@@ -164,7 +165,7 @@ defineExpose({
       />
       <SearchEventArea
         v-if="page === Page.SEARCH_EVENT_AREAS"
-        :isPosterEvent="props.isPosterEvent"
+        :isPosterEvent="isPosterEvent"
         @onEventAreaClick="(area) => handleAreaClick([area])"
         @on-back-click="() => (page = Page.SELECT_AREA_SET)"
         @on-abort-click="onDialogCancel"
@@ -178,7 +179,7 @@ defineExpose({
       <RecentEventAreasOptions
         v-if="page === Page.RECENT_EVENT_AREAS_PAGE_2"
         :event="recentEvent"
-        :isPosterEvent="props.isPosterEvent"
+        :isPosterEvent="isPosterEvent"
         @onAdoptionOptionClick="handleAreaClick"
         @on-back-click="() => (page = Page.RECENT_EVENT_AREAS_PAGE_1)"
         @on-abort-click="onDialogCancel"
