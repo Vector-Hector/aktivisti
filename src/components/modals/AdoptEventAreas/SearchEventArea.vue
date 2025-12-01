@@ -5,7 +5,9 @@ import {
   QForm,
   QInput,
   QScrollArea,
-  QSpinnerDots
+  QSpinnerDots,
+  QToggle,
+  QCardActions
 } from 'quasar'
 import { ionSearch } from '@quasar/extras/ionicons-v5'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
@@ -14,12 +16,30 @@ import { apiClient } from 'src/api/ApiClient'
 import EventAreaList from 'components/EventAreaList.vue'
 import { EventDto } from 'src/api/model/EventDto'
 import { CampaignDto } from 'src/api/model/CampaignDto'
+import { useAdoptEventAreaStore } from 'src/stores/adoptEventArea'
+import { EventAreaWithCompletionNotes } from 'src/pages/edit-event/geometry/EditEventGeometry.vue'
+import { clearCompletionNote } from 'src/utils/adoptEventAreas'
+import { useEditEventMixin } from 'src/pages/edit-event/EditEventMixin'
 
-interface Emits {
-  (e: 'onEventAreaClick', eventArea: EventAreaDto): void
+interface Props {
+  isPosterEvent?: boolean
 }
 
+interface Emits {
+  (
+    e: 'onEventAreaClick',
+    eventArea: Partial<EventAreaWithCompletionNotes>
+  ): void
+  (e: 'onBackClick'): void
+  (e: 'onAbortClick'): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  isPosterEvent: false
+})
 const emit = defineEmits<Emits>()
+
+const adoptEventAreaStore = useAdoptEventAreaStore()
 
 const isInitial = ref<boolean>(true)
 const isLoading = ref<boolean>(false)
@@ -28,6 +48,7 @@ const eventAreas = ref<EventAreaDto[]>([])
 const events = ref<EventDto[]>([])
 const campaigns = ref<CampaignDto[]>([])
 const searchString = ref<string | null>(null)
+const { event: currentEvent } = useEditEventMixin()
 
 const fetchEventAreas = async (searchString: string) => {
   const response = await apiClient.eventAreas.list({ name: searchString }, [
@@ -35,6 +56,9 @@ const fetchEventAreas = async (searchString: string) => {
   ])
   events.value = response.payload.embedded.event
   eventAreas.value = response.payload.data
+  eventAreas.value = eventAreas.value.filter(
+    (area) => area.event !== currentEvent.value.id
+  )
 }
 
 const fetchCampaigns = async () => {
@@ -51,8 +75,30 @@ const handleSubmit = async () => {
   }
 }
 
-function handleEventAreaClick(eventArea: EventAreaDto) {
-  emit('onEventAreaClick', eventArea)
+function handleBackClick(): void {
+  emit('onBackClick')
+}
+function handleAbortClick(): void {
+  emit('onAbortClick')
+}
+
+async function handleEventAreaClick(eventArea: EventAreaDto) {
+  let adjustedEventArea: Partial<EventAreaWithCompletionNotes> = eventArea
+
+  if (adoptEventAreaStore.isAdoptingCompletionNotes) {
+    const completionNotes = (
+      await apiClient.completionNotes.list({
+        event_area: eventArea.id
+      })
+    ).payload.data
+
+    adjustedEventArea = {
+      ...eventArea,
+      completionNotes: completionNotes.map(clearCompletionNote)
+    }
+  }
+
+  emit('onEventAreaClick', adjustedEventArea)
 }
 
 onMounted(async () => {
@@ -94,6 +140,18 @@ onMounted(async () => {
         </div>
       </div>
     </QForm>
+    <QToggle
+      v-if="props.isPosterEvent"
+      v-model="adoptEventAreaStore.isAdoptingPosters"
+      :label="$t('adoptEventAreas.adoptPosters')"
+      dense
+    />
+    <QToggle
+      v-else
+      v-model="adoptEventAreaStore.isAdoptingCompletionNotes"
+      :label="$t('adoptEventAreas.searchEventArea.adoptCompletionNotes')"
+      dense
+    />
     <template v-if="!isInitial">
       <div v-if="isLoading" class="row justify-center q-my-md">
         <QSpinnerDots color="primary" size="40px" />
@@ -112,6 +170,25 @@ onMounted(async () => {
         </div>
       </template>
     </template>
+  </QCardSection>
+  <QCardSection>
+    <QCardActions>
+      <QBtn
+        color="primary"
+        class="grey-button"
+        outline
+        dense
+        :label="$t('general.cancel')"
+        @click="handleAbortClick"
+      />
+      <QBtn
+        color="primary"
+        outline
+        dense
+        :label="$t('general.back')"
+        @click="handleBackClick"
+      />
+    </QCardActions>
   </QCardSection>
 </template>
 
@@ -137,12 +214,18 @@ onMounted(async () => {
   margin: 1rem 0;
   overflow: hidden;
   height: 400px;
-  width: 300px;
 }
 
 .empty-list-placeholder {
   margin: 1rem 0;
   display: flex;
   justify-content: center;
+}
+.q-card__section {
+  .q-card__actions {
+    button:not(:first-child) {
+      margin-left: 8px;
+    }
+  }
 }
 </style>

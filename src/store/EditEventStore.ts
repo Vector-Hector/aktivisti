@@ -4,6 +4,7 @@ import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { EventMetricRecordDto } from 'src/api/model/EventMetricRecordDto'
 import { TinyEmitter } from 'tiny-emitter'
+import { Feature } from 'geojson'
 
 export const START_DRAW_AREA = 'START_DRAW_AREA'
 export const PAN_TO_BBOX = 'PAN_TO_BBOX'
@@ -18,6 +19,7 @@ interface EditEventState {
   updatingAreaFeatureIds: Set<string>
   areasWithError: Record<string, string>
   deletingAreaIds: Set<string>
+  selectedFeatures: Feature[] | null
 }
 
 class EditEventStore extends Store<EditEventState> {
@@ -29,7 +31,8 @@ class EditEventStore extends Store<EditEventState> {
       metricRecords: [],
       updatingAreaFeatureIds: new Set<string>(),
       areasWithError: {},
-      deletingAreaIds: new Set<string>()
+      deletingAreaIds: new Set<string>(),
+      selectedFeatures: null
     }
   }
 
@@ -63,6 +66,10 @@ class EditEventStore extends Store<EditEventState> {
 
   public setDeletingAreaIds(ids: string[] | Set<string>) {
     this.state.deletingAreaIds = new Set(ids)
+  }
+
+  public setSelectedFeature(features: Feature[]) {
+    this.state.selectedFeatures = features
   }
 }
 

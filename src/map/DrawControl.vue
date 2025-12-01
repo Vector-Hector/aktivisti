@@ -78,11 +78,10 @@ const updateListener = (event: any) =>
   forwardEventAndUpdateFeatures('draw:update', event)
 const selectionChangeListener = (event: any) =>
   forwardEventAndUpdateFeatures('draw:selectionchange', event)
-map.value
-  .on('draw.create', createListener)
-  .on('draw.delete', deleteListener)
-  .on('draw.update', updateListener)
-  .on('draw.selectionchange', selectionChangeListener)
+map.value.on('draw.create', createListener)
+map.value.on('draw.delete', deleteListener)
+map.value.on('draw.update', updateListener)
+map.value.on('draw.selectionchange', selectionChangeListener)
 
 onUnmounted(() => {
   map.value
@@ -100,3 +99,42 @@ function changeMode(mode: string) {
 defineExpose({ changeMode })
 </script>
 <template><span></span></template>
+<style lang="scss">
+// Since update of maplibre to version 3, it seems like the css isn't set correctly
+// and the cursor isn't changing. The css class `mapboxgl-` have been removed and developers
+// should use maplibregl- instead, to mitigate that we overwrite the CSS:
+.maplibregl-map.mouse-pointer
+  .maplibregl-canvas-container.maplibregl-interactive {
+  cursor: pointer;
+}
+.maplibregl-map.mouse-move .maplibregl-canvas-container.maplibregl-interactive {
+  cursor: move;
+}
+.maplibregl-map.mouse-add .maplibregl-canvas-container.maplibregl-interactive {
+  cursor: crosshair;
+}
+.maplibregl-map.mouse-move.mode-direct_select
+  .maplibregl-canvas-container.maplibregl-interactive {
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+.maplibregl-map.mode-direct_select.feature-vertex.mouse-move
+  .maplibregl-canvas-container.maplibregl-interactive {
+  cursor: move;
+}
+.maplibregl-map.mode-direct_select.feature-midpoint.mouse-pointer
+  .maplibregl-canvas-container.maplibregl-interactive {
+  cursor: cell;
+}
+.maplibregl-map.mode-direct_select.feature-feature.mouse-move
+  .maplibregl-canvas-container.maplibregl-interactive {
+  cursor: move;
+}
+.maplibregl-map.mode-static.mouse-pointer
+  .maplibregl-canvas-container.maplibregl-interactive {
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+</style>

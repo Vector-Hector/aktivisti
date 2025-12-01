@@ -14,24 +14,42 @@ import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { editEventStore } from 'src/store/EditEventStore'
 import { QScrollArea, useQuasar } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
-import { DEFAULT_FILTER_PREFERENCES } from 'src/store/UserStore'
+import { DEFAULT_FILTER_PREFERENCES } from 'src/stores/user'
 
 const $q = useQuasar()
 
 const _defaultPagination = {
   limit: EVENT_LIST_CHUNK_SIZE
 }
+const _defaultFilterPreference = {
+  sub_association: DEFAULT_FILTER_PREFERENCES.subAssociations,
+  campaigns: DEFAULT_FILTER_PREFERENCES.campaign,
+  order_by: DEFAULT_FILTER_PREFERENCES.sorting,
+  event_type: DEFAULT_FILTER_PREFERENCES.eventType,
+  status: DEFAULT_FILTER_PREFERENCES.status,
+  is_owner: DEFAULT_FILTER_PREFERENCES.is_owner,
+  management_permission: DEFAULT_FILTER_PREFERENCES.management_permission,
+  include_expired_campaigns: true
+}
+
+interface Props {
+  /**
+   * A filter function that can be passed to filter the events shown.
+   */
+  filter?: (event: EventDto) => boolean
+}
 
 interface Emits {
   (e: 'clickOnEvent', event: EventDto): void
 }
 
+const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const campaigns = ref<CampaignDto[]>([])
 const subAssociations = ref<SubAssociationDto[]>([])
 const filterParams = ref<EventFilterParams>({
-  ...DEFAULT_FILTER_PREFERENCES,
+  ..._defaultFilterPreference,
   event_type: editEventStore.state.event?.event_type
 })
 const pagination = ref<Pagination | null>(_defaultPagination)
@@ -82,6 +100,9 @@ async function updateShownEvents() {
     ).payload
     pagination.value = newPagination!
     shownEvents.value = events
+    if (props.filter) {
+      shownEvents.value = shownEvents.value.filter(props.filter)
+    }
   } catch {
     $q.notify({
       message: 'Etwas ging schief beim Abrufen der Aktionen',
@@ -91,7 +112,7 @@ async function updateShownEvents() {
 }
 
 function handleResetClick() {
-  filterParams.value = DEFAULT_FILTER_PREFERENCES
+  filterParams.value = _defaultFilterPreference
 }
 </script>
 
@@ -120,6 +141,7 @@ function handleResetClick() {
       <EventList
         v-model:events="shownEvents"
         v-model:pagination="pagination"
+        :filter="props.filter"
         :filter-params="filterParams"
         :campaigns="campaigns"
         class="event-list"

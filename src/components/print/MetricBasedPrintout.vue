@@ -16,6 +16,8 @@ import EventMarker from 'components/EventMarker.vue'
 import { useRouter } from 'vue-router'
 import { useDateFormat } from 'src/utils/dateFormat'
 import { useI18n } from 'vue-i18n'
+import QrCode from '../QrCode.vue'
+import { getShareUrl } from 'src/utils/shareUrl'
 
 interface Props {
   event: EventDto
@@ -47,6 +49,8 @@ const zoomBox = computed(() => {
       : bbox(meetingPoint)
   ) as BBox2d
 })
+
+const shareUrl = getShareUrl(props.event.id)
 
 function countAddresses(areaDetails: AreaDetailsDto) {
   return areaDetails.streets.reduce((acc, street) => {
@@ -92,8 +96,9 @@ function print() {
         <br />
         {{ `${t('print.date')}: ${dateFormat(event.start_date, 'datetime')}` }}
       </p>
-      <p>{{ event.description }}</p>
+      <p class="description">{{ event.description }}</p>
       <img class="linke-logo" src="../../assets/logo_dielinke.svg" />
+      <QrCode :url="shareUrl" :name="event.name" />
       <Map class="map" :interactive="false" :bounding-box="zoomBox">
         <EventMarker v-if="event?.location" :event="event" />
         <FeatureLayer :features="areaFeatures" />
@@ -225,12 +230,25 @@ function print() {
   width: 3cm;
 }
 
+div.qr-code {
+  position: absolute;
+  top: 3.5cm;
+  right: 0.5cm;
+  * {
+    width: 3.5cm;
+  }
+}
+
 .print-page {
   position: relative;
 }
 
 .facts {
   font-weight: bold;
+  max-width: 15cm;
+}
+.description {
+  max-width: 15cm;
 }
 
 .area-item {

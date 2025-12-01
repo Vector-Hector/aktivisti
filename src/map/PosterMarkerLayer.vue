@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { watch, onMounted, onUnmounted } from 'vue'
 import { uuidv4 } from 'src/utils/uuid'
-import { GeoJSONSource, GeoJSONSourceRaw, SymbolLayout } from 'maplibre-gl'
+import {
+  GeoJSONSource,
+  GeoJSONSourceSpecification,
+  LayerSpecification
+} from 'maplibre-gl'
 import { PosterDto, PosterStatus } from 'src/api/model/PosterDto'
 import { loadImageIfNonExistent } from 'src/utils/map'
 import { FeatureCollection, Point } from 'geojson'
@@ -48,7 +52,7 @@ let postersClickable = false
 const sources: string[] = []
 const layers: string[] = []
 
-const iconLayout: SymbolLayout = {
+const iconLayout: LayerSpecification['layout'] = {
   'icon-size': 0.4,
   'icon-anchor': 'bottom',
   'icon-image': [
@@ -125,7 +129,7 @@ const onMouseDownActivePoster = (e: any) => {
   canvas.style.cursor = 'grab'
 
   map.value.on('mousemove', onMoveActivePoster)
-  map.value.once('mouseup', onUpActivePoster)
+  void map.value.once('mouseup', onUpActivePoster)
   MapEventBus.emit(MAP_GEOLOCATE_STOP_TRACKING)
 }
 
@@ -135,7 +139,7 @@ const onTouchStartActivePoster = (e: any) => {
   e.preventDefault()
 
   map.value.on('touchmove', onMoveActivePoster)
-  map.value.once('touchend', onUpActivePoster)
+  void map.value.once('touchend', onUpActivePoster)
   MapEventBus.emit(MAP_GEOLOCATE_STOP_TRACKING)
 }
 
@@ -191,7 +195,7 @@ onMounted(async () => {
       '/static/icons/location-negative-128x128.png'
     )
   ])
-  const emptySource: GeoJSONSourceRaw = {
+  const emptySource: GeoJSONSourceSpecification = {
     type: 'geojson',
     data: {
       type: 'FeatureCollection',

@@ -1,18 +1,17 @@
 import { computed } from 'vue'
 import { PosterDto } from 'src/api/model/PosterDto'
-import { eventDetailStore } from 'src/store/EventDetailStore'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
+import { useEventStore } from 'src/stores/event'
 import { useRouter } from 'vue-router'
 
 export function useEventDetailPosterMixin() {
   const $router = useRouter()
-  const { postersInArea, mergePosters } = useEventDetailStore()
+  const eventStore = useEventStore()
   const poster = computed({
     get: () => {
-      return postersInArea.value[eventDetailStore.state.activePosterIndex!]
+      return eventStore.postersInArea[eventStore.activePosterIndex!]
     },
     set: (poster: Partial<PosterDto>) => {
-      mergePosters([poster as PosterDto])
+      eventStore.mergePosters([poster as PosterDto])
     }
   })
 

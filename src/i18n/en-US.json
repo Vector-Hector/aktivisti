@@ -409,7 +409,8 @@
   },
   "sortOrderFilter": {
     "options": {
-      "startDate": "Date (Start)",
+      "startDateAsc": "Date (Start - oldest first)",
+      "startDateDesc": "Date (Start - newest first)",
       "name": "Event Name"
     },
     "defaultLabel": "Sorting",
@@ -520,6 +521,9 @@
           "print": {
             "label": "Print"
           }
+        },
+        "qrCode": {
+          "label": "QR Code"
         }
       },
       "eventType": "Event Type",
@@ -584,7 +588,11 @@
         "visitedAddresses": "Visited Addresses",
         "addressesInEventArea": "Addresses in Area",
         "collectedLeads": "Collected Leads",
-        "total": "Total"
+        "total": "Total",
+        "csvExport": {
+          "errorMessage": "Browser denied file download...",
+          "label": "Export as CSV"
+        }
       },
       "area": {
         "completionModal": {
@@ -634,6 +642,13 @@
             "errorMessage": "An error occurred while saving"
           }
         }
+      },
+      "areaPopup": {
+        "addressCounter": "{0} Addresses",
+        "posterCounter": "{0} Posters",
+        "hasNoAssignee": "No one assigned",
+        "isCompleted": "Completed",
+        "goToArea": "Go to Area"
       }
     },
     "edit": {
@@ -690,6 +705,7 @@
         },
         "noValidLocationError": "Please provide a valid meeting point.",
         "noAreasDefinedError": "This event has no areas",
+        "noAreasInSelectedOption": "The selection contains no areas",
         "posterCreationButton": "Create"
       },
       "posters": {
@@ -829,10 +845,15 @@
         "description": "Do you want to promote the user {0} to team captain?"
       }
     },
+    "input": {
+      "label": "Username",
+      "description": "Search participants"
+    },
     "removeParticipant": "Remove user from the event",
     "verifiedParticipants": "Verified Participants",
     "verifyParticipants": "Verify Participants",
-    "noOneWaitingToGetVerified": "No one is waiting for verification. Invite more people to the event."
+    "noParticipants": "There are currently no participants for this action",
+    "coordinators": "Coordinators"
   },
   "eventDeleteDialog": {
     "title": "Really delete {0}?",
@@ -916,15 +937,31 @@
     },
     "searchEventArea": {
       "description": "Search for an area you would like to adopt.",
+      "adoptCompletionNotes": "Adopt information of completed addresses",
       "areaName": "Area Name",
       "noAreasFound": "You have not created any areas with this name.",
       "minLengthError": "At least {0} characters"
     },
     "recentEventAreas": {
-      "description": "Please select an event from which you would like to adopt the defined areas."
+      "description": "Please select an event from which you would like to adopt the defined areas.",
+      "recentEventAreasOptions": {
+        "adoptPosters": "Adopt Poster Locations",
+        "dontAdoptPosters": "Don't Adopt Poster Locations",
+        "description": "Which areas of the action should be adopted?",
+        "adoptCompletionNotes": "Adopt information of completed addresses",
+        "completionNotesDisabledTooltip": "Completion notes can only be adopted between events that share the same campaign.",
+        "all": "All Areas",
+        "startedAreas": "All Started Areas",
+        "notStartedAreas": "All Not Started Areas",
+        "errorMessage": "Failed to load event areas data",
+        "retry": "Retry",
+        "noEventAreas": "No event areas found for this event."
+      }
     },
     "campaignCollections": {
-      "description": "Please select an area"
+      "description": "Please select an area",
+      "adopt": "Adopt",
+      "selectAll": "Select all"
     }
   }
 }

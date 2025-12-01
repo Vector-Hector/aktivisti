@@ -4,9 +4,9 @@ import AreaFeatureLayer from 'src/map/AreaFeatureLayer.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { bbox as tbbox } from '@turf/turf'
 import { useInjectMapMixin } from 'pages/event-detail/InjectMapMixin'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
+import { useEventStore } from 'src/stores/event'
 
-const { currentAreaFeature } = useEventDetailStore()
+const eventStore = useEventStore()
 const { map } = useInjectMapMixin()
 
 onMounted(() => {
@@ -14,12 +14,12 @@ onMounted(() => {
 })
 
 const bbox = computed(() => {
-  if (!currentAreaFeature.value) return
-  return tbbox(currentAreaFeature.value) as BBox2d
+  if (!eventStore.currentAreaFeature) return
+  return tbbox(eventStore.currentAreaFeature) as BBox2d
 })
 </script>
 <template>
-  <AreaFeatureLayer :features="[currentAreaFeature]" />
+  <AreaFeatureLayer :features="[eventStore.currentAreaFeature]" />
 </template>
 
 <style lang="scss" scoped></style>

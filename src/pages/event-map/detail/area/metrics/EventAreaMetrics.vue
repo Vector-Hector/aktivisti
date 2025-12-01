@@ -9,10 +9,11 @@ import {
 import MetricsRow from 'src/components/MetricsRow.vue'
 import { uiStore } from 'src/store/UiStore'
 import { QBtn, QScrollArea, useQuasar } from 'quasar'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
+import { useEventStore } from 'src/stores/event'
 import { useEventAreaMetricsComposable } from 'pages/event-map/detail/area/metrics/EventAreaMetricsMixin'
 import { useRoute } from 'vue-router'
 import { apiClient } from 'src/api/ApiClient'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   houseNumber: string
@@ -24,15 +25,16 @@ const props = defineProps<Props>()
 
 const $q = useQuasar()
 const $route = useRoute()
-const { event, eventArea } = useEventDetailStore()
+const eventStore = useEventStore()
 const { address } = useEventAreaMetricsComposable(props)
+const { t } = useI18n()
 
 const metricRecords = ref<EventMetricRecordDto[]>([])
 const metrics = ref<EventMetricDto[]>([])
 
 onMounted(async () => {
   const metricsRequest = await apiClient.eventMetricRecords.list(
-    { event: eventArea.value.event },
+    { event: eventStore.eventArea.event },
     ['metric']
   )
   metricRecords.value = metricsRequest.payload.data
@@ -42,7 +44,7 @@ onMounted(async () => {
 const metricValues = computed({
   get() {
     const storedValues = trackingSessionStore.getMetricsForAddress(
-      eventArea.value.id!,
+      eventStore.eventArea.id!,
       address.value!
     )
     if (storedValues) {
@@ -59,7 +61,7 @@ const metricValues = computed({
   async set(newMetrics: MetricValueMap) {
     try {
       await trackingSessionStore.updateMetricsForAddress(
-        eventArea.value.id!,
+        eventStore.eventArea.id!,
         address.value!,
         newMetrics
       )
@@ -122,9 +124,9 @@ function updateMetricValue(metricRecordId: number, value: string) {
     <p v-else>
       {{ $t('events.details.area.metrics.noMetricsDefinedWarning') }}
     </p>
-    <div v-if="event.external_url_door" class="external-url">
+    <div v-if="eventStore.event.external_url_door" class="external-url">
       <QBtn
-        :href="event.external_url_door"
+        :href="eventStore.event.external_url_door"
         target="_blank"
         outline
         color="primary"

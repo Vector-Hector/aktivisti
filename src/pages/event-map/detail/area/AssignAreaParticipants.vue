@@ -1,63 +1,64 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { userStore } from 'src/store/UserStore'
+import { computed, ref } from 'vue'
+import { useUserStore } from 'src/stores/user'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
-import { QBtn, QSelect, useQuasar } from 'quasar'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
+import { QBtn, QIcon, QSelect, useQuasar } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
 import { useI18n } from 'vue-i18n'
+import { useEventStore } from 'src/stores/event'
+import { ionChevronDown, ionSearch } from '@quasar/extras/ionicons-v5'
 
 const $q = useQuasar()
 const { t } = useI18n()
+const userStore = useUserStore()
 
-const {
-  eventArea,
-  isTeamCaptainOrCoordinator,
-  personalParticipationPermissions,
-  personalParticipation,
-  participations,
-  refreshParticipants
-} = useEventDetailStore()
+const eventStore = useEventStore()
 
 const user = computed(() => {
-  return userStore.getState().user
+  return userStore.user
 })
 const eventAreaParticipants = computed(() => {
-  return participations.value.filter(({ assigned_event_areas }) => {
-    return assigned_event_areas.includes(eventArea.value.id!)
+  return eventStore.participations.filter(({ assigned_event_areas }) => {
+    return assigned_event_areas.includes(eventStore.eventArea.id!)
   })
 })
 const isUserEventAreaParticipant = computed(() => {
   return (
     (user.value !== null &&
-      personalParticipation.value?.assigned_event_areas.includes(
-        eventArea.value.id!
+      eventStore.personalParticipation?.assigned_event_areas.includes(
+        eventStore.eventArea.id!
       )) ??
     false
   )
 })
 const onlyMemberParticipants = computed(() => {
-  return participations.value.filter((item) => item.user_is_member)
+  return eventStore.participations.filter((item) => item.user_is_member)
 })
 
 async function joinArea() {
-  if (personalParticipation.value) {
-    personalParticipation.value = (
-      await apiClient.eventParticipations.assignEventArea(
-        personalParticipation.value.id.toString(),
-        eventArea.value.id!
-      )
-    ).payload.data
+  if (eventStore.personalParticipation) {
+    eventStore.setPersonalParticipation(
+      (
+        await apiClient.eventParticipations.assignEventArea(
+          eventStore.personalParticipation.id.toString(),
+          eventStore.eventArea.id!
+        )
+      ).payload.data
+    )
+    void eventStore.refreshEventAreas()
   }
 }
 async function leaveArea() {
-  if (personalParticipation.value) {
-    personalParticipation.value = (
-      await apiClient.eventParticipations.unassignEventArea(
-        personalParticipation.value.id.toString(),
-        eventArea.value.id!
-      )
-    ).payload.data
+  if (eventStore.personalParticipation) {
+    eventStore.setPersonalParticipation(
+      (
+        await apiClient.eventParticipations.unassignEventArea(
+          eventStore.personalParticipation.id.toString(),
+          eventStore.eventArea.id!
+        )
+      ).payload.data
+    )
+    void eventStore.refreshEventAreas()
   }
 }
 async function updateAreaParticipations(
@@ -67,10 +68,10 @@ async function updateAreaParticipations(
   const changedParticipations: EventParticipationDto[] = []
 
   try {
-    for (const participation of participations.value) {
+    for (const participation of eventStore.participations) {
       if (
         participants.includes(participation.user) &&
-        !participation.assigned_event_areas.includes(eventArea.value.id!)
+        !participation.assigned_event_areas.includes(eventStore.eventArea.id!)
       ) {
         changedParticipations.push(
           (
@@ -79,7 +80,7 @@ async function updateAreaParticipations(
               {
                 assigned_event_areas: [
                   ...participation.assigned_event_areas,
-                  eventArea.value.id!
+                  eventStore.eventArea.id!
                 ]
               }
             )
@@ -87,7 +88,7 @@ async function updateAreaParticipations(
         )
       } else if (
         !participants.includes(participation.user) &&
-        participation.assigned_event_areas.includes(eventArea.value.id!)
+        participation.assigned_event_areas.includes(eventStore.eventArea.id!)
       ) {
         changedParticipations.push(
           (
@@ -95,7 +96,7 @@ async function updateAreaParticipations(
               participation.id.toString(),
               {
                 assigned_event_areas: participation.assigned_event_areas.filter(
-                  (id) => id !== eventArea.value?.id
+                  (id) => id !== eventStore.eventArea?.id
                 )
               }
             )
@@ -112,7 +113,7 @@ async function updateAreaParticipations(
         timeout: 2000,
         color: 'negative'
       })
-      await refreshParticipants()
+      await eventStore.refreshParticipants()
     } else {
       $q.notify({
         message: t('events.details.area.assignAreaParticipant.generalError'),
@@ -121,30 +122,52 @@ async function updateAreaParticipations(
       })
     }
   }
+  void eventStore.refreshEventAreas()
   updateParticipations(changedParticipations)
 }
-function updateParticipations(updatedParticipations: EventParticipationDto[]) {
-  participations.value = participations.value.map((item) => {
-    const changedItem = updatedParticipations.find(({ id }) => item.id === id)
-    return changedItem ?? item
+
+const filteredOptions = ref<EventParticipationDto[]>()
+function filterFn(val, update) {
+  update(() => {
+    const query = val.toLocaleLowerCase()
+    filteredOptions.value = onlyMemberParticipants.value.filter(
+      (participant) =>
+        participant.user_username.toLocaleLowerCase().indexOf(query) > -1
+    )
   })
+}
+
+function updateParticipations(updatedParticipations: EventParticipationDto[]) {
+  eventStore.setParticipations(
+    eventStore.participations.map((item) => {
+      const changedItem = updatedParticipations.find(({ id }) => item.id === id)
+      return changedItem ?? item
+    })
+  )
 }
 </script>
 <template>
   <QSelect
-    v-if="isTeamCaptainOrCoordinator"
-    :model-value="eventAreaParticipants"
-    @update:model-value="updateAreaParticipations($event)"
+    v-if="eventStore.isTeamCaptainOrCoordinator"
+    use-input
+    input-debounce="0"
+    use-chips
     :multiple="true"
     :label="$t('events.details.area.assignAreaParticipant.inputPlaceholder')"
-    :options="onlyMemberParticipants"
+    :model-value="eventAreaParticipants"
+    :options="filteredOptions"
+    @filter="filterFn"
+    @update:model-value="updateAreaParticipations($event)"
     option-label="user_username"
-    :display-value="
-      eventAreaParticipants.map(({ user_username }) => user_username).join(',')
-    "
-  />
+    dense
+    :dropdown-icon="ionChevronDown"
+  >
+    <template v-slot:prepend> <QIcon :name="ionSearch" /> </template>
+  </QSelect>
   <div
-    v-else-if="personalParticipationPermissions?.assign_event_area?.POST"
+    v-else-if="
+      eventStore.personalParticipationPermissions?.assign_event_area?.POST
+    "
     class="join-buttons"
   >
     <QBtn v-if="isUserEventAreaParticipant" @click="leaveArea" flat>

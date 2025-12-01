@@ -21,15 +21,13 @@ import { ComponentPublicInstance, computed, ref } from 'vue'
 import MapOverlayProxy from 'components/MapOverlayProxy.vue'
 import Map from 'src/map/Map.vue'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import { QPage } from 'quasar'
 import { BottomSheetState, uiStore } from 'src/store/UiStore'
 import GeolocationControl from 'src/map/GeolocationControl.vue'
 import MapContainer from 'components/MapContainer.vue'
-import { eventDetailStore } from 'src/store/EventDetailStore'
+import { useEventStore } from 'src/stores/event'
 import ResetRotateControl from 'src/map/ResetRotateControl.vue'
-import CampaignCollectionOverlayControl from 'src/map/CampaignCollectionOverlayControl.vue'
-import { getAuthStore } from 'src/store/AuthStore'
 import { onBeforeRouteUpdate } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
@@ -41,11 +39,12 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const map = ref<InstanceType<typeof Map> | null>(null)
+const userStore = useUserStore()
+const eventStore = useEventStore()
 const { t } = useI18n()
 
-const bbox = ref(userStore.getState().bbox)
+const bbox = ref(userStore.bbox)
 const isMapDefined = ref(true)
-const isLoggedIn = ref(getAuthStore().isLoggedIn())
 
 onBeforeRouteUpdate((to, from, next) => {
   const componentsOfMostPrecisePath =
@@ -57,7 +56,7 @@ onBeforeRouteUpdate((to, from, next) => {
 })
 
 const poiLocation = computed(() => {
-  return eventDetailStore.state.event?.location
+  return eventStore.event?.location
 })
 const mapRef = computed(() => {
   return map.value as InstanceType<typeof Map> | undefined
@@ -91,7 +90,6 @@ defineExpose({ setIsMapDefined })
         <template v-slot:top-right>
           <div class="flex column q-gutter-y-sm">
             <GeolocationControl :poi-location="poiLocation" />
-            <CampaignCollectionOverlayControl v-if="isLoggedIn" />
             <ResetRotateControl />
           </div>
         </template>

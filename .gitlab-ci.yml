@@ -1,4 +1,5 @@
 stages:
+  - audit
   - test
   - build
 
@@ -13,21 +14,33 @@ default:
   environment:
     action: prepare
     name: development
-  only:
-    - branches
-  except:
-    - /^release/(\d+\.)(\d+\.)(\d+)$/
-    - tags
-    - main
+  rules:
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH !~ /^release\/(\d+\.)(\d+\.)(\d+)$/
+      when: on_success
+    - when: never
 
 .staging_env: &staging_env
   environment:
     action: prepare
     name: staging
-  only:
-    - /^release/(\d+\.)(\d+\.)(\d+)$/
-    - tags
-    - main
+  rules:
+    - if: $CI_COMMIT_TAG || $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH =~ /^release\/(\d+\.)(\d+\.)(\d+)$/
+      when: on_success
+    - when: never
+
+npm_audit:
+  image: node:20
+  stage: audit
+  script:
+    - apt update
+    - apt install s-nail
+    - npm ci
+    - ./scripts/setup_mail.sh
+    - npm audit || ./scripts/send_mail.sh
+  rules:
+    - if: $NPM_AUDIT == "true"
+      when: on_success
+    - when: never
 
 lint:
   image: node:20-alpine
@@ -41,6 +54,10 @@ lint:
   cache:
     paths:
       - node_modules/
+  rules:
+    - if: $NPM_AUDIT != "true" && $CI_COMMIT_BRANCH
+      when: on_success
+    - when: never
 
 .pwa:
   image: node:20-alpine
@@ -85,15 +102,31 @@ lint:
 android-development:
   extends: .android
   <<: *development_env
+  rules:
+    - if: $CI_COMMIT_BRANCH && $NPM_AUDIT != "true"
+      when: on_success
+    - when: never
 
 android-staging:
   extends: .android
   <<: *staging_env
+  rules:
+    - if: $CI_COMMIT_BRANCH && $NPM_AUDIT != "true"
+      when: on_success
+    - when: never
 
 pwa-development:
   extends: .pwa
   <<: *development_env
+  rules:
+    - if: $CI_COMMIT_BRANCH && $NPM_AUDIT != "true"
+      when: on_success
+    - when: never
 
 pwa-staging:
   extends: .pwa
   <<: *staging_env
+  rules:
+    - if: $CI_COMMIT_BRANCH && $NPM_AUDIT != "true"
+      when: on_success
+    - when: never

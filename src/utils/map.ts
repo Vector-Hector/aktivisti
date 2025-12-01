@@ -76,21 +76,6 @@ export async function reverseGeocode(config: any) {
   return parseGeocodeResult(result as OSMPlaceDto)
 }
 
-export async function loadImage(
-  map: maplibregl.Map,
-  url: string
-): Promise<HTMLImageElement | ImageBitmap> {
-  return new Promise((resolve, reject) => {
-    map.loadImage(url, (error: any, result: any) => {
-      if (error) {
-        reject(error)
-      } else {
-        resolve(result)
-      }
-    })
-  })
-}
-
 export async function loadImageIfNonExistent(
   map: maplibregl.Map,
   name: string,
@@ -99,9 +84,9 @@ export async function loadImageIfNonExistent(
   if (map.hasImage(name)) {
     return Promise.resolve(name)
   } else {
-    return loadImage(map, url).then((image) => {
+    return map.loadImage(url).then((image) => {
       if (!map.hasImage(name)) {
-        map.addImage(name, image)
+        map.addImage(name, image.data)
       }
       return name
     })

@@ -1,7 +1,7 @@
 import { Store } from 'src/store/Store'
 import { apiClient } from 'src/api/ApiClient'
 import { AddressDetails } from 'src/api/model/AreaDetailsDto'
-import { eventDetailStore } from 'src/store/EventDetailStore'
+import { useEventStore } from 'src/stores/event'
 
 interface TrackingSessionState {
   trackingSessionId: string | null
@@ -155,15 +155,16 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
     address: AddressDetails,
     metricValueMap: MetricValueMap
   ) {
+    const eventStore = useEventStore()
     if (this.state.trackingSessionId === null) {
       await this.renewTrackingId()
     }
     const metricsToUpdate: { metricRecordId: string; value: number }[] = []
     // set a flag indicating that before this update no metrics were recorded
 
-    const storedCompletionNote = eventDetailStore
-      .getState()
-      .completionNotes.find(({ target_id }) => target_id == address.osm_id)
+    const storedCompletionNote = eventStore.completionNotes.find(
+      ({ target_id }) => target_id == address.osm_id
+    )
 
     const oldMetrics =
       this.state.sessions[this.state.trackingSessionId!]?.eventAreas[
@@ -243,7 +244,7 @@ class TrackingSessionStore extends Store<TrackingSessionState> {
           event_area: eventArea
         })
         .then((response) => {
-          eventDetailStore.addCompletionNotes([response.payload.data])
+          eventStore.addCompletionNotes([response.payload.data])
         })
       updatePromises.push(completionNotePromise)
     }

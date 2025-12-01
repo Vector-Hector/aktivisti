@@ -9,7 +9,7 @@ import { apiClient } from 'src/api/ApiClient'
 import CampaignFilter from 'components/filterInput/filters/CampaignFilter.vue'
 import StateAssociationFilter from 'components/filterInput/filters/StateAssociationFilter.vue'
 import SubAssociationFilter from 'components/filterInput/filters/SubAssociationFilter.vue'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 
 interface Emits {
   (
@@ -21,6 +21,8 @@ interface Emits {
 }
 
 const emit = defineEmits<Emits>()
+
+const userStore = useUserStore()
 
 const campaigns = ref<CampaignDto[]>([])
 const allManagedCampaigns = ref<CampaignDto[]>([])
@@ -50,7 +52,7 @@ const explicitManagedSubAssociationsId = explicitMangedObjects(
 
 onBeforeMount(async () => {
   const allCampaigns = await fetchAllCampaigns()
-  if (userStore.isAdminOrGlobalCoordinator()) {
+  if (userStore.isAdminOrGlobalCoordinator) {
     campaigns.value = allCampaigns
     allManagedCampaigns.value = allCampaigns
   } else {
@@ -149,6 +151,7 @@ watch(
       stateAssociations.value = [
         await fetchStateAssociation(campaign!.state_association!)
       ]
+      allManagedStateAssociations.value = stateAssociations.value
       isAbleToRequestAllStateAssociations.value = false
       selectedStateAssociationId.value = stateAssociations.value[0].id
     } else if (campaign!.campaign_level === CampaignLevel.SUB_ASSOCIATION) {
@@ -226,8 +229,7 @@ watch(
 )
 
 function explicitMangedObjects(contentType: ContentTypeNaturalKey): number[] {
-  return userStore
-    .getMyPermissions()
+  return userStore.myPermissions
     .filter(
       ({ permission_codename, content_type_natural_key }) =>
         permission_codename === PermissionCodename.MANAGE_EVENTS &&
@@ -313,7 +315,7 @@ function handleSubAssociationSelection(subAssociationId: number) {
     :options="subAssociations"
     :model-value="selectedSubAssociationId"
     :disable="subAssociations.length < 2"
-    :show-all-state-association="isAbleToRequestAllSubAssociations"
+    :show-all-sub-association="isAbleToRequestAllSubAssociations"
     @update:model-value="handleSubAssociationSelection"
   />
 </template>

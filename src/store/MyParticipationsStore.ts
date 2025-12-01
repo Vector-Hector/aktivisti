@@ -1,6 +1,6 @@
 import { Store } from 'src/store/Store'
-import { EventFilterPreferences, SortOption } from 'src/store/UserStore'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
+import { EventFilterPreferences, SortOption } from 'src/stores/user'
 //TODO(peter) Remove filter Preferences
 // It seems like the `fitlerPrerences` of `myParticipationsStore` aren't used,
 // so they could be removed, also with the depending function to set it.
@@ -16,7 +16,7 @@ class MyParticipationsStore extends Store<MyParticipationsStoreState> {
       filterPreferences: {
         subAssociations: [],
         campaign: undefined,
-        sorting: SortOption.START_DATE,
+        sorting: SortOption.START_DATE_DESC,
         eventType: undefined,
         status: undefined,
         is_owner: undefined,

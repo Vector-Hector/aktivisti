@@ -18,7 +18,7 @@ import { CampaignDto } from 'src/api/model/CampaignDto'
 import { ionCheckmark, ionClose } from '@quasar/extras/ionicons-v5'
 import PageLoadingSpinner from 'components/PageLoadingSpinner.vue'
 import { myParticipationsStore } from 'src/store/MyParticipationsStore'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import { EventStatus } from 'src/api/model/EventStatus'
 import { apiClient } from 'src/api/ApiClient'
 import { useDateFormat } from 'src/utils/dateFormat'
@@ -30,6 +30,7 @@ const loading = ref(true)
 
 const { dateFormat } = useDateFormat()
 const { eventTypeOptions } = useEventTypes()
+const userStore = useUserStore()
 
 onMounted(async () => {
   await Promise.all([getParticipatedEvents(), getCampaigns()])
@@ -87,7 +88,7 @@ async function getParticipatedEvents() {
   const responseData = (
     await apiClient.eventParticipations.list(
       {
-        user: userStore.getState().user?.id,
+        user: userStore.user?.id,
         status: EventStatus.ACTIVE
       },
       ['event', 'inviting_users']

@@ -35,12 +35,17 @@ import LocationSelect from 'components/LocationSelect.vue'
 import { EventTypes } from 'src/api/model/EventTypes'
 import AdoptEventAreas from 'components/modals/AdoptEventAreas/AdoptEventAreas.vue'
 import { EventAreaDto, eventAreaToFeature } from 'src/api/model/EventAreaDto'
+import { CompletionNoteDto } from 'src/api/model/CompletionNoteDto'
 import { apiClient } from 'src/api/ApiClient'
 import { bbox } from '@turf/turf'
 import { posterListStore } from 'src/store/PosterListStore'
 import { PosterStatus } from 'src/api/model/PosterDto'
 import { useEditEventMixin } from 'pages/edit-event/EditEventMixin'
 import { useI18n } from 'vue-i18n'
+
+export type EventAreaWithCompletionNotes = EventAreaDto & {
+  completionNotes?: Partial<CompletionNoteDto>[]
+}
 
 const $q = useQuasar()
 
@@ -50,7 +55,8 @@ const {
   eventAreasWithError,
   campaigns,
   event,
-  eventAreas
+  eventAreas,
+  selectedFeatures
 } = useEditEventMixin()
 const { updateArea, deleteAreaByFeatureId } = useEditEventGeometryMixin()
 const { errors, saveDebouncer } = useEditEventAutoSaveMixin()
@@ -99,6 +105,10 @@ const columns = computed(() => {
   ]
 })
 
+function isFeatureSelected(feature_id: number) {
+  return selectedFeatures.value?.find((f) => f.id === feature_id)
+}
+
 function startDrawArea() {
   EditEventBus.emit(START_DRAW_AREA)
 }
@@ -128,7 +138,7 @@ function openAdoptAreasModal() {
       campaigns: campaigns.value.filter(({ id }) =>
         event.value.campaigns.includes(id)
       ),
-      showAdoptPosters: event.value.event_type === EventTypes.POSTERS
+      eventType: event.value.event_type
     }
   }).onOk(
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -136,9 +146,16 @@ function openAdoptAreasModal() {
       eventAreas: eventAreasToAdopt,
       adoptPosters
     }: {
-      eventAreas: EventAreaDto[]
+      eventAreas: EventAreaWithCompletionNotes[]
       adoptPosters: boolean
     }) => {
+      if (!eventAreasToAdopt) {
+        $q.notify({
+          color: 'warning',
+          message: t('events.edit.geometry.noAreasInSelectedOption')
+        })
+        return
+      }
       isLoading.value = true
       const events = new Set(eventAreasToAdopt.map(({ event }) => event))
 
@@ -175,10 +192,34 @@ function openAdoptAreasModal() {
       )
 
       const eventAreaResponses = await Promise.all(eventAreaCreationPromise)
-      for (const area of eventAreaResponses.map(
-        (response) => response.payload.data
-      )) {
-        eventAreas.value.push(area)
+
+      // Create completion notes for areas that have them
+      for (let i = 0; i < eventAreaResponses.length; i++) {
+        const createdArea = eventAreaResponses[i].payload.data
+        const originalArea = eventAreasToAdopt[i]
+
+        eventAreas.value.push(createdArea)
+
+        // Check if the original area has completion notes and create them for the new area
+        if (
+          originalArea.completionNotes &&
+          originalArea.completionNotes.length > 0
+        ) {
+          const completionNotePromises = originalArea.completionNotes.map(
+            (note) =>
+              apiClient.completionNotes.create({
+                target_id: note.target_id,
+                completed: note.completed,
+                event_area: createdArea.id
+              })
+          )
+
+          try {
+            await Promise.all(completionNotePromises)
+          } catch (error) {
+            console.warn('Failed to create some completion notes:', error)
+          }
+        }
       }
 
       const featureCollection = {
@@ -246,7 +287,11 @@ function openAdoptAreasModal() {
             </QTr>
           </template>
           <template v-slot:body="props">
-            <QTr>
+            <QTr
+              :class="{
+                selected: isFeatureSelected(props.row.feature_id)
+              }"
+            >
               <QTd key="color" :props="props">
                 <QBtn
                   unelevated

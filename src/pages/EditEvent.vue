@@ -9,7 +9,8 @@ export interface StepControls {
 
 export default {
   async beforeRouteEnter(to, from, next) {
-    if (!userStore.hasAtLeastOneManagePermission()) {
+    const userStore = useUserStore()
+    if (!userStore.hasAtLeastOneManagePermission) {
       //TODO(peter) Check if emit is still required and if working
       ErrorBus.emit(
         NOT_AUTHORIZED,
@@ -22,7 +23,7 @@ export default {
           apiClient.events.get(to.params.eventId as string, [
             'eventmetricrecord_set'
           ]),
-          apiClient.campaigns.list(),
+          apiClient.campaigns.list({ can_create_events: true }),
           apiClient.eventAreas.list({ event: to.params.eventId })
         ])
       if (eventRequest.payload.data.event_type === EventTypes.POSTERS) {
@@ -70,15 +71,15 @@ import RouteStepper from 'components/stepper/RouteStepper.vue'
 import { bbox as tbbox, circle } from '@turf/turf'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import { posterListStore } from 'src/store/PosterListStore'
-import CampaignCollectionOverlayControl from 'src/map/CampaignCollectionOverlayControl.vue'
 import hat from 'hat'
 import { onBeforeRouteUpdate, useRouter } from 'vue-router'
 import { Feature } from 'geojson'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+const userStore = useUserStore()
 
 const Door2DoorAndFlyerSteps = [
   {
@@ -205,7 +206,7 @@ bbox.value =
         type: 'FeatureCollection',
         features: features
       }) as BBox2d)
-    : userStore.state.bbox
+    : userStore.bbox
 </script>
 
 <template>
@@ -216,7 +217,6 @@ bbox.value =
       <Map :bounding-box="bbox">
         <template v-slot:top-right>
           <div class="flex column q-gutter-y-sm">
-            <CampaignCollectionOverlayControl />
             <router-view name="map" />
           </div>
         </template>

@@ -9,6 +9,7 @@ export interface EventAreaDto {
   feature_id: string
   geometry: Geometry
   is_completed: boolean
+  has_assignee: boolean
   area_details?: AreaDetailsDto
   poster_count: number
 }
@@ -19,7 +20,10 @@ export function eventAreaToFeature(eventArea: EventAreaDto): Feature {
     id: eventArea.feature_id,
     geometry: eventArea.geometry,
     properties: {
-      color: eventArea.color
+      color: eventArea.color,
+      is_completed: eventArea.is_completed,
+      has_assignee: eventArea.has_assignee,
+      name: eventArea.name
     }
   }
 }

@@ -3,13 +3,14 @@
 <script lang="ts">
 interface IInstance extends ComponentPublicInstance {
   setMetrics(metrics: EventMetricDto[]): void
-  setCampaigns(campaings: CampaignDto[]): void
+  setCampaigns(campaigns: CampaignDto[]): void
   setEventCampaign(campaignId: number): void
 }
 
 export default {
   async beforeRouteEnter(to, from, next) {
-    if (!userStore.hasAtLeastOneManagePermission()) {
+    const userStore = useUserStore()
+    if (!userStore.hasAtLeastOneManagePermission) {
       //TODO(peter) Check if command is required, seems like it is not emitted
       ErrorBus.emit(
         NOT_AUTHORIZED,
@@ -18,7 +19,7 @@ export default {
       next({ name: 'login' })
     } else {
       const [campaignRequest, metricsRequest] = await Promise.all([
-        apiClient.campaigns.list(),
+        apiClient.campaigns.list({ can_create_events: true }),
         apiClient.eventMetrics.list()
       ])
       next((vm) => {
@@ -43,7 +44,7 @@ import { QBtn, QInput, QPage, QScrollArea, QSelect, useQuasar } from 'quasar'
 import { EventDto } from 'src/api/model/EventDto'
 import FormError from 'components/FormError.vue'
 import { EventMetricDto } from 'src/api/model/EventMetricDto'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import { ErrorBus, NOT_AUTHORIZED } from 'src/utils/errorBus'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import { useRouter } from 'vue-router'

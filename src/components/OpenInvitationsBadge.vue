@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { QBadge } from 'quasar'
 import { myParticipationsStore } from 'src/store/MyParticipationsStore'
-import { userStore } from 'src/store/UserStore'
+import { useUserStore } from 'src/stores/user'
 import Timeout = NodeJS.Timeout
 import { apiClient } from 'src/api/ApiClient'
 import { POLL_INVITATIONS_MS } from 'src/constants'
@@ -10,11 +10,12 @@ import { getAuthStore } from 'src/store/AuthStore'
 import { EventStatus } from 'src/api/model/EventStatus'
 
 const authStore = getAuthStore()
+const userStore = useUserStore()
 const nextPoll = ref<Timeout | null>(null)
 
 onMounted(async () => {
   const myEventsRequest = await apiClient.eventParticipations.list({
-    user: userStore.getState().user?.id
+    user: userStore.user?.id
   })
 
   myParticipationsStore.setEventParticipations(myEventsRequest.payload.data)
@@ -43,7 +44,7 @@ async function pollForParticipations() {
   myParticipationsStore.setEventParticipations(
     (
       await apiClient.eventParticipations.list({
-        user: userStore.getState().user?.id,
+        user: userStore.user?.id,
         status: EventStatus.ACTIVE
       })
     ).payload.data

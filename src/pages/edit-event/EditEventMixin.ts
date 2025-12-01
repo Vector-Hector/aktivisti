@@ -5,6 +5,7 @@ import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import { editEventStore } from 'src/store/EditEventStore'
 import { posterListStore } from 'src/store/PosterListStore'
 import { PosterDto } from 'src/api/model/PosterDto'
+import { Feature } from 'geojson'
 
 export function useEditEventMixin() {
   const event = computed({
@@ -48,6 +49,15 @@ export function useEditEventMixin() {
     }
   })
 
+  const selectedFeatures = computed({
+    get(): Feature[] {
+      return editEventStore.getState().selectedFeatures
+    },
+    set(selectedFeatures: Feature[]) {
+      editEventStore.setSelectedFeature(selectedFeatures)
+    }
+  })
+
   const deletingAreaIds = computed({
     get(): Set<string> {
       return editEventStore.getState().deletingAreaIds
@@ -80,6 +90,7 @@ export function useEditEventMixin() {
     metricRecords,
     campaigns,
     updatingAreaFeatureIds,
+    selectedFeatures,
     deletingAreaIds,
     posters,
     addAreaError,

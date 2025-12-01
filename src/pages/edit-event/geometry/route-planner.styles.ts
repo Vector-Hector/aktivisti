@@ -1,8 +1,15 @@
+import { ExpressionSpecification } from 'maplibre-gl'
+
 export function getColorFromPropertiesWithDefault(
   defaultColor: string,
   key = 'user_color'
 ) {
-  return ['case', ['has', key], ['get', key], defaultColor]
+  return [
+    'case',
+    ['has', key],
+    ['get', key],
+    defaultColor
+  ] as ExpressionSpecification
 }
 
 export const routePlannerStyles = (defaultColor: string) => [

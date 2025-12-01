@@ -409,7 +409,8 @@
   },
   "sortOrderFilter": {
     "options": {
-      "startDate": "Datum (Beginn)",
+      "startDateAsc": "Datum (Beginn - älteste zuerst)",
+      "startDateDesc": "Datum (Beginn - neueste zuerst)",
       "name": "Aktionsname"
     },
     "defaultLabel": "Sortierung",
@@ -495,6 +496,9 @@
           "label": "Teilen",
           "shareText": "{eventName}\n{eventType}{eventDescription}\n\nam: {eventDate}\num: {eventTime}\n",
           "subjectLine": "Mach' mit bei der Aktion von Die Linke: {0}"
+        },
+        "qrCode": {
+          "label": "QR-Code"
         },
         "admin": {
           "label": "Admin",
@@ -584,7 +588,11 @@
         "visitedAddresses": "Besuchte Adressen",
         "addressesInEventArea": "Adressen im Gebiet",
         "collectedLeads": "Gewonnene Kontakte",
-        "total": "Gesamt"
+        "total": "Gesamt",
+        "csvExport": {
+          "errorMessage": "Browser hat den Dateidownload verweigert...",
+          "label": "Export als CSV"
+        }
       },
       "area": {
         "completionModal": {
@@ -634,6 +642,13 @@
             "errorMessage": "Beim Speichern trat ein Fehler auf"
           }
         }
+      },
+      "areaPopup": {
+        "addressCounter": "{0} Adressen",
+        "posterCounter": "{0} Plakate",
+        "hasNoAssignee": "Niemand zugewiesen",
+        "isCompleted": "Erledigt",
+        "goToArea": "Zum Gebiet"
       }
     },
     "edit": {
@@ -690,6 +705,7 @@
         },
         "noValidLocationError": "Bitte gebe einen gültigen Treffpunkt an.",
         "noAreasDefinedError": "Dieses Event hat keine Gebiete",
+        "noAreasInSelectedOption": "Die Auswahl enthält keine Gebiete",
         "posterCreationButton": "Erstellen"
       },
       "posters": {
@@ -816,11 +832,15 @@
     }
   },
   "eventParticipantsModal": {
-    "title": "Mitmachende",
+    "title": "Teilnehmer*innen",
     "teamcaptains": "Teamcaptains",
     "notifications": {
       "noSubAssociationError": "Dieser Aktion ist kein gültiger Landkreis zugeordnet. Die Ernennung einer*eines Teamcaptains ist an einen Landkreis gebunden.",
       "generalError": "Ein unerwarteter Fehler ist aufgetreten"
+    },
+    "input": {
+      "label": "Benutzer*innenname",
+      "description": "Suche Teilnehmer*innen"
     },
     "promoteUserToTeamcamptain": {
       "label": "Benutzer*in zu Teamcaptain machen",
@@ -832,7 +852,8 @@
     "removeParticipant": "Benutzer*in von der Aktion entfernen",
     "verifiedParticipants": "Bestätigte Teilnehmer*innen",
     "verifyParticipants": "Teilnehmer*innen bestätigen",
-    "noOneWaitingToGetVerified": "Niemand wartet auf Freischaltung. Lade noch mehr Leute zur Aktion ein."
+    "noParticipants": "Für diese Aktion gibt es aktuell keine Teilnehmer*innen",
+    "coordinators": "Koordinierende"
   },
   "eventDeleteDialog": {
     "title": "{0} wirklich löschen?",
@@ -916,15 +937,31 @@
     },
     "searchEventArea": {
       "description": "Such nach einem Gebiet, welches du übernehmen möchtest.",
+      "adoptCompletionNotes": "Informationen über erledigte Adressen übernehmen",
       "areaName": "Gebietsname",
       "noAreasFound": "Sie haben keine Gebiete mit diesem Namen angelegt.",
       "minLengthError": "Mindestens {0} Zeichen"
     },
     "recentEventAreas": {
-      "description": "Bitte wähle eine Aktion aus, von welcher du die definierten Gebiete übernehmen möchtest."
+      "description": "Bitte wähle eine Aktion aus, von welcher du die definierten Gebiete übernehmen möchtest.",
+      "recentEventAreasOptions": {
+        "adoptPosters": "Plakatstandorte übernehmen",
+        "dontAdoptPosters": "Plakatstandorte nicht übernehmen",
+        "description": "Welche Gebiete der Aktion sollen übernommen werden?",
+        "adoptCompletionNotes": "Informationen über erledigte Adressen übernehmen",
+        "completionNotesDisabledTooltip": "Informationen über erledigte Adressen können nur zwischen Aktionen derselben Kampagne übernommen werden.",
+        "all": "Alle Gebiete",
+        "startedAreas": "Alle angefangenen Gebiete",
+        "notStartedAreas": "Alle nicht angefangenen Gebiete",
+        "errorMessage": "Fehler beim Laden der Gebiete",
+        "retry": "Erneut versuchen",
+        "noEventAreas": "Keine Gebiete für diese Aktion gefunden."
+      }
     },
     "campaignCollections": {
-      "description": "Bitte wähle ein Gebiet aus"
+      "description": "Bitte wähle ein Gebiet aus",
+      "adopt": "Übernehmen",
+      "selectAll": "Alle auswählen"
     }
   }
 }

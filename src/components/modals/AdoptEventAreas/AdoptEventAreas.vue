@@ -1,33 +1,28 @@
 <script setup lang="ts">
-import {
-  QBtn,
-  QCard,
-  QCardActions,
-  QDialog,
-  QToolbar,
-  QToolbarTitle,
-  QToggle
-} from 'quasar'
+import { QCard, QDialog, QToolbar, QToolbarTitle } from 'quasar'
 import { useDialogPluginComponent } from 'quasar'
 import { CampaignDto } from 'src/api/model/CampaignDto'
 import SelectAreaSet from 'components/modals/AdoptEventAreas/SelectAreaSet.vue'
 import { CampaignGeometryCollectionsDto } from 'src/api/model/CampaignGeometryCollectionsDto'
-import { computed, onMounted, ref } from 'vue'
-import RecentEventAreas from 'components/modals/AdoptEventAreas/RecentEventAreas.vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import RecentEventAreas from 'src/components/modals/AdoptEventAreas/RecentEventAreas/RecentEventAreas.vue'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
 import CampaignCollections from 'components/modals/AdoptEventAreas/CampaignCollections.vue'
 import { apiClient } from 'src/api/ApiClient'
 import SearchEventArea from 'components/modals/AdoptEventAreas/SearchEventArea.vue'
 import { CAMPAIGN_GEOMETRY_COLLECTIONS_CHUNK_SIZE } from 'src/constants'
+import { EventDto } from 'src/api/model/EventDto'
+import RecentEventAreasOptions from './RecentEventAreas/RecentEventAreasOptions.vue'
+import { useAdoptEventAreaStore } from 'src/stores/adoptEventArea'
+import { EventTypes } from 'src/api/model/EventTypes'
 
 interface Props {
   campaigns: CampaignDto[]
-  showAdoptPosters?: boolean
+  eventType: EventTypes
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  showAdoptPosters: false
-})
+const props = defineProps<Props>()
+const isPosterEvent = computed(() => props.eventType === EventTypes.POSTERS)
 defineEmits([
   // REQUIRED by QDialog, we need to emit some events through useDialogPluginComponent
   ...useDialogPluginComponent.emits
@@ -36,7 +31,8 @@ defineEmits([
 enum Page {
   SELECT_AREA_SET,
   SEARCH_EVENT_AREAS,
-  RECENT_EVENT_AREAS,
+  RECENT_EVENT_AREAS_PAGE_1,
+  RECENT_EVENT_AREAS_PAGE_2,
   CAMPAIGN_COLLECTIONS
 }
 
@@ -52,13 +48,14 @@ const isCollectionExisting = computed(
 )
 
 const campaignCollection = ref<CampaignGeometryCollectionsDto | null>(null)
-const adoptPosters = ref(false)
+const adoptEventAreaStore = useAdoptEventAreaStore()
 
 const offsetCampaignCollections = ref(0)
 const totalCampaignCollections = ref(CAMPAIGN_GEOMETRY_COLLECTIONS_CHUNK_SIZE)
 const areAllCollectionsLoaded = computed(
   () => offsetCampaignCollections.value >= totalCampaignCollections.value
 )
+const recentEvent = ref<EventDto | null>(null)
 
 onMounted(async () => {
   await fetchMoreCollections()
@@ -71,6 +68,7 @@ async function fetchMoreCollections() {
   if (!areAllCollectionsLoaded.value) {
     const response = (
       await apiClient.campaignGeometryCollections.list({
+        event_type: [props.eventType],
         campaign: campaignIds.value,
         limit: CAMPAIGN_GEOMETRY_COLLECTIONS_CHUNK_SIZE,
         offset: offsetCampaignCollections.value,
@@ -90,7 +88,7 @@ function handleSearchEventAreasClick() {
 }
 
 function handleRecentEventAreasClick() {
-  page.value = Page.RECENT_EVENT_AREAS
+  page.value = Page.RECENT_EVENT_AREAS_PAGE_1
 }
 
 function handleCampaignCollectionClick(
@@ -101,7 +99,15 @@ function handleCampaignCollectionClick(
 }
 
 function handleAreaClick(eventAreas: EventAreaDto[]) {
-  onDialogOK({ eventAreas: eventAreas, adoptPosters: adoptPosters.value })
+  onDialogOK({
+    eventAreas: eventAreas,
+    adoptPosters: adoptEventAreaStore.isAdoptingPosters
+  })
+}
+
+function handleEventClick(event: EventDto) {
+  recentEvent.value = event
+  page.value = Page.RECENT_EVENT_AREAS_PAGE_2
 }
 
 async function loadMoreCollections(index: number, done: () => void) {
@@ -111,7 +117,8 @@ async function loadMoreCollections(index: number, done: () => void) {
 
 const qCardClass = computed(() => {
   if (
-    page.value === Page.RECENT_EVENT_AREAS ||
+    page.value === Page.RECENT_EVENT_AREAS_PAGE_1 ||
+    page.value === Page.RECENT_EVENT_AREAS_PAGE_2 ||
     (page.value === Page.SELECT_AREA_SET && isCollectionExisting.value)
   ) {
     return 'higher-content'
@@ -122,11 +129,8 @@ const qCardClass = computed(() => {
   return ''
 })
 
-const isPageWithAdoptPostersButton = computed(() => {
-  return (
-    props.showAdoptPosters &&
-    [Page.RECENT_EVENT_AREAS, Page.SEARCH_EVENT_AREAS].includes(page.value)
-  )
+onUnmounted(() => {
+  adoptEventAreaStore.$reset()
 })
 
 defineExpose({
@@ -157,52 +161,36 @@ defineExpose({
         @onSearchEventAreaClick="handleSearchEventAreasClick"
         @onRecentEventAreasClick="handleRecentEventAreasClick"
         @onCampaignCollectionClick="handleCampaignCollectionClick"
+        @on-abort-click="onDialogCancel"
       />
       <SearchEventArea
         v-if="page === Page.SEARCH_EVENT_AREAS"
+        :isPosterEvent="isPosterEvent"
         @onEventAreaClick="(area) => handleAreaClick([area])"
+        @on-back-click="() => (page = Page.SELECT_AREA_SET)"
+        @on-abort-click="onDialogCancel"
       />
       <RecentEventAreas
-        v-if="page === Page.RECENT_EVENT_AREAS"
-        @onEventClick="handleAreaClick"
+        v-if="page === Page.RECENT_EVENT_AREAS_PAGE_1"
+        @onEventClick="handleEventClick"
+        @on-back-click="() => (page = Page.SELECT_AREA_SET)"
+        @on-abort-click="onDialogCancel"
+      />
+      <RecentEventAreasOptions
+        v-if="page === Page.RECENT_EVENT_AREAS_PAGE_2"
+        :event="recentEvent"
+        :isPosterEvent="isPosterEvent"
+        @onAdoptionOptionClick="handleAreaClick"
+        @on-back-click="() => (page = Page.RECENT_EVENT_AREAS_PAGE_1)"
+        @on-abort-click="onDialogCancel"
       />
       <CampaignCollections
         v-if="page === Page.CAMPAIGN_COLLECTIONS"
         :collection="campaignCollection!"
-        @onGeometryClick="handleAreaClick"
+        @on-adopt-click="handleAreaClick"
+        @on-back-click="() => (page = Page.SELECT_AREA_SET)"
+        @on-abort-click="onDialogCancel"
       />
-      <QCardActions align="left">
-        <QBtn
-          color="primary"
-          outline
-          dense
-          :label="$t('general.cancel')"
-          @click="onDialogCancel"
-        />
-        <QBtn
-          v-if="
-            [
-              Page.CAMPAIGN_COLLECTIONS,
-              Page.RECENT_EVENT_AREAS,
-              Page.SEARCH_EVENT_AREAS
-            ].includes(page) && isCollectionExisting
-          "
-          color="primary"
-          outline
-          dense
-          :label="$t('general.back')"
-          @click="
-            () => {
-              page = Page.SELECT_AREA_SET
-            }
-          "
-        />
-        <QToggle
-          v-if="isPageWithAdoptPostersButton"
-          v-model="adoptPosters"
-          :label="$t('adoptEventAreas.adoptPosters')"
-        ></QToggle>
-      </QCardActions>
     </QCard>
   </QDialog>
 </template>

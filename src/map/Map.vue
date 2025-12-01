@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, provide, ref, watch } from 'vue'
-import maplibregl, { LngLat, Point } from 'maplibre-gl'
+import maplibregl, { LngLat } from 'maplibre-gl'
 import { LocationDto } from 'src/api/model/LocationDto'
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson'
 import { isEqual } from 'lodash-es'
@@ -80,7 +80,8 @@ onMounted(() => {
     // for now we are disabling any rotating and pitching interaction
     touchPitch: false,
     dragRotate: false,
-    pitchWithRotate: false
+    pitchWithRotate: false,
+    attributionControl: false
   })
   map.value.on('load', () => {
     map.value?.resize()
@@ -147,10 +148,10 @@ onUnmounted(() => {
 
 const onDrop = (event: any) => {
   const rect = mapContainer.value!.getBoundingClientRect()
-  const cursorPosition = new Point(
+  const cursorPosition: [number, number] = [
     event.clientX - rect.left - mapContainer.value!.clientLeft,
     event.clientY - rect.top - mapContainer.value!.clientTop
-  )
+  ]
   emitWithBus('drop', {
     originalEvent: event,
     coordinates: map.value!.unproject(cursorPosition)

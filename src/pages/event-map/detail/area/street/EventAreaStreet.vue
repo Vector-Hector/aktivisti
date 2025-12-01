@@ -29,21 +29,21 @@ import {
   QList,
   QScrollArea
 } from 'quasar'
-import { useEventDetailStore } from 'pages/event-map/detail/EventDetailStoreMixin'
+import { useEventStore } from 'src/stores/event'
 
 interface Props {
   street: string
 }
 const props = defineProps<Props>()
 
-const { completedTargetIds, eventArea } = useEventDetailStore()
+const eventStore = useEventStore()
 
 const sortedAddresses = computed(() => {
   const collator = new Intl.Collator(undefined, {
     numeric: true,
     sensitivity: 'base'
   })
-  const street = eventArea.value?.area_details?.streets.find(
+  const street = eventStore.eventArea?.area_details?.streets.find(
     ({ name }) => name === props.street
   )
   if (street) {
@@ -77,7 +77,11 @@ defineExpose({ street: props.street })
           <QItemSection side>
             <div class="row">
               <QIcon
-                v-if="completedTargetIds.includes(address.osm_id.toString())"
+                v-if="
+                  eventStore.completedTargetIds.includes(
+                    address.osm_id.toString()
+                  )
+                "
                 class="col finished-icon item-icon"
                 :name="ionCheckmarkCircle"
               />
