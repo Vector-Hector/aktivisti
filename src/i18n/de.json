@@ -722,6 +722,12 @@
           "createButton": "Erstellen"
         }
       }
+    },
+    "invitationToken": {
+      "explanations": {
+        "eventInvitation": "Wer diesen QR-Code scannt wird automatisch dieser Aktion hinzugefügt. Dieser QR-Code ist 48 Stunden gültig.",
+        "eventAreaInvitation": "Wer diesen QR-Code scannt wird automatisch diesem Gebiet hinzugefügt. Dieser QR-Code ist 48 Stunden gültig."
+      }
     }
   },
   "manageUsers": {
