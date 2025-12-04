@@ -55,6 +55,7 @@ import PosterOverview from 'pages/poster-map/overview/PosterOverview.vue'
 import PosterOverviewMap from 'pages/poster-map/overview/PosterOverviewMap.vue'
 import Reports from 'pages/Reports.vue'
 import { getAuthStore } from 'src/store/AuthStore'
+import ValidateInvitationToken from 'src/pages/ValidateInvitationToken.vue'
 
 const authStore = getAuthStore()
 
@@ -76,6 +77,14 @@ const routes = [
             return { name: 'events' }
           }
           return { name: 'login' }
+        }
+      },
+      {
+        path: '/t/:token',
+        component: ValidateInvitationToken,
+        name: 'Invitation-token',
+        meta: {
+          title: (t) => t('routes.invitationTokenScan.title')
         }
       },
       {

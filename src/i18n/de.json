@@ -190,6 +190,9 @@
     "login": {
       "title": "Anmelden"
     },
+    "invitationTokenScan": {
+      "title": "Einladungs QR-Code wird geprüft"
+    },
     "profile": {
       "title": "Mein Profil"
     },
@@ -724,6 +727,10 @@
       }
     },
     "invitationToken": {
+      "notifications": {
+        "success": "Du wurdest erfolgreich hinzugefügt.",
+        "error": "Du konntest nicht hinzugefügt werden."
+      },
       "explanations": {
         "eventInvitation": "Wer diesen QR-Code scannt wird automatisch dieser Aktion hinzugefügt. Dieser QR-Code ist 48 Stunden gültig.",
         "eventAreaInvitation": "Wer diesen QR-Code scannt wird automatisch diesem Gebiet hinzugefügt. Dieser QR-Code ist 48 Stunden gültig."
