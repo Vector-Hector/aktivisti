@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useUserStore } from 'src/stores/user'
 import { EventParticipationDto } from 'src/api/model/EventParticipationDto'
 import { QBtn, QIcon, QSelect, useQuasar } from 'quasar'
@@ -7,12 +7,31 @@ import { apiClient } from 'src/api/ApiClient'
 import { useI18n } from 'vue-i18n'
 import { useEventStore } from 'src/stores/event'
 import { ionChevronDown, ionSearch } from '@quasar/extras/ionicons-v5'
+import EventQrCodeButton from 'src/components/eventDetails/EventQrCodeButton.vue'
+import { InvitationTokenDto } from 'src/api/model/InvitationTokenDto'
 
 const $q = useQuasar()
 const { t } = useI18n()
 const userStore = useUserStore()
 
 const eventStore = useEventStore()
+const isTeamCaptainOrCoordinator = eventStore.isTeamCaptainOrCoordinator
+
+const token = ref<InvitationTokenDto>()
+const baseShareUrl = process.env.APP_SHARE_URL
+const invitationUrl = computed(() => {
+  return `${baseShareUrl}/t/${token?.value?.token}`
+})
+
+onMounted(async () => {
+  if (isTeamCaptainOrCoordinator) {
+    token.value = (
+      await apiClient.eventAreas.generateInvitationToken(
+        eventStore.eventArea.id
+      )
+    ).payload.data
+  }
+})
 
 const user = computed(() => {
   return userStore.user
@@ -147,23 +166,34 @@ function updateParticipations(updatedParticipations: EventParticipationDto[]) {
 }
 </script>
 <template>
-  <QSelect
-    v-if="eventStore.isTeamCaptainOrCoordinator"
-    use-input
-    input-debounce="0"
-    use-chips
-    :multiple="true"
-    :label="$t('events.details.area.assignAreaParticipant.inputPlaceholder')"
-    :model-value="eventAreaParticipants"
-    :options="filteredOptions"
-    @filter="filterFn"
-    @update:model-value="updateAreaParticipations($event)"
-    option-label="user_username"
-    dense
-    :dropdown-icon="ionChevronDown"
-  >
-    <template v-slot:prepend> <QIcon :name="ionSearch" /> </template>
-  </QSelect>
+  <div class="row" v-if="isTeamCaptainOrCoordinator">
+    <EventQrCodeButton
+      :url="invitationUrl"
+      :small="true"
+      :label="false"
+      :show-url="false"
+      :explanation="
+        t('events.invitationToken.explanations.eventAreaInvitation')
+      "
+      image="pin"
+    ></EventQrCodeButton>
+    <QSelect
+      use-input
+      input-debounce="0"
+      use-chips
+      :multiple="true"
+      :label="$t('events.details.area.assignAreaParticipant.inputPlaceholder')"
+      :model-value="eventAreaParticipants"
+      :options="filteredOptions"
+      @filter="filterFn"
+      @update:model-value="updateAreaParticipations($event)"
+      option-label="user_username"
+      dense
+      :dropdown-icon="ionChevronDown"
+    >
+      <template v-slot:prepend> <QIcon :name="ionSearch" /> </template>
+    </QSelect>
+  </div>
   <div
     v-else-if="
       eventStore.personalParticipationPermissions?.assign_event_area?.POST
@@ -178,4 +208,17 @@ function updateParticipations(updatedParticipations: EventParticipationDto[]) {
     </QBtn>
   </div>
 </template>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+div.row {
+  margin-top: 4px;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: nowrap;
+  .q-field {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 200px;
+  }
+}
+</style>
