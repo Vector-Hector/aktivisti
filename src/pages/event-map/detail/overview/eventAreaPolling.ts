@@ -15,9 +15,18 @@ export function useEventAreaPolling() {
   )
 
   async function pollEventAreas() {
-    eventStore.eventAreas = (
-      await apiClient.eventAreas.list({ event: eventStore.event.id })
+    const eventAreas = (
+      await apiClient.eventAreas.list({ event: eventStore.event.id, status: 1 })
     ).payload.data
+    eventStore.eventAreas.forEach(oldArea => {
+      eventAreas.forEach(newArea => {
+        if (newArea.id == oldArea.id) {
+          newArea.geometry = oldArea.geometry
+          newArea.area_details= oldArea.area_details
+        }
+      })
+    })
+    eventStore.eventAreas = eventAreas
   }
 
   function startPolling() {
