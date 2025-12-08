@@ -18,13 +18,15 @@ export function useEventAreaPolling() {
     const eventAreas = (
       await apiClient.eventAreas.list({ event: eventStore.event.id, status: 1 })
     ).payload.data
-    eventStore.eventAreas.forEach(oldArea => {
-      eventAreas.forEach(newArea => {
-        if (newArea.id == oldArea.id) {
-          newArea.geometry = oldArea.geometry
-          newArea.area_details= oldArea.area_details
-        }
-      })
+    const old = {}
+    eventStore.eventAreas.forEach(area => {
+      old[area.id] = area
+    })
+    eventAreas.forEach(area => {
+      if (old[area.id]) {
+        area.geometry = old[area.id].geometry
+        area.area_details = old[area.id].area_details
+      }
     })
     eventStore.eventAreas = eventAreas
   }
