@@ -2,16 +2,19 @@
 import { ref, onMounted } from 'vue'
 import QRCodeStyling from 'qr-code-styling'
 
+export type QrCodeImage = 'flag' | 'pin' | 'normal'
+
 interface Props {
   url: string
   name: string
+  image: QrCodeImage
 }
 
 const props = defineProps<Props>()
 
 const qrContainer = ref<HTMLElement | null>(null)
 let qr: QRCodeStyling
-
+let imageUrl = ''
 onMounted(() => {
   const primaryColor = getComputedStyle(qrContainer.value)
     .getPropertyValue('--primary-color')
@@ -22,6 +25,22 @@ onMounted(() => {
   const backgroundColor = getComputedStyle(qrContainer.value)
     .getPropertyValue('--background-color')
     .trim()
+
+  switch (props.image) {
+    case 'flag':
+      imageUrl = '/icons/favicon-96x96.png'
+      break
+    case 'normal':
+      imageUrl = '/icons/icon-128x128.png'
+      break
+    case 'pin':
+      imageUrl = '/static/icons/map-pin-generic.png'
+      break
+    default:
+      imageUrl = '/icons/favicon-96x96.png'
+      break
+  }
+
   qr = new QRCodeStyling({
     width: 256,
     height: 256,
@@ -32,9 +51,9 @@ onMounted(() => {
       type: 'square'
     },
     backgroundOptions: { color: backgroundColor },
-    image: '/icons/favicon-96x96.png',
+    image: imageUrl,
     imageOptions: {
-      margin: 10,
+      margin: 4,
       imageSize: 0.6
     },
     qrOptions: {

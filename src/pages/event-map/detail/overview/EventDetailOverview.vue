@@ -228,7 +228,11 @@ onBeforeUnmount(() => {
           @on-dissmiss="handleParticipationDissmiss"
         />
         <EventShareButton :event="eventStore.event" />
-        <EventQrCodeButton :url="shareUrl" :name="eventName" />
+        <EventQrCodeButton
+          :url="shareUrl"
+          :name="eventName"
+          :label="$t('events.details.actions.qrCode.label')"
+        />
 
         <EventAdminActions
           v-if="eventStore.isTeamCaptainOrCoordinator"
