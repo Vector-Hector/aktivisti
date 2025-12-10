@@ -37,7 +37,8 @@ if (process.env.MODE !== 'ssr' || process.env.PROD) {
           /api\/.*/,
           /nominatim\/.*/,
           /oauth2\/.*/,
-          /tiles\/.*/
+          /tiles\/.*/,
+          /user\/account\/.*/
         ]
       }
     )
