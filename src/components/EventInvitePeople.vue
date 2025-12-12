@@ -201,19 +201,18 @@ async function deleteParticipation(deleteId: number) {
 
 <template>
   <div class="q-qa-sm">
+    <EventQrCodeButton
+      v-if="token && eventStore.isCoordinator"
+      :url="validateTokenUrl"
+      name="Event invitation"
+      :small="true"
+      image="flag"
+      :show-url="false"
+      :explanation="t('events.invitationToken.explanations.eventInvitation')"
+      :label="$t('events.invitationToken.label')"
+    ></EventQrCodeButton>
     <div class="row">
-      <div class="col-grow qr-and-input">
-        <EventQrCodeButton
-          v-if="token && eventStore.isCoordinator"
-          :url="validateTokenUrl"
-          name="Event invitation"
-          :small="true"
-          image="flag"
-          :show-url="false"
-          :explanation="
-            t('events.invitationToken.explanations.eventInvitation')
-          "
-        ></EventQrCodeButton>
+      <div class="col-grow input">
         <QInput
           use-input
           dense
@@ -306,14 +305,13 @@ async function deleteParticipation(deleteId: number) {
 <style lang="scss" scoped>
 @import 'src/css/utils';
 @import 'src/css/_variables.scss';
-.qr-and-input {
-  display: flex;
-  margin-bottom: 8px;
-  gap: 8px;
-}
 
 .user-autocomplete-username {
   font-weight: bold;
+}
+
+.input {
+  margin-bottom: 16px;
 }
 
 .invitation-item-actions {
@@ -329,5 +327,9 @@ async function deleteParticipation(deleteId: number) {
 
 .invite-users {
   margin: 0.5rem;
+}
+
+.labeled-button {
+  margin-bottom: 8px;
 }
 </style>

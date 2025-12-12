@@ -727,6 +727,7 @@
       }
     },
     "invitationToken": {
+      "label": "Mass invitation",
       "notifications": {
         "success": "You are successfully added.",
         "error": "It was not possible to add you."
