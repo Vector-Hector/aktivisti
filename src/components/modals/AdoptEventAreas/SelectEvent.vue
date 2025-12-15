@@ -101,6 +101,10 @@ async function updateSubAssociations() {
   } else {
     if (myPermissions.value.length > 0) {
       mySubAssociations.value = await getMySubAssociations()
+      if (mySubAssociations.value.length === 1) {
+        filterParams.value.sub_association = [mySubAssociations.value[0].id]
+        await updateShownEvents()
+      }
     } else {
       mySubAssociations.value = []
     }
