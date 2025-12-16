@@ -176,7 +176,7 @@ function updateParticipations(updatedParticipations: EventParticipationDto[]) {
         t('events.invitationToken.explanations.eventAreaInvitation')
       "
       image="pin"
-    ></EventQrCodeButton>
+    />
     <QSelect
       use-input
       input-debounce="0"
