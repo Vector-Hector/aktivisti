@@ -210,7 +210,7 @@ async function deleteParticipation(deleteId: number) {
       :show-url="false"
       :explanation="t('events.invitationToken.explanations.eventInvitation')"
       :label="$t('events.invitationToken.label')"
-    ></EventQrCodeButton>
+    />
     <div class="row">
       <div class="col-grow input">
         <QInput
