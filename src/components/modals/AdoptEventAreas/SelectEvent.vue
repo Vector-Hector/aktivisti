@@ -148,7 +148,7 @@ async function getMySubAssociations() {
   return mySubAssociations
 }
 
-async function getSubAssociations(stateAssociationId?: number) {
+async function getSubAssociations(stateAssociationId: number) {
   return (
     await apiClient.subAssociations.list({
       state_association: stateAssociationId
