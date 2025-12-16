@@ -727,6 +727,7 @@
       }
     },
     "invitationToken": {
+      "label": "Masseneinladung",
       "notifications": {
         "success": "Du wurdest erfolgreich hinzugefügt.",
         "error": "Du konntest nicht hinzugefügt werden."
