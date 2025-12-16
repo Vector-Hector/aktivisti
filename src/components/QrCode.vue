@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import QRCodeStyling from 'qr-code-styling'
 
-export type QrCodeImage = 'flag' | 'pin' | 'normal'
+export type QrCodeImage = 'flag' | 'black_flag' | 'normal'
 
 interface Props {
   url: string
@@ -33,8 +33,8 @@ onMounted(() => {
     case 'normal':
       imageUrl = '/icons/icon-128x128.png'
       break
-    case 'pin':
-      imageUrl = '/static/icons/map-pin-generic.png'
+    case 'black_flag':
+      imageUrl = '/static/ionicons/flag-sharp-circle.png'
       break
     default:
       imageUrl = '/icons/favicon-96x96.png'

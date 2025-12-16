@@ -175,8 +175,9 @@ function updateParticipations(updatedParticipations: EventParticipationDto[]) {
       :explanation="
         t('events.invitationToken.explanations.eventAreaInvitation')
       "
-      image="pin"
+      image="black_flag"
     />
+
     <QSelect
       use-input
       input-debounce="0"
