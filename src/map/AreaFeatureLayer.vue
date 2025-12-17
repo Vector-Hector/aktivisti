@@ -14,6 +14,7 @@ import { loadImageIfNonExistent } from 'src/utils/map'
 import { centroid } from '@turf/turf'
 
 const IS_COMPLETED_COLOR = '#000'
+const LABEL_MIN_ZOOM = 12
 
 interface Props {
   features: Feature[]
@@ -161,11 +162,11 @@ onMounted(async () => {
       'line-width': 1
     }
   })
-
   map.value?.addLayer({
     id: nameLayer,
     type: 'symbol',
     source: labelSourceId,
+    minzoom: LABEL_MIN_ZOOM,
     layout: {
       'text-field': ['get', 'name'],
       'text-size': 12,
@@ -189,6 +190,7 @@ onMounted(async () => {
     id: iconCircleLayer,
     type: 'circle',
     source: labelSourceId,
+    minzoom: LABEL_MIN_ZOOM,
     filter: [
       'any',
       ['==', ['get', 'is_completed'], true],
@@ -206,6 +208,7 @@ onMounted(async () => {
     id: iconLayer,
     type: 'symbol',
     source: labelSourceId,
+    minzoom: LABEL_MIN_ZOOM,
 
     layout: {
       'icon-image': [
