@@ -3,6 +3,7 @@ import { ApiRoute } from 'src/api/ApiRoute'
 import { JSONResponse } from 'src/api/JSONResponse'
 import { EventMetricReportDto } from 'src/api/model/EventMetricReportDto'
 import { EventAreaDto } from 'src/api/model/EventAreaDto'
+import { InvitationTokenDto } from './model/InvitationTokenDto'
 
 /**
  * A class extending {@link ApiRoute} to implement some extra non-standard operations (report)
@@ -15,5 +16,13 @@ export class EventAreaRoute extends ApiRoute<EventAreaDto> {
     })
     const data = response.data
     return new JSONResponse<APIEnvelope<EventMetricReportDto>>(response, data)
+  }
+  async generateInvitationToken(id: number) {
+    const response = await this.request({
+      path: `${this.path}${id.toString()}/generate-invitation-token/`,
+      method: 'POST'
+    })
+    const data = response.data
+    return new JSONResponse<APIEnvelope<InvitationTokenDto>>(response, data)
   }
 }
