@@ -14,7 +14,7 @@ import { loadImageIfNonExistent } from 'src/utils/map'
 import { centroid } from '@turf/turf'
 
 const IS_COMPLETED_COLOR = '#000'
-const LABEL_MIN_ZOOM = 12
+const LABEL_MIN_ZOOM = 14
 
 interface Props {
   features: Feature[]
@@ -176,7 +176,6 @@ onMounted(async () => {
       'icon-image': 'label-background',
       'icon-text-fit': 'both',
       'icon-text-fit-padding': [2, 8, 2, 8],
-      'text-allow-overlap': true,
       'icon-allow-overlap': true
     },
     paint: {
