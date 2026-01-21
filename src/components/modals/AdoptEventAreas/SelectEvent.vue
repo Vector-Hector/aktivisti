@@ -14,9 +14,12 @@ import { SubAssociationDto } from 'src/api/model/SubAssociationDto'
 import { editEventStore } from 'src/store/EditEventStore'
 import { QScrollArea, useQuasar } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
-import { DEFAULT_FILTER_PREFERENCES } from 'src/stores/user'
+import { DEFAULT_FILTER_PREFERENCES, useUserStore } from 'src/stores/user'
+import { ContentTypeNaturalKey } from 'src/api/model/ContentTypeDto'
+import { ObjectPermissions } from 'src/api/model/ObjectPermissionDto'
 
 const $q = useQuasar()
+const userStore = useUserStore()
 
 const _defaultPagination = {
   limit: EVENT_LIST_CHUNK_SIZE
@@ -47,6 +50,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const campaigns = ref<CampaignDto[]>([])
+const mySubAssociations = ref<SubAssociationDto[]>([])
 const subAssociations = ref<SubAssociationDto[]>([])
 const filterParams = ref<EventFilterParams>({
   ..._defaultFilterPreference,
@@ -54,6 +58,9 @@ const filterParams = ref<EventFilterParams>({
 })
 const pagination = ref<Pagination | null>(_defaultPagination)
 const shownEvents = ref<EventDto[]>([])
+const myPermissions = computed(() => {
+  return userStore.myPermissions
+})
 
 onMounted(async () => {
   await updateShownEvents()
@@ -89,7 +96,66 @@ async function updateCampaigns() {
 }
 async function updateSubAssociations() {
   subAssociations.value = (await apiClient.subAssociations.list()).payload.data
+  if (userStore.isAdminOrGlobalCoordinator) {
+    mySubAssociations.value = subAssociations.value
+  } else {
+    if (myPermissions.value.length > 0) {
+      mySubAssociations.value = await getMySubAssociations()
+      if (mySubAssociations.value.length === 1) {
+        filterParams.value.sub_association = [mySubAssociations.value[0].id]
+        await updateShownEvents()
+      }
+    } else {
+      mySubAssociations.value = []
+    }
+  }
 }
+
+async function getMySubAssociations() {
+  //Sub association I have direct permissions for
+  const mySubAssociationsIds = myPermissions.value
+    .filter(
+      (permission) =>
+        permission.content_type_natural_key ===
+          ContentTypeNaturalKey.SUB_ASSOCIATION &&
+        permission.permission_codename === ObjectPermissions.Coordinator
+    )
+    .map((permission) => permission.object_pk)
+  const mySubAssociations = subAssociations.value.filter(({ id }) =>
+    mySubAssociationsIds.includes(id.toString())
+  )
+  // take care of corresponding subassociations if I have state association permission
+  const myStateAssociationIds = myPermissions.value
+    .filter(
+      (permission) =>
+        permission.content_type_natural_key ===
+          ContentTypeNaturalKey.STATE_ASSOCIATION &&
+        permission.permission_codename === ObjectPermissions.Coordinator
+    )
+    .map((permission) => permission.object_pk)
+  const subAssociationsInMyStateAssociations = [] as SubAssociationDto[]
+  for (const stateAssociationId of myStateAssociationIds) {
+    const newSubAssociations = await getSubAssociations(
+      parseInt(stateAssociationId)
+    )
+    subAssociationsInMyStateAssociations.push(...newSubAssociations)
+  }
+  for (const subAssociation of subAssociationsInMyStateAssociations) {
+    if (!mySubAssociationsIds.includes(subAssociation.id.toString())) {
+      mySubAssociations.push(subAssociation)
+    }
+  }
+  return mySubAssociations
+}
+
+async function getSubAssociations(stateAssociationId: number) {
+  return (
+    await apiClient.subAssociations.list({
+      state_association: stateAssociationId
+    })
+  ).payload.data
+}
+
 async function updateShownEvents() {
   try {
     const { data: events, pagination: newPagination } = (
@@ -128,7 +194,7 @@ function handleResetClick() {
           is-sub-association-filterable
           is-sort-order-configurable
           is-event-type-filterable
-          :sub-associations="subAssociations"
+          :sub-associations="mySubAssociations"
           :campaigns="campaigns"
           :avalable-event-types="[
             EventTypes.DOOR_TO_DOOR,

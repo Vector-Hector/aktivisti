@@ -15,6 +15,9 @@ import {
 } from 'quasar'
 import { apiClient } from 'src/api/ApiClient'
 import { useI18n } from 'vue-i18n'
+import EventQrCodeButton from 'src/components/eventDetails/EventQrCodeButton.vue'
+import { InvitationTokenDto } from 'src/api/model/InvitationTokenDto'
+import { useEventStore } from 'src/stores/event'
 
 interface Props {
   eventId: number
@@ -25,10 +28,16 @@ const props = defineProps<Props>()
 const $q = useQuasar()
 const { t } = useI18n()
 const userStore = useUserStore()
+const eventStore = useEventStore()
 
 const isLoading = ref(false)
 const usernameToInvite = ref('')
 const participations = ref<EventParticipationDto[]>([])
+const token = ref<InvitationTokenDto>()
+const baseShareUrl = process.env.APP_SHARE_URL
+const validateTokenUrl = computed(() => {
+  return `${baseShareUrl}/t/${token.value.token}`
+})
 
 onMounted(async () => {
   participations.value = (
@@ -37,6 +46,11 @@ onMounted(async () => {
       is_pending_invitation: true
     })
   ).payload.data
+  if (eventStore.isCoordinator) {
+    token.value = (
+      await apiClient.events.generateInvitationToken(props.eventId.toString())
+    ).payload.data
+  }
 })
 
 const pendingUsersWithoutVisibleEmailAddresses = computed(() => {
@@ -187,8 +201,18 @@ async function deleteParticipation(deleteId: number) {
 
 <template>
   <div class="q-qa-sm">
+    <EventQrCodeButton
+      v-if="token && eventStore.isCoordinator"
+      :url="validateTokenUrl"
+      name="Event invitation"
+      :small="true"
+      image="flag"
+      :show-url="false"
+      :explanation="t('events.invitationToken.explanations.eventInvitation')"
+      :label="$t('events.invitationToken.label')"
+    />
     <div class="row">
-      <div class="col-grow">
+      <div class="col-grow input">
         <QInput
           use-input
           dense
@@ -286,6 +310,10 @@ async function deleteParticipation(deleteId: number) {
   font-weight: bold;
 }
 
+.input {
+  margin-bottom: 16px;
+}
+
 .invitation-item-actions {
   display: flex;
   flex-direction: row;
@@ -299,5 +327,9 @@ async function deleteParticipation(deleteId: number) {
 
 .invite-users {
   margin: 0.5rem;
+}
+
+.labeled-button {
+  margin-bottom: 8px;
 }
 </style>

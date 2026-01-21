@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { QCard, QCardSection, QDialog } from 'quasar'
-import QrCode from '../QrCode.vue'
+import QrCode, { QrCodeImage } from '../QrCode.vue'
 
 interface Emits {
   // REQUIRED
@@ -13,6 +13,9 @@ const emit = defineEmits<Emits>()
 interface Props {
   url: string
   name: string
+  showUrl: boolean
+  explanation: string
+  image: QrCodeImage
 }
 const props = defineProps<Props>()
 
@@ -35,10 +38,13 @@ function onDialogHide() {
   <QDialog ref="dialog" @hide="onDialogHide">
     <QCard class="qr-code-modal">
       <QCardSection>
-        <QrCode :url="props.url" :name="props.name" />
-        <span>
+        <QrCode :url="props.url" :name="props.name" :image="props.image" />
+        <span v-if="props.showUrl">
           {{ props.url }}
         </span>
+        <div class="explanation" v-if="props.explanation">
+          {{ props.explanation }}
+        </div>
       </QCardSection>
     </QCard>
   </QDialog>
@@ -47,5 +53,8 @@ function onDialogHide() {
 <style lang="scss" scoped>
 .qr-code-modal {
   min-width: 320px;
+}
+.explanation {
+  margin-top: 16px;
 }
 </style>

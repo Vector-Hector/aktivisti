@@ -190,6 +190,9 @@
     "login": {
       "title": "Login"
     },
+    "invitationTokenScan": {
+      "title": "invitation QR code is being verified."
+    },
     "profile": {
       "title": "My Profile"
     },
@@ -721,6 +724,17 @@
           "saveButton": "Save",
           "createButton": "Create"
         }
+      }
+    },
+    "invitationToken": {
+      "label": "Mass invitation",
+      "notifications": {
+        "success": "You are successfully added.",
+        "error": "It was not possible to add you."
+      },
+      "explanations": {
+        "eventInvitation": "Scan this QR code to be automatically added to the action. This QR code is valid for 48 hours.",
+        "eventAreaInvitation": "Scan this QR code to be automatically added to the area. This QR code is valid for 48 hours."
       }
     }
   },
