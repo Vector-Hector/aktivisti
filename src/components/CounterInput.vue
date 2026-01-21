@@ -46,7 +46,7 @@ function updateValue(value: any) {
       dense
       outlined
       :counter="false"
-      maxlength="2"
+      maxlength="3"
       :model-value="props.modelValue"
       inputmode="numeric"
       @update:model-value="updateValue($event)"
@@ -56,7 +56,7 @@ function updateValue(value: any) {
       :icon="ionAdd"
       color="primary"
       class="counter-button"
-      :disabled="props.modelValue >= 99"
+      :disabled="props.modelValue >= 999"
       @click="updateValue(modelValue + 1)"
     />
   </div>
