@@ -61,12 +61,20 @@ export default defineConfig(function (ctx) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
     build: {
+      distDir: 'dist/aktivisti',
+
+      // Make all asset URLs relative to the HTML file
+      publicPath: '/aktivisti/',
+
+      // Or use './' if you want it fully relative
+      // publicPath: './',
+
       target: {
         browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
         node: 'node16'
       },
 
-      vueRouterMode: 'history', // available values: 'hash', 'history',
+      vueRouterMode: 'hash', // available values: 'hash', 'history',
       envFilter(originalEnv) {
         const newEnv = {}
         for (const key in originalEnv) {
