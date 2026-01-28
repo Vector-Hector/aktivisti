@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, provide, ref, watch } from 'vue'
-import NavigationSidebar from 'src/components/NavigationSidebar.vue'
 import {
   ErrorBus,
   NOT_AUTHORIZED,
@@ -176,7 +175,7 @@ function backButton() {
         indeterminate
       />
     </QHeader>
-    <NavigationSidebar />
+<!--    <NavigationSidebar />-->
     <QPageContainer class="d-flex flex-fill page-container">
       <router-view v-slot="{ Component }">
         <component :is="Component" />
