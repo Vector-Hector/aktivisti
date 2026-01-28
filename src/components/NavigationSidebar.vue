@@ -197,7 +197,7 @@ async function logout() {
             <MenuLink to="/posters">
               <QIcon
                 class="menu-item-icon"
-                name="img:/static/icons/poster.svg"
+                name="img:static/icons/poster.svg"
               />
               <span class="menu-item-link-text">{{
                 $t('sidebar.posters')

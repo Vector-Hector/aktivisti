@@ -70,17 +70,17 @@ onMounted(async () => {
     loadImageIfNonExistent(
       map.value,
       'is-completed-icon',
-      '/static/ionicons/checkmark-sharp.png'
+      'static/ionicons/checkmark-sharp.png'
     ),
     loadImageIfNonExistent(
       map.value,
       'has-no-assignee-icon',
-      '/static/ionicons/flag.png'
+      'static/ionicons/flag.png'
     ),
     loadImageIfNonExistent(
       map.value,
       'label-background',
-      '/static/icons/background.png'
+      'static/icons/background.png'
     )
   ])
 

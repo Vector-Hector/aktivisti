@@ -182,17 +182,17 @@ onMounted(async () => {
     loadImageIfNonExistent(
       map.value,
       ABSENT_IMAGE_NAME,
-      '/static/icons/location-absent-128x128.png'
+      'static/icons/location-absent-128x128.png'
     ),
     loadImageIfNonExistent(
       map.value,
       POSITIVE_IMAGE_NAME,
-      '/static/icons/location-positive-128x128.png'
+      'static/icons/location-positive-128x128.png'
     ),
     loadImageIfNonExistent(
       map.value,
       NEGATIVE_IMAGE_NAME,
-      '/static/icons/location-negative-128x128.png'
+      'static/icons/location-negative-128x128.png'
     )
   ])
   const emptySource: GeoJSONSourceSpecification = {

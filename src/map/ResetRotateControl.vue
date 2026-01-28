@@ -35,7 +35,7 @@ function onResetClicked() {
   <QBtn
     v-if="visible"
     class="overlay-shadow bg-white"
-    icon="img:/static/icons/north.svg"
+    icon="img:static/icons/north.svg"
     @click="onResetClicked"
     color="black"
     flat

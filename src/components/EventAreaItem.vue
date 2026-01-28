@@ -88,7 +88,7 @@ function countAddresses(areaDetails: AreaDetailsDto) {
         <QIcon
           v-if="!area.has_assignee && !area.is_completed"
           class="area-indicator-icon"
-          name="img:/static/ionicons/flag-sharp-circle-light.svg"
+          name="img:static/ionicons/flag-sharp-circle-light.svg"
         >
         </QIcon>
         <QBadge

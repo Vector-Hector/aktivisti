@@ -34,7 +34,7 @@ onMounted(() => {
       imageUrl = '/icons/icon-128x128.png'
       break
     case 'black_flag':
-      imageUrl = '/static/ionicons/flag-sharp-circle.png'
+      imageUrl = 'static/ionicons/flag-sharp-circle.png'
       break
     default:
       imageUrl = '/icons/favicon-96x96.png'

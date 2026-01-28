@@ -54,7 +54,7 @@ map.value.on('moveend', updateBounds)
 void loadImageIfNonExistent(
   map.value,
   'office',
-  '/static/icons/map-pin-office.png'
+  'static/icons/map-pin-office.png'
 )
 
 onBeforeUnmount(() => {

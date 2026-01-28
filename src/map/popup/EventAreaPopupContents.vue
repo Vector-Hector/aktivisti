@@ -39,7 +39,7 @@ function handleGoToArea() {
       $t('events.details.areaPopup.posterCounter', [eventArea.poster_count])
     }}</span>
     <div v-if="!eventArea.has_assignee && !eventArea.is_completed">
-      <QIcon name="img:/static/ionicons/flag-sharp-circle.svg" />
+      <QIcon name="img:static/ionicons/flag-sharp-circle.svg" />
       <span class="popup-content-label">
         {{ $t('events.details.areaPopup.hasNoAssignee') }}</span
       >

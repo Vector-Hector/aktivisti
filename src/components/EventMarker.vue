@@ -13,13 +13,13 @@ const props = defineProps<Props>()
 const icon = computed(() => {
   switch (props.event.event_type) {
     case EventTypes.POSTERS:
-      return 'img:/static/icons/map-pin-poster.svg'
+      return 'img:static/icons/map-pin-poster.svg'
     case EventTypes.DOOR_TO_DOOR:
-      return 'img:/static/icons/map-pin-door.svg'
+      return 'img:static/icons/map-pin-door.svg'
     case EventTypes.FLYERS:
-      return 'img:/static/icons/map-pin-flyer.svg'
+      return 'img:static/icons/map-pin-flyer.svg'
     default:
-      return 'img:/static/icons/map-pin-generic.svg'
+      return 'img:static/icons/map-pin-generic.svg'
   }
 })
 </script>

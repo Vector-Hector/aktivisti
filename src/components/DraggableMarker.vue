@@ -41,7 +41,7 @@ function onDragStart(event: any) {
     :class="{
       'is-dragging': dragging
     }"
-    name="img:/static/icons/location-select.svg"
+    name="img:static/icons/location-select.svg"
     draggable="true"
     @dragstart="onDragStart"
   />

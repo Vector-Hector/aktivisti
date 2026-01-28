@@ -50,28 +50,28 @@ onBeforeMount(async () => {
 void loadImageIfNonExistent(
   map.value,
   POSTER_SYMBOL_NAME,
-  '/static/icons/map-pin-poster.png'
+  'static/icons/map-pin-poster.png'
 )
 void loadImageIfNonExistent(
   map.value,
   DOOR_TO_DOOR_SYMBOL_NAME,
-  '/static/icons/map-pin-door.png'
+  'static/icons/map-pin-door.png'
 )
 void loadImageIfNonExistent(
   map.value,
   FLYER_SYMBOL_NAME,
-  '/static/icons/map-pin-flyer.png'
+  'static/icons/map-pin-flyer.png'
 )
 void loadImageIfNonExistent(
   map.value,
   GENERIC_SYMBOL_NAME,
-  '/static/icons/map-pin-generic.png'
+  'static/icons/map-pin-generic.png'
 )
 
 void loadImageIfNonExistent(
   map.value,
   'office-gray',
-  '/static/icons/map-pin-office-grayed-out.png'
+  'static/icons/map-pin-office-grayed-out.png'
 )
 
 const updateBounds = () => {
