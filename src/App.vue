@@ -221,11 +221,14 @@ function backButton() {
 }
 
 .page-container {
-  height: 100%;
   overflow: hidden;
 }
 
 .progress-bar {
   z-index: 1;
+}
+
+.q-header {
+  padding-top: env(safe-area-inset-top);
 }
 </style>

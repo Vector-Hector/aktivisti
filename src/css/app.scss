@@ -1,3 +1,8 @@
 // app global css in SCSS form
 // >>> $ <<< LOL! https://quasar.dev/style/sass-scss-variables#caveat - y u now explicitly import
 @import "src/css/globals";
+
+body {
+  padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  position: relative;
+}
